@@ -6917,12 +6917,12 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
           </button>
         </div>
       ) : (
-        <div className="relative z-10 flex items-center gap-3 px-5 py-3 sm:py-4 shrink-0">
-          {/* Back button — hidden on mobile */}
+        <div className="relative z-10 flex items-center gap-2 sm:gap-3 px-4 sm:px-5 py-3 sm:py-4 shrink-0">
+          {/* Back button — always visible */}
           <button onClick={goBack}
-            className="hidden sm:flex w-10 h-10 items-center justify-center rounded-full bg-white border border-[#e5e7eb] shadow-sm active:scale-95 transition-all shrink-0"
+            className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-white border border-[#e5e7eb] shadow-sm active:scale-95 transition-all shrink-0"
             style={{ boxShadow: "0px_1px_2px_0px_rgba(0,0,0,0.05)" }}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4B5563" strokeWidth="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4B5563" strokeWidth="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
           </button>
           {/* Progress track */}
           <div className="flex-1 flex flex-col gap-1 sm:gap-1.5">
@@ -7899,13 +7899,13 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
               <>
                 {step === TOTAL ? (
                   /* CTA card */
-                  <div className="w-full bg-white rounded-[16px] flex items-center justify-between gap-4 px-6 py-5"
+                  <div className="w-full bg-white rounded-[16px] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 px-5 sm:px-6 py-4 sm:py-5"
                     style={{ border: "1px solid #e5e7eb", boxShadow: "0 2px 12px rgba(0,0,0,0.04)" }}>
                     <div className="flex-1 min-w-0">
-                      <p className="font-['Plus_Jakarta_Sans'] font-bold text-[#0f172a] text-[15px] leading-[22px] mb-1">
+                      <p className="font-['Plus_Jakarta_Sans'] font-bold text-[#0f172a] text-[14px] sm:text-[15px] leading-[20px] sm:leading-[22px] mb-1">
                         Mulai Perjalanan Anda Menuju Kesuksesan Global
                       </p>
-                      <p className="font-['Plus_Jakarta_Sans'] text-[#64748b] text-[12px] leading-[18px]">
+                      <p className="font-['Plus_Jakarta_Sans'] text-[#64748b] text-[11px] sm:text-[12px] leading-[16px] sm:leading-[18px]">
                         {selectedFitur === "parafrase"
                           ? "Gunakan fitur Parafrase untuk membuat tulisanmu lebih jelas dan mudah dipahami."
                           : selectedFitur === "jurnal"
@@ -7922,7 +7922,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                         };
                         onFinish(FITUR_DEST[selectedFitur] ?? { prompt: loadingPrompt });
                       }}
-                      className="shrink-0 px-6 py-3 rounded-[12px] font-['Plus_Jakarta_Sans'] font-semibold text-white text-[13px] transition-all active:scale-95"
+                      className="w-full sm:w-auto shrink-0 px-6 py-3 rounded-[12px] font-['Plus_Jakarta_Sans'] font-semibold text-white text-[13px] transition-all active:scale-95"
                       style={{ background: canProceed ? "#2563eb" : "rgba(37,99,235,0.4)", cursor: canProceed ? "pointer" : "not-allowed" }}>
                       {selectedFitur === "parafrase" ? "Mulai Parafrase"
                         : selectedFitur === "jurnal" ? "Mulai Cari Jurnal"
