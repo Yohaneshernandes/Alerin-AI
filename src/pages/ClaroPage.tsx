@@ -6973,11 +6973,8 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                     <h1 className="font-extrabold text-[26px] sm:text-[32px] text-[#1b1b1c] leading-tight tracking-tight mb-2" style={{ fontFamily: "'Plus Jakarta Sans'" }}>
                       Halo, aku <span className="text-[#2563eb]">Alerin!</span>
                     </h1>
-                    <p className="text-[15px] sm:text-[18px] text-[#71717a] leading-relaxed mb-1" style={{ fontFamily: "Inter, sans-serif" }}>
+                    <p className="text-[15px] sm:text-[18px] text-[#71717a] leading-relaxed mb-5" style={{ fontFamily: "Inter, sans-serif" }}>
                       Temukan solusi dari seluruh kendala akademikmu disini
-                    </p>
-                    <p className="text-[14px] sm:text-[17px] text-[#9ca3af] leading-relaxed mb-6" style={{ fontFamily: "Inter, sans-serif" }}>
-                      Dipercaya 50.000+ mahasiswa Indonesia 🇮🇩
                     </p>
                     <button onClick={goNext}
                       className="flex items-center justify-center gap-2 active:scale-[0.98] transition-transform w-full sm:w-auto"
@@ -6985,6 +6982,9 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                       Mulai Sekarang
                       <img src="/assets/6d9c1.svg" alt="" style={{ width: 13, height: 13, display: "inline-block" }}/>
                     </button>
+                    <p className="text-[14px] sm:text-[17px] text-[#9ca3af] leading-relaxed mt-4" style={{ fontFamily: "Inter, sans-serif" }}>
+                      Dipercaya 50.000+ mahasiswa Indonesia
+                    </p>
                   </div>
                 </div>
               </div>
