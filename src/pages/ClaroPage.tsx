@@ -6664,30 +6664,30 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
       <div className="absolute bottom-0 left-0 w-64 h-64 rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, rgba(37,99,235,0.07) 0%, transparent 70%)", transform: "translate(-30%, 30%)" }}/>
 
       {/* Header */}
-      <div className="relative z-10 flex items-center gap-3 px-5 py-4 shrink-0">
-        <button onClick={() => setShowEmailVerify(false)} className="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-[#e5e7eb] shadow-sm active:scale-95 transition-all shrink-0" style={{ boxShadow: "0px 1px 1.5px rgba(0,0,0,0.1)" }}>
+      <div className="relative z-10 flex items-center gap-3 px-4 sm:px-5 py-3 sm:py-4 shrink-0">
+        <button onClick={() => setShowEmailVerify(false)} className="hidden sm:flex w-10 h-10 items-center justify-center rounded-full bg-white border border-[#e5e7eb] shadow-sm active:scale-95 transition-all shrink-0" style={{ boxShadow: "0px 1px 1.5px rgba(0,0,0,0.1)" }}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#374151" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
         </button>
-        <div className="flex-1 flex flex-col gap-[6px]">
-          <div className="flex items-center justify-between px-1">
+        <div className="flex-1 flex flex-col gap-1 sm:gap-[6px]">
+          <div className="hidden sm:flex items-center justify-between px-1">
             <span className="text-[12px] font-bold leading-[18px]" style={{ color: "#2563eb", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Langkah 1 dari {TOTAL}</span>
             <span className="text-[12px] font-semibold leading-[18px]" style={{ color: "#6b7280", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Verifikasi Email</span>
           </div>
-          <div className="h-2 rounded-full overflow-hidden" style={{ background: "rgba(229,231,235,0.8)" }}>
+          <div className="h-[6px] sm:h-2 rounded-full overflow-hidden" style={{ background: "rgba(229,231,235,0.8)" }}>
             <div className="h-full rounded-full transition-all duration-500 ease-out" style={{ width: `${(1 / TOTAL) * 100}%`, background: "linear-gradient(90deg,#60a5fa,#6366f1)" }}/>
           </div>
         </div>
-        <div className="w-10 h-10 flex items-center justify-center shrink-0">
+        <div className="hidden sm:flex w-10 h-10 items-center justify-center shrink-0">
           <div className="w-7 h-7 rounded-full overflow-hidden"><img src="/assets/alerin-logo.png" alt="Alerin" className="w-full h-full object-cover"/></div>
         </div>
       </div>
 
       {/* Scrollable content */}
       <div className="flex-1 overflow-y-auto">
-        <div className="max-w-[448px] mx-auto px-0 pt-2 pb-8 flex flex-col items-center">
+        <div className="max-w-[448px] mx-auto px-4 sm:px-0 pt-2 pb-8 flex flex-col items-center">
 
           {/* Card */}
-          <div className="w-full bg-white rounded-[24px] overflow-hidden relative" style={{ boxShadow: "0 4px 24px rgba(0,0,0,0.08)", border: "1px solid #f1f5f9", animation: "emailCardIn 0.45s cubic-bezier(0.34,1.56,0.64,1) both", top: "14px", marginLeft: "18px", marginRight: "18px" }}>
+          <div className="w-full bg-white rounded-[24px] overflow-hidden relative" style={{ boxShadow: "0 4px 24px rgba(0,0,0,0.08)", border: "1px solid #f1f5f9", animation: "emailCardIn 0.45s cubic-bezier(0.34,1.56,0.64,1) both", top: "14px" }}>
             {/* Top gradient bar */}
             <div className="h-[6px] w-full" style={{ background: "linear-gradient(90deg, #2563eb, #6366f1)" }}/>
 
