@@ -6958,13 +6958,13 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                   <div className="relative shrink-0">
                     <div className="absolute rounded-full pointer-events-none"
                       style={{ inset: "-28px", background: "radial-gradient(circle, rgba(37,99,235,0.18) 0%, rgba(99,102,241,0.1) 60%, transparent 100%)", filter: "blur(12px)" }}/>
-                    <div className="relative flex items-center justify-center rounded-full overflow-hidden"
-                      style={{ width: 140, height: 140, background: "linear-gradient(135deg, #dbeafe 0%, #c7d2fe 100%)", border: "3px solid rgba(255,255,255,0.85)", boxShadow: "0px 6.94px 5.2px rgba(0,0,0,0.1), 0px 3.47px 3.47px rgba(0,0,0,0.1)" }}>
-                      <img src="/assets/alerin-logo.png" alt="Alerin" className="w-[120px] h-[120px] object-contain"/>
+                    <div className="relative flex items-center justify-center rounded-full overflow-hidden mx-auto"
+                      style={{ width: 168, height: 168, background: "linear-gradient(135deg, #dbeafe 0%, #c7d2fe 100%)", border: "3px solid rgba(255,255,255,0.85)", boxShadow: "0px 6.94px 5.2px rgba(0,0,0,0.1), 0px 3.47px 3.47px rgba(0,0,0,0.1)" }}>
+                      <img src="/assets/alerin-logo.png" alt="Alerin" className="w-[130px] h-[130px] sm:w-[168px] sm:h-[168px] object-cover"/>
                     </div>
                     <div className="absolute flex items-center justify-center rounded-full"
-                      style={{ width: 40, height: 40, bottom: 8, right: -4, background: "#fcd34d", boxShadow: "0px 1.74px 3.47px rgba(0,0,0,0.15)" }}>
-                      <span style={{ color: "#78350f", fontSize: 18, lineHeight: 1 }}>✦</span>
+                      style={{ width: 48, height: 48, bottom: 12, right: -4, background: "#fcd34d", boxShadow: "0px 1.74px 3.47px rgba(0,0,0,0.15)" }}>
+                      <span style={{ color: "#78350f", fontSize: 21, lineHeight: 1 }}>✦</span>
                     </div>
                   </div>
 
