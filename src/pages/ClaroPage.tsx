@@ -7235,12 +7235,12 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
 
                       {/* Selected prodi display from search */}
                       {prodi && !showDropdown && (
-                        <div className="flex items-center justify-between px-4 py-2.5 rounded-[12px]" style={{ background: "#eff6ff", border: "1px solid #bfdbfe" }}>
-                          <div className="flex items-center gap-2">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>
-                            <p className="text-[13px] font-semibold text-[#1d4ed8] truncate">{prodi}</p>
+                        <div className="flex items-center justify-between gap-2 px-4 py-2.5 rounded-[12px]" style={{ background: "#eff6ff", border: "1px solid #bfdbfe" }}>
+                          <div className="flex items-center gap-2 min-w-0 flex-1">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2.5" className="shrink-0"><path d="M20 6L9 17l-5-5"/></svg>
+                            <p className="text-[12px] sm:text-[13px] font-semibold text-[#1d4ed8] truncate">{prodi}</p>
                           </div>
-                          <button onClick={() => setProdi("")} className="text-[11px] font-bold ml-2 shrink-0" style={{ color: "#2563eb" }}>Ubah</button>
+                          <button onClick={() => setProdi("")} className="text-[11px] font-bold shrink-0" style={{ color: "#2563eb" }}>Ubah</button>
                         </div>
                       )}
                     </div>
@@ -7259,7 +7259,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                         return (
                           <button key={p}
                             onClick={() => setProdi(isActive ? "" : p)}
-                            className="flex items-center gap-1.5 px-4 py-2 rounded-full text-[13px] font-semibold transition-all active:scale-95"
+                            className="flex items-center gap-1 sm:gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-[12px] sm:text-[13px] font-semibold transition-all active:scale-95"
                             style={isActive
                               ? { background: "#eff6ff", color: "#1d4ed8", border: "1px solid #bfdbfe" }
                               : { background: "#f6f6f8", color: "#374151", border: "1px solid transparent" }}>
@@ -7421,16 +7421,14 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
 
                       {/* Selected university chip */}
                       {universitas && !showUniDropdown && (
-                        <div className="flex items-center justify-between px-4 py-3 rounded-[14px]" style={{ background: "rgba(239,246,255,0.8)", border: "1px solid #bfdbfe" }}>
-                          <div className="flex items-center gap-3">
+                        <div className="flex items-center justify-between gap-2 px-4 py-3 rounded-[14px]" style={{ background: "rgba(239,246,255,0.8)", border: "1px solid #bfdbfe" }}>
+                          <div className="flex items-center gap-3 min-w-0 flex-1">
                             <div className="w-7 h-7 rounded-[8px] flex items-center justify-center shrink-0" style={{ background: "#2563eb" }}>
                               <svg width="12" height="10" viewBox="0 0 12 9" fill="none"><path d="M1 4.5L4.2 8L11 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
                             </div>
-                            <div className="min-w-0">
-                              <p className="text-[14px] font-semibold text-[#111827] truncate">{universitas}</p>
-                            </div>
+                            <p className="text-[13px] sm:text-[14px] font-semibold text-[#111827] truncate">{universitas}</p>
                           </div>
-                          <button onClick={() => setUniversitas("")} className="text-[11px] font-bold ml-3 shrink-0" style={{ color: "#2563eb" }}>Ubah</button>
+                          <button onClick={() => setUniversitas("")} className="text-[11px] font-bold shrink-0" style={{ color: "#2563eb" }}>Ubah</button>
                         </div>
                       )}
                     </div>
@@ -7450,7 +7448,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                         return (
                           <button key={abbr}
                             onClick={() => setUniversitas(isActive ? "" : full)}
-                            className="flex items-center gap-1.5 px-4 py-2 rounded-full text-[13px] font-semibold transition-all active:scale-95"
+                            className="flex items-center gap-1 sm:gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-[12px] sm:text-[13px] font-semibold transition-all active:scale-95"
                             style={isActive
                               ? { background: "#eff6ff", color: "#1d4ed8", border: "1px solid #bfdbfe" }
                               : { background: "#f6f6f8", color: "#374151", border: "1px solid transparent" }}>
