@@ -7299,9 +7299,8 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                     const on = semester === key;
                     return (
                       <button key={n} onClick={() => pickAndAdvance(setSemester, key)}
-                        className="relative flex items-center justify-center rounded-[12px] sm:rounded-[16px] transition-all active:scale-[0.95] reg-grid-card"
+                        className="relative flex items-center justify-center rounded-[12px] sm:rounded-[16px] transition-all active:scale-[0.95] reg-grid-card h-[56px] sm:h-[72px]"
                         style={{
-                          height: 56,
                           background: on ? "#eff6ff" : "#ffffff",
                           border: on ? "2px solid #2563eb" : "1.5px solid #e2e8f0",
                           boxShadow: on ? "0 4px 16px rgba(37,99,235,0.14)" : "0 1px 4px rgba(0,0,0,0.05)",
