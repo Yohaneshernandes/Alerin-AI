@@ -7901,7 +7901,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
             ) : (
               <>
                 {step === TOTAL ? (
-                  /* CTA card — matches Figma */
+                  /* CTA card */
                   <div className="w-full bg-white rounded-[16px] flex items-center justify-between gap-4 px-6 py-5"
                     style={{ border: "1px solid #e5e7eb", boxShadow: "0 2px 12px rgba(0,0,0,0.04)" }}>
                     <div className="flex-1 min-w-0">
@@ -7909,7 +7909,11 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                         Mulai Perjalanan Anda Menuju Kesuksesan Global
                       </p>
                       <p className="font-['Plus_Jakarta_Sans'] text-[#64748b] text-[12px] leading-[18px]">
-                        Dapatkan bimbingan komprehensif dari mentor profesional dan wujudkan proyek riset unggulan Anda.
+                        {selectedFitur === "parafrase"
+                          ? "Gunakan fitur Parafrase untuk membuat tulisanmu lebih jelas dan mudah dipahami."
+                          : selectedFitur === "jurnal"
+                          ? "Temukan referensi jurnal yang sesuai untuk mendukung tugas dan penelitianmu."
+                          : "Dapatkan bimbingan komprehensif dari mentor profesional dan wujudkan proyek riset unggulan Anda."}
                       </p>
                     </div>
                     <button
@@ -7922,8 +7926,10 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                         onFinish(FITUR_DEST[selectedFitur] ?? { prompt: loadingPrompt });
                       }}
                       className="shrink-0 px-6 py-3 rounded-[12px] font-['Plus_Jakarta_Sans'] font-semibold text-white text-[13px] transition-all active:scale-95"
-                      style={{ background: canProceed ? "#059669" : "rgba(5,150,105,0.4)", cursor: canProceed ? "pointer" : "not-allowed" }}>
-                      Menjelajahi Fitur
+                      style={{ background: canProceed ? "#2563eb" : "rgba(37,99,235,0.4)", cursor: canProceed ? "pointer" : "not-allowed" }}>
+                      {selectedFitur === "parafrase" ? "Mulai Parafrase"
+                        : selectedFitur === "jurnal" ? "Mulai Cari Jurnal"
+                        : "Pilih Fitur"}
                     </button>
                   </div>
                 ) : (
