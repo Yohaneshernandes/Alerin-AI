@@ -6909,7 +6909,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
         <circle cx="1100" cy="840" r="5" fill="#93c5fd" opacity="0.18"/>
       </svg>
 
-      {/* Pintarly-style header (step 0: just close; step 1+: back + progress + logo) */}
+      {/* Header — step 0: close only; step 1+: simplified mobile header */}
       {step === 0 ? (
         <div className="relative z-10 flex justify-end px-5 pt-5 pb-2 shrink-0">
           <button onClick={onClose} className="w-9 h-9 flex items-center justify-center rounded-full text-[#6b7280] hover:bg-white/60 transition-all">
@@ -6917,73 +6917,70 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
           </button>
         </div>
       ) : (
-        <div className="relative z-10 flex items-center gap-3 px-5 py-4 shrink-0">
-          {/* Back button */}
+        <div className="relative z-10 flex items-center gap-3 px-5 py-3 sm:py-4 shrink-0">
+          {/* Back button — hidden on mobile */}
           <button onClick={goBack}
-            className="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-[#e5e7eb] shadow-sm active:scale-95 transition-all shrink-0"
+            className="hidden sm:flex w-10 h-10 items-center justify-center rounded-full bg-white border border-[#e5e7eb] shadow-sm active:scale-95 transition-all shrink-0"
             style={{ boxShadow: "0px_1px_2px_0px_rgba(0,0,0,0.05)" }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4B5563" strokeWidth="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
           </button>
           {/* Progress track */}
-          <div className="flex-1 flex flex-col gap-1.5">
-            <div className="flex items-center justify-between px-1">
+          <div className="flex-1 flex flex-col gap-1 sm:gap-1.5">
+            <div className="hidden sm:flex items-center justify-between px-1">
               <span className="text-[12px] font-bold leading-[16px]" style={{ color: "#2563eb" }}>Langkah {step} dari {TOTAL}</span>
               <span className="text-[12px] font-semibold leading-[16px]" style={{ color: "#6b7280" }}>{Math.round(progress)}% Selesai</span>
             </div>
-            <div className="h-2 rounded-full overflow-hidden" style={{ background: "rgba(229,231,235,0.8)" }}>
+            <div className="h-[6px] sm:h-2 rounded-full overflow-hidden" style={{ background: "rgba(229,231,235,0.8)" }}>
               <div className="h-full rounded-full transition-all duration-500 ease-out" style={{ width: `${progress}%`, background: "linear-gradient(90deg,#60a5fa,#6366f1)" }}/>
             </div>
           </div>
-          {/* Alerin logo */}
-          <div className="w-10 h-10 flex items-center justify-center shrink-0">
+          {/* Alerin logo — hidden on mobile */}
+          <div className="hidden sm:flex w-10 h-10 items-center justify-center shrink-0">
             <div className="w-7 h-7 rounded-full overflow-hidden"><img src="/assets/alerin-logo.png" alt="Alerin" className="w-full h-full object-cover"/></div>
           </div>
         </div>
       )}
 
       {/* Scrollable content */}
-      <div className="flex-1 overflow-y-auto pb-4 relative z-10 flex flex-col" style={{ paddingLeft: step === 0 ? 0 : "20px", paddingRight: step === 0 ? 0 : "20px" }}>
+      <div className="flex-1 overflow-y-auto pb-4 relative z-10 flex flex-col" style={{ paddingLeft: step === 0 ? 0 : "16px", paddingRight: step === 0 ? 0 : "16px" }}>
         <div className={step === 0 ? "w-full flex items-center justify-center flex-1" : "max-w-md mx-auto w-full pt-2 pb-8"}
           style={step === 0 ? { minHeight: "100%", opacity: visible ? 1 : 0, transform: visible ? "translateY(0)" : "translateY(14px)", transition: "opacity 0.18s ease, transform 0.18s ease" } : { opacity: visible ? 1 : 0, transform: visible ? "translateY(0)" : "translateY(14px)", transition: "opacity 0.18s ease, transform 0.18s ease" }}>
 
-          {/* Step 0: Welcome — matches Figma node 2008:1029 */}
+          {/* Step 0: Welcome */}
           {step === 0 && (
             <div className="flex items-center justify-center w-full px-5" style={{ paddingBottom: "80px" }}>
-              <div className="w-full max-w-[700px]" style={{ marginLeft: "-31px", marginRight: "-31px", animation: "welcomeCardIn 0.65s cubic-bezier(0.34,1.56,0.64,1) both" }}>
-                {/* Card — white, wide horizontal layout */}
-                <div className="bg-white rounded-[29px] flex items-center gap-10 px-10 py-10"
+              <div className="w-full max-w-[700px] mx-auto" style={{ animation: "welcomeCardIn 0.65s cubic-bezier(0.34,1.56,0.64,1) both" }}>
+                {/* Card */}
+                <div className="bg-white rounded-[29px] flex flex-col sm:flex-row items-center gap-6 sm:gap-10 px-6 sm:px-10 py-8 sm:py-10 text-center sm:text-left"
                   style={{ boxShadow: "0px 4px 40px rgba(0,0,0,0.12)" }}>
 
-                  {/* Left: Mascot circle */}
+                  {/* Mascot circle */}
                   <div className="relative shrink-0">
-                    {/* Glow blur */}
                     <div className="absolute rounded-full pointer-events-none"
                       style={{ inset: "-28px", background: "radial-gradient(circle, rgba(37,99,235,0.18) 0%, rgba(99,102,241,0.1) 60%, transparent 100%)", filter: "blur(12px)" }}/>
-                    {/* Circle with blue gradient */}
                     <div className="relative flex items-center justify-center rounded-full overflow-hidden"
-                      style={{ width: 168, height: 168, background: "linear-gradient(135deg, #dbeafe 0%, #c7d2fe 100%)", border: "3px solid rgba(255,255,255,0.85)", boxShadow: "0px 6.94px 5.2px rgba(0,0,0,0.1), 0px 3.47px 3.47px rgba(0,0,0,0.1)" }}>
-                      <img src="/assets/alerin-logo.png" alt="Alerin" style={{ width: 168, height: 168, objectFit: "cover" }}/>
+                      style={{ width: 140, height: 140, background: "linear-gradient(135deg, #dbeafe 0%, #c7d2fe 100%)", border: "3px solid rgba(255,255,255,0.85)", boxShadow: "0px 6.94px 5.2px rgba(0,0,0,0.1), 0px 3.47px 3.47px rgba(0,0,0,0.1)" }}>
+                      <img src="/assets/alerin-logo.png" alt="Alerin" className="w-[120px] h-[120px] object-contain"/>
                     </div>
-                    {/* Yellow ✦ badge */}
                     <div className="absolute flex items-center justify-center rounded-full"
-                      style={{ width: 48, height: 48, bottom: 12, right: -4, background: "#fcd34d", boxShadow: "0px 1.74px 3.47px rgba(0,0,0,0.15)" }}>
-                      <span style={{ color: "#78350f", fontSize: 21, lineHeight: 1 }}>✦</span>
+                      style={{ width: 40, height: 40, bottom: 8, right: -4, background: "#fcd34d", boxShadow: "0px 1.74px 3.47px rgba(0,0,0,0.15)" }}>
+                      <span style={{ color: "#78350f", fontSize: 18, lineHeight: 1 }}>✦</span>
                     </div>
                   </div>
 
-                  {/* Right: Text + CTA */}
-                  <div className="flex-1 min-w-0">
-                    <h1 style={{ fontFamily: "'Plus Jakarta Sans'", fontWeight: 800, fontSize: 32, color: "#1b1b1c", lineHeight: 1.36, letterSpacing: "-0.8px", marginBottom: 8 }}>
-                      {`Halo, aku `}<span style={{ color: "#2563eb" }}>Alerin!</span>
+                  {/* Text + CTA */}
+                  <div className="flex-1 min-w-0 flex flex-col items-center sm:items-start">
+                    <h1 className="font-extrabold text-[26px] sm:text-[32px] text-[#1b1b1c] leading-tight tracking-tight mb-2" style={{ fontFamily: "'Plus Jakarta Sans'" }}>
+                      Halo, aku <span className="text-[#2563eb]">Alerin!</span>
                     </h1>
-                    <p style={{ fontFamily: "Inter, sans-serif", fontWeight: 400, fontSize: 18, color: "#71717a", lineHeight: 1.57, marginBottom: 4 }}>
-                      {`Temukan solusi dari seluruh kendala akademikmu disini`}
+                    <p className="text-[15px] sm:text-[18px] text-[#71717a] leading-relaxed mb-1" style={{ fontFamily: "Inter, sans-serif" }}>
+                      Temukan solusi dari seluruh kendala akademikmu disini
                     </p>
-                    <p style={{ fontFamily: "Inter, sans-serif", fontWeight: 400, fontSize: 17, color: "#9ca3af", lineHeight: 1.54, marginBottom: 28 }}>
+                    <p className="text-[14px] sm:text-[17px] text-[#9ca3af] leading-relaxed mb-6" style={{ fontFamily: "Inter, sans-serif" }}>
                       Dipercaya 50.000+ mahasiswa Indonesia 🇮🇩
                     </p>
                     <button onClick={goNext}
-                      className="flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
+                      className="flex items-center justify-center gap-2 active:scale-[0.98] transition-transform w-full sm:w-auto"
                       style={{ background: "#2563eb", boxShadow: "0px 3.63px 3.17px rgba(37,99,235,0.38)", borderRadius: 14, paddingTop: 14, paddingBottom: 14, paddingLeft: 32, paddingRight: 32, color: "white", fontFamily: "Inter, sans-serif", fontWeight: 700, fontSize: 16 }}>
                       Mulai Sekarang
                       <img src="/assets/6d9c1.svg" alt="" style={{ width: 13, height: 13, display: "inline-block" }}/>
