@@ -7292,22 +7292,22 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
 
 
                 {/* 3-column grid */}
-                <div className="w-full grid grid-cols-3 gap-[10px]">
+                <div className="w-full grid grid-cols-3 gap-2 sm:gap-[10px]">
                   {semNums.map((n) => {
                     const key = toKey(n);
                     const on = semester === key;
                     return (
                       <button key={n} onClick={() => pickAndAdvance(setSemester, key)}
-                        className="relative flex items-center justify-center rounded-[16px] transition-all active:scale-[0.95] reg-grid-card"
+                        className="relative flex items-center justify-center rounded-[12px] sm:rounded-[16px] transition-all active:scale-[0.95] reg-grid-card"
                         style={{
-                          height: 72,
+                          height: 56,
                           background: on ? "#eff6ff" : "#ffffff",
                           border: on ? "2px solid #2563eb" : "1.5px solid #e2e8f0",
                           boxShadow: on ? "0 4px 16px rgba(37,99,235,0.14)" : "0 1px 4px rgba(0,0,0,0.05)",
                         }}>
-                        <span className="text-[28px] font-extrabold leading-none" style={{ color: on ? "#2563eb" : "#334155" }}>{n}</span>
+                        <span className="text-[22px] sm:text-[28px] font-extrabold leading-none" style={{ color: on ? "#2563eb" : "#334155" }}>{n}</span>
                         {on && (
-                          <div className="absolute top-2 right-2 w-5 h-5 rounded-full flex items-center justify-center" style={{ background: "#2563eb" }}>
+                          <div className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 w-4 h-4 sm:w-5 sm:h-5 rounded-full flex items-center justify-center" style={{ background: "#2563eb" }}>
                             <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
                           </div>
                         )}
