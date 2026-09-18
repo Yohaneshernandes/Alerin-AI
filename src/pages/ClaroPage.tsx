@@ -7370,7 +7370,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                       <p className="text-[14px] font-semibold text-[#111827]">Cari Nama atau Singkatan Kampus</p>
                       <div className="relative">
                         <div className="flex items-center w-full px-4 py-3.5 rounded-[16px] transition-all"
-                          style={{ background: "#fff", border: showUniDropdown ? "2px solid #fbbf24" : "2px solid #e5e7eb", boxShadow: showUniDropdown ? "0 0 0 3px rgba(251,191,36,0.12)" : "none" }}>
+                          style={{ background: "#fff", border: showUniDropdown ? "2px solid #2563eb" : "2px solid #e5e7eb", boxShadow: showUniDropdown ? "0 0 0 3px rgba(37,99,235,0.12)" : "none" }}>
                           <svg className="shrink-0 mr-3" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
                           <input
                             value={uniSearch}
