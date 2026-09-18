@@ -7120,7 +7120,8 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                       {agreeTerms && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3"><path d="M20 6L9 17l-5-5"/></svg>}
                     </div>
                     <p className="text-[12px] text-[#3d4a3d] leading-[19.5px]">
-                      Saya telah membaca dan menyetujui <span className="text-[#2563eb]">Syarat & Ketentuan</span> serta <span className="text-[#2563eb]">Kebijakan Privasi</span> Alerin Indonesia.
+                      <span className="hidden sm:inline">Saya telah membaca dan menyetujui <span className="text-[#2563eb]">Syarat & Ketentuan</span> serta <span className="text-[#2563eb]">Kebijakan Privasi</span> Alerin Indonesia.</span>
+                      <span className="sm:hidden">Dengan mendaftar, saya menyetujui <span className="text-[#2563eb]">Syarat & Ketentuan</span> dan <span className="text-[#2563eb]">Kebijakan Privasi</span>.</span>
                     </p>
                   </button>
                 </div>
