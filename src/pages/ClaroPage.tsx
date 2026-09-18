@@ -6484,22 +6484,22 @@ type FinishDest = { prompt?: string; tab?: NavTab; featureKey?: FeatureKey };
 
 const PintarlyMascotBubble = React.memo(function PintarlyMascotBubble({ pre, bold, sub }: { pre: string; bold: string; sub?: string }) {
   return (
-    <div className="flex items-center gap-4 mb-8 w-full" style={{ animation: "bubbleEnter 0.45s cubic-bezier(0.34,1.56,0.64,1) both" }}>
+    <div className="flex items-center gap-3 sm:gap-4 mb-5 sm:mb-8 w-full" style={{ animation: "bubbleEnter 0.45s cubic-bezier(0.34,1.56,0.64,1) both" }}>
       <div className="relative shrink-0" style={{ animation: "mascotBob 3s ease-in-out infinite" }}>
-        <div className="w-[80px] h-[80px] rounded-full overflow-hidden flex items-center justify-center" style={{ background: "linear-gradient(135deg,#dbeafe,#c7d2fe)", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1),0 2px 4px -2px rgba(0,0,0,0.1)", border: "2px solid #bfdbfe" }}>
+        <div className="w-14 h-14 sm:w-[80px] sm:h-[80px] rounded-full overflow-hidden flex items-center justify-center" style={{ background: "linear-gradient(135deg,#dbeafe,#c7d2fe)", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1),0 2px 4px -2px rgba(0,0,0,0.1)", border: "2px solid #bfdbfe" }}>
           <img src="/assets/alerin-logo.png" alt="Alerin" className="w-full h-full object-cover"/>
         </div>
-        <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center drop-shadow-sm" style={{ background: "#fcd34d" }}>
-          <span style={{ fontSize: 10, color: "#78350f" }}>✦</span>
+        <div className="absolute -bottom-0.5 -right-0.5 sm:-bottom-1 sm:-right-1 w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center drop-shadow-sm" style={{ background: "#fcd34d" }}>
+          <span style={{ fontSize: 9, color: "#78350f" }}>✦</span>
         </div>
       </div>
-      <div className="relative flex-1 bg-white rounded-[24px] px-5 py-4 drop-shadow-[0px_1px_1px_rgba(0,0,0,0.05)]"
+      <div className="relative flex-1 bg-white rounded-[18px] sm:rounded-[24px] px-4 sm:px-5 py-3 sm:py-4 drop-shadow-[0px_1px_1px_rgba(0,0,0,0.05)]"
         style={{ border: "1px solid #e5e7eb", animation: "bubblePop 0.4s cubic-bezier(0.34,1.56,0.64,1) 0.1s both" }}>
         <div className="absolute top-1/2 -translate-y-1/2" style={{ left: -9, width: 0, height: 0, borderTop: "9px solid transparent", borderBottom: "9px solid transparent", borderRight: "10px solid white" }}/>
-        <p className="text-[17px] text-[#1f2937] leading-[28px]">
+        <p className="text-[15px] sm:text-[17px] text-[#1f2937] leading-[24px] sm:leading-[28px]">
           {pre} <strong className="font-extrabold text-[#111827]">{bold}</strong>
         </p>
-        {sub && <p className="text-sm text-[#6b7280] mt-1 leading-[20px]">{sub}</p>}
+        {sub && <p className="text-[13px] sm:text-sm text-[#6b7280] mt-0.5 sm:mt-1 leading-[18px] sm:leading-[20px]">{sub}</p>}
       </div>
     </div>
   );
@@ -6857,21 +6857,21 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
   // Pintarly-style radio card
   const RadioCard = ({ selected, onClick, icon, label, sublabel, badge, badgeColor }: { selected: boolean; onClick: () => void; icon: React.ReactNode; label: string; sublabel: string; badge?: string; badgeColor?: string }) => (
     <button onClick={onClick}
-      className="w-full bg-white relative rounded-[16px] transition-all active:scale-[0.98] drop-shadow-[0px_1px_1px_rgba(0,0,0,0.05)] group reg-card"
+      className="w-full bg-white relative rounded-[12px] sm:rounded-[16px] transition-all active:scale-[0.98] drop-shadow-[0px_1px_1px_rgba(0,0,0,0.05)] group reg-card"
       style={selected ? { border: "2px solid #2563eb", background: "#eff6ff" } : { border: "1px solid #e5e7eb" }}>
-      <div className="flex items-center justify-between px-[20px] py-[16px]">
-        <div className="flex items-center gap-4">
-          <div className="w-11 h-11 rounded-[12px] flex items-center justify-center text-2xl shrink-0 transition-colors"
+      <div className="flex items-center justify-between px-4 sm:px-[20px] py-3 sm:py-[16px]">
+        <div className="flex items-center gap-3 sm:gap-4">
+          <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-[10px] sm:rounded-[12px] flex items-center justify-center shrink-0 transition-colors"
             style={{ background: selected ? "#dbeafe" : "#f8fafc" }}>{icon}</div>
           <div className="text-left">
             <div className="flex items-center gap-2 flex-wrap">
-              <p className="font-bold text-[#111827] text-[17px] leading-[28px]">{label}</p>
+              <p className="font-bold text-[#111827] text-[15px] sm:text-[17px] leading-[24px] sm:leading-[28px]">{label}</p>
               {badge && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full" style={{ background: (badgeColor || "#60a5fa") + "22", color: badgeColor || "#2563eb" }}>{badge}</span>}
             </div>
-            <p className="text-sm text-[#6b7280] leading-[20px]">{sublabel}</p>
+            <p className="text-[13px] sm:text-sm text-[#6b7280] leading-[18px] sm:leading-[20px]">{sublabel}</p>
           </div>
         </div>
-        <div className="w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 ml-3 transition-all"
+        <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 flex items-center justify-center shrink-0 ml-2 sm:ml-3 transition-all"
           style={selected ? { borderColor: "#2563eb", background: "#2563eb" } : { borderColor: "#d1d5db", background: "white" }}>
           {selected && <svg width="11" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4.5L4.2 8L11 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>}
         </div>
@@ -6995,25 +6995,25 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
           {step === 1 && (
             <div>
               {/* Mascot top section (Pintarly form style) */}
-              <div className="flex flex-col items-center mb-6 pt-2">
-                <div className="relative mb-4">
+              <div className="flex flex-col items-center mb-4 sm:mb-6 pt-1 sm:pt-2">
+                <div className="relative mb-2.5 sm:mb-4">
                   <div className="absolute inset-[-8px] rounded-full blur-lg opacity-70" style={{ background: "radial-gradient(circle, rgba(219,234,254,1), rgba(135,209,235,0.4), rgba(255,225,111,0.4))" }}/>
-                  <div className="relative w-20 h-20 rounded-full overflow-hidden flex items-center justify-center bg-white shadow-md">
+                  <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden flex items-center justify-center bg-white shadow-md">
                     <img src="/assets/alerin-logo.png" alt="Alerin" className="w-full h-full object-cover"/>
                   </div>
-                  <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center drop-shadow-sm z-10" style={{ background: "#fcd34d" }}>
-                    <span style={{ fontSize: 9, color: "#78350f" }}>✦</span>
+                  <div className="absolute -bottom-0.5 -right-0.5 sm:-bottom-1 sm:-right-1 w-4 h-4 sm:w-5 sm:h-5 rounded-full flex items-center justify-center drop-shadow-sm z-10" style={{ background: "#fcd34d" }}>
+                    <span style={{ fontSize: 8, color: "#78350f" }}>✦</span>
                   </div>
                 </div>
-                <h2 className="font-['Plus_Jakarta_Sans'] font-bold text-[28px] text-[#1b1b1c] leading-[38px] tracking-[-0.7px]">Daftar Akun Alerin</h2>
-                <p className="text-[14px] text-[#71717a] text-center leading-[22px] mt-1">Mulai perjalanan akademikmu yang lebih cerdas<br/>dengan panduan AI terpersonalisasi.</p>
+                <h2 className="font-['Plus_Jakarta_Sans'] font-bold text-[22px] sm:text-[28px] text-[#1b1b1c] leading-[30px] sm:leading-[38px] tracking-[-0.7px]">Daftar Akun Alerin</h2>
+                <p className="text-[13px] sm:text-[14px] text-[#71717a] text-center leading-[20px] sm:leading-[22px] mt-0.5 sm:mt-1">Mulai perjalanan akademikmu yang lebih cerdas<br/>dengan panduan AI terpersonalisasi.</p>
               </div>
 
               {/* White card form */}
               <div className="bg-white rounded-[16px] shadow-[0px_20px_25px_-5px_rgba(0,0,0,0.08),0px_8px_10px_-6px_rgba(0,0,0,0.06)] overflow-hidden">
                 {/* Top accent bar */}
                 <div className="h-1.5" style={{ background: "linear-gradient(90deg,#60a5fa,#6366f1)" }}/>
-                <div className="p-6 space-y-4">
+                <div className="p-4 sm:p-6 space-y-3 sm:space-y-4">
                   {/* Google button */}
                   <button className="w-full flex items-center justify-center gap-3 py-3 rounded-[12px] font-semibold text-[#1b1b1c] text-[14px] transition-all hover:shadow-md active:scale-[0.98]"
                     style={{ background: "#f6f6f8" }}>
@@ -7136,7 +7136,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
           {step === 2 && (
             <>
               <PintarlyMascotBubble pre="Pilih" bold="Jenjang Akademikmu" sub="Sesuaikan pilihanmu dengan tingkat pendidikan yang sedang kamu jalani" />
-              <div className="space-y-[14px]">
+              <div className="space-y-[10px] sm:space-y-[14px]">
                 <RadioCard selected={jenjang === "S1"} onClick={() => pickAndAdvance(setJenjang, "S1")} icon={<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>} label="S1 Sarjana/ D4 Diploma" sublabel="Program Sarjana, D4, atau Terapan" />
                 <RadioCard selected={jenjang === "S2"} onClick={() => pickAndAdvance(setJenjang, "S2")} icon={<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>} label="S2 Magister" sublabel="Program Pascasarjana / Tesis"/>
                 <RadioCard selected={jenjang === "S3"} onClick={() => pickAndAdvance(setJenjang, "S3")} icon={<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>} label="S3 Doktor" sublabel="Program Doktoral / Disertasi"/>
@@ -7549,7 +7549,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
           {step === 7 && bantuPilihan === "tugas" && (
             <>
               <PintarlyMascotBubble pre="Jenis tugas" bold="apa yang dikerjakan?" sub="Pilih jenis tugas utamamu agar Alerin bisa menyiapkan template dan referensi yang tepat." />
-              <div className="space-y-[14px]">
+              <div className="space-y-[10px] sm:space-y-[14px]">
                 {[
                   { id: "Essay", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>, desc: "Esai argumentatif atau reflektif" },
                   { id: "Paper", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>, desc: "Paper penelitian / karya ilmiah" },
@@ -7581,7 +7581,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
           {step === 7 && bantuPilihan === "matakuliah" && (
             <>
               <PintarlyMascotBubble pre="Sedang di" bold="tahap mana?" sub="Pilih fase belajar matakuliahmu saat ini agar Alerin bisa menyiapkan panduan yang tepat." />
-              <div className="space-y-[14px]">
+              <div className="space-y-[10px] sm:space-y-[14px]">
                 {[
                   { id: "Belum mulai", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>, desc: "Baru mulai atau belum ada progres" },
                   { id: "Sedang belajar", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>, desc: "Aktif memahami materi kuliah" },
@@ -7784,7 +7784,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
             return (
               <>
                 <PintarlyMascotBubble pre={cfg.pre} bold={cfg.bold} sub={cfg.sub} />
-                <div className="space-y-[14px]">
+                <div className="space-y-[10px] sm:space-y-[14px]">
                   {cfg.opts.map(o => (
                     <RadioCard key={o.id} selected={target === o.id} onClick={() => pickAndAdvance(setTarget, o.id)}
                       icon={o.icon} label={o.label} sublabel={o.sublabel} badge={o.badge} badgeColor={o.badgeColor} />
@@ -7811,15 +7811,15 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
               </div>
 
               {/* Feature cards — side by side */}
-              <div className="flex gap-3 w-full mb-4">
+              <div className="flex gap-2.5 sm:gap-3 w-full mb-4">
 
                 {/* === Fitur Parafrase === */}
                 <button
                   onClick={() => setSelectedFitur(selectedFitur === "parafrase" ? "" : "parafrase")}
                   className="flex-1 relative transition-all active:scale-[0.98] overflow-hidden"
                   style={{
-                    height: 300,
-                    borderRadius: "20px",
+                    height: 240,
+                    borderRadius: "16px",
                     boxShadow: selectedFitur === "parafrase"
                       ? "0 0 0 2.5px #2563eb, 0 8px 32px rgba(37,99,235,0.25)"
                       : "0 2px 12px rgba(0,0,0,0.06)",
@@ -7828,20 +7828,20 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                   <div className="absolute inset-0"
                     style={{
                       background: "linear-gradient(180deg, #f97044 0%, #f28c6a 100%)",
-                      borderRadius: "20px",
+                      borderRadius: "16px",
                     }}/>
                   {/* Text content */}
-                  <div className="relative z-10 flex flex-col items-center pt-6 px-5">
-                    <p className="font-['Plus_Jakarta_Sans'] font-bold text-[18px] text-white text-center leading-[22px] mb-2">Fitur Parafrase</p>
-                    <p className="font-['Plus_Jakarta_Sans'] font-medium text-[11px] text-white/90 text-center leading-[16px] px-1">Fitur parafrase membantu mengubah kalimat menjadi versi baru dengan makna yang sama, membuat tulisan lebih segar dan mudah dipahami.</p>
+                  <div className="relative z-10 flex flex-col items-center pt-4 sm:pt-6 px-3 sm:px-5">
+                    <p className="font-['Plus_Jakarta_Sans'] font-bold text-[15px] sm:text-[18px] text-white text-center leading-[20px] sm:leading-[22px] mb-1.5 sm:mb-2">Fitur Parafrase</p>
+                    <p className="font-['Plus_Jakarta_Sans'] font-medium text-[10px] sm:text-[11px] text-white/90 text-center leading-[14px] sm:leading-[16px] px-0.5 sm:px-1">Fitur parafrase membantu mengubah kalimat menjadi versi baru dengan makna yang sama, membuat tulisan lebih segar dan mudah dipahami.</p>
                   </div>
                   {/* Illustration */}
                   <div className="absolute bottom-0 left-1/2 -translate-x-1/2 pointer-events-none">
-                    <img src="/assets/d0574.png" alt="" className="w-[180px] h-[180px] object-contain" />
+                    <img src="/assets/d0574.png" alt="" className="w-[130px] h-[130px] sm:w-[180px] sm:h-[180px] object-contain" />
                   </div>
                   {/* Selected checkmark */}
                   {selectedFitur === "parafrase" && (
-                    <div className="absolute top-3 right-3 w-6 h-6 rounded-full bg-white flex items-center justify-center z-20 shadow-md pointer-events-none">
+                    <div className="absolute top-2.5 right-2.5 sm:top-3 sm:right-3 w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-white flex items-center justify-center z-20 shadow-md pointer-events-none">
                       <svg width="11" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4.5L4.2 8L11 1" stroke="#2563eb" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
                     </div>
                   )}
@@ -7852,8 +7852,8 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                   onClick={() => setSelectedFitur(selectedFitur === "jurnal" ? "" : "jurnal")}
                   className="flex-1 relative transition-all active:scale-[0.98] overflow-hidden"
                   style={{
-                    height: 300,
-                    borderRadius: "20px",
+                    height: 240,
+                    borderRadius: "16px",
                     boxShadow: selectedFitur === "jurnal"
                       ? "0 0 0 2.5px #2563eb, 0 8px 32px rgba(37,99,235,0.25)"
                       : "0 2px 12px rgba(0,0,0,0.06)",
@@ -7862,20 +7862,20 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                   <div className="absolute inset-0"
                     style={{
                       background: "linear-gradient(180deg, #c4edcf 0%, #ddf3e4 100%)",
-                      borderRadius: "20px",
+                      borderRadius: "16px",
                     }}/>
                   {/* Text content */}
-                  <div className="relative z-10 flex flex-col items-center pt-6 px-5">
-                    <p className="font-['Plus_Jakarta_Sans'] font-bold text-[18px] text-[#0f172a] text-center leading-[22px] mb-2">Fitur Cari Jurnal</p>
-                    <p className="font-['Plus_Jakarta_Sans'] font-medium text-[11px] text-[#1e293b]/80 text-center leading-[16px] px-1">Pembentukan mentalitas kepemimpinan &amp; kedisiplinan riset teruji untuk bersaing di Ivy League &amp; PTN Unggulan.</p>
+                  <div className="relative z-10 flex flex-col items-center pt-4 sm:pt-6 px-3 sm:px-5">
+                    <p className="font-['Plus_Jakarta_Sans'] font-bold text-[15px] sm:text-[18px] text-[#0f172a] text-center leading-[20px] sm:leading-[22px] mb-1.5 sm:mb-2">Fitur Cari Jurnal</p>
+                    <p className="font-['Plus_Jakarta_Sans'] font-medium text-[10px] sm:text-[11px] text-[#1e293b]/80 text-center leading-[14px] sm:leading-[16px] px-0.5 sm:px-1">Pembentukan mentalitas kepemimpinan &amp; kedisiplinan riset teruji untuk bersaing di Ivy League &amp; PTN Unggulan.</p>
                   </div>
                   {/* Illustration */}
                   <div className="absolute bottom-0 left-1/2 -translate-x-1/2 pointer-events-none">
-                    <img src="/assets/353d4.png" alt="" className="w-[180px] h-[180px] object-contain" />
+                    <img src="/assets/353d4.png" alt="" className="w-[130px] h-[130px] sm:w-[180px] sm:h-[180px] object-contain" />
                   </div>
                   {/* Selected checkmark */}
                   {selectedFitur === "jurnal" && (
-                    <div className="absolute top-3 right-3 w-6 h-6 rounded-full bg-white flex items-center justify-center z-20 shadow-md pointer-events-none">
+                    <div className="absolute top-2.5 right-2.5 sm:top-3 sm:right-3 w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-white flex items-center justify-center z-20 shadow-md pointer-events-none">
                       <svg width="11" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4.5L4.2 8L11 1" stroke="#2563eb" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
                     </div>
                   )}
@@ -7889,8 +7889,8 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
 
       {/* Bottom CTA */}
       {step > 0 && (
-        <div className={`relative z-10 px-5 pb-4 shrink-0 ${step === TOTAL ? "pt-1" : "pt-2"}`}>
-          <div className="max-w-md mx-auto flex flex-col items-center gap-2">
+        <div className={`relative z-10 px-4 sm:px-5 pb-3 sm:pb-4 shrink-0 ${step === TOTAL ? "pt-1" : "pt-2"}`}>
+          <div className="max-w-md mx-auto flex flex-col items-center gap-1.5 sm:gap-2">
             {AUTO_STEPS.includes(step) ? (
               <p className="text-[12px] text-[#9ca3af] text-center leading-[16px] py-1">
                 Pilihan ini dapat diubah sewaktu-waktu melalui pengaturan profil
@@ -7931,11 +7931,11 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                   </div>
                 ) : (
                   !(step === 7 && !(fase === "Lainnya" && faseLainnya.trim())) && (
-                  <button
-                    disabled={!canProceed}
-                    onClick={step === 1 ? () => setShowEmailVerify(true) : goNext}
-                    className="w-full flex items-center justify-center gap-2 py-[14px] rounded-[16px] text-white font-bold text-[16px] transition-all disabled:opacity-40 active:scale-[0.98]"
-                    style={{ background: "#2563eb", boxShadow: canProceed ? "0px 4px 7px rgba(37,99,235,0.38)" : "none" }}>
+                    <button
+                      disabled={!canProceed}
+                      onClick={step === 1 ? () => setShowEmailVerify(true) : goNext}
+                      className="w-full flex items-center justify-center gap-2 py-3 sm:py-[14px] rounded-[12px] sm:rounded-[16px] text-white font-bold text-[15px] sm:text-[16px] transition-all disabled:opacity-40 active:scale-[0.98]"
+                      style={{ background: "#2563eb", boxShadow: canProceed ? "0px 4px 7px rgba(37,99,235,0.38)" : "none" }}>
                     Lanjut
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                   </button>
