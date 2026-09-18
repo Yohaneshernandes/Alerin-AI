@@ -7807,98 +7807,78 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
               />
 
               {/* DIREKOMENDASIKAN divider */}
-              <div className="flex items-center gap-2 mb-3">
-                <div className="flex-1 h-px" style={{ background: "linear-gradient(90deg, rgba(37,99,235,0.63), rgba(0,0,0,0))" }}/>
-                <span className="font-['Inter'] font-bold text-[11px] text-[#2563eb] tracking-[1.1px] uppercase whitespace-nowrap">Direkomendasikan</span>
-                <div className="flex-1 h-px" style={{ background: "linear-gradient(90deg, rgba(8,8,8,0), #2563eb)" }}/>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="flex-1 h-px" style={{ background: "linear-gradient(90deg, rgba(37,99,235,0.5), rgba(37,99,235,0))" }}/>
+                <span className="font-['Plus_Jakarta_Sans'] font-bold text-[12px] text-[#2563eb] tracking-[1.5px] uppercase whitespace-nowrap">Direkomendasikan</span>
+                <div className="flex-1 h-px" style={{ background: "linear-gradient(90deg, rgba(37,99,235,0), rgba(37,99,235,0.5))" }}/>
               </div>
 
-              {/* Feature cards — side by side, exact Figma structure */}
-              <div className="flex gap-3 w-full mb-2">
+              {/* Feature cards — side by side */}
+              <div className="flex gap-3 w-full mb-4">
 
-                {/* === Fitur Parafrase (Figma 2017:2723) === */}
-                {/* Image is a SIBLING of the card (contents wrapper pattern) */}
+                {/* === Fitur Parafrase === */}
                 <button
                   onClick={() => setSelectedFitur(selectedFitur === "parafrase" ? "" : "parafrase")}
-                  className="flex-1 relative transition-all active:scale-[0.98]"
+                  className="flex-1 relative transition-all active:scale-[0.98] overflow-hidden"
                   style={{
-                    height: 284,
-                    borderRadius: "19.895px",
+                    height: 300,
+                    borderRadius: "20px",
                     boxShadow: selectedFitur === "parafrase"
-                      ? "0 0 0 2px #2563eb, 0 6px 28px rgba(37,99,235,0.25)"
-                      : "0px 0.622px 1.243px rgba(0,0,0,0.05)",
+                      ? "0 0 0 2.5px #2563eb, 0 8px 32px rgba(37,99,235,0.25)"
+                      : "0 2px 12px rgba(0,0,0,0.06)",
                   }}>
-                  {/* Card layer: overflow-clip clips background to rounded shape */}
-                  <div className="absolute inset-0 overflow-clip flex flex-col justify-between"
+                  {/* Card background */}
+                  <div className="absolute inset-0"
                     style={{
-                      background: "rgba(255,110,62,0.85)",
-                      border: "0.622px solid #fdba74",
-                      borderRadius: "19.895px",
-                      padding: "18.03px",
-                    }}>
-                    <div className="flex flex-col items-center gap-[6.994px] w-full">
-                      <p className="font-['Plus_Jakarta_Sans'] font-bold text-[18px] text-white text-center tracking-[-0.373px] leading-[19.895px]">Fitur Parafrase</p>
-                      <div className="flex flex-col items-center px-[4.974px] w-full">
-                        <p className="font-['Plus_Jakarta_Sans'] font-medium text-[8.704px] text-white/95 text-center leading-[11.968px] w-[193px]">Fitur parafrase membantu mengubah kalimat menjadi versi baru dengan makna yang sama, membuat tulisan lebih segar dan mudah dipahami.</p>
-                      </div>
-                    </div>
-                    {/* Bottom spacer for illustration area */}
-                    <div style={{ height: "144.24px" }} />
+                      background: "linear-gradient(180deg, #f97044 0%, #f28c6a 100%)",
+                      borderRadius: "20px",
+                    }}/>
+                  {/* Text content */}
+                  <div className="relative z-10 flex flex-col items-center pt-6 px-5">
+                    <p className="font-['Plus_Jakarta_Sans'] font-bold text-[18px] text-white text-center leading-[22px] mb-2">Fitur Parafrase</p>
+                    <p className="font-['Plus_Jakarta_Sans'] font-medium text-[11px] text-white/90 text-center leading-[16px] px-1">Fitur parafrase membantu mengubah kalimat menjadi versi baru dengan makna yang sama, membuat tulisan lebih segar dan mudah dipahami.</p>
                   </div>
-                  {/* Image: sibling to card, positioned absolute in button */}
-                  <div className="absolute pointer-events-none" style={{ left: 0, top: 0, width: "203px", height: "156px" }}>
-                    <img src="/assets/d0574.png" alt="" className="absolute inset-0 w-full h-full max-w-none" style={{ objectPosition: "bottom" }} />
+                  {/* Illustration */}
+                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 pointer-events-none">
+                    <img src="/assets/d0574.png" alt="" className="w-[180px] h-[180px] object-contain" />
                   </div>
                   {/* Selected checkmark */}
                   {selectedFitur === "parafrase" && (
-                    <div className="absolute top-3 right-3 w-6 h-6 rounded-full bg-white flex items-center justify-center z-20 shadow pointer-events-none">
+                    <div className="absolute top-3 right-3 w-6 h-6 rounded-full bg-white flex items-center justify-center z-20 shadow-md pointer-events-none">
                       <svg width="11" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4.5L4.2 8L11 1" stroke="#2563eb" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
                     </div>
                   )}
                 </button>
 
-                {/* === Fitur Cari Jurnal (Figma 2017:2713) === */}
-                {/* Image is INSIDE the card (card is relative + overflow-clip) */}
+                {/* === Fitur Cari Jurnal === */}
                 <button
                   onClick={() => setSelectedFitur(selectedFitur === "jurnal" ? "" : "jurnal")}
-                  className="flex-1 relative transition-all active:scale-[0.98]"
+                  className="flex-1 relative transition-all active:scale-[0.98] overflow-hidden"
                   style={{
-                    height: 284,
-                    borderRadius: "19.923px",
+                    height: 300,
+                    borderRadius: "20px",
                     boxShadow: selectedFitur === "jurnal"
-                      ? "0 0 0 2px #2563eb, 0 6px 28px rgba(37,99,235,0.25)"
-                      : "0px 0.623px 1.245px rgba(0,0,0,0.05)",
+                      ? "0 0 0 2.5px #2563eb, 0 8px 32px rgba(37,99,235,0.25)"
+                      : "0 2px 12px rgba(0,0,0,0.06)",
                   }}>
-                  {/* Card: relative so image can be absolute inside, overflow-clip */}
-                  <div className="absolute inset-0 overflow-clip relative"
+                  {/* Card background */}
+                  <div className="absolute inset-0"
                     style={{
-                      background: "#cdf4dc",
-                      border: "0.623px solid #a7f3d0",
-                      borderRadius: "19.923px",
-                    }}>
-                    {/* Text: absolute top */}
-                    <div className="absolute flex flex-col gap-[7.004px] items-center"
-                      style={{ left: "17.43px", right: "17.36px", top: "17.43px" }}>
-                      <p className="font-['Plus_Jakarta_Sans'] font-bold text-[18px] text-[#0f172a] text-center tracking-[-0.3736px] leading-[19.923px] whitespace-nowrap w-full">Fitur Cari Jurnal</p>
-                      <div className="flex flex-col items-center w-full" style={{ paddingLeft: "4.981px", paddingRight: "4.981px" }}>
-                        <p className="font-['Plus_Jakarta_Sans'] font-medium text-[8.717px] text-[rgba(30,41,59,0.9)] text-center leading-[11.985px]">Pembentukan mentalitas kepemimpinan &amp; kedisiplinan riset teruji untuk bersaing di Ivy League &amp; PTN Unggulan.</p>
-                      </div>
-                    </div>
-                    {/* Gradient overlay in lower area */}
-                    <div className="absolute" style={{ left: "17.43px", right: "17.36px", top: "110.82px", height: "144.445px", paddingTop: "14.943px" }}>
-                      <div className="relative w-full" style={{ height: "129.502px" }}>
-                        <div className="absolute inset-0 opacity-50"
-                          style={{ backgroundImage: "linear-gradient(90deg, rgba(255,255,255,0.18) 4.17%, rgba(255,255,255,0) 4.17%), linear-gradient(180deg, rgba(255,255,255,0.18) 4.17%, rgba(255,255,255,0) 4.17%)" }} />
-                      </div>
-                    </div>
-                    {/* Image: inside card, clipped by overflow-clip */}
-                    <div className="absolute pointer-events-none" style={{ left: "-1.62px", top: "66.38px", width: "247px", height: "208px" }}>
-                      <img src="/assets/353d4.png" alt="" className="absolute inset-0 w-full h-full max-w-none object-cover pointer-events-none" />
-                    </div>
+                      background: "linear-gradient(180deg, #c4edcf 0%, #ddf3e4 100%)",
+                      borderRadius: "20px",
+                    }}/>
+                  {/* Text content */}
+                  <div className="relative z-10 flex flex-col items-center pt-6 px-5">
+                    <p className="font-['Plus_Jakarta_Sans'] font-bold text-[18px] text-[#0f172a] text-center leading-[22px] mb-2">Fitur Cari Jurnal</p>
+                    <p className="font-['Plus_Jakarta_Sans'] font-medium text-[11px] text-[#1e293b]/80 text-center leading-[16px] px-1">Pembentukan mentalitas kepemimpinan &amp; kedisiplinan riset teruji untuk bersaing di Ivy League &amp; PTN Unggulan.</p>
+                  </div>
+                  {/* Illustration */}
+                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 pointer-events-none">
+                    <img src="/assets/353d4.png" alt="" className="w-[180px] h-[180px] object-contain" />
                   </div>
                   {/* Selected checkmark */}
                   {selectedFitur === "jurnal" && (
-                    <div className="absolute top-3 right-3 w-6 h-6 rounded-full bg-white flex items-center justify-center z-20 shadow pointer-events-none">
+                    <div className="absolute top-3 right-3 w-6 h-6 rounded-full bg-white flex items-center justify-center z-20 shadow-md pointer-events-none">
                       <svg width="11" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4.5L4.2 8L11 1" stroke="#2563eb" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
                     </div>
                   )}
@@ -7921,21 +7901,15 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
             ) : (
               <>
                 {step === TOTAL ? (
-                  /* Figma-style CTA card for feature selection step */
-                  <div className="w-full bg-white rounded-[14.6px] flex items-center justify-between gap-4 p-[20px]"
-                    style={{ border: "0.609px solid rgba(226,232,240,0.8)", boxShadow: "0px 0.609px 0.609px rgba(0,0,0,0.05)" }}>
+                  /* CTA card — matches Figma */
+                  <div className="w-full bg-white rounded-[16px] flex items-center justify-between gap-4 px-6 py-5"
+                    style={{ border: "1px solid #e5e7eb", boxShadow: "0 2px 12px rgba(0,0,0,0.04)" }}>
                     <div className="flex-1 min-w-0">
-                      <p className="font-['Plus_Jakarta_Sans'] font-bold text-[#0f172a] text-[13px] leading-[17px] tracking-[-0.3px] mb-1">
-                        {selectedFitur === "parafrase" ? "Siap mulai parafrase?"
-                          : selectedFitur === "jurnal" ? "Siap mencari jurnal?"
-                          : "Pilih fitur yang kamu butuhkan"}
+                      <p className="font-['Plus_Jakarta_Sans'] font-bold text-[#0f172a] text-[15px] leading-[22px] mb-1">
+                        Mulai Perjalanan Anda Menuju Kesuksesan Global
                       </p>
-                      <p className="font-['Plus_Jakarta_Sans'] font-normal text-[#475569] text-[9px] leading-[13px]">
-                        {selectedFitur === "parafrase"
-                          ? "Gunakan fitur Parafrase untuk membantu membuat tulisanmu lebih jelas dan mudah dipahami."
-                          : selectedFitur === "jurnal"
-                          ? "Temukan referensi jurnal yang sesuai untuk mendukung tugas dan penelitianmu."
-                          : "Klik salah satu fitur di atas untuk melihat bantuan yang paling sesuai dengan kebutuhanmu."}
+                      <p className="font-['Plus_Jakarta_Sans'] text-[#64748b] text-[12px] leading-[18px]">
+                        Dapatkan bimbingan komprehensif dari mentor profesional dan wujudkan proyek riset unggulan Anda.
                       </p>
                     </div>
                     <button
@@ -7947,11 +7921,9 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                         };
                         onFinish(FITUR_DEST[selectedFitur] ?? { prompt: loadingPrompt });
                       }}
-                      className="shrink-0 px-[14.6px] py-[8.5px] rounded-[7.3px] font-['Plus_Jakarta_Sans'] font-semibold text-white text-[9px] text-center leading-[12px] transition-all active:scale-95"
-                      style={{ background: canProceed ? "#0f172a" : "rgba(15,23,42,0.4)", cursor: canProceed ? "pointer" : "not-allowed" }}>
-                      {selectedFitur === "parafrase" ? "Mulai Parafrase →"
-                        : selectedFitur === "jurnal" ? "Mulai Cari Jurnal →"
-                        : "Pilih Fitur"}
+                      className="shrink-0 px-6 py-3 rounded-[12px] font-['Plus_Jakarta_Sans'] font-semibold text-white text-[13px] transition-all active:scale-95"
+                      style={{ background: canProceed ? "#059669" : "rgba(5,150,105,0.4)", cursor: canProceed ? "pointer" : "not-allowed" }}>
+                      Menjelajahi Fitur
                     </button>
                   </div>
                 ) : (
