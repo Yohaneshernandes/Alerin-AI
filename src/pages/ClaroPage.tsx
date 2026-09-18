@@ -7656,15 +7656,6 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                     );
                   })}
                 </div>
-                {fase && (
-                  <div className="w-full flex items-center gap-3 px-4 py-3 rounded-[14px]" style={{ background: "#eff6ff", border: "1px solid #bfdbfe" }}>
-                    <svg className="shrink-0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-                    <p className="text-[12px] text-[#1d4ed8] leading-relaxed">
-                      <span className="font-bold">Fase terpilih: {fase}</span>
-                      <span className="text-[#3b82f6]"> — Alerin siap menyiapkan panduan khusus fase ini</span>
-                    </p>
-                  </div>
-                )}
               </>
             );
           })()}
