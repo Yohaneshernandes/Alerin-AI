@@ -7706,7 +7706,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
             return (
               <>
                 <PintarlyMascotBubble pre="Apa kendala utama" bold="kamu sekarang?" sub={bubbleSub} />
-                <div className="flex flex-wrap gap-[10px] w-full rounded-[20px] p-5" style={{ background: "#ffffff", border: "2px solid #60a5fa" }}>
+                <div className="flex flex-col gap-[10px] w-full rounded-[20px] p-5" style={{ background: "#ffffff", border: "2px solid #60a5fa" }}>
                   {opts.map(o => {
                     const on = kendala.includes(o.label);
                     const maxed = kendala.length >= MAX && !on;
@@ -7714,10 +7714,10 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                       <button
                         key={o.label}
                         onClick={() => !maxed && toggle(o.label)}
-                        className="transition-all active:scale-[0.97]"
+                        className="w-full text-left transition-all active:scale-[0.97]"
                         style={{
                           padding: "10px 18px",
-                          borderRadius: "100px",
+                          borderRadius: "12px",
                           fontSize: 14,
                           fontWeight: on ? 600 : 500,
                           lineHeight: "20px",
