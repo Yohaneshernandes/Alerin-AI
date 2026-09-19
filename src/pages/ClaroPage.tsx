@@ -6789,10 +6789,10 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
       </div>
 
       <div className="relative z-10 flex flex-col items-center text-center px-6 max-w-xl w-full">
-        <h1 className="font-bold text-2xl sm:text-3xl text-slate-900 mb-2 leading-snug">
-          Terima kasih telah mempercayakan<br />mimpimu pada kami
+        <h1 className="font-bold text-[22px] sm:text-3xl text-slate-900 mb-2 leading-snug" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+          Terima kasih telah mempercayakan mimpimu pada kami
         </h1>
-        <p className="text-slate-500 text-sm sm:text-[15px] mb-9">
+        <p className="text-slate-500 text-[13px] sm:text-[15px] mb-9 leading-relaxed">
           Kami sedang merancang jalur akademik personal untukmu.
         </p>
 
