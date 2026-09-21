@@ -7403,7 +7403,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
               "Universitas Muhammadiyah Yogyakarta (UMY)","Universitas Islam Indonesia (UII)","Universitas Ahmad Dahlan (UAD)",
               "Universitas Muhammadiyah Malang (UMM)","Universitas Islam Negeri Jakarta (UIN Jakarta)",
               "Universitas Islam Negeri Sunan Kalijaga (UIN Yogyakarta)","Universitas Islam Negeri Malang (UIN Malang)",
-              "Binus University","Universitas Trisakti","Universitas Mercu Buana","Universitas Tarumanagara",
+              "Universitas Bina Nusantara (BINUS)","Universitas Trisakti","Universitas Mercu Buana","Universitas Tarumanagara",
               "Universitas Atma Jaya Jakarta","Universitas Pelita Harapan (UPH)","Telkom University",
               "Universitas Gunadarma","Universitas Dian Nuswantoro (UDINUS)","Universitas Komputer Indonesia (UNIKOM)",
               "Universitas Pasundan (UNPAS)","Universitas Jenderal Soedirman (UNSOED)","Universitas Surabaya (UBAYA)",
@@ -7413,11 +7413,11 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
               "Universitas Muhammadiyah Surakarta (UMS)","Universitas Muhammadiyah Jakarta (UMJ)",
               "Universitas Terbuka (UT)","Universitas Pamulang (UNPAM)","Universitas BSI",
             ];
-            const POPULAR_UNI = ["UI","UGM","ITB","UNAIR","IPB","ITS","UNPAD","UB","Binus","Telkom Univ"];
+            const POPULAR_UNI = ["UI","UGM","ITB","UNAIR","IPB","ITS","UNPAD","UB","BINUS","Telkom Univ"];
             const POPULAR_UNI_FULL: Record<string,string> = {
               "UI":"Universitas Indonesia (UI)","UGM":"Universitas Gadjah Mada (UGM)","ITB":"Institut Teknologi Bandung (ITB)",
               "UNAIR":"Universitas Airlangga (UNAIR)","IPB":"Institut Pertanian Bogor (IPB)","ITS":"Institut Teknologi Sepuluh Nopember (ITS)",
-              "UNPAD":"Universitas Padjadjaran (UNPAD)","UB":"Universitas Brawijaya (UB)","Binus":"Binus University",
+              "UNPAD":"Universitas Padjadjaran (UNPAD)","UB":"Universitas Brawijaya (UB)","BINUS":"Universitas Bina Nusantara (BINUS)",
               "Telkom Univ":"Telkom University","UT":"Universitas Terbuka (UT)","Unpam":"Universitas Pamulang (UNPAM)",
               "UIN Jakarta":"Universitas Islam Negeri Jakarta (UIN Jakarta)","UNJ":"Universitas Negeri Jakarta (UNJ)",
             };
