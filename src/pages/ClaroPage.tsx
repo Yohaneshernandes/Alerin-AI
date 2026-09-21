@@ -6814,30 +6814,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
   );
 
   if (loading) return (
-    <div className="fixed inset-0 z-[300] flex flex-col items-center justify-center overflow-hidden" style={{ background: "#f0f5ff" }}>
-      {/* Same squiggles as registration slides */}
-      <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
-        <path d="M-30 100 Q30 55 55 115 Q80 175 20 200 Q-30 225 -15 170" fill="none" stroke="#93c5fd" strokeWidth="2.5" opacity="0.7"/>
-        <path d="M60 30 Q110 5 155 55 Q200 105 155 145 Q110 185 65 160 Q20 135 60 100" fill="none" stroke="#7dd3fc" strokeWidth="2" opacity="0.5"/>
-        <path d="M-15 330 Q45 295 35 365 Q25 435 80 425 Q135 415 125 485 Q115 555 55 545" fill="none" stroke="#a5f3fc" strokeWidth="2" opacity="0.55"/>
-        <path d="M-5 660 Q65 615 85 685 Q105 755 45 775 Q-15 795 5 735" fill="none" stroke="#93c5fd" strokeWidth="2.5" opacity="0.6"/>
-        <path d="M25 820 Q95 790 145 835 Q195 880 155 915" fill="none" stroke="#7dd3fc" strokeWidth="2" opacity="0.4"/>
-        <path d="M1350 -15 Q1405 25 1420 85 Q1435 145 1380 165 Q1325 185 1315 135" fill="none" stroke="#93c5fd" strokeWidth="2" opacity="0.5"/>
-        <path d="M1440 210 Q1380 230 1355 295 Q1330 360 1380 375" fill="none" stroke="#7dd3fc" strokeWidth="2.5" opacity="0.6"/>
-        <path d="M1415 510 Q1355 490 1335 550 Q1315 610 1365 630 Q1415 650 1425 595" fill="none" stroke="#a5f3fc" strokeWidth="2" opacity="0.55"/>
-        <path d="M1385 730 Q1325 710 1305 770 Q1285 830 1330 845" fill="none" stroke="#93c5fd" strokeWidth="2" opacity="0.5"/>
-        <path d="M255 275 L258 267 L261 275 L269 278 L261 281 L258 289 L255 281 L247 278 Z" fill="#93c5fd" opacity="0.5"/>
-        <path d="M1105 455 L1108 447 L1111 455 L1119 458 L1111 461 L1108 469 L1105 461 L1097 458 Z" fill="#7dd3fc" opacity="0.45"/>
-        <path d="M1345 75 L1347 69 L1349 75 L1355 77 L1349 79 L1347 85 L1345 79 L1339 77 Z" fill="#93c5fd" opacity="0.4"/>
-        <path d="M85 575 L88 567 L91 575 L99 578 L91 581 L88 589 L85 581 L77 578 Z" fill="#a5f3fc" opacity="0.45"/>
-        <circle cx="285" cy="150" r="4.5" fill="#93c5fd" opacity="0.45"/>
-        <circle cx="1245" cy="285" r="5" fill="#7dd3fc" opacity="0.4"/>
-        <circle cx="55" cy="635" r="5" fill="#fbbf24" opacity="0.35"/>
-        <circle cx="1360" cy="615" r="4" fill="#93c5fd" opacity="0.45"/>
-        <circle cx="1155" cy="785" r="5" fill="#fbbf24" opacity="0.3"/>
-        <circle cx="410" cy="825" r="3.5" fill="#93c5fd" opacity="0.4"/>
-        <circle cx="700" cy="60" r="3" fill="#7dd3fc" opacity="0.35"/>
-      </svg>
+    <div className="fixed inset-0 z-[300] flex flex-col items-center justify-center overflow-hidden" style={{ background: "linear-gradient(180deg, #f8faff 0%, #f0f5ff 50%, #f8faff 100%)" }}>
 
       {/* Same progress bar style as registration slides */}
       <div className="absolute top-0 left-0 right-0 h-1.5 z-10" style={{ background: "rgba(203,213,225,0.4)" }}>
@@ -6912,11 +6889,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
 
   // Feature loading screen (after selecting a feature)
   if (featureLoading) return (
-    <div className="fixed inset-0 z-[300] flex flex-col items-center justify-center overflow-hidden" style={{ background: "linear-gradient(180deg, #f8faff 0%, #eff6ff 50%, #f0f5ff 100%)" }}>
-      {/* Decorative floating circles */}
-      <div className="absolute w-64 h-64 rounded-full opacity-20" style={{ top: "-5%", left: "-10%", background: "radial-gradient(circle, #93c5fd, transparent)" }}/>
-      <div className="absolute w-48 h-48 rounded-full opacity-15" style={{ bottom: "10%", right: "-5%", background: "radial-gradient(circle, #a5b4fc, transparent)" }}/>
-      <div className="absolute w-32 h-32 rounded-full opacity-10" style={{ top: "30%", right: "15%", background: "radial-gradient(circle, #60a5fa, transparent)" }}/>
+    <div className="fixed inset-0 z-[300] flex flex-col items-center justify-center overflow-hidden" style={{ background: "linear-gradient(180deg, #f8faff 0%, #f0f5ff 50%, #f8faff 100%)" }}>
 
       {/* Logo with spinning arc */}
       <div className="relative w-44 h-44 sm:w-52 sm:h-52 mb-6">
@@ -6997,32 +6970,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
   // Pintarly-style mascot speech bubble
 
   return (
-    <div className="fixed inset-0 z-[300] flex flex-col overflow-hidden" style={{ background: "#e8f0fe" }}>
-      {/* Pintarly-style decorative doodles (blue recolor) */}
-      <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
-        {/* Top-left cloud blob + squiggle */}
-        <ellipse cx="-48" cy="-30" rx="160" ry="130" fill="#dbeafe" opacity="0.25"/>
-        <path d="M-48 -40 Q60 10 90 100 Q120 190 40 220 Q-30 240 -10 160" fill="none" stroke="#93c5fd" strokeDasharray="16 12" strokeLinecap="round" strokeWidth="5" opacity="0.35"/>
-        {/* Top-right sparkle circle + dots */}
-        <circle cx="1368" cy="80" r="90" fill="#dbeafe" opacity="0.18"/>
-        <path d="M1290 55 L1294 45 L1298 55 L1308 59 L1298 63 L1294 73 L1290 63 L1280 59 Z" fill="#fbbf24" opacity="0.35"/>
-        <path d="M1370 30 L1373 22 L1376 30 L1384 33 L1376 36 L1373 44 L1370 36 L1362 33 Z" fill="#60a5fa" opacity="0.3"/>
-        <circle cx="1340" cy="160" r="8" fill="#a5b4fc" opacity="0.28"/>
-        {/* Left squiggle line */}
-        <path d="M-32 350 Q50 320 38 400 Q26 480 88 470 Q150 460 140 540 Q130 620 62 610" fill="none" stroke="#93c5fd" strokeDasharray="12 10" strokeLinecap="round" strokeWidth="4" opacity="0.28"/>
-        <circle cx="68" cy="480" r="7" fill="#fbbf24" opacity="0.22"/>
-        {/* Right side wave */}
-        <path d="M1400 500 Q1370 550 1390 630 Q1410 710 1370 760 Q1330 810 1360 860" fill="none" stroke="#93c5fd" strokeLinecap="round" strokeWidth="4.5" opacity="0.22"/>
-        <circle cx="1290" cy="680" r="6" fill="#60a5fa" opacity="0.2"/>
-        <circle cx="1390" cy="390" r="5" fill="#fbbf24" opacity="0.2"/>
-        {/* Floating stars */}
-        <path d="M258 235 L261 226 L264 235 L273 238 L264 241 L261 250 L258 241 L249 238 Z" fill="#93c5fd" opacity="0.3"/>
-        <path d="M1188 195 L1191 186 L1194 195 L1203 198 L1194 201 L1191 210 L1188 201 L1179 198 Z" fill="#a5b4fc" opacity="0.28"/>
-        {/* Bottom decorative dots */}
-        <circle cx="330" cy="830" r="5" fill="#60a5fa" opacity="0.18"/>
-        <circle cx="720" cy="870" r="4" fill="#a5b4fc" opacity="0.15"/>
-        <circle cx="1100" cy="840" r="5" fill="#93c5fd" opacity="0.18"/>
-      </svg>
+    <div className="fixed inset-0 z-[300] flex flex-col overflow-hidden" style={{ background: "linear-gradient(180deg, #f8faff 0%, #f0f5ff 50%, #f8faff 100%)" }}>
 
       {/* Header — step 0: close only; step 1+: simplified mobile header */}
       {step === 0 ? (
