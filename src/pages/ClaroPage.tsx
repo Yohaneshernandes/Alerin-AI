@@ -6924,7 +6924,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
           <defs>
             <linearGradient id="featureArcGrad" x1="0%" y1="0%" x2="100%" y2="0%">
               <stop offset="0%" stopColor="#2563eb"/>
-              <stop offset="100%" stopColor="#6366f1"/>
+              <stop offset="100%" stopColor="#3b82f6"/>
             </linearGradient>
           </defs>
           <circle cx="104" cy="104" r="92" fill="none" stroke="#e0e7ff" strokeWidth="7"/>
@@ -6997,7 +6997,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
   // Pintarly-style mascot speech bubble
 
   return (
-    <div className="fixed inset-0 z-[300] flex flex-col overflow-hidden" style={{ background: "linear-gradient(180deg, #f8faff 0%, #f0f5ff 50%, #f8faff 100%)" }}>
+    <div className="fixed inset-0 z-[300] flex flex-col overflow-hidden" style={{ background: "#e8f0fe" }}>
       {/* Pintarly-style decorative doodles (blue recolor) */}
       <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
         {/* Top-left cloud blob + squiggle */}
@@ -7965,14 +7965,46 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                             <p className="font-['Plus_Jakarta_Sans'] text-[12px] sm:text-[13px] text-white/80 leading-[18px]">{card.desc}</p>
                           </div>
                           {/* Illustration — centered vertically */}
-                          <div className="shrink-0 w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] rounded-full flex items-center justify-center overflow-hidden" style={{ background: "rgba(255,255,255,0.15)" }}>
-                            {card.key === "skripsi" ? (
-                              <img src="/assets/Aset%20fitur%20Skripsi.png" alt="Skripsi" className="w-[70px] h-[70px] sm:w-[85px] sm:h-[85px] object-contain"/>
-                            ) : (
-                              <svg viewBox="0 0 60 60" fill="none" className="w-14 h-14 sm:w-16 sm:h-16">
-                                <circle cx="30" cy="30" r="28" stroke="white" strokeWidth="2" strokeDasharray="4 4"/>
-                                <text x="30" y="34" textAnchor="middle" fill="white" fontSize="10" fontWeight="bold" fontFamily="sans-serif">{card.key === "jurnal" ? "JRNL" : "PARA"}</text>
+                          <div className="shrink-0 w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] flex items-center justify-center">
+                            {card.key === "parafrase" && (
+                              <svg viewBox="0 0 150 140" fill="none" className="w-full h-full" style={{ overflow: "visible" }}>
+                                <rect x="0" y="20" width="80" height="95" rx="10" fill="white" opacity="0.3" transform="rotate(-6 40 67)"/>
+                                <rect x="25" y="5" width="80" height="95" rx="10" fill="white"/>
+                                <rect x="37" y="25" width="48" height="4" rx="2" fill="#e2e8f0"/>
+                                <rect x="37" y="34" width="38" height="4" rx="2" fill="#e2e8f0"/>
+                                <rect x="37" y="43" width="52" height="4" rx="2" fill="#e2e8f0"/>
+                                <rect x="37" y="52" width="32" height="4" rx="2" fill="#e2e8f0"/>
+                                <circle cx="50" cy="74" r="10" fill="#eff6ff" stroke="#93c5fd" strokeWidth="1.5"/>
+                                <text x="50" y="78" textAnchor="middle" fill="#3b82f6" fontSize="8" fontWeight="bold" fontFamily="sans-serif">ID</text>
+                                <rect x="65" y="67" width="42" height="13" rx="6.5" fill="#fce7f3"/>
+                                <text x="86" y="77" textAnchor="middle" fill="#db2777" fontSize="6.5" fontWeight="bold" fontFamily="sans-serif">APPROVED</text>
+                                <circle cx="95" cy="110" r="14" fill="#ef4444"/>
+                                <path d="M89 110l4 4 8-8" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
                               </svg>
+                            )}
+                            {card.key === "jurnal" && (
+                              <div className="rounded-[14px] overflow-hidden flex flex-col items-center justify-center gap-2 py-4 px-3" style={{ background: "rgba(255,255,255,0.95)", width: "100%", height: "100%" }}>
+                                <div className="flex gap-3 w-full px-2">
+                                  <div className="flex-1">
+                                    <p className="text-[7px] sm:text-[8px] font-bold text-[#94a3b8] uppercase tracking-wider">LP Indeks</p>
+                                    <p className="text-[15px] sm:text-[18px] font-extrabold text-[#1e293b] leading-tight">258 <span className="text-[9px] sm:text-[10px] font-semibold text-[#94a3b8]">PSI</span></p>
+                                    <div className="h-[3px] rounded-full mt-1" style={{ background: "linear-gradient(90deg, #f59e0b, #ef4444)" }}/>
+                                  </div>
+                                  <div className="flex-1">
+                                    <p className="text-[7px] sm:text-[8px] font-bold text-[#94a3b8] uppercase tracking-wider">RP Akurasi</p>
+                                    <p className="text-[15px] sm:text-[18px] font-extrabold text-[#1e293b] leading-tight">98 <span className="text-[9px] sm:text-[10px] font-semibold text-[#94a3b8]">PSI</span></p>
+                                    <div className="h-[3px] rounded-full mt-1" style={{ background: "linear-gradient(90deg, #f59e0b, #ef4444)" }}/>
+                                  </div>
+                                </div>
+                                <div className="flex items-end gap-[3px] h-5 sm:h-6">
+                                  {[10, 7, 14, 6, 12, 9, 10].map((h, i) => (
+                                    <div key={i} className="w-[5px] sm:w-[6px] rounded-full" style={{ height: h, background: i === 2 ? "#ef4444" : "#f59e0b" }}/>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                            {card.key === "skripsi" && (
+                              <img src="/assets/Aset%20fitur%20Skripsi.png" alt="Skripsi" className="w-[90px] h-[90px] sm:w-[110px] sm:h-[110px] object-contain"/>
                             )}
                           </div>
                         </div>
