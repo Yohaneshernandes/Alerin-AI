@@ -7917,39 +7917,39 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                   }}>
                   {/* Card background */}
                   <div className="absolute inset-0 rounded-[16px]"
-                    style={{ background: "linear-gradient(135deg, #1e40af 0%, #2563eb 50%, #3b82f6 100%)" }}/>
+                    style={{ background: "linear-gradient(135deg, #1a365d 0%, #2b6cb0 50%, #3182ce 100%)" }}/>
                   {/* Top banner */}
-                  <div className="relative z-10 px-4 py-2 rounded-t-[16px]" style={{ background: "rgba(0,0,0,0.15)" }}>
+                  <div className="relative z-10 px-4 py-2 rounded-t-[16px]" style={{ background: "rgba(0,0,0,0.2)" }}>
                     <p className="text-[11px] sm:text-[12px] font-semibold text-white/90 text-center">Paling relevan untuk kendalamu</p>
                   </div>
                   {/* Content */}
                   <div className="relative z-10 flex items-center gap-4 px-5 py-5">
                     {/* Text */}
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-['Plus_Jakarta_Sans'] font-bold text-[18px] sm:text-[20px] text-white leading-[24px] mb-2">Fitur Parafrase</h3>
+                      <h3 className="font-['Plus_Jakarta_Sans'] font-extrabold text-[18px] sm:text-[20px] text-white leading-[24px] mb-2">Fitur Parafrase</h3>
                       <p className="font-['Plus_Jakarta_Sans'] text-[12px] sm:text-[13px] text-white/80 leading-[18px]">Fitur parafrase membantu mengubah kalimat menjadi versi baru dengan makna yang sama, membuat tulisan lebih segar dan mudah dipahami.</p>
                     </div>
-                    {/* Illustration */}
-                    <div className="shrink-0 w-[120px] h-[100px] sm:w-[160px] sm:h-[130px] rounded-[12px] overflow-hidden flex items-center justify-center" style={{ background: "rgba(255,255,255,0.15)" }}>
-                      <svg viewBox="0 0 160 130" fill="none" className="w-full h-full">
-                        {/* Document stack */}
-                        <rect x="20" y="15" width="90" height="100" rx="8" fill="white" opacity="0.3"/>
-                        <rect x="30" y="10" width="90" height="100" rx="8" fill="white" opacity="0.6"/>
-                        <rect x="40" y="5" width="90" height="100" rx="8" fill="white"/>
-                        {/* Lines */}
-                        <rect x="52" y="25" width="50" height="4" rx="2" fill="#e2e8f0"/>
-                        <rect x="52" y="35" width="40" height="4" rx="2" fill="#e2e8f0"/>
-                        <rect x="52" y="45" width="55" height="4" rx="2" fill="#e2e8f0"/>
-                        <rect x="52" y="55" width="35" height="4" rx="2" fill="#e2e8f0"/>
-                        {/* ID badge */}
-                        <circle cx="58" cy="78" r="10" fill="#dbeafe" stroke="#2563eb" strokeWidth="1.5"/>
-                        <text x="58" y="82" textAnchor="middle" fill="#2563eb" fontSize="8" fontWeight="bold">ID</text>
-                        {/* APPROVED tag */}
-                        <rect x="72" y="72" width="48" height="14" rx="7" fill="#dcfce7"/>
-                        <text x="96" y="82" textAnchor="middle" fill="#16a34a" fontSize="7" fontWeight="bold">APPROVED</text>
-                        {/* Checkmark */}
-                        <circle cx="115" cy="95" r="12" fill="#ef4444" opacity="0.9"/>
-                        <path d="M109 95l4 4 8-8" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    {/* Illustration — document with ID, APPROVED, checkmark */}
+                    <div className="shrink-0 w-[130px] h-[110px] sm:w-[170px] sm:h-[140px] rounded-[12px] overflow-hidden flex items-center justify-center" style={{ background: "rgba(255,255,255,0.12)" }}>
+                      <svg viewBox="0 0 170 140" fill="none" className="w-full h-full">
+                        {/* Back document */}
+                        <rect x="18" y="20" width="85" height="100" rx="10" fill="white" opacity="0.25" transform="rotate(-5 60 70)"/>
+                        {/* Front document */}
+                        <rect x="35" y="12" width="85" height="100" rx="10" fill="white"/>
+                        {/* Lines on document */}
+                        <rect x="48" y="30" width="52" height="4" rx="2" fill="#e2e8f0"/>
+                        <rect x="48" y="40" width="42" height="4" rx="2" fill="#e2e8f0"/>
+                        <rect x="48" y="50" width="56" height="4" rx="2" fill="#e2e8f0"/>
+                        <rect x="48" y="60" width="36" height="4" rx="2" fill="#e2e8f0"/>
+                        {/* ID badge circle */}
+                        <circle cx="62" cy="82" r="11" fill="#eff6ff" stroke="#2563eb" strokeWidth="1.5"/>
+                        <text x="62" y="86" textAnchor="middle" fill="#2563eb" fontSize="9" fontWeight="bold" fontFamily="sans-serif">ID</text>
+                        {/* APPROVED pill */}
+                        <rect x="78" y="75" width="44" height="14" rx="7" fill="#fce7f3"/>
+                        <text x="100" y="85" textAnchor="middle" fill="#db2777" fontSize="7" fontWeight="bold" fontFamily="sans-serif">APPROVED</text>
+                        {/* Red checkmark circle */}
+                        <circle cx="118" cy="100" r="13" fill="#ef4444"/>
+                        <path d="M112 100l4 4 8-8" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
                       </svg>
                     </div>
                   </div>
@@ -7973,33 +7973,33 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                   }}>
                   {/* Card background */}
                   <div className="absolute inset-0 rounded-[16px]"
-                    style={{ background: "linear-gradient(135deg, #92400e 0%, #b45309 50%, #d97706 100%)" }}/>
+                    style={{ background: "linear-gradient(135deg, #7c2d12 0%, #9a3412 40%, #c2410c 100%)" }}/>
                   {/* Content */}
-                  <div className="relative z-10 flex items-center gap-4 px-5 py-6">
+                  <div className="relative z-10 flex items-center gap-4 px-5 py-5">
                     {/* Text */}
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-['Plus_Jakarta_Sans'] font-bold text-[18px] sm:text-[20px] text-white leading-[24px] mb-2">Cari Jurnal</h3>
+                      <h3 className="font-['Plus_Jakarta_Sans'] font-extrabold text-[18px] sm:text-[20px] text-white leading-[24px] mb-2">Cari Jurnal</h3>
                       <p className="font-['Plus_Jakarta_Sans'] text-[12px] sm:text-[13px] text-white/80 leading-[18px]">Fitur parafrase membantu mengubah kalimat menjadi versi baru dengan makna yang sama, membuat tulisan lebih segar dan mudah dipahami.</p>
                     </div>
-                    {/* Illustration */}
-                    <div className="shrink-0 w-[120px] h-[100px] sm:w-[160px] sm:h-[130px] rounded-[12px] overflow-hidden flex flex-col items-center justify-center gap-2" style={{ background: "rgba(255,255,255,0.95)" }}>
+                    {/* Illustration — stats card */}
+                    <div className="shrink-0 w-[130px] h-[110px] sm:w-[170px] sm:h-[140px] rounded-[14px] overflow-hidden flex flex-col items-center justify-center gap-2.5" style={{ background: "rgba(255,255,255,0.95)" }}>
                       {/* Stats */}
-                      <div className="flex gap-4 px-3 w-full">
+                      <div className="flex gap-3 px-3 w-full">
                         <div className="flex-1">
-                          <p className="text-[8px] sm:text-[9px] font-bold text-[#9ca3af] uppercase tracking-wider">LP Indeks</p>
-                          <p className="text-[16px] sm:text-[20px] font-extrabold text-[#1e293b]">258 <span className="text-[10px] font-semibold text-[#9ca3af]">PSI</span></p>
-                          <div className="h-1 rounded-full mt-1" style={{ background: "linear-gradient(90deg, #f59e0b, #ef4444)" }}/>
+                          <p className="text-[7px] sm:text-[8px] font-bold text-[#94a3b8] uppercase tracking-wider">LP Indeks</p>
+                          <p className="text-[15px] sm:text-[18px] font-extrabold text-[#1e293b] leading-tight">258 <span className="text-[9px] sm:text-[10px] font-semibold text-[#94a3b8]">PSI</span></p>
+                          <div className="h-[3px] rounded-full mt-1" style={{ background: "linear-gradient(90deg, #f59e0b, #ef4444)" }}/>
                         </div>
                         <div className="flex-1">
-                          <p className="text-[8px] sm:text-[9px] font-bold text-[#9ca3af] uppercase tracking-wider">RP Akurasi</p>
-                          <p className="text-[16px] sm:text-[20px] font-extrabold text-[#1e293b]">98 <span className="text-[10px] font-semibold text-[#9ca3af]">PSI</span></p>
-                          <div className="h-1 rounded-full mt-1" style={{ background: "linear-gradient(90deg, #f59e0b, #ef4444)" }}/>
+                          <p className="text-[7px] sm:text-[8px] font-bold text-[#94a3b8] uppercase tracking-wider">RP Akurasi</p>
+                          <p className="text-[15px] sm:text-[18px] font-extrabold text-[#1e293b] leading-tight">98 <span className="text-[9px] sm:text-[10px] font-semibold text-[#94a3b8]">PSI</span></p>
+                          <div className="h-[3px] rounded-full mt-1" style={{ background: "linear-gradient(90deg, #f59e0b, #ef4444)" }}/>
                         </div>
                       </div>
                       {/* Bar chart */}
-                      <div className="flex items-end gap-1 h-6 sm:h-8">
-                        {[14, 10, 18, 8, 16, 12, 14].map((h, i) => (
-                          <div key={i} className="w-2 sm:w-2.5 rounded-full" style={{ height: h, background: i === 2 ? "#ef4444" : "#f59e0b" }}/>
+                      <div className="flex items-end gap-[3px] h-5 sm:h-6">
+                        {[10, 7, 14, 6, 12, 9, 10].map((h, i) => (
+                          <div key={i} className="w-[5px] sm:w-[6px] rounded-full" style={{ height: h, background: i === 2 ? "#ef4444" : "#f59e0b" }}/>
                         ))}
                       </div>
                     </div>
