@@ -7172,7 +7172,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
 
                   {/* Terms */}
                   <button type="button" onClick={() => setAgreeTerms(p => !p)} className="w-full flex items-start gap-2.5 text-left">
-                    <div className="mt-[3px] w-4 h-4 rounded-[2.5px] border flex items-center justify-center transition-all shrink-0"
+                    <div className="mt-[1px] w-4 h-4 rounded-[2.5px] border flex items-center justify-center transition-all shrink-0"
                       style={agreeTerms ? { borderColor: "#2563eb", background: "#2563eb", borderWidth: 2 } : { borderColor: "#767676", background: "white", borderWidth: 1 }}>
                       {agreeTerms && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3"><path d="M20 6L9 17l-5-5"/></svg>}
                     </div>
