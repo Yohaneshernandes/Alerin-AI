@@ -7857,10 +7857,10 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
               {/* Feature cards — dynamic based on kendala */}
               <div className="flex flex-col gap-3 w-full">
                 {(() => {
-                  // Get unique recommended features from selected kendala
+                  // Get first recommended feature from selected kendala
                   const recFeatures = [...new Set(kendala.map(k => KENDALA_FITUR_MAP[k]).filter(Boolean))];
-                  // If no kendala, show both default
-                  const features = recFeatures.length > 0 ? recFeatures : ["Parafrase", "Cari Jurnal"];
+                  // If no kendala, show Parafrase as default
+                  const features = recFeatures.length > 0 ? [recFeatures[0]] : ["Parafrase"];
 
                   const cards: { key: string; fitur: string; color: string; desc: string; kendalaMatch: string }[] = [
                     { key: "parafrase", fitur: "Fitur Parafrase", color: "#3b7dd8", desc: "Fitur parafrase membantu mengubah kalimat menjadi versi baru dengan makna yang sama, membuat tulisan lebih segar dan mudah dipahami.", kendalaMatch: "Parafrase" },
@@ -7892,7 +7892,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                         {matchedKendala && (
                           <div className="relative z-10 px-4 py-2 rounded-t-[16px]" style={{ background: "rgba(0,0,0,0.15)" }}>
                             <p className="text-[11px] sm:text-[12px] font-semibold text-white/90 text-center">
-                              Direkomendasikan untuk: {matchedKendala}
+                              Rekomendasi fitur untuk kamu
                             </p>
                           </div>
                         )}
