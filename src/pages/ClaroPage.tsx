@@ -7026,10 +7026,6 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                       style={{ width: 168, height: 168, background: "linear-gradient(135deg, #dbeafe 0%, #c7d2fe 100%)", border: "3px solid rgba(255,255,255,0.85)", boxShadow: "0px 6.94px 5.2px rgba(0,0,0,0.1), 0px 3.47px 3.47px rgba(0,0,0,0.1)" }}>
                       <img src="/assets/alerin-logo.png" alt="Alerin" className="w-[140px] h-[140px] sm:w-[168px] sm:h-[168px] rounded-full object-cover"/>
                     </div>
-                    <div className="absolute flex items-center justify-center rounded-full"
-                      style={{ width: 48, height: 48, bottom: 12, right: -4, background: "#fcd34d", boxShadow: "0px 1.74px 3.47px rgba(0,0,0,0.15)" }}>
-                      <span style={{ color: "#78350f", fontSize: 21, lineHeight: 1 }}>✦</span>
-                    </div>
                   </div>
 
                   {/* Text + CTA */}
@@ -7064,9 +7060,6 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                   <div className="absolute inset-[-8px] rounded-full blur-lg opacity-70" style={{ background: "radial-gradient(circle, rgba(219,234,254,1), rgba(135,209,235,0.4), rgba(255,225,111,0.4))" }}/>
                   <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden flex items-center justify-center bg-white shadow-md">
                     <img src="/assets/alerin-logo.png" alt="Alerin" className="w-full h-full object-cover"/>
-                  </div>
-                  <div className="absolute -bottom-0.5 -right-0.5 sm:-bottom-1 sm:-right-1 w-4 h-4 sm:w-5 sm:h-5 rounded-full flex items-center justify-center drop-shadow-sm z-10" style={{ background: "#fcd34d" }}>
-                    <span style={{ fontSize: 8, color: "#78350f" }}>✦</span>
                   </div>
                 </div>
                 <h2 className="font-['Plus_Jakarta_Sans'] font-bold text-[22px] sm:text-[28px] text-[#1b1b1c] leading-[30px] sm:leading-[38px] tracking-[-0.7px]">Daftar Akun Alerin</h2>
