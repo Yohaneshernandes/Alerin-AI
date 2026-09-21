@@ -7959,14 +7959,14 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                           </div>
                         )}
                         {/* Content */}
-                        <div className="relative z-10 flex items-start gap-4 px-5 py-5">
-                          <div className="flex-1 min-w-0 pt-2">
+                        <div className="relative z-10 flex items-center gap-4 px-5 py-5">
+                          <div className="flex-1 min-w-0">
                             <h3 className="font-['Plus_Jakarta_Sans'] font-extrabold text-[18px] sm:text-[20px] text-white leading-[24px] mb-2">{card.fitur}</h3>
                             <p className="font-['Plus_Jakarta_Sans'] text-[12px] sm:text-[13px] text-white/80 leading-[18px]">{card.desc}</p>
                           </div>
-                          {/* Illustration placeholder */}
-                          <div className="shrink-0 w-[120px] h-[100px] sm:w-[150px] sm:h-[130px] rounded-[14px] flex items-center justify-center" style={{ background: "rgba(255,255,255,0.12)" }}>
-                            <svg viewBox="0 0 60 60" fill="none" className="w-12 h-12 sm:w-14 sm:h-14 opacity-50">
+                          {/* Illustration — centered vertically */}
+                          <div className="shrink-0 w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] rounded-full flex items-center justify-center" style={{ background: "rgba(255,255,255,0.15)" }}>
+                            <svg viewBox="0 0 60 60" fill="none" className="w-14 h-14 sm:w-16 sm:h-16">
                               <circle cx="30" cy="30" r="28" stroke="white" strokeWidth="2" strokeDasharray="4 4"/>
                               <text x="30" y="34" textAnchor="middle" fill="white" fontSize="10" fontWeight="bold" fontFamily="sans-serif">{card.key === "skripsi" ? "SKR" : card.key === "jurnal" ? "JRNL" : "PARA"}</text>
                             </svg>
