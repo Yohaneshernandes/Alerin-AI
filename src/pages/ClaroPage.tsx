@@ -6538,6 +6538,28 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
   const [selectedFitur, setSelectedFitur] = useState("");
   const TOTAL = 10;
 
+  // Kendala → recommended feature mapping
+  const KENDALA_FITUR_MAP: Record<string, string> = {
+    "Belum memahami materinya": "Parafrase",
+    "Sulit menemukan referensi tambahan": "Cari Jurnal",
+    "Tidak tahu bagian mana yang harus dipelajari terlebih dahulu": "Parafrase",
+    "Sulit berlatih soal": "Parafrase",
+    "Belum memahami instruksi tugas": "Parafrase",
+    "Bingung memulai dari bagian mana": "Parafrase",
+    "Sulit mencari referensi yang sesuai": "Cari Jurnal",
+    "Deadline sudah dekat": "Parafrase",
+    "Bingung memulai penelitian": "Parafrase",
+    "Belum memiliki topik/judul": "Parafrase",
+    "Stuck dan tidak tahu harus menulis apa lagi": "Parafrase",
+    "Sulit menemukan referensi yang relevan": "Cari Jurnal",
+    "Banyak revisi dari dosen": "Parafrase",
+    "Khawatir hasil plagiasi tinggi": "Parafrase",
+    "Kesulitan mengolah atau menganalisis data": "Skripsi/Tesis/Disertasi",
+    "Penulisan akademik atau grammar masih kurang tepat": "Parafrase",
+    "Target penyelesaian terasa berat": "Skripsi/Tesis/Disertasi",
+  };
+  const kendalaFitur = kendala.length > 0 ? KENDALA_FITUR_MAP[kendala[0]] ?? "Parafrase" : null;
+
   useEffect(() => {
     if (!showEmailVerify) return;
     setResendCountdown(10);
@@ -7909,12 +7931,14 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                   {/* Card background — solid blue */}
                   <div className="absolute inset-0 rounded-[16px]"
                     style={{ background: "#3b7dd8" }}/>
-                  {/* Top banner */}
-                  <div className="relative z-10 px-4 py-2 rounded-t-[16px]" style={{ background: "rgba(0,0,0,0.15)" }}>
-                    <p className="text-[11px] sm:text-[12px] font-semibold text-white/90 text-center">
-                      {kendala.length > 0 ? `Direkomendasikan untuk: ${kendala[0]}` : "Paling relevan untuk kendalamu"}
-                    </p>
-                  </div>
+                  {/* Top banner — only show when kendala maps to Parafrase */}
+                  {kendalaFitur === "Parafrase" && (
+                    <div className="relative z-10 px-4 py-2 rounded-t-[16px]" style={{ background: "rgba(0,0,0,0.15)" }}>
+                      <p className="text-[11px] sm:text-[12px] font-semibold text-white/90 text-center">
+                        Direkomendasikan untuk: {kendala[0]}
+                      </p>
+                    </div>
+                  )}
                   {/* Content */}
                   <div className="relative z-10 flex items-start gap-4 px-5 py-5">
                     {/* Text */}
@@ -7968,10 +7992,10 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                   <div className="absolute inset-0 rounded-[16px]"
                     style={{ background: "#a0522d" }}/>
                   {/* Top banner — only show for referensi kendala */}
-                  {kendala.some(k => k.toLowerCase().includes("referensi")) && (
+                  {kendalaFitur === "Cari Jurnal" && (
                     <div className="relative z-10 px-4 py-2 rounded-t-[16px]" style={{ background: "rgba(0,0,0,0.15)" }}>
                       <p className="text-[11px] sm:text-[12px] font-semibold text-white/90 text-center">
-                        Direkomendasikan untuk: {kendala.find(k => k.toLowerCase().includes("referensi"))}
+                        Direkomendasikan untuk: {kendala[0]}
                       </p>
                     </div>
                   )}
