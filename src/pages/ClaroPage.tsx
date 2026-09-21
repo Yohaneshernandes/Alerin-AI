@@ -7924,33 +7924,15 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                             <p className="font-['Plus_Jakarta_Sans'] text-[12px] sm:text-[13px] text-white/80 leading-[18px]">{card.desc}</p>
                           </div>
                           {/* Illustration — centered vertically */}
-                          <div className="shrink-0 w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] flex items-center justify-center">
+                          <div className="shrink-0 w-[110px] h-[110px] sm:w-[140px] sm:h-[140px] flex items-center justify-center">
                             {card.key === "parafrase" && (
-                              <img src="/assets/Aset%20Fitur%20Parafrase.png" alt="Parafrase" className="w-[90px] h-[90px] sm:w-[110px] sm:h-[110px] object-contain"/>
+                              <img src="/assets/Aset%20Fitur%20Parafrase.png" alt="Parafrase" className="w-[100px] h-[100px] sm:w-[130px] sm:h-[130px] object-contain"/>
                             )}
                             {card.key === "jurnal" && (
-                              <div className="rounded-[14px] overflow-hidden flex flex-col items-center justify-center gap-2 py-4 px-3" style={{ background: "rgba(255,255,255,0.95)", width: "100%", height: "100%" }}>
-                                <div className="flex gap-3 w-full px-2">
-                                  <div className="flex-1">
-                                    <p className="text-[7px] sm:text-[8px] font-bold text-[#94a3b8] uppercase tracking-wider">LP Indeks</p>
-                                    <p className="text-[15px] sm:text-[18px] font-extrabold text-[#1e293b] leading-tight">258 <span className="text-[9px] sm:text-[10px] font-semibold text-[#94a3b8]">PSI</span></p>
-                                    <div className="h-[3px] rounded-full mt-1" style={{ background: "linear-gradient(90deg, #f59e0b, #ef4444)" }}/>
-                                  </div>
-                                  <div className="flex-1">
-                                    <p className="text-[7px] sm:text-[8px] font-bold text-[#94a3b8] uppercase tracking-wider">RP Akurasi</p>
-                                    <p className="text-[15px] sm:text-[18px] font-extrabold text-[#1e293b] leading-tight">98 <span className="text-[9px] sm:text-[10px] font-semibold text-[#94a3b8]">PSI</span></p>
-                                    <div className="h-[3px] rounded-full mt-1" style={{ background: "linear-gradient(90deg, #f59e0b, #ef4444)" }}/>
-                                  </div>
-                                </div>
-                                <div className="flex items-end gap-[3px] h-5 sm:h-6">
-                                  {[10, 7, 14, 6, 12, 9, 10].map((h, i) => (
-                                    <div key={i} className="w-[5px] sm:w-[6px] rounded-full" style={{ height: h, background: i === 2 ? "#ef4444" : "#f59e0b" }}/>
-                                  ))}
-                                </div>
-                              </div>
+                              <img src="/assets/Metric%20Card%20%26%20Waveform.png" alt="Cari Jurnal" className="w-[100px] h-[100px] sm:w-[130px] sm:h-[130px] object-contain"/>
                             )}
                             {card.key === "skripsi" && (
-                              <img src="/assets/Aset%20fitur%20Skripsi.png" alt="Skripsi" className="w-[90px] h-[90px] sm:w-[110px] sm:h-[110px] object-contain"/>
+                              <img src="/assets/Aset%20fitur%20Skripsi.png" alt="Skripsi" className="w-[100px] h-[100px] sm:w-[130px] sm:h-[130px] object-contain"/>
                             )}
                           </div>
                         </div>
