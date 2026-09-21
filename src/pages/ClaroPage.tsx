@@ -7902,38 +7902,60 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                 <div className="flex-1 h-px" style={{ background: "linear-gradient(90deg, rgba(37,99,235,0), rgba(37,99,235,0.5))" }}/>
               </div>
 
-              {/* Feature cards — side by side */}
-              <div className="flex gap-2.5 sm:gap-3 w-full mb-4">
+              {/* Feature cards — stacked vertically */}
+              <div className="flex flex-col gap-3 w-full">
 
                 {/* === Fitur Parafrase === */}
                 <button
                   onClick={() => setSelectedFitur(selectedFitur === "parafrase" ? "" : "parafrase")}
-                  className="flex-1 relative transition-all active:scale-[0.98] overflow-hidden"
+                  className="w-full relative transition-all active:scale-[0.98] overflow-hidden text-left"
                   style={{
-                    height: 240,
                     borderRadius: "16px",
                     boxShadow: selectedFitur === "parafrase"
                       ? "0 0 0 2.5px #2563eb, 0 8px 32px rgba(37,99,235,0.25)"
                       : "0 2px 12px rgba(0,0,0,0.06)",
                   }}>
                   {/* Card background */}
-                  <div className="absolute inset-0"
-                    style={{
-                      background: "linear-gradient(180deg, #f97044 0%, #f28c6a 100%)",
-                      borderRadius: "16px",
-                    }}/>
-                  {/* Text content */}
-                  <div className="relative z-10 flex flex-col items-center pt-4 sm:pt-6 px-3 sm:px-5">
-                    <p className="font-['Plus_Jakarta_Sans'] font-bold text-[15px] sm:text-[18px] text-white text-center leading-[20px] sm:leading-[22px] mb-1.5 sm:mb-2">Fitur Parafrase</p>
-                    <p className="font-['Plus_Jakarta_Sans'] font-medium text-[10px] sm:text-[11px] text-white/90 text-center leading-[14px] sm:leading-[16px] px-0.5 sm:px-1">Fitur parafrase membantu mengubah kalimat menjadi versi baru dengan makna yang sama, membuat tulisan lebih segar dan mudah dipahami.</p>
+                  <div className="absolute inset-0 rounded-[16px]"
+                    style={{ background: "linear-gradient(135deg, #1e40af 0%, #2563eb 50%, #3b82f6 100%)" }}/>
+                  {/* Top banner */}
+                  <div className="relative z-10 px-4 py-2 rounded-t-[16px]" style={{ background: "rgba(0,0,0,0.15)" }}>
+                    <p className="text-[11px] sm:text-[12px] font-semibold text-white/90 text-center">Paling relevan untuk kendalamu</p>
                   </div>
-                  {/* Illustration */}
-                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 pointer-events-none">
-                    <img src="/assets/d0574.png" alt="" className="w-[130px] h-[130px] sm:w-[180px] sm:h-[180px] object-contain" />
+                  {/* Content */}
+                  <div className="relative z-10 flex items-center gap-4 px-5 py-5">
+                    {/* Text */}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-['Plus_Jakarta_Sans'] font-bold text-[18px] sm:text-[20px] text-white leading-[24px] mb-2">Fitur Parafrase</h3>
+                      <p className="font-['Plus_Jakarta_Sans'] text-[12px] sm:text-[13px] text-white/80 leading-[18px]">Fitur parafrase membantu mengubah kalimat menjadi versi baru dengan makna yang sama, membuat tulisan lebih segar dan mudah dipahami.</p>
+                    </div>
+                    {/* Illustration */}
+                    <div className="shrink-0 w-[120px] h-[100px] sm:w-[160px] sm:h-[130px] rounded-[12px] overflow-hidden flex items-center justify-center" style={{ background: "rgba(255,255,255,0.15)" }}>
+                      <svg viewBox="0 0 160 130" fill="none" className="w-full h-full">
+                        {/* Document stack */}
+                        <rect x="20" y="15" width="90" height="100" rx="8" fill="white" opacity="0.3"/>
+                        <rect x="30" y="10" width="90" height="100" rx="8" fill="white" opacity="0.6"/>
+                        <rect x="40" y="5" width="90" height="100" rx="8" fill="white"/>
+                        {/* Lines */}
+                        <rect x="52" y="25" width="50" height="4" rx="2" fill="#e2e8f0"/>
+                        <rect x="52" y="35" width="40" height="4" rx="2" fill="#e2e8f0"/>
+                        <rect x="52" y="45" width="55" height="4" rx="2" fill="#e2e8f0"/>
+                        <rect x="52" y="55" width="35" height="4" rx="2" fill="#e2e8f0"/>
+                        {/* ID badge */}
+                        <circle cx="58" cy="78" r="10" fill="#dbeafe" stroke="#2563eb" strokeWidth="1.5"/>
+                        <text x="58" y="82" textAnchor="middle" fill="#2563eb" fontSize="8" fontWeight="bold">ID</text>
+                        {/* APPROVED tag */}
+                        <rect x="72" y="72" width="48" height="14" rx="7" fill="#dcfce7"/>
+                        <text x="96" y="82" textAnchor="middle" fill="#16a34a" fontSize="7" fontWeight="bold">APPROVED</text>
+                        {/* Checkmark */}
+                        <circle cx="115" cy="95" r="12" fill="#ef4444" opacity="0.9"/>
+                        <path d="M109 95l4 4 8-8" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </div>
                   </div>
-                  {/* Selected checkmark */}
+                  {/* Selected indicator */}
                   {selectedFitur === "parafrase" && (
-                    <div className="absolute top-2.5 right-2.5 sm:top-3 sm:right-3 w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-white flex items-center justify-center z-20 shadow-md pointer-events-none">
+                    <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-white flex items-center justify-center z-20 shadow-md pointer-events-none">
                       <svg width="11" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4.5L4.2 8L11 1" stroke="#2563eb" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
                     </div>
                   )}
@@ -7942,32 +7964,49 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                 {/* === Fitur Cari Jurnal === */}
                 <button
                   onClick={() => setSelectedFitur(selectedFitur === "jurnal" ? "" : "jurnal")}
-                  className="flex-1 relative transition-all active:scale-[0.98] overflow-hidden"
+                  className="w-full relative transition-all active:scale-[0.98] overflow-hidden text-left"
                   style={{
-                    height: 240,
                     borderRadius: "16px",
                     boxShadow: selectedFitur === "jurnal"
                       ? "0 0 0 2.5px #2563eb, 0 8px 32px rgba(37,99,235,0.25)"
                       : "0 2px 12px rgba(0,0,0,0.06)",
                   }}>
                   {/* Card background */}
-                  <div className="absolute inset-0"
-                    style={{
-                      background: "linear-gradient(180deg, #c4edcf 0%, #ddf3e4 100%)",
-                      borderRadius: "16px",
-                    }}/>
-                  {/* Text content */}
-                  <div className="relative z-10 flex flex-col items-center pt-4 sm:pt-6 px-3 sm:px-5">
-                    <p className="font-['Plus_Jakarta_Sans'] font-bold text-[15px] sm:text-[18px] text-[#0f172a] text-center leading-[20px] sm:leading-[22px] mb-1.5 sm:mb-2">Fitur Cari Jurnal</p>
-                    <p className="font-['Plus_Jakarta_Sans'] font-medium text-[10px] sm:text-[11px] text-[#1e293b]/80 text-center leading-[14px] sm:leading-[16px] px-0.5 sm:px-1">Pembentukan mentalitas kepemimpinan &amp; kedisiplinan riset teruji untuk bersaing di Ivy League &amp; PTN Unggulan.</p>
+                  <div className="absolute inset-0 rounded-[16px]"
+                    style={{ background: "linear-gradient(135deg, #92400e 0%, #b45309 50%, #d97706 100%)" }}/>
+                  {/* Content */}
+                  <div className="relative z-10 flex items-center gap-4 px-5 py-6">
+                    {/* Text */}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-['Plus_Jakarta_Sans'] font-bold text-[18px] sm:text-[20px] text-white leading-[24px] mb-2">Cari Jurnal</h3>
+                      <p className="font-['Plus_Jakarta_Sans'] text-[12px] sm:text-[13px] text-white/80 leading-[18px]">Fitur parafrase membantu mengubah kalimat menjadi versi baru dengan makna yang sama, membuat tulisan lebih segar dan mudah dipahami.</p>
+                    </div>
+                    {/* Illustration */}
+                    <div className="shrink-0 w-[120px] h-[100px] sm:w-[160px] sm:h-[130px] rounded-[12px] overflow-hidden flex flex-col items-center justify-center gap-2" style={{ background: "rgba(255,255,255,0.95)" }}>
+                      {/* Stats */}
+                      <div className="flex gap-4 px-3 w-full">
+                        <div className="flex-1">
+                          <p className="text-[8px] sm:text-[9px] font-bold text-[#9ca3af] uppercase tracking-wider">LP Indeks</p>
+                          <p className="text-[16px] sm:text-[20px] font-extrabold text-[#1e293b]">258 <span className="text-[10px] font-semibold text-[#9ca3af]">PSI</span></p>
+                          <div className="h-1 rounded-full mt-1" style={{ background: "linear-gradient(90deg, #f59e0b, #ef4444)" }}/>
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-[8px] sm:text-[9px] font-bold text-[#9ca3af] uppercase tracking-wider">RP Akurasi</p>
+                          <p className="text-[16px] sm:text-[20px] font-extrabold text-[#1e293b]">98 <span className="text-[10px] font-semibold text-[#9ca3af]">PSI</span></p>
+                          <div className="h-1 rounded-full mt-1" style={{ background: "linear-gradient(90deg, #f59e0b, #ef4444)" }}/>
+                        </div>
+                      </div>
+                      {/* Bar chart */}
+                      <div className="flex items-end gap-1 h-6 sm:h-8">
+                        {[14, 10, 18, 8, 16, 12, 14].map((h, i) => (
+                          <div key={i} className="w-2 sm:w-2.5 rounded-full" style={{ height: h, background: i === 2 ? "#ef4444" : "#f59e0b" }}/>
+                        ))}
+                      </div>
+                    </div>
                   </div>
-                  {/* Illustration */}
-                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 pointer-events-none">
-                    <img src="/assets/353d4.png" alt="" className="w-[130px] h-[130px] sm:w-[180px] sm:h-[180px] object-contain" />
-                  </div>
-                  {/* Selected checkmark */}
+                  {/* Selected indicator */}
                   {selectedFitur === "jurnal" && (
-                    <div className="absolute top-2.5 right-2.5 sm:top-3 sm:right-3 w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-white flex items-center justify-center z-20 shadow-md pointer-events-none">
+                    <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-white flex items-center justify-center z-20 shadow-md pointer-events-none">
                       <svg width="11" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4.5L4.2 8L11 1" stroke="#2563eb" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
                     </div>
                   )}
@@ -7990,33 +8029,17 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
             ) : (
               <>
                 {step === TOTAL ? (
-                  /* CTA card */
-                  <div className="w-full bg-white rounded-[16px] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 px-5 sm:px-6 py-4 sm:py-5"
-                    style={{ border: "1px solid #e5e7eb", boxShadow: "0 2px 12px rgba(0,0,0,0.04)" }}>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-['Plus_Jakarta_Sans'] font-bold text-[#0f172a] text-[14px] sm:text-[15px] leading-[20px] sm:leading-[22px] mb-1">
-                        Mulai Perjalanan Anda Menuju Kesuksesan Global
-                      </p>
-                      <p className="font-['Plus_Jakarta_Sans'] text-[#64748b] text-[11px] sm:text-[12px] leading-[16px] sm:leading-[18px]">
-                        {selectedFitur === "parafrase"
-                          ? "Gunakan fitur Parafrase untuk membuat tulisanmu lebih jelas dan mudah dipahami."
-                          : selectedFitur === "jurnal"
-                          ? "Temukan referensi jurnal yang sesuai untuk mendukung tugas dan penelitianmu."
-                          : "Dapatkan bimbingan komprehensif dari mentor profesional dan wujudkan proyek riset unggulan Anda."}
-                      </p>
-                    </div>
-                    <button
-                      disabled={!canProceed}
-                      onClick={() => {
-                        startFeatureLoading();
-                      }}
-                      className="w-full sm:w-auto shrink-0 px-6 py-3 rounded-[12px] font-['Plus_Jakarta_Sans'] font-semibold text-white text-[13px] transition-all active:scale-95"
-                      style={{ background: canProceed ? "#2563eb" : "rgba(37,99,235,0.4)", cursor: canProceed ? "pointer" : "not-allowed" }}>
-                      {selectedFitur === "parafrase" ? "Mulai Parafrase"
-                        : selectedFitur === "jurnal" ? "Mulai Cari Jurnal"
-                        : "Pilih Fitur"}
-                    </button>
-                  </div>
+                  /* Simple Lanjut button for feature selection */
+                  <button
+                    disabled={!canProceed}
+                    onClick={() => {
+                      startFeatureLoading();
+                    }}
+                    className="w-full flex items-center justify-center gap-2 py-3 sm:py-[14px] rounded-[12px] sm:rounded-[16px] text-white font-bold text-[15px] sm:text-[16px] transition-all disabled:opacity-40 active:scale-[0.98]"
+                    style={{ background: canProceed ? "#2563eb" : "rgba(37,99,235,0.4)", boxShadow: canProceed ? "0px 4px 7px rgba(37,99,235,0.38)" : "none", cursor: canProceed ? "pointer" : "not-allowed" }}>
+                    Lanjut
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                  </button>
                 ) : (
                   !(step === 7 && !(fase === "Lainnya" && faseLainnya.trim())) && (
                     <button
