@@ -6784,9 +6784,9 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                     { src: "/assets/icon-verify-check.svg", text: "Tautan verifikasi berlaku selama 24 jam sejak dikirim." },
                     { src: "/assets/icon-link.svg", text: "Jangan bagikan tautan ini kepada siapapun demi keamanan akunmu." },
                   ].map((item, i) => (
-                    <div key={i} className="flex items-start gap-3">
+                    <div key={i} className="flex items-center gap-3">
                       <div className="rounded-[6px] flex items-center justify-center shrink-0" style={{ width: 25, height: 25, background: "linear-gradient(180deg, #1d4ed8 0%, #0f2972 100%)", opacity: 0.79 }}>
-                        <img src={item.src} alt="" style={{ width: i === 0 ? 16 : 21, height: i === 0 ? 16 : 21, display: "block", margin: "auto" }}/>
+                        <img src={item.src} alt="" style={{ width: 14, height: 14, display: "block", margin: "auto" }}/>
                       </div>
                       <p className="text-[12px] font-medium leading-[19.5px] text-[#1e40af]" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>{item.text}</p>
                     </div>
