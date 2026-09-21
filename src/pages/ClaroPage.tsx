@@ -7338,10 +7338,12 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
 
                       {/* Selected prodi display from search */}
                       {prodi && !showDropdown && (
-                        <div className="flex items-center justify-between gap-2 px-4 py-2.5 rounded-[12px]" style={{ background: "#eff6ff", border: "1px solid #bfdbfe" }}>
-                          <div className="flex items-center gap-2 min-w-0 flex-1">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2.5" className="shrink-0"><path d="M20 6L9 17l-5-5"/></svg>
-                            <p className="text-[12px] sm:text-[13px] font-semibold text-[#1d4ed8] truncate">{prodi}</p>
+                        <div className="flex items-center justify-between gap-2 px-4 py-3 rounded-[14px]" style={{ background: "rgba(239,246,255,0.8)", border: "1px solid #bfdbfe" }}>
+                          <div className="flex items-center gap-3 min-w-0 flex-1">
+                            <div className="w-7 h-7 rounded-[8px] flex items-center justify-center shrink-0" style={{ background: "#2563eb" }}>
+                              <svg width="12" height="10" viewBox="0 0 12 9" fill="none"><path d="M1 4.5L4.2 8L11 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                            </div>
+                            <p className="text-[13px] sm:text-[14px] font-semibold text-[#111827] truncate">{prodi}</p>
                           </div>
                           <button onClick={() => setProdi("")} className="text-[11px] font-bold shrink-0" style={{ color: "#2563eb" }}>Ubah</button>
                         </div>
@@ -7915,41 +7917,43 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                       ? "0 0 0 2.5px #2563eb, 0 8px 32px rgba(37,99,235,0.25)"
                       : "0 2px 12px rgba(0,0,0,0.06)",
                   }}>
-                  {/* Card background */}
+                  {/* Card background — solid blue */}
                   <div className="absolute inset-0 rounded-[16px]"
-                    style={{ background: "linear-gradient(135deg, #1a365d 0%, #2b6cb0 50%, #3182ce 100%)" }}/>
+                    style={{ background: "#3b7dd8" }}/>
                   {/* Top banner */}
-                  <div className="relative z-10 px-4 py-2 rounded-t-[16px]" style={{ background: "rgba(0,0,0,0.2)" }}>
-                    <p className="text-[11px] sm:text-[12px] font-semibold text-white/90 text-center">Paling relevan untuk kendalamu</p>
+                  <div className="relative z-10 px-4 py-2 rounded-t-[16px]" style={{ background: "rgba(0,0,0,0.15)" }}>
+                    <p className="text-[11px] sm:text-[12px] font-semibold text-white/90 text-center">
+                      {kendala.length > 0 ? `Paling relevan: ${kendala[0]}` : "Paling relevan untuk kendalamu"}
+                    </p>
                   </div>
                   {/* Content */}
-                  <div className="relative z-10 flex items-center gap-4 px-5 py-5">
+                  <div className="relative z-10 flex items-start gap-4 px-5 py-5">
                     {/* Text */}
-                    <div className="flex-1 min-w-0">
+                    <div className="flex-1 min-w-0 pt-2">
                       <h3 className="font-['Plus_Jakarta_Sans'] font-extrabold text-[18px] sm:text-[20px] text-white leading-[24px] mb-2">Fitur Parafrase</h3>
                       <p className="font-['Plus_Jakarta_Sans'] text-[12px] sm:text-[13px] text-white/80 leading-[18px]">Fitur parafrase membantu mengubah kalimat menjadi versi baru dengan makna yang sama, membuat tulisan lebih segar dan mudah dipahami.</p>
                     </div>
-                    {/* Illustration — document with ID, APPROVED, checkmark */}
-                    <div className="shrink-0 w-[130px] h-[110px] sm:w-[170px] sm:h-[140px] rounded-[12px] overflow-hidden flex items-center justify-center" style={{ background: "rgba(255,255,255,0.12)" }}>
-                      <svg viewBox="0 0 170 140" fill="none" className="w-full h-full">
-                        {/* Back document */}
-                        <rect x="18" y="20" width="85" height="100" rx="10" fill="white" opacity="0.25" transform="rotate(-5 60 70)"/>
+                    {/* Illustration — positioned to overflow bottom-right */}
+                    <div className="shrink-0 relative" style={{ width: 140, height: 130, marginTop: -10, marginRight: -10 }}>
+                      <svg viewBox="0 0 150 140" fill="none" className="w-full h-full" style={{ overflow: "visible" }}>
+                        {/* Back document tilted */}
+                        <rect x="0" y="20" width="80" height="95" rx="10" fill="white" opacity="0.3" transform="rotate(-6 40 67)"/>
                         {/* Front document */}
-                        <rect x="35" y="12" width="85" height="100" rx="10" fill="white"/>
+                        <rect x="25" y="5" width="80" height="95" rx="10" fill="white"/>
                         {/* Lines on document */}
-                        <rect x="48" y="30" width="52" height="4" rx="2" fill="#e2e8f0"/>
-                        <rect x="48" y="40" width="42" height="4" rx="2" fill="#e2e8f0"/>
-                        <rect x="48" y="50" width="56" height="4" rx="2" fill="#e2e8f0"/>
-                        <rect x="48" y="60" width="36" height="4" rx="2" fill="#e2e8f0"/>
+                        <rect x="37" y="25" width="48" height="4" rx="2" fill="#e2e8f0"/>
+                        <rect x="37" y="34" width="38" height="4" rx="2" fill="#e2e8f0"/>
+                        <rect x="37" y="43" width="52" height="4" rx="2" fill="#e2e8f0"/>
+                        <rect x="37" y="52" width="32" height="4" rx="2" fill="#e2e8f0"/>
                         {/* ID badge circle */}
-                        <circle cx="62" cy="82" r="11" fill="#eff6ff" stroke="#2563eb" strokeWidth="1.5"/>
-                        <text x="62" y="86" textAnchor="middle" fill="#2563eb" fontSize="9" fontWeight="bold" fontFamily="sans-serif">ID</text>
+                        <circle cx="50" cy="74" r="10" fill="#eff6ff" stroke="#93c5fd" strokeWidth="1.5"/>
+                        <text x="50" y="78" textAnchor="middle" fill="#3b82f6" fontSize="8" fontWeight="bold" fontFamily="sans-serif">ID</text>
                         {/* APPROVED pill */}
-                        <rect x="78" y="75" width="44" height="14" rx="7" fill="#fce7f3"/>
-                        <text x="100" y="85" textAnchor="middle" fill="#db2777" fontSize="7" fontWeight="bold" fontFamily="sans-serif">APPROVED</text>
-                        {/* Red checkmark circle */}
-                        <circle cx="118" cy="100" r="13" fill="#ef4444"/>
-                        <path d="M112 100l4 4 8-8" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <rect x="65" y="67" width="42" height="13" rx="6.5" fill="#fce7f3"/>
+                        <text x="86" y="77" textAnchor="middle" fill="#db2777" fontSize="6.5" fontWeight="bold" fontFamily="sans-serif">APPROVED</text>
+                        {/* Red checkmark circle — bottom right, slightly outside */}
+                        <circle cx="95" cy="110" r="14" fill="#ef4444"/>
+                        <path d="M89 110l4 4 8-8" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
                       </svg>
                     </div>
                   </div>
@@ -7971,36 +7975,38 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                       ? "0 0 0 2.5px #2563eb, 0 8px 32px rgba(37,99,235,0.25)"
                       : "0 2px 12px rgba(0,0,0,0.06)",
                   }}>
-                  {/* Card background */}
+                  {/* Card background — solid brown */}
                   <div className="absolute inset-0 rounded-[16px]"
-                    style={{ background: "linear-gradient(135deg, #7c2d12 0%, #9a3412 40%, #c2410c 100%)" }}/>
+                    style={{ background: "#a0522d" }}/>
                   {/* Content */}
-                  <div className="relative z-10 flex items-center gap-4 px-5 py-5">
+                  <div className="relative z-10 flex items-start gap-4 px-5 py-5">
                     {/* Text */}
-                    <div className="flex-1 min-w-0">
+                    <div className="flex-1 min-w-0 pt-2">
                       <h3 className="font-['Plus_Jakarta_Sans'] font-extrabold text-[18px] sm:text-[20px] text-white leading-[24px] mb-2">Cari Jurnal</h3>
                       <p className="font-['Plus_Jakarta_Sans'] text-[12px] sm:text-[13px] text-white/80 leading-[18px]">Fitur parafrase membantu mengubah kalimat menjadi versi baru dengan makna yang sama, membuat tulisan lebih segar dan mudah dipahami.</p>
                     </div>
-                    {/* Illustration — stats card */}
-                    <div className="shrink-0 w-[130px] h-[110px] sm:w-[170px] sm:h-[140px] rounded-[14px] overflow-hidden flex flex-col items-center justify-center gap-2.5" style={{ background: "rgba(255,255,255,0.95)" }}>
-                      {/* Stats */}
-                      <div className="flex gap-3 px-3 w-full">
-                        <div className="flex-1">
-                          <p className="text-[7px] sm:text-[8px] font-bold text-[#94a3b8] uppercase tracking-wider">LP Indeks</p>
-                          <p className="text-[15px] sm:text-[18px] font-extrabold text-[#1e293b] leading-tight">258 <span className="text-[9px] sm:text-[10px] font-semibold text-[#94a3b8]">PSI</span></p>
-                          <div className="h-[3px] rounded-full mt-1" style={{ background: "linear-gradient(90deg, #f59e0b, #ef4444)" }}/>
+                    {/* Illustration — stats card positioned bottom-right */}
+                    <div className="shrink-0 relative" style={{ width: 150, height: 120, marginTop: -5 }}>
+                      <div className="rounded-[14px] overflow-hidden flex flex-col items-center justify-center gap-2 py-4 px-3 absolute bottom-0 right-0" style={{ background: "rgba(255,255,255,0.95)", width: 150 }}>
+                        {/* Stats */}
+                        <div className="flex gap-3 w-full px-2">
+                          <div className="flex-1">
+                            <p className="text-[7px] sm:text-[8px] font-bold text-[#94a3b8] uppercase tracking-wider">LP Indeks</p>
+                            <p className="text-[15px] sm:text-[18px] font-extrabold text-[#1e293b] leading-tight">258 <span className="text-[9px] sm:text-[10px] font-semibold text-[#94a3b8]">PSI</span></p>
+                            <div className="h-[3px] rounded-full mt-1" style={{ background: "linear-gradient(90deg, #f59e0b, #ef4444)" }}/>
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-[7px] sm:text-[8px] font-bold text-[#94a3b8] uppercase tracking-wider">RP Akurasi</p>
+                            <p className="text-[15px] sm:text-[18px] font-extrabold text-[#1e293b] leading-tight">98 <span className="text-[9px] sm:text-[10px] font-semibold text-[#94a3b8]">PSI</span></p>
+                            <div className="h-[3px] rounded-full mt-1" style={{ background: "linear-gradient(90deg, #f59e0b, #ef4444)" }}/>
+                          </div>
                         </div>
-                        <div className="flex-1">
-                          <p className="text-[7px] sm:text-[8px] font-bold text-[#94a3b8] uppercase tracking-wider">RP Akurasi</p>
-                          <p className="text-[15px] sm:text-[18px] font-extrabold text-[#1e293b] leading-tight">98 <span className="text-[9px] sm:text-[10px] font-semibold text-[#94a3b8]">PSI</span></p>
-                          <div className="h-[3px] rounded-full mt-1" style={{ background: "linear-gradient(90deg, #f59e0b, #ef4444)" }}/>
+                        {/* Bar chart */}
+                        <div className="flex items-end gap-[3px] h-5 sm:h-6">
+                          {[10, 7, 14, 6, 12, 9, 10].map((h, i) => (
+                            <div key={i} className="w-[5px] sm:w-[6px] rounded-full" style={{ height: h, background: i === 2 ? "#ef4444" : "#f59e0b" }}/>
+                          ))}
                         </div>
-                      </div>
-                      {/* Bar chart */}
-                      <div className="flex items-end gap-[3px] h-5 sm:h-6">
-                        {[10, 7, 14, 6, 12, 9, 10].map((h, i) => (
-                          <div key={i} className="w-[5px] sm:w-[6px] rounded-full" style={{ height: h, background: i === 2 ? "#ef4444" : "#f59e0b" }}/>
-                        ))}
                       </div>
                     </div>
                   </div>
