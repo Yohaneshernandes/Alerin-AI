@@ -7056,31 +7056,19 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
           {/* Step 1: Akun */}
           {step === 1 && (
             <div>
-              {/* Mascot top section — hidden on mobile, shown on desktop */}
-              <div className="hidden sm:flex flex-col items-center mb-4 sm:mb-6 pt-1 sm:pt-2">
-                <div className="relative mb-2.5 sm:mb-4">
-                  <div className="absolute inset-[-8px] rounded-full blur-lg opacity-70" style={{ background: "radial-gradient(circle, rgba(219,234,254,1), rgba(135,209,235,0.4), rgba(255,225,111,0.4))" }}/>
-                  <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden flex items-center justify-center bg-white shadow-md">
-                    <img src="/assets/alerin-logo.png" alt="Alerin" className="w-full h-full object-cover"/>
-                  </div>
-                </div>
-                <h2 className="font-['Plus_Jakarta_Sans'] font-bold text-[22px] sm:text-[28px] text-[#1b1b1c] leading-[30px] sm:leading-[38px] tracking-[-0.7px]">Daftar Akun Alerin</h2>
-                <p className="text-[13px] sm:text-[14px] text-[#71717a] text-center leading-[20px] sm:leading-[22px] mt-0.5 sm:mt-1">Mulai perjalanan akademikmu yang lebih cerdas<br/>dengan panduan AI terpersonalisasi.</p>
-              </div>
-
               {/* White card form */}
               <div className="bg-white rounded-[16px] shadow-[0px_20px_25px_-5px_rgba(0,0,0,0.08),0px_8px_10px_-6px_rgba(0,0,0,0.06)] overflow-hidden">
                 {/* Top accent bar */}
                 <div className="h-1.5" style={{ background: "linear-gradient(90deg,#60a5fa,#6366f1)" }}/>
-                {/* Mobile header inside card */}
-                <div className="sm:hidden flex flex-col items-center pt-5 pb-3 px-4">
+                {/* Header inside card — both mobile & desktop */}
+                <div className="flex flex-col items-center pt-5 pb-3 px-4 sm:pt-6 sm:pb-4">
                   <div className="relative mb-2">
-                    <div className="w-14 h-14 rounded-full overflow-hidden flex items-center justify-center bg-white shadow-md">
+                    <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden flex items-center justify-center bg-white shadow-md">
                       <img src="/assets/alerin-logo.png" alt="Alerin" className="w-full h-full object-cover"/>
                     </div>
                   </div>
-                  <h2 className="font-['Plus_Jakarta_Sans'] font-bold text-[20px] text-[#1b1b1c] leading-[26px] tracking-[-0.5px]">Daftar Akun Alerin</h2>
-                  <p className="text-[12px] text-[#71717a] text-center leading-[18px] mt-0.5">Mulai perjalanan akademikmu yang lebih cerdas dengan panduan AI terpersonalisasi.</p>
+                  <h2 className="font-['Plus_Jakarta_Sans'] font-bold text-[20px] sm:text-[24px] text-[#1b1b1c] leading-[26px] sm:leading-[32px] tracking-[-0.5px]">Daftar Akun Alerin</h2>
+                  <p className="text-[12px] sm:text-[13px] text-[#71717a] text-center leading-[18px] sm:leading-[20px] mt-0.5">Mulai perjalanan akademikmu yang lebih cerdas dengan panduan AI terpersonalisasi.</p>
                 </div>
                 <div className="p-4 sm:p-6 space-y-3 sm:space-y-4">
                   {/* Google button */}
