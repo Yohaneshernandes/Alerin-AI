@@ -7965,11 +7965,15 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                             <p className="font-['Plus_Jakarta_Sans'] text-[12px] sm:text-[13px] text-white/80 leading-[18px]">{card.desc}</p>
                           </div>
                           {/* Illustration — centered vertically */}
-                          <div className="shrink-0 w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] rounded-full flex items-center justify-center" style={{ background: "rgba(255,255,255,0.15)" }}>
-                            <svg viewBox="0 0 60 60" fill="none" className="w-14 h-14 sm:w-16 sm:h-16">
-                              <circle cx="30" cy="30" r="28" stroke="white" strokeWidth="2" strokeDasharray="4 4"/>
-                              <text x="30" y="34" textAnchor="middle" fill="white" fontSize="10" fontWeight="bold" fontFamily="sans-serif">{card.key === "skripsi" ? "SKR" : card.key === "jurnal" ? "JRNL" : "PARA"}</text>
-                            </svg>
+                          <div className="shrink-0 w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] rounded-full flex items-center justify-center overflow-hidden" style={{ background: "rgba(255,255,255,0.15)" }}>
+                            {card.key === "skripsi" ? (
+                              <img src="/assets/Aset%20fitur%20Skripsi.png" alt="Skripsi" className="w-[70px] h-[70px] sm:w-[85px] sm:h-[85px] object-contain"/>
+                            ) : (
+                              <svg viewBox="0 0 60 60" fill="none" className="w-14 h-14 sm:w-16 sm:h-16">
+                                <circle cx="30" cy="30" r="28" stroke="white" strokeWidth="2" strokeDasharray="4 4"/>
+                                <text x="30" y="34" textAnchor="middle" fill="white" fontSize="10" fontWeight="bold" fontFamily="sans-serif">{card.key === "jurnal" ? "JRNL" : "PARA"}</text>
+                              </svg>
+                            )}
                           </div>
                         </div>
                         {/* Selected indicator */}
