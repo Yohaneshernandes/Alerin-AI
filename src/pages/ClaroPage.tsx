@@ -6881,27 +6881,35 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
   if (featureLoading) return (
     <div className="fixed inset-0 z-[300] flex flex-col items-center justify-center overflow-hidden" style={{ background: "linear-gradient(180deg, #f8faff 0%, #f0f5ff 50%, #f8faff 100%)" }}>
 
-      {/* Logo with spinning arc */}
-      <div className="relative w-44 h-44 sm:w-52 sm:h-52 mb-6">
-        <svg className="absolute inset-0 w-full h-full" viewBox="0 0 208 208" style={{ animation: "featureSpin 2s linear infinite" }}>
-          <defs>
-            <linearGradient id="featureArcGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#2563eb"/>
-              <stop offset="100%" stopColor="#3b82f6"/>
-            </linearGradient>
-          </defs>
-          <circle cx="104" cy="104" r="92" fill="none" stroke="#e0e7ff" strokeWidth="7"/>
-          <circle cx="104" cy="104" r="92" fill="none" stroke="url(#featureArcGrad)" strokeWidth="7"
-            strokeLinecap="round"
-            strokeDasharray="180 400"
-          />
-        </svg>
-        {/* Center logo with pulse */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full flex items-center justify-center"
-            style={{ background: "white", boxShadow: "0 4px 24px rgba(37,99,235,0.12)", animation: "featurePulse 2s ease-in-out infinite" }}>
-            <img src="/assets/alerin-logo.png" alt="Alerin" className="w-20 h-20 sm:w-24 sm:h-24 object-contain"/>
-          </div>
+      {/* Glowing light behind logo */}
+      <div className="relative mb-8">
+        {/* Outer glow */}
+        <div className="absolute inset-0 -m-16 sm:-m-20 rounded-full" style={{
+          background: "radial-gradient(circle, rgba(37,99,235,0.18) 0%, rgba(37,99,235,0.06) 50%, transparent 70%)",
+          animation: "glowPulse 3s ease-in-out infinite",
+        }}/>
+        {/* Animated rays */}
+        <div className="absolute inset-0 -m-12 sm:-m-16" style={{ animation: "glowSpin 8s linear infinite" }}>
+          {[0, 45, 90, 135, 180, 225, 270, 315].map((deg) => (
+            <div key={deg} className="absolute top-1/2 left-1/2 w-[2px] sm:w-[3px] rounded-full origin-bottom" style={{
+              height: "40px",
+              background: "linear-gradient(to top, rgba(37,99,235,0.25), transparent)",
+              transform: `translate(-50%, -100%) rotate(${deg}deg)`,
+              animation: `rayPulse 3s ease-in-out ${deg / 360}s infinite`,
+            }}/>
+          ))}
+        </div>
+        {/* Inner glow */}
+        <div className="absolute inset-0 -m-8 sm:-m-10 rounded-full" style={{
+          background: "radial-gradient(circle, rgba(37,99,235,0.12) 0%, transparent 60%)",
+          animation: "glowPulse 3s ease-in-out 0.5s infinite",
+        }}/>
+        {/* Logo */}
+        <div className="relative w-32 h-32 sm:w-40 sm:h-40 rounded-full flex items-center justify-center z-10" style={{
+          background: "white",
+          boxShadow: "0 4px 30px rgba(37,99,235,0.15)",
+        }}>
+          <img src="/assets/alerin-logo.png" alt="Alerin" className="w-20 h-20 sm:w-24 sm:h-24 object-contain"/>
         </div>
       </div>
 
@@ -6916,17 +6924,18 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
         </p>
       </div>
 
-      {/* Progress bar */}
-      <div className="w-48 sm:w-56 h-[6px] rounded-full bg-[#e0e7ff] mt-6 overflow-hidden">
+      {/* Progress bar — solid blue */}
+      <div className="w-48 sm:w-56 h-[6px] rounded-full bg-[#dbeafe] mt-6 overflow-hidden">
         <div className="h-full rounded-full transition-all duration-700 ease-out" style={{
-          background: "linear-gradient(90deg, #2563eb, #6366f1)",
+          background: "#2563eb",
           width: featureLoadingDone ? "100%" : `${Math.min(95, ((featureLoadingStatus + 1) / FEATURE_MSGS.length) * 100)}%`,
         }}/>
       </div>
 
       <style>{`
-        @keyframes featureSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-        @keyframes featurePulse{0%,100%{transform:scale(1);box-shadow:0 4px 24px rgba(37,99,235,0.12)}50%{transform:scale(1.03);box-shadow:0 6px 32px rgba(37,99,235,0.18)}}
+        @keyframes glowPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.7;transform:scale(1.08)}}
+        @keyframes glowSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+        @keyframes rayPulse{0%,100%{opacity:0.3;height:40px}50%{opacity:1;height:50px}}
         @keyframes fadeSlideUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
       `}</style>
     </div>
