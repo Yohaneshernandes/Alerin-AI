@@ -6878,6 +6878,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
         @keyframes fadeSlideUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
         @keyframes fillArc{from{stroke-dashoffset:603}to{stroke-dashoffset:0}}
         @keyframes fillBar{from{width:0%}to{width:95%}}
+        @keyframes floatUpDown{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
       `}</style>
     </div>
   );
