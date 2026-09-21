@@ -7783,7 +7783,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                           boxShadow: on ? "0 2px 8px rgba(37,99,235,0.18)" : "0 1px 3px rgba(0,0,0,0.06)",
                           cursor: maxed ? "not-allowed" : "pointer",
                         }}>
-                        {o.label} <span className="text-[11px] opacity-60 font-normal">({o.fitur})</span>
+                        {o.label}
                       </button>
                     );
                   })}
