@@ -6504,6 +6504,28 @@ const PintarlyMascotBubble = React.memo(function PintarlyMascotBubble({ pre, bol
     </div>
   );
 });
+
+class RegisterErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean}> {
+  state = { hasError: false };
+  static getDerivedStateFromError() { return { hasError: true }; }
+  componentDidCatch(err: Error) { console.error("RegisterModal error:", err); }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="fixed inset-0 z-[300] flex flex-col items-center justify-center bg-white/90 backdrop-blur-sm px-6 text-center">
+          <div className="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center mb-4">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          </div>
+          <p className="text-[15px] font-semibold text-slate-800 mb-1" style={{fontFamily:"'Plus Jakarta Sans',sans-serif"}}>Terjadi kesalahan</p>
+          <p className="text-[13px] text-slate-500 mb-4">Silakan coba lagi dari awal.</p>
+          <button onClick={() => window.location.reload()} className="px-5 py-2.5 rounded-xl bg-blue-600 text-white text-[13px] font-semibold hover:bg-blue-700 transition">Muat Ulang</button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (dest: FinishDest) => void }) {
   // 0=welcome, 1=akun, 2=jenjang, 3=fase, 4=target, 5=identitas, 6=fitur
   const [step, setStep] = useState(0);
@@ -6537,6 +6559,18 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
   const [featureLoadingStatus, setFeatureLoadingStatus] = useState(0);
   const [selectedFitur, setSelectedFitur] = useState("");
   const TOTAL = 10;
+  const loadingTimers = useRef<number[]>([]);
+  const featureTimers = useRef<number[]>([]);
+
+  // Cleanup timers on unmount
+  useEffect(() => {
+    return () => {
+      loadingTimers.current.forEach(id => clearTimeout(id));
+      loadingTimers.current.forEach(id => clearInterval(id));
+      featureTimers.current.forEach(id => clearTimeout(id));
+      featureTimers.current.forEach(id => clearInterval(id));
+    };
+  }, []);
 
   // Kendala → recommended feature mapping
   const KENDALA_FITUR_MAP: Record<string, string> = {
@@ -6600,7 +6634,8 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
   const transition = (next: number) => {
     playClick();
     setVisible(false);
-    setTimeout(() => { setStep(next); setVisible(true); }, 180);
+    const tid = window.setTimeout(() => { setStep(next); setVisible(true); }, 180);
+    loadingTimers.current.push(tid);
   };
   // Step map: 0=welcome 1=akun 2=jenjang 3=jurusan 4=semester 5=kampus 6=bantu 7=fase 8=kendala 9=target 10=identitas(skip) 11=fitur
   const AUTO_STEPS = [2, 5, 6, 9];
@@ -6614,23 +6649,28 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
   };
   const pickAndAdvance = (setter: (v: string) => void, value: string) => {
     setter(value);
-    setTimeout(() => goNext(), 220);
+    const tid = window.setTimeout(() => goNext(), 220);
+    loadingTimers.current.push(tid);
   };
 
   const handleFinish = () => {
+    loadingTimers.current.forEach(id => { clearTimeout(id); clearInterval(id); });
+    loadingTimers.current = [];
     const jl = jenjang === "S1" ? "Skripsi S1" : jenjang === "S2" ? "Tesis S2" : jenjang === "S3" ? "Disertasi S3" : jenjang;
     const prompt = `Halo Alerin! Saya ${namaPanggilan || "kamu"}, mahasiswa ${prodi || "berbagai jurusan"} di ${universitas || "kampus"}, ${semester || ""}. Saya mengerjakan ${jl} dengan fase: ${fase || "belum ditentukan"}. Target selesai: ${target || "belum ditentukan"}. Tolong bantu saya mulai dan beri arahan yang relevan!`;
     setLoadingPrompt(prompt);
     setLoading(true);
     let idx = 0;
-    const iv = setInterval(() => {
+    const iv = window.setInterval(() => {
       idx += 1;
       setLoadingStatus(idx % LOADING_MSGS.length);
     }, 900);
-    setTimeout(() => {
+    loadingTimers.current.push(iv);
+    const tid = window.setTimeout(() => {
       clearInterval(iv);
       setLoadingDone(true);
     }, 4500);
+    loadingTimers.current.push(tid);
   };
 
   const FEATURE_MSGS = [
@@ -6639,20 +6679,24 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
     "Hampir selesai, sebentar lagi!",
   ];
   const startFeatureLoading = () => {
+    featureTimers.current.forEach(id => { clearTimeout(id); clearInterval(id); });
+    featureTimers.current = [];
     setFeatureLoading(true);
     setFeatureLoadingDone(false);
     setFeatureLoadingStatus(0);
     let idx = 0;
-    const iv = setInterval(() => {
+    const iv = window.setInterval(() => {
       idx += 1;
       setFeatureLoadingStatus(idx % FEATURE_MSGS.length);
     }, 1000);
-    setTimeout(() => {
+    featureTimers.current.push(iv);
+    const tid = window.setTimeout(() => {
       clearInterval(iv);
       setFeatureLoadingDone(true);
     }, 4000);
-    // Auto-navigate after loading
-    setTimeout(() => {
+    featureTimers.current.push(tid);
+    // Auto-navigate after loading completes
+    const navTid = window.setTimeout(() => {
       setFeatureLoading(false);
       setFeatureLoadingDone(false);
       const FITUR_DEST: Record<string, FinishDest> = {
@@ -6661,7 +6705,8 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
         skripsi:   { tab: "fitur", featureKey: "skripsi" },
       };
       onFinish(FITUR_DEST[selectedFitur] ?? { prompt: loadingPrompt });
-    }, 3800);
+    }, 4200);
+    featureTimers.current.push(navTid);
   };
 
   const progress = step === 0 ? 0 : (step / TOTAL) * 100;
@@ -8316,6 +8361,7 @@ export default function AlerinPage() {
       {tab === "quizlab" && <QuizlabTab onTab={setTab} />}
       {tab === "profil" && <ProfilTab onTab={setTab} onRegister={() => setRegisterOpen(true)} />}
       {registerOpen && (
+        <RegisterErrorBoundary>
         <RegisterModal
           onClose={() => setRegisterOpen(false)}
           onFinish={(dest) => {
@@ -8330,6 +8376,7 @@ export default function AlerinPage() {
             }
           }}
         />
+        </RegisterErrorBoundary>
       )}
     </Shell>
   );
