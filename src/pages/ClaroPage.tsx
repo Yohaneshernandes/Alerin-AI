@@ -6658,6 +6658,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
       const FITUR_DEST: Record<string, FinishDest> = {
         jurnal:    { tab: "fitur", featureKey: "jurnal" },
         parafrase: { tab: "fitur", featureKey: "parafrase" },
+        skripsi:   { tab: "fitur", featureKey: "skripsi" },
       };
       onFinish(FITUR_DEST[selectedFitur] ?? { prompt: loadingPrompt });
     }, 3800);
@@ -7915,130 +7916,72 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                 <div className="flex-1 h-px" style={{ background: "linear-gradient(90deg, rgba(37,99,235,0), rgba(37,99,235,0.5))" }}/>
               </div>
 
-              {/* Feature cards — stacked vertically */}
+              {/* Feature cards — dynamic based on kendala */}
               <div className="flex flex-col gap-3 w-full">
+                {(() => {
+                  // Get unique recommended features from selected kendala
+                  const recFeatures = [...new Set(kendala.map(k => KENDALA_FITUR_MAP[k]).filter(Boolean))];
+                  // If no kendala, show both default
+                  const features = recFeatures.length > 0 ? recFeatures : ["Parafrase", "Cari Jurnal"];
 
-                {/* === Fitur Parafrase === */}
-                <button
-                  onClick={() => setSelectedFitur(selectedFitur === "parafrase" ? "" : "parafrase")}
-                  className="w-full relative transition-all active:scale-[0.98] overflow-hidden text-left"
-                  style={{
-                    borderRadius: "16px",
-                    boxShadow: selectedFitur === "parafrase"
-                      ? "0 0 0 2.5px #2563eb, 0 8px 32px rgba(37,99,235,0.25)"
-                      : "0 2px 12px rgba(0,0,0,0.06)",
-                  }}>
-                  {/* Card background — solid blue */}
-                  <div className="absolute inset-0 rounded-[16px]"
-                    style={{ background: "#3b7dd8" }}/>
-                  {/* Top banner — only show when kendala maps to Parafrase */}
-                  {kendalaFitur === "Parafrase" && (
-                    <div className="relative z-10 px-4 py-2 rounded-t-[16px]" style={{ background: "rgba(0,0,0,0.15)" }}>
-                      <p className="text-[11px] sm:text-[12px] font-semibold text-white/90 text-center">
-                        Direkomendasikan untuk: {kendala[0]}
-                      </p>
-                    </div>
-                  )}
-                  {/* Content */}
-                  <div className="relative z-10 flex items-start gap-4 px-5 py-5">
-                    {/* Text */}
-                    <div className="flex-1 min-w-0 pt-2">
-                      <h3 className="font-['Plus_Jakarta_Sans'] font-extrabold text-[18px] sm:text-[20px] text-white leading-[24px] mb-2">Fitur Parafrase</h3>
-                      <p className="font-['Plus_Jakarta_Sans'] text-[12px] sm:text-[13px] text-white/80 leading-[18px]">Fitur parafrase membantu mengubah kalimat menjadi versi baru dengan makna yang sama, membuat tulisan lebih segar dan mudah dipahami.</p>
-                    </div>
-                    {/* Illustration — positioned to overflow bottom-right */}
-                    <div className="shrink-0 relative" style={{ width: 140, height: 130, marginTop: -10, marginRight: -10 }}>
-                      <svg viewBox="0 0 150 140" fill="none" className="w-full h-full" style={{ overflow: "visible" }}>
-                        {/* Back document tilted */}
-                        <rect x="0" y="20" width="80" height="95" rx="10" fill="white" opacity="0.3" transform="rotate(-6 40 67)"/>
-                        {/* Front document */}
-                        <rect x="25" y="5" width="80" height="95" rx="10" fill="white"/>
-                        {/* Lines on document */}
-                        <rect x="37" y="25" width="48" height="4" rx="2" fill="#e2e8f0"/>
-                        <rect x="37" y="34" width="38" height="4" rx="2" fill="#e2e8f0"/>
-                        <rect x="37" y="43" width="52" height="4" rx="2" fill="#e2e8f0"/>
-                        <rect x="37" y="52" width="32" height="4" rx="2" fill="#e2e8f0"/>
-                        {/* ID badge circle */}
-                        <circle cx="50" cy="74" r="10" fill="#eff6ff" stroke="#93c5fd" strokeWidth="1.5"/>
-                        <text x="50" y="78" textAnchor="middle" fill="#3b82f6" fontSize="8" fontWeight="bold" fontFamily="sans-serif">ID</text>
-                        {/* APPROVED pill */}
-                        <rect x="65" y="67" width="42" height="13" rx="6.5" fill="#fce7f3"/>
-                        <text x="86" y="77" textAnchor="middle" fill="#db2777" fontSize="6.5" fontWeight="bold" fontFamily="sans-serif">APPROVED</text>
-                        {/* Red checkmark circle — bottom right, slightly outside */}
-                        <circle cx="95" cy="110" r="14" fill="#ef4444"/>
-                        <path d="M89 110l4 4 8-8" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    </div>
-                  </div>
-                  {/* Selected indicator */}
-                  {selectedFitur === "parafrase" && (
-                    <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-white flex items-center justify-center z-20 shadow-md pointer-events-none">
-                      <svg width="11" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4.5L4.2 8L11 1" stroke="#2563eb" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                    </div>
-                  )}
-                </button>
+                  const cards: { key: string; fitur: string; color: string; desc: string; kendalaMatch: string }[] = [
+                    { key: "parafrase", fitur: "Fitur Parafrase", color: "#3b7dd8", desc: "Fitur parafrase membantu mengubah kalimat menjadi versi baru dengan makna yang sama, membuat tulisan lebih segar dan mudah dipahami.", kendalaMatch: "Parafrase" },
+                    { key: "jurnal", fitur: "Cari Jurnal", color: "#a0522d", desc: "Fitur Cari Jurnal membantu menemukan jurnal dan referensi akademis yang relevan dengan topik penelitianmu.", kendalaMatch: "Cari Jurnal" },
+                    { key: "skripsi", fitur: "Skripsi, Tesis & Disertasi", color: "#1e6b52", desc: "Fitur ini membantu menyusun, mengoreksi, dan memperbaiki penulisan skripsi, tesis, atau disertasi secara menyeluruh.", kendalaMatch: "Skripsi/Tesis/Disertasi" },
+                  ];
 
-                {/* === Fitur Cari Jurnal === */}
-                <button
-                  onClick={() => setSelectedFitur(selectedFitur === "jurnal" ? "" : "jurnal")}
-                  className="w-full relative transition-all active:scale-[0.98] overflow-hidden text-left"
-                  style={{
-                    borderRadius: "16px",
-                    boxShadow: selectedFitur === "jurnal"
-                      ? "0 0 0 2.5px #2563eb, 0 8px 32px rgba(37,99,235,0.25)"
-                      : "0 2px 12px rgba(0,0,0,0.06)",
-                  }}>
-                  {/* Card background — solid brown */}
-                  <div className="absolute inset-0 rounded-[16px]"
-                    style={{ background: "#a0522d" }}/>
-                  {/* Top banner — only show for referensi kendala */}
-                  {kendalaFitur === "Cari Jurnal" && (
-                    <div className="relative z-10 px-4 py-2 rounded-t-[16px]" style={{ background: "rgba(0,0,0,0.15)" }}>
-                      <p className="text-[11px] sm:text-[12px] font-semibold text-white/90 text-center">
-                        Direkomendasikan untuk: {kendala[0]}
-                      </p>
-                    </div>
-                  )}
-                  {/* Content */}
-                  <div className="relative z-10 flex items-start gap-4 px-5 py-5">
-                    {/* Text */}
-                    <div className="flex-1 min-w-0 pt-2">
-                      <h3 className="font-['Plus_Jakarta_Sans'] font-extrabold text-[18px] sm:text-[20px] text-white leading-[24px] mb-2">Cari Jurnal</h3>
-                      <p className="font-['Plus_Jakarta_Sans'] text-[12px] sm:text-[13px] text-white/80 leading-[18px]">Fitur Cari Jurnal membantu menemukan jurnal dan referensi akademis yang relevan dengan topik penelitianmu.</p>
-                    </div>
-                    {/* Illustration — stats card positioned bottom-right */}
-                    <div className="shrink-0 relative" style={{ width: 150, height: 120, marginTop: -5 }}>
-                      <div className="rounded-[14px] overflow-hidden flex flex-col items-center justify-center gap-2 py-4 px-3 absolute bottom-0 right-0" style={{ background: "rgba(255,255,255,0.95)", width: 150 }}>
-                        {/* Stats */}
-                        <div className="flex gap-3 w-full px-2">
-                          <div className="flex-1">
-                            <p className="text-[7px] sm:text-[8px] font-bold text-[#94a3b8] uppercase tracking-wider">LP Indeks</p>
-                            <p className="text-[15px] sm:text-[18px] font-extrabold text-[#1e293b] leading-tight">258 <span className="text-[9px] sm:text-[10px] font-semibold text-[#94a3b8]">PSI</span></p>
-                            <div className="h-[3px] rounded-full mt-1" style={{ background: "linear-gradient(90deg, #f59e0b, #ef4444)" }}/>
+                  return features.map(f => {
+                    const card = cards.find(c => c.kendalaMatch === f);
+                    if (!card) return null;
+                    const sel = selectedFitur === card.key;
+                    // Find which kendala matched this feature
+                    const matchedKendala = kendala.find(k => KENDALA_FITUR_MAP[k] === card.kendalaMatch);
+
+                    return (
+                      <button
+                        key={card.key}
+                        onClick={() => setSelectedFitur(sel ? "" : card.key)}
+                        className="w-full relative transition-all active:scale-[0.98] overflow-hidden text-left"
+                        style={{
+                          borderRadius: "16px",
+                          boxShadow: sel
+                            ? "0 0 0 2.5px #2563eb, 0 8px 32px rgba(37,99,235,0.25)"
+                            : "0 2px 12px rgba(0,0,0,0.06)",
+                        }}>
+                        {/* Card background */}
+                        <div className="absolute inset-0 rounded-[16px]" style={{ background: card.color }}/>
+                        {/* Top banner */}
+                        {matchedKendala && (
+                          <div className="relative z-10 px-4 py-2 rounded-t-[16px]" style={{ background: "rgba(0,0,0,0.15)" }}>
+                            <p className="text-[11px] sm:text-[12px] font-semibold text-white/90 text-center">
+                              Direkomendasikan untuk: {matchedKendala}
+                            </p>
                           </div>
-                          <div className="flex-1">
-                            <p className="text-[7px] sm:text-[8px] font-bold text-[#94a3b8] uppercase tracking-wider">RP Akurasi</p>
-                            <p className="text-[15px] sm:text-[18px] font-extrabold text-[#1e293b] leading-tight">98 <span className="text-[9px] sm:text-[10px] font-semibold text-[#94a3b8]">PSI</span></p>
-                            <div className="h-[3px] rounded-full mt-1" style={{ background: "linear-gradient(90deg, #f59e0b, #ef4444)" }}/>
+                        )}
+                        {/* Content */}
+                        <div className="relative z-10 flex items-start gap-4 px-5 py-5">
+                          <div className="flex-1 min-w-0 pt-2">
+                            <h3 className="font-['Plus_Jakarta_Sans'] font-extrabold text-[18px] sm:text-[20px] text-white leading-[24px] mb-2">{card.fitur}</h3>
+                            <p className="font-['Plus_Jakarta_Sans'] text-[12px] sm:text-[13px] text-white/80 leading-[18px]">{card.desc}</p>
+                          </div>
+                          {/* Illustration placeholder */}
+                          <div className="shrink-0 w-[120px] h-[100px] sm:w-[150px] sm:h-[130px] rounded-[14px] flex items-center justify-center" style={{ background: "rgba(255,255,255,0.12)" }}>
+                            <svg viewBox="0 0 60 60" fill="none" className="w-12 h-12 sm:w-14 sm:h-14 opacity-50">
+                              <circle cx="30" cy="30" r="28" stroke="white" strokeWidth="2" strokeDasharray="4 4"/>
+                              <text x="30" y="34" textAnchor="middle" fill="white" fontSize="10" fontWeight="bold" fontFamily="sans-serif">{card.key === "skripsi" ? "SKR" : card.key === "jurnal" ? "JRNL" : "PARA"}</text>
+                            </svg>
                           </div>
                         </div>
-                        {/* Bar chart */}
-                        <div className="flex items-end gap-[3px] h-5 sm:h-6">
-                          {[10, 7, 14, 6, 12, 9, 10].map((h, i) => (
-                            <div key={i} className="w-[5px] sm:w-[6px] rounded-full" style={{ height: h, background: i === 2 ? "#ef4444" : "#f59e0b" }}/>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  {/* Selected indicator */}
-                  {selectedFitur === "jurnal" && (
-                    <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-white flex items-center justify-center z-20 shadow-md pointer-events-none">
-                      <svg width="11" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4.5L4.2 8L11 1" stroke="#2563eb" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                    </div>
-                  )}
-                </button>
-
+                        {/* Selected indicator */}
+                        {sel && (
+                          <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-white flex items-center justify-center z-20 shadow-md pointer-events-none">
+                            <svg width="11" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4.5L4.2 8L11 1" stroke="#2563eb" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                          </div>
+                        )}
+                      </button>
+                    );
+                  });
+                })()}
               </div>
             </>
           )}
