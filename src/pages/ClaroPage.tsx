@@ -7926,20 +7926,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                           {/* Illustration — centered vertically */}
                           <div className="shrink-0 w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] flex items-center justify-center">
                             {card.key === "parafrase" && (
-                              <svg viewBox="0 0 150 140" fill="none" className="w-full h-full" style={{ overflow: "visible" }}>
-                                <rect x="0" y="20" width="80" height="95" rx="10" fill="white" opacity="0.3" transform="rotate(-6 40 67)"/>
-                                <rect x="25" y="5" width="80" height="95" rx="10" fill="white"/>
-                                <rect x="37" y="25" width="48" height="4" rx="2" fill="#e2e8f0"/>
-                                <rect x="37" y="34" width="38" height="4" rx="2" fill="#e2e8f0"/>
-                                <rect x="37" y="43" width="52" height="4" rx="2" fill="#e2e8f0"/>
-                                <rect x="37" y="52" width="32" height="4" rx="2" fill="#e2e8f0"/>
-                                <circle cx="50" cy="74" r="10" fill="#eff6ff" stroke="#93c5fd" strokeWidth="1.5"/>
-                                <text x="50" y="78" textAnchor="middle" fill="#3b82f6" fontSize="8" fontWeight="bold" fontFamily="sans-serif">ID</text>
-                                <rect x="65" y="67" width="42" height="13" rx="6.5" fill="#fce7f3"/>
-                                <text x="86" y="77" textAnchor="middle" fill="#db2777" fontSize="6.5" fontWeight="bold" fontFamily="sans-serif">APPROVED</text>
-                                <circle cx="95" cy="110" r="14" fill="#ef4444"/>
-                                <path d="M89 110l4 4 8-8" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
-                              </svg>
+                              <img src="/assets/Aset%20Fitur%20Parafrase.png" alt="Parafrase" className="w-[90px] h-[90px] sm:w-[110px] sm:h-[110px] object-contain"/>
                             )}
                             {card.key === "jurnal" && (
                               <div className="rounded-[14px] overflow-hidden flex flex-col items-center justify-center gap-2 py-4 px-3" style={{ background: "rgba(255,255,255,0.95)", width: "100%", height: "100%" }}>
