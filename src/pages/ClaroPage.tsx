@@ -6631,6 +6631,13 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
       clearInterval(iv);
       setLoadingDone(true);
     }, 4500);
+    // Auto-navigate after loading
+    setTimeout(() => {
+      setLoading(false);
+      setLoadingDone(false);
+      setSelectedFitur("");
+      transition(TOTAL);
+    }, 5300);
   };
 
   const FEATURE_MSGS = [
@@ -6818,7 +6825,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
 
       {/* Same progress bar style as registration slides */}
       <div className="absolute top-0 left-0 right-0 h-1.5 z-10" style={{ background: "rgba(203,213,225,0.4)" }}>
-        <div className="h-full rounded-full" style={{ background: "linear-gradient(90deg,#2563eb,#6366f1)", animation: loadingDone ? "none" : "fillBar 4.4s cubic-bezier(0.33,0,0.66,1) forwards", width: loadingDone ? "100%" : undefined }} />
+        <div className="h-full rounded-full" style={{ background: "#2563eb", animation: loadingDone ? "none" : "fillBar 4.4s cubic-bezier(0.33,0,0.66,1) forwards", width: loadingDone ? "100%" : undefined }} />
       </div>
 
       <div className="relative z-10 flex flex-col items-center text-center px-6 max-w-xl w-full">
@@ -6829,17 +6836,11 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
           Kami sedang merancang jalur akademik personal untukmu.
         </p>
 
-        {/* Arc ring (static) + floating mascot */}
+        {/* Arc ring (static) + logo (static) */}
         <div className="relative w-52 h-52 mb-5">
           <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 208 208">
-            <defs>
-              <linearGradient id="arcGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#2563eb"/>
-                <stop offset="100%" stopColor="#6366f1"/>
-              </linearGradient>
-            </defs>
             <circle cx="104" cy="104" r="96" fill="none" stroke="#dbeafe" strokeWidth="10"/>
-            <circle cx="104" cy="104" r="96" fill="none" stroke="url(#arcGrad)" strokeWidth="10"
+            <circle cx="104" cy="104" r="96" fill="none" stroke="#2563eb" strokeWidth="10"
               strokeLinecap="round"
               strokeDasharray="603"
               strokeDashoffset={loadingDone ? 0 : undefined}
@@ -6848,10 +6849,10 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                        transition: loadingDone ? "stroke-dashoffset 0.4s ease" : undefined }}
             />
           </svg>
-          {/* Floating logo in center */}
+          {/* Static logo in center */}
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="w-36 h-36 rounded-full overflow-hidden flex items-center justify-center"
-              style={{ background: "white", boxShadow: "0 4px 20px rgba(0,0,0,0.08)", animation: "floatUpDown 2.4s ease-in-out infinite" }}>
+              style={{ background: "white", boxShadow: "0 4px 20px rgba(0,0,0,0.08)" }}>
               <img
                 src="/assets/alerin-logo.png"
                 alt="Alerin"
@@ -6863,23 +6864,12 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
 
         {/* Status text — fades in each time it changes */}
         <p key={loadingDone ? "done" : loadingStatus} className="text-sm mb-7"
-          style={{ minHeight: "1.4rem", color: "#6366f1", animation: "fadeSlideUp 0.5s ease forwards" }}>
-          {loadingDone ? "Semuanya siap! 🎉" : LOADING_MSGS[loadingStatus]}
+          style={{ minHeight: "1.4rem", color: "#2563eb", animation: "fadeSlideUp 0.5s ease forwards" }}>
+          {loadingDone ? "Semuanya siap!" : LOADING_MSGS[loadingStatus]}
         </p>
-
-        {/* CTA button */}
-        <div style={{ opacity: loadingDone ? 1 : 0, transform: loadingDone ? "translateY(0)" : "translateY(12px)", transition: "opacity 0.5s ease, transform 0.5s ease", pointerEvents: loadingDone ? "auto" : "none" }}>
-          <button
-            onClick={() => { setLoading(false); setLoadingDone(false); setSelectedFitur(""); transition(TOTAL); }}
-            className="px-10 py-4 rounded-2xl text-white font-bold text-base active:scale-95 transition-transform"
-            style={{ background: "linear-gradient(135deg,#2563eb,#6366f1)", boxShadow: "0 6px 24px rgba(37,99,235,0.3)" }}>
-            Lihat Rekomendasi Fitur 🎉
-          </button>
-        </div>
       </div>
 
       <style>{`
-        @keyframes floatUpDown{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
         @keyframes fadeSlideUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
         @keyframes fillArc{from{stroke-dashoffset:603}to{stroke-dashoffset:0}}
         @keyframes fillBar{from{width:0%}to{width:95%}}
