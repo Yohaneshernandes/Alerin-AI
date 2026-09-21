@@ -6631,13 +6631,6 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
       clearInterval(iv);
       setLoadingDone(true);
     }, 4500);
-    // Auto-navigate after loading
-    setTimeout(() => {
-      setLoading(false);
-      setLoadingDone(false);
-      setSelectedFitur("");
-      transition(TOTAL);
-    }, 5300);
   };
 
   const FEATURE_MSGS = [
@@ -6867,6 +6860,16 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
           style={{ minHeight: "1.4rem", color: "#2563eb", animation: "fadeSlideUp 0.5s ease forwards" }}>
           {loadingDone ? "Semuanya siap!" : LOADING_MSGS[loadingStatus]}
         </p>
+
+        {/* CTA button */}
+        <div style={{ opacity: loadingDone ? 1 : 0, transform: loadingDone ? "translateY(0)" : "translateY(12px)", transition: "opacity 0.5s ease, transform 0.5s ease", pointerEvents: loadingDone ? "auto" : "none" }}>
+          <button
+            onClick={() => { setLoading(false); setLoadingDone(false); setSelectedFitur(""); transition(TOTAL); }}
+            className="px-10 py-4 rounded-2xl text-white font-bold text-base active:scale-95 transition-transform"
+            style={{ background: "#2563eb", boxShadow: "0 6px 24px rgba(37,99,235,0.3)" }}>
+            Lihat Rekomendasi Fitur
+          </button>
+        </div>
       </div>
 
       <style>{`
