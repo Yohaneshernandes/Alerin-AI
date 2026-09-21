@@ -6741,7 +6741,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
           </div>
         </div>
         <div className="hidden sm:flex w-10 h-10 items-center justify-center shrink-0">
-          <div className="w-7 h-7 rounded-full overflow-hidden"><img src="/assets/alerin-logo.png" alt="Alerin" className="w-full h-full object-cover"/></div>
+          <div className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold text-white" style={{ background: "linear-gradient(135deg, #f97316, #ea580c)" }}>RA</div>
         </div>
       </div>
 
@@ -6987,9 +6987,9 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
               <div className="h-full rounded-full transition-all duration-500 ease-out" style={{ width: `${progress}%`, background: "linear-gradient(90deg,#60a5fa,#6366f1)" }}/>
             </div>
           </div>
-          {/* Alerin logo — hidden on mobile */}
+          {/* Profile avatar — hidden on mobile */}
           <div className="hidden sm:flex w-10 h-10 items-center justify-center shrink-0">
-            <div className="w-7 h-7 rounded-full overflow-hidden"><img src="/assets/alerin-logo.png" alt="Alerin" className="w-full h-full object-cover"/></div>
+            <div className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold text-white" style={{ background: "linear-gradient(135deg, #f97316, #ea580c)" }}>RA</div>
           </div>
         </div>
       )}
@@ -7843,8 +7843,13 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
             <>
               <PintarlyMascotBubble
                 pre="Fitur yang"
-                bold="pas buat kamu ✨"
-                sub="Berdasarkan kendalamu, ini fitur yang paling bisa membantu."
+                bold="pas buat kamu"
+                sub={(() => {
+                  const rec = kendala.length > 0 ? KENDALA_FITUR_MAP[kendala[0]] : null;
+                  if (rec === "Cari Jurnal") return "Kami rekomendasikan fitur pencarian jurnal untuk kendalamu.";
+                  if (rec === "Skripsi/Tesis/Disertasi") return "Kami rekomendasikan fitur skripsi, tesis & disertasi untuk kendalamu.";
+                  return "Kami rekomendasikan fitur parafrase untuk kendalamu.";
+                })()}
               />
 
               {/* DIREKOMENDASIKAN divider */}
