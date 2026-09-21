@@ -6646,11 +6646,11 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
     const iv = setInterval(() => {
       idx += 1;
       setFeatureLoadingStatus(idx % FEATURE_MSGS.length);
-    }, 800);
+    }, 1000);
     setTimeout(() => {
       clearInterval(iv);
       setFeatureLoadingDone(true);
-    }, 3000);
+    }, 4000);
     // Auto-navigate after loading
     setTimeout(() => {
       setFeatureLoading(false);
@@ -6888,24 +6888,24 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
       <div className="relative mb-8">
         {/* Outer glow */}
         <div className="absolute inset-0 -m-16 sm:-m-20 rounded-full" style={{
-          background: "radial-gradient(circle, rgba(37,99,235,0.18) 0%, rgba(37,99,235,0.06) 50%, transparent 70%)",
-          animation: "glowPulse 3s ease-in-out infinite",
+          background: "radial-gradient(circle, rgba(37,99,235,0.2) 0%, rgba(37,99,235,0.08) 40%, transparent 70%)",
+          animation: "glowPulse 2s ease-in-out infinite",
         }}/>
-        {/* Animated rays */}
-        <div className="absolute inset-0 -m-12 sm:-m-16" style={{ animation: "glowSpin 8s linear infinite" }}>
-          {[0, 45, 90, 135, 180, 225, 270, 315].map((deg) => (
+        {/* Static rays — only pulse brightness */}
+        <div className="absolute inset-0 -m-12 sm:-m-16">
+          {[0, 45, 90, 135, 180, 225, 270, 315].map((deg, i) => (
             <div key={deg} className="absolute top-1/2 left-1/2 w-[2px] sm:w-[3px] rounded-full origin-bottom" style={{
               height: "40px",
-              background: "linear-gradient(to top, rgba(37,99,235,0.25), transparent)",
+              background: "linear-gradient(to top, rgba(37,99,235,0.3), transparent)",
               transform: `translate(-50%, -100%) rotate(${deg}deg)`,
-              animation: `rayPulse 3s ease-in-out ${deg / 360}s infinite`,
+              animation: `rayPulse 2s ease-in-out ${i * 0.25}s infinite`,
             }}/>
           ))}
         </div>
         {/* Inner glow */}
         <div className="absolute inset-0 -m-8 sm:-m-10 rounded-full" style={{
-          background: "radial-gradient(circle, rgba(37,99,235,0.12) 0%, transparent 60%)",
-          animation: "glowPulse 3s ease-in-out 0.5s infinite",
+          background: "radial-gradient(circle, rgba(37,99,235,0.15) 0%, transparent 60%)",
+          animation: "glowPulse 2s ease-in-out 0.3s infinite",
         }}/>
         {/* Logo */}
         <div className="relative w-32 h-32 sm:w-40 sm:h-40 rounded-full flex items-center justify-center z-10" style={{
@@ -6936,9 +6936,8 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
       </div>
 
       <style>{`
-        @keyframes glowPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.7;transform:scale(1.08)}}
-        @keyframes glowSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-        @keyframes rayPulse{0%,100%{opacity:0.3;height:40px}50%{opacity:1;height:50px}}
+        @keyframes glowPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(1.05)}}
+        @keyframes rayPulse{0%,100%{opacity:0.2}50%{opacity:1}}
         @keyframes fadeSlideUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
       `}</style>
     </div>
