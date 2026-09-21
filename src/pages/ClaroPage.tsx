@@ -7754,34 +7754,34 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
           })()}
 
           {/* Step 8: Kendala */}
-          {step === 8 && (() => {
+           {step === 8 && (() => {
             const MAX = 2;
-            const OPTS_BY_BANTU: Record<string, { label: string; icon: React.ReactNode }[]> = {
+            const OPTS_BY_BANTU: Record<string, { label: string; fitur: string; icon: React.ReactNode }[]> = {
               matakuliah: [
-                { label: "Belum memahami materinya", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> },
-                { label: "Sulit menemukan referensi tambahan", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> },
-                { label: "Tidak tahu bagian mana yang harus dipelajari terlebih dahulu", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg> },
-                { label: "Sulit berlatih soal", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> },
-                { label: "Lainnya", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg> },
+                { label: "Belum memahami materinya", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> },
+                { label: "Sulit menemukan referensi tambahan", fitur: "Cari Jurnal", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> },
+                { label: "Tidak tahu bagian mana yang harus dipelajari terlebih dahulu", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg> },
+                { label: "Sulit berlatih soal", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> },
+                { label: "Lainnya", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg> },
               ],
               tugas: [
-                { label: "Belum memahami instruksi tugas", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> },
-                { label: "Bingung memulai dari bagian mana", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> },
-                { label: "Sulit mencari referensi yang sesuai", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> },
-                { label: "Deadline sudah dekat", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> },
-                { label: "Lainnya", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg> },
+                { label: "Belum memahami instruksi tugas", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> },
+                { label: "Bingung memulai dari bagian mana", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> },
+                { label: "Sulit mencari referensi yang sesuai", fitur: "Cari Jurnal", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> },
+                { label: "Deadline sudah dekat", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> },
+                { label: "Lainnya", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg> },
               ],
               skripsi: [
-                { label: "Bingung memulai penelitian", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> },
-                { label: "Belum memiliki topik/judul", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg> },
-                { label: "Stuck dan tidak tahu harus menulis apa lagi", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> },
-                { label: "Sulit menemukan referensi yang relevan", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> },
-                { label: "Banyak revisi dari dosen", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> },
-                { label: "Khawatir hasil plagiasi tinggi", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> },
-                { label: "Kesulitan mengolah atau menganalisis data", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg> },
-                { label: "Penulisan akademik atau grammar masih kurang tepat", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> },
-                { label: "Target penyelesaian terasa berat", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> },
-                { label: "Lainnya", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg> },
+                { label: "Bingung memulai penelitian", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> },
+                { label: "Belum memiliki topik/judul", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg> },
+                { label: "Stuck dan tidak tahu harus menulis apa lagi", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> },
+                { label: "Sulit menemukan referensi yang relevan", fitur: "Cari Jurnal", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> },
+                { label: "Banyak revisi dari dosen", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> },
+                { label: "Khawatir hasil plagiasi tinggi", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> },
+                { label: "Kesulitan mengolah atau menganalisis data", fitur: "Skripsi/Tesis/Disertasi", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg> },
+                { label: "Penulisan akademik atau grammar masih kurang tepat", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> },
+                { label: "Target penyelesaian terasa berat", fitur: "Skripsi/Tesis/Disertasi", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> },
+                { label: "Lainnya", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg> },
               ],
             };
             const opts = OPTS_BY_BANTU[bantuPilihan] ?? OPTS_BY_BANTU.skripsi;
@@ -7822,7 +7822,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                           boxShadow: on ? "0 2px 8px rgba(37,99,235,0.18)" : "0 1px 3px rgba(0,0,0,0.06)",
                           cursor: maxed ? "not-allowed" : "pointer",
                         }}>
-                        {o.label}
+                        {o.label} <span className="text-[11px] opacity-60 font-normal">({o.fitur})</span>
                       </button>
                     );
                   })}
@@ -7912,7 +7912,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                   {/* Top banner */}
                   <div className="relative z-10 px-4 py-2 rounded-t-[16px]" style={{ background: "rgba(0,0,0,0.15)" }}>
                     <p className="text-[11px] sm:text-[12px] font-semibold text-white/90 text-center">
-                      {kendala.length > 0 ? `Paling relevan: ${kendala[0]}` : "Paling relevan untuk kendalamu"}
+                      {kendala.length > 0 ? `Direkomendasikan untuk: ${kendala[0]}` : "Paling relevan untuk kendalamu"}
                     </p>
                   </div>
                   {/* Content */}
@@ -7967,12 +7967,20 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                   {/* Card background — solid brown */}
                   <div className="absolute inset-0 rounded-[16px]"
                     style={{ background: "#a0522d" }}/>
+                  {/* Top banner — only show for referensi kendala */}
+                  {kendala.some(k => k.toLowerCase().includes("referensi")) && (
+                    <div className="relative z-10 px-4 py-2 rounded-t-[16px]" style={{ background: "rgba(0,0,0,0.15)" }}>
+                      <p className="text-[11px] sm:text-[12px] font-semibold text-white/90 text-center">
+                        Direkomendasikan untuk: {kendala.find(k => k.toLowerCase().includes("referensi"))}
+                      </p>
+                    </div>
+                  )}
                   {/* Content */}
                   <div className="relative z-10 flex items-start gap-4 px-5 py-5">
                     {/* Text */}
                     <div className="flex-1 min-w-0 pt-2">
                       <h3 className="font-['Plus_Jakarta_Sans'] font-extrabold text-[18px] sm:text-[20px] text-white leading-[24px] mb-2">Cari Jurnal</h3>
-                      <p className="font-['Plus_Jakarta_Sans'] text-[12px] sm:text-[13px] text-white/80 leading-[18px]">Fitur parafrase membantu mengubah kalimat menjadi versi baru dengan makna yang sama, membuat tulisan lebih segar dan mudah dipahami.</p>
+                      <p className="font-['Plus_Jakarta_Sans'] text-[12px] sm:text-[13px] text-white/80 leading-[18px]">Fitur Cari Jurnal membantu menemukan jurnal dan referensi akademis yang relevan dengan topik penelitianmu.</p>
                     </div>
                     {/* Illustration — stats card positioned bottom-right */}
                     <div className="shrink-0 relative" style={{ width: 150, height: 120, marginTop: -5 }}>
