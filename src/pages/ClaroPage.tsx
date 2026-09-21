@@ -6629,6 +6629,16 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
       clearInterval(iv);
       setFeatureLoadingDone(true);
     }, 3000);
+    // Auto-navigate after loading
+    setTimeout(() => {
+      setFeatureLoading(false);
+      setFeatureLoadingDone(false);
+      const FITUR_DEST: Record<string, FinishDest> = {
+        jurnal:    { tab: "fitur", featureKey: "jurnal" },
+        parafrase: { tab: "fitur", featureKey: "parafrase" },
+      };
+      onFinish(FITUR_DEST[selectedFitur] ?? { prompt: loadingPrompt });
+    }, 3800);
   };
 
   const progress = step === 0 ? 0 : (step / TOTAL) * 100;
@@ -6885,19 +6895,19 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
       <div className="absolute w-48 h-48 rounded-full opacity-15" style={{ bottom: "10%", right: "-5%", background: "radial-gradient(circle, #a5b4fc, transparent)" }}/>
       <div className="absolute w-32 h-32 rounded-full opacity-10" style={{ top: "30%", right: "15%", background: "radial-gradient(circle, #60a5fa, transparent)" }}/>
 
-      {/* Animated spinning arc */}
+      {/* Logo with spinning arc */}
       <div className="relative w-44 h-44 sm:w-52 sm:h-52 mb-6">
-        <svg className="absolute inset-0 w-full h-full" viewBox="0 0 208 208" style={{ animation: "featureSpin 3s linear infinite" }}>
+        <svg className="absolute inset-0 w-full h-full" viewBox="0 0 208 208" style={{ animation: "featureSpin 2s linear infinite" }}>
           <defs>
             <linearGradient id="featureArcGrad" x1="0%" y1="0%" x2="100%" y2="0%">
               <stop offset="0%" stopColor="#2563eb"/>
               <stop offset="100%" stopColor="#6366f1"/>
             </linearGradient>
           </defs>
-          <circle cx="104" cy="104" r="92" fill="none" stroke="#e0e7ff" strokeWidth="8"/>
-          <circle cx="104" cy="104" r="92" fill="none" stroke="url(#featureArcGrad)" strokeWidth="8"
+          <circle cx="104" cy="104" r="92" fill="none" stroke="#e0e7ff" strokeWidth="7"/>
+          <circle cx="104" cy="104" r="92" fill="none" stroke="url(#featureArcGrad)" strokeWidth="7"
             strokeLinecap="round"
-            strokeDasharray="200 400"
+            strokeDasharray="180 400"
           />
         </svg>
         {/* Center logo with pulse */}
@@ -6920,33 +6930,12 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
         </p>
       </div>
 
-      {/* Progress dots */}
-      <div className="flex items-center gap-2 mt-6">
-        {[0, 1, 2].map(i => (
-          <div key={i} className="w-2 h-2 rounded-full transition-all duration-300"
-            style={{
-              background: featureLoadingDone ? "#2563eb" : i <= featureLoadingStatus % 3 ? "#2563eb" : "#cbd5e1",
-              transform: i <= featureLoadingStatus % 3 ? "scale(1.2)" : "scale(1)",
-            }}/>
-        ))}
-      </div>
-
-      {/* Continue button (appears when done) */}
-      <div className="mt-8" style={{ opacity: featureLoadingDone ? 1 : 0, transform: featureLoadingDone ? "translateY(0)" : "translateY(12px)", transition: "all 0.5s ease", pointerEvents: featureLoadingDone ? "auto" : "none" }}>
-        <button
-          onClick={() => {
-            setFeatureLoading(false);
-            setFeatureLoadingDone(false);
-            const FITUR_DEST: Record<string, FinishDest> = {
-              jurnal:    { tab: "fitur", featureKey: "jurnal" },
-              parafrase: { tab: "fitur", featureKey: "parafrase" },
-            };
-            onFinish(FITUR_DEST[selectedFitur] ?? { prompt: loadingPrompt });
-          }}
-          className="px-8 py-3.5 rounded-2xl text-white font-bold text-[15px] active:scale-95 transition-all"
-          style={{ background: "linear-gradient(135deg, #2563eb, #6366f1)", boxShadow: "0 6px 24px rgba(37,99,235,0.3)" }}>
-          {selectedFitur === "parafrase" ? "Mulai Parafrase" : selectedFitur === "jurnal" ? "Mulai Cari Jurnal" : "Lanjut"} →
-        </button>
+      {/* Progress bar */}
+      <div className="w-48 sm:w-56 h-[6px] rounded-full bg-[#e0e7ff] mt-6 overflow-hidden">
+        <div className="h-full rounded-full transition-all duration-700 ease-out" style={{
+          background: "linear-gradient(90deg, #2563eb, #6366f1)",
+          width: featureLoadingDone ? "100%" : `${Math.min(95, ((featureLoadingStatus + 1) / FEATURE_MSGS.length) * 100)}%`,
+        }}/>
       </div>
 
       <style>{`
