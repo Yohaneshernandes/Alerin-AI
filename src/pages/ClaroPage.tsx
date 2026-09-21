@@ -6816,17 +6816,19 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
   if (loading) return (
     <div className="fixed inset-0 z-[300] flex flex-col items-center justify-center overflow-hidden" style={{ background: "linear-gradient(180deg, #f8faff 0%, #f0f5ff 50%, #f8faff 100%)" }}>
 
-      {/* Same progress bar style as registration slides */}
-      <div className="absolute top-0 left-0 right-0 h-1.5 z-10" style={{ background: "rgba(203,213,225,0.4)" }}>
+      {/* Same progress bar style as registration slides — hidden on mobile */}
+      <div className="hidden sm:block absolute top-0 left-0 right-0 h-1.5 z-10" style={{ background: "rgba(203,213,225,0.4)" }}>
         <div className="h-full rounded-full" style={{ background: "#2563eb", animation: loadingDone ? "none" : "fillBar 4.4s cubic-bezier(0.33,0,0.66,1) forwards", width: loadingDone ? "100%" : undefined }} />
       </div>
 
       <div className="relative z-10 flex flex-col items-center text-center px-6 max-w-xl w-full">
-        <h1 className="font-bold text-[22px] sm:text-3xl text-slate-900 mb-2 leading-snug" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
-          Terima kasih telah mempercayakan mimpimu pada kami
+        <h1 className="font-bold text-[19px] sm:text-3xl text-slate-900 mb-2 leading-snug" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+          <span className="sm:hidden">Terima kasih telah mempercayakan mimpimu</span>
+          <span className="hidden sm:inline">Terima kasih telah mempercayakan mimpimu pada kami</span>
         </h1>
-        <p className="text-slate-500 text-[13px] sm:text-[15px] mb-9 leading-relaxed">
-          Kami sedang merancang jalur akademik personal untukmu.
+        <p className="text-slate-500 text-[12px] sm:text-[15px] mb-9 leading-relaxed">
+          <span className="sm:hidden">Kami sedang merancang jalur akademik untukmu.</span>
+          <span className="hidden sm:inline">Kami sedang merancang jalur akademik personal untukmu.</span>
         </p>
 
         {/* Arc ring (static) + logo (static) */}
@@ -7054,8 +7056,8 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
           {/* Step 1: Akun */}
           {step === 1 && (
             <div>
-              {/* Mascot top section (Pintarly form style) */}
-              <div className="flex flex-col items-center mb-4 sm:mb-6 pt-1 sm:pt-2">
+              {/* Mascot top section — hidden on mobile, shown on desktop */}
+              <div className="hidden sm:flex flex-col items-center mb-4 sm:mb-6 pt-1 sm:pt-2">
                 <div className="relative mb-2.5 sm:mb-4">
                   <div className="absolute inset-[-8px] rounded-full blur-lg opacity-70" style={{ background: "radial-gradient(circle, rgba(219,234,254,1), rgba(135,209,235,0.4), rgba(255,225,111,0.4))" }}/>
                   <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden flex items-center justify-center bg-white shadow-md">
@@ -7070,6 +7072,16 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
               <div className="bg-white rounded-[16px] shadow-[0px_20px_25px_-5px_rgba(0,0,0,0.08),0px_8px_10px_-6px_rgba(0,0,0,0.06)] overflow-hidden">
                 {/* Top accent bar */}
                 <div className="h-1.5" style={{ background: "linear-gradient(90deg,#60a5fa,#6366f1)" }}/>
+                {/* Mobile header inside card */}
+                <div className="sm:hidden flex flex-col items-center pt-5 pb-3 px-4">
+                  <div className="relative mb-2">
+                    <div className="w-14 h-14 rounded-full overflow-hidden flex items-center justify-center bg-white shadow-md">
+                      <img src="/assets/alerin-logo.png" alt="Alerin" className="w-full h-full object-cover"/>
+                    </div>
+                  </div>
+                  <h2 className="font-['Plus_Jakarta_Sans'] font-bold text-[20px] text-[#1b1b1c] leading-[26px] tracking-[-0.5px]">Daftar Akun Alerin</h2>
+                  <p className="text-[12px] text-[#71717a] text-center leading-[18px] mt-0.5">Mulai perjalanan akademikmu yang lebih cerdas dengan panduan AI terpersonalisasi.</p>
+                </div>
                 <div className="p-4 sm:p-6 space-y-3 sm:space-y-4">
                   {/* Google button */}
                   <button className="w-full flex items-center justify-center gap-3 py-3 rounded-[12px] font-semibold text-[#1b1b1c] text-[14px] transition-all hover:shadow-md active:scale-[0.98]"
