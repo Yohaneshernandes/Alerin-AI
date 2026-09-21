@@ -6844,10 +6844,10 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                        transition: loadingDone ? "stroke-dashoffset 0.4s ease" : undefined }}
             />
           </svg>
-          {/* Static logo in center */}
+          {/* Floating logo in center */}
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="w-36 h-36 rounded-full overflow-hidden flex items-center justify-center"
-              style={{ background: "white", boxShadow: "0 4px 20px rgba(0,0,0,0.08)" }}>
+              style={{ background: "white", boxShadow: "0 4px 20px rgba(0,0,0,0.08)", animation: "floatUpDown 2.8s ease-in-out infinite" }}>
               <img
                 src="/assets/alerin-logo.png"
                 alt="Alerin"
