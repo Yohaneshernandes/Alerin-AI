@@ -6572,25 +6572,22 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
 
   // Kendala → recommended feature mapping
   const KENDALA_FITUR_MAP: Record<string, string> = {
-    // Mata Kuliah → Fitur Mata Kuliah
-    "Kesulitan memahami materi kuliah": "Mata Kuliah",
-    "Kesulitan mencari referensi materi": "Mata Kuliah",
-    "Kesulitan menentukan prioritas belajar": "Mata Kuliah",
-    "Kesulitan mengerjakan soal ujian": "Mata Kuliah",
-    // Tugas Kuliah → Fitur Mata Kuliah
-    "Belum memahami instruksi tugas": "Mata Kuliah",
-    "Bingung memulai dari bagian mana": "Mata Kuliah",
-    "Sulit mencari referensi yang sesuai": "Mata Kuliah",
-    "Deadline sudah dekat": "Mata Kuliah",
-    // Skripsi/Tesis/Disertasi
-    "Bingung memulai penelitian": "Skripsi/Tesis/Disertasi",
-    "Belum memiliki topik/judul": "Skripsi/Tesis/Disertasi",
-    "Stuck dan tidak tahu harus menulis apa lagi": "Skripsi/Tesis/Disertasi",
+    "Belum memahami materinya": "Parafrase",
+    "Sulit menemukan referensi tambahan": "Cari Jurnal",
+    "Tidak tahu bagian mana yang harus dipelajari terlebih dahulu": "Parafrase",
+    "Sulit berlatih soal": "Parafrase",
+    "Belum memahami instruksi tugas": "Parafrase",
+    "Bingung memulai dari bagian mana": "Parafrase",
+    "Sulit mencari referensi yang sesuai": "Cari Jurnal",
+    "Deadline sudah dekat": "Parafrase",
+    "Bingung memulai penelitian": "Parafrase",
+    "Belum memiliki topik/judul": "Parafrase",
+    "Stuck dan tidak tahu harus menulis apa lagi": "Parafrase",
     "Sulit menemukan referensi yang relevan": "Cari Jurnal",
-    "Banyak revisi dari dosen": "Skripsi/Tesis/Disertasi",
-    "Khawatir hasil plagiasi tinggi": "Cek Plagiarisme",
+    "Banyak revisi dari dosen": "Parafrase",
+    "Khawatir hasil plagiasi tinggi": "Parafrase",
     "Kesulitan mengolah atau menganalisis data": "Skripsi/Tesis/Disertasi",
-    "Penulisan akademik masih kurang tepat": "Parafrase",
+    "Penulisan akademik atau grammar masih kurang tepat": "Parafrase",
     "Target penyelesaian terasa berat": "Skripsi/Tesis/Disertasi",
   };
   const kendalaFitur = kendala.length > 0 ? KENDALA_FITUR_MAP[kendala[0]] ?? "Parafrase" : null;
@@ -6675,8 +6672,9 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
   };
 
   const FEATURE_MSGS = [
-    "Membuka pengalaman menarik untukmu",
-    "Hampir selesai, Alerin sedang bersiap!",
+    "Sedang menyiapkan fitur untukmu...",
+    "Mengkonfigurasi pengaturan personal...",
+    "Hampir selesai, sebentar lagi!",
   ];
   const startFeatureLoading = () => {
     featureTimers.current.forEach(id => { clearTimeout(id); clearInterval(id); });
@@ -6702,8 +6700,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
       const FITUR_DEST: Record<string, FinishDest> = {
         jurnal:    { tab: "fitur", featureKey: "jurnal" },
         parafrase: { tab: "fitur", featureKey: "parafrase" },
-        matakuliah: { tab: "fitur", featureKey: "jurnal" },
-        plagiarisme: { tab: "fitur", featureKey: "plagiasi" },
+        skripsi:   { tab: "fitur", featureKey: "skripsi" },
       };
       onFinish(FITUR_DEST[selectedFitur] ?? { prompt: loadingPrompt });
     }, 4200);
@@ -6959,12 +6956,12 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
 
       <div className="relative z-10 flex flex-col items-center text-center px-6 max-w-xl w-full">
         <h1 className="font-bold text-[19px] sm:text-3xl text-slate-900 mb-2 leading-snug" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
-          <span className="sm:hidden">Terima kasih telah mempercayakan mimpimu pada Alerin</span>
-          <span className="hidden sm:inline">Terima kasih telah mempercayakan mimpimu pada Alerin</span>
+          <span className="sm:hidden">Terima kasih telah mempercayakan mimpimu</span>
+          <span className="hidden sm:inline">Terima kasih telah mempercayakan mimpimu pada kami</span>
         </h1>
         <p className="text-slate-500 text-[12px] sm:text-[15px] mb-9 leading-relaxed">
-          <span className="sm:hidden">Sekarang, Alerin sedang merancang jalur akademik yang sesuai kebutuhanmu</span>
-          <span className="hidden sm:inline">Sekarang, Alerin sedang merancang jalur akademik yang sesuai kebutuhanmu</span>
+          <span className="sm:hidden">Kami sedang merancang jalur akademik untukmu.</span>
+          <span className="hidden sm:inline">Kami sedang merancang jalur akademik personal untukmu.</span>
         </p>
 
         {/* Arc ring (static) + logo (static) */}
@@ -7058,11 +7055,11 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
       {/* Status text */}
       <div className="text-center px-6">
         <h2 className="font-bold text-[20px] sm:text-[24px] text-[#1e293b] mb-2" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
-          {featureLoadingDone ? "Alerin siap membantumu." : "Membuka pengalaman menarik untukmu"}
+          {featureLoadingDone ? "Siap digunakan!" : "Menyiapkan fitur untukmu"}
         </h2>
         <p key={featureLoadingStatus} className="text-[13px] sm:text-[14px] text-[#64748b] leading-relaxed"
           style={{ animation: "fadeSlideUp 0.4s ease forwards" }}>
-          {featureLoadingDone ? "Alerin siap membantumu." : FEATURE_MSGS[featureLoadingStatus]}
+          {featureLoadingDone ? "Semua sudah terkonfigurasi dengan baik." : FEATURE_MSGS[featureLoadingStatus]}
         </p>
       </div>
 
@@ -7182,7 +7179,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                       <img src="/assets/6d9c1.svg" alt="" style={{ width: 13, height: 13, display: "inline-block" }}/>
                     </button>
                     <p className="text-[14px] sm:text-[17px] text-[#9ca3af] leading-relaxed mt-4" style={{ fontFamily: "Inter, sans-serif" }}>
-                      Digunakan 50.000+ mahasiswa Indonesia
+                      Dipercaya 50.000+ mahasiswa Indonesia
                     </p>
                   </div>
                 </div>
@@ -7333,7 +7330,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
           {/* Step 2: Jenjang */}
           {step === 2 && (
             <>
-              <PintarlyMascotBubble pre="Pilih" bold="Jenjang Akademikmu" />
+              <PintarlyMascotBubble pre="Pilih" bold="Jenjang Akademikmu" sub="Sesuaikan pilihanmu dengan tingkat pendidikan yang sedang kamu jalani" />
               <div className="space-y-[10px] sm:space-y-[14px]">
                 <RadioCard selected={jenjang === "S1"} onClick={() => pickAndAdvance(setJenjang, "S1")} icon={<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>} label="S1 Sarjana/ D4 Diploma" sublabel="Program Sarjana, D4, atau Terapan" />
                 <RadioCard selected={jenjang === "S2"} onClick={() => pickAndAdvance(setJenjang, "S2")} icon={<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>} label="S2 Magister" sublabel="Program Pascasarjana / Tesis"/>
@@ -7367,7 +7364,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
             const showDropdown = prodiSearch.trim().length > 0;
             return (
               <>
-                <PintarlyMascotBubble pre="Jurusan kuliahmu" bold="apa?" />
+                <PintarlyMascotBubble pre="Apa" bold="bidang studimu?" sub="Pilih jurusan atau program studi yang sedang kamu jalani." />
 
                 <div className="bg-white rounded-[24px] w-full drop-shadow-[0px_8px_15px_rgba(0,0,0,0.04)]" style={{ border: "1px solid #f1f5f9" }}>
                   <div className="flex flex-col gap-5 p-5">
@@ -7382,7 +7379,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                           <input
                             value={prodiSearch}
                             onChange={e => setProdiSearch(e.target.value)}
-                            placeholder="Ketik jurusan kuliahmu di sini..."
+                            placeholder="Ketik nama jurusan atau singkatan..."
                             className="flex-1 text-[14px] text-[#111827] outline-none bg-transparent placeholder:text-[#9ca3af]"
                           />
                           <button onClick={() => setProdiSearch("")} className="shrink-0 ml-2 text-[#9ca3af] transition-all">
@@ -7475,22 +7472,24 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
             );
           })()}
 
-           {/* Step 5: Semester */}
-           {step === 5 && (() => {
-            // S2 = 1–4, S1/S3 = 1–8+
+          {/* Step 5: Semester */}
+          {step === 5 && (() => {
+            // S2 = 1–8, S1/S3 = 1–14
             const semNums: string[] = jenjang === "S2"
-              ? ["1","2","3","4"]
-              : ["1","2","3","4","5","6","7","8+"];
+              ? ["1","2","3","4","5","6","7","8"]
+              : ["1","2","3","4","5","6","7","8","9","10","11","12","13","14"];
             const toKey = (n: string) => `Semester ${n}`;
             return (
               <>
                 <PintarlyMascotBubble
                   pre="Saat ini kamu"
                   bold="sedang di semester berapa?"
+                  sub="Pilihan semester menyesuaikan dengan jenjang akademik yang kamu pilih."
                 />
 
-                {/* 2-column grid */}
-                <div className="w-full grid grid-cols-2 gap-2 sm:gap-[10px]">
+
+                {/* 3-column grid */}
+                <div className="w-full grid grid-cols-3 gap-2 sm:gap-[10px]">
                   {semNums.map((n) => {
                     const key = toKey(n);
                     const on = semester === key;
@@ -7554,7 +7553,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
             const showUniDropdown = uniSearch.trim().length > 0;
             return (
               <>
-                <PintarlyMascotBubble pre="Kamu kuliah" bold="di mana?" />
+                <PintarlyMascotBubble pre="Kamu dari" bold="kampus mana?" sub="Pilih kampusmu dari daftar berikut atau cari nama kampus." />
 
                 <div className="bg-white rounded-[24px] w-full drop-shadow-[0px_8px_15px_rgba(0,0,0,0.04)]" style={{ border: "1px solid #f1f5f9" }}>
                   <div className="flex flex-col gap-5 p-5">
@@ -7694,7 +7693,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
             ];
             return (
               <>
-                <PintarlyMascotBubble pre="Apa yang bisa" bold="Alerin bantu?" />
+                <PintarlyMascotBubble pre="Apa yang bisa" bold="Alerin bantu?" sub="Pilih kebutuhan utamamu agar Alerin bisa menyiapkan bantuan yang tepat." />
                 <div className="flex flex-col gap-3 w-full">
                   {BANTUAN.map(item => {
                     const isActive = bantuPilihan === item.id;
@@ -7775,7 +7774,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
 
           {step === 7 && bantuPilihan === "matakuliah" && (
             <>
-              <PintarlyMascotBubble pre="Pilih fase belajarmu" bold="saat ini agar Alerin bisa bantu dengan tepat." />
+              <PintarlyMascotBubble pre="Sedang di" bold="tahap mana?" sub="Pilih fase belajar matakuliahmu saat ini agar Alerin bisa menyiapkan panduan yang tepat." />
               <div className="space-y-[10px] sm:space-y-[14px]">
                 {[
                   { id: "Belum mulai", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>, desc: "Baru mulai atau belum ada progres" },
@@ -7861,27 +7860,30 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
             const MAX = 2;
             const OPTS_BY_BANTU: Record<string, { label: string; fitur: string; icon: React.ReactNode }[]> = {
               matakuliah: [
-                { label: "Kesulitan memahami materi kuliah", fitur: "Mata Kuliah", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> },
-                { label: "Kesulitan mencari referensi materi", fitur: "Mata Kuliah", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> },
-                { label: "Kesulitan menentukan prioritas belajar", fitur: "Mata Kuliah", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg> },
-                { label: "Kesulitan mengerjakan soal ujian", fitur: "Mata Kuliah", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> },
+                { label: "Belum memahami materinya", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> },
+                { label: "Sulit menemukan referensi tambahan", fitur: "Cari Jurnal", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> },
+                { label: "Tidak tahu bagian mana yang harus dipelajari terlebih dahulu", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg> },
+                { label: "Sulit berlatih soal", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> },
+                { label: "Lainnya", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg> },
               ],
               tugas: [
-                { label: "Belum memahami instruksi tugas", fitur: "Mata Kuliah", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> },
-                { label: "Bingung memulai dari bagian mana", fitur: "Mata Kuliah", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> },
-                { label: "Sulit mencari referensi yang sesuai", fitur: "Mata Kuliah", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> },
-                { label: "Deadline sudah dekat", fitur: "Mata Kuliah", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> },
+                { label: "Belum memahami instruksi tugas", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> },
+                { label: "Bingung memulai dari bagian mana", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> },
+                { label: "Sulit mencari referensi yang sesuai", fitur: "Cari Jurnal", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> },
+                { label: "Deadline sudah dekat", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> },
+                { label: "Lainnya", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg> },
               ],
               skripsi: [
-                { label: "Bingung memulai penelitian", fitur: "Skripsi/Tesis/Disertasi", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> },
-                { label: "Belum memiliki topik/judul", fitur: "Skripsi/Tesis/Disertasi", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg> },
-                { label: "Stuck dan tidak tahu harus menulis apa lagi", fitur: "Skripsi/Tesis/Disertasi", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> },
+                { label: "Bingung memulai penelitian", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> },
+                { label: "Belum memiliki topik/judul", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg> },
+                { label: "Stuck dan tidak tahu harus menulis apa lagi", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> },
                 { label: "Sulit menemukan referensi yang relevan", fitur: "Cari Jurnal", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> },
-                { label: "Banyak revisi dari dosen", fitur: "Skripsi/Tesis/Disertasi", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> },
-                { label: "Khawatir hasil plagiasi tinggi", fitur: "Cek Plagiarisme", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> },
+                { label: "Banyak revisi dari dosen", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> },
+                { label: "Khawatir hasil plagiasi tinggi", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> },
                 { label: "Kesulitan mengolah atau menganalisis data", fitur: "Skripsi/Tesis/Disertasi", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg> },
-                { label: "Penulisan akademik masih kurang tepat", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> },
+                { label: "Penulisan akademik atau grammar masih kurang tepat", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> },
                 { label: "Target penyelesaian terasa berat", fitur: "Skripsi/Tesis/Disertasi", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> },
+                { label: "Lainnya", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg> },
               ],
             };
             const opts = OPTS_BY_BANTU[bantuPilihan] ?? OPTS_BY_BANTU.skripsi;
@@ -7893,13 +7895,13 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
               );
             };
             const bubbleSub = {
-              matakuliah: "Pilih maksimal 2 agar Alerin bisa bantu lebih tepat.",
-              tugas: "Pilih maksimal 2 agar Alerin bisa bantu lebih tepat.",
+              matakuliah: "Pilih maksimal 2. Alerin akan memprioritaskan materi yang paling kamu butuhkan.",
+              tugas: "Pilih maksimal 2. Alerin akan menyiapkan panduan dan template yang sesuai.",
               skripsi: "Pilih maksimal 2. Tidak perlu sempurna, bisa diubah nanti seiring progres.",
             }[bantuPilihan] ?? "";
             return (
               <>
-                <PintarlyMascotBubble pre="Apa kendala utamamu" bold="saat ini?" sub={bubbleSub} />
+                <PintarlyMascotBubble pre="Apa kendala utama" bold="kamu sekarang?" sub={bubbleSub} />
                 <div className="flex flex-col gap-[10px] w-full rounded-[20px] p-5" style={{ background: "#ffffff", border: "2px solid #60a5fa" }}>
                   {opts.map(o => {
                     const on = kendala.includes(o.label);
@@ -7982,15 +7984,21 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
             <>
               <PintarlyMascotBubble
                 pre="Fitur yang"
-                bold="sesuai untuk kamu"
+                bold="pas buat kamu"
                 sub={(() => {
                   const rec = kendala.length > 0 ? KENDALA_FITUR_MAP[kendala[0]] : null;
-                  if (rec === "Cari Jurnal") return "Alerin merekomendasikan fitur Cari Jurnal yang sesuai dengan kebutuhanmu.";
-                  if (rec === "Skripsi/Tesis/Disertasi") return "Alerin merekomendasikan fitur skripsi, tesis & disertasi yang sesuai dengan kebutuhanmu.";
-                  if (rec === "Mata Kuliah") return "Alerin merekomendasikan fitur Mata Kuliah yang sesuai dengan kebutuhanmu.";
-                  return "Alerin merekomendasikan fitur parafrase yang sesuai dengan kebutuhanmu.";
+                  if (rec === "Cari Jurnal") return "Kami rekomendasikan fitur pencarian jurnal untuk kendalamu.";
+                  if (rec === "Skripsi/Tesis/Disertasi") return "Kami rekomendasikan fitur skripsi, tesis & disertasi untuk kendalamu.";
+                  return "Kami rekomendasikan fitur parafrase untuk kendalamu.";
                 })()}
               />
+
+              {/* DIREKOMENDASIKAN divider */}
+              <div className="flex items-center gap-3 mb-4">
+                <div className="flex-1 h-px" style={{ background: "linear-gradient(90deg, rgba(37,99,235,0.5), rgba(37,99,235,0))" }}/>
+                <span className="font-['Plus_Jakarta_Sans'] font-bold text-[12px] text-[#2563eb] tracking-[1.5px] uppercase whitespace-nowrap">Direkomendasikan</span>
+                <div className="flex-1 h-px" style={{ background: "linear-gradient(90deg, rgba(37,99,235,0), rgba(37,99,235,0.5))" }}/>
+              </div>
 
               {/* Feature cards — dynamic based on kendala */}
               <div className="flex flex-col gap-3 w-full">
@@ -8001,11 +8009,9 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                   const features = recFeatures.length > 0 ? [recFeatures[0]] : ["Parafrase"];
 
                   const cards: { key: string; fitur: string; color: string; desc: string; kendalaMatch: string }[] = [
-                    { key: "matakuliah", fitur: "Mata Kuliah", color: "#3b7dd8", desc: "Membantu memahami materi kuliah dengan penjelasan yang mudah dipahami, rangkuman, dan rekomendasi belajar yang sesuai.", kendalaMatch: "Mata Kuliah" },
-                    { key: "parafrase", fitur: "Parafrase", color: "#3b7dd8", desc: "Membantu mengubah kalimat menjadi versi baru dengan makna yang sama, membuat tulisan lebih segar dan mudah dipahami.", kendalaMatch: "Parafrase" },
-                    { key: "jurnal", fitur: "Cari Jurnal", color: "#a0522d", desc: "Membantu menemukan referensi akademik terpercaya dari berbagai sumber jurnal yang relevan dengan topik penelitian.", kendalaMatch: "Cari Jurnal" },
-                    { key: "plagiarisme", fitur: "Cek Plagiarisme", color: "#d9534f", desc: "Membantu mendeteksi similarity agar tulisanmu lebih original dan aman sebelum disubmit.", kendalaMatch: "Cek Plagiarisme" },
-                    { key: "skripsi", fitur: "Skripsi, Tesis & Disertasi", color: "#1e6b52", desc: "Membantu menyusun skripsi secara lebih terarah, mulai dari menentukan topik, menyusun proposal, hingga menyelesaikan penelitian dan revisi.", kendalaMatch: "Skripsi/Tesis/Disertasi" },
+                    { key: "parafrase", fitur: "Fitur Parafrase", color: "#3b7dd8", desc: "Fitur parafrase membantu mengubah kalimat menjadi versi baru dengan makna yang sama, membuat tulisan lebih segar dan mudah dipahami.", kendalaMatch: "Parafrase" },
+                    { key: "jurnal", fitur: "Cari Jurnal", color: "#a0522d", desc: "Fitur Cari Jurnal membantu menemukan jurnal dan referensi akademis yang relevan dengan topik penelitianmu.", kendalaMatch: "Cari Jurnal" },
+                    { key: "skripsi", fitur: "Skripsi, Tesis & Disertasi", color: "#1e6b52", desc: "Fitur ini membantu menyusun, mengoreksi, dan memperbaiki penulisan skripsi, tesis, atau disertasi secara menyeluruh.", kendalaMatch: "Skripsi/Tesis/Disertasi" },
                   ];
 
                   return features.map(f => {
@@ -8044,21 +8050,11 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                           </div>
                           {/* Illustration — centered vertically */}
                           <div className="shrink-0 w-[110px] h-[110px] sm:w-[140px] sm:h-[140px] flex items-center justify-center">
-                            {card.key === "matakuliah" && (
-                              <div className="w-[100px] h-[100px] sm:w-[130px] sm:h-[130px] flex items-center justify-center">
-                                <svg width="80" height="80" viewBox="0 0 80 80" fill="none"><rect x="10" y="16" width="60" height="48" rx="8" fill="white" fillOpacity="0.2"/><rect x="18" y="24" width="30" height="4" rx="2" fill="white" fillOpacity="0.7"/><rect x="18" y="32" width="44" height="3" rx="1.5" fill="white" fillOpacity="0.4"/><rect x="18" y="39" width="44" height="3" rx="1.5" fill="white" fillOpacity="0.4"/><rect x="18" y="46" width="34" height="3" rx="1.5" fill="white" fillOpacity="0.4"/></svg>
-                              </div>
-                            )}
                             {card.key === "parafrase" && (
                               <img src="/assets/Aset%20Fitur%20Parafrase.png" alt="Parafrase" className="w-[100px] h-[100px] sm:w-[130px] sm:h-[130px] object-contain"/>
                             )}
                             {card.key === "jurnal" && (
                               <img src="/assets/Metric%20Card%20%26%20Waveform.png" alt="Cari Jurnal" className="w-[100px] h-[100px] sm:w-[130px] sm:h-[130px] object-contain"/>
-                            )}
-                            {card.key === "plagiarisme" && (
-                              <div className="w-[100px] h-[100px] sm:w-[130px] sm:h-[130px] flex items-center justify-center">
-                                <svg width="80" height="80" viewBox="0 0 80 80" fill="none"><path d="M40 12L64 26V54L40 68L16 54V26L40 12Z" fill="white" fillOpacity="0.2" stroke="white" strokeWidth="2"/><path d="M28 40L36 48L54 30" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                              </div>
                             )}
                             {card.key === "skripsi" && (
                               <img src="/assets/Aset%20fitur%20Skripsi.png" alt="Skripsi" className="w-[100px] h-[100px] sm:w-[130px] sm:h-[130px] object-contain"/>
