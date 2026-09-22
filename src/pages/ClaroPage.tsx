@@ -6546,6 +6546,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
   const [loadingStatus, setLoadingStatus] = useState(0);
   const [loadingPrompt, setLoadingPrompt] = useState("");
   const [showEmailVerify, setShowEmailVerify] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
   const [resendCountdown, setResendCountdown] = useState(0);
   const [prodiSearch, setProdiSearch] = useState("");
   const [uniSearch, setUniSearch] = useState("");
@@ -6750,6 +6751,115 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
     !!target,                // 9: target (auto)
     !!selectedFitur,         // 10: fitur
   ][step];
+
+  if (showLogin) return (
+    <div className="fixed inset-0 z-[300] flex flex-col overflow-hidden" style={{ background: "linear-gradient(180deg, #f8faff 0%, #f0f5ff 50%, #f8faff 100%)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+      <style>{`
+        @keyframes emailCardIn { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+      `}</style>
+
+      <div className="flex-1 overflow-y-auto flex flex-col items-center justify-center px-4">
+        <div className="max-w-md w-full flex items-center justify-center">
+          <div className="w-full" style={{ animation: "emailCardIn 0.45s cubic-bezier(0.34,1.56,0.64,1) both" }}>
+            {/* White card */}
+            <div className="bg-white rounded-[16px] shadow-[0px_20px_25px_-5px_rgba(0,0,0,0.08),0px_8px_10px_-6px_rgba(0,0,0,0.06)] overflow-hidden">
+              {/* Top accent bar */}
+              <div className="h-1.5" style={{ background: "linear-gradient(90deg,#60a5fa,#6366f1)" }}/>
+
+              {/* Header inside card */}
+              <div className="flex flex-col items-center pt-5 pb-1 px-4 sm:pt-4 sm:pb-1">
+                <div className="relative mb-2">
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden flex items-center justify-center bg-white shadow-md">
+                    <img src="/assets/alerin-logo.png" alt="Alerin" className="w-full h-full object-cover"/>
+                  </div>
+                </div>
+                <h2 className="font-['Plus_Jakarta_Sans'] font-bold text-[20px] sm:text-[24px] text-[#1b1b1c] leading-[26px] sm:leading-[32px] tracking-[-0.5px]">Masuk ke Alerin</h2>
+                <p className="text-[12px] sm:text-[13px] text-[#71717a] text-center leading-[18px] sm:leading-[20px] mt-0.5">Selamat datang kembali! Masuk untuk melanjutkan. Belum punya akun? <button onClick={() => setShowLogin(false)} className="font-semibold text-[#2563eb]">Daftar</button></p>
+              </div>
+
+              {/* Form fields */}
+              <div className="px-4 sm:px-6 pt-1 sm:pt-1 pb-4 sm:pb-6 space-y-3 sm:space-y-4">
+                {/* Email */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <label className="text-[14px] font-semibold text-[#1b1b1c]">Alamat Email</label>
+                    <span className="text-[11px] font-bold text-[#1d4ed8] tracking-[0.44px]">Wajib</span>
+                  </div>
+                  <div className="relative">
+                    <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#71717a]" width="15" height="12" viewBox="0 0 24 20" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="2" width="20" height="16" rx="2"/><path d="m22 5-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 5"/></svg>
+                    <input type="email"
+                      className="w-full pl-10 pr-4 h-11 rounded-[12px] text-[14px] text-[#1b1b1c] outline-none transition-all placeholder:text-[rgba(113,113,122,0.6)]"
+                      style={{ background: "#f6f6f8" }}
+                      onFocus={e => { e.currentTarget.style.outline = "2px solid #2563eb"; e.currentTarget.style.background = "#fff"; }}
+                      onBlur={e => { e.currentTarget.style.outline = "none"; e.currentTarget.style.background = "#f6f6f8"; }}
+                      placeholder="nama@gmail.com atau email kampus" />
+                  </div>
+                </div>
+
+                {/* Password */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <label className="text-[14px] font-semibold text-[#1b1b1c]">Kata Sandi</label>
+                    <span className="text-[11px] font-bold text-[#1d4ed8] tracking-[0.44px]">Wajib</span>
+                  </div>
+                  <div className="relative">
+                    <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#71717a]" width="13" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    <input type={showPass ? "text" : "password"}
+                      className="w-full pl-10 pr-11 h-11 rounded-[12px] text-[14px] text-[#1b1b1c] outline-none transition-all placeholder:text-[rgba(113,113,122,0.6)]"
+                      style={{ background: "#f6f6f8" }}
+                      onFocus={e => { e.currentTarget.style.outline = "2px solid #2563eb"; e.currentTarget.style.background = "#fff"; }}
+                      onBlur={e => { e.currentTarget.style.outline = "none"; e.currentTarget.style.background = "#f6f6f8"; }}
+                      placeholder="Masukkan kata sandi" />
+                    <button type="button" onClick={() => setShowPass(p => !p)} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#71717a]">
+                      {showPass
+                        ? <svg width="18" height="12" viewBox="0 0 22 14" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M1 7s4-6 10-6 10 6 10 6-4 6-10 6S1 7 1 7z"/><circle cx="11" cy="7" r="2.5" fill="currentColor" stroke="none"/></svg>
+                        : <svg width="17" height="12" viewBox="0 0 22 14" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M1 7s4-6 10-6 10 6 10 6-4 6-10 6S1 7 1 7z"/><circle cx="11" cy="7" r="2.5" fill="currentColor" stroke="none"/><line x1="2" y1="1" x2="20" y2="13" stroke="currentColor" strokeWidth="1.8"/></svg>}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Captcha */}
+                <button type="button" onClick={() => setCaptchaDone(p => !p)}
+                  className="w-full flex items-center justify-between p-3 rounded-[12px] drop-shadow-[0px_1px_1px_rgba(0,0,0,0.05)] transition-all"
+                  style={{ background: "#f6f6f8" }}>
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-5 h-5 rounded-[2.5px] border flex items-center justify-center transition-all shrink-0"
+                      style={captchaDone ? { borderColor: "#2563eb", background: "#2563eb", borderWidth: 2 } : { borderColor: "#767676", background: "white", borderWidth: 1 }}>
+                      {captchaDone && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3"><path d="M20 6L9 17l-5-5"/></svg>}
+                    </div>
+                    <div>
+                      <p className="text-[14px] font-semibold text-[#1b1b1c] text-left">Saya bukan robot</p>
+                      <p className="text-[12px] text-[#71717a] leading-[18px] text-left">Verifikasi pintar anti-bot</p>
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-center opacity-80 shrink-0">
+                    <svg width="15" height="18" viewBox="0 0 15 19" fill="none"><path d="M7.5 0.5L1 4V10C1 13.866 3.81 17.477 7.5 18.5C11.19 17.477 14 13.866 14 10V4L7.5 0.5Z" fill="#03677F" stroke="#03677F" strokeWidth="0.5"/></svg>
+                    <span className="text-[9px] text-[#71717a] mt-0.5 tracking-[-0.4px] uppercase">TURNSTILE</span>
+                  </div>
+                </button>
+
+                {/* Lanjut button inside card */}
+                <div className="pt-2">
+                  <button
+                    className="w-full flex items-center justify-center gap-2 py-3 sm:py-[14px] rounded-[12px] sm:rounded-[16px] text-white font-bold text-[15px] sm:text-[16px] transition-all active:scale-[0.98]"
+                    style={{ background: "#2563eb", boxShadow: "0px 4px 7px rgba(37,99,235,0.38)" }}>
+                    Masuk
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                  </button>
+                  {/* Google button */}
+                  <button className="w-full flex items-center justify-center gap-3 py-3 rounded-[12px] font-semibold text-[#1b1b1c] text-[14px] transition-all hover:shadow-md active:scale-[0.98] mt-3"
+                    style={{ background: "#f6f6f8" }}>
+                    <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+                    Masuk dengan Google
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 
   if (showEmailVerify) return (
     <div className="fixed inset-0 z-[300] flex flex-col overflow-hidden" style={{ background: "linear-gradient(180deg, #f8faff 0%, #f0f5ff 50%, #f8faff 100%)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
@@ -7032,8 +7142,8 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
       )}
 
       {/* Scrollable content */}
-      <div className="flex-1 overflow-y-auto pb-4 relative z-10 flex flex-col" style={{ paddingLeft: step === 0 || step === 1 ? 0 : "16px", paddingRight: step === 0 || step === 1 ? 0 : "16px" }}>
-        <div className={step === 0 ? "w-full flex items-center justify-center flex-1" : step === 1 ? "w-full flex items-center justify-center flex-1" : "max-w-md mx-auto w-full pt-2 pb-8"}
+      <div className="flex-1 overflow-y-auto pb-4 relative z-10 flex flex-col" style={{ paddingLeft: "16px", paddingRight: "16px" }}>
+        <div className={step === 0 ? "w-full flex items-center justify-center flex-1" : step === 1 ? "max-w-md mx-auto w-full flex items-center justify-center flex-1" : "max-w-md mx-auto w-full pt-2 pb-8"}
           style={step === 0 ? { minHeight: "100%", opacity: visible ? 1 : 0, transform: visible ? "translateY(0)" : "translateY(14px)", transition: "opacity 0.18s ease, transform 0.18s ease" } : { opacity: visible ? 1 : 0, transform: visible ? "translateY(0)" : "translateY(14px)", transition: "opacity 0.18s ease, transform 0.18s ease" }}>
 
           {/* Step 0: Welcome */}
@@ -7092,7 +7202,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                     </div>
                   </div>
                   <h2 className="font-['Plus_Jakarta_Sans'] font-bold text-[20px] sm:text-[24px] text-[#1b1b1c] leading-[26px] sm:leading-[32px] tracking-[-0.5px]">Daftar Akun Alerin</h2>
-                  <p className="text-[12px] sm:text-[13px] text-[#71717a] text-center leading-[18px] sm:leading-[20px] mt-0.5">Mulai perjalanan akademikmu yang lebih cerdas dengan panduan AI terpersonalisasi. Sudah punya akun? <span className="font-semibold text-[#2563eb]">Masuk</span></p>
+                  <p className="text-[12px] sm:text-[13px] text-[#71717a] text-center leading-[18px] sm:leading-[20px] mt-0.5">Mulai perjalanan akademikmu yang lebih cerdas dengan panduan AI terpersonalisasi. Sudah punya akun? <button onClick={() => setShowLogin(true)} className="font-semibold text-[#2563eb]">Masuk</button></p>
                 </div>
                 <div className="px-4 sm:px-6 pt-1 sm:pt-1 pb-4 sm:pb-6 space-y-3 sm:space-y-4">
                   {/* Nama Lengkap */}
