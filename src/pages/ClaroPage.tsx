@@ -6489,9 +6489,6 @@ const PintarlyMascotBubble = React.memo(function PintarlyMascotBubble({ pre, bol
         <div className="w-14 h-14 sm:w-[80px] sm:h-[80px] rounded-full overflow-hidden flex items-center justify-center" style={{ background: "linear-gradient(135deg,#dbeafe,#c7d2fe)", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1),0 2px 4px -2px rgba(0,0,0,0.1)", border: "2px solid #bfdbfe" }}>
           <img src="/assets/alerin-logo.png" alt="Alerin" className="w-full h-full object-cover"/>
         </div>
-        <div className="absolute -bottom-0.5 -right-0.5 sm:-bottom-1 sm:-right-1 w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center drop-shadow-sm" style={{ background: "#fcd34d" }}>
-          <span style={{ fontSize: 9, color: "#78350f" }}>✦</span>
-        </div>
       </div>
       <div className="relative flex-1 bg-white rounded-[18px] sm:rounded-[24px] px-4 sm:px-5 py-3 sm:py-4 drop-shadow-[0px_1px_1px_rgba(0,0,0,0.05)]"
         style={{ border: "1px solid #e5e7eb", animation: "bubblePop 0.4s cubic-bezier(0.34,1.56,0.64,1) 0.1s both" }}>
