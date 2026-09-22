@@ -7201,8 +7201,8 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                       <img src="/assets/alerin-logo.png" alt="Alerin" className="w-full h-full object-cover"/>
                     </div>
                   </div>
-                  <h2 className="font-['Plus_Jakarta_Sans'] font-bold text-[20px] sm:text-[24px] text-[#1b1b1c] leading-[26px] sm:leading-[32px] tracking-[-0.5px]">Daftar Akun Alerin</h2>
-                  <p className="text-[12px] sm:text-[13px] text-[#71717a] text-center leading-[18px] sm:leading-[20px] mt-0.5">Mulai perjalanan akademikmu yang lebih cerdas dengan panduan AI terpersonalisasi. Sudah punya akun? <button onClick={() => setShowLogin(true)} className="font-semibold text-[#2563eb]">Masuk</button></p>
+                  <h2 className="font-['Plus_Jakarta_Sans'] font-bold text-[20px] sm:text-[24px] text-[#1b1b1c] leading-[26px] sm:leading-[32px] tracking-[-0.5px]">Buat Akun Alerin</h2>
+                  <p className="text-[12px] sm:text-[13px] text-[#71717a] text-center leading-[18px] sm:leading-[20px] mt-0.5">Mulai perjalanan akademikmu bersama Alerin. Sudah punya akun? <button onClick={() => setShowLogin(true)} className="font-semibold text-[#2563eb]">Masuk</button></p>
                 </div>
                 <div className="px-4 sm:px-6 pt-1 sm:pt-1 pb-4 sm:pb-6 space-y-3 sm:space-y-4">
                   {/* Nama Lengkap */}
@@ -7218,7 +7218,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                         style={{ background: "#f6f6f8" }}
                         onFocus={e => { e.currentTarget.style.outline = "2px solid #2563eb"; e.currentTarget.style.background = "#fff"; }}
                         onBlur={e => { e.currentTarget.style.outline = "none"; e.currentTarget.style.background = "#f6f6f8"; }}
-                        placeholder="Nama lengkap" />
+                        placeholder="Masukkan nama lengkapmu" />
                     </div>
                   </div>
 
@@ -7235,7 +7235,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                         style={{ background: "#f6f6f8" }}
                         onFocus={e => { e.currentTarget.style.outline = "2px solid #2563eb"; e.currentTarget.style.background = "#fff"; }}
                         onBlur={e => { e.currentTarget.style.outline = "none"; e.currentTarget.style.background = "#f6f6f8"; }}
-                        placeholder="nama@gmail.com" />
+                        placeholder="Masukkan email aktifmu" />
                     </div>
                   </div>
 
@@ -7252,7 +7252,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                         style={{ background: "#f6f6f8" }}
                         onFocus={e => { e.currentTarget.style.outline = "2px solid #2563eb"; e.currentTarget.style.background = "#fff"; }}
                         onBlur={e => { e.currentTarget.style.outline = "none"; e.currentTarget.style.background = "#f6f6f8"; }}
-                        placeholder="Buat kata sandi yang aman" />
+                        placeholder="Buat kata sandi" />
                       <button type="button" onClick={() => setShowPass(p => !p)} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#71717a]">
                         {showPass
                           ? <svg width="18" height="12" viewBox="0 0 22 14" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M1 7s4-6 10-6 10 6 10 6-4 6-10 6S1 7 1 7z"/><circle cx="11" cy="7" r="2.5" fill="currentColor" stroke="none"/></svg>
