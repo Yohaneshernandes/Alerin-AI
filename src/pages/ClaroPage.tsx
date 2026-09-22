@@ -7206,6 +7206,20 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                     </p>
                   </button>
                 </div>
+
+                {/* Lanjut button inside card — step 1 only */}
+                {step === 1 && (
+                  <div className="px-4 sm:px-6 pb-4 sm:pb-6 pt-2">
+                    <button
+                      disabled={!canProceed}
+                      onClick={() => setShowEmailVerify(true)}
+                      className="w-full flex items-center justify-center gap-2 py-3 sm:py-[14px] rounded-[12px] sm:rounded-[16px] text-white font-bold text-[15px] sm:text-[16px] transition-all disabled:opacity-40 active:scale-[0.98]"
+                      style={{ background: "#2563eb", boxShadow: canProceed ? "0px 4px 7px rgba(37,99,235,0.38)" : "none" }}>
+                      Lanjut
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </button>
+                  </div>
+                )}
               </div>
 
               <p className="text-center text-[14px] text-[#71717a] mt-5">
@@ -7987,7 +8001,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                   </button>
                 ) : (
-                  !(step === 7 && !(fase === "Lainnya" && faseLainnya.trim())) && (
+                  !(step === 7 && !(fase === "Lainnya" && faseLainnya.trim())) && step !== 1 && (
                     <button
                       disabled={!canProceed}
                       onClick={step === 1 ? () => setShowEmailVerify(true) : goNext}
