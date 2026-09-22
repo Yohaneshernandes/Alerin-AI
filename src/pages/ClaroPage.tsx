@@ -7306,7 +7306,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
 
                 {/* Lanjut button inside card — step 1 only */}
                 {step === 1 && (
-                  <div className="px-4 sm:px-6 pb-4 sm:pb-6 pt-2">
+                  <div className="px-4 sm:px-6 pb-4 sm:pb-6 pt-0">
                     <button
                       disabled={!canProceed}
                       onClick={() => setShowEmailVerify(true)}
