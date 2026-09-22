@@ -7032,8 +7032,8 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
       )}
 
       {/* Scrollable content */}
-      <div className="flex-1 overflow-y-auto pb-4 relative z-10 flex flex-col" style={{ paddingLeft: step === 0 ? 0 : "16px", paddingRight: step === 0 ? 0 : "16px" }}>
-        <div className={step === 0 ? "w-full flex items-center justify-center flex-1" : "max-w-md mx-auto w-full pt-2 pb-8"}
+      <div className="flex-1 overflow-y-auto pb-4 relative z-10 flex flex-col" style={{ paddingLeft: step === 0 || step === 1 ? 0 : "16px", paddingRight: step === 0 || step === 1 ? 0 : "16px" }}>
+        <div className={step === 0 ? "w-full flex items-center justify-center flex-1" : step === 1 ? "w-full flex items-center justify-center flex-1" : "max-w-md mx-auto w-full pt-2 pb-8"}
           style={step === 0 ? { minHeight: "100%", opacity: visible ? 1 : 0, transform: visible ? "translateY(0)" : "translateY(14px)", transition: "opacity 0.18s ease, transform 0.18s ease" } : { opacity: visible ? 1 : 0, transform: visible ? "translateY(0)" : "translateY(14px)", transition: "opacity 0.18s ease, transform 0.18s ease" }}>
 
           {/* Step 0: Welcome */}
@@ -7145,8 +7145,8 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                         placeholder="Buat kata sandi yang aman" />
                       <button type="button" onClick={() => setShowPass(p => !p)} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#71717a]">
                         {showPass
-                          ? <svg width="17" height="12" viewBox="0 0 22 14" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M1 7s4-6 10-6 10 6 10 6-4 6-10 6S1 7 1 7z"/><circle cx="11" cy="7" r="2.5" fill="currentColor" stroke="none"/><line x1="2" y1="1" x2="20" y2="13" stroke="currentColor" strokeWidth="1.8"/></svg>
-                          : <svg width="18" height="12" viewBox="0 0 22 14" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M1 7s4-6 10-6 10 6 10 6-4 6-10 6S1 7 1 7z"/><circle cx="11" cy="7" r="2.5" fill="currentColor" stroke="none"/></svg>}
+                          ? <svg width="18" height="12" viewBox="0 0 22 14" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M1 7s4-6 10-6 10 6 10 6-4 6-10 6S1 7 1 7z"/><circle cx="11" cy="7" r="2.5" fill="currentColor" stroke="none"/></svg>
+                          : <svg width="17" height="12" viewBox="0 0 22 14" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M1 7s4-6 10-6 10 6 10 6-4 6-10 6S1 7 1 7z"/><circle cx="11" cy="7" r="2.5" fill="currentColor" stroke="none"/><line x1="2" y1="1" x2="20" y2="13" stroke="currentColor" strokeWidth="1.8"/></svg>}
                       </button>
                     </div>
                     {password.length > 0 && (
