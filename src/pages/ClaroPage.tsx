@@ -6792,7 +6792,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                       style={{ background: "#f6f6f8" }}
                       onFocus={e => { e.currentTarget.style.outline = "2px solid #2563eb"; e.currentTarget.style.background = "#fff"; }}
                       onBlur={e => { e.currentTarget.style.outline = "none"; e.currentTarget.style.background = "#f6f6f8"; }}
-                      placeholder="nama@gmail.com atau email kampus" />
+                      placeholder="nama@gmail.com" />
                   </div>
                 </div>
 
@@ -7218,7 +7218,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                         style={{ background: "#f6f6f8" }}
                         onFocus={e => { e.currentTarget.style.outline = "2px solid #2563eb"; e.currentTarget.style.background = "#fff"; }}
                         onBlur={e => { e.currentTarget.style.outline = "none"; e.currentTarget.style.background = "#f6f6f8"; }}
-                        placeholder="Misal: Naufal Akbar atau Naufal" />
+                        placeholder="Nama lengkap" />
                     </div>
                   </div>
 
@@ -7235,7 +7235,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                         style={{ background: "#f6f6f8" }}
                         onFocus={e => { e.currentTarget.style.outline = "2px solid #2563eb"; e.currentTarget.style.background = "#fff"; }}
                         onBlur={e => { e.currentTarget.style.outline = "none"; e.currentTarget.style.background = "#f6f6f8"; }}
-                        placeholder="nama@gmail.com atau email kampus" />
+                        placeholder="nama@gmail.com" />
                     </div>
                   </div>
 
