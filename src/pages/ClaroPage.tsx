@@ -7085,7 +7085,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                 {/* Top accent bar */}
                 <div className="h-1.5" style={{ background: "linear-gradient(90deg,#60a5fa,#6366f1)" }}/>
                 {/* Header inside card — both mobile & desktop */}
-                <div className="flex flex-col items-center pt-5 pb-3 px-4 sm:pt-4 sm:pb-2">
+                <div className="flex flex-col items-center pt-5 pb-1 px-4 sm:pt-4 sm:pb-1">
                   <div className="relative mb-2">
                     <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden flex items-center justify-center bg-white shadow-md">
                       <img src="/assets/alerin-logo.png" alt="Alerin" className="w-full h-full object-cover"/>
@@ -7094,7 +7094,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                   <h2 className="font-['Plus_Jakarta_Sans'] font-bold text-[20px] sm:text-[24px] text-[#1b1b1c] leading-[26px] sm:leading-[32px] tracking-[-0.5px]">Daftar Akun Alerin</h2>
                   <p className="text-[12px] sm:text-[13px] text-[#71717a] text-center leading-[18px] sm:leading-[20px] mt-0.5">Mulai perjalanan akademikmu yang lebih cerdas dengan panduan AI terpersonalisasi. Sudah punya akun? <span className="font-semibold text-[#2563eb]">Masuk</span></p>
                 </div>
-                <div className="p-4 sm:p-6 space-y-3 sm:space-y-4">
+                <div className="px-4 sm:px-6 pt-1 sm:pt-1 pb-4 sm:pb-6 space-y-3 sm:space-y-4">
                   {/* Nama Lengkap */}
                   <div className="space-y-1.5">
                     <div className="flex items-center justify-between">
