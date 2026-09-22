@@ -7092,7 +7092,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                     </div>
                   </div>
                   <h2 className="font-['Plus_Jakarta_Sans'] font-bold text-[20px] sm:text-[24px] text-[#1b1b1c] leading-[26px] sm:leading-[32px] tracking-[-0.5px]">Daftar Akun Alerin</h2>
-                  <p className="text-[12px] sm:text-[13px] text-[#71717a] text-center leading-[18px] sm:leading-[20px] mt-0.5">Mulai perjalanan akademikmu yang lebih cerdas dengan panduan AI terpersonalisasi.</p>
+                  <p className="text-[12px] sm:text-[13px] text-[#71717a] text-center leading-[18px] sm:leading-[20px] mt-0.5">Mulai perjalanan akademikmu yang lebih cerdas dengan panduan AI terpersonalisasi. Sudah punya akun? <span className="font-semibold text-[#2563eb]">Masuk</span></p>
                 </div>
                 <div className="p-4 sm:p-6 space-y-3 sm:space-y-4">
                   {/* Google button */}
@@ -7221,10 +7221,6 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                   </div>
                 )}
               </div>
-
-              <p className="text-center text-[14px] text-[#71717a] mt-5">
-                Sudah punya akun Alerin? <span className="font-semibold text-[#2563eb] text-[16px]">Masuk</span>
-              </p>
             </div>
           )}
 
