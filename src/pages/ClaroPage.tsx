@@ -7006,7 +7006,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </div>
-      ) : (
+      ) : (step === 1 || showEmailVerify) ? null : (
         <div className="relative z-10 flex items-center gap-2 sm:gap-3 px-4 sm:px-5 py-3 sm:py-4 shrink-0">
           {/* Back button — always visible */}
           <button onClick={goBack}
