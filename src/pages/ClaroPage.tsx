@@ -6889,7 +6889,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
               {/* Title + subtitle */}
               <div className="flex flex-col items-center text-center mb-5">
                 <h2 className="font-extrabold text-[22px] leading-[27.5px] text-[#111827]" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Cek Email Kamu!</h2>
-                <p className="mt-1 text-[13px] leading-[21.125px] text-[#6b7280]" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Kami mengirim tautan verifikasi ke email di bawah ini.</p>
+                <p className="mt-1 text-[13px] leading-[21.125px] text-[#6b7280]" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Tautan verifikasi sudah dikirim ke email yang kamu daftarkan.</p>
               </div>
 
               {/* Email row */}
@@ -6913,9 +6913,9 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                 <p className="text-[12px] font-bold leading-[18px] text-[#1d4ed8] mb-3" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Catatan:</p>
                 <div className="flex flex-col gap-3">
                   {[
-                    { src: "/assets/icon-spam.svg", text: "Periksa folder Spam atau Promosi jika email tidak muncul di Inbox." },
-                    { src: "/assets/icon-verify-check.svg", text: "Tautan verifikasi berlaku selama 24 jam sejak dikirim." },
-                    { src: "/assets/icon-link.svg", text: "Jangan bagikan tautan ini kepada siapapun demi keamanan akunmu." },
+                    { src: "/assets/icon-spam.svg", text: "Belum menemukan emailnya? Coba cek folder Spam atau Promosi." },
+                    { src: "/assets/icon-verify-check.svg", text: "Tautan verifikasi berlaku selama 24 jam sejak email dikirim." },
+                    { src: "/assets/icon-link.svg", text: "Demi keamanan akun, jangan bagikan tautan verifikasi kepada siapa pun." },
                   ].map((item, i) => (
                     <div key={i} className="flex items-center gap-3">
                       <div className="rounded-[6px] flex items-center justify-center shrink-0" style={{ width: 25, height: 25, background: "linear-gradient(180deg, #1d4ed8 0%, #0f2972 100%)", opacity: 0.79 }}>
