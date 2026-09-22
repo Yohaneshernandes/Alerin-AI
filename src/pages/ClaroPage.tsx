@@ -6545,8 +6545,6 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
   const [loadingDone, setLoadingDone] = useState(false);
   const [loadingStatus, setLoadingStatus] = useState(0);
   const [loadingPrompt, setLoadingPrompt] = useState("");
-  const [showEmailVerify, setShowEmailVerify] = useState(false);
-  const [resendCountdown, setResendCountdown] = useState(0);
   const [prodiSearch, setProdiSearch] = useState("");
   const [uniSearch, setUniSearch] = useState("");
   const [bantuPilihan, setBantuPilihan] = useState("");
@@ -6590,18 +6588,6 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
     "Target penyelesaian terasa berat": "Skripsi/Tesis/Disertasi",
   };
   const kendalaFitur = kendala.length > 0 ? KENDALA_FITUR_MAP[kendala[0]] ?? "Parafrase" : null;
-
-  useEffect(() => {
-    if (!showEmailVerify) return;
-    setResendCountdown(10);
-    const iv = setInterval(() => {
-      setResendCountdown((c) => {
-        if (c <= 1) { clearInterval(iv); return 0; }
-        return c - 1;
-      });
-    }, 1000);
-    return () => clearInterval(iv);
-  }, [showEmailVerify]);
 
   const LOADING_MSGS = [
     "Menganalisis profilmu...",
@@ -6751,109 +6737,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
     !!selectedFitur,         // 10: fitur
   ][step];
 
-  if (showEmailVerify) return (
-    <div className="fixed inset-0 z-[300] flex flex-col overflow-hidden" style={{ background: "linear-gradient(180deg, #f8faff 0%, #f0f5ff 50%, #f8faff 100%)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
-      <style>{`
-        @keyframes emailCardIn { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
-      `}</style>
-
-      {/* Decorative blobs */}
-      <div className="absolute top-0 right-0 w-64 h-64 rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, rgba(99,102,241,0.07) 0%, transparent 70%)", transform: "translate(30%, -30%)" }}/>
-      <div className="absolute bottom-0 left-0 w-64 h-64 rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, rgba(37,99,235,0.07) 0%, transparent 70%)", transform: "translate(-30%, 30%)" }}/>
-
-      {/* Header */}
-      <div className="relative z-10 flex items-center gap-3 px-4 sm:px-5 py-3 sm:py-4 shrink-0">
-        <button onClick={() => setShowEmailVerify(false)} className="hidden sm:flex w-10 h-10 items-center justify-center rounded-full bg-white border border-[#e5e7eb] shadow-sm active:scale-95 transition-all shrink-0" style={{ boxShadow: "0px 1px 1.5px rgba(0,0,0,0.1)" }}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#374151" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-        </button>
-        <div className="flex-1 flex flex-col gap-1 sm:gap-[6px]">
-          <div className="hidden sm:flex items-center justify-between px-1">
-            <span className="text-[12px] font-bold leading-[18px]" style={{ color: "#2563eb", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Langkah 1 dari {TOTAL}</span>
-            <span className="text-[12px] font-semibold leading-[18px]" style={{ color: "#6b7280", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Verifikasi Email</span>
-          </div>
-          <div className="h-[6px] sm:h-2 rounded-full overflow-hidden" style={{ background: "rgba(229,231,235,0.8)" }}>
-            <div className="h-full rounded-full transition-all duration-500 ease-out" style={{ width: `${(1 / TOTAL) * 100}%`, background: "linear-gradient(90deg,#60a5fa,#6366f1)" }}/>
-          </div>
-        </div>
-        <div className="hidden sm:flex w-10 h-10 items-center justify-center shrink-0">
-          <div className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold text-white" style={{ background: "linear-gradient(135deg, #f97316, #ea580c)" }}>RA</div>
-        </div>
-      </div>
-
-      {/* Scrollable content */}
-      <div className="flex-1 overflow-y-auto">
-        <div className="max-w-[448px] mx-auto px-4 sm:px-0 pt-2 pb-8 flex flex-col items-center">
-
-          {/* Card */}
-          <div className="w-full bg-white rounded-[24px] overflow-hidden relative" style={{ boxShadow: "0 4px 24px rgba(0,0,0,0.08)", border: "1px solid #f1f5f9", animation: "emailCardIn 0.45s cubic-bezier(0.34,1.56,0.64,1) both", top: "14px" }}>
-            {/* Top gradient bar */}
-            <div className="h-[6px] w-full" style={{ background: "linear-gradient(90deg, #2563eb, #6366f1)" }}/>
-
-            {/* Email illustration */}
-            <div className="flex justify-center pt-6 pb-1">
-              <img src="/assets/email-illustration.png" alt="Email" style={{ width: 119, height: 125, objectFit: "cover", marginTop: "-13px", marginRight: "-7px", marginBottom: "-13px", marginLeft: "-7px" }}/>
-            </div>
-
-            <div className="px-[22px] pb-6 flex flex-col">
-              {/* Title + subtitle */}
-              <div className="flex flex-col items-center text-center mb-5">
-                <h2 className="font-extrabold text-[22px] leading-[27.5px] text-[#111827]" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Cek Email Kamu!</h2>
-                <p className="mt-1 text-[13px] leading-[21.125px] text-[#6b7280]" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Kami mengirim tautan verifikasi ke email di bawah ini.</p>
-              </div>
-
-              {/* Email row */}
-              <div className="flex items-center rounded-[14px] mb-4 relative" style={{ background: "#f8faff", border: "1.5px solid #dbeafe", minHeight: 69, padding: "0 16px" }}>
-                <div className="flex items-center justify-center rounded-[10px] shrink-0 mr-3" style={{ width: 36, height: 36, background: "#eff6ff" }}>
-                  <img src="/assets/icon-email.svg" alt="" style={{ width: 21, height: 21 }}/>
-                </div>
-                <div className="flex flex-col flex-1 min-w-0">
-                  <span className="text-[11px] font-medium leading-[16.5px] text-[#9ca3af]" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Email kamu</span>
-                  <span className="text-[14px] font-bold leading-[21px] text-[#111827] truncate" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>{email}</span>
-                </div>
-                <button onClick={() => setShowEmailVerify(false)}
-                  className="shrink-0 ml-3 px-3 py-1.5 rounded-[8px] text-[12px] font-bold leading-[18px] transition-all active:scale-95"
-                  style={{ background: "#eff6ff", color: "#2563eb", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
-                  Ubah
-                </button>
-              </div>
-
-              {/* Notes box */}
-              <div className="rounded-[14px] mb-5 relative" style={{ background: "#eff6ff", border: "1px solid #bfdbfe", padding: "16px 16px 16px 16px" }}>
-                <p className="text-[12px] font-bold leading-[18px] text-[#1d4ed8] mb-3" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Catatan:</p>
-                <div className="flex flex-col gap-3">
-                  {[
-                    { src: "/assets/icon-spam.svg", text: "Periksa folder Spam atau Promosi jika email tidak muncul di Inbox." },
-                    { src: "/assets/icon-verify-check.svg", text: "Tautan verifikasi berlaku selama 24 jam sejak dikirim." },
-                    { src: "/assets/icon-link.svg", text: "Jangan bagikan tautan ini kepada siapapun demi keamanan akunmu." },
-                  ].map((item, i) => (
-                    <div key={i} className="flex items-center gap-3">
-                      <div className="rounded-[6px] flex items-center justify-center shrink-0" style={{ width: 25, height: 25, background: "linear-gradient(180deg, #1d4ed8 0%, #0f2972 100%)", opacity: 0.79 }}>
-                        <img src={item.src} alt="" style={{ width: 14, height: 14, display: "block", margin: "auto" }}/>
-                      </div>
-                      <p className="text-[12px] font-medium leading-[19.5px] text-[#1e40af]" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>{item.text}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Resend */}
-              <p className="text-center text-[13px] leading-[19.5px] text-[#6b7280] mb-2" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Belum menerima email?</p>
-              <button
-                disabled={resendCountdown > 0}
-                onClick={() => { setShowEmailVerify(false); goNext(); }}
-                className="w-full py-3 rounded-[12px] text-[14px] font-bold leading-[21px] transition-all active:scale-[0.98]"
-                style={resendCountdown > 0
-                  ? { background: "#f1f5f9", color: "#9ca3af", cursor: "not-allowed", fontFamily: "'Plus Jakarta Sans', sans-serif" }
-                  : { background: "#eff6ff", color: "#2563eb", border: "1.5px solid #bfdbfe", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
-                {resendCountdown > 0 ? `Kirim ulang email (${resendCountdown}s)` : "Kirim ulang email"}
-              </button>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  );
+  // Email verify removed — goNext is called directly
 
   if (loading) return (
     <div className="fixed inset-0 z-[300] flex flex-col items-center justify-center overflow-hidden" style={{ background: "linear-gradient(180deg, #f8faff 0%, #f0f5ff 50%, #f8faff 100%)" }}>
@@ -7081,7 +6965,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                     <p className="text-[15px] sm:text-[18px] text-[#71717a] leading-relaxed mb-5" style={{ fontFamily: "Inter, sans-serif" }}>
                       Temukan solusi dari seluruh kendala akademikmu disini
                     </p>
-                    <button onClick={goNext}
+                    <button onClick={() => transition(2)}
                       className="flex items-center justify-center gap-2 active:scale-[0.98] transition-transform w-full sm:w-auto"
                       style={{ background: "#2563eb", boxShadow: "0px 3.63px 3.17px rgba(37,99,235,0.38)", borderRadius: 14, paddingTop: 14, paddingBottom: 14, paddingLeft: 32, paddingRight: 32, color: "white", fontFamily: "Inter, sans-serif", fontWeight: 700, fontSize: 16 }}>
                       Mulai Sekarang
@@ -7096,142 +6980,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
             </div>
           )}
 
-          {/* Step 1: Akun */}
-          {step === 1 && (
-            <div>
-              {/* White card form */}
-              <div className="bg-white rounded-[16px] shadow-[0px_20px_25px_-5px_rgba(0,0,0,0.08),0px_8px_10px_-6px_rgba(0,0,0,0.06)] overflow-hidden">
-                {/* Top accent bar */}
-                <div className="h-1.5" style={{ background: "linear-gradient(90deg,#60a5fa,#6366f1)" }}/>
-                {/* Header inside card — both mobile & desktop */}
-                <div className="flex flex-col items-center pt-5 pb-3 px-4 sm:pt-4 sm:pb-2">
-                  <div className="relative mb-2">
-                    <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden flex items-center justify-center bg-white shadow-md">
-                      <img src="/assets/alerin-logo.png" alt="Alerin" className="w-full h-full object-cover"/>
-                    </div>
-                  </div>
-                  <h2 className="font-['Plus_Jakarta_Sans'] font-bold text-[20px] sm:text-[24px] text-[#1b1b1c] leading-[26px] sm:leading-[32px] tracking-[-0.5px]">Daftar Akun Alerin</h2>
-                  <p className="text-[12px] sm:text-[13px] text-[#71717a] text-center leading-[18px] sm:leading-[20px] mt-0.5">Mulai perjalanan akademikmu yang lebih cerdas dengan panduan AI terpersonalisasi.</p>
-                </div>
-                <div className="p-4 sm:p-6 space-y-3 sm:space-y-4">
-                  {/* Google button */}
-                  <button className="w-full flex items-center justify-center gap-3 py-3 rounded-[12px] font-semibold text-[#1b1b1c] text-[14px] transition-all hover:shadow-md active:scale-[0.98]"
-                    style={{ background: "#f6f6f8" }}>
-                    <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
-                    Daftar Cepat dengan Google
-                  </button>
-
-                  {/* Separator */}
-                  <div className="relative flex items-center">
-                    <div className="flex-1 h-px bg-[#eaecef]"/>
-                    <span className="absolute left-1/2 -translate-x-1/2 bg-white px-2 text-[11px] font-bold text-[#71717a] tracking-[0.55px] uppercase">Melalui</span>
-                  </div>
-
-                  {/* Nama Lengkap */}
-                  <div className="space-y-1.5">
-                    <div className="flex items-center justify-between">
-                      <label className="text-[14px] font-semibold text-[#1b1b1c]">Nama Lengkap</label>
-                      <span className="text-[11px] font-bold text-[#1d4ed8] tracking-[0.44px]">Wajib</span>
-                    </div>
-                    <div className="relative">
-                      <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#71717a]" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                      <input value={namaLengkap} onChange={e => setNamaLengkap(e.target.value)}
-                        className="w-full pl-10 pr-4 h-11 rounded-[12px] text-[14px] text-[#1b1b1c] outline-none transition-all placeholder:text-[rgba(113,113,122,0.6)]"
-                        style={{ background: "#f6f6f8" }}
-                        onFocus={e => { e.currentTarget.style.outline = "2px solid #2563eb"; e.currentTarget.style.background = "#fff"; }}
-                        onBlur={e => { e.currentTarget.style.outline = "none"; e.currentTarget.style.background = "#f6f6f8"; }}
-                        placeholder="Misal: Naufal Akbar atau Naufal" />
-                    </div>
-                  </div>
-
-                  {/* Email */}
-                  <div className="space-y-1.5">
-                    <div className="flex items-center justify-between">
-                      <label className="text-[14px] font-semibold text-[#1b1b1c]">Alamat Email</label>
-                      <span className="text-[11px] font-semibold text-[#71717a] tracking-[0.44px]">Verifikasi aktif</span>
-                    </div>
-                    <div className="relative">
-                      <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#71717a]" width="15" height="12" viewBox="0 0 24 20" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="2" width="20" height="16" rx="2"/><path d="m22 5-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 5"/></svg>
-                      <input value={email} onChange={e => setEmail(e.target.value)} type="email"
-                        className="w-full pl-10 pr-4 h-11 rounded-[12px] text-[14px] text-[#1b1b1c] outline-none transition-all placeholder:text-[rgba(113,113,122,0.6)]"
-                        style={{ background: "#f6f6f8" }}
-                        onFocus={e => { e.currentTarget.style.outline = "2px solid #2563eb"; e.currentTarget.style.background = "#fff"; }}
-                        onBlur={e => { e.currentTarget.style.outline = "none"; e.currentTarget.style.background = "#f6f6f8"; }}
-                        placeholder="nama@gmail.com atau email kampus" />
-                    </div>
-                  </div>
-
-                  {/* Password */}
-                  <div className="space-y-1.5">
-                    <div className="flex items-center justify-between">
-                      <label className="text-[14px] font-semibold text-[#1b1b1c]">Kata Sandi Baru</label>
-                      <span className="text-[11px] font-semibold text-[#71717a] tracking-[0.44px]">Min. 8 karakter</span>
-                    </div>
-                    <div className="relative">
-                      <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#71717a]" width="13" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                      <input value={password} onChange={e => setPassword(e.target.value)} type={showPass ? "text" : "password"}
-                        className="w-full pl-10 pr-11 h-11 rounded-[12px] text-[14px] text-[#1b1b1c] outline-none transition-all placeholder:text-[rgba(113,113,122,0.6)]"
-                        style={{ background: "#f6f6f8" }}
-                        onFocus={e => { e.currentTarget.style.outline = "2px solid #2563eb"; e.currentTarget.style.background = "#fff"; }}
-                        onBlur={e => { e.currentTarget.style.outline = "none"; e.currentTarget.style.background = "#f6f6f8"; }}
-                        placeholder="Buat kata sandi yang aman" />
-                      <button type="button" onClick={() => setShowPass(p => !p)} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#71717a]">
-                        {showPass
-                          ? <svg width="17" height="12" viewBox="0 0 22 14" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M1 7s4-6 10-6 10 6 10 6-4 6-10 6S1 7 1 7z"/><circle cx="11" cy="7" r="2.5" fill="currentColor" stroke="none"/><line x1="2" y1="1" x2="20" y2="13" stroke="currentColor" strokeWidth="1.8"/></svg>
-                          : <svg width="18" height="12" viewBox="0 0 22 14" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M1 7s4-6 10-6 10 6 10 6-4 6-10 6S1 7 1 7z"/><circle cx="11" cy="7" r="2.5" fill="currentColor" stroke="none"/></svg>}
-                      </button>
-                    </div>
-                    {password.length > 0 && (
-                      <div className="space-y-1 pt-1">
-                        <div className="flex gap-1">
-                          {[1,2,3].map(i => (
-                            <div key={i} className="flex-1 h-1.5 rounded-full transition-all" style={{ background: password.length >= i*3 ? (password.length >= 9 ? "#22c55e" : password.length >= 6 ? "#f59e0b" : "#ef4444") : "#eaecef" }} />
-                          ))}
-                        </div>
-                        <p className="text-[12px] text-[#71717a] leading-[18px]">Kombinasi huruf, angka, dan minimal 8 karakter untuk keamanan maksimal.</p>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Captcha */}
-                  <button type="button" onClick={() => setCaptchaDone(p => !p)}
-                    className="w-full flex items-center justify-between p-3 rounded-[12px] drop-shadow-[0px_1px_1px_rgba(0,0,0,0.05)] transition-all"
-                    style={{ background: "#f6f6f8" }}>
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-5 h-5 rounded-[2.5px] border flex items-center justify-center transition-all shrink-0"
-                        style={captchaDone ? { borderColor: "#2563eb", background: "#2563eb", borderWidth: 2 } : { borderColor: "#767676", background: "white", borderWidth: 1 }}>
-                        {captchaDone && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3"><path d="M20 6L9 17l-5-5"/></svg>}
-                      </div>
-                      <div>
-                        <p className="text-[14px] font-semibold text-[#1b1b1c] text-left">Saya bukan robot</p>
-                        <p className="text-[12px] text-[#71717a] leading-[18px] text-left">Verifikasi pintar anti-bot</p>
-                      </div>
-                    </div>
-                    <div className="flex flex-col items-center opacity-80 shrink-0">
-                      <svg width="15" height="18" viewBox="0 0 15 19" fill="none"><path d="M7.5 0.5L1 4V10C1 13.866 3.81 17.477 7.5 18.5C11.19 17.477 14 13.866 14 10V4L7.5 0.5Z" fill="#03677F" stroke="#03677F" strokeWidth="0.5"/></svg>
-                      <span className="text-[9px] text-[#71717a] mt-0.5 tracking-[-0.4px] uppercase">TURNSTILE</span>
-                    </div>
-                  </button>
-
-                  {/* Terms */}
-                  <button type="button" onClick={() => setAgreeTerms(p => !p)} className="w-full flex items-center gap-2.5 text-left">
-                    <div className="w-5 h-5 rounded-[2.5px] border flex items-center justify-center transition-all shrink-0"
-                      style={agreeTerms ? { borderColor: "#2563eb", background: "#2563eb", borderWidth: 2 } : { borderColor: "#767676", background: "white", borderWidth: 1 }}>
-                      {agreeTerms && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3"><path d="M20 6L9 17l-5-5"/></svg>}
-                    </div>
-                    <p className="text-[12px] text-[#3d4a3d] leading-[19.5px]">
-                      <span className="hidden sm:inline">Saya telah membaca dan menyetujui <span className="text-[#2563eb]">Syarat & Ketentuan</span> serta <span className="text-[#2563eb]">Kebijakan Privasi</span> Alerin Indonesia.</span>
-                      <span className="sm:hidden">Dengan mendaftar, saya menyetujui <span className="text-[#2563eb]">Syarat & Ketentuan</span> dan <span className="text-[#2563eb]">Kebijakan Privasi</span>.</span>
-                    </p>
-                  </button>
-                </div>
-              </div>
-
-              <p className="text-center text-[14px] text-[#71717a] mt-5">
-                Sudah punya akun Alerin? <span className="font-semibold text-[#2563eb] text-[16px]">Masuk</span>
-              </p>
-            </div>
-          )}
+          {/* Step 1: Skipped (account form removed) */}
 
           {/* Step 2: Jenjang */}
           {step === 2 && (
@@ -8009,7 +7758,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                   !(step === 7 && !(fase === "Lainnya" && faseLainnya.trim())) && (
                     <button
                       disabled={!canProceed}
-                      onClick={step === 1 ? () => setShowEmailVerify(true) : goNext}
+                      onClick={goNext}
                       className="w-full flex items-center justify-center gap-2 py-3 sm:py-[14px] rounded-[12px] sm:rounded-[16px] text-white font-bold text-[15px] sm:text-[16px] transition-all disabled:opacity-40 active:scale-[0.98]"
                       style={{ background: "#2563eb", boxShadow: canProceed ? "0px 4px 7px rgba(37,99,235,0.38)" : "none" }}>
                     Lanjut
