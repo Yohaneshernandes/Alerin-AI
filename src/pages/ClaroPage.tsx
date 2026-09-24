@@ -7538,12 +7538,12 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
               "Universitas Muhammadiyah Surakarta (UMS)","Universitas Muhammadiyah Jakarta (UMJ)",
               "Universitas Terbuka (UT)","Universitas Pamulang (UNPAM)","Universitas BSI",
             ];
-            const POPULAR_UNI = ["UI","UGM","ITB","UNAIR","IPB","ITS","UNPAD","UB","BINUS","Telkom Univ"];
+            const POPULAR_UNI = ["UI","UGM","ITB","UNAIR","IPB","ITS","UNPAD","UB","BINUS","TELKOM"];
             const POPULAR_UNI_FULL: Record<string,string> = {
               "UI":"Universitas Indonesia (UI)","UGM":"Universitas Gadjah Mada (UGM)","ITB":"Institut Teknologi Bandung (ITB)",
               "UNAIR":"Universitas Airlangga (UNAIR)","IPB":"Institut Pertanian Bogor (IPB)","ITS":"Institut Teknologi Sepuluh Nopember (ITS)",
               "UNPAD":"Universitas Padjadjaran (UNPAD)","UB":"Universitas Brawijaya (UB)","BINUS":"Universitas Bina Nusantara (BINUS)",
-              "Telkom Univ":"Telkom University","UT":"Universitas Terbuka (UT)","Unpam":"Universitas Pamulang (UNPAM)",
+              "TELKOM":"Telkom University","UT":"Universitas Terbuka (UT)","Unpam":"Universitas Pamulang (UNPAM)",
               "UIN Jakarta":"Universitas Islam Negeri Jakarta (UIN Jakarta)","UNJ":"Universitas Negeri Jakarta (UNJ)",
             };
             const uniFiltered = uniSearch.trim()
@@ -7553,7 +7553,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
             const showUniDropdown = uniSearch.trim().length > 0;
             return (
               <>
-                <PintarlyMascotBubble pre="Kamu dari" bold="kampus mana?" sub="Pilih kampusmu dari daftar berikut atau cari nama kampus." />
+                <PintarlyMascotBubble pre="Kamu" bold="kuliah di mana?" />
 
                 <div className="bg-white rounded-[24px] w-full drop-shadow-[0px_8px_15px_rgba(0,0,0,0.04)]" style={{ border: "1px solid #f1f5f9" }}>
                   <div className="flex flex-col gap-5 p-5">
@@ -7568,7 +7568,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                           <input
                             value={uniSearch}
                             onChange={e => setUniSearch(e.target.value)}
-                            placeholder="Ketik nama kampus atau singkatan..."
+                            placeholder="Ketik nama kampusmu di sini"
                             className="flex-1 text-[14px] text-[#111827] outline-none bg-transparent placeholder:text-[#9ca3af]"
                           />
                           <button onClick={() => setUniSearch("")} className="shrink-0 ml-2 text-[#9ca3af]">
