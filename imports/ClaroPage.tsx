@@ -6572,25 +6572,22 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
 
   // Kendala → recommended feature mapping
   const KENDALA_FITUR_MAP: Record<string, string> = {
-    // Mata Kuliah → Fitur Mata Kuliah
-    "Kesulitan memahami materi kuliah": "Mata Kuliah",
-    "Kesulitan mencari referensi materi": "Mata Kuliah",
-    "Kesulitan menentukan prioritas belajar": "Mata Kuliah",
-    "Kesulitan mengerjakan soal ujian": "Mata Kuliah",
-    // Tugas Kuliah → Fitur Mata Kuliah
-    "Belum memahami instruksi tugas": "Mata Kuliah",
-    "Bingung memulai dari bagian mana": "Mata Kuliah",
-    "Sulit mencari referensi yang sesuai": "Mata Kuliah",
-    "Deadline sudah dekat": "Mata Kuliah",
-    // Skripsi/Tesis/Disertasi
-    "Bingung memulai penelitian": "Skripsi/Tesis/Disertasi",
-    "Belum memiliki topik/judul": "Skripsi/Tesis/Disertasi",
-    "Stuck dan tidak tahu harus menulis apa lagi": "Skripsi/Tesis/Disertasi",
+    "Belum memahami materinya": "Parafrase",
+    "Sulit menemukan referensi tambahan": "Cari Jurnal",
+    "Tidak tahu bagian mana yang harus dipelajari terlebih dahulu": "Parafrase",
+    "Sulit berlatih soal": "Parafrase",
+    "Belum memahami instruksi tugas": "Parafrase",
+    "Bingung memulai dari bagian mana": "Parafrase",
+    "Sulit mencari referensi yang sesuai": "Cari Jurnal",
+    "Deadline sudah dekat": "Parafrase",
+    "Bingung memulai penelitian": "Parafrase",
+    "Belum memiliki topik/judul": "Parafrase",
+    "Stuck dan tidak tahu harus menulis apa lagi": "Parafrase",
     "Sulit menemukan referensi yang relevan": "Cari Jurnal",
-    "Banyak revisi dari dosen": "Skripsi/Tesis/Disertasi",
-    "Khawatir hasil plagiasi tinggi": "Cek Plagiarisme",
+    "Banyak revisi dari dosen": "Parafrase",
+    "Khawatir hasil plagiasi tinggi": "Parafrase",
     "Kesulitan mengolah atau menganalisis data": "Skripsi/Tesis/Disertasi",
-    "Penulisan akademik masih kurang tepat": "Parafrase",
+    "Penulisan akademik atau grammar masih kurang tepat": "Parafrase",
     "Target penyelesaian terasa berat": "Skripsi/Tesis/Disertasi",
   };
   const kendalaFitur = kendala.length > 0 ? KENDALA_FITUR_MAP[kendala[0]] ?? "Parafrase" : null;
@@ -6675,8 +6672,9 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
   };
 
   const FEATURE_MSGS = [
-    "Membuka pengalaman menarik untukmu",
-    "Hampir selesai, Alerin sedang bersiap!",
+    "Sedang menyiapkan fitur untukmu...",
+    "Mengkonfigurasi pengaturan personal...",
+    "Hampir selesai, sebentar lagi!",
   ];
   const startFeatureLoading = () => {
     featureTimers.current.forEach(id => { clearTimeout(id); clearInterval(id); });
@@ -6702,8 +6700,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
       const FITUR_DEST: Record<string, FinishDest> = {
         jurnal:    { tab: "fitur", featureKey: "jurnal" },
         parafrase: { tab: "fitur", featureKey: "parafrase" },
-        matakuliah: { tab: "fitur", featureKey: "jurnal" },
-        plagiarisme: { tab: "fitur", featureKey: "plagiasi" },
+        skripsi:   { tab: "fitur", featureKey: "skripsi" },
       };
       onFinish(FITUR_DEST[selectedFitur] ?? { prompt: loadingPrompt });
     }, 4200);
@@ -6916,9 +6913,9 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                 <p className="text-[12px] font-bold leading-[18px] text-[#1d4ed8] mb-3" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Catatan:</p>
                 <div className="flex flex-col gap-3">
                   {[
-                    { src: "/assets/icon-spam.svg", text: "Periksa folder Spam atau Promosi jika email tidak muncul di Kotak Masuk." },
+                    { src: "/assets/icon-spam.svg", text: "Belum menemukan emailnya? Coba cek folder Spam atau Promosi." },
                     { src: "/assets/icon-verify-check.svg", text: "Tautan verifikasi berlaku selama 24 jam sejak email dikirim." },
-                    { src: "/assets/icon-link.svg", text: "Demi keamanan akun, jangan bagikan tautan verifikasi kepada pihak manapun." },
+                    { src: "/assets/icon-link.svg", text: "Demi keamanan akun, jangan bagikan tautan verifikasi kepada siapa pun." },
                   ].map((item, i) => (
                     <div key={i} className="flex items-center gap-3">
                       <div className="rounded-[6px] flex items-center justify-center shrink-0" style={{ width: 25, height: 25, background: "linear-gradient(180deg, #1d4ed8 0%, #0f2972 100%)", opacity: 0.79 }}>
@@ -6959,12 +6956,12 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
 
       <div className="relative z-10 flex flex-col items-center text-center px-6 max-w-xl w-full">
         <h1 className="font-bold text-[19px] sm:text-3xl text-slate-900 mb-2 leading-snug" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
-          <span className="sm:hidden">Terima kasih telah mempercayakan mimpimu pada Alerin</span>
-          <span className="hidden sm:inline">Terima kasih telah mempercayakan mimpimu pada Alerin</span>
+          <span className="sm:hidden">Terima kasih telah mempercayakan mimpimu</span>
+          <span className="hidden sm:inline">Terima kasih telah mempercayakan mimpimu pada kami</span>
         </h1>
         <p className="text-slate-500 text-[12px] sm:text-[15px] mb-9 leading-relaxed">
-          <span className="sm:hidden">Sekarang, Alerin sedang merancang jalur akademik yang sesuai kebutuhanmu</span>
-          <span className="hidden sm:inline">Sekarang, Alerin sedang merancang jalur akademik yang sesuai kebutuhanmu</span>
+          <span className="sm:hidden">Kami sedang merancang jalur akademik untukmu.</span>
+          <span className="hidden sm:inline">Kami sedang merancang jalur akademik personal untukmu.</span>
         </p>
 
         {/* Arc ring (static) + logo (static) */}
@@ -7058,11 +7055,11 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
       {/* Status text */}
       <div className="text-center px-6">
         <h2 className="font-bold text-[20px] sm:text-[24px] text-[#1e293b] mb-2" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
-          {featureLoadingDone ? "Alerin siap membantumu." : "Membuka pengalaman menarik untukmu"}
+          {featureLoadingDone ? "Siap digunakan!" : "Menyiapkan fitur untukmu"}
         </h2>
         <p key={featureLoadingStatus} className="text-[13px] sm:text-[14px] text-[#64748b] leading-relaxed"
           style={{ animation: "fadeSlideUp 0.4s ease forwards" }}>
-          {featureLoadingDone ? "Alerin siap membantumu." : FEATURE_MSGS[featureLoadingStatus]}
+          {featureLoadingDone ? "Semua sudah terkonfigurasi dengan baik." : FEATURE_MSGS[featureLoadingStatus]}
         </p>
       </div>
 
@@ -7110,7 +7107,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
   // Pintarly-style mascot speech bubble
 
   return (
-    <div className="fixed inset-0 z-[300] flex flex-col overflow-hidden" style={{ background: "linear-gradient(180deg, #f8faff 0%, #f0f5ff 50%, #f8faff 100%)", padding: 0 }}>
+    <div className="fixed inset-0 z-[300] flex flex-col overflow-hidden" style={{ background: "linear-gradient(180deg, #f8faff 0%, #f0f5ff 50%, #f8faff 100%)" }}>
 
       {/* Header — step 0: close only; step 1 & email verify: no header; step 2+: progress header */}
       {step === 0 ? (
@@ -7670,8 +7667,8 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                 id: "matakuliah",
                 icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>,
                 label: "Mata Kuliah",
-                badge: undefined,
-                badgeColor: undefined,
+                badge: null,
+                badgeColor: null,
                 desc: "Pahami mata kuliah kamu di sini",
                 tags: ["Rangkuman Otomatis", "Kuis Adaptif", "Catatan Kuliah", "Tanya AI per Modul"],
               },
@@ -7679,8 +7676,8 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                 id: "tugas",
                 icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>,
                 label: "Tugas Kuliah",
-                badge: undefined,
-                badgeColor: undefined,
+                badge: null,
+                badgeColor: null,
                 desc: "Makalah, esai, atau paper",
                 tags: ["Parafrase Akademik", "Sitasi Ilmiah APA/IEEE", "Cek Plagiarisme & Argumen"],
               },
@@ -7688,7 +7685,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                 id: "skripsi",
                 icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>,
                 label: jenjang === "S2" ? "Tesis" : jenjang === "S3" ? "Disertasi" : "Skripsi",
-                badge: undefined,
+                badge: null,
                 badgeColor: "#d97706",
                 desc: "Judul, bab 1-5, olah data, revisi, sidang",
                 tags: ["Review Metodologi Riset", "Olah Data (SPSS/Python)", "Simulasi Tanya Jawab Sidang"],
@@ -7863,27 +7860,30 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
             const MAX = 2;
             const OPTS_BY_BANTU: Record<string, { label: string; fitur: string; icon: React.ReactNode }[]> = {
               matakuliah: [
-                { label: "Kesulitan memahami materi kuliah", fitur: "Mata Kuliah", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> },
-                { label: "Kesulitan mencari referensi materi", fitur: "Mata Kuliah", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> },
-                { label: "Kesulitan menentukan prioritas belajar", fitur: "Mata Kuliah", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg> },
-                { label: "Kesulitan mengerjakan soal ujian", fitur: "Mata Kuliah", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> },
+                { label: "Belum memahami materinya", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> },
+                { label: "Sulit menemukan referensi tambahan", fitur: "Cari Jurnal", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> },
+                { label: "Tidak tahu bagian mana yang harus dipelajari terlebih dahulu", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg> },
+                { label: "Sulit berlatih soal", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> },
+                { label: "Lainnya", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg> },
               ],
               tugas: [
-                { label: "Belum memahami instruksi tugas", fitur: "Mata Kuliah", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> },
-                { label: "Bingung memulai dari bagian mana", fitur: "Mata Kuliah", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> },
-                { label: "Sulit mencari referensi yang sesuai", fitur: "Mata Kuliah", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> },
-                { label: "Deadline sudah dekat", fitur: "Mata Kuliah", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> },
+                { label: "Belum memahami instruksi tugas", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> },
+                { label: "Bingung memulai dari bagian mana", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> },
+                { label: "Sulit mencari referensi yang sesuai", fitur: "Cari Jurnal", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> },
+                { label: "Deadline sudah dekat", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> },
+                { label: "Lainnya", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg> },
               ],
               skripsi: [
-                { label: "Bingung memulai penelitian", fitur: "Skripsi/Tesis/Disertasi", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> },
-                { label: "Belum memiliki topik/judul", fitur: "Skripsi/Tesis/Disertasi", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg> },
-                { label: "Stuck dan tidak tahu harus menulis apa lagi", fitur: "Skripsi/Tesis/Disertasi", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> },
+                { label: "Bingung memulai penelitian", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> },
+                { label: "Belum memiliki topik/judul", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg> },
+                { label: "Stuck dan tidak tahu harus menulis apa lagi", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> },
                 { label: "Sulit menemukan referensi yang relevan", fitur: "Cari Jurnal", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> },
-                { label: "Banyak revisi dari dosen", fitur: "Skripsi/Tesis/Disertasi", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> },
-                { label: "Khawatir hasil plagiasi tinggi", fitur: "Cek Plagiarisme", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> },
+                { label: "Banyak revisi dari dosen", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> },
+                { label: "Khawatir hasil plagiasi tinggi", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> },
                 { label: "Kesulitan mengolah atau menganalisis data", fitur: "Skripsi/Tesis/Disertasi", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg> },
-                { label: "Penulisan akademik masih kurang tepat", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> },
+                { label: "Penulisan akademik atau grammar masih kurang tepat", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> },
                 { label: "Target penyelesaian terasa berat", fitur: "Skripsi/Tesis/Disertasi", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> },
+                { label: "Lainnya", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg> },
               ],
             };
             const opts = OPTS_BY_BANTU[bantuPilihan] ?? OPTS_BY_BANTU.skripsi;
@@ -7895,13 +7895,13 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
               );
             };
             const bubbleSub = {
-              matakuliah: "Pilih maksimal 2 agar Alerin bisa bantu lebih tepat.",
-              tugas: "Pilih maksimal 2 agar Alerin bisa bantu lebih tepat.",
+              matakuliah: "Pilih maksimal 2. Alerin akan memprioritaskan materi yang paling kamu butuhkan.",
+              tugas: "Pilih maksimal 2. Alerin akan menyiapkan panduan dan template yang sesuai.",
               skripsi: "Pilih maksimal 2. Tidak perlu sempurna, bisa diubah nanti seiring progres.",
             }[bantuPilihan] ?? "";
             return (
               <>
-                <PintarlyMascotBubble pre="Apa kendala utamamu" bold="saat ini?" sub={bubbleSub} />
+                <PintarlyMascotBubble pre="Apa kendala utama" bold="kamu sekarang?" sub={bubbleSub} />
                 <div className="flex flex-col gap-[10px] w-full rounded-[20px] p-5" style={{ background: "#ffffff", border: "2px solid #60a5fa" }}>
                   {opts.map(o => {
                     const on = kendala.includes(o.label);
@@ -7949,19 +7949,19 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
               tugas: {
                 pre: "Kapan target", bold: "tugasmu?", sub: "Alerin akan sesuaikan prioritas bantuannya.",
                 opts: [
-                  { id: "Besok", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>, label: "Besok", sublabel: "Deadline besok, butuh bantuan sekarang", badge: undefined, badgeColor: undefined },
-                  { id: "Kurang dari 1 minggu", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>, label: "Kurang dari 1 minggu", sublabel: "Masih ada beberapa hari", badge: undefined, badgeColor: undefined },
-                  { id: "Kurang dari 1 bulan", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>, label: "Kurang dari 1 bulan", sublabel: "Ada waktu untuk persiapan lebih matang", badge: undefined, badgeColor: undefined },
-                  { id: "Belum yakin", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>, label: "Belum yakin", sublabel: "Tidak apa-apa, bisa diatur nanti", badge: undefined, badgeColor: undefined },
+                  { id: "Besok", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>, label: "Besok", sublabel: "Deadline besok, butuh bantuan sekarang", badge: null, badgeColor: null },
+                  { id: "Kurang dari 1 minggu", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>, label: "Kurang dari 1 minggu", sublabel: "Masih ada beberapa hari", badge: null, badgeColor: null },
+                  { id: "Kurang dari 1 bulan", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>, label: "Kurang dari 1 bulan", sublabel: "Ada waktu untuk persiapan lebih matang", badge: null, badgeColor: null },
+                  { id: "Belum yakin", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>, label: "Belum yakin", sublabel: "Tidak apa-apa, bisa diatur nanti", badge: null, badgeColor: null },
                 ],
               },
               skripsi: {
                 pre: "Kapan target", bold: jenjang === "S2" ? "Tesimu?" : jenjang === "S3" ? "Disertasimu?" : "Skripsimu?", sub: "Jawaban ini Alerin pakai untuk kasih saran yang paling masuk akal.",
                 opts: [
-                  { id: "Bulan ini", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>, label: "Bulan ini", sublabel: "Deadline kurang dari 30 hari", badge: undefined, badgeColor: undefined },
-                  { id: "1–3 bulan", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>, label: "1-3 Bulan", sublabel: "Target semester ini", badge: undefined, badgeColor: undefined },
-                  { id: "Lebih dari 3 bulan", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22c4.97 0 9-4.03 9-9s-4.03-9-9-9-9 4.03-9 9 4.03 9 9 9z"/><path d="M6.4 6.4L17.6 17.6"/><path d="M6 12s0-4 6-4 6 4 6 4"/></svg>, label: "Lebih dari 3 Bulan", sublabel: "Masih jauh dari deadline", badge: undefined, badgeColor: undefined },
-                  { id: "Belum yakin", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>, label: "Belum yakin", sublabel: "Belum tahu kapan targetnya", badge: undefined, badgeColor: undefined },
+                  { id: "Bulan ini", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>, label: "Bulan ini", sublabel: "Deadline kurang dari 30 hari", badge: null, badgeColor: null },
+                  { id: "1–3 bulan", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>, label: "1-3 Bulan", sublabel: "Target semester ini", badge: null, badgeColor: null },
+                  { id: "Lebih dari 3 bulan", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22c4.97 0 9-4.03 9-9s-4.03-9-9-9-9 4.03-9 9 4.03 9 9 9z"/><path d="M6.4 6.4L17.6 17.6"/><path d="M6 12s0-4 6-4 6 4 6 4"/></svg>, label: "Lebih dari 3 Bulan", sublabel: "Masih jauh dari deadline", badge: null, badgeColor: null },
+                  { id: "Belum yakin", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>, label: "Belum yakin", sublabel: "Belum tahu kapan targetnya", badge: null, badgeColor: null },
                 ],
               },
             };
@@ -7984,181 +7984,92 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
             <>
               <PintarlyMascotBubble
                 pre="Fitur yang"
-                bold="sesuai untuk kamu"
+                bold="pas buat kamu"
                 sub={(() => {
                   const rec = kendala.length > 0 ? KENDALA_FITUR_MAP[kendala[0]] : null;
-                  if (rec === "Cari Jurnal") return "Alerin merekomendasikan fitur Cari Jurnal yang sesuai dengan kebutuhanmu.";
-                  if (rec === "Skripsi/Tesis/Disertasi") return "Alerin merekomendasikan fitur skripsi, tesis & disertasi yang sesuai dengan kebutuhanmu.";
-                  if (rec === "Mata Kuliah") return "Alerin merekomendasikan fitur Mata Kuliah yang sesuai dengan kebutuhanmu.";
-                  return "Alerin merekomendasikan fitur parafrase yang sesuai dengan kebutuhanmu.";
+                  if (rec === "Cari Jurnal") return "Kami rekomendasikan fitur pencarian jurnal untuk kendalamu.";
+                  if (rec === "Skripsi/Tesis/Disertasi") return "Kami rekomendasikan fitur skripsi, tesis & disertasi untuk kendalamu.";
+                  return "Kami rekomendasikan fitur parafrase untuk kendalamu.";
                 })()}
               />
 
-              {/* Feature cards — two vertically stacked, matching Figma */}
+              {/* DIREKOMENDASIKAN divider */}
+              <div className="flex items-center gap-3 mb-4">
+                <div className="flex-1 h-px" style={{ background: "linear-gradient(90deg, rgba(37,99,235,0.5), rgba(37,99,235,0))" }}/>
+                <span className="font-['Plus_Jakarta_Sans'] font-bold text-[12px] text-[#2563eb] tracking-[1.5px] uppercase whitespace-nowrap">Direkomendasikan</span>
+                <div className="flex-1 h-px" style={{ background: "linear-gradient(90deg, rgba(37,99,235,0), rgba(37,99,235,0.5))" }}/>
+              </div>
+
+              {/* Feature cards — dynamic based on kendala */}
               <div className="flex flex-col gap-3 w-full">
-
-                {/* Card 1 — Fitur Parafrase */}
                 {(() => {
-                  const sel = selectedFitur === "parafrase";
-                  return (
-                    <div
-                      onClick={() => setSelectedFitur(sel ? "" : "parafrase")}
-                      className="w-full relative overflow-hidden cursor-pointer active:scale-[0.99] transition-transform"
-                      style={{
-                        borderRadius: 14,
-                        backgroundImage: "linear-gradient(-66.07deg, rgba(230,247,250,0.35) 5.77%, rgb(235,245,255) 36.07%, rgb(255,255,255) 66.37%, rgb(255,255,255) 92.35%)",
-                        boxShadow: sel ? "0 0 0 2px #2563eb, 0px 4px 4px rgba(0,0,0,0.14)" : "0px 4px 4px rgba(0,0,0,0.14)",
-                        minHeight: 140,
-                      }}>
-                      <div className="flex" style={{ height: "100%" }}>
-                        {/* LEFT — title + desc + button */}
-                        <div className="flex flex-col justify-between" style={{ flex: "1 1 0", minWidth: 0, paddingTop: 24, paddingBottom: 24, paddingLeft: 19, paddingRight: 19 }}>
-                          <div>
-                            <p style={{ fontFamily: "Inter", fontWeight: 700, fontSize: 19, lineHeight: "24px", color: "#000", letterSpacing: "-0.45px", marginBottom: 6 }}>Parafrase</p>
-                            <p style={{ fontFamily: "Inter", fontWeight: 400, fontSize: 10.5, lineHeight: "14.5px", color: "rgba(84,84,84,0.95)" }}>Membantu mengubah kalimat menjadi versi baru dengan makna yang sama, membuat tulisan lebih segar dan mudah dipahami.</p>
-                          </div>
-                          <button
-                            onClick={e => { e.stopPropagation(); setSelectedFitur(sel ? "" : "parafrase"); }}
-                            className="transition-all active:opacity-80"
-                            style={{
-                              marginTop: 12,
-                              alignSelf: "flex-start",
-                              padding: "8px 18px",
-                              borderRadius: 11,
-                              border: "none",
-                              cursor: "pointer",
-                              background: "#2563eb",
-                              boxShadow: "0px 5.5px 13.8px -2.75px rgba(0,133,255,0.42)",
-                              fontFamily: "Inter",
-                              fontWeight: 500,
-                              fontSize: 11,
-                              color: "#fff",
-                              letterSpacing: "0.24px",
-                              display: "flex",
-                              alignItems: "center",
-                              gap: 5,
-                            }}>
-                            {sel ? (
-                              <>
-                                <svg width="12" height="10" viewBox="0 0 12 9" fill="none"><path d="M1 4.5L4.2 8L11 1" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                                Sudah dipilih
-                              </>
-                            ) : "Pilih untuk digunakan"}
-                          </button>
-                        </div>
+                  // Get first recommended feature from selected kendala
+                  const recFeatures = [...new Set(kendala.map(k => KENDALA_FITUR_MAP[k]).filter(Boolean))];
+                  // If no kendala, show Parafrase as default
+                  const features = recFeatures.length > 0 ? [recFeatures[0]] : ["Parafrase"];
 
-                        {/* RIGHT — blue panel with inner widget */}
-                        <div style={{ width: 140, flexShrink: 0, background: "rgba(55,127,233,0.38)", borderRadius: "10px 14px 14px 10px", padding: 12, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                          {/* Inner widget card */}
-                          <div style={{ width: "100%", background: "#fff", borderRadius: 7.5, border: "0.47px solid rgba(241,245,249,0.9)", boxShadow: "0px 4.7px 11.7px -1.87px rgba(26,26,44,0.06), 0px 0.94px 2.81px -0.47px rgba(0,0,0,0.04)", overflow: "hidden", paddingBottom: 8 }}>
-                            {/* Widget header */}
-                            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "7px 8px 5px", borderBottom: "0.47px solid #f1f5f9" }}>
-                              <div style={{ display: "flex", alignItems: "center", gap: 2.5 }}>
-                                <span style={{ fontFamily: "'Plus Jakarta Sans'", fontWeight: 800, fontSize: 7, color: "#2563eb" }}>+</span>
-                                <span style={{ fontFamily: "'Plus Jakarta Sans'", fontWeight: 700, fontSize: 6.5, color: "#1d1b27", letterSpacing: "-0.16px" }}>Parafrase Alerin </span>
-                              </div>
-                              <div style={{ width: 9, height: 9, background: "#f1f5f9", borderRadius: 2.5, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                <div style={{ width: 4.5, height: 4.5, background: "#cbd5e1", borderRadius: 1 }}/>
-                              </div>
-                            </div>
-                            {/* Skeleton lines */}
-                            <div style={{ padding: "7px 8px 0", display: "flex", flexDirection: "column", gap: 4.5 }}>
-                              <div style={{ height: 6.5, borderRadius: 2.5, background: "#edf1f8", width: "80%" }}/>
-                              <div style={{ height: 6.5, borderRadius: 2.5, background: "#edf1f8", width: "100%" }}/>
-                              <div style={{ height: 6.5, borderRadius: 2.5, background: "#edf1f8", width: "60%" }}/>
-                            </div>
-                            {/* Perbaiki button + cursor */}
-                            <div style={{ position: "relative", margin: "5px 8px 0" }}>
-                              <div style={{ background: "#2563eb", borderRadius: 5.5, paddingTop: 0, paddingBottom: 0, textAlign: "center", boxShadow: "0px 4.7px 9.4px -1.4px #2563eb", position: "relative", fontWeight: 700, marginTop: 6, marginBottom: 6, height: 23, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                <span style={{ fontFamily: "'Plus Jakarta Sans'", fontWeight: 600, fontSize: 6.5, color: "#fff", marginTop: -18, marginRight: -1, marginBottom: -18, marginLeft: -1, paddingLeft: 7, paddingRight: 7 }}>Perbaiki </span>
-                              </div>
-                              <img src="/assets/66b22.svg" alt="" style={{ position: "absolute", right: -12, bottom: -12, width: 28, height: 28, pointerEvents: "none" }}/>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })()}
+                  const cards: { key: string; fitur: string; color: string; desc: string; kendalaMatch: string }[] = [
+                    { key: "parafrase", fitur: "Fitur Parafrase", color: "#3b7dd8", desc: "Fitur parafrase membantu mengubah kalimat menjadi versi baru dengan makna yang sama, membuat tulisan lebih segar dan mudah dipahami.", kendalaMatch: "Parafrase" },
+                    { key: "jurnal", fitur: "Cari Jurnal", color: "#a0522d", desc: "Fitur Cari Jurnal membantu menemukan jurnal dan referensi akademis yang relevan dengan topik penelitianmu.", kendalaMatch: "Cari Jurnal" },
+                    { key: "skripsi", fitur: "Skripsi, Tesis & Disertasi", color: "#1e6b52", desc: "Fitur ini membantu menyusun, mengoreksi, dan memperbaiki penulisan skripsi, tesis, atau disertasi secara menyeluruh.", kendalaMatch: "Skripsi/Tesis/Disertasi" },
+                  ];
 
-                {/* Card 2 — Cari Jurnal */}
-                {(() => {
-                  const sel = selectedFitur === "jurnal";
-                  return (
-                    <div
-                      onClick={() => setSelectedFitur(sel ? "" : "jurnal")}
-                      className="w-full relative overflow-hidden cursor-pointer active:scale-[0.99] transition-transform"
-                      style={{
-                        borderRadius: 14,
-                        backgroundImage: "linear-gradient(-66.07deg, rgba(230,247,250,0.35) 5.77%, rgb(235,245,255) 36.07%, rgb(255,255,255) 66.37%, rgb(255,255,255) 92.35%)",
-                        boxShadow: sel ? "0 0 0 2px #d34442, 0px 4px 4px rgba(0,0,0,0.14)" : "0px 4px 4px rgba(0,0,0,0.14)",
-                        minHeight: 140,
-                      }}>
-                      <div className="flex" style={{ height: "100%" }}>
-                        {/* LEFT — title + desc + button */}
-                        <div className="flex flex-col justify-between" style={{ flex: "1 1 0", minWidth: 0, paddingTop: 26, paddingBottom: 26, paddingLeft: 22, paddingRight: 22 }}>
-                          <div>
-                            <p style={{ fontFamily: "Inter", fontWeight: 700, fontSize: 19, lineHeight: "24px", color: "#000", letterSpacing: "-0.45px", marginBottom: 6 }}>Cari Jurnal</p>
-                            <p style={{ fontFamily: "Inter", fontWeight: 400, fontSize: 10.5, lineHeight: "14.5px", color: "rgba(84,84,84,0.95)" }}>Membantu menemukan referensi akademik terpercaya dari berbagai sumber jurnal yang relevan dengan topik penelitian.</p>
-                          </div>
-                          <button
-                            onClick={e => { e.stopPropagation(); setSelectedFitur(sel ? "" : "jurnal"); }}
-                            className="transition-all active:opacity-80"
-                            style={{
-                              marginTop: 12,
-                              alignSelf: "flex-start",
-                              padding: "8px 18px",
-                              borderRadius: 11,
-                              border: "none",
-                              cursor: "pointer",
-                              background: "#d34442",
-                              boxShadow: "0px 5.5px 13.8px -2.75px rgba(0,133,255,0.42)",
-                              fontFamily: "Inter",
-                              fontWeight: 500,
-                              fontSize: 11,
-                              color: "#fff",
-                              letterSpacing: "0.24px",
-                              display: "flex",
-                              alignItems: "center",
-                              gap: 5,
-                            }}>
-                            {sel ? (
-                              <>
-                                <svg width="12" height="10" viewBox="0 0 12 9" fill="none"><path d="M1 4.5L4.2 8L11 1" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                                Sudah dipilih
-                              </>
-                            ) : "Pilih untuk digunakan"}
-                          </button>
-                        </div>
+                  return features.map(f => {
+                    const card = cards.find(c => c.kendalaMatch === f);
+                    if (!card) return null;
+                    const sel = selectedFitur === card.key;
+                    // Find which kendala matched this feature
+                    const matchedKendala = kendala.find(k => KENDALA_FITUR_MAP[k] === card.kendalaMatch);
 
-                        {/* RIGHT — red panel "kotak di dalam kotak" */}
-                        <div style={{ width: 140, flexShrink: 0, background: "rgba(211,68,66,0.57)", borderRadius: "10px 14px 14px 10px", padding: 12, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                          {/* Inner illustration box — same structure as Parafrase inner widget */}
-                          <div style={{ width: "100%", borderRadius: 8, overflow: "hidden", position: "relative", minHeight: 116 }}>
-                            {/* Lozenge decorative rows */}
-                            <div style={{ position: "absolute", top: 0, right: 0, left: 0, display: "flex", flexDirection: "column", rowGap: 13, columnGap: 5, padding: "8px 0 0 8px", opacity: 0.34 }}>
-                              <div style={{ display: "flex", gap: 4 }}>
-                                <div style={{ height: 13, borderRadius: 9999, background: "rgba(226,232,240,0.5)", width: 34 }}/>
-                                <div style={{ height: 13, borderRadius: 9999, background: "rgba(226,232,240,0.6)", width: 52 }}/>
-                                <div style={{ height: 15, borderRadius: 9999, background: "#e2e8f0", width: 60 }}/>
-                              </div>
-                              <div style={{ display: "flex", gap: 4, paddingRight: 8 }}>
-                                <div style={{ height: 13, borderRadius: 9999, background: "rgba(226,232,240,0.4)", width: 43 }}/>
-                                <div style={{ height: 15, borderRadius: 9999, background: "rgba(109,109,109,0.06)", width: 60 }}/>
-                                <div style={{ height: 13, borderRadius: 9999, background: "rgba(226,232,240,0.6)", width: 34 }}/>
-                              </div>
-                              <div style={{ display: "flex", gap: 4 }}>
-                                <div style={{ height: 13, borderRadius: 9999, background: "rgba(226,232,240,0.45)", width: 52 }}/>
-                                <div style={{ height: 15, borderRadius: 9999, background: "#e2e8f0", width: 68 }}/>
-                              </div>
-                            </div>
-                            {/* Patent papers illustration — contained inside the box */}
-                            <img src="/assets/f4f63.png" alt="Cari Jurnal" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", marginTop: 2, marginRight: 6, marginBottom: 2, marginLeft: 6 }}/>
+                    return (
+                      <button
+                        key={card.key}
+                        onClick={() => setSelectedFitur(sel ? "" : card.key)}
+                        className="w-full relative transition-all active:scale-[0.98] overflow-hidden text-left"
+                        style={{
+                          borderRadius: "16px",
+                          boxShadow: sel
+                            ? "0 0 0 2.5px #2563eb, 0 8px 32px rgba(37,99,235,0.25)"
+                            : "0 2px 12px rgba(0,0,0,0.06)",
+                        }}>
+                        {/* Card background */}
+                        <div className="absolute inset-0 rounded-[16px]" style={{ background: card.color }}/>
+                        {/* Top banner */}
+                        {matchedKendala && (
+                          <div className="relative z-10 px-4 py-2 rounded-t-[16px]" style={{ background: "rgba(0,0,0,0.15)" }}>
+                            <p className="text-[11px] sm:text-[12px] font-semibold text-white/90 text-center">
+                              Rekomendasi fitur untuk kamu
+                            </p>
+                          </div>
+                        )}
+                        {/* Content */}
+                        <div className="relative z-10 flex items-center gap-4 px-5 py-5">
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-['Plus_Jakarta_Sans'] font-extrabold text-[18px] sm:text-[20px] text-white leading-[24px] mb-2">{card.fitur}</h3>
+                            <p className="font-['Plus_Jakarta_Sans'] text-[12px] sm:text-[13px] text-white/80 leading-[18px]">{card.desc}</p>
+                          </div>
+                          {/* Illustration — centered vertically */}
+                          <div className="shrink-0 w-[110px] h-[110px] sm:w-[140px] sm:h-[140px] flex items-center justify-center">
+                            {card.key === "parafrase" && (
+                              <img src="/assets/Aset%20Fitur%20Parafrase.png" alt="Parafrase" className="w-[100px] h-[100px] sm:w-[130px] sm:h-[130px] object-contain"/>
+                            )}
+                            {card.key === "jurnal" && (
+                              <img src="/assets/Metric%20Card%20%26%20Waveform.png" alt="Cari Jurnal" className="w-[100px] h-[100px] sm:w-[130px] sm:h-[130px] object-contain"/>
+                            )}
+                            {card.key === "skripsi" && (
+                              <img src="/assets/Aset%20fitur%20Skripsi.png" alt="Skripsi" className="w-[100px] h-[100px] sm:w-[130px] sm:h-[130px] object-contain"/>
+                            )}
                           </div>
                         </div>
-                      </div>
-                    </div>
-                  );
+                        {/* Selected indicator */}
+                        {sel && (
+                          <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-white flex items-center justify-center z-20 shadow-md pointer-events-none">
+                            <svg width="11" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4.5L4.2 8L11 1" stroke="#2563eb" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                          </div>
+                        )}
+                      </button>
+                    );
+                  });
                 })()}
               </div>
             </>
@@ -8331,7 +8242,7 @@ function ProfilTab({ onTab, onRegister }: { onTab: (t: NavTab) => void; onRegist
             className="w-full flex items-center justify-between px-5 py-4 rounded-2xl mb-4 transition-all hover:opacity-95 active:scale-[0.99]"
             style={{ background: "linear-gradient(135deg, #2563eb 0%, #4f46e5 100%)", boxShadow: "0 4px 20px rgba(37,99,235,0.25)" }}>
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ backgroundImage: "none" }}>
+              <div className="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
               </div>
               <div className="text-left">
