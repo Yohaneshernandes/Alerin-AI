@@ -7984,21 +7984,15 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
             <>
               <PintarlyMascotBubble
                 pre="Fitur yang"
-                bold="pas buat kamu"
+                bold="sesuai untuk kamu"
                 sub={(() => {
                   const rec = kendala.length > 0 ? KENDALA_FITUR_MAP[kendala[0]] : null;
-                  if (rec === "Cari Jurnal") return "Kami rekomendasikan fitur pencarian jurnal untuk kendalamu.";
-                  if (rec === "Skripsi/Tesis/Disertasi") return "Kami rekomendasikan fitur skripsi, tesis & disertasi untuk kendalamu.";
-                  return "Kami rekomendasikan fitur parafrase untuk kendalamu.";
+                  if (rec === "Cari Jurnal") return "Alerin merekomendasikan fitur Cari Jurnal yang sesuai dengan kebutuhanmu.";
+                  if (rec === "Skripsi/Tesis/Disertasi") return "Alerin merekomendasikan fitur skripsi, tesis & disertasi yang sesuai dengan kebutuhanmu.";
+                  if (rec === "Mata Kuliah") return "Alerin merekomendasikan fitur Mata Kuliah yang sesuai dengan kebutuhanmu.";
+                  return "Alerin merekomendasikan fitur parafrase yang sesuai dengan kebutuhanmu.";
                 })()}
               />
-
-              {/* DIREKOMENDASIKAN divider */}
-              <div className="flex items-center gap-3 mb-4">
-                <div className="flex-1 h-px" style={{ background: "linear-gradient(90deg, rgba(37,99,235,0.5), rgba(37,99,235,0))" }}/>
-                <span className="font-['Plus_Jakarta_Sans'] font-bold text-[12px] text-[#2563eb] tracking-[1.5px] uppercase whitespace-nowrap">Direkomendasikan</span>
-                <div className="flex-1 h-px" style={{ background: "linear-gradient(90deg, rgba(37,99,235,0), rgba(37,99,235,0.5))" }}/>
-              </div>
 
               {/* Feature cards — dynamic based on kendala */}
               <div className="flex flex-col gap-3 w-full">
@@ -8009,9 +8003,11 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                   const features = recFeatures.length > 0 ? [recFeatures[0]] : ["Parafrase"];
 
                   const cards: { key: string; fitur: string; color: string; desc: string; kendalaMatch: string }[] = [
-                    { key: "parafrase", fitur: "Fitur Parafrase", color: "#3b7dd8", desc: "Fitur parafrase membantu mengubah kalimat menjadi versi baru dengan makna yang sama, membuat tulisan lebih segar dan mudah dipahami.", kendalaMatch: "Parafrase" },
-                    { key: "jurnal", fitur: "Cari Jurnal", color: "#a0522d", desc: "Fitur Cari Jurnal membantu menemukan jurnal dan referensi akademis yang relevan dengan topik penelitianmu.", kendalaMatch: "Cari Jurnal" },
-                    { key: "skripsi", fitur: "Skripsi, Tesis & Disertasi", color: "#1e6b52", desc: "Fitur ini membantu menyusun, mengoreksi, dan memperbaiki penulisan skripsi, tesis, atau disertasi secara menyeluruh.", kendalaMatch: "Skripsi/Tesis/Disertasi" },
+                    { key: "matakuliah", fitur: "Mata Kuliah", color: "#3b7dd8", desc: "Membantu memahami materi kuliah dengan penjelasan yang mudah dipahami, rangkuman, dan rekomendasi belajar yang sesuai.", kendalaMatch: "Mata Kuliah" },
+                    { key: "parafrase", fitur: "Parafrase", color: "#3b7dd8", desc: "Membantu mengubah kalimat menjadi versi baru dengan makna yang sama, membuat tulisan lebih segar dan mudah dipahami.", kendalaMatch: "Parafrase" },
+                    { key: "jurnal", fitur: "Cari Jurnal", color: "#a0522d", desc: "Membantu menemukan referensi akademik terpercaya dari berbagai sumber jurnal yang relevan dengan topik penelitian.", kendalaMatch: "Cari Jurnal" },
+                    { key: "plagiarisme", fitur: "Cek Plagiarisme", color: "#d9534f", desc: "Membantu mendeteksi similarity agar tulisanmu lebih original dan aman sebelum disubmit.", kendalaMatch: "Cek Plagiarisme" },
+                    { key: "skripsi", fitur: "Skripsi, Tesis & Disertasi", color: "#1e6b52", desc: "Membantu menyusun skripsi secara lebih terarah, mulai dari menentukan topik, menyusun proposal, hingga menyelesaikan penelitian dan revisi.", kendalaMatch: "Skripsi/Tesis/Disertasi" },
                   ];
 
                   return features.map(f => {
@@ -8050,11 +8046,21 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                           </div>
                           {/* Illustration — centered vertically */}
                           <div className="shrink-0 w-[110px] h-[110px] sm:w-[140px] sm:h-[140px] flex items-center justify-center">
+                            {card.key === "matakuliah" && (
+                              <div className="w-[100px] h-[100px] sm:w-[130px] sm:h-[130px] flex items-center justify-center">
+                                <svg width="80" height="80" viewBox="0 0 80 80" fill="none"><rect x="10" y="16" width="60" height="48" rx="8" fill="white" fillOpacity="0.2"/><rect x="18" y="24" width="30" height="4" rx="2" fill="white" fillOpacity="0.7"/><rect x="18" y="32" width="44" height="3" rx="1.5" fill="white" fillOpacity="0.4"/><rect x="18" y="39" width="44" height="3" rx="1.5" fill="white" fillOpacity="0.4"/><rect x="18" y="46" width="34" height="3" rx="1.5" fill="white" fillOpacity="0.4"/></svg>
+                              </div>
+                            )}
                             {card.key === "parafrase" && (
                               <img src="/assets/Aset%20Fitur%20Parafrase.png" alt="Parafrase" className="w-[100px] h-[100px] sm:w-[130px] sm:h-[130px] object-contain"/>
                             )}
                             {card.key === "jurnal" && (
                               <img src="/assets/Metric%20Card%20%26%20Waveform.png" alt="Cari Jurnal" className="w-[100px] h-[100px] sm:w-[130px] sm:h-[130px] object-contain"/>
+                            )}
+                            {card.key === "plagiarisme" && (
+                              <div className="w-[100px] h-[100px] sm:w-[130px] sm:h-[130px] flex items-center justify-center">
+                                <svg width="80" height="80" viewBox="0 0 80 80" fill="none"><path d="M40 12L64 26V54L40 68L16 54V26L40 12Z" fill="white" fillOpacity="0.2" stroke="white" strokeWidth="2"/><path d="M28 40L36 48L54 30" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                              </div>
                             )}
                             {card.key === "skripsi" && (
                               <img src="/assets/Aset%20fitur%20Skripsi.png" alt="Skripsi" className="w-[100px] h-[100px] sm:w-[130px] sm:h-[130px] object-contain"/>
