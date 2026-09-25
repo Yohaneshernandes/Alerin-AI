@@ -1702,24 +1702,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
         <aside className="hidden lg:flex shrink-0 border-l border-slate-100 overflow-y-auto bg-white py-4 px-4 flex-col overflow-hidden"
           style={{ width: sidebarOpen ? 256 : 0, opacity: sidebarOpen ? 1 : 0, transition: "width 0.28s cubic-bezier(0.4,0,0.2,1), opacity 0.2s ease", minWidth: 0 }}>
 
-          {/* Profile card — top of right sidebar */}
-          <div className="flex items-center gap-3 px-3 py-2.5 rounded-2xl border border-slate-100 mb-4"
-            style={{ boxShadow: "0 1px 4px rgba(0,0,0,0.04)" }}>
-            <button
-              ref={profileBtnRef}
-              onClick={() => {
-                const rect = profileBtnRef.current?.getBoundingClientRect();
-                if (rect) setProfileMenuPos({ top: rect.bottom + 8, right: window.innerWidth - rect.right });
-                setProfileMenuOpen(o => !o);
-              }}
-              className="flex items-center gap-3 flex-1 min-w-0 text-left hover:opacity-80 transition-opacity">
-              <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0"
-                style={{ background: "linear-gradient(135deg,#f59e0b,#d97706)" }}>RA</div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-semibold text-slate-800 truncate">Raka Aditya</p>
-                <p className="text-[10px] text-slate-400 truncate" style={{ bottom: "-1px" }}>Premium · Sem 6</p>
-              </div>
-            </button>
+          <div className="flex items-center justify-end px-3 py-2.5 mb-4">
             <button onClick={() => setNotifOpen(o => !o)} title="Notifikasi"
               className="relative w-7 h-7 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors shrink-0">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
@@ -7387,8 +7370,8 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                           />
                           <button onClick={() => setProdiSearch("")} className="shrink-0 ml-2 text-[#9ca3af] transition-all">
                             {showDropdown
-                              ? <svg width="14" height="8" viewBox="0 0 14 8" fill="none"><path d="M1 7L7 1L13 7" stroke="#6b7280" strokeWidth="2" strokeLinecap="round"/></svg>
-                              : <svg width="14" height="8" viewBox="0 0 14 8" fill="none"><path d="M1 1L7 7L13 1" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round"/></svg>
+                              ? <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                              : <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6"/></svg>
                             }
                           </button>
                         </div>
@@ -7532,7 +7515,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
               "Universitas Muhammadiyah Malang (UMM)","Universitas Islam Negeri Jakarta (UIN Jakarta)",
               "Universitas Islam Negeri Sunan Kalijaga (UIN Yogyakarta)","Universitas Islam Negeri Malang (UIN Malang)",
               "Universitas Bina Nusantara (BINUS)","Universitas Trisakti","Universitas Mercu Buana","Universitas Tarumanagara",
-              "Universitas Atma Jaya Jakarta","Universitas Pelita Harapan (UPH)","Telkom University",
+              "Universitas Atma Jaya Jakarta","Universitas Pelita Harapan (UPH)","TELKOM",
               "Universitas Gunadarma","Universitas Dian Nuswantoro (UDINUS)","Universitas Komputer Indonesia (UNIKOM)",
               "Universitas Pasundan (UNPAS)","Universitas Jenderal Soedirman (UNSOED)","Universitas Surabaya (UBAYA)",
               "Universitas Kristen Petra","Universitas Ciputra","Universitas Esa Unggul","Universitas Pancasila",
@@ -7546,7 +7529,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
               "UI":"Universitas Indonesia (UI)","UGM":"Universitas Gadjah Mada (UGM)","ITB":"Institut Teknologi Bandung (ITB)",
               "UNAIR":"Universitas Airlangga (UNAIR)","IPB":"Institut Pertanian Bogor (IPB)","ITS":"Institut Teknologi Sepuluh Nopember (ITS)",
               "UNPAD":"Universitas Padjadjaran (UNPAD)","UB":"Universitas Brawijaya (UB)","BINUS":"Universitas Bina Nusantara (BINUS)",
-              "TELKOM":"Telkom University","UT":"Universitas Terbuka (UT)","Unpam":"Universitas Pamulang (UNPAM)",
+              "TELKOM":"TELKOM","UT":"Universitas Terbuka (UT)","Unpam":"Universitas Pamulang (UNPAM)",
               "UIN Jakarta":"Universitas Islam Negeri Jakarta (UIN Jakarta)","UNJ":"Universitas Negeri Jakarta (UNJ)",
             };
             const uniFiltered = uniSearch.trim()
@@ -7563,7 +7546,6 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
 
                     {/* University search */}
                     <div className="flex flex-col gap-2">
-                      <p className="text-[14px] font-semibold text-[#111827]">Cari Nama atau Singkatan Kampus</p>
                       <div className="relative">
                         <div className="flex items-center w-full px-4 py-3.5 rounded-[16px] transition-all"
                           style={{ background: "#fff", border: showUniDropdown ? "2px solid #2563eb" : "2px solid #e5e7eb", boxShadow: showUniDropdown ? "0 0 0 3px rgba(37,99,235,0.12)" : "none" }}>
