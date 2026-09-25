@@ -7532,7 +7532,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
               "Universitas Muhammadiyah Malang (UMM)","Universitas Islam Negeri Jakarta (UIN Jakarta)",
               "Universitas Islam Negeri Sunan Kalijaga (UIN Yogyakarta)","Universitas Islam Negeri Malang (UIN Malang)",
               "Universitas Bina Nusantara (BINUS)","Universitas Trisakti","Universitas Mercu Buana","Universitas Tarumanagara",
-              "Universitas Atma Jaya Jakarta","Universitas Pelita Harapan (UPH)","Telkom University",
+              "Universitas Atma Jaya Jakarta","Universitas Pelita Harapan (UPH)","TELKOM",
               "Universitas Gunadarma","Universitas Dian Nuswantoro (UDINUS)","Universitas Komputer Indonesia (UNIKOM)",
               "Universitas Pasundan (UNPAS)","Universitas Jenderal Soedirman (UNSOED)","Universitas Surabaya (UBAYA)",
               "Universitas Kristen Petra","Universitas Ciputra","Universitas Esa Unggul","Universitas Pancasila",
@@ -7546,7 +7546,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
               "UI":"Universitas Indonesia (UI)","UGM":"Universitas Gadjah Mada (UGM)","ITB":"Institut Teknologi Bandung (ITB)",
               "UNAIR":"Universitas Airlangga (UNAIR)","IPB":"Institut Pertanian Bogor (IPB)","ITS":"Institut Teknologi Sepuluh Nopember (ITS)",
               "UNPAD":"Universitas Padjadjaran (UNPAD)","UB":"Universitas Brawijaya (UB)","BINUS":"Universitas Bina Nusantara (BINUS)",
-              "TELKOM":"Telkom University","UT":"Universitas Terbuka (UT)","Unpam":"Universitas Pamulang (UNPAM)",
+              "TELKOM":"TELKOM","UT":"Universitas Terbuka (UT)","Unpam":"Universitas Pamulang (UNPAM)",
               "UIN Jakarta":"Universitas Islam Negeri Jakarta (UIN Jakarta)","UNJ":"Universitas Negeri Jakarta (UNJ)",
             };
             const uniFiltered = uniSearch.trim()
