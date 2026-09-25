@@ -8072,7 +8072,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                               <div style={{ background: "#2563eb", borderRadius: 5.5, paddingTop: 0, paddingBottom: 0, textAlign: "center", boxShadow: "0px 4.7px 9.4px -1.4px #2563eb", position: "relative", fontWeight: 700, marginTop: 6, marginBottom: 6, height: 23, display: "flex", alignItems: "center", justifyContent: "center" }}>
                                 <span style={{ fontFamily: "'Plus Jakarta Sans'", fontWeight: 600, fontSize: 6.5, color: "#fff", marginTop: -18, marginRight: -1, marginBottom: -18, marginLeft: -1, paddingLeft: 7, paddingRight: 7 }}>Perbaiki </span>
                               </div>
-                              <img src="/assets/66b22.svg" alt="" style={{ position: "absolute", right: -12, bottom: -12, width: 28, height: 28, pointerEvents: "none" }}/>
+                              <svg width="28" height="28" viewBox="0 0 28 28" fill="none" style={{ position: "absolute", right: -12, bottom: -12, pointerEvents: "none" }}><circle cx="14" cy="14" r="12" fill="#fff" fillOpacity="0.2"/><path d="M10 14l4 4 8-8" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
                             </div>
                           </div>
                         </div>
@@ -8153,7 +8153,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                               </div>
                             </div>
                             {/* Patent papers illustration — contained inside the box */}
-                            <img src="/assets/f4f63.png" alt="Cari Jurnal" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", marginTop: 2, marginRight: 6, marginBottom: 2, marginLeft: 6 }}/>
+                            <img src="/assets/Metric%20Card%20%26%20Waveform.png" alt="Cari Jurnal" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", marginTop: 2, marginRight: 6, marginBottom: 2, marginLeft: 6 }}/>
                           </div>
                         </div>
                       </div>
