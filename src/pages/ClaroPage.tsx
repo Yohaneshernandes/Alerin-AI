@@ -6572,22 +6572,25 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
 
   // Kendala → recommended feature mapping
   const KENDALA_FITUR_MAP: Record<string, string> = {
-    "Belum memahami materinya": "Parafrase",
-    "Sulit menemukan referensi tambahan": "Cari Jurnal",
-    "Tidak tahu bagian mana yang harus dipelajari terlebih dahulu": "Parafrase",
-    "Sulit berlatih soal": "Parafrase",
-    "Belum memahami instruksi tugas": "Parafrase",
-    "Bingung memulai dari bagian mana": "Parafrase",
-    "Sulit mencari referensi yang sesuai": "Cari Jurnal",
-    "Deadline sudah dekat": "Parafrase",
-    "Bingung memulai penelitian": "Parafrase",
-    "Belum memiliki topik/judul": "Parafrase",
-    "Stuck dan tidak tahu harus menulis apa lagi": "Parafrase",
+    // Mata Kuliah → Fitur Mata Kuliah
+    "Kesulitan memahami materi kuliah": "Mata Kuliah",
+    "Kesulitan mencari referensi materi": "Mata Kuliah",
+    "Kesulitan menentukan prioritas belajar": "Mata Kuliah",
+    "Kesulitan mengerjakan soal ujian": "Mata Kuliah",
+    // Tugas Kuliah → Fitur Mata Kuliah
+    "Belum memahami instruksi tugas": "Mata Kuliah",
+    "Bingung memulai dari bagian mana": "Mata Kuliah",
+    "Sulit mencari referensi yang sesuai": "Mata Kuliah",
+    "Deadline sudah dekat": "Mata Kuliah",
+    // Skripsi/Tesis/Disertasi
+    "Bingung memulai penelitian": "Skripsi/Tesis/Disertasi",
+    "Belum memiliki topik/judul": "Skripsi/Tesis/Disertasi",
+    "Stuck dan tidak tahu harus menulis apa lagi": "Skripsi/Tesis/Disertasi",
     "Sulit menemukan referensi yang relevan": "Cari Jurnal",
-    "Banyak revisi dari dosen": "Parafrase",
-    "Khawatir hasil plagiasi tinggi": "Parafrase",
+    "Banyak revisi dari dosen": "Skripsi/Tesis/Disertasi",
+    "Khawatir hasil plagiasi tinggi": "Cek Plagiarisme",
     "Kesulitan mengolah atau menganalisis data": "Skripsi/Tesis/Disertasi",
-    "Penulisan akademik atau grammar masih kurang tepat": "Parafrase",
+    "Penulisan akademik masih kurang tepat": "Parafrase",
     "Target penyelesaian terasa berat": "Skripsi/Tesis/Disertasi",
   };
   const kendalaFitur = kendala.length > 0 ? KENDALA_FITUR_MAP[kendala[0]] ?? "Parafrase" : null;
@@ -7860,30 +7863,27 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
             const MAX = 2;
             const OPTS_BY_BANTU: Record<string, { label: string; fitur: string; icon: React.ReactNode }[]> = {
               matakuliah: [
-                { label: "Belum memahami materinya", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> },
-                { label: "Sulit menemukan referensi tambahan", fitur: "Cari Jurnal", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> },
-                { label: "Tidak tahu bagian mana yang harus dipelajari terlebih dahulu", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg> },
-                { label: "Sulit berlatih soal", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> },
-                { label: "Lainnya", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg> },
+                { label: "Kesulitan memahami materi kuliah", fitur: "Mata Kuliah", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> },
+                { label: "Kesulitan mencari referensi materi", fitur: "Mata Kuliah", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> },
+                { label: "Kesulitan menentukan prioritas belajar", fitur: "Mata Kuliah", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg> },
+                { label: "Kesulitan mengerjakan soal ujian", fitur: "Mata Kuliah", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> },
               ],
               tugas: [
-                { label: "Belum memahami instruksi tugas", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> },
-                { label: "Bingung memulai dari bagian mana", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> },
-                { label: "Sulit mencari referensi yang sesuai", fitur: "Cari Jurnal", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> },
-                { label: "Deadline sudah dekat", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> },
-                { label: "Lainnya", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg> },
+                { label: "Belum memahami instruksi tugas", fitur: "Mata Kuliah", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> },
+                { label: "Bingung memulai dari bagian mana", fitur: "Mata Kuliah", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> },
+                { label: "Sulit mencari referensi yang sesuai", fitur: "Mata Kuliah", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> },
+                { label: "Deadline sudah dekat", fitur: "Mata Kuliah", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> },
               ],
               skripsi: [
-                { label: "Bingung memulai penelitian", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> },
-                { label: "Belum memiliki topik/judul", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg> },
-                { label: "Stuck dan tidak tahu harus menulis apa lagi", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> },
+                { label: "Bingung memulai penelitian", fitur: "Skripsi/Tesis/Disertasi", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> },
+                { label: "Belum memiliki topik/judul", fitur: "Skripsi/Tesis/Disertasi", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg> },
+                { label: "Stuck dan tidak tahu harus menulis apa lagi", fitur: "Skripsi/Tesis/Disertasi", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> },
                 { label: "Sulit menemukan referensi yang relevan", fitur: "Cari Jurnal", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> },
-                { label: "Banyak revisi dari dosen", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> },
-                { label: "Khawatir hasil plagiasi tinggi", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> },
+                { label: "Banyak revisi dari dosen", fitur: "Skripsi/Tesis/Disertasi", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> },
+                { label: "Khawatir hasil plagiasi tinggi", fitur: "Cek Plagiarisme", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> },
                 { label: "Kesulitan mengolah atau menganalisis data", fitur: "Skripsi/Tesis/Disertasi", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg> },
-                { label: "Penulisan akademik atau grammar masih kurang tepat", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> },
+                { label: "Penulisan akademik masih kurang tepat", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> },
                 { label: "Target penyelesaian terasa berat", fitur: "Skripsi/Tesis/Disertasi", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> },
-                { label: "Lainnya", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg> },
               ],
             };
             const opts = OPTS_BY_BANTU[bantuPilihan] ?? OPTS_BY_BANTU.skripsi;
@@ -7895,13 +7895,13 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
               );
             };
             const bubbleSub = {
-              matakuliah: "Pilih maksimal 2. Alerin akan memprioritaskan materi yang paling kamu butuhkan.",
-              tugas: "Pilih maksimal 2. Alerin akan menyiapkan panduan dan template yang sesuai.",
+              matakuliah: "Pilih maksimal 2 agar Alerin bisa bantu lebih tepat.",
+              tugas: "Pilih maksimal 2 agar Alerin bisa bantu lebih tepat.",
               skripsi: "Pilih maksimal 2. Tidak perlu sempurna, bisa diubah nanti seiring progres.",
             }[bantuPilihan] ?? "";
             return (
               <>
-                <PintarlyMascotBubble pre="Apa kendala utama" bold="kamu sekarang?" sub={bubbleSub} />
+                <PintarlyMascotBubble pre="Apa kendala utamamu" bold="saat ini?" sub={bubbleSub} />
                 <div className="flex flex-col gap-[10px] w-full rounded-[20px] p-5" style={{ background: "#ffffff", border: "2px solid #60a5fa" }}>
                   {opts.map(o => {
                     const on = kendala.includes(o.label);
