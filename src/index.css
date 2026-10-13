@@ -1,10 +1,59 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap');
 @import 'tailwindcss';
 
+@font-face { font-family: 'Inter:Bold Italic'; src: url('https://static.figma.com/font/Inter_1') format('woff2'); font-style: italic; font-weight: 700; }
+@font-face { font-family: 'Inter:Bold'; src: url('https://static.figma.com/font/Inter_1') format('woff2'); font-style: normal; font-weight: 700; }
+@font-face { font-family: 'Inter:Extra Bold'; src: url('https://static.figma.com/font/Inter_1') format('woff2'); font-style: normal; font-weight: 800; }
+@font-face { font-family: 'Inter:Italic'; src: url('https://static.figma.com/font/Inter_1') format('woff2'); font-style: italic; font-weight: 400; }
+@font-face { font-family: 'Inter:Medium'; src: url('https://static.figma.com/font/Inter_1') format('woff2'); font-style: normal; font-weight: 500; }
+@font-face { font-family: 'Inter:Regular'; src: url('https://static.figma.com/font/Inter_1') format('woff2'); font-style: normal; font-weight: 400; }
+@font-face { font-family: 'Inter:Semi Bold'; src: url('https://static.figma.com/font/Inter_1') format('woff2'); font-style: normal; font-weight: 600; }
+@font-face { font-family: 'JetBrains Mono:Medium'; src: url('https://static.figma.com/font/JetBrainsMono_wght__1') format('woff2'); font-style: normal; font-weight: 500; }
+@font-face { font-family: 'Noto Sans Math:Regular'; src: url('https://static.figma.com/font/NotoSansMath-Regular_1') format('woff2'); font-style: normal; font-weight: 400; }
+@font-face { font-family: 'Noto Sans Symbols2:Regular'; src: url('https://static.figma.com/font/NotoSansSymbols2-Regular_5') format('woff2'); font-style: normal; font-weight: 400; }
+@font-face { font-family: 'Noto Sans Symbols:Bold'; src: url('https://static.figma.com/font/NotoSansSymbols-VF_2') format('woff2'); font-style: normal; font-weight: 700; }
+@font-face { font-family: 'Noto Sans:Bold'; src: url('https://static.figma.com/font/NotoSans-VF_3') format('woff2'); font-style: normal; font-weight: 700; }
+@font-face { font-family: 'Plus Jakarta Sans:Bold'; src: url('https://static.figma.com/font/PlusJakartaSans_wght__2') format('woff2'); font-style: normal; font-weight: 700; }
+@font-face { font-family: 'Plus Jakarta Sans:Italic'; src: url('https://static.figma.com/font/PlusJakartaSans-Italic_wght__2') format('woff2'); font-style: italic; font-weight: 400; }
+@font-face { font-family: 'Plus Jakarta Sans:Light'; src: url('https://static.figma.com/font/PlusJakartaSans_wght__2') format('woff2'); font-style: normal; font-weight: 300; }
+@font-face { font-family: 'Plus Jakarta Sans:ExtraBold'; src: url('https://static.figma.com/font/PlusJakartaSans_wght__2') format('woff2'); font-style: normal; font-weight: 800; }
+@font-face { font-family: 'Plus Jakarta Sans:Medium'; src: url('https://static.figma.com/font/PlusJakartaSans_wght__2') format('woff2'); font-style: normal; font-weight: 500; }
+@font-face { font-family: 'Plus Jakarta Sans:Regular'; src: url('https://static.figma.com/font/PlusJakartaSans_wght__2') format('woff2'); font-style: normal; font-weight: 400; }
+@font-face { font-family: 'Plus Jakarta Sans:SemiBold'; src: url('https://static.figma.com/font/PlusJakartaSans_wght__2') format('woff2'); font-style: normal; font-weight: 600; }
+
 @theme {
   --font-display: 'Plus Jakarta Sans', sans-serif;
   --font-body: 'Inter', sans-serif;
   --breakpoint-xs: 400px;
+  --color-profile-badge-surface: #1e264b;
+  --color-profile-primary: #155dfc;
+  --color-profile-motto-ink: #5c6674;
+  --color-profile-language: #2b7fff;
+  --spacing-profile-card: 241px;
+  --spacing-profile-avatar: 91.298px;
+  --spacing-profile-avatar-top: 13px;
+  --spacing-profile-name-top: 121px;
+  --spacing-profile-motto-bottom: 23px;
+  --spacing-profile-badge-shift: 106px;
+  --spacing-profile-badge: 27px;
+  --spacing-profile-cta: 84px;
+  --spacing-profile-description: 260px;
+  --spacing-profile-tabs: 52px;
+  --spacing-profile-language-option: 62.5px;
+  --text-profile-avatar: 27.389px;
+  --text-profile-avatar--line-height: 36.519px;
+  --text-profile-name: 21.724px;
+  --text-profile-name--line-height: 30.414px;
+  --text-profile-motto: 18.302px;
+  --text-profile-motto--line-height: 26.145px;
+  --text-profile-badge: 11px;
+  --text-profile-badge--line-height: 18.318px;
+  --text-profile-edit: 10px;
+  --text-profile-edit--line-height: 15.909px;
+  --text-profile-helper: 10px;
+  --text-profile-helper--line-height: 15px;
+  --text-profile-caption: 11px;
+  --text-profile-caption--line-height: 16.5px;
 }
 
 html, body, #root {
@@ -17,6 +66,120 @@ body {
   color: #0f172a;
   font-family: 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
+}
+
+.profile-dark .bg-white {
+  background-color: #1e293b !important;
+}
+
+.profile-dark .bg-slate-50 {
+  background-color: #0f172a !important;
+}
+
+.profile-dark .bg-slate-100,
+.profile-dark .bg-slate-200 {
+  background-color: #1e293b !important;
+}
+
+.profile-dark .bg-slate-300,
+.profile-dark .bg-slate-400 {
+  background-color: #475569 !important;
+}
+
+.profile-dark .bg-blue-50 {
+  background-color: #172554 !important;
+}
+
+.profile-dark .bg-emerald-50 {
+  background-color: #052e2b !important;
+}
+
+.profile-dark .bg-red-50 {
+  background-color: #450a0a !important;
+}
+
+.profile-dark .text-slate-900,
+.profile-dark .text-slate-800,
+.profile-dark .text-slate-700,
+.profile-dark .text-black,
+.profile-dark .text-\[\#1D293D\],
+.profile-dark .text-\[\#3a3a3b\],
+.profile-dark .text-\[\#3e3f40\],
+.profile-dark .text-\[\#343941\],
+.profile-dark .text-\[\#414243\],
+.profile-dark .text-\[\#4f4f51\] {
+  color: #f8fafc !important;
+}
+
+.profile-dark .text-slate-100,
+.profile-dark .text-slate-200,
+.profile-dark .text-slate-600,
+.profile-dark .text-slate-500,
+.profile-dark .text-slate-400,
+.profile-dark .text-slate-300,
+.profile-dark .text-profile-motto-ink {
+  color: #cbd5e1 !important;
+}
+
+.profile-dark .border-slate-100,
+.profile-dark .border-slate-200,
+.profile-dark .border-slate-300 {
+  border-color: #334155 !important;
+}
+
+.profile-dark .border-blue-100,
+.profile-dark .border-blue-200 {
+  border-color: #1e40af !important;
+}
+
+.profile-dark .border-emerald-200 {
+  border-color: #047857 !important;
+}
+
+.profile-dark .border-red-100,
+.profile-dark .border-red-200 {
+  border-color: #991b1b !important;
+}
+
+.profile-dark .hover\:bg-slate-50:hover {
+  background-color: #334155 !important;
+}
+
+.profile-dark input,
+.profile-dark select,
+.profile-dark textarea {
+  border-color: #475569 !important;
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+  color-scheme: dark;
+}
+
+.profile-dark input::placeholder,
+.profile-dark textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+.profile-dark input:disabled,
+.profile-dark input[readonly] {
+  background-color: #1e293b !important;
+  color: #cbd5e1 !important;
+}
+
+.profile-dark option {
+  background-color: #0f172a;
+  color: #f8fafc;
+}
+
+.profile-dark svg[stroke="#000000"] {
+  stroke: #e2e8f0;
+}
+
+.profile-dark span.bg-slate-100:has(.profile-theme-light-panel) {
+  background-color: #f1f5f9 !important;
+}
+
+.profile-theme-light-panel {
+  background-color: #ffffff !important;
 }
 
 ::-webkit-scrollbar { width: 5px; }

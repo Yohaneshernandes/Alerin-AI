@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect, useCallback, useLayoutEffect } from "react";
 import { Link } from "react-router";
 import maskotImg from "@/imports/Animasi_Maskot_Buku_31_Agu_2026.png";
 import owlGradImg from "@/imports/image-6.png";
@@ -6,14 +6,145 @@ import claroIconImg from "@/imports/image-2.png";
 import penguinHeadImg from "@/imports/image-2.png";
 import penguinGradImg from "@/imports/image-2.png";
 import aleriniWelcomeImg from "@/imports/WebsiteForClassProgram/eeec25fee4848e457348b9a4e108c0ec19fb79ad.png";
+import ParafraseFigmaPanel from "@/components/ParafraseFigmaPanel";
+import CariJurnalFigmaPanel from "@/components/CariJurnalFigmaPanel";
+import FiturLandingFigma from "@/components/FiturLandingFigma";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type NavTab = "percakapan" | "fitur" | "proyek" | "progress" | "quizlab" | "profil";
 type ChatSource = { title: string; author: string; year: string; url?: string };
-type FeatureKey = "parafrase" | "grammar" | "plagiasi" | "jurnal" | "judul" | "quizlab" | "progress" | "ppt" | "simulasi";
+type FeatureKey = "matakuliah" | "parafrase" | "grammar" | "plagiasi" | "jurnal" | "judul" | "quizlab" | "progress" | "ppt" | "simulasi";
 type FeatureRec = { label: string; desc: string; tab?: NavTab; featureKey?: FeatureKey; icon: string; color: string };
 type ChatMsg = { role: "user" | "claro"; text: string; time: string; imageUrl?: string; imagePrompt?: string; generating?: boolean; paraphrase?: { original: string; versions: { label: string; text: string; color: string }[] }; fileCard?: { name: string; type: string; size: string }; suggestions?: string[]; sources?: ChatSource[]; featureRec?: FeatureRec };
 type SearchFilter = "semua" | "chat" | "dokumen" | "proyek";
+
+// Indonesian remains the source language so existing content keeps working,
+// while the English layer can also translate content mounted after navigation.
+const ENGLISH_INTERFACE_COPY: Record<string, string> = {
+  "Asisten kampusmu": "Your campus assistant",
+  "Baru": "New",
+  "Percakapan": "Chats",
+  "Semua Fitur": "All Features",
+  "Proyek Saya": "My Projects",
+  "Progress": "Progress",
+  "Profil": "Profile",
+  "Chat": "Chat",
+  "Fitur": "Features",
+  "Proyek": "Projects",
+  "Cari percakapan": "Search chats",
+  "Riwayat percakapan": "Chat history",
+  "Hari ini": "Today",
+  "Kemarin": "Yesterday",
+  "Notifikasi": "Notifications",
+  "Tandai semua dibaca": "Mark all as read",
+  "Kredit AI": "AI Credits",
+  "Upgrade": "Upgrade",
+  "Temukan mentor": "Find a mentor",
+  "Profil Saya": "My Profile",
+  "Mode Terang": "Light Mode",
+  "Mode Gelap": "Dark Mode",
+  "Saran & Laporan": "Feedback & Reports",
+  "Pasang Aplikasi": "Install App",
+  "Untuk desktop dan mobile": "For desktop and mobile",
+  "Keluar": "Sign Out",
+  "Detail Informasi": "Personal Details",
+  "Edit": "Edit",
+  "Nama Lengkap": "Full Name",
+  "Universitas": "University",
+  "Jenjang": "Degree Level",
+  "Program Studi": "Study Program",
+  "Semester": "Semester",
+  "Dibantu untuk": "Assistance Focus",
+  "Fase saat ini": "Current Phase",
+  "Akun & Keamanan": "Account & Security",
+  "Nomor WhatsApp": "WhatsApp Number",
+  "Paket": "Plan",
+  "Keamanan Akun": "Account Security",
+  "Ubah kata sandi": "Change password",
+  "Kelola": "Manage",
+  "Yang Alerin ketahui": "What Alerin Knows",
+  "Progres": "Progress",
+  "Personalisasi": "Personalization",
+  "Umum": "General",
+  "Mode Bahasa": "Language",
+  "Pilih satu dari 27 bahasa untuk antarmuka dan jawaban Alerin.": "Choose one of 27 languages for the interface and Alerin's responses.",
+  "27 bahasa": "27 languages",
+  "Gulir di dalam daftar untuk melihat semua bahasa": "Scroll inside the list to see all languages",
+  "Tema Gelap dan Terang": "Dark and Light Theme",
+  "Pilih tampilan yang paling nyaman untuk belajar.": "Choose the most comfortable appearance for studying.",
+  "Terang": "Light",
+  "Gelap": "Dark",
+  "Privasi & Data": "Privacy & Data",
+  "Tentang Alerin": "About Alerin",
+  "Edit Profil": "Edit Profile",
+  "Perubahan disimulasikan dan dapat disimpan.": "Changes can be reviewed and saved.",
+  "Pilih foto baru": "Choose new photo",
+  "JPG atau PNG, maksimal 5 MB.": "JPG or PNG, maximum 5 MB.",
+  "Motto": "Motto",
+  "Batal": "Cancel",
+  "Simpan perubahan": "Save changes",
+  "Kelola Data Pribadi": "Manage Personal Data",
+  "Data pribadi berhasil disimpan.": "Personal data saved.",
+  "Pengaturan Notifikasi": "Notification Settings",
+  "Pengingat deadline": "Deadline reminders",
+  "Ringkasan progres mingguan": "Weekly progress summary",
+  "Rekomendasi dari Alerin": "Recommendations from Alerin",
+  "Simpan": "Save",
+  "Personalisasi jawaban": "Personalized responses",
+  "Izinkan Alerin menggunakan data akademikmu.": "Allow Alerin to use your academic data.",
+  "Hapus seluruh riwayat": "Delete all history",
+  "Mata Kuliah": "Courses",
+  "Tugas Kuliah": "Course Assignments",
+  "Skripsi": "Undergraduate Thesis",
+  "Tesis": "Master's Thesis",
+  "Disertasi": "Dissertation",
+  "Tahapan Skripsi": "Thesis Stages",
+  "Target Akademik": "Academic Target",
+  "Atur Ulang Rencana": "Reset Plan",
+  "Motivasi Hari Ini": "Today's Motivation",
+  "Terus semangat, langkah kecil hari ini bisa jadi hasil besar nanti!": "Keep going—today's small steps can lead to big results!",
+  "Daftar Sekarang": "Register Now",
+  "Mulai Chat": "Start Chat",
+  "Kirim": "Send",
+  "Kembali": "Back",
+  "Lanjut": "Continue",
+  "Selesai": "Done",
+  "Coba Lagi": "Try Again",
+  "Bahasa Indonesia": "Indonesian",
+  "Indonesia": "Indonesia",
+  "Inggris": "English",
+};
+
+const INDONESIAN_INTERFACE_COPY = Object.fromEntries(
+  Object.entries(ENGLISH_INTERFACE_COPY).map(([indonesian, english]) => [english, indonesian]),
+) as Record<string, string>;
+
+function translateInterfaceNode(root: Node, language: "id" | "en") {
+  const dictionary = language === "en" ? ENGLISH_INTERFACE_COPY : INDONESIAN_INTERFACE_COPY;
+  const translateValue = (value: string) => {
+    const trimmed = value.trim();
+    const translated = dictionary[trimmed];
+    return translated ? value.replace(trimmed, translated) : value;
+  };
+  const translateTextNode = (node: Node) => {
+    if (node.nodeType === Node.TEXT_NODE && node.nodeValue) {
+      const translated = translateValue(node.nodeValue);
+      if (translated !== node.nodeValue) node.nodeValue = translated;
+    }
+  };
+
+  translateTextNode(root);
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  while (walker.nextNode()) translateTextNode(walker.currentNode);
+
+  const elements = root instanceof Element ? [root, ...root.querySelectorAll<HTMLElement>("*")] : [];
+  elements.forEach(element => {
+    ["placeholder", "aria-label", "title"].forEach(attribute => {
+      const value = element.getAttribute(attribute);
+      if (value) element.setAttribute(attribute, translateValue(value));
+    });
+  });
+}
 
 // ─── Image generation ─────────────────────────────────────────────────────────
 const IMAGE_KEYWORDS = ["gambar", "ilustrasi", "foto", "visualisasi", "buat gambar", "generate gambar", "buatkan gambar", "bikin gambar", "tampilkan gambar", "render", "desain gambar", "tunjukkan gambar"];
@@ -1425,7 +1556,7 @@ function NewProjectModal({ onClose, onToast }: { onClose: () => void; onToast: (
           </div>
           <button disabled={!name.trim()} onClick={() => { onToast(`Proyek "${name}" berhasil dibuat!`); onClose(); }}
             className="w-full py-3 rounded-xl text-sm font-bold text-white transition-all disabled:opacity-40"
-            style={{ background: "linear-gradient(135deg,#3b82f6,#6366f1)" }}>
+            style={{ backgroundColor: "#347CEA" }}>
             Buat Proyek
           </button>
         </div>
@@ -1488,6 +1619,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
   const [toast, setToast] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true); // single toggle for both sidebars
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
   const [profileMenuPos, setProfileMenuPos] = useState<{ top: number; right: number } | null>(null);
   const profileBtnRef = useRef<HTMLButtonElement>(null);
 
@@ -1499,6 +1631,33 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  useEffect(() => {
+    let interfaceLanguage: "id" | "en" = window.localStorage.getItem("alerin-language") === "en" ? "en" : "id";
+    const applyLanguage = (root: Node = document.body) => {
+      document.documentElement.lang = interfaceLanguage;
+      translateInterfaceNode(root, interfaceLanguage);
+    };
+    const observer = new MutationObserver(mutations => {
+      mutations.forEach(mutation => {
+        if (mutation.type === "characterData") applyLanguage(mutation.target);
+        mutation.addedNodes.forEach(node => applyLanguage(node));
+      });
+    });
+    const handleLanguageChange = (event: Event) => {
+      const requestedLanguage = (event as CustomEvent<string>).detail;
+      interfaceLanguage = requestedLanguage === "en" ? "en" : "id";
+      applyLanguage();
+    };
+
+    applyLanguage();
+    observer.observe(document.body, { childList: true, characterData: true, subtree: true });
+    window.addEventListener("alerin-language-change", handleLanguageChange);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("alerin-language-change", handleLanguageChange);
+    };
   }, []);
 
   const NAV: { id: NavTab; label: string; icon: React.ReactNode }[] = [
@@ -1517,37 +1676,82 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
       {mentorOpen && <MentorModal onClose={() => setMentorOpen(false)} onToast={showToast} />}
       {calOpen && <CalendarModal onClose={() => setCalOpen(false)} onToast={showToast} />}
       {toast && <Toast msg={toast} onDone={() => setToast(null)} />}
+      {logoutConfirmOpen && (
+        <div
+          className="fixed inset-0 z-[250] flex items-center justify-center bg-slate-950/50 px-4 py-6 backdrop-blur-sm"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="shell-logout-dialog-title"
+          onClick={event => {
+            if (event.target === event.currentTarget) setLogoutConfirmOpen(false);
+          }}
+        >
+          <div className="w-full max-w-sm rounded-2xl bg-white p-5 shadow-2xl">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-red-50 text-red-500">
+              <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" /></svg>
+            </div>
+            <p id="shell-logout-dialog-title" className="mt-4 text-lg font-bold text-slate-900">Apakah kamu yakin ingin keluar?</p>
+            <p className="mt-2 text-sm leading-relaxed text-slate-500">Kamu perlu masuk kembali untuk melanjutkan aktivitas di Alerin.</p>
+            <div className="mt-6 grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setLogoutConfirmOpen(false)}
+                className="rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setLogoutConfirmOpen(false);
+                  showToast("Anda telah keluar dari akun.");
+                }}
+                className="rounded-xl bg-red-500 px-4 py-3 text-sm font-bold text-white transition-colors hover:bg-red-600"
+              >
+                Keluar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Mobile top header */}
       <div className="md:hidden flex items-center justify-between px-4 py-2.5 shrink-0 bg-white z-40" style={{ borderBottom: "1px solid #f1f5f9" }}>
         <div className="flex items-center gap-2">
-          <img src={penguinHeadImg} alt="Alerin" className="w-7 h-7 object-contain" />
+          <img src="/assets/f725b.png" alt="Alerin" className="size-8 rounded-full border border-white object-cover shadow-sm" />
           <div>
-            <p className="font-bold text-[14px] text-slate-900 leading-none">Alerin</p>
-            <div className="flex items-center gap-1 mt-0.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-              <span className="text-[10px] text-slate-400">Asisten kampusmu</span>
-            </div>
+            <p className="font-bold text-[14px] text-slate-900 leading-none">ALERIN</p>
           </div>
         </div>
         <div className="flex items-center gap-1.5">
           <button onClick={() => setSearchOpen(true)}
             className="w-8 h-8 flex items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 transition-colors">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           </button>
           <button onClick={() => setNotifOpen(o => !o)}
             className="relative w-8 h-8 flex items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 transition-colors">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
             <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-red-500 border border-white" />
           </button>
           <button onClick={onNewChat}
-            className="h-8 px-3 rounded-xl text-[11px] font-bold text-white flex items-center gap-1 transition-opacity hover:opacity-90"
-            style={{ background: "linear-gradient(135deg,#3b82f6,#6366f1)" }}>
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Baru
+            className="h-8 px-[18px] rounded-xl text-xs font-bold text-white flex items-center gap-1 transition-opacity hover:opacity-90"
+            style={{ backgroundColor: "rgb(52, 124, 234)" }}>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Chat
           </button>
         </div>
       </div>
+      {notifOpen && (
+        <div className="md:hidden">
+          <NotifPanel
+            onClose={() => setNotifOpen(false)}
+            onNavigate={tab => {
+              onTab(tab);
+              setNotifOpen(false);
+            }}
+          />
+        </div>
+      )}
 
       <div className="flex flex-1 min-h-0">
         {/* Left sidebar — desktop only, collapses to icon rail */}
@@ -1559,7 +1763,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
             {sidebarOpen ? (
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5 px-1">
-                  <img src={penguinHeadImg} alt="Alerin" className="w-8 h-8 object-contain shrink-0" />
+                  <img src="/assets/f725b.png" alt="Alerin" className="h-8 w-8 shrink-0 rounded-full object-cover" />
                   <div className="min-w-0">
                     <p className="font-display font-700 text-sm text-slate-900 leading-none">Alerin</p>
                     <div className="flex items-center gap-1 mt-0.5">
@@ -1576,7 +1780,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
             ) : (
               <div className="flex flex-col items-center gap-2">
                 <button onClick={() => setSidebarOpen(true)} title="Buka sidebar">
-                  <img src={penguinHeadImg} alt="Alerin" className="w-8 h-8 object-contain" />
+                  <img src="/assets/f725b.png" alt="Alerin" className="h-8 w-8 rounded-full object-cover" />
                 </button>
               </div>
             )}
@@ -1587,8 +1791,8 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
             {sidebarOpen ? (
               <div className="flex items-center gap-1.5">
                 <button onClick={onNewChat}
-                  className="flex-1 flex items-center justify-center gap-1.5 h-8 rounded-xl text-xs font-bold text-white whitespace-nowrap transition-all hover:opacity-90"
-                  style={{ background: "linear-gradient(135deg,#3b82f6,#6366f1)" }}>
+                  className="flex-1 flex items-center justify-center gap-1.5 h-8 rounded-xl border-0 text-xs font-bold text-white whitespace-nowrap transition-all hover:opacity-90"
+                  style={{ backgroundColor: "#347CEA" }}>
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                   Baru
                 </button>
@@ -1775,7 +1979,42 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
       </div>
 
       {/* Bottom nav — floating pill, mobile only */}
-      <nav className="md:hidden fixed bottom-4 left-3 right-3 z-50">
+      <nav
+        ref={(nav) => {
+          if (!nav) return;
+          const lastScrollPositions = new WeakMap<EventTarget, number>();
+          let visible = true;
+
+          const setVisible = (nextVisible: boolean) => {
+            if (visible === nextVisible) return;
+            visible = nextVisible;
+            nav.style.transform = nextVisible ? "translateY(0)" : "translateY(calc(100% + 2rem))";
+            nav.style.opacity = nextVisible ? "1" : "0";
+            nav.style.pointerEvents = nextVisible ? "auto" : "none";
+          };
+
+          const handleScroll = (event: Event) => {
+            const target = event.target;
+            if (!target) return;
+            const scrollTop = target instanceof Document
+              ? target.scrollingElement?.scrollTop ?? 0
+              : target instanceof HTMLElement
+              ? target.scrollTop
+              : 0;
+            const previousScrollTop = lastScrollPositions.get(target) ?? scrollTop;
+            const delta = scrollTop - previousScrollTop;
+
+            if (scrollTop <= 8) setVisible(true);
+            else if (delta > 2) setVisible(false);
+            else if (delta < -2) setVisible(true);
+
+            lastScrollPositions.set(target, scrollTop);
+          };
+
+          document.addEventListener("scroll", handleScroll, { capture: true, passive: true });
+          return () => document.removeEventListener("scroll", handleScroll, true);
+        }}
+        className="fixed bottom-5 left-3 right-3 z-50 transition-[transform,opacity] duration-300 ease-out will-change-transform md:hidden">
         <div className="rounded-[22px] flex items-stretch px-2 py-2" style={{
           background: "rgba(255,255,255,0.88)",
           backdropFilter: "blur(24px)",
@@ -1784,18 +2023,20 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
           boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)",
         }}>
           {([
-            { id: "percakapan", label: "Chat", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> },
-            { id: "fitur", label: "Fitur", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg> },
-            { id: "proyek", label: "Proyek", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> },
-            { id: "progress", label: "Progress", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> },
-            { id: "profil", label: "Profil", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg> },
-          ] as { id: NavTab; label: string; icon: React.ReactNode }[]).map((n) => {
+            { id: "percakapan", label: "Chat", asset: "/assets/689f8.svg", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> },
+            { id: "fitur", label: "Fitur", asset: "/assets/3f19b.svg", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg> },
+            { id: "proyek", label: "Proyek", asset: "/assets/abe62.svg", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> },
+            { id: "progress", label: "Progress", asset: "/assets/cb179.svg", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> },
+            { id: "profil", label: "Profil", asset: "/assets/a16cb.svg", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg> },
+          ] as { id: NavTab; label: string; asset: string; icon: React.ReactNode }[]).map((n) => {
             const active = activeTab === n.id;
             return (
               <button key={n.id} onClick={() => onTab(n.id)}
                 className="flex-1 flex flex-col items-center justify-center gap-[3px] py-1.5 px-1 rounded-[16px] transition-all"
                 style={{ background: active ? "#eff6ff" : "transparent", minWidth: 0 }}>
-                <span style={{ color: active ? "#2563eb" : "#94a3b8" }}>{n.icon}</span>
+                <span className={active ? "text-blue-600" : "text-slate-400"}>
+                  {activeTab === "profil" ? <img src={n.asset} alt="" /> : n.icon}
+                </span>
                 <span className="text-[9px] font-semibold leading-none truncate w-full text-center" style={{ color: active ? "#2563eb" : "#94a3b8" }}>{n.label}</span>
               </button>
             );
@@ -1807,37 +2048,87 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
       {profileMenuOpen && profileMenuPos && (
         <>
           <div className="fixed inset-0 z-[190]" onClick={() => setProfileMenuOpen(false)} />
-          <div className="fixed z-[200] w-64 rounded-2xl bg-white overflow-hidden"
-            style={{ top: profileMenuPos.top, right: profileMenuPos.right, boxShadow: "0 12px 40px rgba(0,0,0,0.13), 0 2px 8px rgba(0,0,0,0.06)", border: "1px solid #f1f5f9" }}>
-            <div className="px-5 py-4 border-b border-slate-100">
-              <p className="font-bold text-slate-900 text-sm">Raka Aditya</p>
-              <p className="text-xs text-slate-400 mt-0.5">rakaaditya@gmail.com</p>
+          <div
+            ref={(menu) => {
+              if (!menu) return;
+              const shell = menu.closest(".h-screen");
+              const isDark = window.localStorage.getItem("alerin-theme") === "dark";
+              shell?.classList.toggle("profile-dark", isDark);
+              if (shell instanceof HTMLElement) shell.style.backgroundColor = isDark ? "#0f172a" : "#ffffff";
+            }}
+            className="fixed z-[200] w-64 overflow-hidden rounded-2xl border border-slate-100 bg-white"
+            style={{ top: profileMenuPos.top, right: profileMenuPos.right, boxShadow: "0 12px 40px rgba(0,0,0,0.13), 0 2px 8px rgba(0,0,0,0.06)" }}>
+            <div className="flex items-center gap-3 border-b border-slate-100 px-4 py-4">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-600 text-sm font-bold text-white">RA</div>
+              <div className="min-w-0">
+                <p className="truncate text-sm font-bold text-slate-900">Raka</p>
+                <p className="mt-0.5 truncate text-xs text-slate-400">rakaaditya@gmail.com</p>
+              </div>
             </div>
-            <div className="py-1.5">
-              {([
-                { icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>, label: "Profil Saya", badge: undefined as string|undefined, action: () => { onTab("profil"); setProfileMenuOpen(false); } },
-                { icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>, label: "Bagikan Progres", badge: undefined, action: () => setProfileMenuOpen(false) },
-                { icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>, label: "Settings", badge: undefined, action: () => setProfileMenuOpen(false) },
-                { icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>, label: "Apa yang Baru", badge: undefined, action: () => setProfileMenuOpen(false) },
-                { icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>, label: "Mode Gelap", badge: "OFF", action: () => setProfileMenuOpen(false) },
-                { icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>, label: "Saran & Laporan", badge: undefined, action: () => setProfileMenuOpen(false) },
-                { icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>, label: "Pasang Aplikasi", badge: undefined, action: () => setProfileMenuOpen(false) },
-              ] as { icon: React.ReactNode; label: string; badge?: string; action: () => void }[]).map((item) => (
-                <button key={item.label} onClick={item.action}
-                  className="w-full flex items-center justify-between px-5 py-2.5 hover:bg-slate-50 transition-colors">
-                  <div className="flex items-center gap-3 text-slate-600">
-                    {item.icon}
-                    <span className="text-sm">{item.label}</span>
-                  </div>
-                  {item.badge && <span className="text-xs text-slate-400 font-medium">{item.badge}</span>}
-                </button>
-              ))}
+
+            <div className="p-2">
+              <button type="button" onClick={() => { onTab("profil"); setProfileMenuOpen(false); }}
+                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-slate-600 transition-colors hover:bg-slate-50">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <span className="text-sm font-medium">Profil</span>
+              </button>
+
+              {(() => {
+                const isDark = window.localStorage.getItem("alerin-theme") === "dark";
+                return (
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={isDark}
+                    onClick={(event) => {
+                      const shell = event.currentTarget.closest(".h-screen");
+                      const nextDark = !shell?.classList.contains("profile-dark");
+                      shell?.classList.toggle("profile-dark", nextDark);
+                      if (shell instanceof HTMLElement) shell.style.backgroundColor = nextDark ? "#0f172a" : "#ffffff";
+                      window.localStorage.setItem("alerin-theme", nextDark ? "dark" : "light");
+                      event.currentTarget.setAttribute("aria-checked", String(nextDark));
+                      const label = event.currentTarget.querySelector("[data-theme-label]");
+                      if (label) label.textContent = nextDark ? "Mode Gelap" : "Mode Terang";
+                      const track = event.currentTarget.querySelector("[data-theme-track]");
+                      track?.classList.toggle("bg-blue-600", nextDark);
+                      track?.classList.toggle("bg-slate-200", !nextDark);
+                      const knob = event.currentTarget.querySelector("[data-theme-knob]");
+                      knob?.classList.toggle("translate-x-5", nextDark);
+                      knob?.classList.toggle("translate-x-0", !nextDark);
+                    }}
+                    className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-slate-600 transition-colors hover:bg-slate-50">
+                    <span className="flex items-center gap-3">
+                      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                      <span data-theme-label className="text-sm font-medium">{isDark ? "Mode Gelap" : "Mode Terang"}</span>
+                    </span>
+                    <span data-theme-track className={`relative h-6 w-11 rounded-full transition-colors ${isDark ? "bg-blue-600" : "bg-slate-200"}`}>
+                      <span data-theme-knob className={`absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${isDark ? "translate-x-5" : "translate-x-0"}`} />
+                    </span>
+                  </button>
+                );
+              })()}
+
+              <button type="button" onClick={() => { showToast("Form saran & laporan siap digunakan."); setProfileMenuOpen(false); }}
+                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-slate-600 transition-colors hover:bg-slate-50">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 9h8M8 13h5"/></svg>
+                <span className="text-sm font-medium">Saran &amp; Laporan</span>
+              </button>
+
+              <button type="button" onClick={() => { showToast("Alerin dapat dipasang di desktop dan mobile."); setProfileMenuOpen(false); }}
+                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-slate-600 transition-colors hover:bg-slate-50">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="3" y="3" width="18" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M9 8l3 3 3-3M12 5v6"/></svg>
+                <span className="flex flex-col">
+                  <span className="text-sm font-medium">Pasang Aplikasi</span>
+                  <span className="text-[11px] text-slate-400">Untuk desktop dan mobile</span>
+                </span>
+              </button>
             </div>
-            <div className="border-t border-slate-100 py-1.5">
-              <button onClick={() => setProfileMenuOpen(false)}
-                className="w-full flex items-center gap-3 px-5 py-2.5 hover:bg-red-50 transition-colors text-red-500">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-                <span className="text-sm font-medium">Logout</span>
+
+            <div className="border-t border-slate-100 p-2">
+              <button type="button" onClick={() => { setLogoutConfirmOpen(true); setProfileMenuOpen(false); }}
+                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-red-500 transition-colors hover:bg-red-50">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                <span className="text-sm font-semibold">Keluar</span>
               </button>
             </div>
           </div>
@@ -5733,7 +6024,7 @@ function FiturTab({ onChat, openFeatureKey, onFeatureOpened }: { onChat: (prompt
   const [showPlagiasi, setShowPlagiasi] = useState(openFeatureKey === "plagiasi");
   const [showJurnal, setShowJurnal] = useState(openFeatureKey === "jurnal");
   const [showCariJudul, setShowCariJudul] = useState(openFeatureKey === "judul");
-  const [shortcutModal, setShortcutModal] = useState<ShortcutType | null>(null);
+  const [shortcutModal, setShortcutModal] = useState<ShortcutType | null>(openFeatureKey === "matakuliah" ? "mata-kuliah" : null);
 
   useEffect(() => {
     if (!openFeatureKey) return;
@@ -5742,169 +6033,39 @@ function FiturTab({ onChat, openFeatureKey, onFeatureOpened }: { onChat: (prompt
     setShowPlagiasi(openFeatureKey === "plagiasi");
     setShowJurnal(openFeatureKey === "jurnal");
     setShowCariJudul(openFeatureKey === "judul");
+    if (openFeatureKey === "matakuliah") setShortcutModal("mata-kuliah");
     onFeatureOpened?.();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [openFeatureKey]);
 
-  const FEATURE_SHORTCUT_MAP: Record<string, ShortcutType> = {
-    "Mata Kuliah": "mata-kuliah",
-    "Tugas": "tugas",
-    "Skripsi / Tesis": "skripsi",
-    "Cari Judul": "cari-judul",
-    "Cari Jurnal": "cari-jurnal",
-  };
-
-  if (showParafrase) return <ParafrasePanel onBack={() => setShowParafrase(false)} />;
+  if (showParafrase) return <ParafraseFigmaPanel onBack={() => setShowParafrase(false)} />;
   if (showGrammar) return <GrammarPanel onBack={() => setShowGrammar(false)} />;
   if (showPlagiasi) return <PlagiasPanel onBack={() => setShowPlagiasi(false)} />;
-  if (showJurnal) return <CariJurnalPanel onBack={() => setShowJurnal(false)} />;
+  if (showJurnal) return <CariJurnalFigmaPanel onBack={() => setShowJurnal(false)} />;
   if (showCariJudul) return <CariJudulPanel onBack={() => setShowCariJudul(false)} />;
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden">
-      <div className="flex-1 overflow-y-auto px-4 md:px-8 py-4 md:py-6">
-        <div className="flex items-start justify-between mb-6">
-          <div>
-            <div className="flex items-center gap-2 mb-3">
-              <span className="px-3 py-1 rounded-full text-xs font-bold border" style={{ background: "#eff6ff", color: "#2563eb", borderColor: "#bfdbfe" }}>
-                8 alur akademik
-              </span>
-            </div>
-            <h2 className="font-display font-800 text-2xl text-slate-900 mb-1">Pilih cara Alerin membantumu</h2>
-            <p className="text-slate-500 text-sm leading-relaxed max-w-lg">Setiap fitur memberi formulir dan hasil berbeda agar mahasiswa tidak memulai dari ruang chat kosong.</p>
-          </div>
-          <button onClick={onChat}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-200 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition-colors shrink-0">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-            Chat
-          </button>
-        </div>
-
-        {/* Featured cards row */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">
-          {/* Cari Judul */}
-          <button onClick={() => setShowCariJudul(true)}
-            className="rounded-2xl p-5 text-left group overflow-hidden relative transition-all hover:shadow-lg"
-            style={{ background: "linear-gradient(135deg,#3730a3 0%,#4f46e5 60%,#818cf8 100%)" }}>
-            <div className="absolute top-0 right-0 w-40 h-40 rounded-full opacity-10 pointer-events-none" style={{ background: "radial-gradient(circle,#fff,transparent)", transform: "translate(30%,-30%)" }} />
-            <div className="relative flex items-center gap-3">
-              <div className="w-11 h-11 rounded-2xl bg-white/20 flex items-center justify-center text-2xl shrink-0 group-hover:scale-110 transition-transform">💡</div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
-                  <p className="text-sm font-display font-800 text-white">Cari Judul</p>
-                  <span className="px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-white/20 text-white">AI</span>
-                </div>
-                <p className="text-xs text-indigo-100 leading-relaxed">Hasilkan 5 kandidat judul skripsi dari konteks penelitianmu.</p>
-              </div>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="2.5" className="shrink-0 group-hover:translate-x-1 transition-transform"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </div>
-          </button>
-
-          {/* Cari Jurnal */}
-          <button onClick={() => setShowJurnal(true)}
-            className="rounded-2xl p-5 text-left group overflow-hidden relative transition-all hover:shadow-lg"
-            style={{ background: "linear-gradient(135deg,#0c4a6e 0%,#0369a1 60%,#0ea5e9 100%)" }}>
-            <div className="absolute top-0 right-0 w-40 h-40 rounded-full opacity-10 pointer-events-none" style={{ background: "radial-gradient(circle,#fff,transparent)", transform: "translate(30%,-30%)" }} />
-            <div className="relative flex items-center gap-3">
-              <div className="w-11 h-11 rounded-2xl bg-white/20 flex items-center justify-center text-2xl shrink-0 group-hover:scale-110 transition-transform">📚</div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
-                  <p className="text-sm font-display font-800 text-white">Cari Jurnal</p>
-                  <span className="px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-white/20 text-white">Scopus</span>
-                </div>
-                <p className="text-xs text-sky-100 leading-relaxed">Temukan referensi akademik terindeks Scopus & Sinta dalam detik.</p>
-              </div>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="2.5" className="shrink-0 group-hover:translate-x-1 transition-transform"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </div>
-          </button>
-
-          {/* Parafrase */}
-          <button onClick={() => setShowParafrase(true)}
-            className="rounded-2xl p-5 text-left group overflow-hidden relative transition-all hover:shadow-lg"
-            style={{ background: "linear-gradient(135deg,#1d4ed8 0%,#3b82f6 60%,#6366f1 100%)" }}>
-            <div className="absolute top-0 right-0 w-40 h-40 rounded-full opacity-10 pointer-events-none" style={{ background: "radial-gradient(circle,#fff,transparent)", transform: "translate(30%,-30%)" }} />
-            <div className="relative flex items-center gap-3">
-              <div className="w-11 h-11 rounded-2xl bg-white/20 flex items-center justify-center text-2xl shrink-0 group-hover:scale-110 transition-transform">✏️</div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
-                  <p className="text-sm font-display font-800 text-white">Parafrase Online</p>
-                  <span className="px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-white/20 text-white">Populer</span>
-                </div>
-                <p className="text-xs text-blue-100 leading-relaxed">Ubah teks skripsi otomatis dengan pilihan gaya & intensitas.</p>
-              </div>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="2.5" className="shrink-0 group-hover:translate-x-1 transition-transform"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </div>
-          </button>
-
-          {/* Grammar Checker */}
-          <button onClick={() => setShowGrammar(true)}
-            className="rounded-2xl p-5 text-left group overflow-hidden relative transition-all hover:shadow-lg"
-            style={{ background: "linear-gradient(135deg,#7c3aed 0%,#9333ea 60%,#c026d3 100%)" }}>
-            <div className="absolute top-0 right-0 w-40 h-40 rounded-full opacity-10 pointer-events-none" style={{ background: "radial-gradient(circle,#fff,transparent)", transform: "translate(30%,-30%)" }} />
-            <div className="relative flex items-center gap-3">
-              <div className="w-11 h-11 rounded-2xl bg-white/20 flex items-center justify-center text-2xl shrink-0 group-hover:scale-110 transition-transform">📝</div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
-                  <p className="text-sm font-display font-800 text-white">Grammar Checker</p>
-                  <span className="px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-white/20 text-white">Baru</span>
-                </div>
-                <p className="text-xs text-purple-100 leading-relaxed">Periksa ejaan, tata bahasa, dan gaya akademik tulisanmu.</p>
-              </div>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="2.5" className="shrink-0 group-hover:translate-x-1 transition-transform"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </div>
-          </button>
-
-          {/* Cek Plagiasi */}
-          <button onClick={() => setShowPlagiasi(true)}
-            className="rounded-2xl p-5 text-left group overflow-hidden relative transition-all hover:shadow-lg"
-            style={{ background: "linear-gradient(135deg,#059669 0%,#10b981 60%,#34d399 100%)" }}>
-            <div className="absolute top-0 right-0 w-40 h-40 rounded-full opacity-10 pointer-events-none" style={{ background: "radial-gradient(circle,#fff,transparent)", transform: "translate(30%,-30%)" }} />
-            <div className="relative flex items-center gap-3">
-              <div className="w-11 h-11 rounded-2xl bg-white/20 flex items-center justify-center text-2xl shrink-0 group-hover:scale-110 transition-transform">🔍</div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
-                  <p className="text-sm font-display font-800 text-white">Cek Plagiasi</p>
-                  <span className="px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-white/20 text-white">AI</span>
-                </div>
-                <p className="text-xs text-emerald-100 leading-relaxed">Periksa kemiripan teks dan perbaiki dengan AI secara otomatis.</p>
-              </div>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="2.5" className="shrink-0 group-hover:translate-x-1 transition-transform"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </div>
-          </button>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {FEATURES.map((f) => {
-            const sType = FEATURE_SHORTCUT_MAP[f.title];
-            const handleClick = () => {
-              if (f.title === "Cari Jurnal") { setShowJurnal(true); return; }
-              if (f.title === "Cari Judul") { setShowCariJudul(true); return; }
-              if (sType) { setShortcutModal(sType); return; }
-              onChat();
-            };
-            return (
-              <button key={f.title}
-                onClick={handleClick}
-                className="flex items-center gap-4 p-5 rounded-2xl bg-white border border-slate-100 hover:border-blue-200 hover:shadow-sm transition-all text-left group">
-                <div className="w-11 h-11 rounded-xl flex items-center justify-center text-xl shrink-0" style={{ background: f.bg }}>{f.icon}</div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-bold text-slate-800 group-hover:text-blue-600 transition-colors mb-0.5">{f.title}</p>
-                  <p className="text-xs text-slate-400 leading-relaxed">{f.desc}</p>
-                </div>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="2" className="shrink-0"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-              </button>
-            );
-          })}
-        </div>
-      </div>
+    <>
+      <FiturLandingFigma
+        onChat={() => onChat()}
+        onJurnal={() => setShowJurnal(true)}
+        onSkripsi={() => setShortcutModal("skripsi")}
+        onParafrase={() => setShowParafrase(true)}
+        onMataKuliah={() => setShortcutModal("mata-kuliah")}
+        onTugas={() => setShortcutModal("tugas")}
+        onPemeriksaan={() => setShowGrammar(true)}
+      />
       {shortcutModal && (
         <ShortcutModal
           type={shortcutModal}
           onClose={() => setShortcutModal(null)}
-          onSubmit={(text) => { setShortcutModal(null); onChat(text); }}
+          onSubmit={text => {
+            setShortcutModal(null);
+            onChat(text);
+          }}
         />
       )}
-    </div>
+    </>
   );
 }
 
@@ -6482,21 +6643,21 @@ function QuizlabTab({ onTab }: { onTab: (t: NavTab) => void }) {
 // ─── Register / Onboarding Modal (Pintarly-inspired full-screen) ─────────────
 type FinishDest = { prompt?: string; tab?: NavTab; featureKey?: FeatureKey };
 
-const PintarlyMascotBubble = React.memo(function PintarlyMascotBubble({ pre, bold, sub }: { pre: string; bold: string; sub?: string }) {
+const PintarlyMascotBubble = React.memo(function PintarlyMascotBubble({ pre, bold, sub }: { pre?: string; bold: string; sub?: string }) {
   return (
-    <div className="flex items-center gap-3 sm:gap-4 mb-5 sm:mb-8 w-full" style={{ animation: "bubbleEnter 0.45s cubic-bezier(0.34,1.56,0.64,1) both" }}>
+    <div className="flex items-center gap-3 sm:gap-4 mb-6 sm:mb-8 w-full" style={{ animation: "bubbleEnter 0.45s cubic-bezier(0.34,1.56,0.64,1) both" }}>
       <div className="relative shrink-0" style={{ animation: "mascotBob 3s ease-in-out infinite" }}>
-        <div className="w-14 h-14 sm:w-[80px] sm:h-[80px] rounded-full overflow-hidden flex items-center justify-center" style={{ background: "linear-gradient(135deg,#dbeafe,#c7d2fe)", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1),0 2px 4px -2px rgba(0,0,0,0.1)", border: "2px solid #bfdbfe" }}>
+        <div className="w-[72px] h-[72px] sm:w-[80px] sm:h-[80px] rounded-full overflow-hidden flex items-center justify-center" style={{ background: "linear-gradient(135deg,#dbeafe,#c7d2fe)", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1),0 2px 4px -2px rgba(0,0,0,0.1)", border: "2px solid #bfdbfe" }}>
           <img src="/assets/alerin-logo.png" alt="Alerin" className="w-full h-full object-cover"/>
         </div>
       </div>
-      <div className="relative flex-1 bg-white rounded-[18px] sm:rounded-[24px] px-4 sm:px-5 py-3 sm:py-4 drop-shadow-[0px_1px_1px_rgba(0,0,0,0.05)]"
+      <div className="relative flex-1 bg-white rounded-[18px] sm:rounded-[24px] px-4 sm:px-5 py-3.5 sm:py-4 drop-shadow-[0px_1px_1px_rgba(0,0,0,0.05)]"
         style={{ border: "1px solid #e5e7eb", animation: "bubblePop 0.4s cubic-bezier(0.34,1.56,0.64,1) 0.1s both" }}>
         <div className="absolute top-1/2 -translate-y-1/2" style={{ left: -9, width: 0, height: 0, borderTop: "9px solid transparent", borderBottom: "9px solid transparent", borderRight: "10px solid white" }}/>
-        <p className="text-[15px] sm:text-[17px] text-[#1f2937] leading-[24px] sm:leading-[28px]">
-          {pre} <strong className="font-extrabold text-[#111827]">{bold}</strong>
+        <p className="text-[16px] sm:text-[17px] text-[#1f2937] leading-[24px] sm:leading-[28px]">
+          <strong className="font-extrabold text-[#111827]">{pre && `${pre} `}{bold}</strong>
         </p>
-        {sub && <p className="text-[13px] sm:text-sm text-[#6b7280] mt-0.5 sm:mt-1 leading-[18px] sm:leading-[20px]">{sub}</p>}
+        {sub && <p className="text-[13px] sm:text-sm text-[#6b7280] mt-1 sm:mt-1 leading-[18px] sm:leading-[20px]">{sub}</p>}
       </div>
     </div>
   );
@@ -6547,16 +6708,29 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
   const [loadingPrompt, setLoadingPrompt] = useState("");
   const [showEmailVerify, setShowEmailVerify] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [showRecoverySent, setShowRecoverySent] = useState(false);
+  const [showResetPassword, setShowResetPassword] = useState(false);
+  const [recoveryEmail, setRecoveryEmail] = useState("");
+  const [resetPassword, setResetPassword] = useState("");
+  const [resetPasswordConfirmation, setResetPasswordConfirmation] = useState("");
+  const [showResetPasswordValue, setShowResetPasswordValue] = useState(false);
+  const [showResetPasswordConfirmation, setShowResetPasswordConfirmation] = useState(false);
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+  const [loginCaptchaDone, setLoginCaptchaDone] = useState(false);
   const [resendCountdown, setResendCountdown] = useState(0);
   const [prodiSearch, setProdiSearch] = useState("");
+  const [prodiOpen, setProdiOpen] = useState(false);
   const [uniSearch, setUniSearch] = useState("");
+  const [uniOpen, setUniOpen] = useState(false);
   const [bantuPilihan, setBantuPilihan] = useState("");
   const [faseLainnya, setFaseLainnya] = useState("");
   const [featureLoading, setFeatureLoading] = useState(false);
   const [featureLoadingDone, setFeatureLoadingDone] = useState(false);
   const [featureLoadingStatus, setFeatureLoadingStatus] = useState(0);
   const [selectedFitur, setSelectedFitur] = useState("");
-  const TOTAL = 10;
+  const TOTAL = bantuPilihan === "tugas" ? 11 : 10;
   const loadingTimers = useRef<number[]>([]);
   const featureTimers = useRef<number[]>([]);
 
@@ -6572,23 +6746,23 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
 
   // Kendala → recommended feature mapping
   const KENDALA_FITUR_MAP: Record<string, string> = {
-    // Mata Kuliah → Fitur Mata Kuliah
     "Kesulitan memahami materi kuliah": "Mata Kuliah",
     "Kesulitan mencari referensi materi": "Mata Kuliah",
     "Kesulitan menentukan prioritas belajar": "Mata Kuliah",
-    "Kesulitan mengerjakan soal ujian": "Mata Kuliah",
-    // Tugas Kuliah → Fitur Mata Kuliah
+    "Kesulitan mempraktikkan teori mata kuliah": "Mata Kuliah",
     "Belum memahami instruksi tugas": "Mata Kuliah",
     "Bingung memulai dari bagian mana": "Mata Kuliah",
     "Sulit mencari referensi yang sesuai": "Mata Kuliah",
-    "Deadline sudah dekat": "Mata Kuliah",
-    // Skripsi/Tesis/Disertasi
+    "Deadline tugas sudah sangat dekat": "Mata Kuliah",
+    "Persiapan Kualifikasi Disertasi masih belum diterima": "Skripsi/Tesis/Disertasi",
+    "Kurang yakin dengan draft final Disertasi": "Skripsi/Tesis/Disertasi",
+    "Kurang yakin dengan draft final tesis": "Skripsi/Tesis/Disertasi",
     "Bingung memulai penelitian": "Skripsi/Tesis/Disertasi",
     "Belum memiliki topik/judul": "Skripsi/Tesis/Disertasi",
     "Stuck dan tidak tahu harus menulis apa lagi": "Skripsi/Tesis/Disertasi",
     "Sulit menemukan referensi yang relevan": "Cari Jurnal",
     "Banyak revisi dari dosen": "Skripsi/Tesis/Disertasi",
-    "Khawatir hasil plagiasi tinggi": "Cek Plagiarisme",
+    "Khawatir hasil plagiasi tinggi": "Cek Plagiasi",
     "Kesulitan mengolah atau menganalisis data": "Skripsi/Tesis/Disertasi",
     "Penulisan akademik masih kurang tepat": "Parafrase",
     "Target penyelesaian terasa berat": "Skripsi/Tesis/Disertasi",
@@ -6638,10 +6812,11 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
     const tid = window.setTimeout(() => { setStep(next); setVisible(true); }, 180);
     loadingTimers.current.push(tid);
   };
-  // Step map: 0=welcome 1=akun 2=jenjang 3=jurusan 4=semester 5=kampus 6=bantu 7=fase 8=kendala 9=target 10=identitas(skip) 11=fitur
-  const AUTO_STEPS = [2, 5, 6, 9];
+  // Step map: 0=welcome 1=akun 2=jenjang 3=jurusan 4=semester 5=kampus 6=bantu 7=fase | tugas: 8=dibingungkan 9=target 10=kendala 11=fitur | others: 8=target 9=kendala 10=fitur
+  const AUTO_STEPS = [2, 5, 6, 8];
   const goNext = () => {
-    if (step === 9) handleFinish(); // after target → loading
+    if (step === 9 && bantuPilihan !== "tugas") handleFinish();
+    else if (step === 10 && bantuPilihan === "tugas") handleFinish();
     else transition(step + 1);
   };
   const goBack = () => {
@@ -6675,10 +6850,28 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
   };
 
   const FEATURE_MSGS = [
-    "Membuka pengalaman menarik untukmu",
-    "Hampir selesai, Alerin sedang bersiap!",
+    "Menyiapkan fitur sesuai dengan kebutuhanmu..",
+    "Sedikit lagi, siap!",
   ];
   const startFeatureLoading = () => {
+    const bantuanLabel = bantuPilihan === "matakuliah"
+      ? "Mata Kuliah"
+      : bantuPilihan === "tugas"
+      ? "Tugas Kuliah"
+      : jenjang === "S2"
+      ? "Tesis"
+      : jenjang === "S3"
+      ? "Disertasi"
+      : "Skripsi";
+    window.localStorage.setItem("alerin-registration-profile", JSON.stringify({
+      nama: namaLengkap || namaPanggilan,
+      universitas,
+      jenjang: jenjang === "S1" ? "S1 (Sarjana)" : jenjang === "S2" ? "S2 (Magister)" : jenjang === "S3" ? "S3 (Doktor)" : jenjang,
+      prodi,
+      semester,
+      bantuan: bantuanLabel,
+      fase: fase === "Lainnya" ? faseLainnya : fase,
+    }));
     featureTimers.current.forEach(id => { clearTimeout(id); clearInterval(id); });
     featureTimers.current = [];
     setFeatureLoading(true);
@@ -6700,10 +6893,10 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
       setFeatureLoading(false);
       setFeatureLoadingDone(false);
       const FITUR_DEST: Record<string, FinishDest> = {
+        matakuliah:{ tab: "fitur", featureKey: "matakuliah" },
         jurnal:    { tab: "fitur", featureKey: "jurnal" },
         parafrase: { tab: "fitur", featureKey: "parafrase" },
-        matakuliah: { tab: "fitur", featureKey: "jurnal" },
-        plagiarisme: { tab: "fitur", featureKey: "plagiasi" },
+        skripsi:   { tab: "fitur", featureKey: "skripsi" },
       };
       onFinish(FITUR_DEST[selectedFitur] ?? { prompt: loadingPrompt });
     }, 4200);
@@ -6740,6 +6933,14 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
 
   const inpCls = "w-full px-4 py-3.5 rounded-2xl text-sm text-slate-800 outline-none bg-white border-2 border-transparent focus:border-blue-400 transition-all placeholder:text-slate-400";
   const inpShadow = { boxShadow: "0 1px 8px rgba(0,0,0,0.06)" };
+  const resetPasswordChecks = {
+    length: resetPassword.length >= 8,
+    letterCase: /[a-z]/.test(resetPassword) && /[A-Z]/.test(resetPassword),
+    unique: /[\d\W]/.test(resetPassword),
+  };
+  const resetPasswordScore = Object.values(resetPasswordChecks).filter(Boolean).length;
+  const resetPasswordsMatch = resetPassword.length > 0 && resetPassword === resetPasswordConfirmation;
+  const canSaveResetPassword = resetPasswordScore === 3 && resetPasswordsMatch;
 
   const canProceed = [
     true,                    // 0: welcome
@@ -6750,112 +6951,360 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
     !!semester,              // 5: semester
     !!bantuPilihan,          // 6: bantu
     fase === "Lainnya" ? !!faseLainnya.trim() : !!fase, // 7: fase
-    kendala.length > 0,      // 8: kendala (wajib, min 1)
-    !!target,                // 9: target (auto)
-    !!selectedFitur,         // 10: fitur
+    bantuPilihan === "tugas" ? true : !!target,                     // 8: dibingungkan(tugas) or target
+    bantuPilihan === "tugas" ? !!target : kendala.length > 0,      // 9: target(tugas) or kendala
+    bantuPilihan === "tugas" ? kendala.length > 0 : !!selectedFitur, // 10: kendala(tugas) or fitur
+    !!selectedFitur,         // 11: fitur (tugas only)
   ][step];
 
+  if (showResetPassword) return (
+    <div
+      key="reset-password"
+      className="fixed inset-0 z-[300] flex min-h-dvh items-center justify-center overflow-y-auto px-4 py-8"
+      style={{ background: "url('/assets/5187b.png') center / cover no-repeat #f3f7fe" }}
+    >
+      <div
+        className="w-full max-w-[440px] overflow-hidden rounded-[16px] bg-white"
+        style={{ boxShadow: "0px 20px 25px -5px rgba(0,0,0,0.08), 0px 8px 10px -6px rgba(0,0,0,0.06)" }}
+      >
+        <div className="h-[6px] bg-gradient-to-r from-[#60a5fa] to-[#6366f1]" />
+        <div className="px-5 pb-6 pt-6 sm:px-7">
+          <div className="text-center">
+            <h2 className="font-['Plus_Jakarta_Sans:ExtraBold'] text-[23px] font-extrabold leading-[30px] tracking-[-0.46px] text-[#1b1b1c]">
+              Buat Kata Sandi Baru
+            </h2>
+            <p className="mx-auto mt-2 max-w-[377px] font-['Plus_Jakarta_Sans:Regular'] text-[14px] leading-[21px] text-[#64748b]">
+              Kata sandi kamu harus berbeda dari kata sandi yang pernah digunakan sebelumnya
+            </p>
+          </div>
+
+          <form
+            className="mt-5"
+            onSubmit={event => {
+              event.preventDefault();
+              if (!canSaveResetPassword) return;
+              setShowResetPassword(false);
+              setShowLogin(true);
+              setResetPassword("");
+              setResetPasswordConfirmation("");
+            }}
+          >
+            <label className="block">
+              <span className="mb-2 block font-['Plus_Jakarta_Sans:SemiBold'] text-[14px] font-semibold leading-5 text-[#1e293b]">Kata Sandi Baru</span>
+              <span className="relative block">
+                <input
+                  type={showResetPasswordValue ? "text" : "password"}
+                  value={resetPassword}
+                  onChange={event => setResetPassword(event.target.value)}
+                  placeholder="Masukkan kata sandi"
+                  autoComplete="new-password"
+                  className="h-[46px] w-full rounded-xl border border-[#e2e8f0] bg-slate-50/50 px-3 pr-11 font-['Plus_Jakarta_Sans:Regular'] text-[13px] text-slate-800 outline-none transition-colors placeholder:text-zinc-400/60 focus:border-blue-400"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowResetPasswordValue(value => !value)}
+                  className="absolute right-3 top-1/2 flex -translate-y-1/2 items-center justify-center opacity-60"
+                  aria-label={showResetPasswordValue ? "Sembunyikan kata sandi" : "Tampilkan kata sandi"}
+                >
+                  <img src="/assets/6aa10.svg" alt="" />
+                </button>
+              </span>
+            </label>
+
+            <div className="mt-3" style={{ fontFamily: "Arial, sans-serif" }}>
+              <div className="flex items-center justify-between text-[12px] leading-[18px]">
+                <span className="text-[#64748b]">Kekuatan Kata Sandi</span>
+                <span className="text-[#2563eb]">{resetPasswordScore === 3 ? "Sangat Kuat" : resetPasswordScore === 2 ? "Kuat" : resetPasswordScore === 1 ? "Lemah" : "Belum dinilai"}</span>
+              </div>
+              <div className="mt-1 flex h-[6px] gap-1">
+                {[0, 1, 2, 3].map(segment => (
+                  <span key={segment} className={`h-full flex-1 rounded-full ${segment < (resetPasswordScore === 3 ? 4 : resetPasswordScore) ? "bg-[#2563eb]" : "bg-slate-200"}`} />
+                ))}
+              </div>
+              <div className="mt-3 space-y-1.5 text-[12px] leading-[18px]">
+                {[
+                  [resetPasswordChecks.length, "Minimal 8 karakter"],
+                  [resetPasswordChecks.letterCase, "Mengandung huruf besar & kecil"],
+                  [resetPasswordChecks.unique, "Mengandung angka atau simbol unik"],
+                ].map(([valid, label]) => (
+                  <div key={String(label)} className={`flex items-center gap-1.5 ${valid ? "text-[#2563eb]" : "text-slate-400"}`}>
+                    <img src="/assets/a2f45.svg" alt="" className={`shrink-0 ${valid ? "opacity-100" : "opacity-30 grayscale"}`} />
+                    <span>{label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <label className="mt-4 block">
+              <span className="mb-2 block font-['Plus_Jakarta_Sans:SemiBold'] text-[14px] font-semibold leading-5 text-[#1e293b]">Konfirmasi kata sandi</span>
+              <span className="relative block">
+                <input
+                  type={showResetPasswordConfirmation ? "text" : "password"}
+                  value={resetPasswordConfirmation}
+                  onChange={event => setResetPasswordConfirmation(event.target.value)}
+                  placeholder="Masukkan kata sandi"
+                  autoComplete="new-password"
+                  className="h-[46px] w-full rounded-xl border border-[#e2e8f0] bg-slate-50/50 px-3 pr-11 font-['Plus_Jakarta_Sans:Regular'] text-[13px] text-slate-800 outline-none transition-colors placeholder:text-zinc-400/60 focus:border-blue-400"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowResetPasswordConfirmation(value => !value)}
+                  className="absolute right-3 top-1/2 flex -translate-y-1/2 items-center justify-center opacity-60"
+                  aria-label={showResetPasswordConfirmation ? "Sembunyikan konfirmasi kata sandi" : "Tampilkan konfirmasi kata sandi"}
+                >
+                  <img src="/assets/6aa10.svg" alt="" />
+                </button>
+              </span>
+            </label>
+
+            <div className={`mt-2 flex items-center gap-1.5 text-[12px] leading-[18px] ${resetPasswordsMatch ? "text-[#2563eb]" : "text-slate-400"}`} style={{ fontFamily: "Arial, sans-serif" }}>
+              <img src="/assets/4b4d0.svg" alt="" className={resetPasswordsMatch ? "opacity-100" : "opacity-30 grayscale"} />
+              <span>{resetPasswordConfirmation ? (resetPasswordsMatch ? "Kata sandi cocok" : "Kata sandi belum cocok") : "Kata sandi cocok"}</span>
+            </div>
+
+            <button
+              type="submit"
+              disabled={!canSaveResetPassword}
+              className="mt-5 flex h-11 w-full items-center justify-center rounded-xl bg-[#2563eb] px-4 font-['Plus_Jakarta_Sans:Bold'] text-[13px] font-bold text-white shadow-sm transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Simpan
+            </button>
+          </form>
+
+          <button
+            type="button"
+            onClick={() => {
+              setShowResetPassword(false);
+              setShowLogin(true);
+            }}
+            className="mx-auto mt-4 flex items-center justify-center gap-1.5 font-['Plus_Jakarta_Sans:SemiBold'] text-[14px] font-semibold leading-5 text-[#2563eb]"
+          >
+            <img src="/assets/c0bc7.svg" alt="" />
+            Kembali ke Halaman Masuk
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  if (showRecoverySent) return (
+    <div
+      key="recovery-sent"
+      className="fixed inset-0 z-[300] flex items-center justify-center overflow-y-auto px-4 py-8"
+      style={{ background: "url('/assets/5187b.png') center / cover no-repeat #f3f7fe" }}
+    >
+      <div
+        className="w-full max-w-[440px] overflow-hidden rounded-[16px] bg-white"
+        style={{ boxShadow: "0px 20px 25px -5px rgba(0,0,0,0.08), 0px 8px 10px -6px rgba(0,0,0,0.06)", animation: "emailCardIn 0.4s ease both" }}
+      >
+        <div className="h-[6px] bg-gradient-to-r from-[#60a5fa] to-[#6366f1]" />
+        <div className="flex flex-col items-center px-7 pb-8 pt-6 text-center">
+          <div className="relative h-[145px] w-[144px] overflow-hidden">
+            <img
+              src="/assets/90f05.png"
+              alt="Email pemulihan telah dikirim"
+              className="pointer-events-none absolute max-w-none"
+              style={{ width: 410, height: 230, left: -141, top: -40 }}
+            />
+          </div>
+          <h2 className="font-['Plus_Jakarta_Sans:ExtraBold'] text-[28px] font-extrabold leading-9 tracking-[-0.55px] text-[#1b1b1c]">Cek Email Kamu</h2>
+          <p className="mt-3 max-w-[370px] font-['Plus_Jakarta_Sans:Regular'] text-[14px] leading-[23px] text-slate-500">
+            Kami telah mengirim tautan pemulihan kata sandi ke email Kamu. Silakan cek kotak masuk dan ikuti instruksi untuk mengatur ulang kata sandi.
+          </p>
+          <button
+            type="button"
+            onClick={() => {
+              setShowRecoverySent(false);
+              setShowForgotPassword(false);
+              setShowResetPassword(true);
+            }}
+            className="mt-6 w-full rounded-xl bg-blue-600 px-4 py-3 text-[14px] font-semibold text-white shadow-sm transition-colors hover:bg-blue-700"
+          >
+            Kembali ke Halaman Masuk
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  if (showForgotPassword) return (
+    <div
+      key="forgot-password"
+      className="fixed inset-0 z-[300] flex items-center justify-center overflow-y-auto px-4 py-8"
+      style={{ background: "url('/assets/5187b.png') center / cover no-repeat #f3f7fe", fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+    >
+      <div className="w-full max-w-[440px] overflow-hidden rounded-[16px] bg-white shadow-[0px_20px_25px_-5px_rgba(0,0,0,0.08),0px_8px_10px_-6px_rgba(0,0,0,0.06)]">
+        <div className="h-[6px] bg-gradient-to-r from-[#60a5fa] to-[#6366f1]" />
+        <div className="px-7 pb-6 pt-7 sm:px-8">
+          <div className="text-center">
+            <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-[24px] font-bold leading-8 tracking-[-0.5px] text-[#1b1b1c]">Lupa Kata Sandi?</h2>
+            <p className="mx-auto mt-2 max-w-[410px] font-['Plus_Jakarta_Sans:Regular'] text-[14px] leading-[23px] text-slate-500">
+              Masukkan alamat email yang terdaftar untuk menerima tautan verifikasi pemulihan kata sandi Kamu.
+            </p>
+          </div>
+
+          <label className="mt-5 block">
+            <span className="mb-1.5 block font-['Plus_Jakarta_Sans:SemiBold'] text-[14px] font-semibold text-slate-800">Email</span>
+            <span className="relative block">
+              <img src="/assets/c9652.svg" alt="" className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <input
+                type="email"
+                value={recoveryEmail}
+                onChange={event => setRecoveryEmail(event.target.value)}
+                placeholder="Masukan email aktifmu"
+                className="h-[48px] w-full rounded-xl border border-slate-200 bg-slate-50/50 pl-11 pr-4 font-['Plus_Jakarta_Sans:Regular'] text-[14px] text-slate-800 outline-none transition-all placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-50"
+              />
+            </span>
+          </label>
+
+          <div className="mt-3 flex min-h-[65px] items-center rounded-xl border border-blue-100 bg-blue-50/70 px-3 py-2">
+            <div className="flex h-[46px] w-[46px] shrink-0 items-center justify-center">
+              <img src="/assets/56fca.svg" alt="" />
+            </div>
+            <p className="ml-2 font-['Plus_Jakarta_Sans:Regular'] text-[12px] leading-[19.5px] text-slate-600">
+              Tautan pemulihan berlaku selama <strong className="font-['Plus_Jakarta_Sans:Bold'] font-bold">60 menit.</strong> Pastikan memeriksa kotak masuk atau spam email kamu
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setShowRecoverySent(true)}
+            className="mt-4 w-full rounded-xl bg-blue-600 py-3 text-[14px] font-semibold text-white shadow-sm transition-all hover:bg-blue-700 active:scale-[0.99]"
+          >
+            Kirim Tautan Pemulihan
+          </button>
+
+          <button type="button" onClick={() => setShowForgotPassword(false)} className="mx-auto mt-5 flex items-center gap-1.5 font-['Plus_Jakarta_Sans:SemiBold'] text-[14px] font-semibold text-blue-600 hover:text-blue-700">
+            <img src="/assets/c0bc7.svg" alt="" />
+            Kembali ke Halaman Masuk
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
   if (showLogin) return (
-    <div className="fixed inset-0 z-[300] flex flex-col overflow-hidden" style={{ background: "linear-gradient(180deg, #f8faff 0%, #f0f5ff 50%, #f8faff 100%)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+    <div key="login" className="fixed inset-0 z-[300] flex flex-col overflow-hidden" style={{ background: "url('/assets/5187b.png') center / cover no-repeat #f3f7fe", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
       <style>{`
         @keyframes emailCardIn { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
       `}</style>
 
-      <div className="flex-1 overflow-y-auto flex flex-col items-center justify-center px-4">
-        <div className="max-w-md w-full flex items-center justify-center">
+      <div className="flex-1 overflow-y-auto flex flex-col items-center justify-center px-4 py-6">
+        <div className="max-w-[422px] w-full">
           <div className="w-full" style={{ animation: "emailCardIn 0.45s cubic-bezier(0.34,1.56,0.64,1) both" }}>
-            {/* White card */}
-            <div className="bg-white rounded-[16px] shadow-[0px_20px_25px_-5px_rgba(0,0,0,0.08),0px_8px_10px_-6px_rgba(0,0,0,0.06)] overflow-hidden">
-              {/* Top accent bar */}
-              <div className="h-1.5" style={{ background: "linear-gradient(90deg,#60a5fa,#6366f1)" }}/>
+            <div className="bg-white rounded-[15px] shadow-[0px_20px_25px_-5px_rgba(0,0,0,0.08),0px_8px_10px_-6px_rgba(0,0,0,0.06)] overflow-hidden">
+              {/* Top gradient bar */}
+              <div className="h-[6px]" style={{ background: "linear-gradient(90deg,#60a5fa,#6366f1)" }}/>
 
-              {/* Header inside card */}
-              <div className="flex flex-col items-center pt-5 pb-1 px-4 sm:pt-4 sm:pb-1">
-                <div className="relative mb-2">
-                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden flex items-center justify-center bg-white shadow-md">
-                    <img src="/assets/alerin-logo.png" alt="Alerin" className="w-full h-full object-cover"/>
-                  </div>
+              {/* Header */}
+              <div className="flex flex-col items-center px-4 pb-3 pt-4">
+                <div className="mb-2 flex h-[61px] w-[61px] items-center justify-center overflow-hidden rounded-full border-2 border-blue-100 bg-white shadow-md">
+                  <img src="/assets/f725b.png" alt="Alerin" className="h-full w-full object-cover" />
                 </div>
-                <h2 className="font-['Plus_Jakarta_Sans'] font-bold text-[20px] sm:text-[24px] text-[#1b1b1c] leading-[26px] sm:leading-[32px] tracking-[-0.5px]">Masuk ke Alerin</h2>
-                <p className="text-[12px] sm:text-[13px] text-[#71717a] text-center leading-[18px] sm:leading-[20px] mt-0.5">Selamat datang kembali! Masuk untuk melanjutkan. Belum punya akun? <button onClick={() => setShowLogin(false)} className="font-semibold text-[#2563eb]">Daftar</button></p>
+                <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-[22px] font-bold leading-[30px] tracking-[-0.45px] text-[#1b1b1c]">Masuk ke Alerin</h2>
+                <p className="mt-1 w-full text-center font-['Plus_Jakarta_Sans:Regular'] text-[12px] leading-[19px] text-[#71717a]">Selamat datang kembali! Masuk untuk melanjutkan.</p>
               </div>
 
-              {/* Form fields */}
-              <div className="px-4 sm:px-6 pt-1 sm:pt-1 pb-4 sm:pb-6 space-y-3 sm:space-y-4">
+              {/* Fields */}
+              <div className="space-y-[12px] px-[22px] pb-[12px] pt-1">
                 {/* Email */}
-                <div className="space-y-1.5">
+                <div className="space-y-[6px]">
                   <div className="flex items-center justify-between">
-                    <label className="text-[14px] font-semibold text-[#1b1b1c]">Alamat Email</label>
-                    <span className="text-[11px] font-bold text-[#1d4ed8] tracking-[0.44px]">Wajib</span>
+                    <label className="text-[13px] font-semibold text-[#1b1b1c] leading-[20px]">Email</label>
+                    <span className="font-['Plus_Jakarta_Sans:Medium'] text-[10px] font-medium leading-4 text-[#2563eb]">Wajib</span>
                   </div>
                   <div className="relative">
-                    <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#71717a]" width="15" height="12" viewBox="0 0 24 20" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="2" width="20" height="16" rx="2"/><path d="m22 5-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 5"/></svg>
-                    <input type="email"
-                      className="w-full pl-10 pr-4 h-11 rounded-[12px] text-[14px] text-[#1b1b1c] outline-none transition-all placeholder:text-[rgba(113,113,122,0.6)]"
-                      style={{ background: "#f6f6f8" }}
-                      onFocus={e => { e.currentTarget.style.outline = "2px solid #2563eb"; e.currentTarget.style.background = "#fff"; }}
-                      onBlur={e => { e.currentTarget.style.outline = "none"; e.currentTarget.style.background = "#f6f6f8"; }}
-                      placeholder="nama@gmail.com" />
+                    <img src="/assets/36806.svg" alt="" className="absolute left-[13px] top-1/2 -translate-y-1/2 pointer-events-none" />
+                    <input
+                      type="email"
+                      value={loginEmail}
+                      onChange={event => setLoginEmail(event.target.value)}
+                      className="w-full pl-[38px] pr-4 h-[46px] rounded-[10px] border text-[14px] text-[#1b1b1c] outline-none transition-all placeholder:text-[#a1a1aa]"
+                      style={{ background: "#f8fafc", borderColor: "#e2e8f0" }}
+                      onFocus={e => { e.currentTarget.style.borderColor = "#2563eb"; e.currentTarget.style.background = "#fff"; e.currentTarget.style.boxShadow = "0 0 0 3px rgba(37,99,235,0.08)"; }}
+                      onBlur={e => { e.currentTarget.style.borderColor = "#e2e8f0"; e.currentTarget.style.background = "#f8fafc"; e.currentTarget.style.boxShadow = "none"; }}
+                      placeholder="Masukan email aktifmu"/>
                   </div>
                 </div>
 
-                {/* Password */}
-                <div className="space-y-1.5">
+                {/* Kata Sandi */}
+                <div className="space-y-[6px]">
                   <div className="flex items-center justify-between">
-                    <label className="text-[14px] font-semibold text-[#1b1b1c]">Kata Sandi</label>
-                    <span className="text-[11px] font-bold text-[#1d4ed8] tracking-[0.44px]">Wajib</span>
+                    <label className="text-[13px] font-semibold text-[#1b1b1c] leading-[20px]">Kata Sandi</label>
+                    <span className="font-['Plus_Jakarta_Sans:Medium'] text-[10px] font-medium leading-4 text-[#2563eb]">Wajib</span>
                   </div>
                   <div className="relative">
-                    <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#71717a]" width="13" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                    <input type={showPass ? "text" : "password"}
-                      className="w-full pl-10 pr-11 h-11 rounded-[12px] text-[14px] text-[#1b1b1c] outline-none transition-all placeholder:text-[rgba(113,113,122,0.6)]"
-                      style={{ background: "#f6f6f8" }}
-                      onFocus={e => { e.currentTarget.style.outline = "2px solid #2563eb"; e.currentTarget.style.background = "#fff"; }}
-                      onBlur={e => { e.currentTarget.style.outline = "none"; e.currentTarget.style.background = "#f6f6f8"; }}
-                      placeholder="Masukkan kata sandi" />
-                    <button type="button" onClick={() => setShowPass(p => !p)} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#71717a]">
-                      {showPass
-                        ? <svg width="18" height="12" viewBox="0 0 22 14" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M1 7s4-6 10-6 10 6 10 6-4 6-10 6S1 7 1 7z"/><circle cx="11" cy="7" r="2.5" fill="currentColor" stroke="none"/></svg>
-                        : <svg width="17" height="12" viewBox="0 0 22 14" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M1 7s4-6 10-6 10 6 10 6-4 6-10 6S1 7 1 7z"/><circle cx="11" cy="7" r="2.5" fill="currentColor" stroke="none"/><line x1="2" y1="1" x2="20" y2="13" stroke="currentColor" strokeWidth="1.8"/></svg>}
+                    <img src="/assets/e3c20.svg" alt="" className="absolute left-[13px] top-1/2 -translate-y-1/2 pointer-events-none" />
+                    <input
+                      type={showPass ? "text" : "password"}
+                      value={loginPassword}
+                      onChange={event => setLoginPassword(event.target.value)}
+                      className="w-full pl-[38px] pr-[42px] h-[46px] rounded-[10px] border text-[14px] text-[#1b1b1c] outline-none transition-all placeholder:text-[#a1a1aa]"
+                      style={{ background: "#f8fafc", borderColor: "#e2e8f0" }}
+                      onFocus={e => { e.currentTarget.style.borderColor = "#2563eb"; e.currentTarget.style.background = "#fff"; e.currentTarget.style.boxShadow = "0 0 0 3px rgba(37,99,235,0.08)"; }}
+                      onBlur={e => { e.currentTarget.style.borderColor = "#e2e8f0"; e.currentTarget.style.background = "#f8fafc"; e.currentTarget.style.boxShadow = "none"; }}
+                      placeholder="Masukkan kata sandi"/>
+                    <button type="button" onClick={() => setShowPass(p => !p)} className="absolute right-[13px] top-1/2 -translate-y-1/2 opacity-60 hover:opacity-100 transition-opacity">
+                      <img src="/assets/7c5e4.svg" alt="Tampilkan kata sandi" />
                     </button>
                   </div>
+                  <div className="flex justify-start">
+                    <button type="button" onClick={() => setShowForgotPassword(true)} className="text-[12px] font-bold text-[#2563eb] leading-[18px]">Lupa kata sandi?</button>
+                  </div>
                 </div>
 
-                {/* Captcha */}
-                <button type="button" onClick={() => setCaptchaDone(p => !p)}
-                  className="w-full flex items-center justify-between p-3 rounded-[12px] drop-shadow-[0px_1px_1px_rgba(0,0,0,0.05)] transition-all"
-                  style={{ background: "#f6f6f8" }}>
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-5 h-5 rounded-[2.5px] border flex items-center justify-center transition-all shrink-0"
-                      style={captchaDone ? { borderColor: "#2563eb", background: "#2563eb", borderWidth: 2 } : { borderColor: "#767676", background: "white", borderWidth: 1 }}>
-                      {captchaDone && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3"><path d="M20 6L9 17l-5-5"/></svg>}
+                {/* CAPTCHA */}
+                <button type="button" onClick={() => setLoginCaptchaDone(value => !value)}
+                  className="w-full flex items-center justify-between px-[13px] py-[10px] rounded-[10px] border transition-all"
+                  style={{ background: "#f8fafc", borderColor: "#e2e8f0", boxShadow: "0px 1px_1px rgba(0,0,0,0.04)" }}>
+                  <div className="flex items-center gap-[10px]">
+                    <div className="w-[18px] h-[18px] rounded-[3px] border flex items-center justify-center transition-all shrink-0"
+                      style={loginCaptchaDone ? { borderColor: "#2563eb", background: "#2563eb", borderWidth: 2 } : { borderColor: "#94a3b8", background: "white", borderWidth: 1.5 }}>
+                      {loginCaptchaDone && <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3.5"><path d="M20 6L9 17l-5-5"/></svg>}
                     </div>
-                    <div>
-                      <p className="text-[14px] font-semibold text-[#1b1b1c] text-left">Saya bukan robot</p>
-                      <p className="text-[12px] text-[#71717a] leading-[18px] text-left">Verifikasi pintar anti-bot</p>
+                    <div className="text-left">
+                      <p className="text-[13px] font-semibold text-[#1b1b1c] leading-[18px]">Saya bukan robot</p>
+                      <p className="text-[11px] text-[#71717a] leading-[16px]">Verifikasi pintar anti-bot</p>
                     </div>
                   </div>
-                  <div className="flex flex-col items-center opacity-80 shrink-0">
-                    <svg width="15" height="18" viewBox="0 0 15 19" fill="none"><path d="M7.5 0.5L1 4V10C1 13.866 3.81 17.477 7.5 18.5C11.19 17.477 14 13.866 14 10V4L7.5 0.5Z" fill="#03677F" stroke="#03677F" strokeWidth="0.5"/></svg>
-                    <span className="text-[9px] text-[#71717a] mt-0.5 tracking-[-0.4px] uppercase">TURNSTILE</span>
+                  <div className="flex shrink-0 flex-col items-center border-l border-slate-200 pl-3">
+                    <img src="/assets/7a08e.svg" alt="" />
+                    <span className="mt-0.5 text-[8px] font-bold uppercase tracking-wider text-slate-500">Turnstile</span>
                   </div>
                 </button>
+              </div>
 
-                {/* Lanjut button inside card */}
-                <div className="pt-2">
-                  <button
-                    className="w-full flex items-center justify-center gap-2 py-3 sm:py-[14px] rounded-[12px] sm:rounded-[16px] text-white font-bold text-[15px] sm:text-[16px] transition-all active:scale-[0.98]"
-                    style={{ background: "#2563eb", boxShadow: "0px 4px 7px rgba(37,99,235,0.38)" }}>
-                    Masuk
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                  </button>
-                  {/* Google button */}
-                  <button className="w-full flex items-center justify-center gap-3 py-3 rounded-[12px] font-semibold text-[#1b1b1c] text-[14px] transition-all hover:shadow-md active:scale-[0.98] mt-3"
-                    style={{ background: "#f6f6f8" }}>
-                    <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
-                    Masuk dengan Google
-                  </button>
+              {/* Footer actions */}
+              <div className="space-y-[10px] px-[22px] pb-[22px] pt-0">
+                {/* Belum punya akun */}
+                <p className="text-[12px] text-[#71717a] text-center leading-[18px]">
+                  Belum memiliki akun?{" "}
+                  <button onClick={() => setShowLogin(false)} className="font-bold text-[#2563eb]">Daftar sekarang</button>
+                </p>
+
+                {/* Masuk button */}
+                <button
+                  type="button"
+                  disabled={!loginEmail.trim() || !loginPassword || !loginCaptchaDone}
+                  onClick={onClose}
+                  className="w-full flex items-center justify-center gap-2 h-[48px] rounded-[12px] text-white font-bold text-[15px] transition-all active:scale-[0.98] disabled:cursor-not-allowed"
+                  style={{ background: "linear-gradient(135deg,#2563eb,#1d4ed8)", boxShadow: "0px 4px 12px rgba(37,99,235,0.28)" }}>
+                  Masuk
+                </button>
+
+                {/* Atau divider */}
+                <div className="flex items-center gap-3 py-[2px]">
+                  <div className="flex-1 h-px bg-[#e2e8f0]"/>
+                  <span className="text-[12px] text-[#94a3b8] font-medium">atau</span>
+                  <div className="flex-1 h-px bg-[#e2e8f0]"/>
                 </div>
+
+                {/* Google */}
+                <button type="button" onClick={onClose} className="w-full flex items-center justify-center gap-[10px] h-[46px] rounded-[12px] font-semibold text-[#1b1b1c] text-[14px] transition-all active:scale-[0.98]"
+                  style={{ background: "#f6f6f8" }}>
+                  <img src="/assets/78567.svg" alt="Google" />
+                  Masuk dengan Google
+                </button>
               </div>
             </div>
           </div>
@@ -6865,7 +7314,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
   );
 
   if (showEmailVerify) return (
-    <div className="fixed inset-0 z-[300] flex flex-col overflow-hidden" style={{ background: "linear-gradient(180deg, #f8faff 0%, #f0f5ff 50%, #f8faff 100%)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+    <div key="email-verify" className="fixed inset-0 z-[300] flex flex-col overflow-hidden" style={{ background: "linear-gradient(180deg, #f8faff 0%, #f0f5ff 50%, #f8faff 100%)", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
       <style>{`
         @keyframes emailCardIn { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
       `}</style>
@@ -6916,9 +7365,9 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                 <p className="text-[12px] font-bold leading-[18px] text-[#1d4ed8] mb-3" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Catatan:</p>
                 <div className="flex flex-col gap-3">
                   {[
-                    { src: "/assets/icon-spam.svg", text: "Periksa folder Spam atau Promosi jika email tidak muncul di Kotak Masuk." },
+                    { src: "/assets/icon-spam.svg", text: "Periksa folder Spam atau Promosi jika email tidak muncul di Kotak Masuk" },
                     { src: "/assets/icon-verify-check.svg", text: "Tautan verifikasi berlaku selama 24 jam sejak email dikirim." },
-                    { src: "/assets/icon-link.svg", text: "Demi keamanan akun, jangan bagikan tautan verifikasi kepada pihak manapun." },
+                    { src: "/assets/icon-link.svg", text: "Demi keamanan akun, jangan bagikan tautan verifikasi kepada pihak manapun" },
                   ].map((item, i) => (
                     <div key={i} className="flex items-center gap-3">
                       <div className="rounded-[6px] flex items-center justify-center shrink-0" style={{ width: 25, height: 25, background: "linear-gradient(180deg, #1d4ed8 0%, #0f2972 100%)", opacity: 0.79 }}>
@@ -6959,11 +7408,11 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
 
       <div className="relative z-10 flex flex-col items-center text-center px-6 max-w-xl w-full">
         <h1 className="font-bold text-[19px] sm:text-3xl text-slate-900 mb-2 leading-snug" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
-          <span className="sm:hidden">Terima kasih telah mempercayakan mimpimu pada Alerin</span>
+          <span className="sm:hidden">Terima kasih telah mempercayakan mimpimu</span>
           <span className="hidden sm:inline">Terima kasih telah mempercayakan mimpimu pada Alerin</span>
         </h1>
         <p className="text-slate-500 text-[12px] sm:text-[15px] mb-9 leading-relaxed">
-          <span className="sm:hidden">Sekarang, Alerin sedang merancang jalur akademik yang sesuai kebutuhanmu</span>
+          <span className="sm:hidden">Sekarang, Alerin sedang merancang jalur akademik untukmu.</span>
           <span className="hidden sm:inline">Sekarang, Alerin sedang merancang jalur akademik yang sesuai kebutuhanmu</span>
         </p>
 
@@ -6983,7 +7432,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
           {/* Floating logo in center */}
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="w-36 h-36 rounded-full overflow-hidden flex items-center justify-center"
-              style={{ background: "white", boxShadow: "0 4px 20px rgba(0,0,0,0.08)", animation: "floatUpDown 2.8s ease-in-out infinite" }}>
+              style={{ background: "white", boxShadow: "0 4px 20px rgba(0,0,0,0.08)", animation: "floatUpDown 4s ease-in-out infinite" }}>
               <img
                 src="/assets/alerin-logo.png"
                 alt="Alerin"
@@ -7014,7 +7463,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
         @keyframes fadeSlideUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
         @keyframes fillArc{from{stroke-dashoffset:603}to{stroke-dashoffset:0}}
         @keyframes fillBar{from{width:0%}to{width:95%}}
-        @keyframes floatUpDown{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+        @keyframes floatUpDown{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
       `}</style>
     </div>
   );
@@ -7058,7 +7507,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
       {/* Status text */}
       <div className="text-center px-6">
         <h2 className="font-bold text-[20px] sm:text-[24px] text-[#1e293b] mb-2" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
-          {featureLoadingDone ? "Alerin siap membantumu." : "Membuka pengalaman menarik untukmu"}
+          {featureLoadingDone ? "Siap digunakan" : "Langkah pertamamu dimulai di sini"}
         </h2>
         <p key={featureLoadingStatus} className="text-[13px] sm:text-[14px] text-[#64748b] leading-relaxed"
           style={{ animation: "fadeSlideUp 0.4s ease forwards" }}>
@@ -7087,13 +7536,13 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
     <button onClick={onClick}
       className="w-full bg-white relative rounded-[12px] sm:rounded-[16px] transition-all active:scale-[0.98] drop-shadow-[0px_1px_1px_rgba(0,0,0,0.05)] group reg-card"
       style={selected ? { border: "2px solid #2563eb", background: "#eff6ff" } : { border: "1px solid #e5e7eb" }}>
-      <div className="flex items-center justify-between px-4 sm:px-[20px] py-3 sm:py-[16px]">
+      <div className="flex items-center justify-between px-4 sm:px-[20px] py-[14px] sm:py-[16px]">
         <div className="flex items-center gap-3 sm:gap-4">
-          <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-[10px] sm:rounded-[12px] flex items-center justify-center shrink-0 transition-colors"
-            style={{ background: selected ? "#dbeafe" : "#f8fafc" }}>{icon}</div>
+          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-[10px] sm:rounded-[12px] flex items-center justify-center shrink-0 transition-colors"
+            style={{ background: "#eff6ff", color: step >= 3 ? "#374151" : "#2563eb" }}>{icon}</div>
           <div className="text-left">
             <div className="flex items-center gap-2 flex-wrap">
-              <p className="font-bold text-[#111827] text-[15px] sm:text-[17px] leading-[24px] sm:leading-[28px]">{label}</p>
+              <p className="font-bold text-[#111827] text-[16px] sm:text-[17px] leading-[24px] sm:leading-[28px]">{label}</p>
               {badge && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full" style={{ background: (badgeColor || "#60a5fa") + "22", color: badgeColor || "#2563eb" }}>{badge}</span>}
             </div>
             <p className="text-[13px] sm:text-sm text-[#6b7280] leading-[18px] sm:leading-[20px]">{sublabel}</p>
@@ -7110,23 +7559,55 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
   // Pintarly-style mascot speech bubble
 
   return (
-    <div className="fixed inset-0 z-[300] flex flex-col overflow-hidden" style={{ background: "linear-gradient(180deg, #f8faff 0%, #f0f5ff 50%, #f8faff 100%)", padding: 0 }}>
+    <div
+      key="register-flow"
+      className="fixed inset-0 z-[300] flex flex-col overflow-hidden"
+      style={{
+        background: step === 1 && !showEmailVerify
+          ? "url('/assets/5187b.png') center / cover no-repeat #f3f7fe"
+          : "linear-gradient(180deg, #f8faff 0%, #f0f5ff 50%, #f8faff 100%)",
+        padding: 0,
+      }}
+    >
+      {step === 0 && (
+        <div className="pointer-events-none absolute inset-0 overflow-hidden sm:hidden">
+          {[0, 1].map(layer => (
+            <img
+              key={layer}
+              src="/assets/5187b.png"
+              alt=""
+              className="absolute left-0 top-0 max-w-none opacity-50"
+              style={{ width: 1433, height: 760 }}
+            />
+          ))}
+        </div>
+      )}
 
       {/* Header — step 0: close only; step 1 & email verify: no header; step 2+: progress header */}
       {step === 0 ? (
         <div className="relative z-10 flex justify-end px-5 pt-5 pb-2 shrink-0">
           <button onClick={onClose} className="w-9 h-9 flex items-center justify-center rounded-full text-[#6b7280] hover:bg-white/60 transition-all">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            <img src="/assets/fbb9c.svg" alt="" />
           </button>
         </div>
-      ) : (step === 1 || showEmailVerify) ? null : (
+      ) : (step === 1 || showEmailVerify) ? (
+        !showEmailVerify ? (
+          <div className="absolute right-4 top-4 z-20">
+            <button onClick={onClose} aria-label="Tutup pendaftaran" className="flex h-9 w-9 items-center justify-center rounded-full border border-white/70 bg-white/80 text-slate-500 shadow-sm backdrop-blur-sm hover:bg-white">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </button>
+          </div>
+        ) : null
+      ) : (
         <div className="relative z-10 flex items-center gap-2 sm:gap-3 px-4 sm:px-5 py-3 sm:py-4 shrink-0">
-          {/* Back button — always visible */}
-          <button onClick={goBack}
-            className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-white border border-[#e5e7eb] shadow-sm active:scale-95 transition-all shrink-0"
-            style={{ boxShadow: "0px_1px_2px_0px_rgba(0,0,0,0.05)" }}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4B5563" strokeWidth="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-          </button>
+          {/* Back button — hidden on fitur/recommendation step */}
+          {step < TOTAL && step !== 2 && (
+            <button onClick={goBack}
+              className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-white border border-[#e5e7eb] shadow-sm active:scale-95 transition-all shrink-0"
+              style={{ boxShadow: "0px_1px_2px_0px_rgba(0,0,0,0.05)" }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4B5563" strokeWidth="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            </button>
+          )}
           {/* Progress track */}
           <div className="flex-1 flex flex-col gap-1 sm:gap-1.5">
             <div className="hidden sm:flex items-center justify-between px-1">
@@ -7137,22 +7618,18 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
               <div className="h-full rounded-full transition-all duration-500 ease-out" style={{ width: `${progress}%`, background: "linear-gradient(90deg,#60a5fa,#6366f1)" }}/>
             </div>
           </div>
-          {/* Profile avatar — hidden on mobile */}
-          <div className="hidden sm:flex w-10 h-10 items-center justify-center shrink-0">
-            <div className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold text-white" style={{ background: "linear-gradient(135deg, #f97316, #ea580c)" }}>RA</div>
-          </div>
         </div>
       )}
 
       {/* Scrollable content */}
       <div className="flex-1 overflow-y-auto pb-4 relative z-10 flex flex-col" style={{ paddingLeft: "16px", paddingRight: "16px" }}>
-        <div className={step === 0 ? "w-full flex items-center justify-center flex-1" : step === 1 ? "max-w-md mx-auto w-full flex items-center justify-center flex-1" : "max-w-md mx-auto w-full pt-2 pb-8"}
+        <div className={step === 0 ? "w-full flex items-center justify-center flex-1" : step === 1 ? "max-w-[418px] mx-auto w-full flex items-center justify-center flex-1" : "max-w-md mx-auto w-full pt-4 sm:pt-2 pb-8"}
           style={step === 0 ? { minHeight: "100%", opacity: visible ? 1 : 0, transform: visible ? "translateY(0)" : "translateY(14px)", transition: "opacity 0.18s ease, transform 0.18s ease" } : { opacity: visible ? 1 : 0, transform: visible ? "translateY(0)" : "translateY(14px)", transition: "opacity 0.18s ease, transform 0.18s ease" }}>
 
           {/* Step 0: Welcome */}
           {step === 0 && (
             <div className="flex items-center justify-center w-full px-5" style={{ paddingBottom: "80px" }}>
-              <div className="w-full max-w-[700px] mx-auto" style={{ animation: "welcomeCardIn 0.65s cubic-bezier(0.34,1.56,0.64,1) both" }}>
+              <div className="w-full max-w-[700px] mx-auto sm:px-9" style={{ animation: "welcomeCardIn 0.65s cubic-bezier(0.34,1.56,0.64,1) both" }}>
                 {/* Card */}
                 <div className="bg-white rounded-[29px] flex flex-col sm:flex-row items-center gap-6 sm:gap-10 px-6 sm:px-10 py-8 sm:py-10 text-center sm:text-left"
                   style={{ boxShadow: "0px 4px 40px rgba(0,0,0,0.12)" }}>
@@ -7163,27 +7640,24 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                       style={{ inset: "-28px", background: "radial-gradient(circle, rgba(37,99,235,0.18) 0%, rgba(99,102,241,0.1) 60%, transparent 100%)", filter: "blur(12px)" }}/>
                     <div className="relative flex items-center justify-center rounded-full overflow-hidden mx-auto"
                       style={{ width: 168, height: 168, background: "linear-gradient(135deg, #dbeafe 0%, #c7d2fe 100%)", border: "3px solid rgba(255,255,255,0.85)", boxShadow: "0px 6.94px 5.2px rgba(0,0,0,0.1), 0px 3.47px 3.47px rgba(0,0,0,0.1)" }}>
-                      <img src="/assets/alerin-logo.png" alt="Alerin" className="w-[140px] h-[140px] sm:w-[168px] sm:h-[168px] rounded-full object-cover"/>
+                      <img src="/assets/f725b.png" alt="Alerin" className="h-[140px] w-[140px] rounded-full object-cover"/>
                     </div>
                   </div>
 
                   {/* Text + CTA */}
                   <div className="flex-1 min-w-0 flex flex-col items-center sm:items-start">
-                    <h1 className="font-extrabold text-[26px] sm:text-[32px] text-[#1b1b1c] leading-tight tracking-tight mb-2" style={{ fontFamily: "'Plus Jakarta Sans'" }}>
+                    <h1 className="mb-2 font-['Plus_Jakarta_Sans:ExtraBold'] text-[26px] font-extrabold leading-[32.5px] tracking-[-0.65px] text-[#1b1b1c] sm:text-[32px]">
                       Halo, aku <span className="text-[#2563eb]">Alerin!</span>
                     </h1>
-                    <p className="text-[15px] sm:text-[18px] text-[#71717a] leading-relaxed mb-5" style={{ fontFamily: "Inter, sans-serif" }}>
-                      Temukan solusi dari seluruh kendala akademikmu disini
+                    <p className="mb-5 font-['Inter:Regular'] text-[15px] leading-[24.375px] text-[#71717a] sm:text-[18px]">
+                      Temukan solusi dari seluruh kendala akademikmu di sini
                     </p>
                     <button onClick={goNext}
                       className="flex items-center justify-center gap-2 active:scale-[0.98] transition-transform w-full sm:w-auto"
                       style={{ background: "#2563eb", boxShadow: "0px 3.63px 3.17px rgba(37,99,235,0.38)", borderRadius: 14, paddingTop: 14, paddingBottom: 14, paddingLeft: 32, paddingRight: 32, color: "white", fontFamily: "Inter, sans-serif", fontWeight: 700, fontSize: 16 }}>
-                      Mulai Sekarang
-                      <img src="/assets/6d9c1.svg" alt="" style={{ width: 13, height: 13, display: "inline-block" }}/>
+                      Mulai sekarang
+                      <img src="/assets/a4e37.svg" alt="" />
                     </button>
-                    <p className="text-[14px] sm:text-[17px] text-[#9ca3af] leading-relaxed mt-4" style={{ fontFamily: "Inter, sans-serif" }}>
-                      Dipercaya 50.000+ mahasiswa Indonesia
-                    </p>
                   </div>
                 </div>
               </div>
@@ -7192,140 +7666,140 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
 
           {/* Step 1: Akun (no header) */}
           {step === 1 && (
-            <div>
+            <div className="w-full py-5 sm:py-8">
               {/* White card form */}
-              <div className="bg-white rounded-[16px] shadow-[0px_20px_25px_-5px_rgba(0,0,0,0.08),0px_8px_10px_-6px_rgba(0,0,0,0.06)] overflow-hidden">
+              <div className="bg-white rounded-[15px] shadow-[0px_20px_25px_-5px_rgba(0,0,0,0.08),0px_8px_10px_-6px_rgba(0,0,0,0.06)] overflow-hidden">
                 {/* Top accent bar */}
-                <div className="h-1.5" style={{ background: "linear-gradient(90deg,#60a5fa,#6366f1)" }}/>
-                {/* Header inside card — both mobile & desktop */}
-                <div className="flex flex-col items-center pt-5 pb-1 px-4 sm:pt-4 sm:pb-1">
-                  <div className="relative mb-2">
-                    <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden flex items-center justify-center bg-white shadow-md">
-                      <img src="/assets/alerin-logo.png" alt="Alerin" className="w-full h-full object-cover"/>
-                    </div>
-                  </div>
-                  <h2 className="font-['Plus_Jakarta_Sans'] font-bold text-[20px] sm:text-[24px] text-[#1b1b1c] leading-[26px] sm:leading-[32px] tracking-[-0.5px]">Buat Akun Alerin</h2>
-                  <p className="text-[12px] sm:text-[13px] text-[#71717a] text-center leading-[18px] sm:leading-[20px] mt-0.5">Mulai perjalanan akademikmu bersama Alerin. Sudah punya akun? <button onClick={() => setShowLogin(true)} className="font-semibold text-[#2563eb]">Masuk</button></p>
+                <div className="h-[6px] bg-gradient-to-r from-[#60a5fa] to-[#6366f1]"/>
+                {/* Header inside card */}
+                <div className="flex flex-col items-center px-4 pb-3 pt-5">
+                  <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-[22px] font-bold leading-[30px] tracking-[-0.45px] text-[#1b1b1c]">Daftar Akun</h2>
+                  <p className="mt-1 w-full text-center font-['Plus_Jakarta_Sans:Regular'] text-[12px] leading-[19px] text-[#71717a]">Mulai perjalanan akademikmu bersama Alerin.</p>
                 </div>
-                <div className="px-4 sm:px-6 pt-1 sm:pt-1 pb-4 sm:pb-6 space-y-3 sm:space-y-4">
+                <div className="space-y-[12px] px-[22px] pb-[12px] pt-1">
                   {/* Nama Lengkap */}
-                  <div className="space-y-1.5">
-                    <div className="flex items-center justify-between">
-                      <label className="text-[14px] font-semibold text-[#1b1b1c]">Nama Lengkap</label>
-                      <span className="text-[11px] font-bold text-[#1d4ed8] tracking-[0.44px]">Wajib</span>
+                  <div className="space-y-[6px]">
+                    <div className="flex items-center justify-between h-[23px]">
+                      <label className="font-['Plus_Jakarta_Sans'] font-semibold text-[14px] text-[#1b1b1c] leading-[21px]">Nama lengkap</label>
+                      <span className="font-['Plus_Jakarta_Sans:Medium'] text-[11px] font-medium leading-[16.5px] text-[#2563eb]">Wajib</span>
                     </div>
                     <div className="relative">
-                      <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#71717a]" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                      <img src="/assets/40306.svg" alt="" className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                       <input value={namaLengkap} onChange={e => setNamaLengkap(e.target.value)}
-                        className="w-full pl-10 pr-4 h-11 rounded-[12px] text-[14px] text-[#1b1b1c] outline-none transition-all placeholder:text-[rgba(113,113,122,0.6)]"
-                        style={{ background: "#f6f6f8" }}
+                        className="w-full pl-10 pr-4 h-11 rounded-[12px] text-[14px] text-[#1b1b1c] border border-[#e2e8f0] outline-none transition-all placeholder:text-[rgba(113,113,122,0.6)] font-['Plus_Jakarta_Sans']"
+                        style={{ background: "#f8fafc" }}
                         onFocus={e => { e.currentTarget.style.outline = "2px solid #2563eb"; e.currentTarget.style.background = "#fff"; }}
-                        onBlur={e => { e.currentTarget.style.outline = "none"; e.currentTarget.style.background = "#f6f6f8"; }}
+                        onBlur={e => { e.currentTarget.style.outline = "none"; e.currentTarget.style.background = "#f8fafc"; }}
                         placeholder="Masukkan nama lengkapmu" />
                     </div>
                   </div>
 
                   {/* Email */}
-                  <div className="space-y-1.5">
-                    <div className="flex items-center justify-between">
-                      <label className="text-[14px] font-semibold text-[#1b1b1c]">Alamat Email</label>
-                      <span className="text-[11px] font-bold text-[#1d4ed8] tracking-[0.44px]">Wajib</span>
+                  <div className="space-y-[6px]">
+                    <div className="flex items-center justify-between h-[23px]">
+                      <label className="font-['Plus_Jakarta_Sans'] font-semibold text-[14px] text-[#1b1b1c] leading-[21px]">Email</label>
+                      <span className="font-['Plus_Jakarta_Sans:Medium'] text-[11px] font-medium leading-[16.5px] text-[#2563eb]">Wajib</span>
                     </div>
                     <div className="relative">
-                      <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#71717a]" width="15" height="12" viewBox="0 0 24 20" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="2" width="20" height="16" rx="2"/><path d="m22 5-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 5"/></svg>
+                      <img src="/assets/10dab.svg" alt="" className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                       <input value={email} onChange={e => setEmail(e.target.value)} type="email"
-                        className="w-full pl-10 pr-4 h-11 rounded-[12px] text-[14px] text-[#1b1b1c] outline-none transition-all placeholder:text-[rgba(113,113,122,0.6)]"
-                        style={{ background: "#f6f6f8" }}
+                        className="w-full pl-10 pr-4 h-11 rounded-[12px] text-[14px] text-[#1b1b1c] border border-[#e2e8f0] outline-none transition-all placeholder:text-[rgba(113,113,122,0.6)] font-['Plus_Jakarta_Sans']"
+                        style={{ background: "#f8fafc" }}
                         onFocus={e => { e.currentTarget.style.outline = "2px solid #2563eb"; e.currentTarget.style.background = "#fff"; }}
-                        onBlur={e => { e.currentTarget.style.outline = "none"; e.currentTarget.style.background = "#f6f6f8"; }}
+                        onBlur={e => { e.currentTarget.style.outline = "none"; e.currentTarget.style.background = "#f8fafc"; }}
                         placeholder="Masukkan email aktifmu" />
                     </div>
                   </div>
 
                   {/* Password */}
-                  <div className="space-y-1.5">
-                    <div className="flex items-center justify-between">
-                      <label className="text-[14px] font-semibold text-[#1b1b1c]">Kata Sandi Baru</label>
-                      <span className="text-[11px] font-bold text-[#1d4ed8] tracking-[0.44px]">Wajib</span>
+                  <div className="space-y-[6px]">
+                    <div className="flex items-center justify-between h-[23px]">
+                      <label className="font-['Plus_Jakarta_Sans'] font-semibold text-[14px] text-[#1b1b1c] leading-[21px]">Kata sandi baru</label>
+                      <span className="font-['Plus_Jakarta_Sans:Medium'] text-[11px] font-medium leading-[16.5px] text-[#2563eb]">Wajib</span>
                     </div>
                     <div className="relative">
-                      <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#71717a]" width="13" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                      <img src="/assets/d7753.svg" alt="" className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                       <input value={password} onChange={e => setPassword(e.target.value)} type={showPass ? "text" : "password"}
-                        className="w-full pl-10 pr-11 h-11 rounded-[12px] text-[14px] text-[#1b1b1c] outline-none transition-all placeholder:text-[rgba(113,113,122,0.6)]"
-                        style={{ background: "#f6f6f8" }}
+                        className="w-full pl-10 pr-11 h-11 rounded-[12px] text-[14px] text-[#1b1b1c] border border-[#e2e8f0] outline-none transition-all placeholder:text-[rgba(113,113,122,0.6)] font-['Plus_Jakarta_Sans']"
+                        style={{ background: "#f8fafc" }}
                         onFocus={e => { e.currentTarget.style.outline = "2px solid #2563eb"; e.currentTarget.style.background = "#fff"; }}
-                        onBlur={e => { e.currentTarget.style.outline = "none"; e.currentTarget.style.background = "#f6f6f8"; }}
-                        placeholder="Buat kata sandi" />
-                      <button type="button" onClick={() => setShowPass(p => !p)} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#71717a]">
-                        {showPass
-                          ? <svg width="18" height="12" viewBox="0 0 22 14" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M1 7s4-6 10-6 10 6 10 6-4 6-10 6S1 7 1 7z"/><circle cx="11" cy="7" r="2.5" fill="currentColor" stroke="none"/></svg>
-                          : <svg width="17" height="12" viewBox="0 0 22 14" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M1 7s4-6 10-6 10 6 10 6-4 6-10 6S1 7 1 7z"/><circle cx="11" cy="7" r="2.5" fill="currentColor" stroke="none"/><line x1="2" y1="1" x2="20" y2="13" stroke="currentColor" strokeWidth="1.8"/></svg>}
+                        onBlur={e => { e.currentTarget.style.outline = "none"; e.currentTarget.style.background = "#f8fafc"; }}
+                        placeholder="Buat kata sandi yang aman" />
+                      <button type="button" onClick={() => setShowPass(p => !p)} className="absolute right-3.5 top-1/2 -translate-y-1/2">
+                        <img src="/assets/4eafa.svg" alt="" />
                       </button>
                     </div>
-                    {password.length > 0 && (
-                      <div className="space-y-1 pt-1">
-                        <div className="flex gap-1">
-                          {[1,2,3].map(i => (
-                            <div key={i} className="flex-1 h-1.5 rounded-full transition-all" style={{ background: password.length >= i*3 ? (password.length >= 9 ? "#22c55e" : password.length >= 6 ? "#f59e0b" : "#ef4444") : "#eaecef" }} />
-                          ))}
-                        </div>
-                        <p className="text-[12px] text-[#71717a] leading-[18px]">Kombinasi huruf, angka, dan minimal 8 karakter untuk keamanan maksimal.</p>
+                    <div className="flex gap-[6px] items-center pt-[2px]">
+                      <div className="flex-1 h-[5px] rounded-full overflow-hidden bg-[#dce9ff]">
+                        <div className="h-full rounded-full transition-all" style={{ width: password.length >= 8 ? "100%" : password.length >= 5 ? "66%" : "33%", background: password.length >= 8 ? "#22c55e" : password.length >= 5 ? "#f59e0b" : "#ef4444" }} />
                       </div>
-                    )}
+                      <span className="font-['Inter:Medium'] font-medium text-[10px] text-[#434655] tracking-[0.4px] whitespace-nowrap">
+                        {`Kekuatan: ${password.length >= 8 ? "Kuat" : password.length >= 5 ? "Sedang" : "Lemah"}`}
+                      </span>
+                    </div>
                   </div>
 
                   {/* Captcha */}
                   <button type="button" onClick={() => setCaptchaDone(p => !p)}
-                    className="w-full flex items-center justify-between p-3 rounded-[12px] drop-shadow-[0px_1px_1px_rgba(0,0,0,0.05)] transition-all"
-                    style={{ background: "#f6f6f8" }}>
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-5 h-5 rounded-[2.5px] border flex items-center justify-center transition-all shrink-0"
-                        style={captchaDone ? { borderColor: "#2563eb", background: "#2563eb", borderWidth: 2 } : { borderColor: "#767676", background: "white", borderWidth: 1 }}>
+                    className="w-full flex items-center justify-between p-[13px] rounded-[12px] h-[66px] transition-all"
+                    style={{ background: "rgba(248,250,252,0.7)", border: "1px solid rgba(226,232,240,0.9)", boxShadow: "0px_2px_8px_-2px_rgba(15,23,42,0.05)" }}>
+                    <div className="flex items-center gap-0">
+                      <div className="w-5 h-5 rounded-[4px] border flex items-center justify-center transition-all shrink-0 mr-3"
+                        style={captchaDone ? { borderColor: "#2563eb", background: "#2563eb", borderWidth: 2 } : { borderColor: "#cbd5e1", background: "white", borderWidth: 1 }}>
                         {captchaDone && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3"><path d="M20 6L9 17l-5-5"/></svg>}
                       </div>
                       <div>
-                        <p className="text-[14px] font-semibold text-[#1b1b1c] text-left">Saya bukan robot</p>
-                        <p className="text-[12px] text-[#71717a] leading-[18px] text-left">Verifikasi pintar anti-bot</p>
+                        <p className="font-['Plus_Jakarta_Sans'] font-semibold text-[14px] text-[#334155] text-left leading-[16px]">Saya bukan robot</p>
+                        <p className="font-['Plus_Jakarta_Sans'] font-normal text-[12px] text-[#94a3b8] text-left leading-[13.75px] mt-[2px]">Verifikasi pintar anti-bot</p>
                       </div>
                     </div>
-                    <div className="flex flex-col items-center opacity-80 shrink-0">
-                      <svg width="15" height="18" viewBox="0 0 15 19" fill="none"><path d="M7.5 0.5L1 4V10C1 13.866 3.81 17.477 7.5 18.5C11.19 17.477 14 13.866 14 10V4L7.5 0.5Z" fill="#03677F" stroke="#03677F" strokeWidth="0.5"/></svg>
-                      <span className="text-[9px] text-[#71717a] mt-0.5 tracking-[-0.4px] uppercase">TURNSTILE</span>
+                    <div className="flex flex-col items-center pl-[9px] border-l border-[rgba(226,232,240,0.6)] shrink-0">
+                      <img src="/assets/a4b24.svg" alt="" />
+                      <span className="font-['Plus_Jakarta_Sans'] font-bold text-[9px] text-[#64748b] tracking-[0.45px] uppercase mt-[2px]">TURNSTILE</span>
                     </div>
-                  </button>
-
-                  {/* Terms */}
-                  <button type="button" onClick={() => setAgreeTerms(p => !p)} className="w-full flex items-center gap-2.5 text-left">
-                    <div className="w-5 h-5 rounded-[2.5px] border flex items-center justify-center transition-all shrink-0"
-                      style={agreeTerms ? { borderColor: "#2563eb", background: "#2563eb", borderWidth: 2 } : { borderColor: "#767676", background: "white", borderWidth: 1 }}>
-                      {agreeTerms && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3"><path d="M20 6L9 17l-5-5"/></svg>}
-                    </div>
-                    <p className="text-[12px] text-[#3d4a3d] leading-[19.5px]">
-                      <span className="hidden sm:inline">Saya telah membaca dan menyetujui <span className="text-[#2563eb]">Syarat & Ketentuan</span> serta <span className="text-[#2563eb]">Kebijakan Privasi</span> Alerin Indonesia.</span>
-                      <span className="sm:hidden">Dengan mendaftar, saya menyetujui <span className="text-[#2563eb]">Syarat & Ketentuan</span> dan <span className="text-[#2563eb]">Kebijakan Privasi</span>.</span>
-                    </p>
                   </button>
                 </div>
 
-                {/* Lanjut button inside card — step 1 only */}
-                {step === 1 && (
-                  <div className="px-4 sm:px-6 pb-4 sm:pb-6 pt-0">
-                    <button
-                      disabled={!canProceed}
-                      onClick={() => setShowEmailVerify(true)}
-                      className="w-full flex items-center justify-center gap-2 py-3 sm:py-[14px] rounded-[12px] sm:rounded-[16px] text-white font-bold text-[15px] sm:text-[16px] transition-all disabled:opacity-40 active:scale-[0.98]"
-                      style={{ background: "#2563eb", boxShadow: canProceed ? "0px 4px 7px rgba(37,99,235,0.38)" : "none" }}>
-                      Lanjut
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                    </button>
-                    {/* Google button — below Lanjut */}
-                    <button className="w-full flex items-center justify-center gap-3 py-3 rounded-[12px] font-semibold text-[#1b1b1c] text-[14px] transition-all hover:shadow-md active:scale-[0.98] mt-3"
-                      style={{ background: "#f6f6f8" }}>
-                      <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
-                      Daftar dengan Google
-                    </button>
+                {/* Bottom section: Terms → Masuk link → Lanjut → atau → Google */}
+                <div className="space-y-0 px-[22px] pb-[22px] pt-0">
+                  {/* Terms */}
+                  <button type="button" onClick={() => setAgreeTerms(p => !p)} className="w-full flex items-start gap-[10px] text-left pb-[8px] pt-[4px]">
+                    <div className="w-4 h-4 mt-[2px] rounded-[4px] border flex items-center justify-center transition-all shrink-0"
+                      style={agreeTerms ? { borderColor: "#2563eb", background: "#2563eb", borderWidth: 1 } : { borderColor: "#cbd5e1", background: "#f8fafc", borderWidth: 1 }}>
+                      {agreeTerms && <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3"><path d="M20 6L9 17l-5-5"/></svg>}
+                    </div>
+                    <p className="font-['Plus_Jakarta_Sans'] font-normal text-[14px] text-[#64748b] leading-[17px]">
+                      {`Saya telah membaca dan menyetujui `}<span className="font-['Plus_Jakarta_Sans'] font-medium text-[#2563eb]">{`Syarat & Ketentuan`}</span>{` serta `}<span className="font-['Plus_Jakarta_Sans'] font-medium text-[#2563eb]">Kebijakan Privasi</span>{` Alerin.`}
+                    </p>
+                  </button>
+                  {/* Sudah punya akun */}
+                  <div className="flex items-center justify-center gap-[2px] py-[10px]">
+                    <span className="font-['Plus_Jakarta_Sans'] font-normal text-[14px] text-[#64748b] leading-[20px]">Sudah punya akun Alerin?</span>
+                    <button onClick={() => setShowLogin(true)} className="font-['Plus_Jakarta_Sans'] font-bold text-[14px] text-[#2563eb] leading-[20px] ml-[2px]">Masuk</button>
                   </div>
-                )}
+                  {/* Lanjut */}
+                  <button
+                    disabled={!canProceed}
+                    onClick={() => setShowEmailVerify(true)}
+                    className="w-full flex items-center justify-center gap-2 py-[14px] rounded-[12px] text-white font-['Inter'] font-bold text-[16px] leading-[24px] transition-all disabled:opacity-40 active:scale-[0.98]"
+                    style={{ background: "linear-gradient(90deg,#2563eb,#1d4ed8)", boxShadow: canProceed ? "0px 4px 6px -1px rgba(59,130,246,0.25),0px 2px 4px -2px rgba(59,130,246,0.25)" : "none" }}>
+                    Lanjut
+                    <img src="/assets/cec1a.svg" alt="" />
+                  </button>
+                  {/* atau divider */}
+                  <div className="relative flex items-center justify-center py-[10px]">
+                    <div className="flex-1 border-t border-[#e2e8f0]" />
+                    <div className="absolute bg-white px-3">
+                      <span className="font-['Plus_Jakarta_Sans:Medium'] font-medium text-[12px] text-[#94a3b8] tracking-[0.3px]">Atau Melalui</span>
+                    </div>
+                  </div>
+                  {/* Google */}
+                  <button className="w-full flex items-center justify-center gap-3 py-[12px] rounded-[12px] font-['Plus_Jakarta_Sans'] font-semibold text-[#1b1b1c] text-[14px] leading-[21px] transition-all active:scale-[0.98]"
+                    style={{ background: "#f6f6f8" }}>
+                    <img src="/assets/676c7.svg" alt="" />
+                    Daftar dengan Google
+                  </button>
+                </div>
               </div>
             </div>
           )}
@@ -7333,8 +7807,8 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
           {/* Step 2: Jenjang */}
           {step === 2 && (
             <>
-              <PintarlyMascotBubble pre="Pilih" bold="Jenjang Akademikmu" sub="Sesuaikan pilihanmu dengan tingkat pendidikan yang sedang kamu jalani" />
-              <div className="space-y-[10px] sm:space-y-[14px]">
+              <PintarlyMascotBubble pre="" bold="Pilih Jenjang Akademikmu" />
+              <div className="space-y-3 sm:space-y-[14px]">
                 <RadioCard selected={jenjang === "S1"} onClick={() => pickAndAdvance(setJenjang, "S1")} icon={<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>} label="S1 Sarjana/D4 Diploma" sublabel="Program Sarjana, Diploma, atau Terapan" />
                 <RadioCard selected={jenjang === "S2"} onClick={() => pickAndAdvance(setJenjang, "S2")} icon={<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>} label="S2 Magister" sublabel="Program Pascasarjana"/>
                 <RadioCard selected={jenjang === "S3"} onClick={() => pickAndAdvance(setJenjang, "S3")} icon={<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>} label="S3 Doktor" sublabel="Program Doktoral"/>
@@ -7360,35 +7834,36 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
               "Kecerdasan Buatan","Cyber Security","Teknik Komputer","Multimedia","Animasi",
             ];
             const POPULAR_PRODI = ["Manajemen","Ilmu Hukum","Akuntansi","Psikologi","Ilmu Komunikasi","Teknik Informatika","Sistem Informasi","PGSD","Administrasi Negara","Teknik Sipil"];
-            const uniFiltered = prodiSearch.trim()
+            const prodiFiltered = prodiSearch.trim()
               ? ALL_PRODI.filter(u => u.toLowerCase().includes(prodiSearch.toLowerCase()))
-              : [];
-            const hasNoResult = prodiSearch.trim().length > 0 && uniFiltered.length === 0;
-            const showDropdown = prodiSearch.trim().length > 0;
+              : POPULAR_PRODI;
+            const hasNoResult = prodiSearch.trim().length > 0 && prodiFiltered.length === 0;
+            const showDropdown = prodiOpen;
             return (
               <>
-                <PintarlyMascotBubble pre="Apa" bold="bidang studimu?" sub="Pilih jurusan atau program studi yang sedang kamu jalani." />
+                <PintarlyMascotBubble pre="Jurusan kuliahmu" bold="apa?" />
 
                 <div className="bg-white rounded-[24px] w-full drop-shadow-[0px_8px_15px_rgba(0,0,0,0.04)]" style={{ border: "1px solid #f1f5f9" }}>
                   <div className="flex flex-col gap-5 p-5">
 
                     {/* Jurusan search with dropdown */}
                     <div className="flex flex-col gap-2">
-                      <p className="text-[14px] font-semibold text-[#111827]">Cari Jurusan / Program Studi</p>
                       <div className="relative">
                         {/* Input */}
                         <div className="flex items-center w-full px-4 py-3.5 rounded-[16px] transition-all"
                           style={{ background: "#fff", border: showDropdown ? "2px solid #3b82f6" : "2px solid #e5e7eb", boxShadow: showDropdown ? "0 0 0 3px rgba(59,130,246,0.12)" : "none" }}>
                           <input
                             value={prodiSearch}
-                            onChange={e => setProdiSearch(e.target.value)}
-                            placeholder="Ketik nama jurusan atau singkatan..."
+                            onChange={e => { setProdiSearch(e.target.value); setProdiOpen(true); }}
+                            onFocus={() => setProdiOpen(true)}
+                            onBlur={() => setTimeout(() => setProdiOpen(false), 150)}
+                            placeholder="Ketik jurusan kuliahmu di sini"
                             className="flex-1 text-[14px] text-[#111827] outline-none bg-transparent placeholder:text-[#9ca3af]"
                           />
-                          <button onClick={() => setProdiSearch("")} className="shrink-0 ml-2 text-[#9ca3af] transition-all">
+                          <button onMouseDown={e => { e.preventDefault(); setProdiOpen(p => !p); }} className="shrink-0 ml-2 text-[#9ca3af] transition-all">
                             {showDropdown
-                              ? <svg width="14" height="8" viewBox="0 0 14 8" fill="none"><path d="M1 7L7 1L13 7" stroke="#6b7280" strokeWidth="2" strokeLinecap="round"/></svg>
-                              : <svg width="14" height="8" viewBox="0 0 14 8" fill="none"><path d="M1 1L7 7L13 1" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round"/></svg>
+                              ? <svg width="14" height="8" viewBox="0 0 14 8" fill="none"><path d="M1 1L7 7L13 1" stroke="#6b7280" strokeWidth="2" strokeLinecap="round"/></svg>
+                              : <svg width="8" height="14" viewBox="0 0 8 14" fill="none"><path d="M1 1L7 7L1 13" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round"/></svg>
                             }
                           </button>
                         </div>
@@ -7399,21 +7874,20 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                             style={{ boxShadow: "0 8px 24px rgba(0,0,0,0.1)", border: "1px solid #f1f5f9" }}>
                             {!hasNoResult ? (
                               <div className="max-h-[240px] overflow-y-auto">
-                                {uniFiltered.map((u, i) => (
+                                {prodiFiltered.map((u, i) => (
                                   <button key={u}
-                                    onMouseDown={() => { setProdi(u); setProdiSearch(""); }}
+                                    onMouseDown={() => { setProdi(u); setProdiSearch(""); setProdiOpen(false); }}
                                     className="w-full text-left px-5 py-3.5 transition-all active:bg-[#eff6ff]"
-                                    style={{ background: i === 0 ? "#f8faff" : "#fff", borderBottom: i < uniFiltered.length - 1 ? "1px solid #f8faff" : "none" }}>
+                                    style={{ background: i === 0 && prodiSearch.trim() ? "#f8faff" : "#fff", borderBottom: i < prodiFiltered.length - 1 ? "1px solid #f8faff" : "none" }}>
                                     <p className="text-[14px] font-semibold text-[#111827]">{u}</p>
                                   </button>
                                 ))}
                               </div>
                             ) : (
                               <div className="flex flex-col">
-                                {/* Manual option */}
                                 <div className="border-t border-[#f1f5f9]">
                                   <button
-                                    onMouseDown={() => { setProdi(prodiSearch); setProdiSearch(""); }}
+                                    onMouseDown={() => { setProdi(prodiSearch); setProdiSearch(""); setProdiOpen(false); }}
                                     className="w-full flex items-center gap-3 px-5 py-4 transition-all active:bg-[#eff6ff]">
                                     <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0" style={{ background: "#dbeafe" }}>
                                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2.5"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
@@ -7447,7 +7921,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                     {/* Divider */}
                     <div className="flex items-center gap-3">
                       <div className="flex-1 h-px bg-[#f0f0f0]"/>
-                      <p className="text-[10px] font-bold tracking-[0.55px] uppercase text-[#9ca3af] whitespace-nowrap">Jurusan Populer</p>
+                      <p className="text-[10px] font-bold tracking-[0.55px] uppercase text-[#9ca3af] whitespace-nowrap">Pilihan Populer</p>
                       <div className="flex-1 h-px bg-[#f0f0f0]"/>
                     </div>
 
@@ -7477,34 +7951,28 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
 
           {/* Step 5: Semester */}
           {step === 5 && (() => {
-            // S2 = 1–8, S1/S3 = 1–14
-            const semNums: string[] = jenjang === "S2"
-              ? ["1","2","3","4","5","6","7","8"]
-              : ["1","2","3","4","5","6","7","8","9","10","11","12","13","14"];
-            const toKey = (n: string) => `Semester ${n}`;
+            const semNums: string[] = ["Semester 1","Semester 2","Semester 3","Semester 4","Semester 5","Semester 6","Semester 7","Semester 8","Semester 8+"];
             return (
               <>
                 <PintarlyMascotBubble
-                  pre="Saat ini kamu"
-                  bold="sedang di semester berapa?"
-                  sub="Pilihan semester menyesuaikan dengan jenjang akademik yang kamu pilih."
+                  pre="Sedang di"
+                  bold="semester berapa?"
                 />
 
 
                 {/* 3-column grid */}
                 <div className="w-full grid grid-cols-3 gap-2 sm:gap-[10px]">
-                  {semNums.map((n) => {
-                    const key = toKey(n);
+                  {semNums.map((key) => {
                     const on = semester === key;
                     return (
-                      <button key={n} onClick={() => pickAndAdvance(setSemester, key)}
+                      <button key={key} onClick={() => pickAndAdvance(setSemester, key)}
                         className="relative flex items-center justify-center rounded-[12px] sm:rounded-[16px] transition-all active:scale-[0.95] reg-grid-card h-[56px] sm:h-[72px]"
                         style={{
                           background: on ? "#eff6ff" : "#ffffff",
                           border: on ? "2px solid #2563eb" : "1.5px solid #e2e8f0",
                           boxShadow: on ? "0 4px 16px rgba(37,99,235,0.14)" : "0 1px 4px rgba(0,0,0,0.05)",
                         }}>
-                        <span className="text-[22px] sm:text-[28px] font-extrabold leading-none" style={{ color: on ? "#2563eb" : "#334155" }}>{n}</span>
+                        <span className="text-[13px] sm:text-[15px] font-extrabold leading-none text-center px-1" style={{ color: on ? "#2563eb" : "#334155" }}>{key}</span>
                         {on && (
                           <div className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 w-4 h-4 sm:w-5 sm:h-5 rounded-full flex items-center justify-center" style={{ background: "#2563eb" }}>
                             <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
@@ -7532,7 +8000,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
               "Universitas Muhammadiyah Malang (UMM)","Universitas Islam Negeri Jakarta (UIN Jakarta)",
               "Universitas Islam Negeri Sunan Kalijaga (UIN Yogyakarta)","Universitas Islam Negeri Malang (UIN Malang)",
               "Universitas Bina Nusantara (BINUS)","Universitas Trisakti","Universitas Mercu Buana","Universitas Tarumanagara",
-              "Universitas Atma Jaya Jakarta","Universitas Pelita Harapan (UPH)","TELKOM",
+              "Universitas Atma Jaya Jakarta","Universitas Pelita Harapan (UPH)","Universitas Telkom",
               "Universitas Gunadarma","Universitas Dian Nuswantoro (UDINUS)","Universitas Komputer Indonesia (UNIKOM)",
               "Universitas Pasundan (UNPAS)","Universitas Jenderal Soedirman (UNSOED)","Universitas Surabaya (UBAYA)",
               "Universitas Kristen Petra","Universitas Ciputra","Universitas Esa Unggul","Universitas Pancasila",
@@ -7549,11 +8017,12 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
               "TELKOM":"TELKOM","UT":"Universitas Terbuka (UT)","Unpam":"Universitas Pamulang (UNPAM)",
               "UIN Jakarta":"Universitas Islam Negeri Jakarta (UIN Jakarta)","UNJ":"Universitas Negeri Jakarta (UNJ)",
             };
+            const POPULAR_UNI_LIST = ["Universitas Indonesia (UI)","Universitas Gadjah Mada (UGM)","Institut Teknologi Bandung (ITB)","Universitas Airlangga (UNAIR)","Institut Pertanian Bogor (IPB)","Institut Teknologi Sepuluh Nopember (ITS)","Universitas Padjadjaran (UNPAD)","Universitas Brawijaya (UB)","Universitas Bina Nusantara (BINUS)","Universitas Telkom"];
             const uniFiltered = uniSearch.trim()
               ? ALL_UNIVERSITIES.filter(u => u.toLowerCase().includes(uniSearch.toLowerCase()))
-              : [];
+              : POPULAR_UNI_LIST;
             const hasNoResult = uniSearch.trim().length > 0 && uniFiltered.length === 0;
-            const showUniDropdown = uniSearch.trim().length > 0;
+            const showUniDropdown = uniOpen;
             return (
               <>
                 <PintarlyMascotBubble pre="Kamu" bold="kuliah di mana?" />
@@ -7563,21 +8032,22 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
 
                     {/* University search */}
                     <div className="flex flex-col gap-2">
-                      <p className="text-[14px] font-semibold text-[#111827]">Cari Nama atau Singkatan Kampus</p>
                       <div className="relative">
                         <div className="flex items-center w-full px-4 py-3.5 rounded-[16px] transition-all"
                           style={{ background: "#fff", border: showUniDropdown ? "2px solid #2563eb" : "2px solid #e5e7eb", boxShadow: showUniDropdown ? "0 0 0 3px rgba(37,99,235,0.12)" : "none" }}>
                           <svg className="shrink-0 mr-3" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
                           <input
                             value={uniSearch}
-                            onChange={e => setUniSearch(e.target.value)}
+                            onChange={e => { setUniSearch(e.target.value); setUniOpen(true); }}
+                            onFocus={() => setUniOpen(true)}
+                            onBlur={() => setTimeout(() => setUniOpen(false), 150)}
                             placeholder="Ketik nama kampusmu di sini"
                             className="flex-1 text-[14px] text-[#111827] outline-none bg-transparent placeholder:text-[#9ca3af]"
                           />
-                          <button onClick={() => setUniSearch("")} className="shrink-0 ml-2 text-[#9ca3af]">
+                          <button onMouseDown={e => { e.preventDefault(); setUniOpen(p => !p); }} className="shrink-0 ml-2 text-[#9ca3af]">
                             {showUniDropdown
-                              ? <svg width="14" height="8" viewBox="0 0 14 8" fill="none"><path d="M1 7L7 1L13 7" stroke="#6b7280" strokeWidth="2" strokeLinecap="round"/></svg>
-                              : <svg width="14" height="8" viewBox="0 0 14 8" fill="none"><path d="M1 1L7 7L13 1" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round"/></svg>
+                              ? <svg width="14" height="8" viewBox="0 0 14 8" fill="none"><path d="M1 1L7 7L13 1" stroke="#6b7280" strokeWidth="2" strokeLinecap="round"/></svg>
+                              : <svg width="8" height="14" viewBox="0 0 8 14" fill="none"><path d="M1 1L7 7L1 13" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round"/></svg>
                             }
                           </button>
                         </div>
@@ -7589,9 +8059,9 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                               <div className="max-h-[240px] overflow-y-auto">
                                 {uniFiltered.map((u, i) => (
                                   <button key={u}
-                                    onMouseDown={() => { setUniversitas(u); setUniSearch(""); }}
+                                    onMouseDown={() => { setUniversitas(u); setUniSearch(""); setUniOpen(false); }}
                                     className="w-full text-left px-5 py-3.5 transition-all active:bg-[#eff6ff]"
-                                    style={{ background: i === 0 ? "#f8faff" : "#fff", borderBottom: i < uniFiltered.length - 1 ? "1px solid #f8faff" : "none" }}>
+                                    style={{ background: i === 0 && uniSearch.trim() ? "#f8faff" : "#fff", borderBottom: i < uniFiltered.length - 1 ? "1px solid #f8faff" : "none" }}>
                                     <p className="text-[14px] font-semibold text-[#111827]">{u}</p>
                                   </button>
                                 ))}
@@ -7600,7 +8070,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                               <div className="flex flex-col">
                                 <div className="border-t border-[#f1f5f9]">
                                   <button
-                                    onMouseDown={() => { setUniversitas(uniSearch); setUniSearch(""); }}
+                                    onMouseDown={() => { setUniversitas(uniSearch); setUniSearch(""); setUniOpen(false); }}
                                     className="w-full flex items-center gap-3 px-5 py-4 transition-all active:bg-[#eff6ff]">
                                     <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0" style={{ background: "#dbeafe" }}>
                                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2.5"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
@@ -7672,7 +8142,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                 label: "Mata Kuliah",
                 badge: undefined,
                 badgeColor: undefined,
-                desc: "Pahami mata kuliah kamu di sini",
+                desc: "Konsep dasar hingga materi lanjutan",
                 tags: ["Rangkuman Otomatis", "Kuis Adaptif", "Catatan Kuliah", "Tanya AI per Modul"],
               },
               {
@@ -7681,7 +8151,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                 label: "Tugas Kuliah",
                 badge: undefined,
                 badgeColor: undefined,
-                desc: "Makalah, esai, atau paper",
+                desc: "Makalah, Esai, Paper dan tugas lainnya",
                 tags: ["Parafrase Akademik", "Sitasi Ilmiah APA/IEEE", "Cek Plagiarisme & Argumen"],
               },
               {
@@ -7690,13 +8160,13 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                 label: jenjang === "S2" ? "Tesis" : jenjang === "S3" ? "Disertasi" : "Skripsi",
                 badge: undefined,
                 badgeColor: "#d97706",
-                desc: "Judul, bab 1-5, olah data, revisi, sidang",
+                desc: "Judul, Bab 1-5, olah data, revisi, sidang",
                 tags: ["Review Metodologi Riset", "Olah Data (SPSS/Python)", "Simulasi Tanya Jawab Sidang"],
               },
             ];
             return (
               <>
-                <PintarlyMascotBubble pre="Apa yang bisa" bold="Alerin bantu?" sub="Pilih kebutuhan utamamu agar Alerin bisa menyiapkan bantuan yang tepat." />
+                <PintarlyMascotBubble pre="Apa yang bisa" bold="Alerin bantu?" sub="Pilih yang ingin kamu pelajari bersama Alerin." />
                 <div className="flex flex-col gap-3 w-full">
                   {BANTUAN.map(item => {
                     const isActive = bantuPilihan === item.id;
@@ -7711,7 +8181,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                           <div className="flex items-center justify-between gap-3">
                             <div className="flex items-center gap-3 flex-1 min-w-0">
                               <div className="w-10 h-10 rounded-[12px] flex items-center justify-center shrink-0"
-                                style={{ background: isActive ? "#eff6ff" : "#f8fafc" }}>
+                                style={{ background: "#eff6ff", color: "#374151" }}>
                                 {item.icon}
                               </div>
                               <div className="min-w-0">
@@ -7745,12 +8215,12 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
           {/* Step 7: Fase — conditional on bantuPilihan */}
           {step === 7 && bantuPilihan === "tugas" && (
             <>
-              <PintarlyMascotBubble pre="Jenis tugas" bold="apa yang dikerjakan?" sub="Pilih jenis tugas utamamu agar Alerin bisa menyiapkan template dan referensi yang tepat." />
+              <PintarlyMascotBubble pre="Jenis tugas" bold="apa yang dikerjakan?" />
               <div className="space-y-[10px] sm:space-y-[14px]">
                 {[
-                  { id: "Essay", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>, desc: "Esai argumentatif atau reflektif" },
-                  { id: "Paper", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>, desc: "Paper penelitian / karya ilmiah" },
                   { id: "Makalah", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>, desc: "Makalah akademik / laporan" },
+                  { id: "Esai", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>, desc: "Esai argumentatif atau reflektif" },
+                  { id: "Paper", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>, desc: "Paper penelitian / karya ilmiah" },
                   { id: "Lainnya", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>, desc: "Jenis tugas lainnya" },
                 ].map(o => (
                   <RadioCard key={o.id} selected={fase === o.id} onClick={() => {
@@ -7777,14 +8247,13 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
 
           {step === 7 && bantuPilihan === "matakuliah" && (
             <>
-              <PintarlyMascotBubble pre="Sedang di" bold="tahap mana?" sub="Pilih fase belajar matakuliahmu saat ini agar Alerin bisa menyiapkan panduan yang tepat." />
+              <PintarlyMascotBubble pre="Sedang di" bold="tahap mana?" sub="Pilih fase belajarmu saat ini agar Alerin bisa bantu dengan tepat." />
               <div className="space-y-[10px] sm:space-y-[14px]">
                 {[
-                  { id: "Belum mulai", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>, desc: "Baru mulai atau belum ada progres" },
-                  { id: "Sedang belajar", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>, desc: "Aktif memahami materi kuliah" },
-                  { id: "Mengerjakan tugas", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>, desc: "Sedang mengerjakan tugas atau PR" },
-                  { id: "Mempersiapkan ujian", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>, desc: "Persiapan ujian tengah semester atau akhir" },
-                  { id: "Review materi", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>, desc: "Review dan ulang materi yang sudah dipelajari" },
+                  { id: "Baru mau memulai", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>, desc: "Belum tahu harus mulai dari mana" },
+                  { id: "Belajar materi", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>, desc: "Memahami materi, konsep, atau teori" },
+                  { id: "Persiapan ujian", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>, desc: "Belajar untuk kuis, UTS, atau UAS" },
+                  { id: "Review materi", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>, desc: "Mempelajari kembali materi sebelumnya" },
                 ].map(o => (
                   <RadioCard key={o.id} selected={fase === o.id} onClick={() => pickAndAdvance(setFase, o.id)} icon={o.icon} label={o.id} sublabel={o.desc}/>
                 ))}
@@ -7794,43 +8263,49 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
 
           {step === 7 && bantuPilihan === "skripsi" && (() => {
             const SKRIPSI_OPTS_S1 = [
-              { id: "Belum mulai", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>, desc: "Ingin belajar cara menyusun skripsi" },
-              { id: "Mencari topik/judul", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>, desc: "Membantu penyusunan judul" },
-              { id: "Proposal", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>, desc: "Bab 1 sampai 3 untuk persiapan seminar proposal" },
+              { id: "Belum mulai", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>, desc: "Memahami alur dan persiapan skripsi" },
+              { id: "Mencari topik/judul", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>, desc: "Membantu penyusunan topik/judul" },
+              { id: "Penyusunan proposal", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>, desc: "Menyusun Bab 1 sampai Bab 3" },
+              { id: "Persiapan sempro", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>, desc: "Mempelajari materi untuk sempro" },
               { id: "Pengumpulan data", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M10 2v7.31"/><path d="M14 9.3V1.99"/><path d="M8.5 2h7"/><path d="M14 9.3a6.5 6.5 0 1 1-4 0"/></svg>, desc: "Riset lapangan atau analisis data" },
-              { id: "Penyusunan bab akhir", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>, desc: "Penyusunan bab akhir, pembahasan, dan kesimpulan" },
-              { id: "Persiapan sidang", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>, desc: "Simulasi sidang dan persiapan presentasi" },
-              { id: "Progres terhenti", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>, desc: "Bingung langkah selanjutnya" },
-              { id: "Review dan revisi", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>, desc: "Review bab 1–5 dan temukan perbaikannya" },
+              { id: "Penyusunan bab akhir", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>, desc: "Menyusun Bab 4 hingga selesai" },
+              { id: "Review dan revisi", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>, desc: "Mengoreksi dan memperbaiki keseluruhan skripsi" },
+              { id: "Persiapan sidang", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>, desc: "Mempelajari materi untuk sidang skripsi" },
+              { id: "Progres terhenti", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>, desc: "Bingung menentukan langkah selanjutnya" },
             ];
             const SKRIPSI_OPTS_S2 = [
-              { id: "Belum mulai", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>, desc: "Ingin belajar cara menyusun tesis" },
-              { id: "Mencari topik/judul", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>, desc: "Membantu penyusunan judul tesis" },
-              { id: "Proposal", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>, desc: "Persiapan seminar proposal tesis" },
-              { id: "Pengumpulan dan analisis data", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M10 2v7.31"/><path d="M14 9.3V1.99"/><path d="M8.5 2h7"/><path d="M14 9.3a6.5 6.5 0 1 1-4 0"/></svg>, desc: "Pengumpulan data lapangan dan analisis mendalam" },
-              { id: "Penyusunan hasil dan pembahasan", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>, desc: "Menulis bab hasil penelitian dan pembahasan" },
-              { id: "Finalisasi Tesis", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/></svg>, desc: "Finalisasi dan kelengkapan naskah tesis" },
-              { id: "Persiapan sidang", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>, desc: "Simulasi sidang tesis" },
-              { id: "Progres terhenti", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>, desc: "Bingung langkah selanjutnya" },
-              { id: "Review dan revisi", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>, desc: "Review naskah dan temukan perbaikannya" },
+              { id: "Belum mulai", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>, desc: "Memahami alur dan persiapan Tesis" },
+              { id: "Menentukan fokus penelitian", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>, desc: "Menentukan masalah, fokus, dan arah penelitian" },
+              { id: "Kualifikasi/Komprehensif", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>, desc: "Menyiapkan rancangan penelitian" },
+              { id: "Menyusun proposal", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>, desc: "Menyusun dan menyempurnakan rancangan penelitian" },
+              { id: "Persiapan sempro", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>, desc: "Mempelajari materi untuk seminar proposal" },
+              { id: "Persiapan penelitian", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>, desc: "Menyiapkan instrumen, perizinan, etik, dan kebutuhan penelitian" },
+              { id: "Pengumpulan data", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M10 2v7.31"/><path d="M14 9.3V1.99"/><path d="M8.5 2h7"/><path d="M14 9.3a6.5 6.5 0 1 1-4 0"/></svg>, desc: "Melaksanakan penelitian dan mengumpulkan data" },
+              { id: "Analisis data", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>, desc: "Mengolah dan menginterpretasikan data penelitian" },
+              { id: "Hasil, pembahasan, dan kesimpulan", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/></svg>, desc: "Menyusun temuan hingga kesimpulan penelitian" },
+              { id: "Seminar hasil", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>, desc: "Mempresentasikan hasil dan menerima masukan" },
+              { id: "Finalisasi tesis", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>, desc: "Menyempurnakan keseluruhan Tesis" },
+              { id: "Ujian tesis/Sidang Akhir", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>, desc: "Mempelajari materi Tesis untuk Sidang" },
             ];
             const SKRIPSI_OPTS_S3 = [
-              { id: "Belum mulai", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>, desc: "Ingin belajar cara menyusun disertasi" },
-              { id: "Fokus penelitian/Topik", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>, desc: "Menentukan topik dan fokus penelitian doktoral" },
-              { id: "Kualifikasi/Komprehensif", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>, desc: "Persiapan ujian kualifikasi atau komprehensif" },
-              { id: "Proposal Disertasi", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>, desc: "Menyusun proposal disertasi" },
-              { id: "Pengumpulan dan analisis data", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M10 2v7.31"/><path d="M14 9.3V1.99"/><path d="M8.5 2h7"/><path d="M14 9.3a6.5 6.5 0 1 1-4 0"/></svg>, desc: "Riset mendalam dan analisis data doktoral" },
-              { id: "Hasil dan Pembahasan", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>, desc: "Menulis temuan, hasil, dan pembahasan ilmiah" },
-              { id: "Finalisasi disertasi", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/></svg>, desc: "Finalisasi dan kelengkapan naskah disertasi" },
-              { id: "Ujian Disertasi", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>, desc: "Persiapan ujian dan sidang terbuka disertasi" },
-              { id: "Progres terhenti", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>, desc: "Bingung langkah selanjutnya" },
-              { id: "Review dan revisi", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>, desc: "Review naskah dan temukan perbaikannya" },
+              { id: "Belum mulai", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/></svg>, desc: "Memahami proses dan tahapan penelitian Disertasi" },
+              { id: "Menentukan fokus penelitian", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>, desc: "Menentukan masalah, gap, kebaruan, dan arah penelitian" },
+              { id: "Kualifikasi/Komprehensif", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>, desc: "Mempersiapkan kelayakan akademik dan rancangan penelitian" },
+              { id: "Proposal Disertasi", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>, desc: "Penyusunan dan penyempurnaan rancangan penelitian" },
+              { id: "Persiapan penelitian", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>, desc: "Menyiapkan instrumen, perizinan, etik, dan kebutuhan penelitian" },
+              { id: "Pengumpulan data", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M10 2v7.31"/><path d="M14 9.3V1.99"/><path d="M8.5 2h7"/><path d="M14 9.3a6.5 6.5 0 1 1-4 0"/></svg>, desc: "Menjalankan penelitian dan mengumpulkan data yang dibutuhkan" },
+              { id: "Analisis dan interpretasi", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>, desc: "Mengolah data serta memahami makna temuan penelitian" },
+              { id: "Hasil dan Pembahasan", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/></svg>, desc: "Menyusun temuan, pembahasan, dan kontribusi penelitian" },
+              { id: "Finalisasi disertasi", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>, desc: "Meninjau dan menyempurnakan keseluruhan naskah" },
+              { id: "Ujian tertutup", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>, desc: "Mempertahankan disertasi di hadapan tim penguji" },
+              { id: "Promosi/Ujian Terbuka", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>, desc: "Mempertahankan kontribusi disertasi pada tahap akhir" },
+              { id: "Revisi akhir", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>, desc: "Menyelesaikan perbaikan dan keseluruhan Naskah Disertasi" },
             ];
             const SKRIPSI_OPTS = jenjang === "S3" ? SKRIPSI_OPTS_S3 : jenjang === "S2" ? SKRIPSI_OPTS_S2 : SKRIPSI_OPTS_S1;
             const jenjangLabel = jenjang === "S2" ? "Tesis" : jenjang === "S3" ? "Disertasi" : "Skripsi";
             return (
               <>
-                <PintarlyMascotBubble pre="Sedang di" bold="tahap mana?" sub={`Pilih fase pengerjaan ${jenjangLabel}mu saat ini agar Alerin menyiapkan panduan yang presisi.`} />
+                <PintarlyMascotBubble pre="Sedang di" bold="tahap mana?" sub="Pilih fase belajarmu saat ini agar Alerin bisa bantu dengan tepat." />
                 <div className="grid grid-cols-2 gap-3 w-full">
                   {SKRIPSI_OPTS.map(o => {
                     const isActive = fase === o.id;
@@ -7842,14 +8317,14 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                           : { border: "1px solid #e5e7eb", boxShadow: "0 1px 4px rgba(0,0,0,0.04)" }}>
                         <div className="flex items-start justify-between mb-3">
                           <div className="w-9 h-9 rounded-[10px] flex items-center justify-center text-xl shrink-0"
-                            style={{ background: isActive ? "#dbeafe" : "#f8fafc" }}>{o.icon}</div>
+                            style={{ background: "#eff6ff", color: "#374151" }}>{o.icon}</div>
                           <div className="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0"
                             style={isActive ? { borderColor: "#2563eb", background: "#2563eb" } : { borderColor: "#d1d5db", background: "white" }}>
                             {isActive && <svg width="9" height="7" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>}
                           </div>
                         </div>
                         <p className="font-bold text-[13px] text-[#111827] leading-snug mb-1">{o.id}</p>
-                        <p className="text-[11px] text-[#6b7280] leading-snug">{o.desc}</p>
+                        {o.desc && <p className="text-[11px] text-[#6b7280] leading-snug">{o.desc}</p>}
                       </button>
                     );
                   })}
@@ -7858,21 +8333,38 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
             );
           })()}
 
-          {/* Step 8: Kendala */}
-           {step === 8 && (() => {
+          {/* Step 8: Dibingungkan (tugas) | Target (matakuliah/skripsi) — combined with step 8 Target block below */}
+
+          {/* Step 9: Target (tugas) | Kendala chips (matakuliah/skripsi) */}
+           {step === 9 && (() => {
+            // Tugas kuliah at step 9: show Target (Kapan deadline?)
+            if (bantuPilihan === "tugas") {
+              const tugasTargetOpts = [
+                { id: "Deadline Besok", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>, label: "Deadline Besok", sublabel: "Butuh bantuan segera" },
+                { id: "Kurang dari 1 minggu", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>, label: "Kurang dari 1 minggu", sublabel: "Maksimalkan sisa waktu pengerjaan" },
+                { id: "Kurang dari 1 bulan", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>, label: "Kurang dari 1 bulan", sublabel: "Pakai waktu yang ada agar lebih matang" },
+                { id: "Belum yakin", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>, label: "Belum yakin", sublabel: "Belum tahu kapan targetnya" },
+              ];
+              return (
+                <>
+                  <PintarlyMascotBubble bold="Kapan target tugasmu selesai?" />
+                  <div className="space-y-[10px] sm:space-y-[14px]">
+                    {tugasTargetOpts.map(o => (
+                      <RadioCard key={o.id} selected={target === o.id} onClick={() => pickAndAdvance(setTarget, o.id)}
+                        icon={o.icon} label={o.label} sublabel={o.sublabel} />
+                    ))}
+                  </div>
+                </>
+              );
+            }
+
             const MAX = 2;
             const OPTS_BY_BANTU: Record<string, { label: string; fitur: string; icon: React.ReactNode }[]> = {
               matakuliah: [
                 { label: "Kesulitan memahami materi kuliah", fitur: "Mata Kuliah", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> },
                 { label: "Kesulitan mencari referensi materi", fitur: "Mata Kuliah", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> },
                 { label: "Kesulitan menentukan prioritas belajar", fitur: "Mata Kuliah", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg> },
-                { label: "Kesulitan mengerjakan soal ujian", fitur: "Mata Kuliah", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> },
-              ],
-              tugas: [
-                { label: "Belum memahami instruksi tugas", fitur: "Mata Kuliah", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> },
-                { label: "Bingung memulai dari bagian mana", fitur: "Mata Kuliah", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> },
-                { label: "Sulit mencari referensi yang sesuai", fitur: "Mata Kuliah", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> },
-                { label: "Deadline sudah dekat", fitur: "Mata Kuliah", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> },
+                { label: "Kesulitan mempraktikkan teori mata kuliah", fitur: "Mata Kuliah", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> },
               ],
               skripsi: [
                 { label: "Bingung memulai penelitian", fitur: "Skripsi/Tesis/Disertasi", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> },
@@ -7880,13 +8372,42 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                 { label: "Stuck dan tidak tahu harus menulis apa lagi", fitur: "Skripsi/Tesis/Disertasi", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> },
                 { label: "Sulit menemukan referensi yang relevan", fitur: "Cari Jurnal", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> },
                 { label: "Banyak revisi dari dosen", fitur: "Skripsi/Tesis/Disertasi", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> },
-                { label: "Khawatir hasil plagiasi tinggi", fitur: "Cek Plagiarisme", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> },
+                { label: "Khawatir hasil plagiasi tinggi", fitur: "Cek Plagiasi", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> },
                 { label: "Kesulitan mengolah atau menganalisis data", fitur: "Skripsi/Tesis/Disertasi", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg> },
                 { label: "Penulisan akademik masih kurang tepat", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> },
                 { label: "Target penyelesaian terasa berat", fitur: "Skripsi/Tesis/Disertasi", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> },
               ],
+              tesis: [
+                { label: "Bingung memulai penelitian", fitur: "Skripsi/Tesis/Disertasi", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> },
+                { label: "Belum memiliki topik/judul", fitur: "Skripsi/Tesis/Disertasi", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg> },
+                { label: "Stuck dan tidak tahu harus menulis apa lagi", fitur: "Skripsi/Tesis/Disertasi", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> },
+                { label: "Sulit menemukan referensi yang relevan", fitur: "Cari Jurnal", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> },
+                { label: "Banyak revisi dari dosen", fitur: "Skripsi/Tesis/Disertasi", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> },
+                { label: "Khawatir hasil plagiasi tinggi", fitur: "Cek Plagiasi", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> },
+                { label: "Kesulitan mengolah atau menganalisis data", fitur: "Skripsi/Tesis/Disertasi", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg> },
+                { label: "Penulisan akademik masih kurang tepat", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> },
+                { label: "Kurang yakin dengan draft final tesis", fitur: "Skripsi/Tesis/Disertasi", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> },
+                { label: "Target penyelesaian terasa berat", fitur: "Skripsi/Tesis/Disertasi", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> },
+              ],
+              disertasi: [
+                { label: "Bingung memulai penelitian", fitur: "Skripsi/Tesis/Disertasi", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> },
+                { label: "Belum memiliki topik/judul", fitur: "Skripsi/Tesis/Disertasi", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg> },
+                { label: "Persiapan Kualifikasi Disertasi masih belum diterima", fitur: "Skripsi/Tesis/Disertasi", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> },
+                { label: "Stuck dan tidak tahu harus menulis apa lagi", fitur: "Skripsi/Tesis/Disertasi", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> },
+                { label: "Sulit menemukan referensi yang relevan", fitur: "Cari Jurnal", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> },
+                { label: "Banyak revisi dari dosen", fitur: "Skripsi/Tesis/Disertasi", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> },
+                { label: "Khawatir hasil plagiasi tinggi", fitur: "Cek Plagiasi", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> },
+                { label: "Kesulitan mengolah atau menganalisis data", fitur: "Skripsi/Tesis/Disertasi", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg> },
+                { label: "Penulisan akademik masih kurang tepat", fitur: "Parafrase", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> },
+                { label: "Kurang yakin dengan draft final Disertasi", fitur: "Skripsi/Tesis/Disertasi", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> },
+                { label: "Target penyelesaian terasa berat", fitur: "Skripsi/Tesis/Disertasi", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> },
+              ],
             };
-            const opts = OPTS_BY_BANTU[bantuPilihan] ?? OPTS_BY_BANTU.skripsi;
+            const opts = bantuPilihan === "skripsi" && jenjang === "S3"
+              ? OPTS_BY_BANTU.disertasi
+              : bantuPilihan === "skripsi" && jenjang === "S2"
+              ? OPTS_BY_BANTU.tesis
+              : OPTS_BY_BANTU[bantuPilihan] ?? OPTS_BY_BANTU.skripsi;
             const toggle = (label: string) => {
               setKendala(prev =>
                 prev.includes(label)
@@ -7894,14 +8415,13 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                   : prev.length < MAX ? [...prev, label] : prev
               );
             };
-            const bubbleSub = {
-              matakuliah: "Pilih maksimal 2 agar Alerin bisa bantu lebih tepat.",
-              tugas: "Pilih maksimal 2 agar Alerin bisa bantu lebih tepat.",
-              skripsi: "Pilih maksimal 2. Tidak perlu sempurna, bisa diubah nanti seiring progres.",
-            }[bantuPilihan] ?? "";
+            const bubbleData = {
+              matakuliah: { pre: "Apa kendala utamamu", bold: "saat ini?", sub: "Pilih maksimal 2 agar Alerin bisa bantu kamu lebih tepat." },
+              skripsi: { pre: "Apa kendala utamamu", bold: "saat ini?", sub: "Pilih maksimal 2 agar Alerin bisa bantu kamu lebih tepat." },
+            }[bantuPilihan] ?? { pre: "Apa kendala utamamu", bold: "saat ini?", sub: "Pilih maksimal 2 agar Alerin bisa bantu kamu lebih tepat." };
             return (
               <>
-                <PintarlyMascotBubble pre="Apa kendala utamamu" bold="saat ini?" sub={bubbleSub} />
+                <PintarlyMascotBubble pre={bubbleData.pre} bold={bubbleData.bold} sub={bubbleData.sub} />
                 <div className="flex flex-col gap-[10px] w-full rounded-[20px] p-5" style={{ background: "#ffffff", border: "2px solid #60a5fa" }}>
                   {opts.map(o => {
                     const on = kendala.includes(o.label);
@@ -7934,34 +8454,63 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
             );
           })()}
 
-          {/* Step 9: Target */}
-          {step === 9 && (() => {
-            const cfgByBantu: Record<string, { pre: string; bold: string; sub: string; opts: { id: string; icon: React.ReactNode; label: string; sublabel: string; badge?: string; badgeColor?: string }[] }> = {
+          {/* Step 8: Dibingungkan 2x2 (tugas) | Target (matakuliah/skripsi) */}
+          {step === 8 && (() => {
+            // Tugas kuliah: show "Bagian yang dibingungkan" 2x2 grid
+            if (bantuPilihan === "tugas") {
+              const TUGAS_OPTS = [
+                { id: "Memahami tugas", desc: "Memahami apa yang harus dikerjakan", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg> },
+                { id: "Menyusun kerangka", desc: "Menentukan struktur dan isi tugas", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg> },
+                { id: "Mencari referensi", desc: "Menemukan sumber yang relevan", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> },
+                { id: "Revisi tugas", desc: "Memperbaiki tugas sebelum dikumpulkan", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> },
+              ];
+              return (
+                <>
+                  <PintarlyMascotBubble pre="" bold="Sedang ditahap mana?" sub="Pilih fase belajarmu saat ini agar Alerin bisa bantu dengan tepat." />
+                  <div className="grid grid-cols-2 gap-3 w-full">
+                    {TUGAS_OPTS.map(o => {
+                      const isActive = kendala.includes(o.id);
+                      return (
+                        <button key={o.id} onClick={() => { setKendala([o.id]); const tid = window.setTimeout(() => goNext(), 220); loadingTimers.current.push(tid); }}
+                          className="bg-white rounded-[20px] p-4 text-left transition-all active:scale-[0.98] reg-grid-card"
+                          style={isActive
+                            ? { border: "2px solid #2563eb", background: "#eff6ff", boxShadow: "0 4px 16px rgba(37,99,235,0.12)" }
+                            : { border: "1px solid #e5e7eb", boxShadow: "0 1px 4px rgba(0,0,0,0.04)" }}>
+                          <div className="flex items-start justify-between mb-3">
+                            <div className="w-9 h-9 rounded-[10px] flex items-center justify-center shrink-0"
+                              style={{ background: "#eff6ff", color: "#374151" }}>{o.icon}</div>
+                            <div className="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0"
+                              style={isActive ? { borderColor: "#2563eb", background: "#2563eb" } : { borderColor: "#d1d5db", background: "white" }}>
+                              {isActive && <svg width="9" height="7" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+                            </div>
+                          </div>
+                          <p className="font-bold text-[13px] text-[#111827] leading-snug mb-1">{o.id}</p>
+                          <p className="text-[11px] text-[#6b7280] leading-snug">{o.desc}</p>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </>
+              );
+            }
+            // Matakuliah / Skripsi: show Target
+            const cfgByBantu: Record<string, { pre: string; bold: string; sub: string; opts: { id: string; icon: React.ReactNode; label: string; sublabel: string }[] }> = {
               matakuliah: {
-                pre: "Apa", bold: "Tujuanmu?", sub: "Pilih satu yang paling sesuai tujuanmu sekarang.",
+                pre: "", bold: "Apa targetmu saat ini?", sub: "",
                 opts: [
-                  { id: "Memahami materi", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>, label: "Memahami materi", sublabel: "Mengerti konsep dan isi mata kuliah" },
-                  { id: "Mendapat nilai lebih baik", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>, label: "Mendapat nilai lebih baik", sublabel: "Tingkatkan IPK atau nilai ujian" },
-                  { id: "Lulus semua mata kuliah", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>, label: "Lulus semua mata kuliah", sublabel: "Pastikan tidak ada nilai merah" },
-                  { id: "Belajar lebih terkonsep", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>, label: "Belajar lebih terkonsep", sublabel: "Kuasai materi secara terstruktur" },
-                ],
-              },
-              tugas: {
-                pre: "Kapan target", bold: "tugasmu?", sub: "Alerin akan sesuaikan prioritas bantuannya.",
-                opts: [
-                  { id: "Besok", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>, label: "Besok", sublabel: "Deadline besok, butuh bantuan sekarang", badge: undefined, badgeColor: undefined },
-                  { id: "Kurang dari 1 minggu", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>, label: "Kurang dari 1 minggu", sublabel: "Masih ada beberapa hari", badge: undefined, badgeColor: undefined },
-                  { id: "Kurang dari 1 bulan", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>, label: "Kurang dari 1 bulan", sublabel: "Ada waktu untuk persiapan lebih matang", badge: undefined, badgeColor: undefined },
-                  { id: "Belum yakin", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>, label: "Belum yakin", sublabel: "Tidak apa-apa, bisa diatur nanti", badge: undefined, badgeColor: undefined },
+                  { id: "Memahami materi", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>, label: "Memahami materi", sublabel: "Paham konsep dan materi kuliah" },
+                  { id: "Mendapat nilai lebih baik", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>, label: "Mendapat nilai lebih baik", sublabel: "Meningkatkan nilai tugas, ujian, atau IPK" },
+                  { id: "Lulus semua mata kuliah", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>, label: "Lulus semua mata kuliah", sublabel: "Tidak ada mata kuliah yang tertinggal" },
+                  { id: "Mengejar ketertinggalan", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>, label: "Mengejar ketertinggalan", sublabel: "Memprioritaskan mata kuliah yang mengulang" },
                 ],
               },
               skripsi: {
-                pre: "Kapan target", bold: jenjang === "S2" ? "Tesimu?" : jenjang === "S3" ? "Disertasimu?" : "Skripsimu?", sub: "Jawaban ini Alerin pakai untuk kasih saran yang paling masuk akal.",
+                pre: "Kapan target", bold: jenjang === "S2" ? "Tesismu selesai?" : jenjang === "S3" ? "Disertasimu selesai?" : "Skripsimu selesai?", sub: "",
                 opts: [
-                  { id: "Bulan ini", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>, label: "Bulan ini", sublabel: "Deadline kurang dari 30 hari", badge: undefined, badgeColor: undefined },
-                  { id: "1–3 bulan", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>, label: "1-3 Bulan", sublabel: "Target semester ini", badge: undefined, badgeColor: undefined },
-                  { id: "Lebih dari 3 bulan", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22c4.97 0 9-4.03 9-9s-4.03-9-9-9-9 4.03-9 9 4.03 9 9 9z"/><path d="M6.4 6.4L17.6 17.6"/><path d="M6 12s0-4 6-4 6 4 6 4"/></svg>, label: "Lebih dari 3 Bulan", sublabel: "Masih jauh dari deadline", badge: undefined, badgeColor: undefined },
-                  { id: "Belum yakin", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>, label: "Belum yakin", sublabel: "Belum tahu kapan targetnya", badge: undefined, badgeColor: undefined },
+                  { id: "Bulan ini", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>, label: "Bulan ini", sublabel: "Butuh bantuan segera" },
+                  { id: "1–3 bulan", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>, label: "1-3 Bulan", sublabel: "Maksimalkan waktu pengerjaan" },
+                  { id: "Lebih dari 3 bulan", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22c4.97 0 9-4.03 9-9s-4.03-9-9-9-9 4.03-9 9 4.03 9 9 9z"/><path d="M6.4 6.4L17.6 17.6"/><path d="M6 12s0-4 6-4 6 4 6 4"/></svg>, label: "Lebih dari 3 Bulan", sublabel: "Gunakan waktu yang ada untuk progres" },
+                  { id: "Belum yakin", icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>, label: "Belum yakin", sublabel: "Belum tahu kapan targetnya" },
                 ],
               },
             };
@@ -7972,33 +8521,151 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                 <div className="space-y-[10px] sm:space-y-[14px]">
                   {cfg.opts.map(o => (
                     <RadioCard key={o.id} selected={target === o.id} onClick={() => pickAndAdvance(setTarget, o.id)}
-                      icon={o.icon} label={o.label} sublabel={o.sublabel} badge={o.badge} badgeColor={o.badgeColor} />
+                      icon={o.icon} label={o.label} sublabel={o.sublabel} />
                   ))}
                 </div>
               </>
             );
           })()}
 
-          {/* Step 10: Rekomendasi Fitur */}
-          {step === 10 && (
+          {/* Step 10 (tugas only): Kendala chips */}
+          {step === 10 && bantuPilihan === "tugas" && (() => {
+            const MAX = 2;
+            const tugasKendalaOpts = [
+              { label: "Belum memahami instruksi tugas", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> },
+              { label: "Bingung memulai dari bagian mana", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg> },
+              { label: "Sulit mencari referensi yang sesuai", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> },
+              { label: "Deadline tugas sudah sangat dekat", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> },
+            ];
+            const toggle = (label: string) => {
+              setKendala(prev =>
+                prev.includes(label) ? prev.filter(k => k !== label) : prev.length < MAX ? [...prev, label] : prev
+              );
+            };
+            return (
+              <>
+                <PintarlyMascotBubble pre="Apa kendala utamamu" bold="saat ini?" sub="Pilih maksimal 2 agar Alerin bisa bantu kamu lebih tepat." />
+                <div className="flex flex-col gap-[10px] w-full rounded-[20px] p-5" style={{ background: "#ffffff", border: "2px solid #60a5fa" }}>
+                  {tugasKendalaOpts.map(o => {
+                    const on = kendala.includes(o.label);
+                    const maxed = kendala.length >= MAX && !on;
+                    return (
+                      <button key={o.label} onClick={() => !maxed && toggle(o.label)}
+                        className="w-full text-left transition-all active:scale-[0.97]"
+                        style={{ padding: "10px 18px", borderRadius: "12px", fontSize: 14, fontWeight: on ? 600 : 500, lineHeight: "20px", border: on ? "2px solid #2563eb" : "1.5px solid #d1d5db", background: on ? "#2563eb" : "#fff", color: on ? "#fff" : "#374151", opacity: maxed ? 0.4 : 1, boxShadow: on ? "0 2px 8px rgba(37,99,235,0.18)" : "0 1px 3px rgba(0,0,0,0.06)", cursor: maxed ? "not-allowed" : "pointer" }}>
+                        {o.label}
+                      </button>
+                    );
+                  })}
+                </div>
+                <p className="text-[13px] text-[#6b7280]" style={{ marginTop: "17px", marginBottom: "17px" }}>Dipilih {kendala.length} dari {MAX}</p>
+              </>
+            );
+          })()}
+
+          {/* Step 10 (non-tugas) or Step 11 (tugas): Rekomendasi Fitur */}
+          {(step === 10 && bantuPilihan !== "tugas" || step === 11 && bantuPilihan === "tugas") && (
             <>
               <PintarlyMascotBubble
-                pre="Fitur yang"
-                bold="sesuai untuk kamu"
-                sub={(() => {
-                  const rec = kendala.length > 0 ? KENDALA_FITUR_MAP[kendala[0]] : null;
-                  if (rec === "Cari Jurnal") return "Alerin merekomendasikan fitur Cari Jurnal yang sesuai dengan kebutuhanmu.";
-                  if (rec === "Skripsi/Tesis/Disertasi") return "Alerin merekomendasikan fitur skripsi, tesis & disertasi yang sesuai dengan kebutuhanmu.";
-                  if (rec === "Mata Kuliah") return "Alerin merekomendasikan fitur Mata Kuliah yang sesuai dengan kebutuhanmu.";
-                  return "Alerin merekomendasikan fitur parafrase yang sesuai dengan kebutuhanmu.";
-                })()}
+                pre=""
+                bold="Fitur yang sesuai dengan kebutuhanmu"
               />
+
+              {/* DIREKOMENDASIKAN divider */}
+              <div className="flex items-center gap-3 mb-4">
+                <div className="flex-1 h-[1.5px]" style={{ background: "linear-gradient(90deg, rgba(37,99,235,0.6), rgba(37,99,235,0.05))" }}/>
+                <span style={{ fontFamily: "Inter", fontWeight: 700, fontSize: 10, color: "#2563eb", letterSpacing: "2px", textTransform: "uppercase", whiteSpace: "nowrap" }}>Direkomendasikan</span>
+                <div className="flex-1 h-[1.5px]" style={{ background: "linear-gradient(90deg, rgba(37,99,235,0.05), rgba(37,99,235,0.6))" }}/>
+              </div>
 
               {/* Feature cards — two vertically stacked, matching Figma */}
               <div className="flex flex-col gap-3 w-full">
 
-                {/* Card 1 — Fitur Parafrase */}
-                {(() => {
+                {/* Card Fitur Mata Kuliah — shown for matakuliah or tugas */}
+                {(bantuPilihan === "matakuliah" || bantuPilihan === "tugas") && (() => {
+                  const sel = selectedFitur === "matakuliah";
+                  return (
+                    <div
+                      onClick={() => setSelectedFitur(sel ? "" : "matakuliah")}
+                      className="w-full relative overflow-hidden cursor-pointer active:scale-[0.99] transition-transform"
+                      style={{
+                        borderRadius: 14,
+                        backgroundImage: "linear-gradient(-66.07deg, rgba(230,247,250,0.35) 5.77%, rgb(235,245,255) 36.07%, rgb(255,255,255) 66.37%, rgb(255,255,255) 92.35%)",
+                        boxShadow: sel ? "0 0 0 2px #2563eb, 0px 4px 4px rgba(0,0,0,0.14)" : "0px 4px 4px rgba(0,0,0,0.14)",
+                        minHeight: 140,
+                      }}>
+                      <div className="flex" style={{ height: "100%" }}>
+                        {/* LEFT — title + desc + button */}
+                        <div className="flex flex-col justify-between" style={{ flex: "1 1 0", minWidth: 0, paddingTop: 24, paddingBottom: 24, paddingLeft: 19, paddingRight: 19 }}>
+                          <div>
+                            <p style={{ fontFamily: "Inter", fontWeight: 700, fontSize: 19, lineHeight: "24px", color: "#000", letterSpacing: "-0.45px", marginBottom: 6 }}>Fitur Mata Kuliah</p>
+                            <p style={{ fontFamily: "Inter", fontWeight: 400, fontSize: 10.5, lineHeight: "14.5px", color: "rgba(84,84,84,0.95)" }}>Mata Kuliah: Membantu memahami materi perkuliahan, mempersiapkan ujian, serta mencapai target akademikmu</p>
+                          </div>
+                          <button
+                            onClick={e => { e.stopPropagation(); setSelectedFitur(sel ? "" : "matakuliah"); }}
+                            className="transition-all active:opacity-80"
+                            style={{
+                              marginTop: 12,
+                              alignSelf: "flex-start",
+                              padding: "8px 18px",
+                              borderRadius: 11,
+                              border: "none",
+                              cursor: "pointer",
+                              background: "#2563eb",
+                              boxShadow: "0px 5.5px 13.8px -2.75px rgba(0,133,255,0.42)",
+                              fontFamily: "Inter",
+                              fontWeight: 500,
+                              fontSize: 11,
+                              color: "#fff",
+                              letterSpacing: "0.24px",
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 5,
+                            }}>
+                            {sel ? (
+                              <>
+                                <svg width="12" height="10" viewBox="0 0 12 9" fill="none"><path d="M1 4.5L4.2 8L11 1" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                                Sudah dipilih
+                              </>
+                            ) : "Pilih untuk digunakan"}
+                          </button>
+                        </div>
+
+                        {/* RIGHT — blue panel with inner widget */}
+                        <div style={{ width: 140, flexShrink: 0, background: "rgba(55,127,233,0.38)", borderRadius: "10px 14px 14px 10px", padding: 12, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                          {/* Inner widget card */}
+                          <div style={{ width: "100%", background: "#fff", borderRadius: 7.5, border: "0.47px solid rgba(241,245,249,0.9)", boxShadow: "0px 4.7px 11.7px -1.87px rgba(26,26,44,0.06), 0px 0.94px 2.81px -0.47px rgba(0,0,0,0.04)", overflow: "hidden", paddingBottom: 8 }}>
+                            {/* Widget header */}
+                            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "7px 8px 5px", borderBottom: "0.47px solid #f1f5f9" }}>
+                              <div style={{ display: "flex", alignItems: "center", gap: 2.5 }}>
+                                <span style={{ fontFamily: "'Plus Jakarta Sans'", fontWeight: 800, fontSize: 7, color: "#2563eb" }}>+</span>
+                                <span style={{ fontFamily: "'Plus Jakarta Sans'", fontWeight: 700, fontSize: 6.5, color: "#1d1b27", letterSpacing: "-0.16px" }}>Mata Kuliah Alerin </span>
+                              </div>
+                              <div style={{ width: 9, height: 9, background: "#f1f5f9", borderRadius: 2.5, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                <div style={{ width: 4.5, height: 4.5, background: "#cbd5e1", borderRadius: 1 }}/>
+                              </div>
+                            </div>
+                            {/* Skeleton lines */}
+                            <div style={{ padding: "7px 8px 0", display: "flex", flexDirection: "column", gap: 4.5 }}>
+                              <div style={{ height: 6.5, borderRadius: 2.5, background: "#edf1f8", width: "80%" }}/>
+                              <div style={{ height: 6.5, borderRadius: 2.5, background: "#edf1f8", width: "100%" }}/>
+                              <div style={{ height: 6.5, borderRadius: 2.5, background: "#edf1f8", width: "60%" }}/>
+                            </div>
+                            {/* Button */}
+                            <div style={{ position: "relative", margin: "5px 8px 0" }}>
+                              <div style={{ background: "#2563eb", borderRadius: 5.5, textAlign: "center", boxShadow: "0px 4.7px 9.4px -1.4px #2563eb", position: "relative", fontWeight: 700, marginTop: 6, marginBottom: 6, height: 23, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                <span style={{ fontFamily: "'Plus Jakarta Sans'", fontWeight: 600, fontSize: 6.5, color: "#fff", paddingLeft: 7, paddingRight: 7 }}>Pelajari </span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
+
+                {/* Card 1 — Fitur Parafrase (skripsi only) */}
+                {bantuPilihan === "skripsi" && (() => {
                   const sel = selectedFitur === "parafrase";
                   return (
                     <div
@@ -8014,8 +8681,8 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                         {/* LEFT — title + desc + button */}
                         <div className="flex flex-col justify-between" style={{ flex: "1 1 0", minWidth: 0, paddingTop: 24, paddingBottom: 24, paddingLeft: 19, paddingRight: 19 }}>
                           <div>
-                            <p style={{ fontFamily: "Inter", fontWeight: 700, fontSize: 19, lineHeight: "24px", color: "#000", letterSpacing: "-0.45px", marginBottom: 6 }}>Parafrase</p>
-                            <p style={{ fontFamily: "Inter", fontWeight: 400, fontSize: 10.5, lineHeight: "14.5px", color: "rgba(84,84,84,0.95)" }}>Membantu mengubah kalimat menjadi versi baru dengan makna yang sama, membuat tulisan lebih segar dan mudah dipahami.</p>
+                            <p style={{ fontFamily: "Inter", fontWeight: 700, fontSize: 19, lineHeight: "24px", color: "#000", letterSpacing: "-0.45px", marginBottom: 6 }}>Fitur Parafrase</p>
+                            <p style={{ fontFamily: "Inter", fontWeight: 400, fontSize: 10.5, lineHeight: "14.5px", color: "rgba(84,84,84,0.95)" }}>Parafrase: Memeriksa kemiripan tulisan dengan sumber yang tersedia dan menunjukkan bagian yang perlu ditinjau atau diberi sitasi.</p>
                           </div>
                           <button
                             onClick={e => { e.stopPropagation(); setSelectedFitur(sel ? "" : "parafrase"); }}
@@ -8072,7 +8739,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                               <div style={{ background: "#2563eb", borderRadius: 5.5, paddingTop: 0, paddingBottom: 0, textAlign: "center", boxShadow: "0px 4.7px 9.4px -1.4px #2563eb", position: "relative", fontWeight: 700, marginTop: 6, marginBottom: 6, height: 23, display: "flex", alignItems: "center", justifyContent: "center" }}>
                                 <span style={{ fontFamily: "'Plus Jakarta Sans'", fontWeight: 600, fontSize: 6.5, color: "#fff", marginTop: -18, marginRight: -1, marginBottom: -18, marginLeft: -1, paddingLeft: 7, paddingRight: 7 }}>Perbaiki </span>
                               </div>
-                              <svg width="28" height="28" viewBox="0 0 28 28" fill="none" style={{ position: "absolute", right: -12, bottom: -12, pointerEvents: "none" }}><circle cx="14" cy="14" r="12" fill="#fff" fillOpacity="0.2"/><path d="M10 14l4 4 8-8" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                              <img src="/assets/66b22.svg" alt="" style={{ position: "absolute", right: -12, bottom: -12, width: 28, height: 28, pointerEvents: "none" }}/>
                             </div>
                           </div>
                         </div>
@@ -8081,8 +8748,8 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                   );
                 })()}
 
-                {/* Card 2 — Cari Jurnal */}
-                {(() => {
+                {/* Card 2 — Cari Jurnal (skripsi only) */}
+                {bantuPilihan === "skripsi" && (() => {
                   const sel = selectedFitur === "jurnal";
                   return (
                     <div
@@ -8099,7 +8766,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                         <div className="flex flex-col justify-between" style={{ flex: "1 1 0", minWidth: 0, paddingTop: 26, paddingBottom: 26, paddingLeft: 22, paddingRight: 22 }}>
                           <div>
                             <p style={{ fontFamily: "Inter", fontWeight: 700, fontSize: 19, lineHeight: "24px", color: "#000", letterSpacing: "-0.45px", marginBottom: 6 }}>Cari Jurnal</p>
-                            <p style={{ fontFamily: "Inter", fontWeight: 400, fontSize: 10.5, lineHeight: "14.5px", color: "rgba(84,84,84,0.95)" }}>Membantu menemukan referensi akademik terpercaya dari berbagai sumber jurnal yang relevan dengan topik penelitian.</p>
+                            <p style={{ fontFamily: "Inter", fontWeight: 400, fontSize: 10.5, lineHeight: "14.5px", color: "rgba(84,84,84,0.95)" }}>Cari jurnal: Membantu menemukan referensi akademik terpercaya dari berbagai sumber jurnal yang relevan dengan topik penelitian</p>
                           </div>
                           <button
                             onClick={e => { e.stopPropagation(); setSelectedFitur(sel ? "" : "jurnal"); }}
@@ -8153,7 +8820,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                               </div>
                             </div>
                             {/* Patent papers illustration — contained inside the box */}
-                            <img src="/assets/Metric%20Card%20%26%20Waveform.png" alt="Cari Jurnal" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", marginTop: 2, marginRight: 6, marginBottom: 2, marginLeft: 6 }}/>
+                            <img src="/assets/f4f63.png" alt="Cari Jurnal" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", marginTop: 2, marginRight: 6, marginBottom: 2, marginLeft: 6 }}/>
                           </div>
                         </div>
                       </div>
@@ -8172,7 +8839,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
           <div className="max-w-md mx-auto flex flex-col items-center gap-1.5 sm:gap-2">
             {AUTO_STEPS.includes(step) ? (
               <p className="text-[12px] text-[#9ca3af] text-center leading-[16px] py-1">
-                Pilihan ini dapat diubah sewaktu-waktu melalui pengaturan profil
+                Pilihan ini dapat diubah sewaktu-waktu melalui profil saya
               </p>
             ) : (
               <>
@@ -8189,7 +8856,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                   </button>
                 ) : (
-                  !(step === 7 && !(fase === "Lainnya" && faseLainnya.trim())) && step !== 1 && (
+                  !(step === 7 && !(fase === "Lainnya" && faseLainnya.trim())) && step !== 1 && !(step === 9 && bantuPilihan === "tugas") && !((step === 9 && bantuPilihan !== "tugas" || step === 10 && bantuPilihan === "tugas") && kendala.length === 0) && (
                     <button
                       disabled={!canProceed}
                       onClick={step === 1 ? () => setShowEmailVerify(true) : goNext}
@@ -8252,253 +8919,1901 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
 }
 
 function ProfilTab({ onTab, onRegister }: { onTab: (t: NavTab) => void; onRegister: () => void }) {
-  const [editMode, setEditMode] = useState(false);
-  const [nama, setNama] = useState("Raka Aditya");
-  const [universitas, setUniversitas] = useState("Universitas Indonesia");
-  const [jenjang, setJenjang] = useState("S1 (Sarjana)");
-  const [prodi, setProdi] = useState("Manajemen");
-  const [semester, setSemester] = useState("Semester 6");
+  type ProfileView = "main" | "profile-photo" | "memory-summary" | "edit-profile" | "manage-data" | "account-security" | "password" | "package" | "stage-detail" | "reset-plan" | "notifications" | "privacy-policy" | "terms" | "privacy" | "about";
+  type ProfileSubTab = "profil" | "progres" | "personalisasi" | "umum";
+  const registrationProfile = (() => {
+    if (typeof window === "undefined") return {};
+    try {
+      return JSON.parse(window.localStorage.getItem("alerin-registration-profile") || "{}") as Partial<{
+        nama: string;
+        universitas: string;
+        jenjang: string;
+        prodi: string;
+        semester: string;
+        bantuan: string;
+        fase: string;
+      }>;
+    } catch {
+      return {};
+    }
+  })();
+  const accountEmail = "rakaaditya@gmail.com";
+  const [subTab, setSubTab] = useState<ProfileSubTab>("profil");
+  const subTabListRef = useRef<HTMLDivElement>(null);
+  const subTabButtonRefs = useRef<Record<ProfileSubTab, HTMLButtonElement | null>>({
+    profil: null,
+    progres: null,
+    personalisasi: null,
+    umum: null,
+  });
+  const [subTabIndicator, setSubTabIndicator] = useState({ left: 0, top: 0, width: 0, height: 0 });
+  const [profileView, setProfileView] = useState<ProfileView>("main");
+  const [photoModalOpen, setPhotoModalOpen] = useState(false);
+  const [logoutModalOpen, setLogoutModalOpen] = useState(false);
+  const [packageModalOpen, setPackageModalOpen] = useState(false);
+  const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
+  const [upgradeBillingCycle, setUpgradeBillingCycle] = useState<"monthly" | "yearly">("yearly");
+  const [profilePhoto, setProfilePhoto] = useState(() => (
+    typeof window !== "undefined" ? window.localStorage.getItem("alerin-profile-photo") || "" : ""
+  ));
+  const [draftProfilePhoto, setDraftProfilePhoto] = useState(profilePhoto);
+  const [selectedStage, setSelectedStage] = useState("Revisi Bab III & instrumen");
+  const [notice, setNotice] = useState("");
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const [privacyPersonalization, setPrivacyPersonalization] = useState(true);
+  const [knownItems, setKnownItems] = useState(["Manajemen", "Universitas Indonesia", "Semester 6", "Skripsi (Bab 2)", "Target Sidang Nov 2026", "Preferensi: Contoh + latihan"]);
+  const [draftKnownItems, setDraftKnownItems] = useState<string[]>(knownItems);
+  const [manualKnownItem, setManualKnownItem] = useState("");
+  const [manageDataError, setManageDataError] = useState("");
+  const [whatsapp, setWhatsapp] = useState("-");
+  const [draftWhatsapp, setDraftWhatsapp] = useState(whatsapp);
+  const [currentAccountPassword, setCurrentAccountPassword] = useState("");
+  const [newAccountPassword, setNewAccountPassword] = useState("");
+  const [confirmAccountPassword, setConfirmAccountPassword] = useState("");
+  const [accountSecurityError, setAccountSecurityError] = useState("");
+  const [recoveryEmail, setRecoveryEmail] = useState(accountEmail);
+  const [languageMode, setLanguageMode] = useState(() => (
+    typeof window !== "undefined" ? window.localStorage.getItem("alerin-language") || "id" : "id"
+  ));
+  const [themeMode, setThemeMode] = useState<"light" | "dark">("light");
+  const [communicationStyle, setCommunicationStyle] = useState(() => (
+    typeof window !== "undefined" ? window.localStorage.getItem("alerin-communication-style") || "Rapi dan Presisi" : "Rapi dan Presisi"
+  ));
+  const [nama, setNama] = useState(registrationProfile.nama || "Raka Aditya");
+  const [universitas, setUniversitas] = useState(registrationProfile.universitas || "Universitas Indonesia");
+  const [jenjang, setJenjang] = useState(registrationProfile.jenjang || "S1 (Sarjana)");
+  const [prodi, setProdi] = useState(registrationProfile.prodi || "Manajemen");
+  const [semester, setSemester] = useState(registrationProfile.semester || "Semester 6");
+  const [bantuan, setBantuan] = useState(registrationProfile.bantuan || "Skripsi");
+  const [faseAkademik, setFaseAkademik] = useState(registrationProfile.fase || "Penyusunan Bab II");
   const [motto, setMotto] = useState("Proses hari ini, hasil nanti.");
-  const [saved, setSaved] = useState(false);
 
   const inF = (e: React.FocusEvent<HTMLInputElement>) => { e.currentTarget.style.borderColor = "#93c5fd"; e.currentTarget.style.background = "#fff"; };
   const inB = (e: React.FocusEvent<HTMLInputElement>) => { e.currentTarget.style.borderColor = "#e2e8f0"; e.currentTarget.style.background = "#f8fafc"; };
   const inCls = "w-full px-3 py-2 rounded-xl text-sm text-slate-800 outline-none transition-all";
   const inSt = { background: "#f8fafc", border: "1.5px solid #e2e8f0" };
 
-  const handleSave = () => { setSaved(true); setEditMode(false); setTimeout(() => setSaved(false), 2000); };
+  const completeProfileAction = (message: string) => {
+    setNotice(message);
+    setProfileView("main");
+    window.setTimeout(() => {
+      setNotice("");
+    }, 2400);
+  };
 
-  const menuItems = [
-    { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>, label: "Akun & Pengaturan" },
-    { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>, label: "Notifikasi" },
-    { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>, label: "Privasi & Data" },
-    { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>, label: "Tentang Alerin" },
+  const saveProfileDetails = () => {
+    window.localStorage.setItem("alerin-registration-profile", JSON.stringify({
+      nama,
+      universitas,
+      jenjang,
+      prodi,
+      semester,
+      bantuan,
+      fase: faseAkademik,
+    }));
+    completeProfileAction("Profil berhasil diperbarui.");
+  };
+
+  const openAccountSecurity = () => {
+    setDraftWhatsapp(whatsapp);
+    setCurrentAccountPassword("");
+    setNewAccountPassword("");
+    setConfirmAccountPassword("");
+    setAccountSecurityError("");
+    setProfileView("account-security");
+  };
+
+  const applyProfilePhotoFile = (file: File, input: HTMLInputElement) => {
+    if (file.size > 5 * 1024 * 1024) {
+      setNotice("Ukuran foto maksimal 5 MB.");
+      window.setTimeout(() => setNotice(""), 2400);
+      input.value = "";
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result !== "string") return;
+      setDraftProfilePhoto(reader.result);
+      setProfilePhoto(reader.result);
+      window.localStorage.setItem("alerin-profile-photo", reader.result);
+      setPhotoModalOpen(false);
+      setNotice("Foto profil berhasil diperbarui.");
+      window.setTimeout(() => setNotice(""), 2400);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const saveAccountSecurity = () => {
+    const nextWhatsapp = draftWhatsapp.trim();
+    if (!nextWhatsapp) {
+      setAccountSecurityError("Nomor WhatsApp wajib diisi.");
+      return;
+    }
+
+    const changingPassword = Boolean(currentAccountPassword || newAccountPassword || confirmAccountPassword);
+    if (changingPassword && !currentAccountPassword) {
+      setAccountSecurityError("Masukkan kata sandi saat ini untuk mengubah kata sandi.");
+      return;
+    }
+    if (changingPassword && newAccountPassword.length < 8) {
+      setAccountSecurityError("Kata sandi baru minimal 8 karakter.");
+      return;
+    }
+    if (changingPassword && newAccountPassword !== confirmAccountPassword) {
+      setAccountSecurityError("Konfirmasi kata sandi baru belum cocok.");
+      return;
+    }
+
+    setWhatsapp(nextWhatsapp);
+    setDraftWhatsapp(nextWhatsapp);
+    setCurrentAccountPassword("");
+    setNewAccountPassword("");
+    setConfirmAccountPassword("");
+    setAccountSecurityError("");
+    completeProfileAction(changingPassword ? "Akun dan kata sandi berhasil diperbarui." : "Informasi akun berhasil diperbarui.");
+  };
+
+  const openManageData = () => {
+    setDraftKnownItems(knownItems);
+    setManualKnownItem("");
+    setManageDataError("");
+    setProfileView("manage-data");
+  };
+
+  const addManualKnownItem = () => {
+    const item = manualKnownItem.trim();
+    if (!item) {
+      setManageDataError("Tulis informasi yang ingin ditambahkan.");
+      return;
+    }
+    if (draftKnownItems.some(existingItem => existingItem.toLocaleLowerCase() === item.toLocaleLowerCase())) {
+      setManageDataError("Informasi tersebut sudah ada di dalam daftar.");
+      return;
+    }
+
+    setDraftKnownItems(items => [...items, item]);
+    setManualKnownItem("");
+    setManageDataError("");
+  };
+
+  const saveManagedData = () => {
+    const pendingItem = manualKnownItem.trim();
+    const nextItems = pendingItem && !draftKnownItems.some(item => item.toLocaleLowerCase() === pendingItem.toLocaleLowerCase())
+      ? [...draftKnownItems, pendingItem]
+      : draftKnownItems;
+
+    setKnownItems(nextItems);
+    setDraftKnownItems(nextItems);
+    setManualKnownItem("");
+    setManageDataError("");
+    completeProfileAction("Data pribadi berhasil disimpan.");
+  };
+
+  const toggleAlerinMemory = () => {
+    const enabled = !privacyPersonalization;
+    setPrivacyPersonalization(enabled);
+    setNotice(enabled ? "Memori Alerin diaktifkan." : "Memori Alerin dinonaktifkan.");
+    window.setTimeout(() => setNotice(""), 2200);
+  };
+
+  const subTabs: { id: ProfileSubTab; label: string; icon: string; activeIcon: string }[] = [
+    { id: "profil", label: "Profil", icon: "/assets/24ca3.svg", activeIcon: "/assets/7ef20.svg" },
+    { id: "progres", label: "Progres", icon: "/assets/5d70a.svg", activeIcon: "/assets/ff271.svg" },
+    { id: "personalisasi", label: "Personalisasi", icon: "/assets/0d577.svg", activeIcon: "/assets/8fdb1.svg" },
+    { id: "umum", label: "Umum", icon: "/assets/0d518.svg", activeIcon: "/assets/4fa2c.svg" },
   ];
 
-  const tags = [prodi, universitas, semester, "Skripsi (Bab 2)", "Target Sidang Nov 2026", "Preferensi: Contoh + latihan"];
+  useLayoutEffect(() => {
+    const list = subTabListRef.current;
+    const activeButton = subTabButtonRefs.current[subTab];
+    if (!list || !activeButton) return;
+
+    const updateIndicator = () => {
+      setSubTabIndicator({
+        left: activeButton.offsetLeft,
+        top: activeButton.offsetTop,
+        width: activeButton.offsetWidth,
+        height: activeButton.offsetHeight,
+      });
+    };
+
+    updateIndicator();
+    const observer = new ResizeObserver(updateIndicator);
+    observer.observe(list);
+    Object.values(subTabButtonRefs.current).forEach(button => {
+      if (button) observer.observe(button);
+    });
+
+    return () => observer.disconnect();
+  }, [subTab]);
+
+  const profileViewTitle: Record<Exclude<ProfileView, "main">, string> = {
+    "profile-photo": "Ubah Foto Profil",
+    "memory-summary": "Ringkasan memori",
+    "edit-profile": "Edit Data Pendaftaran",
+    "manage-data": "Kelola memori Alerin",
+    "account-security": "Akun & Keamanan",
+    password: "Ubah Kata Sandi",
+    package: "Kelola Paket",
+    "stage-detail": "Detail Tahapan",
+    "reset-plan": "Atur Ulang Rencana",
+    notifications: "Pengaturan Notifikasi",
+    "privacy-policy": "Kebijakan Privasi",
+    terms: "Syarat & Ketentuan",
+    privacy: "Privasi & Data",
+    about: "Tentang Alerin",
+  };
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden bg-slate-50">
-      <div className="flex-1 overflow-y-auto">
-        <div className="max-w-4xl mx-auto px-4 md:px-6 py-5 md:py-7">
-
-          {/* Page header */}
-          <div className="flex items-center justify-between mb-5">
-            <div>
-              <h2 className="font-display font-800 text-xl md:text-2xl text-slate-900">Profil Saya</h2>
-              <p className="text-xs text-slate-400 mt-0.5">Kelola informasi akun dan preferensi agar Alerin bisa membantumu lebih baik.</p>
+    <div
+      className={`-mb-24 flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden p-0 transition-colors md:mb-0 ${themeMode === "dark" ? "profile-dark" : ""}`}
+      style={{ background: themeMode === "dark" ? "#0f172a" : "#f0f2f5" }}
+    >
+      {logoutModalOpen && (
+        <div
+          className="fixed inset-0 z-[400] flex items-center justify-center bg-slate-950/50 px-4 py-6 backdrop-blur-sm"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="logout-dialog-title"
+          onMouseDown={event => {
+            if (event.target === event.currentTarget) setLogoutModalOpen(false);
+          }}
+        >
+          <div className="w-full max-w-sm rounded-2xl bg-white p-5 shadow-2xl">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-red-50 text-red-500">
+              <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" /></svg>
             </div>
-            <button onClick={() => setEditMode(e => !e)}
-              className="hidden md:flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90"
-              style={{ background: "#0f172a" }}>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-              {editMode ? "Selesai Edit" : "Edit Profil"}
-            </button>
+            <p id="logout-dialog-title" className="mt-4 text-lg font-bold text-slate-900">Apakah kamu yakin ingin keluar?</p>
+            <p className="mt-2 text-sm leading-relaxed text-slate-500">Kamu perlu masuk kembali untuk melanjutkan aktivitas di Alerin.</p>
+            <div className="mt-6 grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setLogoutModalOpen(false)}
+                className="rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setLogoutModalOpen(false);
+                  setNotice("Simulasi keluar berhasil. Sesi pengguna tetap dipertahankan untuk demo.");
+                  window.setTimeout(() => setNotice(""), 2600);
+                }}
+                className="rounded-xl bg-red-500 px-4 py-3 text-sm font-bold text-white transition-colors hover:bg-red-600"
+              >
+                Keluar
+              </button>
+            </div>
           </div>
+        </div>
+      )}
 
-          {/* Avatar card */}
-          <div className="bg-white rounded-2xl border border-slate-100 p-5 mb-4 flex items-center gap-4" style={{ boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}>
-            <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-xl font-bold text-white shrink-0"
-              style={{ background: "linear-gradient(135deg,#f59e0b,#d97706)" }}>RA</div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                <h3 className="font-display font-800 text-lg text-slate-900">{nama}</h3>
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold" style={{ background: "#eff6ff", color: "#2563eb", border: "1px solid #bfdbfe" }}>
-                  ✦ Premium
-                </span>
-              </div>
-              <p className="text-sm text-slate-500 mt-0.5">{jenjang} · {universitas} · {semester}</p>
-              <p className="text-xs text-slate-400 italic mt-1">"{motto}"</p>
-            </div>
-            <button className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-600 border border-slate-200 hover:bg-slate-50 transition-all shrink-0">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-              Ubah Foto
+      {packageModalOpen && (
+        <div
+          className="fixed inset-0 z-[400] flex items-center justify-center overflow-y-auto bg-slate-950/55 px-4 py-6 backdrop-blur-sm"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Detail paket"
+          onMouseDown={event => {
+            if (event.target === event.currentTarget) setPackageModalOpen(false);
+          }}
+        >
+          <div className="relative my-auto w-full max-w-2xl overflow-visible rounded-2xl bg-white shadow-2xl">
+            <button
+              type="button"
+              onClick={() => setPackageModalOpen(false)}
+              aria-label="Tutup detail paket"
+              className="absolute -right-3 -top-3 z-10 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 shadow-md transition-colors hover:bg-slate-100 hover:text-slate-800"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <path d="M18 6 6 18M6 6l12 12" />
+              </svg>
             </button>
-            {/* Mobile edit */}
-            <button onClick={() => setEditMode(e => !e)} className="md:hidden w-8 h-8 flex items-center justify-center rounded-xl text-slate-400 hover:bg-slate-100">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-            </button>
-          </div>
 
-          {/* Motivasi strip */}
-          <div className="bg-blue-50 border border-blue-100 rounded-2xl px-4 py-3 mb-4 flex items-start gap-2.5">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2" className="mt-0.5 shrink-0"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            <p className="text-xs text-blue-700 leading-relaxed">Terus semangat, langkah kecil hari ini bisa jadi hasil besar nanti!</p>
-          </div>
-
-          {/* Daftar Sekarang CTA */}
-          <button onClick={onRegister}
-            className="w-full flex items-center justify-between px-5 py-4 rounded-2xl mb-4 transition-all hover:opacity-95 active:scale-[0.99]"
-            style={{ background: "linear-gradient(135deg, #2563eb 0%, #4f46e5 100%)", boxShadow: "0 4px 20px rgba(37,99,235,0.25)" }}>
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ backgroundImage: "none" }}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
-              </div>
-              <div className="text-left">
-                <p className="text-sm font-bold text-white">Daftar Sekarang</p>
-                <p className="text-[11px] text-blue-100">Buat akun gratis, personalisasi pengalamanmu</p>
-              </div>
-            </div>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </button>
-
-          {/* Main grid — 2 col desktop, 1 col mobile */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-
-            {/* Informasi Akademik */}
-            <div className="bg-white rounded-2xl border border-slate-100 p-5" style={{ boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}>
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
-                  <p className="font-bold text-slate-800 text-sm">Informasi Akademik</p>
-                </div>
-                <button onClick={() => setEditMode(e => !e)} className="text-xs font-semibold text-blue-600 hover:text-blue-700">{editMode ? "Selesai" : "Edit"}</button>
-              </div>
-              {editMode ? (
-                <div className="space-y-3">
-                  {[["Universitas", universitas, setUniversitas], ["Jenjang", jenjang, setJenjang], ["Program Studi", prodi, setProdi], ["Semester", semester, setSemester]].map(([label, val, setter]) => (
-                    <div key={label as string}>
-                      <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-1">{label as string}</label>
-                      <input value={val as string} onChange={e => (setter as (v: string) => void)(e.target.value)} className={inCls} style={inSt} onFocus={inF} onBlur={inB} />
+            <div className="my-[11px] max-h-[75vh] overflow-y-auto px-5 py-[10px] sm:px-6">
+              <div className="flex items-center justify-between gap-4 rounded-xl border border-slate-200 p-4">
+                <div className="flex min-w-0 items-center gap-3">
+                  <img src="/assets/7052b.png" alt="" className="h-12 w-12 shrink-0 rounded-xl object-cover" />
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="text-base font-bold text-slate-900">Alerin Plus</p>
+                      <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700">Aktif</span>
                     </div>
-                  ))}
-                  <button onClick={handleSave} className="w-full py-2 rounded-xl text-xs font-bold text-white mt-1" style={{ background: "linear-gradient(135deg,#3b82f6,#6366f1)" }}>
-                    {saved ? "✓ Tersimpan!" : "Simpan"}
-                  </button>
+                    <p className="mt-1 text-xs text-slate-500">Paket bulanan</p>
+                  </div>
                 </div>
-              ) : (
-                <div className="space-y-2.5">
-                  {[["Universitas", universitas], ["Jenjang", jenjang], ["Program Studi", prodi], ["Semester", semester]].map(([label, val]) => (
-                    <div key={label} className="flex items-start justify-between gap-3">
-                      <span className="text-xs text-slate-400 shrink-0 w-28">{label}</span>
-                      <span className="text-xs font-semibold text-slate-700 text-right">{val}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+                <p className="shrink-0 text-right text-base font-bold text-slate-900">Rp49.000<span className="block text-[11px] font-medium text-slate-400">per bulan</span></p>
+              </div>
 
-            {/* Cara Alerin membantumu */}
-            <div className="bg-white rounded-2xl border border-slate-100 p-5" style={{ boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}>
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                  <p className="font-bold text-slate-800 text-sm">Cara Alerin membantumu</p>
-                </div>
-                <button className="text-xs font-semibold text-blue-600 hover:text-blue-700">Ubah</button>
-              </div>
-              <div className="rounded-xl p-3.5" style={{ background: "#f0f7ff", border: "1px solid #dbeafe" }}>
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center shrink-0" style={{ boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold text-slate-800">Contoh + latihan singkat</p>
-                    <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">Alerin akan memberikan penjelasan disertai contoh dan latihan sederhana.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Konteks Akademik Aktif */}
-            <div className="bg-white rounded-2xl border border-slate-100 p-5" style={{ boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}>
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-                  <p className="font-bold text-slate-800 text-sm">Konteks Akademik Aktif</p>
-                </div>
-                <button onClick={() => onTab("proyek")} className="text-xs font-semibold text-blue-600 hover:text-blue-700">Lihat semua</button>
-              </div>
-              <div className="rounded-xl border border-slate-100 p-3.5" style={{ background: "#f8fafc" }}>
-                <div className="flex items-center gap-2.5 mb-3">
-                  <div className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center shrink-0">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <p className="text-sm font-bold text-slate-800">Skripsi</p>
-                      <span className="px-1.5 py-0.5 rounded-full text-[9px] font-bold" style={{ background: "#dcfce7", color: "#16a34a" }}>● Aktif</span>
-                    </div>
-                    <p className="text-xs text-slate-500">Bab 2 · Literature Review</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 mb-1">
-                  <div className="flex-1 h-1.5 rounded-full bg-slate-200 overflow-hidden">
-                    <div className="h-full rounded-full" style={{ width: "43%", background: "linear-gradient(90deg,#3b82f6,#6366f1)" }} />
-                  </div>
-                  <span className="text-xs font-bold text-slate-600">43%</span>
-                </div>
-                <div className="flex items-center gap-1.5 mt-2.5">
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                  <p className="text-[11px] text-slate-400">Target sidang: November 2026</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Akun & Keamanan */}
-            <div className="bg-white rounded-2xl border border-slate-100 p-5" style={{ boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}>
-              <div className="flex items-center gap-2 mb-4">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-                <p className="font-bold text-slate-800 text-sm">Akun & Keamanan</p>
-              </div>
-              <div className="space-y-0 divide-y divide-slate-100">
+              <dl className="mt-4 divide-y divide-slate-100 rounded-xl border border-slate-200 px-4">
                 {[
-                  { label: "Email", value: "rakaaditya@gmail.com", action: null },
-                  { label: "Nomor WhatsApp", value: "08xxxxxxxx", action: null },
-                  { label: "Paket", value: "Alerin Premium", action: "Kelola" },
-                  { label: "Keamanan Akun", value: "Ubah kata sandi", action: "›", blue: true },
-                ].map((row) => (
-                  <div key={row.label} className="flex items-center justify-between py-2.5">
-                    <span className="text-xs text-slate-500">{row.label}</span>
-                    <div className="flex items-center gap-2">
-                      <span className={`text-xs font-medium ${row.blue ? "text-blue-600" : "text-slate-700"}`}>{row.value}</span>
-                      {row.action && row.action !== "›" && <button className="text-xs font-semibold text-blue-600 hover:text-blue-700">{row.action}</button>}
-                      {row.action === "›" && <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2"><path d="M9 18l6-6-6-6"/></svg>}
+                  ["Status langganan", "Aktif"],
+                  ["Tanggal mulai", "30 Desember 2025"],
+                  ["Tagihan berikutnya", "30 Desember 2026"],
+                  ["Metode pembayaran", "Visa •••• 2048"],
+                ].map(([label, value]) => (
+                  <div key={label} className="flex items-center justify-between gap-4 py-3">
+                    <dt className="text-xs text-slate-500">{label}</dt>
+                    <dd className="text-right text-xs font-semibold text-slate-800">{value}</dd>
+                  </div>
+                ))}
+              </dl>
+
+              <div className="mt-5">
+                <p className="text-sm font-bold text-[#1D293D]">Benefit paket</p>
+                <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                  {["Akses semua fitur Alerin", "Analisis akademik mendalam", "Respons prioritas", "Riwayat proyek tanpa batas"].map(benefit => (
+                    <div key={benefit} className="flex items-center gap-2 text-xs text-slate-600">
+                      <svg className="shrink-0 text-emerald-600" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="m5 12 4 4L19 6" /></svg>
+                      {benefit}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mt-6 border-t border-slate-200 pt-5">
+                <p className="text-sm font-bold text-[#1D293D]">Tindakan paket</p>
+                <div className="mt-3 space-y-3">
+                  <div className="flex flex-col gap-3 rounded-xl border border-slate-200 p-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <p className="text-sm font-semibold text-slate-800">Batalkan Langganan</p>
+                      <p className="mt-1 text-xs leading-relaxed text-slate-500">Hentikan perpanjangan otomatis. Paket tetap aktif sampai 30 Desember 2026.</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPackageModalOpen(false);
+                        setNotice("Perpanjangan otomatis berhasil dibatalkan.");
+                        window.setTimeout(() => setNotice(""), 2600);
+                      }}
+                      className="shrink-0 rounded-lg border border-slate-300 px-4 py-2.5 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50"
+                    >
+                      Batalkan Langganan
+                    </button>
+                  </div>
+
+                  <div className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <p className="text-sm font-semibold text-slate-800">Batalkan Paket</p>
+                      <p className="mt-1 text-xs leading-relaxed text-slate-500">Akhiri paket sekarang. Akun akan kembali ke Alerin Basic dan benefit Plus langsung berhenti.</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPackageModalOpen(false);
+                        setNotice("Permintaan pembatalan paket berhasil dikirim.");
+                        window.setTimeout(() => setNotice(""), 2600);
+                      }}
+                      className="shrink-0 rounded-lg border border-[#D33D3D] bg-[#D33D3D] px-4 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-[#bd3434]"
+                    >
+                      Batalkan Paket
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {upgradeModalOpen && (
+        <div
+          className="fixed inset-0 z-[400] flex items-center justify-center overflow-y-auto bg-slate-950/55 px-4 py-6 backdrop-blur-sm"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="upgrade-modal-title"
+          onMouseDown={event => {
+            if (event.target === event.currentTarget) setUpgradeModalOpen(false);
+          }}
+        >
+          <div className="my-auto w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl">
+            <div className="relative px-6 pb-6 pt-5">
+              <button
+                type="button"
+                onClick={() => setUpgradeModalOpen(false)}
+                aria-label="Tutup pilihan paket"
+                className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                  <path d="M18 6 6 18M6 6l12 12" />
+                </svg>
+              </button>
+
+              <div className="text-center">
+                <div className="mx-auto mt-6 flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border-4 border-blue-100 bg-blue-50 shadow-sm">
+                  <img src="/assets/f725b.png" alt="Logo Alerin" className="h-full w-full object-cover" />
+                </div>
+              <p className="mt-4 text-[18px] font-bold text-slate-800">Buka semua fitur Alerin</p>
+                <p className="mt-1 text-xs leading-5 text-slate-500">Dapatkan dukungan penuh untuk belajar, riset, dan menyelesaikan target akademikmu.</p>
+              </div>
+
+              <div className="mt-6 space-y-4">
+                {[
+                  ["Akses tanpa batas", "Gunakan seluruh fitur Alerin tanpa batas harian."],
+                  ["Mentor akademik", "Dapatkan sesi pendampingan untuk tugas dan penelitian."],
+                  ["Prioritas tertinggi", "Respons lebih cepat dan review dokumen lanjutan."],
+                ].map(([title, description], index) => (
+                  <div key={title} className="flex items-start gap-3">
+                    <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${index < 3 ? "bg-[#558FDF] text-white" : "bg-blue-50 text-[#347CEA]"}`}>
+                      {index === 0 ? (
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2"><path d="M5 12h14M12 5v14" /></svg>
+                      ) : index === 1 ? (
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2"><circle cx="12" cy="8" r="4" /><path d="M4 21a8 8 0 0 1 16 0" /></svg>
+                      ) : (
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2"><path d="m13 2-2 7h7l-9 13 2-9H4z" /></svg>
+                      )}
+                    </span>
+                    <div>
+                      <p className="text-sm font-semibold text-slate-800">{title}</p>
+                      <p className="mt-0.5 text-xs leading-5 text-slate-500">{description}</p>
                     </div>
                   </div>
                 ))}
               </div>
-            </div>
-          </div>
 
-          {/* Yang Alerin ketahui tentangmu */}
-          <div className="bg-white rounded-2xl border border-slate-100 p-5 mb-4" style={{ boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}>
-            <div className="flex items-start justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                <div>
-                  <p className="font-bold text-slate-800 text-sm">Yang Alerin ketahui tentangmu</p>
-                  <p className="text-[11px] text-slate-400 mt-0.5">Informasi ini digunakan untuk menyesuaikan jawaban dan rekomendasi.</p>
-                </div>
+              <div className="mt-6 grid grid-cols-2 gap-3">
+                {[
+                  { id: "monthly" as const, label: "Bulanan", price: "Rp99.000", caption: "Ditagih setiap bulan" },
+                  { id: "yearly" as const, label: "Tahunan", price: "Rp990.000", caption: "Hemat Rp198.000" },
+                ].map(option => {
+                  const active = upgradeBillingCycle === option.id;
+                  return (
+                    <button
+                      key={option.id}
+                      type="button"
+                      onClick={() => setUpgradeBillingCycle(option.id)}
+                      className={`rounded-xl border p-4 text-left transition-colors ${active ? "border-[#347CEA] bg-blue-50/50" : "border-slate-200 bg-white hover:border-blue-200"}`}
+                    >
+                      <span className="flex items-center justify-between gap-2">
+                        <span className="text-xs font-medium text-slate-600">{option.label}</span>
+                        <span className={`flex h-4 w-4 items-center justify-center rounded-full border ${active ? "border-[#347CEA]" : "border-slate-300"}`}>
+                          {active && <span className="h-2 w-2 rounded-full bg-[#347CEA]" />}
+                        </span>
+                      </span>
+                      <span className="mt-3 block text-base font-bold text-slate-900">{option.price}</span>
+                      <span className={`mt-1 block text-[10px] ${active && option.id === "yearly" ? "font-semibold text-[#347CEA]" : "text-slate-400"}`}>{option.caption}</span>
+                    </button>
+                  );
+                })}
               </div>
-              <button className="text-xs font-semibold text-blue-600 hover:text-blue-700 shrink-0 ml-3">Kelola data</button>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {tags.map(t => (
-                <span key={t} className="px-3 py-1 rounded-full text-xs font-medium text-slate-700 border border-slate-200 bg-slate-50">{t}</span>
-              ))}
-            </div>
-          </div>
 
-          {/* Mobile menu list */}
-          <div className="md:hidden bg-white rounded-2xl border border-slate-100 overflow-hidden mb-4" style={{ boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}>
-            {menuItems.map((item, i) => (
-              <button key={i} className="w-full flex items-center justify-between px-5 py-3.5 hover:bg-slate-50 transition-colors border-b border-slate-100 last:border-0">
-                <div className="flex items-center gap-3">
-                  {item.icon}
-                  <span className="text-sm font-medium text-slate-700">{item.label}</span>
-                </div>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="2"><path d="M9 18l6-6-6-6"/></svg>
+              <button
+                type="button"
+                onClick={() => {
+                  setUpgradeModalOpen(false);
+                  setNotice(`Paket ${upgradeBillingCycle === "yearly" ? "tahunan" : "bulanan"} Alerin Max siap dilanjutkan ke pembayaran.`);
+                  window.setTimeout(() => setNotice(""), 2800);
+                }}
+                className="mt-5 w-full rounded-xl bg-[#347CEA] px-5 py-3.5 text-sm font-bold text-white transition-colors hover:bg-blue-700"
+              >
+                Upgrade Sekarang
               </button>
-            ))}
+              <p className="mt-3 text-center text-[11px] leading-5 text-slate-400">Batalkan kapan saja. Paket diperpanjang otomatis sesuai periode yang dipilih.</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="min-h-0 flex-1 overflow-y-auto p-0">
+        <div className="mx-auto min-h-full max-w-5xl px-3 py-4 md:px-6">
+          {/* Profile summary — follows the supplied Alerin profile layout */}
+          <div className="relative -mt-1 h-[272px] rounded-2xl bg-white shadow-sm md:mb-3 md:mt-0 md:h-auto md:px-7 md:py-6">
+            <div className="relative mb-1 flex h-full flex-col items-center md:mb-0 md:h-auto md:flex-row md:gap-4">
+              <div className={`absolute left-1/2 top-profile-avatar-top flex w-fit -translate-x-1/2 shrink-0 flex-col items-center md:static md:translate-x-0 ${photoModalOpen ? "z-[100]" : "z-0"}`}>
+                <div
+                  className="flex size-profile-avatar items-center justify-center overflow-hidden rounded-full border-4 border-white font-['Inter:Bold'] text-profile-avatar font-bold text-white"
+                  style={{ background: "linear-gradient(135deg,#f59e0b,#ea8b00)", boxShadow: "0 2px 10px rgba(0,0,0,0.14)" }}
+                >
+                  {profilePhoto ? <img src={profilePhoto} alt={`Foto profil ${nama}`} className="h-full w-full object-cover" /> : "RA"}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setDraftProfilePhoto(profilePhoto);
+                    setPhotoModalOpen(open => !open);
+                  }}
+                  aria-expanded={photoModalOpen}
+                  aria-haspopup="menu"
+                  className="absolute left-13 top-18 flex h-6 w-[53px] items-center gap-1 rounded-xl border border-slate-200 bg-white px-2.5 font-['Inter:Medium'] text-profile-edit font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50"
+                >
+                  <img src="/assets/bdfdb.svg" alt="" className={themeMode === "dark" ? "brightness-0 invert" : ""} />
+                  Edit
+                </button>
+                {photoModalOpen && (
+                  <div
+                    role="menu"
+                    aria-label="Pilihan foto profil"
+                    className="absolute left-1/2 top-[104px] z-[110] w-56 -translate-x-1/2 overflow-hidden rounded-xl border border-slate-200 bg-white p-2 shadow-[0_12px_30px_rgba(15,23,42,0.16)] md:left-[112px] md:top-[60px] md:w-48 md:translate-x-0 md:p-1.5"
+                  >
+                    <label className="flex cursor-pointer items-center gap-2.5 rounded-lg px-3 py-3 text-sm font-semibold text-slate-700 transition-colors hover:bg-blue-50 hover:text-blue-700 md:py-2.5 md:text-xs">
+                      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14.5 4 16 6h3a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3l1.5-2h5Z" /><circle cx="12" cy="12" r="3" /></svg>
+                      Ambil dari kamera
+                      <input
+                        type="file"
+                        accept="image/*"
+                        capture="user"
+                        className="sr-only"
+                        onChange={event => {
+                          const file = event.target.files?.[0];
+                          if (file) applyProfilePhotoFile(file, event.target);
+                        }}
+                      />
+                    </label>
+                    <label className="flex cursor-pointer items-center gap-2.5 rounded-lg px-3 py-3 text-sm font-semibold text-slate-700 transition-colors hover:bg-blue-50 hover:text-blue-700 md:py-2.5 md:text-xs">
+                      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="8.5" cy="9" r="1.5" /><path d="m21 15-5-5L5 20" /></svg>
+                      Pilih dari galeri
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp"
+                        className="sr-only"
+                        onChange={event => {
+                          const file = event.target.files?.[0];
+                          if (file) applyProfilePhotoFile(file, event.target);
+                        }}
+                      />
+                    </label>
+                  </div>
+                )}
+              </div>
+
+              <div className="absolute inset-x-0 top-[147px] min-w-0 py-1.5 text-center md:static md:flex-1 md:py-0 md:text-left">
+                <div className="flex items-center justify-center md:justify-start md:gap-2">
+                  <p className="font-['Plus_Jakarta_Sans:Bold'] text-profile-name font-bold text-slate-900">{nama}</p>
+                  <span className="absolute left-1/2 top-[-33px] mt-[5px] inline-flex h-profile-badge w-[107px] -translate-x-1/2 items-center justify-center gap-1.5 rounded-full border border-blue-200 bg-white px-3 font-['Inter:Bold'] text-profile-badge font-bold text-slate-900 shadow-sm md:static md:mt-0 md:w-auto md:translate-x-0 md:bg-white md:text-slate-900 md:shadow-none">
+                    Alerin Plus
+                    <span className="relative h-[17px] w-[17px] overflow-hidden">
+                      <img src="/assets/8923b.png" alt="" className="pointer-events-none absolute max-w-none" style={{ width: 41, height: 74, left: -12, top: -6 }} />
+                    </span>
+                  </span>
+                </div>
+                <p className="mt-1 font-['Inter:Medium'] text-sm font-medium leading-5 text-[#3e3f40]">{jenjang.replace(/\s*\([^)]*\)/, "")} · {prodi} · {universitas}</p>
+              </div>
+
+              <p
+                ref={(element) => {
+                  if (!element) return;
+                  const messages = Array.from(new Set([
+                    motto,
+                    "Langkah kecil hari ini, hasil besar nanti.",
+                    "Belajar konsisten, tumbuh tanpa batas.",
+                  ]));
+                  let activeIndex = 0;
+                  let fadeTimer = 0;
+
+                  const fitMessage = (message: string) => {
+                    element.textContent = `"${message}"`;
+                    element.title = message;
+                    let fontSize = 16;
+                    element.style.fontSize = `${fontSize}px`;
+                    while (element.scrollWidth > element.clientWidth && fontSize > 10) {
+                      fontSize -= 0.5;
+                      element.style.fontSize = `${fontSize}px`;
+                    }
+                  };
+
+                  fitMessage(messages[activeIndex]);
+                  const rotationTimer = window.setInterval(() => {
+                    element.style.opacity = "0";
+                    fadeTimer = window.setTimeout(() => {
+                      activeIndex = (activeIndex + 1) % messages.length;
+                      fitMessage(messages[activeIndex]);
+                      element.style.opacity = "1";
+                    }, 200);
+                  }, 20000);
+                  const resizeObserver = new ResizeObserver(() => fitMessage(messages[activeIndex]));
+                  resizeObserver.observe(element);
+
+                  return () => {
+                    window.clearInterval(rotationTimer);
+                    window.clearTimeout(fadeTimer);
+                    resizeObserver.disconnect();
+                  };
+                }}
+                className="absolute bottom-[8px] left-0 right-0 overflow-hidden whitespace-nowrap px-3 py-5 text-center font-['Plus_Jakarta_Sans'] text-base font-extrabold not-italic text-profile-motto-ink transition-[opacity,font-size] duration-200 md:static md:max-w-64 md:px-0 md:py-0 md:text-right"
+              >
+                "{motto}"
+              </p>
+            </div>
           </div>
 
-          {/* Keluar — mobile */}
-          <button className="md:hidden w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl text-sm font-bold text-red-500 border border-red-100 bg-red-50 hover:bg-red-100 transition-colors mb-4">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-            Keluar
+          {/* Profile completion */}
+          <button
+            type="button"
+            onClick={onRegister}
+            className="group relative mx-0 mb-3 mt-[11px] flex min-h-profile-cta w-full items-center gap-3 overflow-hidden rounded-2xl bg-white px-5 py-[22px] text-left text-blue-800 shadow-[0_10px_30px_rgba(52,124,234,0.16)] ring-1 ring-blue-100"
+          >
+            <span aria-hidden="true" className="pointer-events-none absolute inset-y-0 -left-1/3 z-20 hidden w-1/4 -skew-x-12 bg-gradient-to-r from-transparent via-blue-200/70 to-transparent opacity-0 blur-sm transition-[left,opacity] duration-700 ease-out group-hover:left-[115%] group-hover:opacity-100 md:block" />
+            <span aria-hidden="true" className="pointer-events-none absolute -right-8 -top-12 h-32 w-32 rounded-full border border-blue-200/70" />
+            <span aria-hidden="true" className="pointer-events-none absolute -bottom-16 right-12 hidden h-32 w-52 rounded-full bg-blue-400/25 blur-2xl md:block" />
+            <span aria-hidden="true" className="pointer-events-none absolute left-[42%] top-3 h-2 w-2 rotate-45 rounded-[2px] bg-blue-300/70" />
+            <span aria-hidden="true" className="pointer-events-none absolute bottom-3 left-[58%] h-1.5 w-1.5 rounded-full bg-blue-400/70" />
+            <img src="/assets/6667b.svg" alt="" className="relative z-10 shrink-0 rounded-xl border border-white/70 bg-[linear-gradient(135deg,rgba(52,124,234,0.88),rgba(85,143,223,0.62))] p-2 shadow-[0_6px_18px_rgba(52,124,234,0.28),inset_0_1px_0_rgba(255,255,255,0.45)] backdrop-blur-xl" />
+            <span className="relative z-10 min-w-0 flex-1">
+              <span className="block font-['Inter:Bold'] text-[15px] font-bold leading-5 text-[#3a3a3b]">Lengkapi Profil Kamu 8/10</span>
+              <span className="mt-0.5 block max-w-profile-description font-['Inter:Medium'] text-[13px] font-medium text-slate-500">Lengkapi profilmu untuk pengalaman yang lebih personal dan menarik.</span>
+            </span>
+            <svg className="relative z-10 shrink-0 md:hidden" width="18" height="18" viewBox="0 0 24 24" fill="none" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M5 12h14M13 6l6 6-6 6" stroke="var(--color-blue-500)" />
+            </svg>
+            <span className="relative z-10 hidden shrink-0 items-center gap-4 md:flex">
+              <span className="h-2 w-40 overflow-hidden rounded bg-blue-100 lg:w-56">
+                <span className="block h-full w-4/5 bg-blue-500" />
+              </span>
+              <span className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2.5 font-['Inter:Bold'] text-xs font-bold leading-4 text-white shadow-sm">
+                Mulai Lengkapi
+                <img src="/assets/1d78a.svg" alt="" className="ml-1 brightness-0 invert" />
+              </span>
+            </span>
           </button>
 
+          {/* Main + sidebar layout */}
+          <div className="flex gap-3 pb-6">
+            {/* Main column */}
+            <div className="flex-1 min-w-0">
+              {/* Sub-tabs */}
+              <div ref={subTabListRef} className="relative mb-3 flex h-profile-tabs items-center justify-center gap-1 overflow-hidden rounded-2xl bg-white p-3 shadow-sm md:justify-start">
+                <span
+                  aria-hidden="true"
+                  className={`pointer-events-none absolute left-0 top-0 rounded-full border border-white/70 bg-[linear-gradient(135deg,rgba(52,124,234,0.88),rgba(85,143,223,0.62))] shadow-[0_3px_10px_rgba(52,124,234,0.18),inset_0_1px_0_rgba(255,255,255,0.45)] backdrop-blur-xl transition-[transform,width,height,opacity] duration-300 ease-out motion-reduce:transition-none md:hidden ${subTabIndicator.width ? "opacity-100" : "opacity-0"}`}
+                  style={{
+                    width: subTabIndicator.width,
+                    height: subTabIndicator.height,
+                    transform: `translate(${subTabIndicator.left}px, ${subTabIndicator.top}px)`,
+                  }}
+                />
+                {subTabs.map(t => (
+                  <button
+                    ref={button => {
+                      subTabButtonRefs.current[t.id] = button;
+                    }}
+                    key={t.id}
+                    onClick={() => { setSubTab(t.id); setProfileView("main"); }}
+                    className={`${t.id === "progres" ? "hidden" : "flex"} relative z-10 shrink-0 items-center justify-center rounded-full py-1.5 font-['Inter:Semi_Bold'] text-sm font-semibold transition-all duration-200 md:text-xs ${t.id === "umum" ? "gap-x-[5px] gap-y-1.5 px-[7px]" : "gap-1.5 px-3"} ${
+                      subTab === t.id ? "text-white md:border md:border-white/70 md:bg-[linear-gradient(135deg,rgba(52,124,234,0.88),rgba(85,143,223,0.62))] md:shadow-[0_3px_10px_rgba(52,124,234,0.18),inset_0_1px_0_rgba(255,255,255,0.45)] md:backdrop-blur-xl" : "text-slate-500"
+                    }`}
+                  >
+                    <img
+                      src={subTab === t.id ? t.activeIcon : t.icon}
+                      alt=""
+                      className={t.id === "umum" ? "-mx-[5px] h-[23px] w-[23px]" : "h-4 w-4"}
+                    />
+                    {t.label}
+                  </button>
+                ))}
+              </div>
+
+              {notice && (
+                <div className="mb-3 flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-xs font-semibold text-emerald-700">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="m5 12 4 4L19 6"/></svg>
+                  {notice}
+                </div>
+              )}
+
+              {profileView !== "main" && (
+                <div
+                  className="w-full rounded-2xl bg-white p-5 md:p-6"
+                  style={{ boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}
+                >
+                  <div className="mb-6 flex items-center gap-3 border-b border-slate-100 pb-4">
+                    <button
+                      type="button"
+                      onClick={() => setProfileView("main")}
+                      className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 text-slate-600 transition-colors hover:bg-slate-50"
+                      aria-label="Kembali"
+                    >
+                      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m15 18-6-6 6-6"/></svg>
+                    </button>
+                    <div>
+                      <p className="text-base font-bold text-slate-900">{profileViewTitle[profileView]}</p>
+                      {profileView !== "edit-profile" && profileView !== "account-security" && profileView !== "manage-data" && (
+                        <p className={`mt-0.5 ${profileView === "memory-summary" ? "text-[13px] text-[#4f4f51]" : "text-[11px] text-slate-400"}`}>
+                          {profileView === "memory-summary"
+                            ? "Baru saja diperbarui"
+                            : "Perubahan disimulasikan dan dapat disimpan."}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  {profileView === "memory-summary" && (
+                    <div className="mx-auto max-w-3xl">
+                      <div className="space-y-7">
+                        <section>
+                          <h2 className="text-lg font-bold text-[#1D293D]">Ringkasan</h2>
+                          <p className="mt-2 text-sm leading-7 text-slate-600">
+                            Kamu adalah {nama}, mahasiswa {jenjang} program studi {prodi} di {universitas}. Saat ini kamu berada di {semester} dan sedang berfokus pada {bantuan.toLowerCase()} dalam fase {faseAkademik.toLowerCase()}.
+                          </p>
+                        </section>
+
+                        <section>
+                          <h2 className="text-lg font-bold text-[#1D293D]">Akademik &amp; Proyek</h2>
+                          <p className="mt-2 text-sm leading-7 text-slate-600">
+                            Fokus akademikmu berkaitan dengan {prodi.toLowerCase()} dan penyelesaian {bantuan.toLowerCase()}. Alerin mengingat tahapan yang sedang kamu kerjakan agar bantuan, penjelasan, serta rekomendasi berikutnya tetap relevan dengan progresmu.
+                          </p>
+                        </section>
+
+                        <section>
+                          <h2 className="text-lg font-bold text-[#1D293D]">Gaya Belajar</h2>
+                          <p className="mt-2 text-sm leading-7 text-slate-600">
+                            Kamu lebih mudah memahami materi melalui contoh dan latihan singkat. Gaya komunikasi Alerin yang kamu pilih adalah {communicationStyle.toLowerCase()}, sehingga jawaban akan disampaikan dengan struktur dan nada yang sesuai.
+                          </p>
+                        </section>
+
+                        <section>
+                          <h2 className="text-lg font-bold text-[#1D293D]">Personalisasi yang Diingat</h2>
+                          <div className="mt-3 flex flex-wrap gap-2">
+                            {knownItems.map(item => (
+                              <span key={item} className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-600">{item}</span>
+                            ))}
+                          </div>
+                        </section>
+                      </div>
+
+                      <form
+                        className="mt-8 space-y-3"
+                        onSubmit={event => {
+                          event.preventDefault();
+                          const form = event.currentTarget;
+                          const input = form.elements.namedItem("memoryPrompt") as HTMLInputElement;
+                          const submitButton = form.querySelector<HTMLButtonElement>("[data-memory-submit]");
+                          const output = form.querySelector<HTMLElement>("[data-memory-output]");
+                          const outputQuestion = form.querySelector<HTMLElement>("[data-memory-question]");
+                          const idleIcon = form.querySelector<HTMLElement>("[data-memory-idle]");
+                          const loadingIcon = form.querySelector<HTMLElement>("[data-memory-loading]");
+                          const question = input.value.trim();
+                          if (!question || !submitButton || !output || !outputQuestion || !idleIcon || !loadingIcon) return;
+
+                          output.classList.add("hidden");
+                          input.disabled = true;
+                          input.value = "Alerin sedang menyusun jawaban...";
+                          submitButton.disabled = true;
+                          idleIcon.classList.add("hidden");
+                          loadingIcon.classList.remove("hidden");
+
+                          window.setTimeout(() => {
+                            outputQuestion.textContent = question;
+                            output.classList.remove("hidden");
+                            input.disabled = false;
+                            input.value = "";
+                            submitButton.disabled = false;
+                            idleIcon.classList.remove("hidden");
+                            loadingIcon.classList.add("hidden");
+                            input.focus();
+                          }, 1400);
+                        }}
+                      >
+                        <div data-memory-output role="status" className="relative hidden rounded-2xl bg-[#1D293D] p-5 pr-12 text-white shadow-xl">
+                          <button
+                            type="button"
+                            aria-label="Tutup jawaban"
+                            onClick={event => event.currentTarget.parentElement?.classList.add("hidden")}
+                            className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-slate-300 transition-colors hover:bg-white/20 hover:text-white"
+                          >
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                              <path d="M18 6 6 18M6 6l12 12" />
+                            </svg>
+                          </button>
+                          <p className="text-sm leading-7 text-slate-100">Dari yang Alerin tahu tentangmu, berikut konteks yang paling relevan:</p>
+                          <ul className="mt-3 space-y-2 pl-5 text-sm leading-6 text-slate-200">
+                            <li className="list-disc"><strong className="text-white">Fokus akademik:</strong> {bantuan} pada fase {faseAkademik.toLowerCase()}.</li>
+                            <li className="list-disc"><strong className="text-white">Gaya belajar:</strong> penjelasan terstruktur melalui contoh dan latihan singkat.</li>
+                            <li className="list-disc"><strong className="text-white">Pertanyaanmu:</strong> <span data-memory-question /></li>
+                          </ul>
+                        </div>
+
+                        <div className="flex items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-2">
+                          <input
+                            name="memoryPrompt"
+                            type="text"
+                            aria-label="Tanya atau perbarui ringkasan memori"
+                            placeholder="Tanya atau perbarui"
+                            className="min-w-0 flex-1 bg-transparent px-3 py-2 text-sm text-slate-700 outline-none placeholder:text-slate-400 disabled:text-slate-400"
+                          />
+                          <button data-memory-submit type="submit" aria-label="Kirim" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#347CEA] text-white transition-colors hover:bg-blue-700 disabled:cursor-wait disabled:bg-blue-400">
+                            <span data-memory-idle>
+                              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="m12 19 0-14" />
+                                <path d="m5 12 7-7 7 7" />
+                              </svg>
+                            </span>
+                            <span data-memory-loading className="hidden h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  )}
+
+                  {profileView === "profile-photo" && (
+                    <div className="mx-auto max-w-xl">
+                      <div className="flex flex-col items-center rounded-2xl bg-slate-50 p-6 text-center">
+                        <div
+                          className="flex h-28 w-28 items-center justify-center overflow-hidden rounded-full border-4 border-white text-3xl font-bold text-white shadow-md"
+                          style={{ background: "linear-gradient(135deg,#f59e0b,#ea8b00)" }}
+                        >
+                          {draftProfilePhoto ? <img src={draftProfilePhoto} alt="Pratinjau foto profil" className="h-full w-full object-cover" /> : "RA"}
+                        </div>
+                        <p className="mt-4 text-sm font-bold text-slate-800">Foto Profil</p>
+                        <p className="mt-1 text-xs leading-relaxed text-slate-400">Gunakan foto JPG, PNG, atau WebP dengan ukuran maksimal 5 MB.</p>
+                        <label className="mt-4 cursor-pointer rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50">
+                          Pilih foto baru
+                          <input
+                            type="file"
+                            accept="image/jpeg,image/png,image/webp"
+                            className="sr-only"
+                            onChange={event => {
+                              const file = event.target.files?.[0];
+                              if (!file) return;
+                              if (file.size > 5 * 1024 * 1024) {
+                                setNotice("Ukuran foto maksimal 5 MB.");
+                                window.setTimeout(() => setNotice(""), 2400);
+                                event.target.value = "";
+                                return;
+                              }
+                              const reader = new FileReader();
+                              reader.onload = () => {
+                                if (typeof reader.result === "string") setDraftProfilePhoto(reader.result);
+                              };
+                              reader.readAsDataURL(file);
+                            }}
+                          />
+                        </label>
+                        {draftProfilePhoto && (
+                          <button type="button" onClick={() => setDraftProfilePhoto("")} className="mt-3 text-xs font-semibold text-red-500 hover:text-red-600">
+                            Hapus foto
+                          </button>
+                        )}
+                      </div>
+                      <div className="mt-6 flex justify-end gap-2">
+                        <button type="button" onClick={() => setProfileView("main")} className="rounded-xl border border-slate-200 px-4 py-2.5 text-xs font-semibold text-slate-600">Batal</button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setProfilePhoto(draftProfilePhoto);
+                            if (draftProfilePhoto) {
+                              window.localStorage.setItem("alerin-profile-photo", draftProfilePhoto);
+                            } else {
+                              window.localStorage.removeItem("alerin-profile-photo");
+                            }
+                            completeProfileAction("Foto profil berhasil diperbarui.");
+                          }}
+                          className="rounded-xl bg-[#347CEA] px-5 py-2.5 text-xs font-bold text-white transition-colors hover:bg-blue-700"
+                        >
+                          Simpan foto
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {profileView === "edit-profile" && (
+                    <div className="mx-auto max-w-2xl">
+                      <div className="mb-5">
+                        <p className="text-lg font-bold text-slate-800">Data akun dan akademik</p>
+                        <p className="mt-1 text-[13px] leading-relaxed text-slate-600">Pastikan informasi berikut sesuai dengan data pendaftaranmu agar bantuan Alerin tetap relevan.</p>
+                      </div>
+                      <div className="grid gap-5 sm:grid-cols-2">
+                        <label className="block">
+                          <span className="mb-2 block text-sm font-semibold text-slate-700">Nama Lengkap</span>
+                          <input value={nama} onChange={event => setNama(event.target.value)} className={`${inCls} px-4 py-3 text-base`} style={inSt} onFocus={inF} onBlur={inB} />
+                        </label>
+                        <label className="block">
+                          <span className="mb-2 block text-sm font-semibold text-slate-700">Jenjang Akademik</span>
+                          <select value={jenjang} onChange={event => setJenjang(event.target.value)} className={`${inCls} px-4 py-3 text-base`} style={inSt}>
+                            <option value="S1 (Sarjana)">S1 Sarjana/D4 Diploma</option>
+                            <option value="S2 (Magister)">S2 Magister</option>
+                            <option value="S3 (Doktor)">S3 Doktor</option>
+                          </select>
+                        </label>
+                        <label className="block">
+                          <span className="mb-2 block text-sm font-semibold text-slate-700">Universitas</span>
+                          <input value={universitas} onChange={event => setUniversitas(event.target.value)} className={`${inCls} px-4 py-3 text-base`} style={inSt} onFocus={inF} onBlur={inB} />
+                        </label>
+                        <label className="block">
+                          <span className="mb-2 block text-sm font-semibold text-slate-700">Jurusan</span>
+                          <input value={prodi} onChange={event => setProdi(event.target.value)} className={`${inCls} px-4 py-3 text-base`} style={inSt} onFocus={inF} onBlur={inB} />
+                        </label>
+                        <label className="block sm:col-span-2">
+                          <span className="mb-2 block text-sm font-semibold text-slate-700">Semester Saat Ini</span>
+                          <select value={semester} onChange={event => setSemester(event.target.value)} className={`${inCls} px-4 py-3 text-base`} style={inSt}>
+                            {["Semester 1", "Semester 2", "Semester 3", "Semester 4", "Semester 5", "Semester 6", "Semester 7", "Semester 8", "Semester 9", "Semester 10", "Semester 11", "Semester 12", "Semester 9+"].map(option => (
+                              <option key={option} value={option}>{option}</option>
+                            ))}
+                          </select>
+                        </label>
+                      </div>
+                      <div className="mt-6 flex justify-end gap-2">
+                        <button type="button" onClick={() => setProfileView("main")} className="rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-600">Batal</button>
+                        <button type="button" onClick={saveProfileDetails} className="rounded-xl bg-blue-600 px-6 py-3 text-sm font-bold text-white hover:bg-blue-700">Simpan perubahan</button>
+                      </div>
+                    </div>
+                  )}
+
+                  {profileView === "manage-data" && (
+                    <div className="mx-auto max-w-2xl">
+                      <p className="mb-4 text-sm leading-relaxed text-slate-600">Tambahkan informasi yang boleh digunakan Alerin untuk menyesuaikan jawaban dan rekomendasi.</p>
+
+                      <form
+                        className="flex flex-col gap-2 xs:flex-row"
+                        onSubmit={event => {
+                          event.preventDefault();
+                          addManualKnownItem();
+                        }}
+                      >
+                        <input
+                          value={manualKnownItem}
+                          onChange={event => {
+                            setManualKnownItem(event.target.value);
+                            if (manageDataError) setManageDataError("");
+                          }}
+                          aria-label="Informasi pribadi baru"
+                          placeholder="Contoh: Target sidang Desember 2026"
+                          className="min-w-0 flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm text-slate-800 outline-none transition-colors placeholder:text-slate-400 focus:border-blue-400 focus:bg-white"
+                        />
+                        <button
+                          type="submit"
+                          disabled={!manualKnownItem.trim()}
+                          className="rounded-xl bg-blue-600 px-5 py-3 text-xs font-bold text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300"
+                        >
+                          Tambah
+                        </button>
+                      </form>
+
+                      {manageDataError && (
+                        <p className="mt-2 text-xs font-medium text-red-500" role="alert">{manageDataError}</p>
+                      )}
+
+                      <div className="mt-5 flex items-center justify-between gap-3">
+                        <p className="text-sm font-bold text-slate-800">Data yang digunakan Alerin</p>
+                        <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-500">{draftKnownItems.length} data</span>
+                      </div>
+
+                      <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                        {draftKnownItems.map(item => (
+                          <div key={item} className="flex min-w-0 items-center justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
+                            <span className="min-w-0 break-words text-xs font-medium text-slate-700">{item}</span>
+                            <button
+                              type="button"
+                              aria-label={`Hapus ${item}`}
+                              onClick={() => setDraftKnownItems(items => items.filter(knownItem => knownItem !== item))}
+                              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-red-50 hover:text-red-500"
+                            >
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                                <path d="M18 6 6 18M6 6l12 12" />
+                              </svg>
+                            </button>
+                          </div>
+                        ))}
+                        {draftKnownItems.length === 0 && (
+                          <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50 p-5 text-center text-xs leading-relaxed text-slate-400 sm:col-span-2">
+                            Belum ada data. Tambahkan informasi yang ingin digunakan Alerin.
+                          </div>
+                        )}
+                      </div>
+
+                      <button type="button" onClick={saveManagedData} className="mt-6 w-full rounded-xl bg-blue-600 py-3 text-xs font-bold text-white transition-colors hover:bg-blue-700">Simpan</button>
+                    </div>
+                  )}
+
+                  {profileView === "account-security" && (
+                    <form
+                      className="mx-auto max-w-xl"
+                      onSubmit={event => {
+                        event.preventDefault();
+                        saveAccountSecurity();
+                      }}
+                    >
+                      <div className="space-y-5">
+                        <label className="block">
+                          <span className="mb-2 flex items-center justify-between gap-3 text-sm font-semibold text-slate-700">
+                            Email
+                            <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-500">Tidak dapat diubah</span>
+                          </span>
+                          <input
+                            type="email"
+                            value={accountEmail}
+                            readOnly
+                            aria-readonly="true"
+                            className="w-full cursor-not-allowed rounded-xl border border-slate-200 bg-slate-100 px-4 py-3 text-base text-slate-500 outline-none"
+                          />
+                          <span className="mt-2 block text-[13px] leading-relaxed text-slate-500">Email ini terhubung dengan akun Alerin dan tidak dapat diganti.</span>
+                        </label>
+
+                        <label className="block">
+                          <span className="mb-2 block text-sm font-semibold text-slate-700">Nomor Handphone</span>
+                          <input
+                            type="tel"
+                            inputMode="tel"
+                            autoComplete="tel"
+                            value={draftWhatsapp === whatsapp ? "" : draftWhatsapp}
+                            onChange={event => {
+                              setDraftWhatsapp(event.target.value);
+                              if (accountSecurityError) setAccountSecurityError("");
+                            }}
+                            placeholder="Masukkan nomor aktifmu"
+                            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-base text-slate-800 outline-none transition-colors placeholder:text-slate-400 focus:border-blue-400 focus:bg-white"
+                          />
+                        </label>
+                      </div>
+
+                      <div className="my-6 border-t border-slate-100" />
+
+                      <div>
+                        <p className="text-lg font-bold text-slate-800">Ubah kata sandi</p>
+                        <p className="mt-1 text-[13px] leading-relaxed text-slate-600">Kosongkan bagian ini jika hanya ingin memperbarui nomor Handphone.</p>
+                      </div>
+
+                      <div className="mt-5 space-y-5">
+                        <label className="block">
+                          <span className="mb-2 block text-sm font-semibold text-slate-700">Kata sandi saat ini</span>
+                          <input
+                            type="password"
+                            autoComplete="current-password"
+                            value={currentAccountPassword}
+                            onChange={event => {
+                              setCurrentAccountPassword(event.target.value);
+                              if (accountSecurityError) setAccountSecurityError("");
+                            }}
+                            placeholder="Masukkan kata sandi saat ini"
+                            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-base text-slate-800 outline-none transition-colors placeholder:text-slate-400 focus:border-blue-400 focus:bg-white"
+                          />
+                        </label>
+
+                        <div className="grid gap-5 sm:grid-cols-2">
+                          <label className="block">
+                            <span className="mb-2 block text-sm font-semibold text-slate-700">Kata sandi baru</span>
+                            <input
+                              type="password"
+                              autoComplete="new-password"
+                              value={newAccountPassword}
+                              onChange={event => {
+                                setNewAccountPassword(event.target.value);
+                                if (accountSecurityError) setAccountSecurityError("");
+                              }}
+                              placeholder="Minimal 8 karakter"
+                              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-base text-slate-800 outline-none transition-colors placeholder:text-slate-400 focus:border-blue-400 focus:bg-white"
+                            />
+                          </label>
+                          <label className="block">
+                            <span className="mb-2 block text-sm font-semibold text-slate-700">Konfirmasi kata sandi</span>
+                            <input
+                              type="password"
+                              autoComplete="new-password"
+                              value={confirmAccountPassword}
+                              onChange={event => {
+                                setConfirmAccountPassword(event.target.value);
+                                if (accountSecurityError) setAccountSecurityError("");
+                              }}
+                              placeholder="Ulangi kata sandi baru"
+                              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-base text-slate-800 outline-none transition-colors placeholder:text-slate-400 focus:border-blue-400 focus:bg-white"
+                            />
+                          </label>
+                        </div>
+                      </div>
+
+                      <div className="my-6 border-t border-slate-100" />
+
+                      <div className="rounded-2xl border border-blue-100 bg-blue-50/60 p-4 sm:p-5">
+                        <div>
+                          <p className="text-lg font-bold text-slate-800">Lupa kata sandi?</p>
+                          <p className="mt-1 text-[13px] leading-relaxed text-slate-600">
+                            Masukkan email akunmu untuk menerima tautan pemulihan kata sandi.
+                          </p>
+                        </div>
+                        <label className="mt-4 block">
+                          <span className="mb-2 block text-sm font-semibold text-slate-700">Email pemulihan</span>
+                          <input
+                            type="email"
+                            value={recoveryEmail}
+                            onChange={event => setRecoveryEmail(event.target.value)}
+                            placeholder={accountEmail}
+                            autoComplete="email"
+                            className="w-full rounded-xl border border-blue-100 bg-white px-4 py-3 text-base text-slate-800 outline-none transition-colors placeholder:text-slate-400 focus:border-blue-400"
+                          />
+                        </label>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const email = recoveryEmail.trim() || accountEmail;
+                            setRecoveryEmail(email);
+                            setNotice(`Tautan pemulihan telah dikirim ke ${email}.`);
+                            window.setTimeout(() => setNotice(""), 2600);
+                          }}
+                          className="mt-4 w-full rounded-xl bg-[#347CEA] px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-blue-700"
+                        >
+                          Kirim tautan pemulihan
+                        </button>
+                      </div>
+
+                      {accountSecurityError && (
+                        <p className="mt-4 rounded-xl border border-red-100 bg-red-50 p-3 text-xs font-medium text-red-600" role="alert">{accountSecurityError}</p>
+                      )}
+
+                      <div className="mt-6 flex flex-col-reverse gap-2 xs:flex-row xs:justify-end">
+                        <button type="button" onClick={() => setProfileView("main")} className="rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-50">Batal</button>
+                        <button type="submit" className="rounded-xl bg-blue-600 px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-blue-700">Simpan perubahan</button>
+                      </div>
+                    </form>
+                  )}
+
+                  {profileView === "password" && (
+                    <div className="mx-auto max-w-lg space-y-4">
+                      {["Kata sandi saat ini", "Kata sandi baru", "Konfirmasi kata sandi baru"].map(label => (
+                        <label key={label} className="block">
+                          <span className="mb-1.5 block text-xs font-semibold text-slate-600">{label}</span>
+                          <input type="password" placeholder="••••••••" className={inCls} style={inSt} onFocus={inF} onBlur={inB} />
+                        </label>
+                      ))}
+                      <div className="rounded-xl border border-blue-100 bg-blue-50 p-3 text-[11px] leading-relaxed text-blue-700">Gunakan minimal 8 karakter dengan kombinasi huruf dan angka.</div>
+                      <button type="button" onClick={() => completeProfileAction("Kata sandi berhasil diubah.")} className="w-full rounded-xl bg-blue-600 py-3 text-xs font-bold text-white">Ubah kata sandi</button>
+                    </div>
+                  )}
+
+                  {profileView === "package" && (
+                    <div className="mx-auto max-w-xl">
+                      <div className="rounded-2xl border border-blue-100 bg-blue-50 p-5">
+                        <div className="flex items-center gap-4">
+                          <img src="/assets/7052b.png" alt="" className="h-16 w-16 rounded-2xl object-cover" />
+                          <div>
+                            <p className="font-display text-xl font-bold text-slate-900">Alerin Plus</p>
+                            <p className="mt-1 text-xs text-slate-500">Aktif sampai 30 Desember 2026</p>
+                          </div>
+                        </div>
+                        <div className="mt-5 space-y-2">
+                          {["Akses semua fitur AI", "Analisis akademik mendalam", "Prioritas respons", "Riwayat proyek tanpa batas"].map(feature => (
+                            <div key={feature} className="flex items-center gap-2 text-xs text-slate-700">
+                              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500 text-white"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="m5 12 4 4L19 6"/></svg></span>
+                              {feature}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      <button type="button" onClick={() => completeProfileAction("Simulasi upgrade paket berhasil.")} className="mt-4 w-full rounded-xl bg-blue-600 py-3 text-xs font-bold text-white">Simulasikan upgrade paket</button>
+                    </div>
+                  )}
+
+                  {profileView === "stage-detail" && (
+                    <div className="mx-auto max-w-2xl">
+                      <div className="rounded-2xl border border-blue-100 bg-blue-50 p-5">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600">Tahap Skripsi Aktif</span>
+                        <p className="mt-2 text-lg font-bold text-slate-900">{selectedStage}</p>
+                        <p className="mt-2 text-sm leading-relaxed text-slate-600">Tahap ini memiliki dua penghambat yang perlu diselesaikan sebelum melanjutkan ke seminar proposal.</p>
+                      </div>
+                      <div className="mt-4 space-y-2">
+                        {["Finalisasi instrumen penelitian", "Validasi dosen pembimbing", "Perbaiki catatan revisi Bab III"].map((task, index) => (
+                          <label key={task} className="flex items-center gap-3 rounded-xl border border-slate-200 p-3 text-xs text-slate-700">
+                            <input type="checkbox" defaultChecked={index === 2} className="h-4 w-4 accent-blue-600" />
+                            {task}
+                          </label>
+                        ))}
+                      </div>
+                      <button type="button" onClick={() => completeProfileAction("Progres tahapan berhasil diperbarui.")} className="mt-5 w-full rounded-xl bg-blue-600 py-3 text-xs font-bold text-white">Simpan progres</button>
+                    </div>
+                  )}
+
+                  {profileView === "reset-plan" && (
+                    <div className="mx-auto max-w-xl space-y-4">
+                      <label className="block">
+                        <span className="mb-1.5 block text-xs font-semibold text-slate-600">Target seminar proposal</span>
+                        <input type="date" defaultValue="2026-10-18" className={inCls} style={inSt} />
+                      </label>
+                      <label className="block">
+                        <span className="mb-1.5 block text-xs font-semibold text-slate-600">Jam belajar per minggu</span>
+                        <input type="range" min="2" max="30" defaultValue="12" className="w-full accent-blue-600" />
+                      </label>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="rounded-xl bg-slate-50 p-4"><p className="text-[10px] text-slate-400">Risiko baru</p><p className="mt-1 text-sm font-bold text-emerald-600">Rendah</p></div>
+                        <div className="rounded-xl bg-slate-50 p-4"><p className="text-[10px] text-slate-400">Estimasi</p><p className="mt-1 text-sm font-bold text-slate-800">18 jam</p></div>
+                      </div>
+                      <button type="button" onClick={() => completeProfileAction("Rencana belajar berhasil diperbarui.")} className="w-full rounded-xl bg-blue-600 py-3 text-xs font-bold text-white">Terapkan rencana</button>
+                    </div>
+                  )}
+
+                  {profileView === "notifications" && (
+                    <div className="mx-auto max-w-xl space-y-3">
+                      {["Pengingat deadline", "Ringkasan progres mingguan", "Rekomendasi dari Alerin"].map(label => (
+                        <button key={label} type="button" onClick={() => setNotificationsEnabled(value => !value)} className="flex w-full items-center justify-between rounded-xl border border-slate-200 p-4 text-left">
+                          <span className="text-sm font-medium text-slate-700">{label}</span>
+                          <span className={`relative h-6 w-11 rounded-full transition-colors ${notificationsEnabled ? "bg-blue-600" : "bg-slate-300"}`}><span className={`absolute top-1 h-4 w-4 rounded-full bg-white transition-all ${notificationsEnabled ? "left-6" : "left-1"}`} /></span>
+                        </button>
+                      ))}
+                      <button type="button" onClick={() => completeProfileAction("Pengaturan notifikasi disimpan.")} className="w-full rounded-xl bg-blue-600 py-3 text-xs font-bold text-white">Simpan</button>
+                    </div>
+                  )}
+
+                  {profileView === "privacy-policy" && (
+                    <div className="mx-auto max-w-2xl">
+                      <div className="rounded-2xl border border-blue-100 bg-blue-50 p-5">
+                        <p className="text-base font-bold text-slate-900">Kebijakan Privasi Alerin</p>
+                        <p className="mt-1 text-xs text-slate-500">Terakhir diperbarui: 2 Oktober 2026</p>
+                        <p className="mt-3 text-sm leading-7 text-slate-600">
+                          Privasimu penting bagi kami. Kebijakan ini menjelaskan data yang Alerin simpan, cara penggunaannya, dan pilihan yang kamu miliki.
+                        </p>
+                      </div>
+
+                      <div className="mt-5 divide-y divide-slate-100">
+                        {[
+                          {
+                            title: "Data yang kami kumpulkan",
+                            description: "Alerin menyimpan data akun, profil akademik, preferensi belajar, serta percakapan yang diperlukan untuk memberikan bantuan yang relevan.",
+                          },
+                          {
+                            title: "Cara kami menggunakan data",
+                            description: "Data digunakan untuk mempersonalisasi jawaban, menampilkan progres akademik, menyimpan pengaturan, dan meningkatkan keamanan layanan.",
+                          },
+                          {
+                            title: "Penyimpanan dan keamanan",
+                            description: "Kami menerapkan perlindungan teknis yang wajar untuk menjaga data dari akses, perubahan, atau penggunaan yang tidak sah.",
+                          },
+                          {
+                            title: "Kontrol pengguna",
+                            description: "Kamu dapat mengubah data profil, menonaktifkan personalisasi, mengelola memori Alerin, atau menghapus riwayat melalui pengaturan Privasi & Data.",
+                          },
+                          {
+                            title: "Pembagian data",
+                            description: "Alerin tidak menjual data pribadimu. Data hanya dibagikan jika diperlukan untuk menjalankan layanan atau memenuhi kewajiban hukum.",
+                          },
+                        ].map(section => (
+                          <section key={section.title} className="py-4 first:pt-0 last:pb-0">
+                            <h2 className="text-sm font-bold text-[#1D293D]">{section.title}</h2>
+                            <p className="mt-1.5 text-sm leading-6 text-slate-500">{section.description}</p>
+                          </section>
+                        ))}
+                      </div>
+
+                      <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50 p-4">
+                        <p className="text-sm font-bold text-slate-800">Pertanyaan tentang privasi?</p>
+                        <p className="mt-1 text-xs leading-relaxed text-slate-500">Hubungi tim Alerin melalui pusat bantuan jika kamu ingin menanyakan atau meminta penghapusan data.</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {profileView === "terms" && (
+                    <div className="mx-auto max-w-2xl">
+                      <div className="rounded-2xl border border-blue-100 bg-blue-50 p-5">
+                        <p className="text-base font-bold text-slate-900">Syarat &amp; Ketentuan Alerin</p>
+                        <p className="mt-1 text-xs text-slate-500">Terakhir diperbarui: 2 Oktober 2026</p>
+                        <p className="mt-3 text-sm leading-7 text-slate-600">
+                          Dengan menggunakan Alerin, kamu menyetujui ketentuan berikut. Bacalah informasi ini agar kamu memahami hak dan tanggung jawab selama menggunakan layanan.
+                        </p>
+                      </div>
+
+                      <div className="mt-5 divide-y divide-slate-100">
+                        {[
+                          {
+                            title: "Penggunaan layanan",
+                            description: "Alerin ditujukan sebagai asisten akademik untuk membantu proses belajar, riset, penulisan, dan pengelolaan progres mahasiswa.",
+                          },
+                          {
+                            title: "Tanggung jawab akun",
+                            description: "Kamu bertanggung jawab menjaga kerahasiaan informasi masuk, memberikan data yang benar, serta memastikan seluruh aktivitas akun dilakukan dengan aman.",
+                          },
+                          {
+                            title: "Integritas akademik",
+                            description: "Hasil dari Alerin harus digunakan secara bertanggung jawab. Kamu tetap wajib mengikuti aturan kampus, melakukan verifikasi, dan mencantumkan sumber bila diperlukan.",
+                          },
+                          {
+                            title: "Batasan penggunaan",
+                            description: "Kamu tidak diperkenankan menggunakan Alerin untuk tindakan ilegal, merugikan pihak lain, mengganggu layanan, atau mencoba mengakses sistem tanpa izin.",
+                          },
+                          {
+                            title: "Konten dan jawaban AI",
+                            description: "Jawaban AI dapat mengandung kekeliruan. Pengguna bertanggung jawab meninjau ketepatan informasi sebelum menggunakannya untuk keputusan akademik.",
+                          },
+                          {
+                            title: "Perubahan layanan",
+                            description: "Alerin dapat memperbarui fitur dan ketentuan dari waktu ke waktu. Perubahan penting akan diinformasikan melalui aplikasi.",
+                          },
+                        ].map(section => (
+                          <section key={section.title} className="py-4 first:pt-0 last:pb-0">
+                            <h2 className="text-sm font-bold text-[#1D293D]">{section.title}</h2>
+                            <p className="mt-1.5 text-sm leading-6 text-slate-500">{section.description}</p>
+                          </section>
+                        ))}
+                      </div>
+
+                      <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50 p-4">
+                        <p className="text-sm font-bold text-slate-800">Butuh bantuan?</p>
+                        <p className="mt-1 text-xs leading-relaxed text-slate-500">Hubungi pusat bantuan Alerin jika ada bagian dari syarat dan ketentuan yang ingin kamu tanyakan.</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {profileView === "privacy" && (
+                    <div className="mx-auto max-w-xl">
+                      <button type="button" onClick={() => setPrivacyPersonalization(value => !value)} className="flex w-full items-center justify-between rounded-xl border border-slate-200 p-4 text-left">
+                        <span><span className="block text-sm font-semibold text-slate-700">Personalisasi jawaban</span><span className="mt-1 block text-[11px] text-slate-400">Izinkan Alerin menggunakan data akademikmu.</span></span>
+                        <span className={`relative h-6 w-11 shrink-0 rounded-full ${privacyPersonalization ? "bg-blue-600" : "bg-slate-300"}`}><span className={`absolute top-1 h-4 w-4 rounded-full bg-white ${privacyPersonalization ? "left-6" : "left-1"}`} /></span>
+                      </button>
+                      <button type="button" onClick={() => { setNotice("Riwayat berhasil dihapus dalam simulasi."); window.setTimeout(() => setNotice(""), 2200); }} className="mt-3 w-full rounded-xl border border-red-200 py-3 text-xs font-bold text-red-500 hover:bg-red-50">Hapus seluruh riwayat</button>
+                      <button type="button" onClick={() => completeProfileAction("Pengaturan privasi disimpan.")} className="mt-3 w-full rounded-xl bg-blue-600 py-3 text-xs font-bold text-white">Simpan</button>
+                    </div>
+                  )}
+
+                  {profileView === "about" && (
+                    <div className="mx-auto max-w-xl text-center">
+                      <img src="/assets/alerin-logo.png" alt="Alerin" className="mx-auto h-20 w-20 rounded-2xl object-cover" />
+                      <p className="mt-4 font-display text-xl font-bold text-slate-900">Alerin AI</p>
+                      <p className="mt-2 text-sm leading-relaxed text-slate-500">Asisten akademik untuk membantu mahasiswa Indonesia belajar, meneliti, dan menyelesaikan tugas akhirnya.</p>
+                      <p className="mt-4 text-xs text-slate-400">Versi simulasi 1.0.0</p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Profil tab */}
+              {profileView === "main" && subTab === "profil" && (
+                <div className="grid gap-3 md:grid-cols-2">
+                  {/* Detail Informasi */}
+                  <div className="bg-white rounded-2xl p-5" style={{ boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}>
+                    <div className="flex items-center justify-between mb-4">
+                      <p className="text-base font-bold text-slate-900">Detail Informasi</p>
+                      <button onClick={() => setProfileView("edit-profile")} className="text-sm font-semibold text-blue-600 hover:text-blue-700">Edit</button>
+                    </div>
+                    <div className="divide-y divide-slate-100">
+                      {[
+                        ["Nama Lengkap", nama],
+                        ["Jenjang Akademik", jenjang.replace(/\s*\([^)]*\)/, "")],
+                        ["Jurusan", prodi],
+                        ["Semester", semester],
+                        ["Kampus", universitas],
+                      ].map(([label, value]) => (
+                        <div key={label} className="flex min-h-11 items-center justify-between gap-4 py-2.5">
+                          <span className="w-32 shrink-0 text-[13px] font-semibold text-slate-600">{label}</span>
+                          <span className="text-right text-[13px] font-bold text-slate-800">{value}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Akun & Keamanan */}
+                  <div className="bg-white rounded-2xl p-5" style={{ boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}>
+                    <div className="mb-4 flex items-center gap-2">
+                      <p className="mr-auto text-base font-bold text-slate-900">Akun &amp; Keamanan</p>
+                      <button type="button" onClick={openAccountSecurity} className="text-sm font-semibold text-blue-600 transition-colors hover:text-blue-700">Edit</button>
+                    </div>
+                    <div className="divide-y divide-slate-100">
+                      {[
+                        { label: "Email", value: accountEmail },
+                        { label: "Nomor Handphone", value: whatsapp },
+                        { label: "Kata Sandi", value: "Ubah kata sandi" },
+                        { label: "Lupa Kata Sandi", value: "Pulihkan akun" },
+                      ].map(row => (
+                        <div key={row.label} className="flex min-h-11 items-center justify-between gap-4 py-2.5">
+                          <span className="text-[13px] font-semibold text-slate-600">{row.label}</span>
+                          <span className="flex items-center gap-2 text-right">
+                            <span className={`text-[13px] font-bold ${row.label === "Kata Sandi" || row.label === "Lupa Kata Sandi" ? "text-black" : "text-slate-800"}`}>{row.value}</span>
+                            {row.action === "Kelola" && <button type="button" onClick={() => setProfileView("package")} className="text-[13px] font-semibold text-blue-600">Kelola</button>}
+                            {row.action === "›" && <button type="button" onClick={() => setProfileView("password")} className="text-slate-400">›</button>}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Paket Alerin Plus */}
+                  <div className="w-full rounded-2xl bg-white p-5 md:col-span-2" style={{ boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}>
+                    <div className="flex flex-col gap-4 py-1 sm:flex-row sm:items-center sm:justify-between">
+                      <div className="flex items-center gap-3">
+                        <img src="/assets/7052b.png" alt="" className="h-16 w-16 rounded-2xl object-cover" />
+                        <div>
+                          <p className="font-display text-xl font-bold text-slate-900">Paket Alerin Plus</p>
+                          <span className="mt-2 inline-flex rounded-full border border-solid border-[#558FDF] bg-[#558FDF] px-2 py-0.5 text-[10px] font-bold text-white">
+                            Masa Aktif Sampai 30 Desember 2026
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
+                        <button type="button" onClick={() => setPackageModalOpen(true)} className="flex items-center justify-center rounded-lg border border-[#347CEA] bg-white px-5 py-3 text-xs font-bold uppercase text-[#347CEA] transition-colors hover:bg-blue-50">
+                          Kelola Paket
+                        </button>
+                        <button type="button" onClick={() => setUpgradeModalOpen(true)} className="flex items-center justify-center rounded-lg bg-[#347CEA] px-5 py-3 text-xs font-bold uppercase text-white transition-colors hover:bg-blue-700">
+                          Upgrade Paket
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Progres tab */}
+              {profileView === "main" && subTab === "progres" && (
+                <div className="grid items-start gap-3 md:grid-cols-[minmax(0,2fr)_minmax(220px,0.75fr)]">
+                  <div
+                    className="relative overflow-hidden rounded-2xl border border-blue-200 bg-blue-50 p-4 md:col-span-2 md:flex md:items-center md:justify-between md:gap-5 md:p-5"
+                    style={{ boxShadow: "0 8px 24px rgba(37,99,235,0.08)" }}
+                  >
+                    <div className="pointer-events-none absolute -right-8 -top-10 h-32 w-32 rounded-full bg-blue-200/40 blur-2xl" />
+                    <div className="relative flex items-start gap-3">
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-white shadow-sm">
+                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                          <path d="M6 12v5c3 3 9 3 12 0v-5" />
+                        </svg>
+                      </span>
+                      <div>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <p className="text-sm font-bold text-slate-900">Terintegrasi dengan Fitur Skripsi</p>
+                          <span className="rounded-full border border-blue-200 bg-white px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-blue-600">Tersinkron</span>
+                        </div>
+                        <p className="mt-1 max-w-2xl text-xs leading-relaxed text-slate-600">
+                          Progres di halaman ini terhubung dengan Fitur Skripsi. Akses fiturnya untuk melihat panduan lengkap, menyusun bab, mengelola revisi, dan mendapatkan bantuan di setiap tahap.
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => onTab("fitur")}
+                      className="relative mt-4 flex w-full shrink-0 items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-xs font-bold text-white shadow-sm transition-colors hover:bg-blue-700 md:mt-0 md:w-auto"
+                    >
+                      Buka Fitur Skripsi
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </button>
+                  </div>
+
+                  {/* Tahapan skripsi */}
+                  <div className="rounded-2xl border border-slate-200 bg-white p-5 md:p-6" style={{ boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}>
+                    <div className="mb-5 flex flex-col items-start gap-3 border-b border-slate-200 pb-5 md:flex-row md:flex-wrap md:items-center md:justify-between">
+                      <div className="w-full md:w-auto">
+                        <p className="font-display text-xs font-bold uppercase tracking-wider text-blue-600">Tahapan Skripsi</p>
+                        <p className="mt-1 whitespace-nowrap font-['Inter:Bold'] text-base font-bold text-slate-900">Jalur berdasarkan pedoman kampusmu</p>
+                      </div>
+                      <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">Ilmu Komunikasi · S1</span>
+                    </div>
+
+                    <div>
+                      {[
+                        { title: "Persiapan topik & judul", description: "Selesai · judul sementara tersimpan", state: "done" },
+                        { title: "Penyusunan proposal", description: "Bab I–II terverifikasi", state: "done" },
+                        { title: "Revisi Bab III & instrumen", description: "Tahap saat ini · 2 penghambat", state: "active" },
+                        { title: "Seminar proposal", description: "Target 18 Oktober 2026", state: "waiting" },
+                        { title: "Pengumpulan data", description: "Belum dapat dimulai", state: "waiting" },
+                        { title: "Pengolahan & analisis", description: "Belum dimulai", state: "waiting" },
+                        { title: "Penulisan hasil & pembahasan", description: "Belum dimulai", state: "waiting" },
+                        { title: "Finalisasi & sidang", description: "Belum dimulai", state: "waiting" },
+                      ].map((stage, index, stages) => (
+                        <div key={stage.title} className="relative flex min-h-16 gap-3">
+                          {index < stages.length - 1 && <span className="absolute left-3 top-7 h-full w-px bg-slate-200" />}
+                          <span
+                            className={`relative z-10 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[10px] font-bold ${
+                              stage.state === "done"
+                                ? "bg-emerald-500 text-white"
+                                : stage.state === "active"
+                                  ? "bg-blue-600 text-white ring-4 ring-blue-100"
+                                  : "border border-slate-200 bg-slate-100 text-slate-400"
+                            }`}
+                          >
+                            {stage.state === "done" ? (
+                              <img src="/assets/d6611.svg" alt="" />
+                            ) : index + 1}
+                          </span>
+                          <div className="min-w-0 flex-1 pb-4">
+                            <p className="text-sm font-semibold text-slate-800">{stage.title}</p>
+                            <p className="mt-0.5 text-[11px] text-slate-400">{stage.description}</p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSelectedStage(stage.title);
+                              setProfileView("stage-detail");
+                            }}
+                            className="self-start text-[11px] font-medium text-blue-600 hover:text-blue-700"
+                          >
+                            Detail
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Risiko deadline */}
+                  <div className="rounded-2xl border border-slate-200 bg-white p-5" style={{ boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}>
+                    <p className="font-display text-[11px] font-bold uppercase tracking-wider text-blue-600">Risiko Deadline</p>
+                    <div className="relative mx-auto mt-4 h-28 w-44">
+                      <svg width="176" height="104" viewBox="0 0 176 104" fill="none" aria-hidden="true">
+                        <defs>
+                          <linearGradient id="deadline-risk-gradient" x1="20" y1="90" x2="144" y2="22" gradientUnits="userSpaceOnUse">
+                            <stop stopColor="#84cc16" />
+                            <stop offset="0.5" stopColor="#f59e0b" />
+                            <stop offset="1" stopColor="#f97316" />
+                          </linearGradient>
+                        </defs>
+                        <path d="M18 88a70 70 0 0 1 140 0" stroke="#f1f5f9" strokeWidth="14" strokeLinecap="round" />
+                        <path d="M18 88a70 70 0 0 1 112-56" stroke="url(#deadline-risk-gradient)" strokeWidth="14" strokeLinecap="round" />
+                      </svg>
+                      <p className="absolute inset-x-0 bottom-2 text-center text-xl font-extrabold text-amber-500">Sedang</p>
+                    </div>
+                    <p className="mt-3 text-[11px] leading-relaxed text-slate-500">
+                      Sempro masih memungkinkan tercapai jika dua penghambat utama selesai paling lambat 2 Oktober.
+                    </p>
+                    <div className="mt-4 grid grid-cols-2 gap-2">
+                      <div className="rounded-xl border border-slate-100 bg-slate-50 p-3">
+                        <p className="text-[10px] font-medium text-slate-400">Sisa waktu</p>
+                        <p className="mt-1 text-xs font-bold text-slate-900">24 hari</p>
+                      </div>
+                      <div className="rounded-xl border border-slate-100 bg-slate-50 p-3">
+                        <p className="text-[10px] font-medium text-slate-400">Estimasi kebutuhan</p>
+                        <p className="mt-1 text-xs font-bold text-slate-900">16–22 jam</p>
+                      </div>
+                    </div>
+                    <button type="button" onClick={() => setProfileView("reset-plan")} className="mt-3 w-full rounded-xl border border-slate-200 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50">
+                      Atur ulang rencana
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Personalisasi tab */}
+              {profileView === "main" && subTab === "personalisasi" && (
+                <div className="space-y-3">
+                  <div className="bg-white rounded-2xl p-5" style={{ boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}>
+                    <div className="mb-4">
+                      <p className="text-base font-bold text-slate-900 md:text-[15px]">Gaya Bicara dan Karakteristik</p>
+                      <p className="mt-1 text-[13px] font-medium leading-relaxed text-[#1D293D] md:text-xs">Pilih cara Alerin menyampaikan jawaban agar lebih sesuai dengan keinginanmu</p>
+                    </div>
+                    <div className="grid max-h-[250px] gap-2.5 overflow-y-auto overscroll-contain pr-2 sm:max-h-none sm:grid-cols-2 sm:overflow-visible sm:pr-0">
+                      {[
+                        ["Default", "Gaya dan bahasa bawaan"],
+                        ["Rapi dan Presisi", "Jawaban terstruktur dan jelas"],
+                        ["Ramah", "Hangat dan akrab"],
+                        ["Lugas", "Langsung ke inti"],
+                        ["Nyentrik", "Menyenangkan dan imajinatif"],
+                        ["Sinis", "Kritis dan analitis"],
+                      ].map(([title, description]) => {
+                        const active = communicationStyle === title;
+                        return (
+                          <button
+                            key={title}
+                            type="button"
+                            aria-pressed={active}
+                            onClick={() => setCommunicationStyle(title)}
+                            className={`rounded-xl border p-3 text-left transition-all ${active ? "border-blue-500 bg-[#455877] text-white shadow-sm ring-2 ring-blue-100" : "border-slate-100 bg-slate-50 hover:border-blue-200"}`}
+                          >
+                            <span className={`block text-[13px] font-bold md:text-xs ${active ? "text-white" : "text-[#1D293D]"}`}>{title}</span>
+                            <span className={`mt-1 block text-xs font-medium md:text-[11px] ${active ? "text-slate-200" : "text-[#1D293D]"}`}>{description}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        window.localStorage.setItem("alerin-communication-style", communicationStyle);
+                        setNotice(`Gaya bicara "${communicationStyle}" berhasil disimpan.`);
+                        window.setTimeout(() => setNotice(""), 2400);
+                      }}
+                      className="mt-4 w-full rounded-xl bg-[#347CEA] py-3 text-sm font-bold text-white transition-colors hover:bg-blue-700 md:text-[13px]"
+                    >
+                      {"Simpan\u00A0\u00A0"}
+                    </button>
+                  </div>
+
+                  <div className="rounded-2xl bg-white p-5 shadow-sm">
+                    <div className="flex items-start gap-3">
+                      <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-colors ${privacyPersonalization ? "bg-[#347CEA]" : "bg-slate-400"}`}>
+                        <img src="/assets/8fdb1.svg" alt="" />
+                      </span>
+
+                      <span className="min-w-0 flex-1">
+                        <span className="flex items-center justify-between gap-3">
+                          <span className="font-['Inter:Bold'] text-base font-bold text-slate-900 md:text-[15px]">Memori Alerin</span>
+                          <button
+                            type="button"
+                            role="switch"
+                            aria-checked={privacyPersonalization}
+                            aria-label={privacyPersonalization ? "Nonaktifkan Memori Alerin" : "Aktifkan Memori Alerin"}
+                            onClick={toggleAlerinMemory}
+                            className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${privacyPersonalization ? "bg-[#347CEA]" : "bg-slate-300"}`}
+                          >
+                            <span className={`absolute top-1 h-4 w-4 rounded-full bg-white shadow-sm transition-all ${privacyPersonalization ? "left-6" : "left-1"}`} />
+                          </button>
+                        </span>
+                        <span className="mt-1 block font-['Inter:Medium'] text-[13px] font-medium leading-relaxed text-[#1D293D] md:text-xs">
+                          Alerin mengingat konteks penting agar jawaban berikutnya lebih sesuai
+                        </span>
+                      </span>
+                    </div>
+
+                    <div className="mt-4 rounded-xl border border-slate-100 bg-slate-50 p-4">
+                      <div className="flex items-center justify-between gap-3">
+                        <span className="flex min-w-0 items-center gap-2">
+                          <span className={`h-2 w-2 shrink-0 rounded-full ${privacyPersonalization ? "bg-emerald-500" : "bg-slate-300"}`} />
+                          <span className="truncate font-['Inter:Semi_Bold'] text-[13px] font-semibold text-slate-700 md:text-xs">
+                            {privacyPersonalization ? "Memori aktif" : "Memori dijeda"}
+                          </span>
+                        </span>
+                        <span className="shrink-0 rounded-full bg-white px-2.5 py-1 font-['Inter:Semi_Bold'] text-xs font-semibold text-slate-600 shadow-sm md:text-[11px]">
+                          {knownItems.length} memori
+                        </span>
+                      </div>
+
+                      {privacyPersonalization ? (
+                        <div className="mt-3 flex flex-wrap gap-1.5">
+                          {knownItems.slice(0, 2).map(item => (
+                            <span key={item} className="max-w-full truncate rounded-full border border-slate-200 bg-white px-3 py-1 font-['Inter:Regular'] text-xs text-slate-600 md:text-[11px]">{item}</span>
+                          ))}
+                          {knownItems.length > 2 && (
+                            <span className="rounded-full border border-slate-200 bg-white px-3 py-1 font-['Inter:Semi_Bold'] text-xs font-semibold text-blue-600 md:text-[11px]">+{knownItems.length - 2} lainnya</span>
+                          )}
+                          {knownItems.length === 0 && (
+                            <p className="font-['Inter:Regular'] text-xs leading-relaxed text-slate-500 md:text-[11px]">Belum ada informasi yang disimpan.</p>
+                          )}
+                        </div>
+                      ) : (
+                        <p className="mt-2 font-['Inter:Regular'] text-xs leading-relaxed text-slate-500 md:text-[11px]">Data tetap tersimpan, tetapi sementara tidak digunakan.</p>
+                      )}
+
+                      <div className="mt-4 flex justify-end border-t border-slate-200 pt-3">
+                        <button type="button" onClick={openManageData} className="rounded-lg border border-slate-200 bg-white px-3 py-2 font-['Inter:Semi_Bold'] text-[13px] font-semibold text-blue-600 transition-colors hover:border-blue-200 hover:bg-blue-50 md:text-xs">
+                          Kelola memori Alerin
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-4 rounded-xl border border-slate-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="min-w-0">
+                      <p className="text-base font-bold text-[#1D293D] md:text-[15px]">Ringkasan memori</p>
+                    <p className="mt-1 max-w-2xl text-[13px] leading-relaxed text-[#343941] md:text-xs">
+                        Lihat ikhtisar tentang hal penting yang telah dipelajari Alerin tentangmu. Kamu tetap dapat mengelola setiap memori yang tersimpan.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setProfileView("memory-summary")}
+                      className="shrink-0 rounded-full border border-slate-300 bg-white px-5 py-2.5 text-[13px] font-bold text-[#1D293D] transition-colors hover:border-blue-300 hover:bg-blue-50 md:text-xs"
+                    >
+                      Kelola
+                    </button>
+                  </div>
+
+                  <div className="bg-white rounded-2xl p-5" style={{ boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}>
+                    <div className="flex items-center gap-2 mb-4">
+                      <p className="text-base font-bold text-slate-900 md:text-[15px]">Tentang Kamu</p>
+                    </div>
+                    <div className="grid sm:grid-cols-2 gap-3 mb-3">
+                      <div>
+                        <p className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-slate-500 md:text-[11px]">Nama panggilan</p>
+                        <div
+                          contentEditable
+                          suppressContentEditableWarning
+                          role="textbox"
+                          aria-label="Nama panggilan"
+                          className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-[13px] font-medium text-slate-700 outline-none transition-colors focus:border-blue-400 focus:bg-white md:text-xs"
+                        >
+                          Raka
+                        </div>
+                      </div>
+                    </div>
+                    <p className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-slate-500 md:text-[11px]">Deskripsi minat dan gaya riset</p>
+                    <div
+                      contentEditable
+                      suppressContentEditableWarning
+                      role="textbox"
+                      aria-label="Deskripsi minat dan gaya riset"
+                      aria-multiline="true"
+                      className="min-h-24 rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-[13px] leading-relaxed text-slate-600 outline-none transition-colors focus:border-blue-400 focus:bg-white md:text-xs"
+                    >
+                      Saya tertarik pada manajemen dan riset terapan. Saya lebih mudah memahami penjelasan melalui contoh serta latihan singkat.
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Umum tab */}
+              {profileView === "main" && subTab === "umum" && (
+                <div className="space-y-3">
+                  {/* Mode bahasa */}
+                  <div className="bg-white rounded-2xl p-5" style={{ boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}>
+                    <div className="mb-4 flex items-center justify-between gap-3">
+                      <p className="font-['Inter:Bold'] text-base font-bold text-slate-900 md:text-[15px]">Mode Bahasa</p>
+                      <p className="text-right font-['Plus_Jakarta_Sans'] text-[13px] font-semibold leading-relaxed text-[#414243] md:text-xs">Pilih satu dari 27 bahasa</p>
+                    </div>
+                    <div className="grid max-h-80 gap-2.5 overflow-y-auto overscroll-contain pr-2 sm:grid-cols-2 lg:grid-cols-3">
+                      {[
+                        { id: "id", label: "Bahasa Indonesia", description: "Indonesia" },
+                        { id: "en", label: "English", description: "English" },
+                        { id: "ms", label: "Bahasa Melayu", description: "Malaysia" },
+                        { id: "es", label: "Español", description: "Spanyol" },
+                        { id: "fr", label: "Français", description: "Prancis" },
+                        { id: "de", label: "Deutsch", description: "Jerman" },
+                        { id: "pt", label: "Português", description: "Portugal & Brasil" },
+                        { id: "it", label: "Italiano", description: "Italia" },
+                        { id: "nl", label: "Nederlands", description: "Belanda" },
+                        { id: "ru", label: "Русский", description: "Rusia" },
+                        { id: "uk", label: "Українська", description: "Ukraina" },
+                        { id: "pl", label: "Polski", description: "Polandia" },
+                        { id: "tr", label: "Türkçe", description: "Turki" },
+                        { id: "ar", label: "العربية", description: "Arab" },
+                        { id: "fa", label: "فارسی", description: "Persia" },
+                        { id: "hi", label: "हिन्दी", description: "India" },
+                        { id: "bn", label: "বাংলা", description: "Bengali" },
+                        { id: "ur", label: "اردو", description: "Urdu" },
+                        { id: "zh", label: "中文", description: "Mandarin" },
+                        { id: "ja", label: "日本語", description: "Jepang" },
+                        { id: "ko", label: "한국어", description: "Korea" },
+                        { id: "th", label: "ไทย", description: "Thailand" },
+                        { id: "vi", label: "Tiếng Việt", description: "Vietnam" },
+                        { id: "fil", label: "Filipino", description: "Filipina" },
+                        { id: "sw", label: "Kiswahili", description: "Afrika Timur" },
+                        { id: "sv", label: "Svenska", description: "Swedia" },
+                        { id: "cs", label: "Čeština", description: "Ceko" },
+                      ].map(option => {
+                        const active = languageMode === option.id;
+                        return (
+                          <button
+                            key={option.id}
+                            type="button"
+                            aria-pressed={active}
+                            onClick={() => setLanguageMode(option.id)}
+                            className={`relative min-h-profile-language-option rounded-xl border p-3 text-left transition-all ${active ? "border-profile-language bg-blue-50" : "border-slate-200 bg-white hover:border-blue-200"}`}
+                          >
+                            <span className={`block font-['Inter:Bold'] text-[13px] font-bold md:text-xs ${active ? "text-blue-700" : "text-slate-700"}`}>{option.label}</span>
+                            <span className="mt-1 block font-['Inter:Regular'] text-xs text-slate-500 md:text-profile-caption md:text-slate-400">{option.description}</span>
+                            <span className={`absolute right-3 top-3 flex h-4 w-4 items-center justify-center rounded-full border ${active ? "border-profile-language bg-profile-language" : "border-slate-300"}`}>
+                              {active && <span className="h-1.5 w-1.5 rounded-full bg-white" />}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        window.localStorage.setItem("alerin-language", languageMode);
+                        window.dispatchEvent(new CustomEvent("alerin-language-change", { detail: languageMode }));
+                        setNotice("Perubahan bahasa berhasil disimpan.");
+                        window.setTimeout(() => setNotice(""), 2400);
+                      }}
+                      className="mt-4 w-full rounded-xl bg-[#347CEA] py-3 text-sm font-bold text-white transition-colors hover:bg-blue-700 md:text-[13px]"
+                    >
+                      Simpan perubahan
+                    </button>
+                  </div>
+
+                  {/* Tema */}
+                  <div className="bg-white rounded-2xl p-5" style={{ boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}>
+                    <div className="mb-4">
+                      <p className="text-base font-bold text-slate-900 md:text-[15px]">Tema Gelap dan Terang</p>
+                      <p className="mt-1 text-[13px] leading-relaxed text-slate-500 md:text-xs">Pilih tampilan yang paling nyaman untuk belajar.</p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      {[
+                        { id: "light" as const, label: "Terang", shell: "bg-slate-100", panel: "profile-theme-light-panel", line: "bg-slate-200" },
+                        { id: "dark" as const, label: "Gelap", shell: "bg-slate-950", panel: "bg-slate-800", line: "bg-slate-600" },
+                      ].map(option => {
+                        const active = themeMode === option.id;
+                        return (
+                          <button
+                            key={option.id}
+                            type="button"
+                            aria-pressed={active}
+                            onClick={(event) => {
+                              const isDark = option.id === "dark";
+                              const shell = event.currentTarget.closest(".h-screen");
+                              setThemeMode(option.id);
+                              shell?.classList.toggle("profile-dark", isDark);
+                              if (shell instanceof HTMLElement) {
+                                shell.style.backgroundColor = isDark ? "#0f172a" : "#ffffff";
+                              }
+                              document.documentElement.style.colorScheme = option.id;
+                              window.localStorage.setItem("alerin-theme", option.id);
+                            }}
+                            className={`rounded-xl border p-2.5 text-left transition-all ${active ? "border-blue-500 ring-2 ring-blue-100" : "border-slate-200 hover:border-blue-200"}`}
+                          >
+                            <span className={`block rounded-lg p-2 ${option.shell}`}>
+                              <span className={`block h-12 rounded-md p-2 ${option.panel}`}>
+                                <span className={`block h-1.5 w-2/3 rounded-full ${option.line}`} />
+                                <span className={`mt-2 block h-1.5 w-1/2 rounded-full ${option.line}`} />
+                              </span>
+                            </span>
+                            <span className="mt-2 flex items-center justify-between px-0.5">
+                              <span className="text-[13px] font-bold text-slate-700 md:text-xs">{option.label}</span>
+                              <span className={`h-4 w-4 rounded-full border ${active ? "border-blue-500 bg-blue-500 ring-2 ring-blue-100" : "border-slate-300"}`} />
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Menu list */}
+                  <div className="bg-white rounded-2xl overflow-hidden" style={{ boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}>
+                    {[
+                      { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="2"><rect x="3" y="3" width="18" height="14" rx="2"/><path d="M8 21h8M12 17v4M16 8l-4 4-2-2M12 5v7"/></svg>, label: "Pasang Pintasan", view: "edit-profile" as ProfileView },
+                      { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h6"/></svg>, label: "Kebijakan Privasi", view: "privacy-policy" as ProfileView },
+                      { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11"/><path d="M8 7h6M8 11h6M8 15h3"/><path d="m16 19 2 2 4-4"/></svg>, label: "Syarat & Ketentuan", view: "terms" as ProfileView },
+                    ].map((item, i) => (
+                      <button key={i} type="button" onClick={() => {
+                        if (i === 0) {
+                          setNotice("Alerin dapat dipasang untuk desktop dan mobile.");
+                          window.setTimeout(() => setNotice(""), 2600);
+                          return;
+                        }
+                        setProfileView(item.view);
+                      }} className="w-full flex items-center justify-between px-5 py-3.5 hover:bg-slate-50 transition-colors border-b border-slate-100 last:border-0">
+                        <div className="flex items-center gap-3">
+                          {item.icon}
+                          <span className="flex flex-col text-left">
+                            <span className="text-sm font-medium text-slate-700">{item.label}</span>
+                            {i === 0 && <span className="text-xs text-slate-500 md:text-[11px] md:text-slate-400">Untuk desktop dan mobile</span>}
+                          </span>
+                        </div>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="2"><path d="M9 18l6-6-6-6"/></svg>
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Keluar */}
+                  <button type="button" onClick={() => setLogoutModalOpen(true)} className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl text-sm font-bold text-red-500 border border-red-100 bg-white hover:bg-red-50 transition-colors" style={{ boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                    Keluar
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Right sidebar — desktop only */}
+            <div className="hidden flex-col gap-3 w-72 shrink-0">
+              {/* Yang Alerin ketahui */}
+              <div className="bg-white rounded-2xl p-4" style={{ boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}>
+                <div className="flex items-center justify-between mb-3">
+                  <p className="font-bold text-slate-800 text-sm">Yang Alerin ketahui</p>
+                  <button type="button" onClick={openManageData} className="text-xs font-semibold text-blue-600 hover:text-blue-700">Kelola</button>
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {knownItems.map(t => (
+                    <span key={t} className="px-2.5 py-1 rounded-full text-[11px] font-medium text-slate-600 border border-slate-200 bg-slate-50">{t}</span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Motivasi */}
+              <div className="bg-blue-50 border border-blue-100 rounded-2xl p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                  <p className="text-xs font-bold text-blue-700">Motivasi Hari Ini</p>
+                </div>
+                <p className="text-xs text-blue-700 leading-relaxed">Terus semangat, langkah kecil hari ini bisa jadi hasil besar nanti!</p>
+              </div>
+
+              {/* Premium upsell */}
+              <div className="rounded-2xl p-4 text-white" style={{ background: "linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)" }}>
+                <p className="font-bold text-sm mb-1">✦ Alerin Premium</p>
+                <p className="text-xs opacity-80 mb-3">Fitur lebih lengkap untuk perjalanan akademikmu.</p>
+                <div className="space-y-1.5 mb-3">
+                  {["Akses semua fitur AI", "Analisis mendalam", "Prioritas respons"].map(f => (
+                    <div key={f} className="flex items-center gap-2">
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
+                      <span className="text-xs opacity-90">{f}</span>
+                    </div>
+                  ))}
+                </div>
+                <button onClick={onRegister} className="w-full py-2 rounded-xl text-xs font-bold bg-white hover:bg-blue-50 transition-colors" style={{ color: "#2563eb" }}>
+                  Daftar Sekarang
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
