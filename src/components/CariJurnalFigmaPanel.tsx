@@ -396,39 +396,39 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                 </section>
 
                 <section className="mt-4 rounded-2xl border border-slate-200/80 bg-white px-4 py-[22px] shadow-sm md:p-6">
-                  <h2 className="text-center font-['Plus_Jakarta_Sans:ExtraBold'] text-[22px] font-extrabold md:text-left md:font-['Plus_Jakarta_Sans:Bold'] md:text-2xl md:font-bold">Cari rujukan dari tulisanmu</h2>
-                  <p className="mx-auto mt-2 max-w-lg text-center font-['Plus_Jakarta_Sans:Regular'] text-xs leading-[19.5px] text-[#1c1c1c] md:mx-0 md:mt-1 md:max-w-none md:text-left md:font-['Inter:Regular'] md:leading-5 md:text-[#64748b]">Tempel kalimat atau paragraf yang ingin kamu perkuat dengan sitasi. Alerin akan membantu mencari artikel jurnal yang relevan untuk mendukung tulisanmu.</p>
+                  <h2 className="text-center font-['Plus_Jakarta_Sans:ExtraBold'] text-[19px] font-extrabold md:text-left md:font-['Plus_Jakarta_Sans:Bold'] md:text-base md:font-bold">Cari rujukan dari tulisanmu</h2>
+                  <p className="mx-auto mt-2 max-w-lg text-center font-['Plus_Jakarta_Sans:Regular'] text-sm leading-[21px] text-[#1c1c1c] md:mx-0 md:mt-1 md:max-w-none md:text-left md:font-['Inter:Regular'] md:leading-5 md:text-[#64748b]">Tempel kalimat atau paragraf yang ingin kamu perkuat dengan sitasi. Alerin akan membantu mencari artikel jurnal yang relevan untuk mendukung tulisanmu.</p>
                   <div className="mt-5 grid gap-3 md:grid-cols-[1.35fr_0.95fr]">
                     <label className="grid gap-1.5">
-                      <span className="font-['Plus_Jakarta_Sans:SemiBold'] text-[13px] font-semibold text-[#334155] md:hidden">Draf / Paragraf Teks</span>
-                      <textarea value={paragraph} onChange={event => setParagraph(event.target.value)} placeholder="Masukkan kalimat atau paragraf yang membutuhkan sitasi." className="min-h-[123px] resize-none rounded-xl border border-slate-200 bg-[rgba(200,226,251,0.24)] p-3 text-xs outline-none focus:border-sky-400 md:min-h-44 md:p-4 md:text-sm" />
+                      <span className="font-['Plus_Jakarta_Sans:SemiBold'] text-[15px] font-semibold text-[#334155] md:hidden">Draf / Paragraf Teks</span>
+                      <textarea value={paragraph} onChange={event => setParagraph(event.target.value)} placeholder="Masukkan kalimat atau paragraf yang membutuhkan sitasi." className="min-h-[123px] resize-none rounded-xl border border-slate-200 bg-[rgba(200,226,251,0.24)] p-3 text-sm outline-none focus:border-sky-400 md:min-h-44 md:p-4 md:text-base" />
                     </label>
                     <label className="flex min-h-[108px] cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-sky-300 bg-sky-50/40 p-4 text-center md:min-h-44 md:border md:border-sky-400 md:bg-white">
                       <span className="flex h-[53px] w-[53px] items-center justify-center rounded-full border border-sky-100 bg-white shadow-sm md:h-9 md:w-9 md:rounded-lg md:border-0 md:bg-sky-50 md:shadow-none">
                         <img src={`${mobileAssets}/36094.svg`} alt="" className="md:hidden" />
                         <img src={`${searchAssets}/f5e87.svg`} alt="" className="hidden md:block" />
                       </span>
-                      <span className="mt-3 text-xs font-semibold">Unggah artikel atau catatan</span>
-                      <span className="mt-1 text-[11px] text-[#94a3b8]">PDF, DOCX, atau TXT hingga 20 MB</span>
-                      <span className="mt-2 rounded-full bg-sky-50 px-2.5 py-1 text-[10px] text-[#004f80] md:bg-transparent md:p-0 md:text-[11px] md:text-emerald-600">{fileName || "Belum ada dokumen"}</span>
+                      <span className="mt-3 text-sm font-semibold">Unggah artikel atau catatan</span>
+                      <span className="mt-1 text-[13px] text-[#94a3b8]">PDF, DOCX, atau TXT hingga 20 MB</span>
+                      <span className="mt-2 rounded-full bg-sky-50 px-2.5 py-1 text-xs text-[#004f80] md:bg-transparent md:p-0 md:text-[13px] md:text-emerald-600">{fileName || "Belum ada dokumen"}</span>
                       <input type="file" accept=".pdf,.doc,.docx,.txt" className="sr-only" onChange={event => setFileName(event.target.files?.[0]?.name || "")} />
                     </label>
                   </div>
                   <div className="mt-4 flex flex-col gap-3 md:mt-5 md:flex-row md:items-center md:justify-between md:border-b md:border-slate-200 md:pb-4">
-                    <label className="flex items-center gap-2 text-xs text-[#475569]">
+                    <label className="flex items-center gap-2 text-sm text-[#475569]">
                       <span className="flex h-[18px] w-[18px] items-center justify-center rounded bg-[#0070ba]">
                         <img src={`${mobileAssets}/9e421.svg`} alt="" className="max-w-none origin-center scale-[0.6667] md:hidden" />
                         <img src={`${searchAssets}/b5bd9.svg`} alt="" className="hidden md:block" />
                       </span>
                       Gunakan filter aktif pada rekomendasi Alerin
                     </label>
-                    <button type="button" onClick={runSearch} className="flex items-center justify-center gap-2 rounded-xl bg-[#00629b] px-8 py-3 font-['Plus_Jakarta_Sans:Bold'] text-xs font-bold text-white md:bg-[#0066a1] md:font-['Inter:Semi_Bold'] md:text-sm md:font-semibold">
+                    <button type="button" onClick={runSearch} className="flex items-center justify-center gap-2 rounded-xl bg-[#00629b] px-8 py-3 font-['Plus_Jakarta_Sans:Bold'] text-sm font-bold text-white md:bg-[#0066a1] md:font-['Inter:Semi_Bold'] md:text-base md:font-semibold">
                       <img src={`${mobileAssets}/8802c.svg`} alt="" className="max-w-none origin-center scale-[0.6667] md:hidden" />
                       <img src={`${searchAssets}/550ef.svg`} alt="" className="hidden md:block" />
                       Analisis dan carikan jurnal
                     </button>
                   </div>
-                  <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-slate-100 pt-3 text-[11px] text-[#64748b] md:border-0 md:pt-0">
+                  <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-slate-100 pt-3 text-[13px] text-[#64748b] md:border-0 md:pt-0">
                     <span className="w-full md:w-auto">Konsep yang dipahami Alerin:</span>
                     {["interaksi parasosial", "kepercayaan konsumen", "kelangkaan produk", "niat beli"].map(item => (
                       <span key={item} className="rounded-lg bg-slate-100 px-3 py-1 font-['Plus_Jakarta_Sans:SemiBold'] text-[#334155] md:rounded-full md:font-['Inter:Regular']">{item}</span>
