@@ -450,8 +450,8 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
               <aside className="space-y-5">
                 <div className="hidden md:block"><ProfileCard collection={false} /></div>
                 <div className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm md:p-6">
-                  <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-sm font-bold md:text-base">Tiga cara menemukan jurnal</h2>
-                  <p className="mt-2 text-xs leading-5 text-[#64748b]">Pilih cara paling mudah sesuai informasi yang sudah kamu punya.</p>
+                  <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-base font-bold md:text-base">Tiga cara menemukan jurnal</h2>
+                  <p className="mt-2 text-sm leading-5 text-[#64748b] md:text-xs">Pilih cara paling mudah sesuai informasi yang sudah kamu punya.</p>
                   <ol className="mt-4 space-y-2 md:mt-6 md:space-y-6">
                     {[
                       ["1", "Ketik kata kunci", "Cocok jika sudah tahu topik, penulis, atau variabel."],
@@ -459,8 +459,8 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                       ["3", "Unggah dokumen", "Alerin mengambil konsep penting dari artikel atau catatan."],
                     ].map(([number, title, description]) => (
                       <li key={number} className="flex gap-3 rounded-xl border border-slate-100/80 bg-slate-50 p-3 md:rounded-none md:border-0 md:bg-transparent md:p-0">
-                        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-sky-100 text-xs font-bold text-[#0070ba] md:h-8 md:w-8 md:text-base">{number}</span>
-                        <span><strong className="block text-xs md:text-sm">{title}</strong><span className="mt-0.5 block text-[11px] leading-4 text-[#64748b] md:mt-1 md:text-xs md:leading-5">{description}</span></span>
+                        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-sky-100 text-sm font-bold text-[#0070ba] md:h-8 md:w-8 md:text-base">{number}</span>
+                        <span><strong className="block text-sm md:text-sm">{title}</strong><span className="mt-0.5 block text-xs leading-5 text-[#64748b] md:mt-1 md:text-xs md:leading-5">{description}</span></span>
                       </li>
                     ))}
                   </ol>
