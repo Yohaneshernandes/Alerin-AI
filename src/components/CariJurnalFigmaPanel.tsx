@@ -396,7 +396,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                 </section>
 
                 <section className="mt-4 rounded-2xl border border-slate-200/80 bg-white px-4 py-[22px] shadow-sm md:p-6">
-                  <h2 className="text-center font-['Plus_Jakarta_Sans:ExtraBold'] text-[19px] font-extrabold md:text-left md:font-['Plus_Jakarta_Sans:Bold'] md:text-base md:font-bold">Cari rujukan dari tulisanmu</h2>
+                  <h2 className="text-center font-['Plus_Jakarta_Sans:ExtraBold'] text-[22px] font-extrabold md:text-left md:font-['Plus_Jakarta_Sans:Bold'] md:text-2xl md:font-bold">Cari rujukan dari tulisanmu</h2>
                   <p className="mx-auto mt-2 max-w-lg text-center font-['Plus_Jakarta_Sans:Regular'] text-xs leading-[19.5px] text-[#1c1c1c] md:mx-0 md:mt-1 md:max-w-none md:text-left md:font-['Inter:Regular'] md:leading-5 md:text-[#64748b]">Tempel kalimat atau paragraf yang ingin kamu perkuat dengan sitasi. Alerin akan membantu mencari artikel jurnal yang relevan untuk mendukung tulisanmu.</p>
                   <div className="mt-5 grid gap-3 md:grid-cols-[1.35fr_0.95fr]">
                     <label className="grid gap-1.5">
