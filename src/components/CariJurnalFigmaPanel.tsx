@@ -21,6 +21,100 @@ const journals = [
   },
 ];
 
+const temuanAnalisis = [
+  {
+    halaman: 18,
+    badge: "Sitasi tidak mendukung klaim",
+    kutipan:
+      "“Media sosial terbukti meningkatkan keputusan pembelian pada seluruh kelompok usia (Pratama, 2021).”",
+    alasan: [
+      "Artikel hanya meneliti mahasiswa usia 18–24 tahun.",
+      "Variabel yang diuji adalah niat beli, bukan keputusan pembelian.",
+      "Klaim pada naskah jauh lebih luas daripada bukti dalam sumber aslinya.",
+    ],
+    saran:
+      "“Pada mahasiswa usia 18–24 tahun di Bandung, intensitas penggunaan media sosial berhubungan positif dengan niat beli (Pratama & Lestari, 2021).”",
+  },
+  {
+    halaman: 21,
+    badge: "Sumber tidak dapat diverifikasi",
+    kutipan:
+      "“Konsumen Gen Z lebih loyal pada merek yang transparan (Hidayat, 2022).”",
+    alasan: [
+      "Referensi Hidayat (2022) tidak ditemukan di OpenAlex maupun Crossref.",
+      "Tidak ada DOI atau tautan menuju sumber asli.",
+      "Pembaca tidak dapat memeriksa ulang klaim ini.",
+    ],
+    saran:
+      "“Sebanyak 68% konsumen Gen Z menyebut transparansi merek sebagai alasan loyalitas (Aisyah et al., 2023, hlm. 45).”",
+  },
+  {
+    halaman: 24,
+    badge: "Parafrase terlalu mirip aslinya",
+    kutipan:
+      "“Interaksi parasosial membuat penonton merasa dekat dengan host sehingga lebih mudah terdorong membeli (Wongkitrungrueng & Assarut, 2023).”",
+    alasan: [
+      "Kalimat hasil parafrase lebih dari 80% sama dengan sumber.",
+      "Struktur kalimat dan pilihan kata mengikuti sumber terlalu ketat.",
+      "Berisiko dianggap plagiarisme oleh pemeriksa similarity.",
+    ],
+    saran:
+      "“Penonton yang membangun ikatan emosional dengan host cenderung lebih percaya dan lebih cepat mengambil keputusan pembelian (Wongkitrungrueng & Assarut, 2023).”",
+  },
+  {
+    halaman: 27,
+    badge: "Sumber terlalu lama",
+    kutipan:
+      "“Pemasaran media sosial adalah kanal utama branding saat ini (Kotler, 2010).”",
+    alasan: [
+      "Sumber berusia lebih dari 15 tahun.",
+      "Lanskap media sosial telah berubah jauh setelah 2010.",
+      "Klaim “utama saat ini” butuh data terbaru.",
+    ],
+    saran:
+      "“Pada 2024, media sosial menjadi kanal akuisisi pelanggan dengan biaya terendah bagi UMKM (Databoks, 2024).”",
+  },
+  {
+    halaman: 30,
+    badge: "Klaim tanpa sitasi",
+    kutipan:
+      "“Live streaming commerce tumbuh 3x lebih cepat dibanding e-commerce konvensional.”",
+    alasan: [
+      "Tidak ada sumber yang dilampirkan pada akhir kalimat.",
+      "Angka “3x” tidak diberi rujukan data.",
+      "Pembaca tidak tahu periode dan cakupan perbandingan.",
+    ],
+    saran:
+      "“Sepanjang 2023–2024, nilai transaksi live streaming commerce tumbuh 2,7 kali dibanding kanal e-commerce konvensional (Jakpat, 2024).”",
+  },
+  {
+    halaman: 33,
+    badge: "Mengutip sumber sekunder",
+    kutipan:
+      "“Teori uses and gratification menegaskan bahwa audiens aktif memilih media (Rahmawati, 2022).”",
+    alasan: [
+      "Kutipan diambil dari jurnal Rahmawati, bukan dari teori aslinya.",
+      "Sumber asli (Katz, 1974) seharusnya dirujuk langsung.",
+      "Pengutipan sumber sekunder melemahkan landasan teori.",
+    ],
+    saran:
+      "“Audiens aktif memilih dan menyesuaikan media sesuai kebutuhannya (Katz, Blumler & Gurevitch, 1974; dikutip dari Rahmawati, 2022).”",
+  },
+  {
+    halaman: 36,
+    badge: "Judul sumber tidak sesuai kutipan",
+    kutipan:
+      "“Kelangkaan produk meningkatkan niat beli secara signifikan (Sari, 2023).”",
+    alasan: [
+      "Judul sumber Sari (2023) membahas discount depth, bukan kelangkaan.",
+      "Variabel dalam sumber berbeda dengan yang dikutip.",
+      "Sitasi tampak dipasang agar daftar pustaka penuh.",
+    ],
+    saran:
+      "“Penekanan stok terbatas pada siaran langsung meningkatkan niat beli hingga 24% (Lim & Susanto, 2023).”",
+  },
+];
+
 const riwayatPencarian = [
   {
     query: "interaksi parasosial niat beli konsumen",
@@ -185,6 +279,8 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
   const [fileName, setFileName] = useState("");
   const [mobileSearchStage, setMobileSearchStage] = useState<"home" | "loading" | "results">("home");
   const [searchType, setSearchType] = useState("");
+  const [resultMode, setResultMode] = useState<"search" | "analysis">("search");
+  const [temuanIndex, setTemuanIndex] = useState(1);
 
   useEffect(() => {
     if (mobileSearchStage !== "loading") return;
@@ -237,10 +333,12 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                 className="w-[290px] max-w-[82vw] animate-[bounce_1.4s_ease-in-out_infinite]"
               />
               <h1 className="mt-5 text-center font-['Plus_Jakarta_Sans:ExtraBold'] text-[21px] font-extrabold tracking-[-0.5px] text-[#313131]">
-                Menulusuri Jurnal Untukmu
+                {resultMode === "analysis" ? "Menganalisis Naskahmu" : "Menulusuri Jurnal Untukmu"}
               </h1>
               <p className="mt-2 max-w-[290px] animate-pulse text-center text-xs leading-5 text-[#71717a]">
-                Alerin sedang mencari jurnal berdasarkan informasi yang kamu berikan.
+                {resultMode === "analysis"
+                  ? "Alerin sedang membaca dokumenmu dan menyiapkan temuan serta rekomendasi sitasi."
+                  : "Alerin sedang mencari jurnal berdasarkan informasi yang kamu berikan."}
               </p>
             </div>
           )}
@@ -262,6 +360,105 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                   </button>
                   <h1 className="font-['Plus_Jakarta_Sans:Bold'] text-base font-bold tracking-[-0.4px]">Rekomendasi yang paling relevan</h1>
                 </div>
+
+                {resultMode === "analysis" && (
+                  <>
+                    <section className="mt-4 rounded-2xl bg-white p-4 shadow-sm">
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="flex min-w-0 items-center gap-3">
+                          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-sky-50">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#006194" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                              <path d="M14 2v6h6" />
+                              <path d="M16 13H8" />
+                              <path d="M16 17H8" />
+                            </svg>
+                          </span>
+                          <div className="min-w-0">
+                            <p className="truncate font-['Plus_Jakarta_Sans:SemiBold'] text-sm font-semibold">{fileName || "Skripsi_Nadia_Final.docx"}</p>
+                            <p className="mt-0.5 text-[11px] text-[#94a3b8]">42 halaman · 126 sitasi diperiksa</p>
+                          </div>
+                        </div>
+                        <span className="shrink-0 rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-semibold text-emerald-600">Selesai</span>
+                      </div>
+                      <div className="mt-3 grid grid-cols-4 rounded-xl bg-[#f1f4fa] py-3 text-center">
+                        {[
+                          ["7", "Temuan", "text-[#006194]", ""],
+                          ["3", "Bermasalah", "text-[#e7000b]", "bg-red-50"],
+                          ["2", "Kurang Kuat", "text-[#006194]", ""],
+                          ["2", "Ref. Lemah", "text-[#006194]", ""],
+                        ].map(([value, label, color, bg]) => (
+                          <div key={label} className={`mx-1 rounded-lg ${bg}`}>
+                            <p className={`font-['Plus_Jakarta_Sans:Bold'] text-lg font-bold ${color}`}>{value}</p>
+                            <p className="mt-0.5 text-[9px] font-medium text-[#64748b]">{label}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </section>
+
+                    <section className="mt-3 rounded-2xl bg-white p-4 shadow-sm">
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex min-w-0 items-center gap-2">
+                          <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-sm font-bold">Temuan {temuanIndex} dari 7</h2>
+                          <span className="shrink-0 rounded-md bg-sky-50 px-2 py-0.5 text-[10px] font-semibold text-[#0369a1]">Halaman {temuanAnalisis[temuanIndex - 1].halaman}</span>
+                        </div>
+                        <div className="flex shrink-0 gap-1.5">
+                          <button
+                            type="button"
+                            aria-label="Temuan sebelumnya"
+                            onClick={() => setTemuanIndex(index => Math.max(1, index - 1))}
+                            className="flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200 text-sm text-[#64748b]"
+                          >
+                            ‹
+                          </button>
+                          <button
+                            type="button"
+                            aria-label="Temuan berikutnya"
+                            onClick={() => setTemuanIndex(index => Math.min(7, index + 1))}
+                            className="flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200 text-sm text-[#64748b]"
+                          >
+                            ›
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="mt-3 rounded-xl bg-red-50 p-3">
+                        <p className="text-[10px] font-bold uppercase tracking-wide text-[#e7000b]">⚠ {temuanAnalisis[temuanIndex - 1].badge}</p>
+                        <p className="mt-2.5 text-[11px] font-semibold text-[#475569]">Bagian yang perlu diperbaiki:</p>
+                        <blockquote className="mt-1.5 rounded-lg bg-white p-2.5 font-['Inter:Italic'] text-[11px] italic leading-4 text-[#334155]">
+                          {temuanAnalisis[temuanIndex - 1].kutipan}
+                        </blockquote>
+                        <p className="mt-3 text-[11px] font-bold text-[#e7000b]">Mengapa sitasi ini bermasalah?</p>
+                        <ul className="mt-1.5 space-y-1.5 text-[11px] leading-4 text-[#475569]">
+                          {temuanAnalisis[temuanIndex - 1].alasan.map(alasan => (
+                            <li key={alasan} className="flex gap-1.5">
+                              <span className="text-[#e7000b]">•</span>
+                              <span>{alasan}</span>
+                            </li>
+                          ))}
+                        </ul>
+                        <p className="mt-2.5 text-[10px] font-medium leading-4 text-[#0369a1]">✔ DOI valid · Metadata cocok · Isi sitasi tidak mendukung klaim</p>
+                      </div>
+
+                      <div className="mt-3 rounded-xl bg-sky-50 p-3">
+                        <p className="text-[11px] font-bold text-[#0369a1]">✦ Saran perbaikan Alerin:</p>
+                        <blockquote className="mt-1.5 rounded-lg bg-white p-2.5 font-['Inter:Italic'] text-[11px] italic leading-4 text-[#334155]">
+                          {temuanAnalisis[temuanIndex - 1].saran}
+                        </blockquote>
+                        <div className="mt-2.5 flex items-center justify-between gap-2">
+                          <span className="text-[10px] text-[#64748b]">OpenAlex + 4 verifikasi</span>
+                          <button
+                            type="button"
+                            onClick={() => window.alert("Saran perbaikan Alerin diterapkan ke naskahmu.")}
+                            className="shrink-0 rounded-lg bg-[#006194] px-3 py-1.5 text-[11px] font-semibold text-white"
+                          >
+                            Terapkan ke naskah
+                          </button>
+                        </div>
+                      </div>
+                    </section>
+                  </>
+                )}
 
                 <section className="mt-4 rounded-2xl bg-white p-4 shadow-sm">
                   <h2 className="flex items-center gap-2 font-['Plus_Jakarta_Sans:Bold'] text-base font-bold">
@@ -310,7 +507,8 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                     },
                   ].map((result, index) => (
                     <article key={result.rank} className="rounded-2xl bg-white p-4 shadow-sm">
-                      <div className="flex items-start justify-between gap-3">
+                      <p className="text-[9px] font-medium text-slate-400">OpenAlex &amp; Crossref Scopus</p>
+                      <div className="mt-1.5 flex items-start justify-between gap-3">
                         <div className="flex flex-wrap gap-1 text-[9px] font-semibold">
                           <span className="rounded-md bg-sky-100 px-2 py-1 text-[#0369a1]">Scopus Q1</span>
                           <span className="rounded-md bg-slate-200 px-2 py-1 text-slate-700">Artikel</span>
@@ -337,6 +535,31 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                         <p className="mt-3 text-[10px] leading-4 text-slate-600">Cocok untuk landasan teori, penyusunan hipotesis, dan pengembangan penelitian.</p>
                       </div>
 
+                      <div className="mt-3 rounded-xl bg-amber-50 p-3">
+                        <p className="text-[10px] font-bold uppercase tracking-wide text-[#b45309]">Kutipan relevan</p>
+                        <p className="mt-1.5 text-[11px] italic leading-4 text-[#475569]">
+                          "Parasocial interaction strengthens purchase intention when viewers perceive urgency and scarcity."
+                        </p>
+                      </div>
+
+                      <div className="mt-3 rounded-xl bg-[#f1f4fa] p-3">
+                        <p className="text-[10px] font-bold uppercase tracking-wide">Kredibilitas &amp; akses</p>
+                        {[
+                          ["Scopus Q1 terverifikasi", "Status indeks dicek dari sumber resmi"],
+                          ["DOI & metadata cocok", "Judul, penulis, tahun, dan penerbit konsisten"],
+                          ["PDF dapat diakses legal", "Versi akses terbuka tersedia dari penerbit"],
+                          ["Tidak ada peringatan integritas", "Tidak ditemukan retraksi atau koreksi kritis"],
+                        ].map(([judul, detail]) => (
+                          <div key={judul} className="mt-2 flex items-start gap-2">
+                            <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-[9px] font-bold text-emerald-600">✓</span>
+                            <span className="min-w-0">
+                              <span className="block text-[11px] font-semibold text-[#1e293b]">{judul}</span>
+                              <span className="block text-[10px] leading-4 text-[#94a3b8]">{detail}</span>
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+
                       <div className="mt-3 rounded-xl bg-sky-50 p-3">
                         <p className="text-[10px] font-bold uppercase tracking-wide text-[#006194]">Ringkasan utama</p>
                         <p className="mt-2 text-[11px] leading-[17px]">{result.summary}</p>
@@ -344,6 +567,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                           <span className="rounded-md bg-white px-2 py-1">2 kutipan pendukung</span>
                           <span className="rounded-md bg-white px-2 py-1">Metode SEM-PLS</span>
                           <span className="rounded-md bg-white px-2 py-1">Studi cross-sectional</span>
+                          <span className="rounded-md bg-white px-2 py-1">Ringkasan Bahasa Indonesia</span>
                         </div>
                       </div>
 
@@ -390,7 +614,10 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                         onKeyDown={event => {
                           if (event.key !== "Enter") return;
                           if (window.matchMedia("(min-width: 768px)").matches) runSearch();
-                          else setMobileSearchStage("loading");
+                          else {
+                            setResultMode("search");
+                            setMobileSearchStage("loading");
+                          }
                         }}
                         placeholder="Ketik topik, judul, penulis, variabel, atau DOI"
                         className="min-w-0 flex-1 bg-transparent text-xs outline-none placeholder:text-slate-400 md:text-sm"
@@ -403,7 +630,10 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                       onClick={() => {
                         if (!searchType) setSearchType("journal");
                         if (window.matchMedia("(min-width: 768px)").matches) runSearch();
-                        else setMobileSearchStage("loading");
+                        else {
+                          setResultMode("search");
+                          setMobileSearchStage("loading");
+                        }
                       }}
                       className="rounded-xl bg-[#00629b] px-4 py-3 text-center font-['Plus_Jakarta_Sans:SemiBold'] text-sm font-semibold text-white md:bg-[#0070ba]"
                     >
@@ -453,7 +683,18 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                       </span>
                       Gunakan filter aktif pada rekomendasi Alerin
                     </label>
-                    <button type="button" onClick={runSearch} className="flex items-center justify-center gap-2 rounded-xl bg-[#00629b] px-8 py-3 font-['Plus_Jakarta_Sans:Bold'] text-[13px] font-bold text-white md:bg-[#0066a1] md:font-['Inter:Semi_Bold'] md:text-base md:font-semibold">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (window.matchMedia("(min-width: 768px)").matches) runSearch();
+                        else {
+                          setResultMode("analysis");
+                          setTemuanIndex(1);
+                          setMobileSearchStage("loading");
+                        }
+                      }}
+                      className="flex items-center justify-center gap-2 rounded-xl bg-[#00629b] px-8 py-3 font-['Plus_Jakarta_Sans:Bold'] text-[13px] font-bold text-white md:bg-[#0066a1] md:font-['Inter:Semi_Bold'] md:text-base md:font-semibold"
+                    >
                       <img src={`${mobileAssets}/8802c.svg`} alt="" className="max-w-none origin-center scale-[0.6667] md:hidden" />
                       <img src={`${searchAssets}/550ef.svg`} alt="" className="hidden md:block" />
                       Analisis dan carikan jurnal
