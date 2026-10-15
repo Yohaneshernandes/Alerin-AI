@@ -925,13 +925,204 @@ function JournalCard({ index }: { index: number }) {
   );
 }
 
+function DesktopJournalResultCard({ relevancy, showHeader = false }: { relevancy: string; showHeader?: boolean }) {
+  const fitBars: [string, number][] = [
+    ["Kesesuaian variabel", 98],
+    ["Kesesuaian topik", 96],
+    ["Kesesuaian wilayah", 90],
+  ];
+  const credibilityItems: [string, string][] = [
+    ["Scopus Q1 terverifikasi", "Status indeks dicek pada sumber resmi"],
+    ["DOI & metadata cocok", "Judul, penulis, tahun, dan penerbit konsisten"],
+    ["PDF dapat diakses legal", "Versi akses terbuka tersedia dari penerbit"],
+    ["Tidak ada peringatan integritas", "Tidak ditemukan retraksi atau koreksi kritis"],
+  ];
+  const actionButtons = ["Buat sitasi", "Abstrak", "DOI", "Buka PDF"];
+
+  return (
+    <article className="overflow-hidden rounded-2xl bg-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] outline outline-2 outline-offset-[-2px] outline-sky-100">
+      {showHeader && (
+        <div className="flex items-center justify-between border-b border-slate-100 bg-sky-50/40 px-6 py-3">
+          <p className="text-sm font-bold leading-4 text-slate-900">Rekomendasi Jurnal</p>
+          <p className="text-xs font-bold leading-4 text-sky-700">Ditemukan OpenAlex dan Diverifikasi Crossref &amp; Scopus</p>
+        </div>
+      )}
+      <div className="flex flex-col gap-3 px-6 py-6">
+        <div className="flex flex-wrap items-center gap-1.5">
+          <span className="rounded-sm bg-sky-100 px-2 py-0.5 text-xs font-bold leading-4 text-sky-600">Scopus Q1</span>
+          <span className="rounded-sm bg-slate-100 px-2 py-0.5 text-xs font-semibold leading-4 text-slate-700">Artikel</span>
+          <span className="rounded-sm bg-slate-100 px-2 py-0.5 text-xs font-semibold leading-4 text-slate-700">2023</span>
+          <span className="rounded-sm bg-sky-100 px-2 py-0.5 text-xs font-semibold leading-4 text-sky-600">Akses terbuka legal</span>
+        </div>
+
+        <div className="flex items-start gap-4">
+          <div className="min-w-0 flex-1">
+            <h3 className="text-xl font-bold leading-7 text-slate-900">
+              Live Streaming Commerce and Mimic Purchase Intention: The Role of Parasocial Interaction and Scarcity Nudges
+            </h3>
+            <p className="pt-1 text-xs font-medium leading-4 text-slate-600">Wongkitrungrueng, A. &amp; Assarut, N.</p>
+            <div className="flex flex-wrap items-center gap-2 pt-0.5 text-xs leading-4">
+              <span className="font-semibold text-sky-600 underline">120 sitasi</span>
+              <span className="text-slate-500">•</span>
+              <span className="text-slate-500">Asia Pacific Journal of Marketing and Logistics</span>
+              <span className="text-slate-500">•</span>
+              <span className="text-slate-500">DOI terverifikasi</span>
+            </div>
+          </div>
+          <div className="flex w-28 shrink-0 flex-col items-center">
+            <span className="flex h-20 w-20 items-center justify-center rounded-full text-2xl font-extrabold leading-8 text-sky-600 outline outline-4 outline-offset-[-3.64px] outline-sky-600">
+              {relevancy}
+            </span>
+            <span className="pt-1 text-xs font-semibold leading-4 text-slate-500">Relevansi</span>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-3 pt-1 min-[1180px]:flex-row">
+          <div className="min-w-0 flex-1 rounded-xl bg-sky-50/30 p-4 outline outline-1 outline-offset-[-1px] outline-sky-100">
+            <h4 className="text-xs font-bold leading-4 text-slate-900">Mengapa jurnal ini direkomendasikan?</h4>
+            <div className="flex flex-col gap-2 pt-3">
+              {fitBars.map(([label, value]) => (
+                <div key={label} className="flex flex-col gap-1">
+                  <div className="flex items-start justify-between text-xs leading-4">
+                    <span className="font-semibold text-slate-600">{label}</span>
+                    <span className="font-bold text-sky-600">{value}%</span>
+                  </div>
+                  <div className="h-1.5 rounded-full bg-slate-200">
+                    <div className="h-1.5 rounded-full bg-sky-600" style={{ width: `${value}%` }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+            <p className="pt-3 text-xs font-bold leading-4 text-slate-800">
+              Cocok untuk: landasan teori, penyusunan hipotesis, pembanding penelitian, dan rujukan metode kuantitatif.
+            </p>
+            <p className="mt-3 rounded-lg bg-amber-50 p-2.5 text-xs font-bold leading-4 text-amber-900 outline outline-1 outline-offset-[-1px] outline-amber-200/60">
+              Kutipan relevan: &ldquo;Parasocial interaction strengthens purchase intention when viewers perceive urgency and scarcity.&rdquo;
+            </p>
+          </div>
+          <div className="w-full shrink-0 rounded-xl bg-white p-4 outline outline-1 outline-offset-[-1px] outline-slate-200 min-[1180px]:w-[300px]">
+            <h4 className="text-center text-base font-extrabold leading-5 text-slate-900">Kredibilitas &amp; akses</h4>
+            <ul className="flex flex-col">
+              {credibilityItems.map(([title, desc]) => (
+                <li key={title} className="flex items-start gap-2 py-3">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#059669" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="mt-0.5 shrink-0" aria-hidden="true">
+                    <path d="M2.5 8.5l3.5 3.5 7.5-8" />
+                  </svg>
+                  <div>
+                    <p className="text-xs font-bold leading-4 text-slate-800">{title}</p>
+                    <p className="text-xs leading-4 text-slate-500">{desc}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <div className="rounded-r-xl border-l-4 border-sky-600 bg-sky-50/70 px-4 pb-4 pt-6">
+          <p className="text-xs font-bold leading-4 text-sky-600">RINGKASAN UTAMA</p>
+          <p className="pt-1.5 text-xs leading-5 text-slate-700">
+            Interaksi parasosial antara host dan penonton, ditambah dorongan kelangkaan seperti batas waktu dan stok, meningkatkan niat beli di live
+            streaming commerce. Temuan ini relevan untuk riset perilaku konsumen digital di Asia Tenggara.
+          </p>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2 border-t border-slate-100 pt-4">
+          <button type="button" className="rounded-lg bg-sky-600 px-3.5 py-1.5 text-xs font-semibold leading-4 text-white">
+            Analisis lengkap
+          </button>
+          {actionButtons.map(label => (
+            <button
+              key={label}
+              type="button"
+              className="flex items-center gap-1 rounded-lg bg-white px-3 py-1.5 text-xs font-semibold leading-4 text-slate-700 outline outline-1 outline-offset-[-1px] outline-slate-200"
+            >
+              {label === "DOI" && (
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" aria-hidden="true">
+                  <rect x="1.5" y="1.5" width="9" height="9" rx="1.5" />
+                </svg>
+              )}
+              {label}
+            </button>
+          ))}
+          <button
+            type="button"
+            className="ml-auto flex items-center gap-1.5 rounded-lg bg-white px-3 py-1.5 text-xs font-semibold leading-4 text-slate-700 outline outline-1 outline-offset-[-1px] outline-slate-200"
+          >
+            <svg width="12" height="14" viewBox="0 0 12 14" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" aria-hidden="true">
+              <path d="M2 1.5h8v11l-4-2.5-4 2.5v-11z" />
+            </svg>
+            Simpan
+          </button>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function DesktopSearchResults({ query, onBack }: { query: string; onBack: () => void }) {
+  return (
+    <div className="mx-auto hidden max-w-[1160px] md:block">
+      <div className="flex items-center justify-between gap-4">
+        <h1 className="text-2xl font-extrabold leading-8 text-sky-800">Rekomendasi yang paling relevan</h1>
+        <button
+          type="button"
+          onClick={onBack}
+          className="flex shrink-0 items-center gap-2 rounded-[10px] bg-sky-700 px-6 py-2 text-sm font-bold leading-4 text-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]"
+        >
+          <svg width="14" height="12" viewBox="0 0 14 12" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M12 6H2M5.5 2.5L2 6l3.5 3.5" />
+          </svg>
+          Kembali ke Pencarian
+        </button>
+      </div>
+
+      <div className="mt-6 flex items-start gap-6">
+        <div className="flex min-w-0 flex-1 flex-col gap-6">
+          <DesktopJournalResultCard relevancy="97%" showHeader />
+          <DesktopJournalResultCard relevancy="92%" />
+          <DesktopJournalResultCard relevancy="89%" />
+        </div>
+
+        <aside className="w-64 shrink-0 rounded-2xl bg-white p-6">
+          <h2 className="text-base font-bold leading-6 text-slate-900">Ringkasan hasil pencarian</h2>
+          <p className="pt-1 text-xs leading-4 text-slate-500">
+            Alerin menyeleksi hasil secara bertahap sebelum menampilkan jurnal terbaik.
+          </p>
+          <div className="flex flex-col items-start gap-2 pt-4">
+            <span className="rounded-md bg-slate-100 px-2.5 py-1 text-xs font-semibold leading-4 text-slate-700">
+              Kata kunci: {query.trim() || "interaksi parasosial"}
+            </span>
+            <span className="rounded-md bg-slate-100 px-2.5 py-1 text-xs font-semibold leading-4 text-slate-700">Tahun 2024–2026</span>
+          </div>
+          <div className="mt-5 border-t border-slate-200/70 pt-5 text-center">
+            <p className="text-3xl font-extrabold leading-10 text-slate-900">4,2 juta</p>
+            <p className="text-sm font-medium leading-5 text-slate-500">Jurnal tersedia</p>
+          </div>
+          <div className="mt-5 border-t border-slate-200/70 pt-5 text-center">
+            <p className="text-3xl font-extrabold leading-10 text-slate-900">50</p>
+            <p className="text-sm font-medium leading-5 text-slate-500">sesuai filter dan kriteria</p>
+          </div>
+          <div className="mt-5 border-t border-slate-200/70 pt-5 text-center">
+            <p className="text-3xl font-extrabold leading-8 text-sky-600">20</p>
+            <p className="text-sm font-medium leading-4 text-slate-500">paling relevan untuk ditelaah</p>
+          </div>
+          <button type="button" className="mt-5 w-full rounded-lg bg-sky-700 py-3 text-xs font-bold leading-4 text-white">
+            Tabel penelitian terdahulu
+          </button>
+          <p className="mt-3 text-center text-sm font-bold leading-4 text-slate-300">Peta Penelitian</p>
+        </aside>
+      </div>
+    </div>
+  );
+}
+
 export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void }) {
   const [view, setView] = useState<JournalView>("home");
   const [query, setQuery] = useState("");
   const [paragraph, setParagraph] = useState("");
-  const [hasResults, setHasResults] = useState(false);
   const [fileName, setFileName] = useState("");
   const [mobileSearchStage, setMobileSearchStage] = useState<"home" | "loading" | "results">("home");
+  const [desktopStage, setDesktopStage] = useState<"home" | "loading" | "results">("home");
   const [searchType, setSearchType] = useState("");
   const [resultMode, setResultMode] = useState<"search" | "analysis">("search");
   const [temuanIndex, setTemuanIndex] = useState(1);
@@ -945,8 +1136,14 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
     return () => window.clearTimeout(timer);
   }, [mobileSearchStage]);
 
+  useEffect(() => {
+    if (desktopStage !== "loading") return;
+    const timer = window.setTimeout(() => setDesktopStage("results"), 2400);
+    return () => window.clearTimeout(timer);
+  }, [desktopStage]);
+
   const runSearch = () => {
-    if (query.trim() || paragraph.trim() || fileName) setHasResults(true);
+    if (query.trim() || paragraph.trim() || fileName) setDesktopStage("loading");
   };
 
   const canSearch = query.trim().length >= 5;
@@ -1245,7 +1442,23 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
             </div>
           )}
 
-          {view === "home" ? (
+          {desktopStage === "loading" && (
+            <div className="hidden min-h-[70vh] flex-col items-center justify-center md:flex">
+              <img
+                src="/assets/jurnal-design/search-flow/5e7e4.svg"
+                alt=""
+                className="w-[290px] animate-[bounce_1.4s_ease-in-out_infinite]"
+              />
+              <h1 className="mt-5 text-center text-2xl font-extrabold tracking-[-0.5px] text-slate-800">Menelusuri Jurnal Untukmu</h1>
+              <p className="mt-2 max-w-sm animate-pulse text-center text-sm leading-6 text-slate-500">
+                Alerin sedang mencari jurnal berdasarkan informasi yang kamu berikan.
+              </p>
+            </div>
+          )}
+
+          {desktopStage === "results" && <DesktopSearchResults query={query} onBack={() => setDesktopStage("home")} />}
+
+          {desktopStage !== "home" ? null : view === "home" ? (
             <div className="mx-auto grid max-w-[1160px] gap-5 lg:grid-cols-[minmax(0,1fr)_280px]">
               <div>
                 <h1 className="text-center font-['Plus_Jakarta_Sans:ExtraBold'] text-2xl font-extrabold leading-[33px] tracking-[-0.6px] text-[#0f172a] md:text-left md:text-[30px] md:leading-10 md:tracking-normal md:text-[#172554]">
@@ -1422,15 +1635,6 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                   </div>
                 </section>
 
-                {hasResults && (
-                  <section className="mt-4 space-y-4">
-                    <div className="flex items-center justify-between">
-                      <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-xl font-bold text-[#193662]">Jurnal yang direkomendasikan</h2>
-                      <button type="button" onClick={() => setView("collection")} className="text-sm font-semibold text-[#0070ba]">Lihat koleksi</button>
-                    </div>
-                    <JournalCard index={0} />
-                  </section>
-                )}
               </div>
 
               <aside className="space-y-5">
