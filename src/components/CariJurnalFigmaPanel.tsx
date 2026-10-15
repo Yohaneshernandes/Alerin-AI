@@ -365,7 +365,7 @@ function FilterSection({
   );
 }
 
-function FilterPanel({ open, onClose }: { open: boolean; onClose: () => void }) {
+function FilterPanel({ open, onClose, onApply, onReset }: { open: boolean; onClose: () => void; onApply: () => void; onReset: () => void }) {
   const [tahun, setTahun] = useState("2 tahun terakhir");
   const [tahunAwal, setTahunAwal] = useState("2024");
   const [tahunAkhir, setTahunAkhir] = useState("2026");
@@ -537,12 +537,22 @@ function FilterPanel({ open, onClose }: { open: boolean; onClose: () => void }) 
         <footer className="flex shrink-0 items-center gap-3 border-t border-slate-200 bg-white p-4">
           <button
             type="button"
-            onClick={onClose}
+            onClick={() => {
+              onApply();
+              onClose();
+            }}
             className="min-w-0 flex-1 rounded-xl bg-sky-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm sm:flex-none sm:w-60"
           >
             Terapkan filter
           </button>
-          <button type="button" onClick={handleReset} className="rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-medium text-slate-700">
+          <button
+            type="button"
+            onClick={() => {
+              handleReset();
+              onReset();
+            }}
+            className="rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-medium text-slate-700"
+          >
             Atur ulang
           </button>
         </footer>
@@ -798,6 +808,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
   const [resultMode, setResultMode] = useState<"search" | "analysis">("search");
   const [temuanIndex, setTemuanIndex] = useState(1);
   const [filterOpen, setFilterOpen] = useState(false);
+  const [filterApplied, setFilterApplied] = useState(false);
   const [upgradeOpen, setUpgradeOpen] = useState(false);
 
   useEffect(() => {
@@ -1120,7 +1131,15 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                         <img src="/assets/jurnal-design/quick-search/8e43d.svg" alt="" className="absolute left-[-19.689px] top-[-18.447px] max-w-none origin-top-left scale-[0.6667]" />
                       </span>
                       Filter
-                      <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[11px] font-bold text-[#0070ba]">10</span>
+                      {filterApplied ? (
+                        <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-sky-100">
+                          <svg width="14" height="11" viewBox="0 0 14 11" fill="none" stroke="#0070ba" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <path d="M1.5 5.8l3.8 3.8L12.5 1.5" />
+                          </svg>
+                        </span>
+                      ) : (
+                        <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[11px] font-bold text-[#0070ba]">10</span>
+                      )}
                     </button>
                   </div>
 
@@ -1152,6 +1171,13 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                         <img src="/assets/jurnal-design/quick-search/8e43d.svg" alt="" className="absolute left-[-19.689px] top-[-18.447px] max-w-none origin-top-left scale-[0.6667]" />
                       </span>
                       Filter
+                      {filterApplied && (
+                        <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-sky-100">
+                          <svg width="14" height="11" viewBox="0 0 14 11" fill="none" stroke="#0070ba" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <path d="M1.5 5.8l3.8 3.8L12.5 1.5" />
+                          </svg>
+                        </span>
+                      )}
                     </button>
                   </div>
 
@@ -1578,7 +1604,12 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
         </div>
       </nav>
 
-      <FilterPanel open={filterOpen} onClose={() => setFilterOpen(false)} />
+      <FilterPanel
+        open={filterOpen}
+        onClose={() => setFilterOpen(false)}
+        onApply={() => setFilterApplied(true)}
+        onReset={() => setFilterApplied(false)}
+      />
       <UpgradePremiumModal open={upgradeOpen} onClose={() => setUpgradeOpen(false)} />
     </div>
   );
