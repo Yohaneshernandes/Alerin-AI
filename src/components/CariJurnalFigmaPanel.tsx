@@ -600,22 +600,22 @@ const premiumFeatures = [
 ];
 
 const premiumFeatureIcons: ReactNode[] = [
-  <svg key="sintesis" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="white" strokeWidth="1.4" strokeLinecap="round" aria-hidden="true">
+  <svg key="sintesis" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="white" strokeWidth="1.4" strokeLinecap="round" aria-hidden="true">
     <circle cx="7" cy="7" r="4.5" />
     <path d="M10.5 10.5L14 14" />
   </svg>,
-  <svg key="database" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="white" strokeWidth="1.4" strokeLinecap="round" aria-hidden="true">
+  <svg key="database" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="white" strokeWidth="1.4" strokeLinecap="round" aria-hidden="true">
     <rect x="3.5" y="2" width="9" height="12" rx="1.5" />
     <path d="M6 5.5h4M6 8h4M6 10.5h3" />
   </svg>,
-  <svg key="deteksi" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="white" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+  <svg key="deteksi" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="white" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     <path d="M8 1.5l5 2v4.2c0 3-2.1 5.3-5 6.3-2.9-1-5-3.3-5-6.3V3.5l5-2z" />
     <path d="M5.8 8l1.6 1.6 2.8-3" />
   </svg>,
-  <svg key="peta" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="white" strokeWidth="1.4" strokeLinecap="round" aria-hidden="true">
+  <svg key="peta" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="white" strokeWidth="1.4" strokeLinecap="round" aria-hidden="true">
     <path d="M3 13V7M8 13V3M13 13V9" />
   </svg>,
-  <svg key="kuota" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="white" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+  <svg key="kuota" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="white" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     <path d="M4 1.5h5l3 3v10H4z" />
     <path d="M9 1.5v3h3" />
     <path d="M6.5 9.5l1.5 1.5 2.5-2.5" />
@@ -624,26 +624,26 @@ const premiumFeatureIcons: ReactNode[] = [
 
 function UpgradePremiumCell({ value }: { value: string }) {
   if (value === "—") {
-    return <span className="text-sm font-medium text-slate-400">—</span>;
+    return <span className="text-xs font-medium text-slate-400">—</span>;
   }
   if (value === "check") {
     return (
-      <span className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-100">
-        <svg width="14" height="11" viewBox="0 0 10 8" fill="none" stroke="#059669" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-100">
+        <svg width="12" height="9" viewBox="0 0 10 8" fill="none" stroke="#059669" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
           <path d="M1 4l2.5 2.5L9 1" />
         </svg>
       </span>
     );
   }
   const tone: Record<string, string> = {
-    "10/hari": "whitespace-nowrap text-[13px] font-medium text-slate-400",
-    Unlimited: "whitespace-nowrap rounded-md bg-indigo-50/70 px-2.5 py-1 text-[13px] font-bold text-zinc-800",
-    "Unlimited + API": "whitespace-nowrap text-[13px] font-bold text-slate-700",
-    "1 Jurnal/sesi": "whitespace-nowrap text-[13px] font-medium text-slate-500",
-    "Hingga 30 Jurnal": "whitespace-nowrap text-[13px] font-bold text-zinc-800",
-    "Hingga 80 Jurnal": "whitespace-nowrap text-[13px] font-bold text-sky-700",
+    "10/hari": "whitespace-nowrap text-xs font-medium text-slate-400",
+    Unlimited: "whitespace-nowrap rounded-md bg-indigo-50/70 px-2 py-0.5 text-xs font-bold text-zinc-800",
+    "Unlimited + API": "whitespace-nowrap text-xs font-bold text-slate-700",
+    "1 Jurnal/sesi": "whitespace-nowrap text-xs font-medium text-slate-500",
+    "Hingga 30 Jurnal": "whitespace-nowrap text-xs font-bold text-zinc-800",
+    "Hingga 80 Jurnal": "whitespace-nowrap text-xs font-bold text-sky-700",
   };
-  return <span className={tone[value] ?? "whitespace-nowrap text-[13px] font-bold text-slate-700"}>{value}</span>;
+  return <span className={tone[value] ?? "whitespace-nowrap text-xs font-bold text-slate-700"}>{value}</span>;
 }
 
 function UpgradePremiumModal({ open, onClose }: { open: boolean; onClose: () => void }) {
@@ -708,22 +708,22 @@ function UpgradePremiumModal({ open, onClose }: { open: boolean; onClose: () => 
           </div>
 
           <div className="mt-4 border-t border-slate-100 pt-4">
-            <div className="flex items-end gap-2 border-b border-slate-100 pb-3">
-              <p className="min-w-0 flex-1 pl-1 text-lg font-bold leading-6 tracking-wide text-zinc-800">Manfaat &amp; Fitur Riset</p>
-              <span className="w-24 shrink-0 text-center text-sm font-semibold leading-5 tracking-wide text-slate-500">Gratis</span>
+            <div className="flex items-end gap-2 border-b border-slate-100 pb-2.5">
+              <p className="min-w-0 flex-1 pl-1 text-base font-bold leading-6 tracking-wide text-zinc-800">Manfaat &amp; Fitur Riset</p>
+              <span className="w-24 shrink-0 text-center text-[13px] font-semibold leading-5 tracking-wide text-slate-500">Gratis</span>
               <span className="w-24 shrink-0 text-center">
-                <span className="inline-block rounded-md bg-indigo-50/80 px-2.5 py-1 text-sm font-bold leading-5 tracking-wide text-blue-950">Plus</span>
+                <span className="inline-block rounded-md bg-indigo-50/80 px-2 py-0.5 text-[13px] font-bold leading-5 tracking-wide text-blue-950">Plus</span>
               </span>
-              <span className="w-24 shrink-0 text-center text-sm font-semibold leading-5 tracking-wide text-slate-700">Pro</span>
+              <span className="w-24 shrink-0 text-center text-[13px] font-semibold leading-5 tracking-wide text-slate-700">Pro</span>
             </div>
             {premiumFeatures.map((feature, index) => (
-              <div key={feature.title} className={`flex items-center gap-3 py-3.5 ${index > 0 ? "border-t border-slate-100" : ""}`}>
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-neutral-700" aria-hidden="true">
+              <div key={feature.title} className={`flex items-center gap-2.5 py-3 ${index > 0 ? "border-t border-slate-100" : ""}`}>
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-neutral-700" aria-hidden="true">
                   {premiumFeatureIcons[index]}
                 </span>
                 <div className="min-w-0 flex-1">
-                  <p className="text-[17px] font-bold leading-6 text-slate-900">{feature.title}</p>
-                  <p className="mt-0.5 text-sm font-medium leading-5 text-neutral-700">{feature.desc}</p>
+                  <p className="text-[15px] font-bold leading-[21px] text-slate-900">{feature.title}</p>
+                  <p className="mt-0.5 text-[13px] font-medium leading-[18px] text-neutral-700">{feature.desc}</p>
                 </div>
                 <span className="flex w-24 shrink-0 items-center justify-center">
                   <UpgradePremiumCell value={feature.gratis} />
@@ -1158,13 +1158,65 @@ function DesktopLiteratureReview({ query, onBack }: { query: string; onBack: () 
     { label: "Artikel prioritas tinggi", value: "24", tone: "text-blue-600" },
   ];
 
-  const priorityRows = [
-    { title: "Resilience among Women in Disaster Contexts: A Systematic Literature Review", year: 2023, relevan: 97, tag: "Sangat relevan", kind: "Ulasan teori", source: "Google Scholar" },
-    { title: "Gendered Impacts of Natural Disasters: A Global Review", year: 2022, relevan: 95, tag: "Sangat relevan", kind: "Ulasan teori", source: "Crossref" },
-    { title: "Community Resilience and Women's Leadership in Disaster Recovery", year: 2021, relevan: 91, tag: "Perlu ditinjau", kind: "Ulasan teori", source: "OpenAlex" },
-    { title: "The Role of Social Support in Post-Disaster Recovery for Women", year: 2020, relevan: 93, tag: "Sangat relevan", kind: "Ulasan teori", source: "DOAJ" },
-    { title: "Digital Platforms for Women's Resilience in Crisis Situations: An Empirical Study", year: 2023, relevan: 90, tag: "Perlu ditinjau", kind: "Empiris", source: "Google Scholar" },
-  ];
+  const priorityRows = (() => {
+    const interleave = (...lists: string[][]) => {
+      const out: string[] = [];
+      const max = Math.max(...lists.map(list => list.length));
+      for (let i = 0; i < max; i++) for (const list of lists) if (i < list.length) out.push(list[i]);
+      return out;
+    };
+    const head = [
+      { title: "Resilience among Women in Disaster Contexts: A Systematic Literature Review", year: 2023, relevan: 97, tag: "Sangat relevan", kind: "Ulasan teori", source: "Google Scholar" },
+      { title: "Gendered Impacts of Natural Disasters: A Global Review", year: 2022, relevan: 95, tag: "Sangat relevan", kind: "Ulasan teori", source: "Crossref" },
+      { title: "Community Resilience and Women's Leadership in Disaster Recovery", year: 2021, relevan: 91, tag: "Perlu ditinjau", kind: "Ulasan teori", source: "OpenAlex" },
+      { title: "The Role of Social Support in Post-Disaster Recovery for Women", year: 2020, relevan: 93, tag: "Sangat relevan", kind: "Ulasan teori", source: "DOAJ" },
+      { title: "Digital Platforms for Women's Resilience in Crisis Situations: An Empirical Study", year: 2023, relevan: 90, tag: "Perlu ditinjau", kind: "Empiris", source: "Google Scholar" },
+    ];
+    const topics = [
+      "Women's Resilience in Disasters",
+      "Gendered Disaster Recovery",
+      "Social Support after Crises",
+      "Community Preparedness and Women",
+      "Psychological Recovery of Survivors",
+      "Digital Inclusion in Humanitarian Crises",
+      "Women's Leadership in Emergency Response",
+      "Livelihood Restoration after Hazards",
+      "Coastal Community Vulnerability and Adaptation",
+      "Care Networks in Post-Disaster Settings",
+      "Gender Sensitivity in Humanitarian Aid",
+      "Education Continuity for Displaced Children",
+    ];
+    const suffixes = [
+      ": A Systematic Review",
+      ": Evidence from Coastal Indonesia",
+      ": A Mixed-Methods Study",
+      ": A Scoping Review",
+      ": Insights from ASEAN",
+      ": Lessons from COVID-19",
+      ": Longitudinal Perspectives",
+      ": Policy Implications",
+    ];
+    const tags = interleave(
+      Array.from({ length: 21 }, () => "Sangat relevan"),
+      Array.from({ length: 36 }, () => "Perlu ditinjau"),
+      Array.from({ length: 30 }, () => "Cukup relevan"),
+    );
+    const kinds = interleave(
+      Array.from({ length: 8 }, () => "Ulasan teori"),
+      Array.from({ length: 45 }, () => "Empiris"),
+      Array.from({ length: 34 }, () => "Campuran"),
+    );
+    const sources = ["Google Scholar", "Crossref", "OpenAlex", "DOAJ"];
+    const extra = Array.from({ length: 87 }, (_, index) => ({
+      title: `${topics[index % topics.length]}${suffixes[Math.floor(index / topics.length) % suffixes.length]}`,
+      year: 2026 - (index % 7),
+      relevan: Math.max(58, 94 - Math.floor(index * 0.42)),
+      tag: tags[index],
+      kind: kinds[index],
+      source: sources[index % sources.length],
+    }));
+    return [...head, ...extra];
+  })();
 
   const sourceLogos: Record<string, string> = {
     "Google Scholar": "/assets/source-logos/google-scholar.svg",
@@ -1333,10 +1385,10 @@ function DesktopLiteratureReview({ query, onBack }: { query: string; onBack: () 
       <div className="rounded-2xl bg-white p-2.5 shadow-sm">
         <div className="grid grid-cols-4 divide-x divide-slate-200/80">
           {stats.map(stat => (
-            <div key={stat.label} className="px-6 py-4">
+            <div key={stat.label} className="px-6 py-4 text-center">
               <p className="text-base font-medium leading-6 text-slate-500">{stat.label}</p>
               <p className={`mt-2 text-2xl font-extrabold leading-8 ${stat.tone}`}>
-                {stat.value} <span className="text-xl font-bold">artikel</span>
+                {stat.value} <span className="text-xl font-extrabold">artikel</span>
               </p>
             </div>
           ))}
@@ -1380,9 +1432,9 @@ function DesktopLiteratureReview({ query, onBack }: { query: string; onBack: () 
           ))}
         </div>
 
-        <div className="mt-4 overflow-x-auto">
+        <div className="mt-4 max-h-[460px] overflow-auto">
           <table className="w-full min-w-[760px] border-collapse text-left">
-            <thead>
+            <thead className="sticky top-0 z-10 bg-slate-50">
               <tr className="bg-slate-50/60">
                 <th className="px-5 py-3 text-xs font-semibold text-slate-500">Judul</th>
                 <th className="px-5 py-3">
@@ -1431,10 +1483,16 @@ function DesktopLiteratureReview({ query, onBack }: { query: string; onBack: () 
                       className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${
                         row.tag === "Sangat relevan"
                           ? "bg-emerald-50 text-emerald-700 outline outline-1 outline-emerald-200/60"
-                          : "bg-amber-50 text-amber-700 outline outline-1 outline-amber-200/60"
+                          : row.tag === "Cukup relevan"
+                            ? "bg-blue-50 text-blue-700 outline outline-1 outline-blue-200/60"
+                            : "bg-amber-50 text-amber-700 outline outline-1 outline-amber-200/60"
                       }`}
                     >
-                      <span className={`h-1.5 w-1.5 rounded-full ${row.tag === "Sangat relevan" ? "bg-emerald-500" : "bg-amber-500"}`} />
+                      <span
+                        className={`h-1.5 w-1.5 rounded-full ${
+                          row.tag === "Sangat relevan" ? "bg-emerald-500" : row.tag === "Cukup relevan" ? "bg-blue-500" : "bg-amber-500"
+                        }`}
+                      />
                       {row.tag}
                     </span>
                   </td>
