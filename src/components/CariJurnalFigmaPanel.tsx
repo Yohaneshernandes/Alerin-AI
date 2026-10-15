@@ -180,10 +180,12 @@ function Sidebar({
   view,
   onView,
   onBack,
+  onUpgrade,
 }: {
   view: JournalView;
   onView: (view: JournalView) => void;
   onBack: () => void;
+  onUpgrade: () => void;
 }) {
   const assets = view === "collection" ? collectionAssets : searchAssets;
   const homeIcon = view === "collection" ? "62b0b.svg" : "b4a91.svg";
@@ -264,7 +266,8 @@ function Sidebar({
         </div>
         <button
           type="button"
-          className="mt-3.5 w-full rounded-xl border border-blue-200 bg-white px-3 py-2 text-xs font-semibold text-blue-600 shadow-sm"
+          onClick={onUpgrade}
+          className="mt-3.5 w-full rounded-xl border border-blue-200 bg-white px-3 py-2 text-xs font-semibold text-blue-600 shadow-sm hover:bg-blue-50"
         >
           Upgrade Sekarang
         </button>
@@ -548,6 +551,201 @@ function FilterPanel({ open, onClose }: { open: boolean; onClose: () => void }) 
   );
 }
 
+const premiumFeatures = [
+  {
+    title: "Sintesis Literatur & Matriks",
+    desc: "Ekspor otomatis ke Word & Excel matriks telaah",
+    gratis: "—",
+    plus: "check",
+    pro: "check",
+  },
+  {
+    title: "Akses Basis Data Bereputasi",
+    desc: "Scopus, SINTA 1-6, Crossref & OpenAlex",
+    gratis: "10/hari",
+    plus: "Unlimited",
+    pro: "Unlimited + API",
+  },
+  {
+    title: "Deteksi Klaim & Validasi Sitasi",
+    desc: "Cek akurasi argumen naskah & anti halusinasi AI",
+    gratis: "—",
+    plus: "check",
+    pro: "check",
+  },
+  {
+    title: "Peta Riset Bibliometrik (Research Gap)",
+    desc: "Visualisasi klaster topik & kebaruan studi",
+    gratis: "—",
+    plus: "check",
+    pro: "check",
+  },
+  {
+    title: "Kuota Analisis Naskah & PDF",
+    desc: "Kapasitas pembacaan dokumen bab riset",
+    gratis: "1 Jurnal/sesi",
+    plus: "Hingga 30 Jurnal",
+    pro: "Hingga 80 Jurnal",
+  },
+];
+
+const premiumFeatureIcons: ReactNode[] = [
+  <svg key="sintesis" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="white" strokeWidth="1.4" strokeLinecap="round" aria-hidden="true">
+    <circle cx="7" cy="7" r="4.5" />
+    <path d="M10.5 10.5L14 14" />
+  </svg>,
+  <svg key="database" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="white" strokeWidth="1.4" strokeLinecap="round" aria-hidden="true">
+    <rect x="3.5" y="2" width="9" height="12" rx="1.5" />
+    <path d="M6 5.5h4M6 8h4M6 10.5h3" />
+  </svg>,
+  <svg key="deteksi" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="white" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M8 1.5l5 2v4.2c0 3-2.1 5.3-5 6.3-2.9-1-5-3.3-5-6.3V3.5l5-2z" />
+    <path d="M5.8 8l1.6 1.6 2.8-3" />
+  </svg>,
+  <svg key="peta" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="white" strokeWidth="1.4" strokeLinecap="round" aria-hidden="true">
+    <path d="M3 13V7M8 13V3M13 13V9" />
+  </svg>,
+  <svg key="kuota" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="white" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M4 1.5h5l3 3v10H4z" />
+    <path d="M9 1.5v3h3" />
+    <path d="M6.5 9.5l1.5 1.5 2.5-2.5" />
+  </svg>,
+];
+
+function UpgradePremiumCell({ value }: { value: string }) {
+  if (value === "—") {
+    return <span className="text-xs font-semibold text-slate-400">—</span>;
+  }
+  if (value === "check") {
+    return (
+      <span className="flex h-4 w-4 items-center justify-center rounded-full bg-emerald-100">
+        <svg width="10" height="8" viewBox="0 0 10 8" fill="none" stroke="#059669" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M1 4l2.5 2.5L9 1" />
+        </svg>
+      </span>
+    );
+  }
+  const tone: Record<string, string> = {
+    "10/hari": "text-[8.71px] font-medium text-slate-400",
+    Unlimited: "rounded-[3px] bg-indigo-50/70 px-2 py-[3px] text-[8.71px] font-bold text-zinc-800",
+    "Unlimited + API": "text-[8.71px] font-bold text-slate-700",
+    "1 Jurnal/sesi": "text-[8.71px] font-medium text-slate-500",
+    "Hingga 30 Jurnal": "text-[8.71px] font-bold text-zinc-800",
+    "Hingga 80 Jurnal": "text-[8.71px] font-bold text-sky-700",
+  };
+  return <span className={tone[value] ?? "text-[8.71px] font-bold text-slate-700"}>{value}</span>;
+}
+
+function UpgradePremiumModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  return (
+    <div
+      className={`fixed inset-0 z-[330] flex items-center justify-center p-4 transition-opacity duration-200 ${open ? "opacity-100" : "pointer-events-none opacity-0"}`}
+      aria-hidden={!open}
+    >
+      <div onClick={onClose} className="absolute inset-0 bg-black/20" aria-hidden="true" />
+      <div
+        role="dialog"
+        aria-label="Upgrade ke Alerin Premium"
+        className="relative flex max-h-[calc(100dvh-2rem)] w-full max-w-[608px] flex-col overflow-hidden rounded-[19px] bg-white shadow-[0px_19.79px_39.58px_-9.5px_rgba(0,0,0,0.25)] outline outline-[0.79px] outline-offset-[-0.79px] outline-slate-100"
+      >
+        <div className="relative shrink-0 px-8 pb-3 pt-6 text-center">
+          <button
+            type="button"
+            aria-label="Tutup"
+            onClick={onClose}
+            className="absolute right-4 top-4 flex h-6 w-6 items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200"
+          >
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" aria-hidden="true">
+              <path d="M4 4l8 8M12 4l-8 8" />
+            </svg>
+          </button>
+          <h2 className="text-2xl font-extrabold leading-7 text-slate-900">Upgrade ke Alerin Premium!</h2>
+          <p className="mx-auto mt-1.5 max-w-96 text-xs font-medium leading-4 text-zinc-800">
+            Akselerasi riset, telaah literatur, dan skripsimu lebih cepat &amp; tuntas dengan asisten bertenaga AI.
+          </p>
+        </div>
+
+        <div className="min-h-0 flex-1 overflow-y-auto px-8 pb-5">
+          <div className="grid grid-cols-3 items-start gap-2">
+            <div className="mt-[3px] rounded-xl bg-white p-4 text-center outline outline-[0.79px] outline-offset-[-0.79px] outline-slate-200">
+              <p className="text-xs font-semibold leading-4 text-slate-600">Gratis</p>
+              <p className="mt-1.5 text-lg font-extrabold leading-6 text-slate-900">Rp 0</p>
+              <p className="text-[9.5px] font-medium leading-3 text-slate-400">Akses dasar</p>
+            </div>
+            <div className="relative rounded-xl bg-gradient-to-b from-cyan-50 to-blue-200/70 p-4 text-center outline outline-[1.58px] outline-offset-[-1.58px] outline-blue-500/90">
+              <span className="absolute -top-2 left-1/2 -translate-x-1/2 rounded-full bg-red-500 px-2.5 py-[2px] text-[8.71px] font-bold uppercase leading-3 tracking-tight text-white shadow-sm">
+                Populer
+              </span>
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="#f59e0b"
+                className="absolute right-2.5 top-2.5 opacity-80"
+                aria-hidden="true"
+              >
+                <path d="M12 2l2.9 6.26L21.5 9.3l-4.75 4.63 1.12 6.57L12 17.4l-5.87 3.1 1.12-6.57L2.5 9.3l6.6-1.04L12 2z" />
+              </svg>
+              <p className="text-xs font-bold leading-4 text-sky-900">Paket Plus</p>
+              <p className="mt-1.5 text-lg font-extrabold leading-6 text-slate-900">Rp 49.000</p>
+              <p className="text-[9.5px] font-semibold leading-3 text-sky-900">per bulan</p>
+            </div>
+            <div className="mt-[3px] rounded-xl bg-white p-4 text-center outline outline-[0.79px] outline-offset-[-0.79px] outline-slate-200">
+              <p className="text-xs font-semibold leading-4 text-slate-600">Paket Pro</p>
+              <p className="mt-1.5 text-lg font-extrabold leading-6 text-slate-900">Rp 99.000</p>
+              <p className="text-[9.5px] font-medium leading-3 text-slate-400">per bulan</p>
+            </div>
+          </div>
+
+          <div className="mt-4 border-t border-slate-100 pt-3">
+            <div className="flex items-end gap-2 border-b border-slate-100 pb-2">
+              <p className="min-w-0 flex-1 pl-1 text-xs font-bold leading-3 tracking-wide text-zinc-800">Manfaat &amp; Fitur Riset</p>
+              <span className="w-20 shrink-0 text-center text-[9.5px] font-semibold leading-3 tracking-wide text-slate-500 sm:w-24">Gratis</span>
+              <span className="w-20 shrink-0 text-center sm:w-24">
+                <span className="inline-block rounded-sm bg-indigo-50/80 px-2 py-[2px] text-[9.5px] font-bold leading-3 tracking-wide text-blue-950">Plus</span>
+              </span>
+              <span className="w-20 shrink-0 text-center text-[9.5px] font-semibold leading-3 tracking-wide text-slate-700 sm:w-24">Pro</span>
+            </div>
+            {premiumFeatures.map((feature, index) => (
+              <div key={feature.title} className={`flex items-center gap-2 py-2.5 ${index > 0 ? "border-t border-slate-100" : ""}`}>
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-neutral-700" aria-hidden="true">
+                  {premiumFeatureIcons[index]}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs font-bold leading-4 text-slate-900">{feature.title}</p>
+                  <p className="text-[9px] font-medium leading-3 text-neutral-700">{feature.desc}</p>
+                </div>
+                <span className="flex w-20 shrink-0 items-center justify-center sm:w-24">
+                  <UpgradePremiumCell value={feature.gratis} />
+                </span>
+                <span className="flex w-20 shrink-0 items-center justify-center sm:w-24">
+                  <UpgradePremiumCell value={feature.plus} />
+                </span>
+                <span className="flex w-20 shrink-0 items-center justify-center sm:w-24">
+                  <UpgradePremiumCell value={feature.pro} />
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex shrink-0 justify-center border-t border-slate-100 bg-slate-50 px-8 py-4">
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex w-full items-center justify-center gap-1.5 rounded-xl bg-sky-600 px-5 py-3 text-xs font-bold leading-5 text-white shadow-sm hover:bg-sky-700 sm:w-96"
+          >
+            Pilih Paket Plus Sekarang (Rp 49.000)
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M2 6h8M7 3l3 3-3 3" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function JournalCard({ index }: { index: number }) {
   return (
     <article className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-sm">
@@ -600,6 +798,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
   const [resultMode, setResultMode] = useState<"search" | "analysis">("search");
   const [temuanIndex, setTemuanIndex] = useState(1);
   const [filterOpen, setFilterOpen] = useState(false);
+  const [upgradeOpen, setUpgradeOpen] = useState(false);
 
   useEffect(() => {
     if (mobileSearchStage !== "loading") return;
@@ -613,7 +812,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
 
   return (
     <div className="fixed inset-0 z-[300] flex h-dvh w-full overflow-hidden bg-[#f4f7fb] font-['Inter:Regular'] text-[#0f172a] md:bg-[#f3f6f9]">
-      <Sidebar view={view} onView={setView} onBack={onBack} />
+      <Sidebar view={view} onView={setView} onBack={onBack} onUpgrade={() => setUpgradeOpen(true)} />
 
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
         <header className="flex h-[65px] shrink-0 items-center justify-between border-b border-slate-200/80 bg-white/95 px-[18px] shadow-[0_1px_3px_rgba(0,0,0,0.02)] backdrop-blur-md md:hidden">
@@ -1380,6 +1579,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
       </nav>
 
       <FilterPanel open={filterOpen} onClose={() => setFilterOpen(false)} />
+      <UpgradePremiumModal open={upgradeOpen} onClose={() => setUpgradeOpen(false)} />
     </div>
   );
 }
