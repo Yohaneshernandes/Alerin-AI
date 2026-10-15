@@ -1740,13 +1740,13 @@ function DesktopLiteratureReview({ query, onBack }: { query: string; onBack: () 
                 </svg>
               </button>
               {openRow === row.key && (
-                <div className="border-t border-slate-200/70 px-5 py-4">
-                  <p className="text-base font-semibold leading-6 text-slate-800">
+                <div className="border-t border-slate-200/70 px-5 py-5">
+                  <p className="text-2xl font-bold leading-8 text-slate-900">
                     {row.key}. {row.title}
                   </p>
-                  <div className="mt-2 space-y-3">
+                  <div className="mt-4 space-y-4">
                     {row.content.map(paragraph => (
-                      <p key={paragraph} className="text-sm leading-6 text-slate-600">
+                      <p key={paragraph} className="text-lg leading-8 text-slate-700">
                         {paragraph}
                       </p>
                     ))}
