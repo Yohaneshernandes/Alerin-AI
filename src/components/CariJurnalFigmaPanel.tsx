@@ -1836,7 +1836,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
           </div>
         </header>
 
-        <main className="min-h-0 flex-1 overflow-y-auto px-4 pb-28 pt-7 md:p-7">
+        <main className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden px-4 pb-28 pt-7 md:p-7">
           {mobileSearchStage === "loading" && (
             <div className="fixed inset-x-0 bottom-[68px] top-[65px] z-[305] flex flex-col items-center justify-center bg-[#f4f7fb] px-6 md:hidden">
               <img
@@ -1856,7 +1856,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
           )}
 
           {mobileSearchStage === "results" && (
-            <div className="fixed inset-x-0 bottom-[68px] top-[65px] z-[305] overflow-y-auto bg-[#f4f7fb] px-4 pb-6 pt-4 md:hidden">
+            <div className="fixed inset-x-0 bottom-[68px] top-[65px] z-[305] overflow-y-auto overflow-x-hidden bg-[#f4f7fb] px-4 pb-6 pt-4 md:hidden">
               <div className="mx-auto max-w-md">
                 <div className="flex items-center gap-2">
                   <button
@@ -2247,13 +2247,13 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                 <section className="mt-4 rounded-2xl border border-slate-200/80 bg-white px-4 py-[22px] shadow-sm md:p-6">
                   <h2 className="text-center font-['Plus_Jakarta_Sans:ExtraBold'] text-[19px] font-extrabold md:text-left md:font-['Plus_Jakarta_Sans:Bold'] md:text-base md:font-bold">Cari rujukan dari tulisanmu</h2>
                   <p className="mx-auto mt-2 max-w-lg text-center font-['Plus_Jakarta_Sans:Regular'] text-[13px] leading-5 text-[#1c1c1c] md:mx-0 md:mt-1 md:max-w-none md:text-left md:font-['Plus_Jakarta_Sans:Medium'] md:font-medium md:leading-5 md:text-xs md:text-[#71717a]">Tempel kalimat atau paragraf yang ingin kamu perkuat dengan sitasi. Alerin akan membantu mencari artikel jurnal yang relevan untuk mendukung tulisanmu.</p>
-                  <div className="mt-5 grid gap-3 md:grid-cols-[1.35fr_0.95fr]">
+                  <div className="mt-5 grid min-w-0 gap-3 md:grid-cols-[1.35fr_0.95fr]">
                     <label className="grid gap-1.5">
                       <span className="font-['Plus_Jakarta_Sans:SemiBold'] text-[14px] font-semibold text-[#334155] md:hidden">Draf / Paragraf Teks</span>
                       <textarea value={paragraph} onChange={event => setParagraph(event.target.value)} placeholder="Masukkan kalimat atau paragraf yang membutuhkan sitasi." className="min-h-[123px] resize-none rounded-xl border border-slate-200 bg-[rgba(200,226,251,0.24)] p-3 text-[13px] outline-none focus:border-sky-400 md:min-h-44 md:bg-white md:p-4 md:text-xs" />
                     </label>
                     {fileName ? (
-                      <div className="flex min-h-[108px] flex-col items-center justify-center rounded-xl border-2 border-dashed border-sky-200 bg-white p-5 text-center md:min-h-44 md:p-4">
+                      <div className="flex min-h-[108px] w-full min-w-0 flex-col items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-sky-200 bg-white p-5 text-center md:min-h-44 md:p-4">
                         <span className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-rose-600 to-red-500 shadow-[0_0_0_4px_rgba(224,242,254,1)] md:h-10 md:w-10 md:rounded-xl md:shadow-[0_0_0_3.5px_rgba(224,242,254,1)]">
                           <svg viewBox="0 0 14 16" fill="none" stroke="white" strokeWidth="1.2" strokeLinejoin="round" aria-hidden="true" className="h-7 w-6 md:h-4 md:w-[14px]">
                             <path d="M2 1.5h6l4 4v9H2z" />
@@ -2261,7 +2261,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                           </svg>
                           <span className="absolute bottom-1 text-[9px] font-extrabold uppercase leading-none tracking-tight text-rose-200 md:bottom-[3px] md:text-[6px]">PDF</span>
                         </span>
-                        <p className="mt-4 max-w-full truncate px-2 text-base font-bold leading-6 text-slate-900 md:mt-3 md:text-xs md:text-slate-800 md:leading-4">{fileName}</p>
+                        <p className="mt-4 w-full truncate px-2 text-base font-bold leading-6 text-slate-900 md:mt-3 md:text-xs md:text-slate-800 md:leading-4">{fileName}</p>
                         <p className="mt-2 text-sm font-medium leading-5 text-slate-500 md:mt-1.5 md:text-xs md:leading-4">
                           {fileSizeLabel || "1.0 MB"} <span className="px-1">•</span> 22 Halaman
                         </p>
