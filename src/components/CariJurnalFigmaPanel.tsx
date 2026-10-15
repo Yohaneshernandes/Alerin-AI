@@ -956,6 +956,8 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
     if (query.trim() || paragraph.trim() || fileName) setHasResults(true);
   };
 
+  const canSearch = query.trim().length >= 5;
+
   return (
     <div className="fixed inset-0 z-[300] flex h-dvh w-full overflow-hidden bg-[#f4f7fb] font-['Inter:Regular'] text-[#0f172a] md:bg-[#f3f6f9]">
       <Sidebar view={view} onView={setView} onBack={onBack} onUpgrade={() => setUpgradeOpen(true)} />
@@ -1286,6 +1288,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                           onChange={event => setQuery(event.target.value)}
                           onKeyDown={event => {
                             if (event.key !== "Enter") return;
+                            if (query.trim().length < 5) return;
                             if (window.matchMedia("(min-width: 768px)").matches) runSearch();
                             else {
                               setResultMode("search");
@@ -1325,11 +1328,14 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                       <button
                         key={type}
                         type="button"
+                        disabled={!canSearch}
                         onClick={() => {
                           setSearchType(type);
                           runSearch();
                         }}
-                        className={`rounded-xl px-5 py-2.5 text-sm font-semibold text-white ${searchType === type ? "bg-[#00629b]" : "bg-sky-700"}`}
+                        className={`rounded-xl px-5 py-2.5 text-sm font-semibold text-white transition-colors ${
+                          !canSearch ? "cursor-not-allowed bg-slate-200 text-slate-400" : searchType === type ? "bg-[#00629b]" : "bg-sky-700"
+                        }`}
                       >
                         {label}
                       </button>
@@ -1339,6 +1345,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                   <div className="mt-4 grid grid-cols-[minmax(0,1fr)_52px] gap-2 md:hidden">
                     <button
                       type="button"
+                      disabled={!canSearch}
                       onClick={() => {
                         if (!searchType) setSearchType("journal");
                         if (window.matchMedia("(min-width: 768px)").matches) runSearch();
@@ -1347,7 +1354,9 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                           setMobileSearchStage("loading");
                         }
                       }}
-                      className="rounded-xl bg-[#00629b] px-4 py-3 text-center font-['Plus_Jakarta_Sans:SemiBold'] text-sm font-semibold text-white md:bg-[#0070ba]"
+                      className={`rounded-xl px-4 py-3 text-center font-['Plus_Jakarta_Sans:SemiBold'] text-sm font-semibold text-white transition-colors md:bg-[#0070ba] ${
+                        !canSearch ? "cursor-not-allowed bg-slate-200 text-slate-400" : "bg-[#00629b]"
+                      }`}
                     >
                       {searchType === "review" ? "Literatur Review" : searchType === "map" ? "Peta Penelitian" : "Cari jurnal"}
                     </button>
