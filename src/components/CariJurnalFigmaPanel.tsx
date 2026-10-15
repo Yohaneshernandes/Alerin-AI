@@ -600,22 +600,22 @@ const premiumFeatures = [
 ];
 
 const premiumFeatureIcons: ReactNode[] = [
-  <svg key="sintesis" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="white" strokeWidth="1.4" strokeLinecap="round" aria-hidden="true">
+  <svg key="sintesis" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="white" strokeWidth="1.4" strokeLinecap="round" aria-hidden="true">
     <circle cx="7" cy="7" r="4.5" />
     <path d="M10.5 10.5L14 14" />
   </svg>,
-  <svg key="database" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="white" strokeWidth="1.4" strokeLinecap="round" aria-hidden="true">
+  <svg key="database" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="white" strokeWidth="1.4" strokeLinecap="round" aria-hidden="true">
     <rect x="3.5" y="2" width="9" height="12" rx="1.5" />
     <path d="M6 5.5h4M6 8h4M6 10.5h3" />
   </svg>,
-  <svg key="deteksi" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="white" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+  <svg key="deteksi" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="white" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     <path d="M8 1.5l5 2v4.2c0 3-2.1 5.3-5 6.3-2.9-1-5-3.3-5-6.3V3.5l5-2z" />
     <path d="M5.8 8l1.6 1.6 2.8-3" />
   </svg>,
-  <svg key="peta" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="white" strokeWidth="1.4" strokeLinecap="round" aria-hidden="true">
+  <svg key="peta" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="white" strokeWidth="1.4" strokeLinecap="round" aria-hidden="true">
     <path d="M3 13V7M8 13V3M13 13V9" />
   </svg>,
-  <svg key="kuota" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="white" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+  <svg key="kuota" width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="white" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     <path d="M4 1.5h5l3 3v10H4z" />
     <path d="M9 1.5v3h3" />
     <path d="M6.5 9.5l1.5 1.5 2.5-2.5" />
@@ -624,26 +624,26 @@ const premiumFeatureIcons: ReactNode[] = [
 
 function UpgradePremiumCell({ value }: { value: string }) {
   if (value === "—") {
-    return <span className="text-xs font-semibold text-slate-400">—</span>;
+    return <span className="text-sm font-medium text-slate-400">—</span>;
   }
   if (value === "check") {
     return (
-      <span className="flex h-4 w-4 items-center justify-center rounded-full bg-emerald-100">
-        <svg width="10" height="8" viewBox="0 0 10 8" fill="none" stroke="#059669" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <span className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-100">
+        <svg width="14" height="11" viewBox="0 0 10 8" fill="none" stroke="#059669" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
           <path d="M1 4l2.5 2.5L9 1" />
         </svg>
       </span>
     );
   }
   const tone: Record<string, string> = {
-    "10/hari": "text-[8.71px] font-medium text-slate-400",
-    Unlimited: "rounded-[3px] bg-indigo-50/70 px-2 py-[3px] text-[8.71px] font-bold text-zinc-800",
-    "Unlimited + API": "text-[8.71px] font-bold text-slate-700",
-    "1 Jurnal/sesi": "text-[8.71px] font-medium text-slate-500",
-    "Hingga 30 Jurnal": "text-[8.71px] font-bold text-zinc-800",
-    "Hingga 80 Jurnal": "text-[8.71px] font-bold text-sky-700",
+    "10/hari": "whitespace-nowrap text-[13px] font-medium text-slate-400",
+    Unlimited: "whitespace-nowrap rounded-md bg-indigo-50/70 px-2.5 py-1 text-[13px] font-bold text-zinc-800",
+    "Unlimited + API": "whitespace-nowrap text-[13px] font-bold text-slate-700",
+    "1 Jurnal/sesi": "whitespace-nowrap text-[13px] font-medium text-slate-500",
+    "Hingga 30 Jurnal": "whitespace-nowrap text-[13px] font-bold text-zinc-800",
+    "Hingga 80 Jurnal": "whitespace-nowrap text-[13px] font-bold text-sky-700",
   };
-  return <span className={tone[value] ?? "text-[8.71px] font-bold text-slate-700"}>{value}</span>;
+  return <span className={tone[value] ?? "whitespace-nowrap text-[13px] font-bold text-slate-700"}>{value}</span>;
 }
 
 function UpgradePremiumModal({ open, onClose }: { open: boolean; onClose: () => void }) {
@@ -675,7 +675,7 @@ function UpgradePremiumModal({ open, onClose }: { open: boolean; onClose: () => 
           </p>
         </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto px-8 pb-5">
+        <div className="min-h-0 flex-1 overflow-y-auto px-8 pb-5 pt-4">
           <div className="grid grid-cols-3 items-start gap-2">
             <div className="mt-[3px] rounded-xl bg-white p-4 text-center outline outline-[0.79px] outline-offset-[-0.79px] outline-slate-200">
               <p className="text-xs font-semibold leading-4 text-slate-600">Gratis</p>
@@ -707,31 +707,31 @@ function UpgradePremiumModal({ open, onClose }: { open: boolean; onClose: () => 
             </div>
           </div>
 
-          <div className="mt-4 border-t border-slate-100 pt-3">
-            <div className="flex items-end gap-2 border-b border-slate-100 pb-2">
-              <p className="min-w-0 flex-1 pl-1 text-xs font-bold leading-3 tracking-wide text-zinc-800">Manfaat &amp; Fitur Riset</p>
-              <span className="w-20 shrink-0 text-center text-[9.5px] font-semibold leading-3 tracking-wide text-slate-500 sm:w-24">Gratis</span>
-              <span className="w-20 shrink-0 text-center sm:w-24">
-                <span className="inline-block rounded-sm bg-indigo-50/80 px-2 py-[2px] text-[9.5px] font-bold leading-3 tracking-wide text-blue-950">Plus</span>
+          <div className="mt-4 border-t border-slate-100 pt-4">
+            <div className="flex items-end gap-2 border-b border-slate-100 pb-3">
+              <p className="min-w-0 flex-1 pl-1 text-lg font-bold leading-6 tracking-wide text-zinc-800">Manfaat &amp; Fitur Riset</p>
+              <span className="w-24 shrink-0 text-center text-sm font-semibold leading-5 tracking-wide text-slate-500">Gratis</span>
+              <span className="w-24 shrink-0 text-center">
+                <span className="inline-block rounded-md bg-indigo-50/80 px-2.5 py-1 text-sm font-bold leading-5 tracking-wide text-blue-950">Plus</span>
               </span>
-              <span className="w-20 shrink-0 text-center text-[9.5px] font-semibold leading-3 tracking-wide text-slate-700 sm:w-24">Pro</span>
+              <span className="w-24 shrink-0 text-center text-sm font-semibold leading-5 tracking-wide text-slate-700">Pro</span>
             </div>
             {premiumFeatures.map((feature, index) => (
-              <div key={feature.title} className={`flex items-center gap-2 py-2.5 ${index > 0 ? "border-t border-slate-100" : ""}`}>
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-neutral-700" aria-hidden="true">
+              <div key={feature.title} className={`flex items-center gap-3 py-3.5 ${index > 0 ? "border-t border-slate-100" : ""}`}>
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-neutral-700" aria-hidden="true">
                   {premiumFeatureIcons[index]}
                 </span>
                 <div className="min-w-0 flex-1">
-                  <p className="text-xs font-bold leading-4 text-slate-900">{feature.title}</p>
-                  <p className="text-[9px] font-medium leading-3 text-neutral-700">{feature.desc}</p>
+                  <p className="text-[17px] font-bold leading-6 text-slate-900">{feature.title}</p>
+                  <p className="mt-0.5 text-sm font-medium leading-5 text-neutral-700">{feature.desc}</p>
                 </div>
-                <span className="flex w-20 shrink-0 items-center justify-center sm:w-24">
+                <span className="flex w-24 shrink-0 items-center justify-center">
                   <UpgradePremiumCell value={feature.gratis} />
                 </span>
-                <span className="flex w-20 shrink-0 items-center justify-center sm:w-24">
+                <span className="flex w-24 shrink-0 items-center justify-center">
                   <UpgradePremiumCell value={feature.plus} />
                 </span>
-                <span className="flex w-20 shrink-0 items-center justify-center sm:w-24">
+                <span className="flex w-24 shrink-0 items-center justify-center">
                   <UpgradePremiumCell value={feature.pro} />
                 </span>
               </div>
