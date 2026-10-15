@@ -649,7 +649,7 @@ function UpgradePremiumCell({ value }: { value: string }) {
 function UpgradePremiumModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   return (
     <div
-      className={`fixed inset-0 z-[330] flex items-center justify-center p-4 transition-opacity duration-200 ${open ? "opacity-100" : "pointer-events-none opacity-0"}`}
+      className={`fixed inset-0 z-[330] hidden items-center justify-center p-4 transition-opacity duration-200 md:flex ${open ? "opacity-100" : "pointer-events-none opacity-0"}`}
       aria-hidden={!open}
     >
       <div onClick={onClose} className="absolute inset-0 bg-black/20" aria-hidden="true" />
@@ -747,6 +747,141 @@ function UpgradePremiumModal({ open, onClose }: { open: boolean; onClose: () => 
           >
             Pilih Paket Plus Sekarang (Rp 49.000)
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M2 6h8M7 3l3 3-3 3" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const mobilePremiumFeatures = [
+  { title: "Sintesis Literatur AI", desc: "Ringkas ratusan jurnal instan" },
+  { title: "Akses SINTA & Scopus", desc: "Index Q1-Q4 & SINTA 1-6" },
+  { title: "Cek Sitasi & Referensi", desc: "Format APA, IEEE, Harvard" },
+  { title: "Peta Bibliometrik", desc: "Visualisasi novelty & gap riset" },
+];
+
+const mobilePremiumFeatureIcons: ReactNode[] = [
+  <svg key="m-sintesis" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M2.5 3.5c2-.8 3.5-.8 5.5 0v9c-2-.8-3.5-.8-5.5 0v-9zM13.5 3.5c-2-.8-3.5-.8-5.5 0v9c2-.8 3.5-.8 5.5 0v-9z" />
+  </svg>,
+  <svg key="m-sinta" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <rect x="2.5" y="2.5" width="11" height="11" rx="2" />
+    <path d="M5.5 6.5h5M5.5 9.5h3" />
+  </svg>,
+  <svg key="m-sitasi" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M4 1.5h5l3 3v10H4z" />
+    <path d="M9 1.5v3h3M6.5 9.5l1.5 1.5 2.5-2.5" />
+  </svg>,
+  <svg key="m-peta" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M2.5 11.5l3.5-4 2.5 2 4.5-5" />
+    <path d="M10.5 4.5h2.5v2.5" />
+  </svg>,
+];
+
+function UpgradePremiumSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
+  return (
+    <div className={`fixed inset-0 z-[330] md:hidden ${open ? "" : "pointer-events-none"}`} aria-hidden={!open}>
+      <div
+        onClick={onClose}
+        className={`absolute inset-0 bg-black/40 transition-opacity duration-300 ${open ? "opacity-100" : "opacity-0"}`}
+        aria-hidden="true"
+      />
+      <div
+        role="dialog"
+        aria-label="Upgrade ke Alerin Premium"
+        className={`absolute inset-x-0 bottom-0 flex max-h-[92dvh] flex-col overflow-hidden rounded-t-[40px] bg-stone-50 shadow-[0px_32px_72px_-16px_rgba(15,23,42,0.25)] transition-transform duration-300 ${
+          open ? "translate-y-0" : "translate-y-full"
+        }`}
+      >
+        <div className="relative flex shrink-0 flex-col items-center gap-1.5 px-8 pb-5 pt-4">
+          <span className="h-1.5 w-16 rounded-full bg-slate-300" aria-hidden="true" />
+          <button
+            type="button"
+            aria-label="Tutup"
+            onClick={onClose}
+            className="absolute right-5 top-5 flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200"
+          >
+            <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+              <path d="M4 4l8 8M12 4l-8 8" />
+            </svg>
+          </button>
+          <h2 className="pt-1 text-center text-[26px] font-bold leading-9 text-slate-900 sm:text-3xl">Upgrade ke Alerin Premium!</h2>
+          <p className="text-center text-base leading-6 text-slate-500 sm:text-xl">Akselerasi riset &amp; skripsimu lebih mudah &amp; cepat.</p>
+        </div>
+
+        <div className="min-h-0 flex-1 overflow-y-auto px-6 pb-6">
+          <div className="grid grid-cols-3 items-start gap-2 pt-3">
+            <div className="mt-2 rounded-3xl bg-white p-4 text-center shadow-[0px_1.6px_3.2px_rgba(0,0,0,0.05)] outline outline-[1.6px] outline-offset-[-1.6px] outline-slate-200/90">
+              <p className="text-base font-bold leading-6 text-slate-600 sm:text-xl">Gratis</p>
+              <p className="mt-1 text-xl font-bold leading-6 text-slate-900 sm:text-2xl">Rp 0</p>
+              <p className="text-sm leading-6 text-slate-400 sm:text-base">selamanya</p>
+            </div>
+            <div className="relative rounded-3xl bg-amber-50/80 p-4 text-center shadow-[0px_3.2px_6.4px_-3.2px_rgba(0,0,0,0.1),0px_6.4px_9.6px_-1.6px_rgba(0,0,0,0.1)] outline outline-[3px] outline-offset-[-3px] outline-amber-300">
+              <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full bg-red-500 px-3 py-[3px] text-xs font-bold uppercase leading-5 tracking-tight text-white shadow-sm">
+                Popular
+              </span>
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="#f59e0b"
+                className="absolute right-3 top-3 opacity-30"
+                aria-hidden="true"
+              >
+                <path d="M12 2l2.9 6.26L21.5 9.3l-4.75 4.63 1.12 6.57L12 17.4l-5.87 3.1 1.12-6.57L2.5 9.3l6.6-1.04L12 2z" />
+              </svg>
+              <p className="text-base font-bold leading-6 text-amber-900 sm:text-xl">Plus</p>
+              <p className="mt-0.5 text-2xl font-bold leading-9 text-amber-950 sm:text-3xl">Rp 49rb</p>
+              <p className="text-sm leading-6 text-amber-800/80 sm:text-base">per bulan</p>
+            </div>
+            <div className="mt-2 rounded-3xl bg-white p-4 text-center shadow-[0px_1.6px_3.2px_rgba(0,0,0,0.05)] outline outline-[1.6px] outline-offset-[-1.6px] outline-slate-200/90">
+              <p className="text-base font-bold leading-6 text-slate-600 sm:text-xl">Pro</p>
+              <p className="mt-1 text-xl font-bold leading-6 text-slate-900 sm:text-2xl">Rp 99rb</p>
+              <p className="text-sm leading-6 text-slate-400 sm:text-base">per bulan</p>
+            </div>
+          </div>
+
+          <div className="pt-6">
+            <div className="flex items-end gap-2 border-b-2 border-slate-200 px-2 pb-2.5">
+              <p className="min-w-0 flex-1 text-base font-bold uppercase leading-7 tracking-wide text-slate-600 sm:text-xl">Manfaat</p>
+              <span className="w-12 shrink-0 text-center text-base font-bold leading-7 text-slate-500 sm:text-xl">Gratis</span>
+              <span className="w-12 shrink-0 text-center text-base font-bold leading-7 text-sky-700 sm:text-xl">Plus</span>
+            </div>
+            {mobilePremiumFeatures.map((feature, index) => (
+              <div key={feature.title} className={`px-2 py-4 ${index > 0 ? "border-t-2 border-slate-100" : ""}`}>
+                <div className="flex items-start gap-3.5 pr-2">
+                  <span className="mt-0.5 flex shrink-0 items-center justify-center rounded-xl bg-neutral-700 p-2" aria-hidden="true">
+                    {mobilePremiumFeatureIcons[index]}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-base font-bold leading-6 text-slate-800 sm:text-xl">{feature.title}</p>
+                    <p className="text-sm leading-6 text-slate-400 sm:text-lg">{feature.desc}</p>
+                  </div>
+                </div>
+                <div className="flex items-center justify-end gap-2 pt-1">
+                  <span className="flex w-12 justify-center text-base font-semibold text-slate-400">—</span>
+                  <span className="flex w-12 justify-center">
+                    <svg width="20" height="16" viewBox="0 0 16 12" fill="none" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M1.5 6.5l4.5 4.5L14.5 1.5" />
+                    </svg>
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="shrink-0 border-t border-slate-100 bg-white px-8 pb-8 pt-5">
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex w-full items-center justify-center gap-3 rounded-3xl bg-sky-600 px-6 py-5 text-lg font-bold tracking-wide text-white shadow-sm hover:bg-sky-700 sm:text-2xl"
+          >
+            Pilih Paket Plus (Rp 49.000)
+            <svg width="18" height="16" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d="M2 6h8M7 3l3 3-3 3" />
             </svg>
           </button>
@@ -1597,7 +1732,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
             <span className="flex h-6 items-center"><img src={`${mobileAssets}/3a1cb.svg`} alt="" className="max-w-none origin-center scale-[0.6667]" style={{ filter: view === "riwayat" ? "brightness(0) saturate(100%) invert(30%) sepia(96%) saturate(1030%) hue-rotate(164deg) brightness(86%) contrast(102%)" : "none" }} /></span>
             Riwayat
           </button>
-          <button type="button" className="flex flex-col items-center gap-1 py-1 text-[10px] font-medium text-slate-400">
+          <button type="button" onClick={() => setUpgradeOpen(true)} className="flex flex-col items-center gap-1 py-1 text-[10px] font-medium text-slate-400">
             <span className="flex h-6 items-center"><img src={`${mobileAssets}/ae5e6.svg`} alt="" className="max-w-none origin-center scale-[0.6667]" /></span>
             Paket
           </button>
@@ -1611,6 +1746,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
         onReset={() => setFilterApplied(false)}
       />
       <UpgradePremiumModal open={upgradeOpen} onClose={() => setUpgradeOpen(false)} />
+      <UpgradePremiumSheet open={upgradeOpen} onClose={() => setUpgradeOpen(false)} />
     </div>
   );
 }
