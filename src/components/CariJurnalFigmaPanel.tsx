@@ -146,6 +146,15 @@ const riwayatPencarian = [
   },
 ];
 
+const riwayatSidebar = [
+  "Analisis Regresi Variabel Parasosial",
+  "Tinjauan Teori TAM Skripsi Bab II",
+  "Evaluasi Sitasi & Parafrase Bab 4",
+  "Rekomendasi Jurnal Scopus Q1",
+  "Buat Rumusan Masalah E-Commerce",
+  "Penjelasan Uji Validitas & Reliabilitas",
+];
+
 function ProfileCard({ collection }: { collection: boolean }) {
   const assets = collection ? collectionAssets : searchAssets;
   return (
@@ -153,15 +162,15 @@ function ProfileCard({ collection }: { collection: boolean }) {
       <img src={`${assets}/48c68.png`} alt="Raka Aditya" className="h-10 w-10 rounded-full object-cover" />
       <div className="min-w-0">
         <div className="flex items-center gap-2">
-          <p className="truncate font-['Inter:Semi_Bold'] text-sm font-semibold text-[#1d293d]">Raka Aditya</p>
-          <span className="inline-flex items-center gap-1 rounded-full bg-[#1e264b] px-2 py-0.5 font-['Inter:Bold'] text-[8px] font-bold text-white">
+          <p className="truncate font-['Inter:Semi_Bold'] text-sm font-semibold text-slate-800">Raka Aditya</p>
+          <span className="inline-flex items-center gap-1 rounded-full border border-blue-200 bg-indigo-950 px-2 py-0.5 font-['Inter:Bold'] text-[8px] font-bold text-white">
             Alerin Plus
             <span className="relative h-3 w-3 overflow-hidden">
               <img src={`${assets}/8923b.png`} alt="" className="absolute -left-2 -top-1 h-12 max-w-none" />
             </span>
           </span>
         </div>
-        <p className="mt-0.5 font-['Inter:Regular'] text-[11px] text-[#90a1b9]">Manajemen · Semester 6</p>
+        <p className="mt-0.5 font-['Inter:Regular'] text-xs text-slate-400">Manajemen · Semester 6</p>
       </div>
     </div>
   );
@@ -184,48 +193,82 @@ function Sidebar({
     <aside className="hidden w-[280px] shrink-0 flex-col border-r border-slate-100 bg-white p-5 md:flex">
       <div className="flex items-center gap-3">
         <img src={`${assets}/24a8e.svg`} alt="" />
-        <div>
-          <p className="font-['Inter:Bold'] text-[19px] font-bold tracking-[-0.47px] text-[#0f172a]">Alerin Jurnal</p>
-          <p className="font-['Inter:Medium'] text-xs font-medium text-[#94a3b8]">Pendamping Akademik</p>
+        <div className="min-w-0 flex-1">
+          <p className="font-['Inter:Bold'] text-lg font-bold leading-5 text-slate-900">Alerin Jurnal</p>
+          <p className="font-['Inter:Medium'] text-xs font-medium leading-4 text-slate-400">Pendamping Akademik</p>
         </div>
+        <span aria-hidden="true" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-slate-400">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round">
+            <rect x="1.5" y="2.5" width="13" height="11" rx="2" />
+            <path d="M6 2.5v11" />
+          </svg>
+        </span>
       </div>
 
-      <nav className="mt-10 space-y-1">
+      <nav className="mt-8 space-y-1">
         <button
           type="button"
           onClick={() => onView("home")}
-          className={`flex w-full items-center gap-4 rounded-[15px] px-4 py-3 font-['Inter:Semi_Bold'] text-[17px] font-semibold ${
-            view === "home" ? "bg-[#e6f4ff]/80 text-[#0070ba]" : "text-[#475569]"
+          className={`flex w-full items-center gap-3.5 rounded-xl px-4 py-3 text-base ${
+            view === "home" ? "bg-sky-100/80 font-semibold text-sky-600" : "font-medium text-slate-600"
           }`}
         >
           <img src={`${assets}/${homeIcon}`} alt="" />
-          {view === "home" ? "Beranda" : "Beranda Jurnal"}
+          Beranda Jurnal
         </button>
         <button
           type="button"
           onClick={() => onView("collection")}
-          className={`flex w-full items-center gap-4 rounded-[15px] px-4 py-3 font-['Inter:Semi_Bold'] text-[17px] font-semibold ${
-            view === "collection" ? "bg-[#ebf6ff] text-[#0070ba]" : "text-[#475569]"
+          className={`flex w-full items-center gap-3.5 rounded-xl px-4 py-3 text-base ${
+            view === "collection" ? "bg-sky-100/80 font-semibold text-sky-600" : "font-medium text-slate-600"
           }`}
         >
           <img src={`${assets}/${collectionIcon}`} alt="" />
           Koleksi
         </button>
+        <button
+          type="button"
+          onClick={onBack}
+          className="flex w-full items-center gap-3.5 rounded-xl px-4 py-3 text-base font-medium text-slate-600 hover:bg-slate-50"
+        >
+          <img src={`${assets}/f725b.png`} alt="" className="h-8 w-8 rounded-full object-cover outline outline-1 outline-slate-400/50" />
+          Home Alerin
+        </button>
       </nav>
 
-      <p className="mt-7 px-2 font-['Inter:Bold'] text-[13px] font-bold uppercase tracking-[0.69px] text-[#94a3b8]">Bandingkan Paket</p>
-      <button type="button" className="mt-4 flex items-center gap-4 rounded-[14px] bg-[#ebf1ff] px-5 py-3.5 text-left font-['Inter:Semi_Bold'] text-base font-semibold text-[#475569]">
-        <img src={`${assets}/88a20.svg`} alt="" />
-        Upgrade Paket
-      </button>
+      <p className="mt-6 px-4 font-['Inter:Bold'] text-sm font-bold uppercase leading-5 tracking-wide text-slate-400">Riwayat</p>
+      <div className="mt-2 space-y-0.5">
+        {riwayatSidebar.map((item, index) => (
+          <button
+            key={item}
+            type="button"
+            onClick={() => onView("riwayat")}
+            className={`flex w-full items-center justify-between gap-2 rounded-lg px-2.5 py-2 text-left text-xs leading-4 ${
+              index === 0 ? "bg-blue-50/70 font-semibold text-blue-900 outline outline-1 outline-blue-200/80" : "text-slate-600"
+            }`}
+          >
+            <span className="truncate">{item}</span>
+            {index === 0 && <span className="shrink-0 text-slate-400" aria-hidden="true">•••</span>}
+          </button>
+        ))}
+      </div>
 
-      <button type="button" onClick={onBack} className="mt-auto flex items-center gap-3 rounded-2xl border border-[#dbe4ff] bg-[#f7f9ff] p-3 text-left">
-        <img src={`${assets}/f725b.png`} alt="" className="h-11 w-11 rounded-full object-cover" />
-        <span>
-          <span className="block font-['Inter:Bold'] text-xs font-bold text-[#1e293b]">Kembali Ke Alerin</span>
-          <span className="mt-0.5 block font-['Inter:Regular'] text-[10px] text-[#94a3b8]">Navigasi ke halaman utama Alerin</span>
-        </span>
-      </button>
+      <div className="mt-auto rounded-2xl border border-amber-100/80 bg-gradient-to-br from-amber-50/70 via-blue-50/50 to-indigo-50/60 p-4">
+        <div className="flex items-start gap-2.5">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#f59e0b" className="mt-0.5 shrink-0" aria-hidden="true">
+            <path d="M12 2l2.9 6.26L21.5 9.3l-4.75 4.63 1.12 6.57L12 17.4l-5.87 3.1 1.12-6.57L2.5 9.3l6.6-1.04L12 2z" />
+          </svg>
+          <p className="text-xs leading-4 text-slate-600">
+            Akses lebih banyak fitur dengan <span className="text-blue-700">Alerin Premium</span>
+          </p>
+        </div>
+        <button
+          type="button"
+          className="mt-3.5 w-full rounded-xl border border-blue-200 bg-white px-3 py-2 text-xs font-semibold text-blue-600 shadow-sm"
+        >
+          Upgrade Sekarang
+        </button>
+      </div>
     </aside>
   );
 }
@@ -589,15 +632,15 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
           {view === "home" ? (
             <div className="mx-auto grid max-w-[1160px] gap-5 lg:grid-cols-[minmax(0,1fr)_280px]">
               <div>
-                <h1 className="text-center font-['Plus_Jakarta_Sans:ExtraBold'] text-2xl font-extrabold leading-[33px] tracking-[-0.6px] text-[#0f172a] md:text-left md:text-[30px] md:leading-normal md:tracking-[-0.85px] md:text-[#193662]">
+                <h1 className="text-center font-['Plus_Jakarta_Sans:ExtraBold'] text-2xl font-extrabold leading-[33px] tracking-[-0.6px] text-[#0f172a] md:text-left md:text-[30px] md:leading-10 md:tracking-normal md:text-[#172554]">
                   Temukan jurnal yang tepat <br className="md:hidden" />untuk tulisanmu
                 </h1>
-                <p className="mt-2 text-center font-['Plus_Jakarta_Sans:Regular'] text-xs leading-[19.5px] text-[#232323] md:text-left md:text-base md:leading-normal md:text-[#475569]">Cari dengan kata kunci atau biarkan Alerin memahami paragraf dan dokumenmu.</p>
+                <p className="mt-2 text-center font-['Plus_Jakarta_Sans:Regular'] text-xs leading-[19.5px] text-[#232323] md:text-left md:text-base md:leading-6 md:text-[#475569]">Cari dengan kata kunci atau biarkan Alerin memahami paragraf dan dokumenmu.</p>
 
                 <section className="mt-5 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm md:mt-7 md:p-6">
                   <div className="flex items-center justify-between gap-3">
-                    <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-[17px] font-bold">Pencarian cepat</h2>
-                    <button type="button" onClick={() => window.alert("Panel filter dibuka.")} className="flex items-center gap-2 font-['Plus_Jakarta_Sans:SemiBold'] text-xs font-semibold text-[#334155] md:text-sm">
+                    <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-[17px] font-bold md:text-base">Pencarian cepat</h2>
+                    <button type="button" onClick={() => window.alert("Panel filter dibuka.")} className="flex items-center gap-2 font-['Plus_Jakarta_Sans:SemiBold'] text-xs font-semibold text-[#334155] md:text-sm md:hidden">
                       <span className="relative h-[19.689px] w-[17.143px] shrink-0 overflow-hidden">
                         <img src="/assets/jurnal-design/quick-search/8e43d.svg" alt="" className="absolute left-[-19.689px] top-[-18.447px] max-w-none origin-top-left scale-[0.6667]" />
                       </span>
@@ -606,25 +649,57 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                     </button>
                   </div>
 
-                  <label className="mt-4 flex min-w-0 items-center gap-2 rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-3 md:px-4">
-                      <img src="/assets/jurnal-design/quick-search/f5f78.svg" alt="" className="max-w-none origin-center scale-[0.6667]" />
-                      <input
-                        value={query}
-                        onChange={event => setQuery(event.target.value)}
-                        onKeyDown={event => {
-                          if (event.key !== "Enter") return;
-                          if (window.matchMedia("(min-width: 768px)").matches) runSearch();
-                          else {
-                            setResultMode("search");
-                            setMobileSearchStage("loading");
-                          }
-                        }}
-                        placeholder="Ketik topik, judul, penulis, variabel, atau DOI"
-                        className="min-w-0 flex-1 bg-transparent text-xs outline-none placeholder:text-slate-400 md:text-sm"
-                      />
-                  </label>
+                  <div className="mt-4 flex min-w-0 items-stretch gap-3">
+                    <label className="flex min-w-0 flex-1 items-center gap-2 rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-3 md:bg-white md:px-4">
+                        <img src="/assets/jurnal-design/quick-search/f5f78.svg" alt="" className="max-w-none origin-center scale-[0.6667]" />
+                        <input
+                          value={query}
+                          onChange={event => setQuery(event.target.value)}
+                          onKeyDown={event => {
+                            if (event.key !== "Enter") return;
+                            if (window.matchMedia("(min-width: 768px)").matches) runSearch();
+                            else {
+                              setResultMode("search");
+                              setMobileSearchStage("loading");
+                            }
+                          }}
+                          placeholder="Ketik topik, judul, penulis, variabel, atau DOI"
+                          className="min-w-0 flex-1 bg-transparent text-xs outline-none placeholder:text-slate-400 md:text-sm"
+                        />
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => window.alert("Panel filter dibuka.")}
+                      className="hidden shrink-0 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 md:flex"
+                    >
+                      <span className="relative h-[19.689px] w-[17.143px] shrink-0 overflow-hidden">
+                        <img src="/assets/jurnal-design/quick-search/8e43d.svg" alt="" className="absolute left-[-19.689px] top-[-18.447px] max-w-none origin-top-left scale-[0.6667]" />
+                      </span>
+                      Filter
+                    </button>
+                  </div>
 
-                  <div className="mt-4 grid grid-cols-[minmax(0,1fr)_52px] gap-2">
+                  <div className="mt-4 hidden flex-wrap gap-4 md:flex">
+                    {[
+                      ["journal", "Cari jurnal"],
+                      ["review", "Literatur Review"],
+                      ["map", "Peta Penelitian"],
+                    ].map(([type, label]) => (
+                      <button
+                        key={type}
+                        type="button"
+                        onClick={() => {
+                          setSearchType(type);
+                          runSearch();
+                        }}
+                        className={`rounded-xl px-5 py-2.5 text-sm font-semibold text-white ${searchType === type ? "bg-[#00629b]" : "bg-sky-700"}`}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="mt-4 grid grid-cols-[minmax(0,1fr)_52px] gap-2 md:hidden">
                     <button
                       type="button"
                       onClick={() => {
@@ -658,25 +733,25 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
 
                 <section className="mt-4 rounded-2xl border border-slate-200/80 bg-white px-4 py-[22px] shadow-sm md:p-6">
                   <h2 className="text-center font-['Plus_Jakarta_Sans:ExtraBold'] text-[19px] font-extrabold md:text-left md:font-['Plus_Jakarta_Sans:Bold'] md:text-base md:font-bold">Cari rujukan dari tulisanmu</h2>
-                  <p className="mx-auto mt-2 max-w-lg text-center font-['Plus_Jakarta_Sans:Regular'] text-[13px] leading-5 text-[#1c1c1c] md:mx-0 md:mt-1 md:max-w-none md:text-left md:font-['Inter:Regular'] md:leading-5 md:text-[#64748b]">Tempel kalimat atau paragraf yang ingin kamu perkuat dengan sitasi. Alerin akan membantu mencari artikel jurnal yang relevan untuk mendukung tulisanmu.</p>
-                  <div className="mt-5 grid gap-3 md:grid-cols-[1.35fr_0.95fr]">
+                  <p className="mx-auto mt-2 max-w-lg text-center font-['Plus_Jakarta_Sans:Regular'] text-[13px] leading-5 text-[#1c1c1c] md:mx-0 md:mt-1 md:max-w-none md:text-left md:font-['Plus_Jakarta_Sans:Medium'] md:font-medium md:leading-5 md:text-xs md:text-[#71717a]">Tempel kalimat atau paragraf yang ingin kamu perkuat dengan sitasi. Alerin akan membantu mencari artikel jurnal yang relevan untuk mendukung tulisanmu.</p>
+                  <div className="mt-5 grid gap-3">
                     <label className="grid gap-1.5">
                       <span className="font-['Plus_Jakarta_Sans:SemiBold'] text-[14px] font-semibold text-[#334155] md:hidden">Draf / Paragraf Teks</span>
-                      <textarea value={paragraph} onChange={event => setParagraph(event.target.value)} placeholder="Masukkan kalimat atau paragraf yang membutuhkan sitasi." className="min-h-[123px] resize-none rounded-xl border border-slate-200 bg-[rgba(200,226,251,0.24)] p-3 text-[13px] outline-none focus:border-sky-400 md:min-h-44 md:p-4 md:text-base" />
+                      <textarea value={paragraph} onChange={event => setParagraph(event.target.value)} placeholder="Masukkan kalimat atau paragraf yang membutuhkan sitasi." className="min-h-[123px] resize-none rounded-xl border border-slate-200 bg-[rgba(200,226,251,0.24)] p-3 text-[13px] outline-none focus:border-sky-400 md:min-h-44 md:bg-white md:p-4 md:text-xs" />
                     </label>
-                    <label className="flex min-h-[108px] cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-sky-300 bg-sky-50/40 p-4 text-center md:min-h-44 md:border md:border-sky-400 md:bg-white">
+                    <label className="flex min-h-[108px] cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-sky-300 bg-sky-50/40 p-4 text-center md:min-h-44 md:border-2 md:border-dashed md:border-sky-200 md:bg-white">
                       <span className="flex h-[53px] w-[53px] items-center justify-center rounded-full border border-sky-100 bg-white shadow-sm md:h-9 md:w-9 md:rounded-lg md:border-0 md:bg-sky-50 md:shadow-none">
                         <img src={`${mobileAssets}/36094.svg`} alt="" className="md:hidden" />
                         <img src={`${searchAssets}/f5e87.svg`} alt="" className="hidden md:block" />
                       </span>
-                      <span className="mt-3 text-[13px] font-semibold">Unggah artikel atau catatan</span>
-                      <span className="mt-1 text-[12px] text-[#94a3b8]">PDF, DOCX, atau TXT hingga 20 MB</span>
-                      <span className="mt-2 rounded-full bg-sky-50 px-2.5 py-1 text-[11px] text-[#004f80] md:bg-transparent md:p-0 md:text-[13px] md:text-emerald-600">{fileName || "Belum ada dokumen"}</span>
+                      <span className="mt-3 text-[13px] font-semibold md:text-xs md:font-bold md:text-slate-800">Unggah artikel atau catatan</span>
+                      <span className="mt-1 text-[12px] text-[#94a3b8] md:text-slate-500">PDF, DOCX, atau TXT hingga 20 MB</span>
+                      <span className="mt-2 rounded-full bg-sky-50 px-2.5 py-1 text-[11px] text-[#004f80] md:bg-transparent md:p-0 md:text-xs md:font-semibold md:text-emerald-600">{fileName || "Belum ada dokumen"}</span>
                       <input type="file" accept=".pdf,.doc,.docx,.txt" className="sr-only" onChange={event => setFileName(event.target.files?.[0]?.name || "")} />
                     </label>
                   </div>
-                  <div className="mt-4 flex flex-col gap-3 md:mt-5 md:flex-row md:items-center md:justify-between md:border-b md:border-slate-200 md:pb-4">
-                    <label className="flex items-center gap-2 text-[13px] text-[#475569]">
+                  <div className="mt-4 flex flex-col gap-3 md:mt-5 md:flex-row md:items-center md:justify-between">
+                    <label className="flex items-center gap-2 text-[13px] text-[#475569] md:text-xs md:font-semibold md:text-slate-700">
                       <span className="flex h-[18px] w-[18px] items-center justify-center rounded bg-[#0070ba]">
                         <img src={`${mobileAssets}/9e421.svg`} alt="" className="max-w-none origin-center scale-[0.6667] md:hidden" />
                         <img src={`${searchAssets}/b5bd9.svg`} alt="" className="hidden md:block" />
@@ -693,17 +768,17 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                           setMobileSearchStage("loading");
                         }
                       }}
-                      className="flex items-center justify-center gap-2 rounded-xl bg-[#00629b] px-8 py-3 font-['Plus_Jakarta_Sans:Bold'] text-[13px] font-bold text-white md:bg-[#0066a1] md:font-['Inter:Semi_Bold'] md:text-base md:font-semibold"
+                      className="flex items-center justify-center gap-2 rounded-xl bg-[#00629b] px-8 py-3 font-['Plus_Jakarta_Sans:Bold'] text-[13px] font-bold text-white md:w-80 md:bg-sky-700 md:px-5 md:py-2.5 md:font-['Plus_Jakarta_Sans:Bold'] md:text-xs md:font-bold"
                     >
                       <img src={`${mobileAssets}/8802c.svg`} alt="" className="max-w-none origin-center scale-[0.6667] md:hidden" />
                       <img src={`${searchAssets}/550ef.svg`} alt="" className="hidden md:block" />
                       Analisis dan carikan jurnal
                     </button>
                   </div>
-                  <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-slate-100 pt-3 text-[12px] text-[#64748b] md:border-0 md:pt-0">
+                  <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-slate-100 pt-3 text-[12px] text-[#64748b] md:pt-4 md:font-semibold md:text-slate-500">
                     <span className="w-full md:w-auto">Konsep yang dipahami Alerin:</span>
                     {["interaksi parasosial", "kepercayaan konsumen", "kelangkaan produk", "niat beli"].map(item => (
-                      <span key={item} className="rounded-lg bg-slate-100 px-3 py-1 font-['Plus_Jakarta_Sans:SemiBold'] text-[#334155] md:rounded-full md:font-['Inter:Regular']">{item}</span>
+                      <span key={item} className="rounded-lg bg-slate-100 px-3 py-1 font-['Plus_Jakarta_Sans:SemiBold'] text-[#334155] md:bg-sky-50 md:font-['Plus_Jakarta_Sans:SemiBold'] md:font-semibold md:text-zinc-700">{item}</span>
                     ))}
                   </div>
                 </section>
@@ -723,16 +798,22 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                 <div className="hidden md:block"><ProfileCard collection={false} /></div>
                 <div className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm md:p-6">
                   <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-base font-bold md:text-base">Tiga cara menemukan jurnal</h2>
-                  <p className="mt-2 text-sm leading-5 text-[#64748b] md:text-xs">Pilih cara paling mudah sesuai informasi yang sudah kamu punya.</p>
+                  <p className="mt-2 text-sm leading-5 text-[#64748b] md:font-['Plus_Jakarta_Sans:Regular'] md:text-xs">Pilih cara paling mudah sesuai informasi yang sudah kamu punya.</p>
                   <ol className="mt-4 space-y-2 md:mt-6 md:space-y-6">
                     {[
-                      ["1", "Ketik kata kunci", "Cocok jika sudah tahu topik, penulis, atau variabel."],
-                      ["2", "Tempel tulisan", "Alerin memahami teori dan konteks paragrafmu."],
-                      ["3", "Unggah dokumen", "Alerin mengambil konsep penting dari artikel atau catatan."],
-                    ].map(([number, title, description]) => (
+                      ["1", "Ketik kata kunci", "Cocok jika sudah tahu topik, penulis, atau variabel.", "Cocok jika sudah tahu topik, penulis, atau variabel."],
+                      ["2", "Tempel tulisan", "Alerin memahami teori dan konteks paragrafmu.", "Alerin memahami narasi atau konteks paragrafmu."],
+                      ["3", "Unggah dokumen", "Alerin mengambil konsep penting dari artikel atau catatan.", "Alerin membantu koreksi file untuk mengecek kekurangan atau kesalahan referensi yang digunakan."],
+                    ].map(([number, title, descriptionMobile, descriptionDesktop]) => (
                       <li key={number} className="flex gap-3 rounded-xl border border-slate-100/80 bg-slate-50 p-3 md:rounded-none md:border-0 md:bg-transparent md:p-0">
-                        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-sky-100 text-sm font-bold text-[#0070ba] md:h-8 md:w-8 md:text-base">{number}</span>
-                        <span><strong className="block text-sm md:text-sm">{title}</strong><span className="mt-0.5 block text-xs leading-5 text-[#64748b] md:mt-1 md:text-xs md:leading-5">{description}</span></span>
+                        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-sky-100 text-sm font-bold text-[#0070ba] md:h-8 md:w-8 md:rounded-xl md:text-sky-600">{number}</span>
+                        <span>
+                          <strong className="block text-sm md:text-sm">{title}</strong>
+                          <span className="mt-0.5 block text-xs leading-5 text-[#64748b] md:mt-1 md:text-xs md:leading-5">
+                            <span className="md:hidden">{descriptionMobile}</span>
+                            <span className="hidden md:inline">{descriptionDesktop}</span>
+                          </span>
+                        </span>
                       </li>
                     ))}
                   </ol>
