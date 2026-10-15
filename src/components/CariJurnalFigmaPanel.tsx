@@ -589,15 +589,15 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
           {view === "home" ? (
             <div className="mx-auto grid max-w-[1160px] gap-5 lg:grid-cols-[minmax(0,1fr)_280px]">
               <div>
-                <h1 className="font-['Plus_Jakarta_Sans:ExtraBold'] text-3xl font-extrabold leading-10 text-[#172554] md:text-[30px] md:leading-normal md:tracking-[-0.85px] md:text-[#193662]">
+                <h1 className="text-center font-['Plus_Jakarta_Sans:ExtraBold'] text-2xl font-extrabold leading-[33px] tracking-[-0.6px] text-[#0f172a] md:text-left md:text-[30px] md:leading-normal md:tracking-[-0.85px] md:text-[#193662]">
                   Temukan jurnal yang tepat <br className="md:hidden" />untuk tulisanmu
                 </h1>
-                <p className="mt-2 font-['Plus_Jakarta_Sans:Regular'] text-base leading-6 text-slate-600 md:leading-normal md:text-[#475569]">Cari dengan kata kunci atau biarkan Alerin memahami paragraf dan dokumenmu.</p>
+                <p className="mt-2 text-center font-['Plus_Jakarta_Sans:Regular'] text-xs leading-[19.5px] text-[#232323] md:text-left md:text-base md:leading-normal md:text-[#475569]">Cari dengan kata kunci atau biarkan Alerin memahami paragraf dan dokumenmu.</p>
 
-                <section className="mt-5 rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm md:mt-7">
+                <section className="mt-5 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm md:mt-7 md:p-6">
                   <div className="flex items-center justify-between gap-3">
-                    <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-base font-bold md:text-[17px]">Pencarian cepat</h2>
-                    <button type="button" onClick={() => window.alert("Panel filter dibuka.")} className="hidden items-center gap-2 font-['Plus_Jakarta_Sans:SemiBold'] text-xs font-semibold text-[#334155] md:flex md:text-sm">
+                    <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-[17px] font-bold">Pencarian cepat</h2>
+                    <button type="button" onClick={() => window.alert("Panel filter dibuka.")} className="flex items-center gap-2 font-['Plus_Jakarta_Sans:SemiBold'] text-xs font-semibold text-[#334155] md:text-sm">
                       <span className="relative h-[19.689px] w-[17.143px] shrink-0 overflow-hidden">
                         <img src="/assets/jurnal-design/quick-search/8e43d.svg" alt="" className="absolute left-[-19.689px] top-[-18.447px] max-w-none origin-top-left scale-[0.6667]" />
                       </span>
@@ -606,58 +606,25 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                     </button>
                   </div>
 
-                  <div className="mt-4 flex min-w-0 items-stretch gap-2">
-                    <label className="flex min-w-0 flex-1 items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-3 md:bg-slate-50/80 md:px-4">
-                        <img src="/assets/jurnal-design/quick-search/f5f78.svg" alt="" className="max-w-none origin-center scale-[0.6667]" />
-                        <input
-                          value={query}
-                          onChange={event => setQuery(event.target.value)}
-                          onKeyDown={event => {
-                            if (event.key !== "Enter") return;
-                            if (window.matchMedia("(min-width: 768px)").matches) runSearch();
-                            else {
-                              setResultMode("search");
-                              setMobileSearchStage("loading");
-                            }
-                          }}
-                          placeholder="Ketik topik, judul, penulis, variabel, atau DOI"
-                          className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-slate-400"
-                        />
-                    </label>
-                    <button
-                      type="button"
-                      onClick={() => window.alert("Panel filter dibuka.")}
-                      className="flex shrink-0 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 md:hidden"
-                    >
-                      <span className="relative h-[19.689px] w-[17.143px] shrink-0 overflow-hidden">
-                        <img src="/assets/jurnal-design/quick-search/8e43d.svg" alt="" className="absolute left-[-19.689px] top-[-18.447px] max-w-none origin-top-left scale-[0.6667]" />
-                      </span>
-                      Filter
-                    </button>
-                  </div>
-
-                  <div className="mt-3 flex flex-wrap gap-2 md:hidden">
-                    {[
-                      ["journal", "Cari jurnal"],
-                      ["review", "Literatur Review"],
-                      ["map", "Peta Penelitian"],
-                    ].map(([type, label]) => (
-                      <button
-                        key={type}
-                        type="button"
-                        onClick={() => {
-                          setSearchType(type);
-                          setMobileSearchStage("loading");
-                          setResultMode("search");
+                  <label className="mt-4 flex min-w-0 items-center gap-2 rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-3 md:px-4">
+                      <img src="/assets/jurnal-design/quick-search/f5f78.svg" alt="" className="max-w-none origin-center scale-[0.6667]" />
+                      <input
+                        value={query}
+                        onChange={event => setQuery(event.target.value)}
+                        onKeyDown={event => {
+                          if (event.key !== "Enter") return;
+                          if (window.matchMedia("(min-width: 768px)").matches) runSearch();
+                          else {
+                            setResultMode("search");
+                            setMobileSearchStage("loading");
+                          }
                         }}
-                        className={`rounded-xl px-5 py-2.5 text-sm font-semibold text-white ${searchType === type ? "bg-[#00629b]" : "bg-sky-700"}`}
-                      >
-                        {label}
-                      </button>
-                    ))}
-                  </div>
+                        placeholder="Ketik topik, judul, penulis, variabel, atau DOI"
+                        className="min-w-0 flex-1 bg-transparent text-xs outline-none placeholder:text-slate-400 md:text-sm"
+                      />
+                  </label>
 
-                  <div className="mt-4 hidden md:grid md:grid-cols-[minmax(0,1fr)_52px] md:gap-2">
+                  <div className="mt-4 grid grid-cols-[minmax(0,1fr)_52px] gap-2">
                     <button
                       type="button"
                       onClick={() => {
@@ -689,27 +656,27 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                   </div>
                 </section>
 
-                <section className="mt-4 rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">
-                  <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-base font-bold leading-6 md:text-left">Cari rujukan dari tulisanmu</h2>
-                  <p className="mt-2 font-['Plus_Jakarta_Sans:Medium'] text-xs font-medium leading-5 text-[#71717a] md:mt-1 md:font-['Inter:Regular'] md:font-normal md:text-[13px] md:text-[#64748b]">Tempel kalimat atau paragraf yang ingin kamu perkuat dengan sitasi. Alerin akan membantu mencari artikel jurnal yang relevan untuk mendukung tulisanmu.</p>
+                <section className="mt-4 rounded-2xl border border-slate-200/80 bg-white px-4 py-[22px] shadow-sm md:p-6">
+                  <h2 className="text-center font-['Plus_Jakarta_Sans:ExtraBold'] text-[19px] font-extrabold md:text-left md:font-['Plus_Jakarta_Sans:Bold'] md:text-base md:font-bold">Cari rujukan dari tulisanmu</h2>
+                  <p className="mx-auto mt-2 max-w-lg text-center font-['Plus_Jakarta_Sans:Regular'] text-[13px] leading-5 text-[#1c1c1c] md:mx-0 md:mt-1 md:max-w-none md:text-left md:font-['Inter:Regular'] md:leading-5 md:text-[#64748b]">Tempel kalimat atau paragraf yang ingin kamu perkuat dengan sitasi. Alerin akan membantu mencari artikel jurnal yang relevan untuk mendukung tulisanmu.</p>
                   <div className="mt-5 grid gap-3 md:grid-cols-[1.35fr_0.95fr]">
                     <label className="grid gap-1.5">
                       <span className="font-['Plus_Jakarta_Sans:SemiBold'] text-[14px] font-semibold text-[#334155] md:hidden">Draf / Paragraf Teks</span>
-                      <textarea value={paragraph} onChange={event => setParagraph(event.target.value)} placeholder="Masukkan kalimat atau paragraf yang membutuhkan sitasi." className="min-h-[123px] resize-none rounded-xl border border-slate-200 bg-white p-3 text-xs outline-none focus:border-sky-400 md:min-h-44 md:bg-[rgba(200,226,251,0.24)] md:p-4 md:text-base" />
+                      <textarea value={paragraph} onChange={event => setParagraph(event.target.value)} placeholder="Masukkan kalimat atau paragraf yang membutuhkan sitasi." className="min-h-[123px] resize-none rounded-xl border border-slate-200 bg-[rgba(200,226,251,0.24)] p-3 text-[13px] outline-none focus:border-sky-400 md:min-h-44 md:p-4 md:text-base" />
                     </label>
-                    <label className="flex min-h-[108px] cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-sky-200 bg-sky-50/40 p-4 text-center md:min-h-44 md:border md:border-sky-400 md:bg-white">
-                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-sky-50 md:h-9 md:w-9 md:rounded-lg md:border-0 md:bg-sky-50 md:shadow-none">
+                    <label className="flex min-h-[108px] cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-sky-300 bg-sky-50/40 p-4 text-center md:min-h-44 md:border md:border-sky-400 md:bg-white">
+                      <span className="flex h-[53px] w-[53px] items-center justify-center rounded-full border border-sky-100 bg-white shadow-sm md:h-9 md:w-9 md:rounded-lg md:border-0 md:bg-sky-50 md:shadow-none">
                         <img src={`${mobileAssets}/36094.svg`} alt="" className="md:hidden" />
                         <img src={`${searchAssets}/f5e87.svg`} alt="" className="hidden md:block" />
                       </span>
-                      <span className="mt-3 text-xs font-bold text-slate-800 md:text-[13px] md:font-semibold md:text-[#0f172a]">Unggah artikel atau catatan</span>
-                      <span className="mt-1 text-xs text-slate-500 md:text-[#94a3b8]">PDF, DOCX, atau TXT hingga 20 MB</span>
-                      <span className="mt-2 text-xs font-semibold text-emerald-600 md:bg-transparent md:p-0 md:font-normal md:text-[13px] md:text-emerald-600">{fileName || "Belum ada dokumen"}</span>
+                      <span className="mt-3 text-[13px] font-semibold">Unggah artikel atau catatan</span>
+                      <span className="mt-1 text-[12px] text-[#94a3b8]">PDF, DOCX, atau TXT hingga 20 MB</span>
+                      <span className="mt-2 rounded-full bg-sky-50 px-2.5 py-1 text-[11px] text-[#004f80] md:bg-transparent md:p-0 md:text-[13px] md:text-emerald-600">{fileName || "Belum ada dokumen"}</span>
                       <input type="file" accept=".pdf,.doc,.docx,.txt" className="sr-only" onChange={event => setFileName(event.target.files?.[0]?.name || "")} />
                     </label>
                   </div>
                   <div className="mt-4 flex flex-col gap-3 md:mt-5 md:flex-row md:items-center md:justify-between md:border-b md:border-slate-200 md:pb-4">
-                    <label className="flex items-center gap-2 text-xs font-semibold text-slate-700 md:text-[13px] md:font-normal md:text-[#475569]">
+                    <label className="flex items-center gap-2 text-[13px] text-[#475569]">
                       <span className="flex h-[18px] w-[18px] items-center justify-center rounded bg-[#0070ba]">
                         <img src={`${mobileAssets}/9e421.svg`} alt="" className="max-w-none origin-center scale-[0.6667] md:hidden" />
                         <img src={`${searchAssets}/b5bd9.svg`} alt="" className="hidden md:block" />
@@ -726,17 +693,17 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                           setMobileSearchStage("loading");
                         }
                       }}
-                      className="flex items-center justify-center gap-2 rounded-xl bg-sky-700 px-8 py-3 font-['Plus_Jakarta_Sans:Bold'] text-xs font-bold text-white md:bg-[#0066a1] md:font-['Inter:Semi_Bold'] md:text-base md:font-semibold"
+                      className="flex items-center justify-center gap-2 rounded-xl bg-[#00629b] px-8 py-3 font-['Plus_Jakarta_Sans:Bold'] text-[13px] font-bold text-white md:bg-[#0066a1] md:font-['Inter:Semi_Bold'] md:text-base md:font-semibold"
                     >
                       <img src={`${mobileAssets}/8802c.svg`} alt="" className="max-w-none origin-center scale-[0.6667] md:hidden" />
                       <img src={`${searchAssets}/550ef.svg`} alt="" className="hidden md:block" />
                       Analisis dan carikan jurnal
                     </button>
                   </div>
-                  <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-slate-100 pt-4 text-xs font-semibold text-slate-500 md:border-0 md:pt-0 md:font-normal md:text-[#64748b]">
+                  <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-slate-100 pt-3 text-[12px] text-[#64748b] md:border-0 md:pt-0">
                     <span className="w-full md:w-auto">Konsep yang dipahami Alerin:</span>
                     {["interaksi parasosial", "kepercayaan konsumen", "kelangkaan produk", "niat beli"].map(item => (
-                      <span key={item} className="rounded-lg bg-sky-50 px-3 py-1 font-['Plus_Jakarta_Sans:SemiBold'] font-semibold text-zinc-700 md:rounded-full md:bg-slate-100 md:font-['Inter:Regular'] md:font-normal md:text-[#334155]">{item}</span>
+                      <span key={item} className="rounded-lg bg-slate-100 px-3 py-1 font-['Plus_Jakarta_Sans:SemiBold'] text-[#334155] md:rounded-full md:font-['Inter:Regular']">{item}</span>
                     ))}
                   </div>
                 </section>
@@ -760,11 +727,11 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                   <ol className="mt-4 space-y-2 md:mt-6 md:space-y-6">
                     {[
                       ["1", "Ketik kata kunci", "Cocok jika sudah tahu topik, penulis, atau variabel."],
-                      ["2", "Tempel tulisan", "Alerin memahami narasi atau konteks paragrafmu."],
-                      ["3", "Unggah dokumen", "Alerin membantu koreksi file untuk mengecek kekurangan atau kesalahan referensi yang digunakan."],
+                      ["2", "Tempel tulisan", "Alerin memahami teori dan konteks paragrafmu."],
+                      ["3", "Unggah dokumen", "Alerin mengambil konsep penting dari artikel atau catatan."],
                     ].map(([number, title, description]) => (
                       <li key={number} className="flex gap-3 rounded-xl border border-slate-100/80 bg-slate-50 p-3 md:rounded-none md:border-0 md:bg-transparent md:p-0">
-                        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-sky-100 text-sm font-bold text-sky-600 md:h-8 md:w-8 md:rounded-full md:text-base md:text-[#0070ba]">{number}</span>
+                        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-sky-100 text-sm font-bold text-[#0070ba] md:h-8 md:w-8 md:text-base">{number}</span>
                         <span><strong className="block text-sm md:text-sm">{title}</strong><span className="mt-0.5 block text-xs leading-5 text-[#64748b] md:mt-1 md:text-xs md:leading-5">{description}</span></span>
                       </li>
                     ))}
