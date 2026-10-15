@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 type JournalView = "home" | "collection" | "riwayat";
 
@@ -273,6 +273,281 @@ function Sidebar({
   );
 }
 
+const metodeGroups = [
+  { name: "Eksperimental", items: ["Uji acak terkontrol (RCT)", "Eksperimen nonacak", "Eksperimen laboratorium", "Eksperimen in vitro"] },
+  {
+    name: "Observasional",
+    items: [
+      "Studi lapangan",
+      "Studi potong lintang",
+      "Studi kohort",
+      "Studi longitudinal/panel",
+      "Studi kasus-kontrol",
+      "Studi kasus",
+      "Laporan kasus",
+      "Studi wawancara",
+      "Metode campuran",
+    ],
+  },
+  { name: "Sintesis bukti", items: ["Tinjauan sistematis", "Meta-analisis", "Tinjauan literatur"] },
+  { name: "Lainnya", items: ["Studi simulasi", "Artikel komentar", "Analisis historis"] },
+];
+
+const bidangStudi = ["Bisnis dan manajemen", "Ilmu sosial", "Pendidikan", "Kesehatan"];
+const negaraPenelitian = ["Indonesia", "Asia Tenggara", "Semua negara"];
+const pilihanTahun = ["Semua", "2 tahun terakhir", "5 tahun terakhir", "10 tahun terakhir"];
+
+function FilterCheck({
+  checked,
+  label,
+  onToggle,
+  bold = false,
+}: {
+  checked: boolean;
+  label: string;
+  onToggle: () => void;
+  bold?: boolean;
+}) {
+  return (
+    <button type="button" onClick={onToggle} className="flex w-full items-center gap-2 py-0.5 text-left">
+      <span
+        className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-sm border ${
+          checked ? "border-sky-700 bg-sky-700" : "border-slate-300 bg-white"
+        }`}
+      >
+        {checked && (
+          <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M2.5 6.5l2.5 2.5 4.5-5.5" />
+          </svg>
+        )}
+      </span>
+      <span className={`text-xs ${bold ? "font-semibold text-slate-800" : "text-slate-600"}`}>{label}</span>
+    </button>
+  );
+}
+
+function FilterSection({
+  title,
+  open,
+  onToggle,
+  children,
+  bordered = true,
+}: {
+  title: string;
+  open: boolean;
+  onToggle: () => void;
+  children: ReactNode;
+  bordered?: boolean;
+}) {
+  return (
+    <section className={`pb-5 ${bordered ? "border-b border-slate-200" : "pb-0"}`}>
+      <button type="button" onClick={onToggle} className="flex w-full items-center justify-between py-4 text-left">
+        <span className="text-sm font-bold text-slate-900">{title}</span>
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 16 16"
+          fill="none"
+          stroke="#64748b"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+          className={`transition-transform ${open ? "rotate-180" : ""}`}
+          aria-hidden="true"
+        >
+          <path d="M4 6l4 4 4-4" />
+        </svg>
+      </button>
+      {open && <div className="flex flex-col gap-3">{children}</div>}
+    </section>
+  );
+}
+
+function FilterPanel({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [tahun, setTahun] = useState("2 tahun terakhir");
+  const [tahunAwal, setTahunAwal] = useState("2024");
+  const [tahunAkhir, setTahunAkhir] = useState("2026");
+  const [aksesTerbuka, setAksesTerbuka] = useState(true);
+  const [metode, setMetode] = useState<Record<string, string[]>>({ Eksperimental: [...metodeGroups[0].items] });
+  const [bidang, setBidang] = useState<Record<string, boolean>>({ "Bisnis dan manajemen": true });
+  const [negara, setNegara] = useState<Record<string, boolean>>({});
+  const [sections, setSections] = useState<Record<string, boolean>>({ umum: true, metodologi: true, bidang: true, negara: true });
+
+  const toggleSection = (key: string) => setSections(current => ({ ...current, [key]: !current[key] }));
+
+  const toggleMetodeItem = (group: string, item: string) =>
+    setMetode(current => {
+      const selected = current[group] ?? [];
+      return { ...current, [group]: selected.includes(item) ? selected.filter(value => value !== item) : [...selected, item] };
+    });
+
+  const groupChecked = (group: string) => (metode[group]?.length ?? 0) > 0;
+
+  const handleReset = () => {
+    setTahun("Semua");
+    setAksesTerbuka(false);
+    setMetode({});
+    setBidang({});
+    setNegara({});
+  };
+
+  return (
+    <>
+      <div
+        onClick={onClose}
+        aria-hidden="true"
+        className={`fixed inset-0 z-[315] bg-black/40 transition-opacity duration-300 ${open ? "opacity-100" : "pointer-events-none opacity-0"}`}
+      />
+      <aside
+        role="dialog"
+        aria-label="Filter jurnal"
+        className={`fixed right-0 top-0 z-[320] flex h-dvh w-full max-w-[384px] flex-col border-l border-slate-200 bg-white shadow-2xl transition-transform duration-300 ${
+          open ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
+        <header className="flex shrink-0 items-center justify-between border-b border-slate-200 px-6 py-4">
+          <h2 className="text-lg font-bold leading-7 text-slate-900">Filter jurnal</h2>
+          <button
+            type="button"
+            aria-label="Tutup filter"
+            onClick={onClose}
+            className="flex h-7 w-7 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100"
+          >
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" aria-hidden="true">
+              <path d="M4 4l8 8M12 4l-8 8" />
+            </svg>
+          </button>
+        </header>
+
+        <div className="min-h-0 flex-1 overflow-y-auto px-6">
+          <FilterSection title="Umum" open={sections.umum} onToggle={() => toggleSection("umum")}>
+            <div>
+              <p className="text-xs font-medium leading-4 text-slate-600">Tahun terbit</p>
+              <div className="mt-2.5 flex flex-wrap gap-2">
+                {pilihanTahun.map(option => (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => setTahun(option)}
+                    className={`rounded-lg px-2.5 py-1 text-xs ${
+                      tahun === option ? "border border-sky-300 bg-sky-100 font-semibold text-sky-700" : "border border-slate-200 text-slate-600"
+                    }`}
+                  >
+                    {option}
+                  </button>
+                ))}
+              </div>
+              <div className="mt-3 flex items-center gap-2">
+                <input
+                  value={tahunAwal}
+                  onChange={event => setTahunAwal(event.target.value)}
+                  inputMode="numeric"
+                  aria-label="Tahun awal"
+                  className="h-7 w-40 rounded-lg border border-slate-300 bg-white px-3 text-center text-xs text-slate-800 outline-none focus:border-sky-400"
+                />
+                <span className="h-px w-3.5 shrink-0 bg-slate-400" />
+                <input
+                  value={tahunAkhir}
+                  onChange={event => setTahunAkhir(event.target.value)}
+                  inputMode="numeric"
+                  aria-label="Tahun akhir"
+                  className="h-7 min-w-0 flex-1 rounded-lg border border-slate-300 bg-white px-3 text-center text-xs text-slate-800 outline-none focus:border-sky-400"
+                />
+              </div>
+            </div>
+            <div className="flex items-center justify-between pt-1">
+              <span className="text-xs font-medium text-slate-700">Hanya akses terbuka</span>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={aksesTerbuka}
+                onClick={() => setAksesTerbuka(value => !value)}
+                className={`flex h-5 w-9 shrink-0 rounded-full p-0.5 transition-colors ${aksesTerbuka ? "bg-sky-700" : "bg-slate-300"}`}
+              >
+                <span className={`h-4 w-4 rounded-full border border-white bg-white shadow transition-transform ${aksesTerbuka ? "translate-x-4" : ""}`} />
+              </button>
+            </div>
+          </FilterSection>
+
+          <FilterSection title="Metodologi" open={sections.metodologi} onToggle={() => toggleSection("metodologi")}>
+            <p className="text-xs leading-4 text-slate-500">Pilih jenis desain penelitian hingga tingkat yang lebih spesifik.</p>
+            {metodeGroups.map(group => (
+              <div key={group.name} className={`rounded-xl border border-slate-200 p-3 ${groupChecked(group.name) ? "bg-sky-50/50" : ""}`}>
+                <div className="flex items-center justify-between gap-2">
+                  <FilterCheck
+                    bold
+                    checked={(metode[group.name]?.length ?? 0) === group.items.length}
+                    label={group.name}
+                    onToggle={() =>
+                      setMetode(current => ({
+                        ...current,
+                        [group.name]: (current[group.name]?.length ?? 0) === group.items.length ? [] : [...group.items],
+                      }))
+                    }
+                  />
+                  <span className="shrink-0 text-xs font-medium text-slate-400">{group.items.length} jenis</span>
+                </div>
+                <div className="flex flex-col gap-1.5 pl-6 pt-1">
+                  {group.items.map(item => (
+                    <FilterCheck
+                      key={item}
+                      checked={(metode[group.name] ?? []).includes(item)}
+                      label={item}
+                      onToggle={() => toggleMetodeItem(group.name, item)}
+                    />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </FilterSection>
+
+          <FilterSection title="Bidang studi" open={sections.bidang} onToggle={() => toggleSection("bidang")}>
+            <p className="text-xs leading-4 text-slate-500">23 bidang studi tersedia.</p>
+            <div className="flex flex-col gap-2 pt-1">
+              {bidangStudi.map(item => (
+                <FilterCheck
+                  key={item}
+                  bold
+                  checked={Boolean(bidang[item])}
+                  label={item}
+                  onToggle={() => setBidang(current => ({ ...current, [item]: !current[item] }))}
+                />
+              ))}
+            </div>
+          </FilterSection>
+
+          <FilterSection title="Negara penelitian" open={sections.negara} onToggle={() => toggleSection("negara")} bordered={false}>
+            <p className="text-xs leading-4 text-slate-500">236 negara dan wilayah.</p>
+            <div className="flex flex-col gap-2 pt-1">
+              {negaraPenelitian.map(item => (
+                <FilterCheck
+                  key={item}
+                  bold
+                  checked={Boolean(negara[item])}
+                  label={item}
+                  onToggle={() => setNegara(current => ({ ...current, [item]: !current[item] }))}
+                />
+              ))}
+            </div>
+          </FilterSection>
+        </div>
+
+        <footer className="flex shrink-0 items-center gap-3 border-t border-slate-200 bg-white p-4">
+          <button
+            type="button"
+            onClick={onClose}
+            className="min-w-0 flex-1 rounded-xl bg-sky-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm sm:flex-none sm:w-60"
+          >
+            Terapkan filter
+          </button>
+          <button type="button" onClick={handleReset} className="rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-medium text-slate-700">
+            Atur ulang
+          </button>
+        </footer>
+      </aside>
+    </>
+  );
+}
+
 function JournalCard({ index }: { index: number }) {
   return (
     <article className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-sm">
@@ -324,6 +599,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
   const [searchType, setSearchType] = useState("");
   const [resultMode, setResultMode] = useState<"search" | "analysis">("search");
   const [temuanIndex, setTemuanIndex] = useState(1);
+  const [filterOpen, setFilterOpen] = useState(false);
 
   useEffect(() => {
     if (mobileSearchStage !== "loading") return;
@@ -640,7 +916,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                 <section className="mt-5 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm md:mt-7 md:p-6">
                   <div className="flex items-center justify-between gap-3">
                     <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-[17px] font-bold md:text-base">Pencarian cepat</h2>
-                    <button type="button" onClick={() => window.alert("Panel filter dibuka.")} className="flex items-center gap-2 font-['Plus_Jakarta_Sans:SemiBold'] text-xs font-semibold text-[#334155] md:text-sm md:hidden">
+                    <button type="button" onClick={() => setFilterOpen(true)} aria-expanded={filterOpen} className="flex items-center gap-2 font-['Plus_Jakarta_Sans:SemiBold'] text-xs font-semibold text-[#334155] md:text-sm md:hidden">
                       <span className="relative h-[19.689px] w-[17.143px] shrink-0 overflow-hidden">
                         <img src="/assets/jurnal-design/quick-search/8e43d.svg" alt="" className="absolute left-[-19.689px] top-[-18.447px] max-w-none origin-top-left scale-[0.6667]" />
                       </span>
@@ -669,7 +945,8 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                     </label>
                     <button
                       type="button"
-                      onClick={() => window.alert("Panel filter dibuka.")}
+                      onClick={() => setFilterOpen(true)}
+                      aria-expanded={filterOpen}
                       className="hidden shrink-0 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 md:flex"
                     >
                       <span className="relative h-[19.689px] w-[17.143px] shrink-0 overflow-hidden">
@@ -1049,8 +1326,8 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                       ["Landasan teori", "0", false],
                       ["Jenis penelitian", "0", false],
                       ["Hipotesis Penelitian", "0", false],
-                    ].map(([label, count, active], index) => (
-                      <button key={label} type="button" className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-xs ${active ? "bg-sky-100 text-[#0066a1]" : "text-[#475569]"}`}>
+                      ].map(([label, count, active], index) => (
+                      <button key={String(label)} type="button" className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-xs ${active ? "bg-sky-100 text-[#0066a1]" : "text-[#475569]"}`}>
                         <img src={`${collectionAssets}/${index < 2 ? "8b8d1.svg" : "e1558.svg"}`} alt="" />
                         <span className="flex-1">{label}</span>
                         <span>{count}</span>
@@ -1101,6 +1378,8 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
           </button>
         </div>
       </nav>
+
+      <FilterPanel open={filterOpen} onClose={() => setFilterOpen(false)} />
     </div>
   );
 }
