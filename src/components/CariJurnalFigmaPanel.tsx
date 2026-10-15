@@ -1116,6 +1116,551 @@ function DesktopSearchResults({ query, onBack }: { query: string; onBack: () => 
   );
 }
 
+function SortArrow({ dir }: { dir: "asc" | "desc" | null }) {
+  return (
+    <svg
+      width="9"
+      height="12"
+      viewBox="0 0 9 12"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      className={dir === "desc" ? "rotate-180" : ""}
+    >
+      <path d="M1.5 4L4.5 1l3 3M1.5 8l3 3 3-3" />
+    </svg>
+  );
+}
+
+function DesktopLiteratureReview({ query, onBack }: { query: string; onBack: () => void }) {
+  const sectionNames = [
+    "Ringkasan Eksekutif",
+    "Pendahuluan",
+    "Metodologi dan Cakupan",
+    "Matriks Literatur",
+    "Perbandingan Studi",
+    "Pengelompokan Tema",
+    "Sintesis",
+    "Evaluasi dan Kritik",
+    "Research Gap",
+    "Posisi Penelitian",
+    "Kesimpulan",
+    "Daftar Pustaka",
+  ];
+
+  const stats = [
+    { label: "Total hasil ditemukan", value: "126", tone: "text-blue-600" },
+    { label: "Duplikasi dihapus", value: "34", tone: "text-red-600" },
+    { label: "Artikel tersisa untuk sintesis", value: "92", tone: "text-blue-600" },
+    { label: "Artikel prioritas tinggi", value: "24", tone: "text-blue-600" },
+  ];
+
+  const priorityRows = [
+    { title: "Resilience among Women in Disaster Contexts: A Systematic Literature Review", year: 2023, relevan: 97, tag: "Sangat relevan", kind: "Ulasan teori", source: "Google Scholar" },
+    { title: "Gendered Impacts of Natural Disasters: A Global Review", year: 2022, relevan: 95, tag: "Sangat relevan", kind: "Ulasan teori", source: "Crossref" },
+    { title: "Community Resilience and Women's Leadership in Disaster Recovery", year: 2021, relevan: 91, tag: "Perlu ditinjau", kind: "Ulasan teori", source: "OpenAlex" },
+    { title: "The Role of Social Support in Post-Disaster Recovery for Women", year: 2020, relevan: 93, tag: "Sangat relevan", kind: "Ulasan teori", source: "DOAJ" },
+    { title: "Digital Platforms for Women's Resilience in Crisis Situations: An Empirical Study", year: 2023, relevan: 90, tag: "Perlu ditinjau", kind: "Empiris", source: "Google Scholar" },
+  ];
+
+  const sourceBadge: Record<string, { letter: string; className: string }> = {
+    "Google Scholar": { letter: "G", className: "bg-[#4285F4]" },
+    Crossref: { letter: "C", className: "bg-[#C4302B]" },
+    OpenAlex: { letter: "O", className: "bg-slate-900" },
+    DOAJ: { letter: "D", className: "bg-[#E53935]" },
+  };
+
+  const filterChips = [
+    { key: "semua", label: "Semua (92)" },
+    { key: "relevan", label: "Sangat relevan (24)" },
+    { key: "tinjau", label: "Perlu ditinjau (38)" },
+    { key: "teori", label: "Ulasan teori (12)" },
+    { key: "empiris", label: "Empiris (46)" },
+  ];
+
+  const matrixRows = [
+    { name: "Sari et al. (2022)", journal: "Jurnal Ketahanan Nasional", cells: ["Dukungan sosial perempuan pasca bencana", "Kualitatif (wawancara mendalam)", "Jaringan sosial mempercepat pemulihan psikologis dan ekonomi.", "Menunjukkan peran sentral komunitas perempuan."] },
+    { name: "Ahmed & Rahman (2021)", journal: "International Journal of Disaster Risk Reduction", cells: ["Akses sumber daya pada tahap respon bencana", "Mixed methods", "Keterbatasan akses informasi menghambat keterlibatan perempuan dalam pengambilan keputusan.", "Mengidentifikasi kesenjangan akses berbasis gender."] },
+    { name: "Putri (2023)", journal: "Jurnal Ilmu Sosial dan Humaniora", cells: ["Strategi coping perempuan korban bencana", "Kualitatif (studi kasus)", "Strategi coping berbasis agama dan dukungan keluarga meningkatkan resiliensi.", "Memberikan perspektif lokal dalam konteks Indonesia."] },
+    { name: "Nguyen et al. (2020)", journal: "Global Environmental Change", cells: ["Peran perempuan dalam manajemen risiko bencana", "Kuantitatif (survei)", "Perempuan lebih aktif dalam kesiapsiagaan komunitas dibanding laki-laki.", "Data komparatif gender lintas negara Asia Tenggara."] },
+  ];
+
+  const matrixHeaders = ["Penelitian", "Fokus", "Metode", "Temuan Utama", "Kontribusi Khas"];
+
+  const docNavRows = [
+    { key: "2", title: "Pendahuluan", desc: "Latar belakang, dinamika kerentanan gender, dan konteks kebencanaan", section: 2 },
+    { key: "3", title: "Metodologi dan Cakupan", desc: "Strategi pencarian, kriteria inklusi, dan seleksi 126 artikel", section: 3 },
+    { key: "4", title: "Matriks Literatur", desc: "Fokus, metode, temuan utama, dan kontribusi khas tiap studi", section: 4 },
+    { key: "5", title: "Perbandingan Studi", desc: "Persamaan dan perbedaan metode serta temuan antar studi", section: 5 },
+    { key: "6", title: "Pengelompokan Tema", desc: "Temuan utama dikelompokkan ke dalam lima tema besar", section: 6 },
+    { key: "7–9", title: "Pengelompokan Tema", desc: "Sintesis tema lanjutan beserta celah penelitian yang ditemukan", section: 7 },
+  ];
+
+  const [chip, setChip] = useState("semua");
+  const [prioritySearch, setPrioritySearch] = useState("");
+  const [yearSort, setYearSort] = useState<"asc" | "desc" | null>(null);
+  const [relevanSort, setRelevanSort] = useState<"asc" | "desc" | null>(null);
+  const [matrixSearch, setMatrixSearch] = useState("");
+  const [matrixSort, setMatrixSort] = useState<{ index: number; dir: "asc" | "desc" } | null>(null);
+  const [activeSection, setActiveSection] = useState(1);
+
+  const visiblePriority = (() => {
+    let rows = priorityRows.filter(row => {
+      if (chip === "relevan" && row.tag !== "Sangat relevan") return false;
+      if (chip === "tinjau" && row.tag !== "Perlu ditinjau") return false;
+      if (chip === "teori" && row.kind !== "Ulasan teori") return false;
+      if (chip === "empiris" && row.kind !== "Empiris") return false;
+      const q = prioritySearch.trim().toLowerCase();
+      if (q && !row.title.toLowerCase().includes(q) && !row.source.toLowerCase().includes(q)) return false;
+      return true;
+    });
+    if (yearSort) rows = [...rows].sort((a, b) => (yearSort === "desc" ? b.year - a.year : a.year - b.year));
+    else if (relevanSort) rows = [...rows].sort((a, b) => (relevanSort === "desc" ? b.relevan - a.relevan : a.relevan - b.relevan));
+    return rows;
+  })();
+
+  const visibleMatrix = (() => {
+    const q = matrixSearch.trim().toLowerCase();
+    let rows = matrixRows.filter(
+      row => !q || row.name.toLowerCase().includes(q) || row.journal.toLowerCase().includes(q) || row.cells.some(cell => cell.toLowerCase().includes(q)),
+    );
+    if (matrixSort) {
+      const { index, dir } = matrixSort;
+      rows = [...rows].sort((a, b) => {
+        const left = index === 0 ? a.name.toLowerCase() : a.cells[index - 1].toLowerCase();
+        const right = index === 0 ? b.name.toLowerCase() : b.cells[index - 1].toLowerCase();
+        return dir === "asc" ? left.localeCompare(right) : right.localeCompare(left);
+      });
+    }
+    return rows;
+  })();
+
+  const activeSectionTitle = sectionNames[activeSection - 1];
+
+  return (
+    <div className="mx-auto hidden max-w-[1160px] flex-col gap-5 pb-8 md:flex">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-extrabold leading-8 text-slate-900">Tinjau hasil penelusuran literatur</h1>
+          <p className="mt-1.5 text-xs leading-5 text-slate-500">
+            Alerin telah menggabungkan, merapikan, dan memeringkat artikel berdasarkan relevansi.
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={onBack}
+          className="flex shrink-0 items-center gap-2 rounded-[9.88px] bg-sky-700 px-5 py-2.5 text-sm font-bold leading-5 text-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]"
+        >
+          <svg width="14" height="12" viewBox="0 0 14 12" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M12 6H2M5.5 2.5L2 6l3.5 3.5" />
+          </svg>
+          Kembali
+        </button>
+      </div>
+
+      <div className="rounded-2xl bg-white p-2.5 shadow-sm">
+        <div className="grid grid-cols-4 divide-x divide-slate-200/80">
+          {stats.map(stat => (
+            <div key={stat.label} className="px-6 py-4">
+              <p className="text-base font-medium leading-6 text-slate-500">{stat.label}</p>
+              <p className={`mt-2 text-2xl font-extrabold leading-8 ${stat.tone}`}>
+                {stat.value} <span className="text-xl font-bold">artikel</span>
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <section className="rounded-2xl bg-white shadow-sm">
+        <div className="flex items-start justify-between gap-4 p-5">
+          <div>
+            <h2 className="text-lg font-bold leading-7 text-slate-900">Artikel prioritas untuk ditinjau</h2>
+            <p className="mt-0.5 text-sm leading-5 text-slate-500">Berikut adalah artikel dengan relevansi tertinggi untuk topik Anda.</p>
+          </div>
+          <label className="flex h-10 w-72 shrink-0 items-center gap-2 rounded-xl bg-slate-50 px-3">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#94a3b8" strokeWidth="1.6" strokeLinecap="round" aria-hidden="true">
+              <circle cx="6" cy="6" r="4.5" />
+              <path d="M9.5 9.5L13 13" />
+            </svg>
+            <input
+              value={prioritySearch}
+              onChange={event => setPrioritySearch(event.target.value)}
+              placeholder="Cari judul, penulis, atau kata kunci..."
+              className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-slate-400"
+            />
+          </label>
+        </div>
+
+        <div className="flex flex-wrap gap-2 px-5">
+          {filterChips.map(item => (
+            <button
+              key={item.key}
+              type="button"
+              onClick={() => setChip(item.key)}
+              className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors ${
+                chip === item.key
+                  ? "bg-blue-50 text-blue-700 outline outline-1 outline-blue-200"
+                  : "bg-white text-slate-600 outline outline-1 outline-slate-200 hover:bg-slate-50"
+              }`}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-4 overflow-x-auto">
+          <table className="w-full min-w-[760px] border-collapse text-left">
+            <thead>
+              <tr className="bg-slate-50/60">
+                <th className="px-5 py-3 text-xs font-semibold text-slate-500">Judul</th>
+                <th className="px-5 py-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setRelevanSort(null);
+                      setYearSort(yearSort === "desc" ? "asc" : "desc");
+                    }}
+                    className={`flex items-center gap-1.5 text-xs font-semibold ${yearSort ? "text-blue-600" : "text-slate-500 hover:text-slate-700"}`}
+                  >
+                    Tahun
+                    <SortArrow dir={yearSort} />
+                  </button>
+                </th>
+                <th className="px-5 py-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setYearSort(null);
+                      setRelevanSort(relevanSort === "desc" ? "asc" : "desc");
+                    }}
+                    className={`flex items-center gap-1.5 text-xs font-semibold ${relevanSort ? "text-blue-600" : "text-slate-500 hover:text-slate-700"}`}
+                  >
+                    Relevansi
+                    <SortArrow dir={relevanSort} />
+                  </button>
+                </th>
+                <th className="px-5 py-3 text-xs font-semibold text-slate-500">Sumber</th>
+              </tr>
+            </thead>
+            <tbody>
+              {visiblePriority.length === 0 && (
+                <tr>
+                  <td colSpan={4} className="px-5 py-8 text-center text-sm text-slate-400">
+                    Tidak ada artikel yang cocok dengan pencarianmu.
+                  </td>
+                </tr>
+              )}
+              {visiblePriority.map(row => (
+                <tr key={row.title} className="border-t border-slate-100">
+                  <td className="max-w-[380px] px-5 py-4 text-sm font-medium leading-5 text-slate-800">{row.title}</td>
+                  <td className="px-5 py-4 text-sm text-slate-600">{row.year}</td>
+                  <td className="px-5 py-4">
+                    <span
+                      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${
+                        row.tag === "Sangat relevan"
+                          ? "bg-emerald-50 text-emerald-700 outline outline-1 outline-emerald-200/60"
+                          : "bg-amber-50 text-amber-700 outline outline-1 outline-amber-200/60"
+                      }`}
+                    >
+                      <span className={`h-1.5 w-1.5 rounded-full ${row.tag === "Sangat relevan" ? "bg-emerald-500" : "bg-amber-500"}`} />
+                      {row.tag}
+                    </span>
+                  </td>
+                  <td className="px-5 py-4">
+                    <span className="flex items-center gap-2">
+                      <span className={`flex h-6 w-6 items-center justify-center rounded-md text-[11px] font-bold text-white ${sourceBadge[row.source]?.className ?? "bg-slate-500"}`}>
+                        {sourceBadge[row.source]?.letter ?? "?"}
+                      </span>
+                      <span className="text-sm text-slate-600">{row.source}</span>
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <div className="flex items-center justify-between gap-4 pt-1">
+        <div className="flex items-center gap-3">
+          <span className="h-8 w-1.5 rounded-full bg-blue-600" />
+          <h2 className="text-2xl font-bold leading-8 text-slate-900">Hasil Analisis Literature Review</h2>
+        </div>
+        <p className="text-sm text-slate-500">Resiliensi perempuan dalam menghadapi bencana dan krisis</p>
+      </div>
+
+      <section className="rounded-2xl bg-white shadow-sm">
+        <div className="flex items-start justify-between gap-4 border-b border-slate-200/70 p-5">
+          <div>
+            <h2 className="text-lg font-bold leading-7 text-slate-900">Matriks Literatur</h2>
+            <p className="mt-0.5 text-sm leading-5 text-slate-500">
+              Daftar studi yang dianalisis beserta fokus, metode, temuan utama, dan kontribusi khasnya.
+            </p>
+          </div>
+          <label className="flex h-10 w-64 shrink-0 items-center gap-2 rounded-xl bg-slate-50 px-3">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#94a3b8" strokeWidth="1.6" strokeLinecap="round" aria-hidden="true">
+              <circle cx="6" cy="6" r="4.5" />
+              <path d="M9.5 9.5L13 13" />
+            </svg>
+            <input
+              value={matrixSearch}
+              onChange={event => setMatrixSearch(event.target.value)}
+              placeholder="Cari dalam matriks..."
+              className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-slate-400"
+            />
+          </label>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[980px] border-collapse text-left">
+            <thead>
+              <tr className="bg-slate-50/60">
+                {matrixHeaders.map((header, index) => (
+                  <th key={header} className="px-5 py-3">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setMatrixSort(current =>
+                          current && current.index === index ? { index, dir: current.dir === "asc" ? "desc" : "asc" } : { index, dir: "asc" },
+                        )
+                      }
+                      className={`flex items-center gap-1.5 text-xs font-semibold ${
+                        matrixSort?.index === index ? "text-blue-600" : "text-slate-500 hover:text-slate-700"
+                      }`}
+                    >
+                      {header}
+                      <SortArrow dir={matrixSort?.index === index ? matrixSort.dir : null} />
+                    </button>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {visibleMatrix.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="px-5 py-8 text-center text-sm text-slate-400">
+                    Tidak ada baris yang cocok dengan pencarianmu.
+                  </td>
+                </tr>
+              )}
+              {visibleMatrix.map(row => (
+                <tr key={row.name} className="border-t border-slate-100 align-top">
+                  <td className="w-56 px-5 py-4">
+                    <span className="block text-sm font-semibold leading-5 text-blue-600">{row.name}</span>
+                    <span className="mt-0.5 block text-xs leading-4 text-slate-400">{row.journal}</span>
+                  </td>
+                  {row.cells.map((cell, index) => (
+                    <td key={index} className="px-5 py-4 text-sm leading-5 text-slate-600">
+                      {cell}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <div className="flex items-center justify-between gap-4 pt-1">
+        <div className="flex items-center gap-3">
+          <span className="h-8 w-1.5 rounded-full bg-blue-600" />
+          <h2 className="text-2xl font-extrabold leading-8 text-slate-900">Literature Review Siap Digunakan</h2>
+        </div>
+        <div className="flex items-center gap-2">
+          {[
+            { label: "Scoping Review", icon: "text-blue-500", path: "M3 2.5h7.5v9H3zM3 5.5h7.5M5.5 2.5v9" },
+            { label: "15 artikel", icon: "text-emerald-500", path: "M7 1.5v8M4 6.5L7 9.5l3-3M2.5 12.5h9" },
+            { label: "Berbasis sumber", icon: "text-amber-500", path: "M7 1.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6L7 9.7l-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" },
+          ].map(item => (
+            <span key={item.label} className="flex items-center gap-1.5 rounded-lg bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm outline outline-1 outline-slate-200">
+              <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" strokeLinecap="round" className={item.icon} aria-hidden="true">
+                <path d={item.path} />
+              </svg>
+              {item.label}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <section className="flex items-stretch gap-5 rounded-2xl bg-white p-5 shadow-sm">
+        <div className="grid min-w-0 flex-1 grid-cols-2 gap-3">
+          <button
+            type="button"
+            onClick={() => window.alert("Dokumen berhasil diekspor ke Word.")}
+            className="flex items-center justify-center gap-2 rounded-xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-sky-700"
+          >
+            <svg width="15" height="15" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" aria-hidden="true">
+              <path d="M2.5 1.5h6l3 3v8h-9zM8.5 1.5v3h3" />
+            </svg>
+            Ekspor ke Word
+          </button>
+          <button
+            type="button"
+            onClick={() => window.alert("Dokumen berhasil diekspor ke PDF.")}
+            className="flex items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-sm font-semibold text-slate-700 outline outline-1 outline-slate-200 transition-colors hover:bg-slate-50"
+          >
+            <svg width="15" height="15" viewBox="0 0 14 14" fill="none" stroke="#dc2626" strokeWidth="1.5" strokeLinejoin="round" aria-hidden="true">
+              <path d="M2.5 1.5h6l3 3v8h-9zM8.5 1.5v3h3" />
+            </svg>
+            Ekspor ke PDF
+          </button>
+          <button
+            type="button"
+            onClick={() => window.alert("Teks literatur review disalin ke papan klip.")}
+            className="flex items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-sm font-semibold text-slate-700 outline outline-1 outline-slate-200 transition-colors hover:bg-slate-50"
+          >
+            <svg width="15" height="15" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" aria-hidden="true">
+              <rect x="4.5" y="4.5" width="8" height="8" rx="1.5" />
+              <path d="M9.5 4.5v-2a1.5 1.5 0 0 0-1.5-1.5H3A1.5 1.5 0 0 0 1.5 2.5V8A1.5 1.5 0 0 0 3 9.5h1.5" />
+            </svg>
+            Salin Teks
+          </button>
+          <button
+            type="button"
+            onClick={() => window.alert("Daftar sitasi ditampilkan.")}
+            className="flex items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-sm font-semibold text-slate-700 outline outline-1 outline-slate-200 transition-colors hover:bg-slate-50"
+          >
+            <svg width="15" height="15" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" aria-hidden="true">
+              <path d="M5.5 4.5H3.8A1.3 1.3 0 0 0 2.5 5.8v4.4a1.3 1.3 0 0 0 1.3 1.3h4.4a1.3 1.3 0 0 0 1.3-1.3V5.8a1.3 1.3 0 0 0-1.3-1.3H7M5 2.5h4M5 5h4" />
+            </svg>
+            Lihat Sitasi
+          </button>
+        </div>
+        <div className="w-72 shrink-0 rounded-xl bg-slate-50 p-4">
+          <p className="text-sm font-bold leading-5 text-slate-800">Keterlacakan Sumber</p>
+          <div className="mt-3 flex items-end justify-between gap-3">
+            <div className="flex flex-col gap-2">
+              <span className="flex items-center gap-2 text-xs leading-4 text-slate-600">
+                <span className="h-2 w-2 rounded-full bg-sky-600" />
+                12 klaim terverifikasi
+              </span>
+              <span className="flex items-center gap-2 text-xs leading-4 text-slate-600">
+                <span className="h-2 w-2 rounded-full bg-amber-400" />
+                3 manual
+              </span>
+            </div>
+            <div className="text-right">
+              <p className="text-xs font-medium leading-4 text-slate-500">80% Valid</p>
+              <div className="mt-1.5 flex h-2 w-24 overflow-hidden rounded-full bg-slate-200">
+                <span className="h-full w-4/5 bg-sky-600" />
+                <span className="h-full w-1/5 bg-amber-400" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="rounded-2xl bg-white p-5 shadow-sm">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2.5">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#2563eb" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true">
+                <path d="M2.5 4h11M2.5 8h11M2.5 12h7" />
+              </svg>
+            </span>
+            <span className="text-sm font-bold uppercase tracking-wide text-slate-800">Struktur Dokumen (12 Bagian)</span>
+          </div>
+          <span className="text-xs font-semibold text-blue-600">Bagian Aktif: {activeSection} dari 12</span>
+        </div>
+        <div className="mt-4 flex gap-2.5 overflow-x-auto pb-1">
+          {sectionNames.map((name, index) => (
+            <button
+              key={name}
+              type="button"
+              onClick={() => setActiveSection(index + 1)}
+              className={`flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold transition-colors ${
+                activeSection === index + 1
+                  ? "bg-blue-50 text-blue-700 outline outline-1 outline-blue-200"
+                  : "bg-slate-50 text-slate-600 outline outline-1 outline-slate-200 hover:bg-slate-100"
+              }`}
+            >
+              <span
+                className={`flex h-5 w-5 items-center justify-center rounded text-[10px] font-bold text-white ${
+                  activeSection === index + 1 ? "bg-blue-600" : "bg-slate-600"
+                }`}
+              >
+                {index + 1}
+              </span>
+              {name}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <section className="rounded-3xl bg-white p-11 shadow-sm">
+        <div className="flex gap-4 rounded-2xl bg-gradient-to-r from-blue-50/90 via-sky-50/70 to-indigo-50/80 p-6">
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-600/10">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#2563eb" strokeWidth="1.6" strokeLinejoin="round" aria-hidden="true">
+              <path d="M10 4.5C8.5 3.3 6.6 3 4 3v12c2.6 0 4.5.3 6 1.5 1.5-1.2 3.4-1.5 6-1.5V3c-2.6 0-4.5.3-6 1.5zM10 4.5v12" />
+            </svg>
+          </span>
+          <div className="min-w-0">
+            <h3 className="text-xl font-bold leading-7 text-slate-900">{activeSectionTitle}</h3>
+            <p className="mt-2 text-lg leading-8 text-slate-700">
+              Tinjauan literatur ini mengkaji 126 artikel yang tersaring menjadi 92 studi relevan tentang resiliensi perempuan
+              dalam menghadapi bencana dan krisis. Temuan menunjukkan bahwa pemulihan perempuan sangat bergantung pada{" "}
+              <span className="font-semibold text-slate-900">dukungan sosial</span>, ketersediaan{" "}
+              <span className="font-semibold text-slate-900">akses sumber daya</span> ekonomi dan informasi, serta{" "}
+              <span className="font-semibold text-slate-900">faktor individual/psikologis</span> seperti koping berbasis agama dan keluarga.
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-8 flex items-center justify-between gap-4">
+          <h3 className="text-2xl font-bold leading-8 text-slate-900">
+            {activeSection}. {activeSectionTitle}
+          </h3>
+          <span className="text-xs leading-4 text-slate-400">Halaman {activeSection} dari 18</span>
+        </div>
+        <div className="mt-4 space-y-4">
+          <p className="text-lg leading-8 text-slate-700">
+            Kajian ini mengompilasi 92 artikel terpilih dari 126 hasil penelusuran setelah proses penghapusan duplikasi dan
+            penyaringan berdasarkan kriteria inklusi. Sebagian besar studi menggunakan pendekatan kualitatif, dengan jumlah
+            sampel yang terbatas, sehingga generalisasi temuan masih perlu kehati-hatian.
+          </p>
+          <p className="text-lg leading-8 text-slate-700">
+            Tiga faktor utama paling konsisten muncul lintas studi: dukungan sosial dari keluarga dan komunitas, akses
+            sumber daya serta informasi pada tahap respon bencana, dan faktor individual/psikologis perempuan. Ketiadaan
+            salah satu faktor terbukti memperlambat pemulihan psikologis pasca-bencana.
+          </p>
+          <p className="text-lg leading-8 text-slate-700">
+            Celah penelitian masih terbuka pada konteks Asia Tenggara, khususnya Indonesia, yang didominasi studi berskala
+            kecil dan bersifat lokal. Dokumen ini menyusun sintesis dua belas bagian untuk menjawab kebutuhan tersebut
+            sekaligus memetakan arah penelitian lanjutan.
+          </p>
+        </div>
+
+        <div className="mt-8 space-y-3">
+          {docNavRows.map(row => (
+            <button
+              key={row.key}
+              type="button"
+              onClick={() => setActiveSection(row.section)}
+              className="flex w-full items-center gap-4 rounded-2xl bg-slate-50 px-5 py-4 text-left transition-colors hover:bg-slate-100"
+            >
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white text-sm font-bold text-blue-600 outline outline-1 outline-slate-200">
+                {row.key}
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-base font-bold leading-6 text-slate-800">{row.title}</span>
+                <span className="block text-sm leading-5 text-slate-500">{row.desc}</span>
+              </span>
+              <svg width="8" height="13" viewBox="0 0 8 13" fill="none" stroke="#2563eb" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M1.5 1.5L6.5 6.5l-5 5" />
+              </svg>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <p className="text-center text-xs text-slate-400">Kata kunci pencarian: {query.trim() || "resiliensi perempuan pasca bencana"}</p>
+    </div>
+  );
+}
+
 export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void }) {
   const [view, setView] = useState<JournalView>("home");
   const [query, setQuery] = useState("");
@@ -1465,7 +2010,12 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
             </div>
           )}
 
-          {desktopStage === "results" && <DesktopSearchResults query={query} onBack={() => setDesktopStage("home")} />}
+          {desktopStage === "results" &&
+            (searchType === "review" ? (
+              <DesktopLiteratureReview query={query} onBack={() => setDesktopStage("home")} />
+            ) : (
+              <DesktopSearchResults query={query} onBack={() => setDesktopStage("home")} />
+            ))}
 
           {desktopStage !== "home" ? null : view === "home" ? (
             <div className="mx-auto grid max-w-[1160px] gap-5 lg:grid-cols-[minmax(0,1fr)_280px]">
