@@ -734,7 +734,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                 <section className="mt-4 rounded-2xl border border-slate-200/80 bg-white px-4 py-[22px] shadow-sm md:p-6">
                   <h2 className="text-center font-['Plus_Jakarta_Sans:ExtraBold'] text-[19px] font-extrabold md:text-left md:font-['Plus_Jakarta_Sans:Bold'] md:text-base md:font-bold">Cari rujukan dari tulisanmu</h2>
                   <p className="mx-auto mt-2 max-w-lg text-center font-['Plus_Jakarta_Sans:Regular'] text-[13px] leading-5 text-[#1c1c1c] md:mx-0 md:mt-1 md:max-w-none md:text-left md:font-['Plus_Jakarta_Sans:Medium'] md:font-medium md:leading-5 md:text-xs md:text-[#71717a]">Tempel kalimat atau paragraf yang ingin kamu perkuat dengan sitasi. Alerin akan membantu mencari artikel jurnal yang relevan untuk mendukung tulisanmu.</p>
-                  <div className="mt-5 grid gap-3">
+                  <div className="mt-5 grid gap-3 md:grid-cols-[1.35fr_0.95fr]">
                     <label className="grid gap-1.5">
                       <span className="font-['Plus_Jakarta_Sans:SemiBold'] text-[14px] font-semibold text-[#334155] md:hidden">Draf / Paragraf Teks</span>
                       <textarea value={paragraph} onChange={event => setParagraph(event.target.value)} placeholder="Masukkan kalimat atau paragraf yang membutuhkan sitasi." className="min-h-[123px] resize-none rounded-xl border border-slate-200 bg-[rgba(200,226,251,0.24)] p-3 text-[13px] outline-none focus:border-sky-400 md:min-h-44 md:bg-white md:p-4 md:text-xs" />
