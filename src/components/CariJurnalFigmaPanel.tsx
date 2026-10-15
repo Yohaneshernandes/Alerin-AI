@@ -2253,26 +2253,26 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                       <textarea value={paragraph} onChange={event => setParagraph(event.target.value)} placeholder="Masukkan kalimat atau paragraf yang membutuhkan sitasi." className="min-h-[123px] resize-none rounded-xl border border-slate-200 bg-[rgba(200,226,251,0.24)] p-3 text-[13px] outline-none focus:border-sky-400 md:min-h-44 md:bg-white md:p-4 md:text-xs" />
                     </label>
                     {fileName ? (
-                      <div className="flex min-h-[108px] flex-col items-center justify-center rounded-xl border-2 border-dashed border-sky-200 bg-white p-4 text-center md:min-h-44">
-                        <span className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-rose-600 to-red-500 shadow-[0_0_0_3.5px_rgba(224,242,254,1)]">
-                          <svg width="14" height="16" viewBox="0 0 14 16" fill="none" stroke="white" strokeWidth="1.2" strokeLinejoin="round" aria-hidden="true">
+                      <div className="flex min-h-[108px] flex-col items-center justify-center rounded-xl border-2 border-dashed border-sky-200 bg-white p-5 text-center md:min-h-44 md:p-4">
+                        <span className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-rose-600 to-red-500 shadow-[0_0_0_4px_rgba(224,242,254,1)] md:h-10 md:w-10 md:rounded-xl md:shadow-[0_0_0_3.5px_rgba(224,242,254,1)]">
+                          <svg viewBox="0 0 14 16" fill="none" stroke="white" strokeWidth="1.2" strokeLinejoin="round" aria-hidden="true" className="h-7 w-6 md:h-4 md:w-[14px]">
                             <path d="M2 1.5h6l4 4v9H2z" />
                             <path d="M8 1.5v4h4" />
                           </svg>
-                          <span className="absolute bottom-[3px] text-[6px] font-extrabold uppercase leading-none tracking-tight text-rose-200">PDF</span>
+                          <span className="absolute bottom-1 text-[9px] font-extrabold uppercase leading-none tracking-tight text-rose-200 md:bottom-[3px] md:text-[6px]">PDF</span>
                         </span>
-                        <p className="mt-3 max-w-full truncate px-2 text-[13px] font-bold leading-4 text-slate-800 md:text-xs">{fileName}</p>
-                        <p className="mt-1.5 text-[12px] font-medium leading-4 text-slate-500 md:text-xs">
+                        <p className="mt-4 max-w-full truncate px-2 text-base font-bold leading-6 text-slate-900 md:mt-3 md:text-xs md:text-slate-800 md:leading-4">{fileName}</p>
+                        <p className="mt-2 text-sm font-medium leading-5 text-slate-500 md:mt-1.5 md:text-xs md:leading-4">
                           {fileSizeLabel || "1.0 MB"} <span className="px-1">•</span> 22 Halaman
                         </p>
-                        <div className="mt-3 flex w-full flex-wrap items-center justify-center gap-1 border-t border-slate-500/20 pt-3">
+                        <div className="mt-4 flex w-full flex-wrap items-center justify-center gap-2 border-t border-slate-200 pt-4 md:mt-3 md:gap-1 md:border-slate-500/20 md:pt-3">
                           <button
                             type="button"
-                            className="rounded-lg bg-white px-2.5 py-1 text-[12px] font-semibold leading-5 text-slate-600 outline outline-1 outline-offset-[-1px] outline-slate-200 md:text-xs"
+                            className="rounded-lg bg-white px-4 py-1.5 text-sm font-bold leading-5 text-slate-800 outline outline-1 outline-offset-[-1px] outline-slate-200 md:px-2.5 md:py-1 md:text-xs md:font-semibold md:text-slate-600"
                           >
                             Lihat Pratinjau
                           </button>
-                          <label className="cursor-pointer rounded-lg bg-sky-100/70 px-3 py-1 text-[12px] font-bold leading-5 text-sky-700 outline outline-1 outline-offset-[-1px] outline-sky-200 md:text-xs">
+                          <label className="cursor-pointer rounded-lg bg-blue-50 px-4 py-1.5 text-sm font-bold leading-5 text-blue-700 outline outline-1 outline-offset-[-1px] outline-blue-200 md:bg-sky-100/70 md:px-3 md:py-1 md:text-xs md:text-sky-700 md:outline-sky-200">
                             Ganti File
                             <input type="file" accept=".pdf,.doc,.docx,.txt" className="sr-only" onChange={handleFileChange} />
                           </label>
@@ -2283,9 +2283,9 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                               setFileName("");
                               setFileSizeLabel("");
                             }}
-                            className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-50"
+                            className="rounded-lg p-2 text-slate-400 hover:bg-slate-50 md:p-1.5"
                           >
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="md:h-4 md:w-4">
                               <path d="M2.5 4.5h11M6 4.5V3h4v1.5M4 4.5l.7 9h6.6l.7-9" />
                               <path d="M6.5 7v4M9.5 7v4" />
                             </svg>
