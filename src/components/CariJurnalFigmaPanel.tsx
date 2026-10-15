@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useState, type ChangeEvent, type ReactNode } from "react";
 
 type JournalView = "home" | "collection" | "riwayat";
 
@@ -1121,6 +1121,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
   const [query, setQuery] = useState("");
   const [paragraph, setParagraph] = useState("");
   const [fileName, setFileName] = useState("");
+  const [fileSizeLabel, setFileSizeLabel] = useState("");
   const [mobileSearchStage, setMobileSearchStage] = useState<"home" | "loading" | "results">("home");
   const [desktopStage, setDesktopStage] = useState<"home" | "loading" | "results">("home");
   const [searchType, setSearchType] = useState("");
@@ -1147,6 +1148,14 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
   };
 
   const canSearch = query.trim().length >= 5;
+
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    setFileName(file.name);
+    setFileSizeLabel(`${(file.size / 1048576).toFixed(1)} MB`);
+    event.target.value = "";
+  };
 
   return (
     <div className="fixed inset-0 z-[300] flex h-dvh w-full overflow-hidden bg-[#f4f7fb] font-['Inter:Regular'] text-[#0f172a] md:bg-[#f3f6f9]">
@@ -1591,16 +1600,58 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                       <span className="font-['Plus_Jakarta_Sans:SemiBold'] text-[14px] font-semibold text-[#334155] md:hidden">Draf / Paragraf Teks</span>
                       <textarea value={paragraph} onChange={event => setParagraph(event.target.value)} placeholder="Masukkan kalimat atau paragraf yang membutuhkan sitasi." className="min-h-[123px] resize-none rounded-xl border border-slate-200 bg-[rgba(200,226,251,0.24)] p-3 text-[13px] outline-none focus:border-sky-400 md:min-h-44 md:bg-white md:p-4 md:text-xs" />
                     </label>
-                    <label className="flex min-h-[108px] cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-sky-300 bg-sky-50/40 p-4 text-center md:min-h-44 md:border-2 md:border-dashed md:border-sky-200 md:bg-white">
-                      <span className="flex h-[53px] w-[53px] items-center justify-center rounded-full border border-sky-100 bg-white shadow-sm md:h-9 md:w-9 md:rounded-lg md:border-0 md:bg-sky-50 md:shadow-none">
-                        <img src={`${mobileAssets}/36094.svg`} alt="" className="md:hidden" />
-                        <img src={`${searchAssets}/f5e87.svg`} alt="" className="hidden md:block" />
-                      </span>
-                      <span className="mt-3 text-[13px] font-semibold md:text-xs md:font-bold md:text-slate-800">Unggah artikel atau catatan</span>
-                      <span className="mt-1 text-[12px] text-[#94a3b8] md:text-slate-500">PDF, DOCX, atau TXT hingga 20 MB</span>
-                      <span className="mt-2 rounded-full bg-sky-50 px-2.5 py-1 text-[11px] text-[#004f80] md:bg-transparent md:p-0 md:text-xs md:font-semibold md:text-emerald-600">{fileName || "Belum ada dokumen"}</span>
-                      <input type="file" accept=".pdf,.doc,.docx,.txt" className="sr-only" onChange={event => setFileName(event.target.files?.[0]?.name || "")} />
-                    </label>
+                    {fileName ? (
+                      <div className="flex min-h-[108px] flex-col items-center justify-center rounded-xl border-2 border-dashed border-sky-200 bg-white p-4 text-center md:min-h-44">
+                        <span className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-rose-600 to-red-500 shadow-[0_0_0_3.5px_rgba(224,242,254,1)]">
+                          <svg width="14" height="16" viewBox="0 0 14 16" fill="none" stroke="white" strokeWidth="1.2" strokeLinejoin="round" aria-hidden="true">
+                            <path d="M2 1.5h6l4 4v9H2z" />
+                            <path d="M8 1.5v4h4" />
+                          </svg>
+                          <span className="absolute bottom-[3px] text-[6px] font-extrabold uppercase leading-none tracking-tight text-rose-200">PDF</span>
+                        </span>
+                        <p className="mt-3 max-w-full truncate px-2 text-[13px] font-bold leading-4 text-slate-800 md:text-xs">{fileName}</p>
+                        <p className="mt-1.5 text-[12px] font-medium leading-4 text-slate-500 md:text-xs">
+                          {fileSizeLabel || "1.0 MB"} <span className="px-1">•</span> 22 Halaman
+                        </p>
+                        <div className="mt-3 flex w-full flex-wrap items-center justify-center gap-1 border-t border-slate-500/20 pt-3">
+                          <button
+                            type="button"
+                            className="rounded-lg bg-white px-2.5 py-1 text-[12px] font-semibold leading-5 text-slate-600 outline outline-1 outline-offset-[-1px] outline-slate-200 md:text-xs"
+                          >
+                            Lihat Pratinjau
+                          </button>
+                          <label className="cursor-pointer rounded-lg bg-sky-100/70 px-3 py-1 text-[12px] font-bold leading-5 text-sky-700 outline outline-1 outline-offset-[-1px] outline-sky-200 md:text-xs">
+                            Ganti File
+                            <input type="file" accept=".pdf,.doc,.docx,.txt" className="sr-only" onChange={handleFileChange} />
+                          </label>
+                          <button
+                            type="button"
+                            aria-label="Hapus file"
+                            onClick={() => {
+                              setFileName("");
+                              setFileSizeLabel("");
+                            }}
+                            className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-50"
+                          >
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                              <path d="M2.5 4.5h11M6 4.5V3h4v1.5M4 4.5l.7 9h6.6l.7-9" />
+                              <path d="M6.5 7v4M9.5 7v4" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <label className="flex min-h-[108px] cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-sky-300 bg-sky-50/40 p-4 text-center md:min-h-44 md:border-2 md:border-dashed md:border-sky-200 md:bg-white">
+                        <span className="flex h-[53px] w-[53px] items-center justify-center rounded-full border border-sky-100 bg-white shadow-sm md:h-9 md:w-9 md:rounded-lg md:border-0 md:bg-sky-50 md:shadow-none">
+                          <img src={`${mobileAssets}/36094.svg`} alt="" className="md:hidden" />
+                          <img src={`${searchAssets}/f5e87.svg`} alt="" className="hidden md:block" />
+                        </span>
+                        <span className="mt-3 text-[13px] font-semibold md:text-xs md:font-bold md:text-slate-800">Unggah artikel atau catatan</span>
+                        <span className="mt-1 text-[12px] text-[#94a3b8] md:text-slate-500">PDF, DOCX, atau TXT hingga 20 MB</span>
+                        <span className="mt-2 rounded-full bg-sky-50 px-2.5 py-1 text-[11px] text-[#004f80] md:bg-transparent md:p-0 md:text-xs md:font-semibold md:text-emerald-600">Belum ada dokumen</span>
+                        <input type="file" accept=".pdf,.doc,.docx,.txt" className="sr-only" onChange={handleFileChange} />
+                      </label>
+                    )}
                   </div>
                   <div className="mt-4 flex flex-col gap-3 md:mt-5 md:flex-row md:items-center md:justify-between">
                     <label className="flex items-center gap-2 text-[13px] text-[#475569] md:text-xs md:font-semibold md:text-slate-700">
