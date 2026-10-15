@@ -1157,6 +1157,73 @@ function SortArrow({ dir }: { dir: "asc" | "desc" | null }) {
   );
 }
 
+const priorityRows = (() => {
+  const interleave = (...lists: string[][]) => {
+    const out: string[] = [];
+    const max = Math.max(...lists.map(list => list.length));
+    for (let i = 0; i < max; i++) for (const list of lists) if (i < list.length) out.push(list[i]);
+    return out;
+  };
+  const head = [
+    { title: "Resilience among Women in Disaster Contexts: A Systematic Literature Review", year: 2023, relevan: 97, tag: "Sangat relevan", kind: "Ulasan teori", source: "Google Scholar" },
+    { title: "Gendered Impacts of Natural Disasters: A Global Review", year: 2022, relevan: 95, tag: "Sangat relevan", kind: "Ulasan teori", source: "Crossref" },
+    { title: "Community Resilience and Women's Leadership in Disaster Recovery", year: 2021, relevan: 91, tag: "Perlu ditinjau", kind: "Ulasan teori", source: "OpenAlex" },
+    { title: "The Role of Social Support in Post-Disaster Recovery for Women", year: 2020, relevan: 93, tag: "Sangat relevan", kind: "Ulasan teori", source: "DOAJ" },
+    { title: "Digital Platforms for Women's Resilience in Crisis Situations: An Empirical Study", year: 2023, relevan: 90, tag: "Perlu ditinjau", kind: "Empiris", source: "Google Scholar" },
+  ];
+  const topics = [
+    "Women's Resilience in Disasters",
+    "Gendered Disaster Recovery",
+    "Social Support after Crises",
+    "Community Preparedness and Women",
+    "Psychological Recovery of Survivors",
+    "Digital Inclusion in Humanitarian Crises",
+    "Women's Leadership in Emergency Response",
+    "Livelihood Restoration after Hazards",
+    "Coastal Community Vulnerability and Adaptation",
+    "Care Networks in Post-Disaster Settings",
+    "Gender Sensitivity in Humanitarian Aid",
+    "Education Continuity for Displaced Children",
+  ];
+  const suffixes = [
+    ": A Systematic Review",
+    ": Evidence from Coastal Indonesia",
+    ": A Mixed-Methods Study",
+    ": A Scoping Review",
+    ": Insights from ASEAN",
+    ": Lessons from COVID-19",
+    ": Longitudinal Perspectives",
+    ": Policy Implications",
+  ];
+  const tags = interleave(
+    Array.from({ length: 21 }, () => "Sangat relevan"),
+    Array.from({ length: 36 }, () => "Perlu ditinjau"),
+    Array.from({ length: 30 }, () => "Cukup relevan"),
+  );
+  const kinds = interleave(
+    Array.from({ length: 8 }, () => "Ulasan teori"),
+    Array.from({ length: 45 }, () => "Empiris"),
+    Array.from({ length: 34 }, () => "Campuran"),
+  );
+  const sources = ["Google Scholar", "Crossref", "OpenAlex", "DOAJ"];
+  const extra = Array.from({ length: 87 }, (_, index) => ({
+    title: `${topics[index % topics.length]}${suffixes[Math.floor(index / topics.length) % suffixes.length]}`,
+    year: 2026 - (index % 7),
+    relevan: Math.max(58, 94 - Math.floor(index * 0.42)),
+    tag: tags[index],
+    kind: kinds[index],
+    source: sources[index % sources.length],
+  }));
+  return [...head, ...extra];
+})();
+
+const sourceLogos: Record<string, string> = {
+  "Google Scholar": "/assets/source-logos/google-scholar.svg",
+  Crossref: "/assets/source-logos/crossref.svg",
+  OpenAlex: "/assets/source-logos/openalex.svg",
+  DOAJ: "/assets/source-logos/doaj.svg",
+};
+
 function DesktopLiteratureReview({ query, onBack }: { query: string; onBack: () => void }) {
   const sectionNames = [
     "Ringkasan Eksekutif",
@@ -1179,73 +1246,6 @@ function DesktopLiteratureReview({ query, onBack }: { query: string; onBack: () 
     { label: "Artikel tersisa untuk sintesis", value: "92", tone: "text-blue-600" },
     { label: "Artikel prioritas tinggi", value: "24", tone: "text-blue-600" },
   ];
-
-  const priorityRows = (() => {
-    const interleave = (...lists: string[][]) => {
-      const out: string[] = [];
-      const max = Math.max(...lists.map(list => list.length));
-      for (let i = 0; i < max; i++) for (const list of lists) if (i < list.length) out.push(list[i]);
-      return out;
-    };
-    const head = [
-      { title: "Resilience among Women in Disaster Contexts: A Systematic Literature Review", year: 2023, relevan: 97, tag: "Sangat relevan", kind: "Ulasan teori", source: "Google Scholar" },
-      { title: "Gendered Impacts of Natural Disasters: A Global Review", year: 2022, relevan: 95, tag: "Sangat relevan", kind: "Ulasan teori", source: "Crossref" },
-      { title: "Community Resilience and Women's Leadership in Disaster Recovery", year: 2021, relevan: 91, tag: "Perlu ditinjau", kind: "Ulasan teori", source: "OpenAlex" },
-      { title: "The Role of Social Support in Post-Disaster Recovery for Women", year: 2020, relevan: 93, tag: "Sangat relevan", kind: "Ulasan teori", source: "DOAJ" },
-      { title: "Digital Platforms for Women's Resilience in Crisis Situations: An Empirical Study", year: 2023, relevan: 90, tag: "Perlu ditinjau", kind: "Empiris", source: "Google Scholar" },
-    ];
-    const topics = [
-      "Women's Resilience in Disasters",
-      "Gendered Disaster Recovery",
-      "Social Support after Crises",
-      "Community Preparedness and Women",
-      "Psychological Recovery of Survivors",
-      "Digital Inclusion in Humanitarian Crises",
-      "Women's Leadership in Emergency Response",
-      "Livelihood Restoration after Hazards",
-      "Coastal Community Vulnerability and Adaptation",
-      "Care Networks in Post-Disaster Settings",
-      "Gender Sensitivity in Humanitarian Aid",
-      "Education Continuity for Displaced Children",
-    ];
-    const suffixes = [
-      ": A Systematic Review",
-      ": Evidence from Coastal Indonesia",
-      ": A Mixed-Methods Study",
-      ": A Scoping Review",
-      ": Insights from ASEAN",
-      ": Lessons from COVID-19",
-      ": Longitudinal Perspectives",
-      ": Policy Implications",
-    ];
-    const tags = interleave(
-      Array.from({ length: 21 }, () => "Sangat relevan"),
-      Array.from({ length: 36 }, () => "Perlu ditinjau"),
-      Array.from({ length: 30 }, () => "Cukup relevan"),
-    );
-    const kinds = interleave(
-      Array.from({ length: 8 }, () => "Ulasan teori"),
-      Array.from({ length: 45 }, () => "Empiris"),
-      Array.from({ length: 34 }, () => "Campuran"),
-    );
-    const sources = ["Google Scholar", "Crossref", "OpenAlex", "DOAJ"];
-    const extra = Array.from({ length: 87 }, (_, index) => ({
-      title: `${topics[index % topics.length]}${suffixes[Math.floor(index / topics.length) % suffixes.length]}`,
-      year: 2026 - (index % 7),
-      relevan: Math.max(58, 94 - Math.floor(index * 0.42)),
-      tag: tags[index],
-      kind: kinds[index],
-      source: sources[index % sources.length],
-    }));
-    return [...head, ...extra];
-  })();
-
-  const sourceLogos: Record<string, string> = {
-    "Google Scholar": "/assets/source-logos/google-scholar.svg",
-    Crossref: "/assets/source-logos/crossref.svg",
-    OpenAlex: "/assets/source-logos/openalex.svg",
-    DOAJ: "/assets/source-logos/doaj.svg",
-  };
 
   const filterChips = [
     { key: "semua", label: "Semua (92)" },
@@ -1845,6 +1845,493 @@ function DesktopLiteratureReview({ query, onBack }: { query: string; onBack: () 
   );
 }
 
+
+function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => void }) {
+  const [mode, setMode] = useState("kepadatan");
+  const [showLines, setShowLines] = useState(true);
+  const [zoom, setZoom] = useState(100);
+  const [activeNode, setActiveNode] = useState("AI Literacy");
+  const [nodeFilter, setNodeFilter] = useState<string | null>(null);
+  const [mapSearch, setMapSearch] = useState("");
+  const [chip, setChip] = useState("semua");
+  const [yearSort, setYearSort] = useState<"asc" | "desc" | null>(null);
+  const [relevanSort, setRelevanSort] = useState<"asc" | "desc" | null>(null);
+
+  const mapNodes = [
+    { name: "AI Literacy", x: 23, y: 44, size: 36, color: "red", pct: 88, cluster: "AI Literacy & Motivation" },
+    { name: "Learning Motivation", x: 57, y: 52, size: 36, color: "red", pct: 84, cluster: "AI Literacy & Motivation" },
+    { name: "Generative AI", x: 13.3, y: 25, size: 24, color: "amber", pct: 76, cluster: "Generative AI & Tools" },
+    { name: "Digital Learning", x: 51.6, y: 37, size: 24, color: "yellow", pct: 72, cluster: "Digital Learning Systems" },
+    { name: "Academic Engagement", x: 74.2, y: 34, size: 24, color: "yellow", pct: 70, cluster: "Academic Engagement" },
+    { name: "Critical Thinking", x: 18.4, y: 69.7, size: 20, color: "amber", pct: 66, cluster: "Critical Thinking & SRL" },
+    { name: "Self-Regulated Learning", x: 45.9, y: 74.7, size: 20, color: "amber", pct: 64, cluster: "Critical Thinking & SRL" },
+  ];
+
+  const nodeLabels = [
+    { label: "Teacher Education", x: 47, y: 20 },
+    { label: "Digital Competence", x: 37, y: 28 },
+    { label: "Educational Technology", x: 36, y: 40 },
+    { label: "Learning Analytics", x: 44, y: 48 },
+    { label: "AI tools", x: 14, y: 40 },
+    { label: "Problem Solving", x: 19, y: 80 },
+    { label: "Higher Order Thinking", x: 23, y: 84 },
+    { label: "Student Engagement", x: 85, y: 40 },
+    { label: "Blended Learning", x: 87, y: 62 },
+    { label: "Motivation Theory", x: 76, y: 72 },
+    { label: "Online Learning", x: 87, y: 74 },
+    { label: "Self-Efficacy", x: 58, y: 81 },
+  ];
+
+  const mapRects = [
+    { x: 29, y: 42.6, w: 38.4, h: 7.4, color: "outline outline-4 outline-offset-[-2px] outline-red-500/90" },
+    { x: 19, y: 25.6, w: 9, h: 16.7, color: "outline outline-2 outline-offset-[-1px] outline-sky-400/60" },
+    { x: 25, y: 44.2, w: 4, h: 24, color: "outline outline-2 outline-offset-[-1px] outline-sky-400/60" },
+    { x: 29, y: 29.2, w: 11.2, h: 14.9, color: "outline outline-1 outline-offset-[-1px] outline-sky-400/40" },
+    { x: 39.5, y: 29.2, w: 16, h: 7.4, color: "outline outline-2 outline-offset-[-1px] outline-sky-400/60" },
+    { x: 56, y: 36.4, w: 11.2, h: 11.9, color: "outline outline-2 outline-offset-[-1px] outline-sky-400/60" },
+    { x: 67, y: 33.7, w: 14.4, h: 14.9, color: "outline outline-2 outline-offset-[-1px] outline-amber-500/75" },
+    { x: 56, y: 33.7, w: 25.5, h: 1.4, color: "outline outline-1 outline-offset-[-1px] outline-sky-400/50" },
+    { x: 54.5, y: 49.6, w: 12.8, h: 20.4, color: "outline outline-2 outline-offset-[-1px] outline-sky-400/60" },
+    { x: 25, y: 67.2, w: 28.7, h: 4.5, color: "outline outline-1 outline-offset-[-1px] outline-sky-400/50" },
+    { x: 14, y: 25.6, w: 4.8, h: 14.9, color: "outline outline-1 outline-offset-[-1px] outline-sky-400/30" },
+    { x: 67, y: 49.6, w: 17.6, h: 11.9, color: "outline outline-1 outline-offset-[-1px] outline-sky-400/40" },
+    { x: 54.5, y: 71.7, w: 8, h: 6.7, color: "outline outline-1 outline-offset-[-1px] outline-sky-400/40" },
+    { x: 22.5, y: 67.2, w: 2.4, h: 11.9, color: "outline outline-1 outline-offset-[-1px] outline-sky-400/30" },
+    { x: 39.5, y: 21.1, w: 9.6, h: 8.2, color: "outline outline-1 outline-offset-[-1px] outline-sky-400/30" },
+  ];
+
+  const mapEdges = [
+    { from: [13.3, 25], to: [23, 44], color: "#38bdf8" },
+    { from: [23, 44], to: [14, 40], color: "#38bdf8" },
+    { from: [23, 44], to: [57, 52], color: "#ef4444" },
+    { from: [57, 52], to: [51.6, 37], color: "#38bdf8" },
+    { from: [51.6, 37], to: [74.2, 34], color: "#f59e0b" },
+    { from: [57, 52], to: [74.2, 34], color: "#f59e0b" },
+    { from: [57, 52], to: [45.9, 74.7], color: "#38bdf8" },
+    { from: [18.4, 69.7], to: [45.9, 74.7], color: "#38bdf8" },
+    { from: [18.4, 69.7], to: [23, 44], color: "#38bdf8" },
+    { from: [13.3, 25], to: [18.4, 69.7], color: "#38bdf899" },
+    { from: [74.2, 34], to: [87, 62], color: "#38bdf899" },
+    { from: [57, 52], to: [87, 74], color: "#38bdf899" },
+  ];
+
+  const glowBlobs = [
+    { x: 11, y: 8, size: 320, color: "bg-sky-500/25" },
+    { x: 50, y: 18, size: 320, color: "bg-red-500/20" },
+    { x: 7, y: 3, size: 208, color: "bg-indigo-500/25" },
+    { x: 40, y: 11, size: 224, color: "bg-sky-500/20" },
+    { x: 68, y: 7, size: 224, color: "bg-amber-500/20" },
+    { x: 15, y: 50, size: 192, color: "bg-indigo-500/20" },
+    { x: 42, y: 56, size: 208, color: "bg-sky-500/20" },
+  ];
+
+  const tabs = [
+    { key: "jaringan", label: "Jaringan" },
+    { key: "kepadatan", label: "Kepadatan" },
+    { key: "perkembangan", label: "Perkembangan" },
+  ];
+
+  const filterChips = [
+    { key: "semua", label: "Semua (92)" },
+    { key: "relevan", label: "Sangat relevan (24)" },
+    { key: "tinjau", label: "Perlu ditinjau (38)" },
+    { key: "teori", label: "Ulasan teori (12)" },
+    { key: "empiris", label: "Empiris (46)" },
+  ];
+
+  const active = mapNodes.find(node => node.name === activeNode) ?? mapNodes[0];
+  const blobOpacity = mode === "jaringan" ? 0.15 : mode === "perkembangan" ? 0.5 : 1;
+
+  const toggleNode = (name: string) => {
+    setActiveNode(name);
+    setNodeFilter(current => (current === name ? null : name));
+  };
+
+  const visibleRows = (() => {
+    let rows = priorityRows.map((row, index) => ({ row, node: mapNodes[index % mapNodes.length].name }));
+    if (nodeFilter) rows = rows.filter(item => item.node === nodeFilter);
+    rows = rows.filter(item => {
+      const { row } = item;
+      if (chip === "relevan" && row.tag !== "Sangat relevan") return false;
+      if (chip === "tinjau" && row.tag !== "Perlu ditinjau") return false;
+      if (chip === "teori" && row.kind !== "Ulasan teori") return false;
+      if (chip === "empiris" && row.kind !== "Empiris") return false;
+      const q = mapSearch.trim().toLowerCase();
+      if (q && !row.title.toLowerCase().includes(q) && !row.source.toLowerCase().includes(q)) return false;
+      return true;
+    });
+    if (yearSort) rows = [...rows].sort((a, b) => (yearSort === "desc" ? b.row.year - a.row.year : a.row.year - b.row.year));
+    else if (relevanSort) rows = [...rows].sort((a, b) => (relevanSort === "desc" ? b.row.relevan - a.row.relevan : a.row.relevan - b.row.relevan));
+    return rows;
+  })();
+
+  return (
+    <div className="mx-auto hidden max-w-[1160px] flex-col gap-5 pb-8 md:flex">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-extrabold leading-8 text-slate-900">Visualisasi Klaster &amp; Kepadatan Sitasi</h1>
+          <p className="mt-1.5 text-xs leading-5 text-slate-500">
+            Jelajahi peta topik berdasarkan {priorityRows.length} publikasi dan klik lingkaran topik untuk menyaring rekomendasi.
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={onBack}
+          className="flex shrink-0 items-center gap-2 rounded-[9.88px] bg-sky-700 px-5 py-2.5 text-sm font-bold leading-5 text-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]"
+        >
+          <svg width="14" height="12" viewBox="0 0 14 12" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M12 6H2M5.5 2.5L2 6l3.5 3.5" />
+          </svg>
+          Kembali ke Pencarian
+        </button>
+      </div>
+
+      <section className="rounded-2xl bg-white p-6 shadow-sm">
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex rounded-lg bg-slate-100 p-1">
+            {tabs.map(tab => (
+              <button
+                key={tab.key}
+                type="button"
+                onClick={() => setMode(tab.key)}
+                className={`rounded-md px-3 py-1.5 text-sm font-medium leading-5 transition-colors ${
+                  mode === tab.key ? "bg-white text-sky-700 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]" : "text-slate-500 hover:text-slate-700"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setShowLines(value => !value)}
+            aria-pressed={showLines}
+            className="flex items-center gap-2 rounded-lg bg-white px-3 py-1.5 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]"
+          >
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#64748b" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true">
+              <path d="M5.6 8.4l2.8-2.8M4.4 6.4L2.9 7.9a2.47 2.47 0 103.5 3.5l1.5-1.5M9.6 7.6l1.5-1.5a2.47 2.47 0 10-3.5-3.5L6.1 4.1" />
+            </svg>
+            <span className="text-xs font-medium leading-4 text-slate-500">Garis Relasi</span>
+            <span className={`h-4 w-4 rounded-[3px] transition-colors ${showLines ? "bg-sky-700" : "bg-slate-300"}`} />
+          </button>
+
+          <div className="flex items-center gap-1 rounded-lg bg-white px-2 py-1 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]">
+            <button
+              type="button"
+              aria-label="Perkecil peta"
+              onClick={() => setZoom(value => Math.max(50, value - 10))}
+              className="flex h-6 w-6 items-center justify-center rounded-sm text-sm font-bold text-slate-500 transition-colors hover:bg-slate-50"
+            >
+              &minus;
+            </button>
+            <span className="w-9 text-center text-xs font-semibold leading-4 text-slate-900">{zoom}%</span>
+            <button
+              type="button"
+              aria-label="Perbesar peta"
+              onClick={() => setZoom(value => Math.min(200, value + 10))}
+              className="flex h-6 w-6 items-center justify-center rounded-sm text-sm font-bold text-slate-500 transition-colors hover:bg-slate-50"
+            >
+              +
+            </button>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => window.alert("Peta klaster berhasil diunduh sebagai gambar.")}
+            className="flex items-center gap-1.5 rounded-lg bg-white px-3 py-1.5 text-sm font-medium leading-5 text-slate-900 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]"
+          >
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="#0f172a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M6.5 1.5v7M3.8 5.8l2.7 2.7 2.7-2.7M2 11h9" />
+            </svg>
+            Unduh Gambar
+            <svg width="9" height="6" viewBox="0 0 9 6" fill="none" stroke="#64748b" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M1 1.5L4.5 5 8 1.5" />
+            </svg>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => window.alert("Data klaster berhasil diunduh sebagai CSV.")}
+            className="flex items-center gap-1.5 rounded-lg bg-white px-3 py-1.5 text-sm font-medium leading-5 text-slate-900 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]"
+          >
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="#0f172a" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true">
+              <rect x="1.5" y="1.5" width="10" height="10" rx="1.5" />
+              <path d="M1.5 5h10M1.5 8.5h10M5.5 1.5v10" />
+            </svg>
+            CSV Data
+          </button>
+        </div>
+
+        <div className="relative mt-4 h-[538px] overflow-hidden rounded-2xl bg-slate-900 shadow-[0px_12px_32px_0px_rgba(3,15,38,0.18)]">
+          <div className="absolute inset-0 transition-transform duration-200" style={{ transform: `scale(${zoom / 100})` }}>
+            {glowBlobs.map((blob, index) => (
+              <span
+                key={index}
+                className={`absolute rounded-full blur-3xl transition-opacity duration-300 ${blob.color}`}
+                style={{ left: `${blob.x}%`, top: `${blob.y}%`, width: blob.size, height: blob.size, opacity: blobOpacity }}
+              />
+            ))}
+
+            {mapRects.map((rect, index) => (
+              <span
+                key={index}
+                className={`absolute ${rect.color}`}
+                style={{ left: `${rect.x}%`, top: `${rect.y}%`, width: `${rect.w}%`, height: `${rect.h}%` }}
+              />
+            ))}
+
+            {showLines && (
+              <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                {mapEdges.map((edge, index) => (
+                  <line
+                    key={index}
+                    x1={edge.from[0]}
+                    y1={edge.from[1]}
+                    x2={edge.to[0]}
+                    y2={edge.to[1]}
+                    stroke={edge.color}
+                    strokeWidth={1.4}
+                    strokeLinecap="round"
+                    vectorEffect="non-scaling-stroke"
+                  />
+                ))}
+              </svg>
+            )}
+
+            {nodeLabels.map(label => (
+              <span
+                key={label.label}
+                className="absolute -translate-y-1/2 whitespace-nowrap text-xs leading-4 text-blue-300/90"
+                style={{ left: `${label.x}%`, top: `${label.y}%` }}
+              >
+                {label.label}
+              </span>
+            ))}
+
+            {mapNodes.map(node => {
+              const isActive = activeNode === node.name;
+              const circleSize = node.size === 36 ? "h-9 w-9" : node.size === 24 ? "h-6 w-6" : "h-5 w-5";
+              const innerSize = node.size === 36 ? "h-3 w-3" : node.size === 24 ? "h-2 w-2" : "h-1.5 w-1.5";
+              const colorCls =
+                node.color === "red"
+                  ? "bg-red-500 shadow-[0_0_20px_rgba(239,68,68,0.9)]"
+                  : node.color === "yellow"
+                    ? "bg-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.9)]"
+                    : "bg-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.9)]";
+              const outlineCls = isActive ? "outline outline-2 outline-offset-[4px] outline-white/80" : "outline outline-2 outline-offset-[-2px] outline-white";
+              return (
+                <button
+                  key={node.name}
+                  type="button"
+                  onClick={() => toggleNode(node.name)}
+                  aria-pressed={nodeFilter === node.name}
+                  className="absolute z-10 flex items-center gap-2"
+                  style={{ left: `${node.x}%`, top: `${node.y}%`, transform: `translate(${-node.size / 2}px, -50%)` }}
+                >
+                  <span className={`flex shrink-0 items-center justify-center rounded-full ${circleSize} ${colorCls} ${outlineCls}`}>
+                    <span className={`${innerSize} rounded-full bg-white`} />
+                  </span>
+                  <span
+                    className={
+                      node.size === 36
+                        ? "rounded-md bg-slate-900/60 px-2.5 py-1 text-lg font-bold leading-6 text-white shadow-[0px_2px_8px_rgba(0,0,0,0.9)] backdrop-blur-sm"
+                        : "whitespace-nowrap rounded-sm bg-slate-900/50 px-2 py-0.5 text-xs font-semibold leading-5 text-white shadow-[0px_2px_4px_rgba(0,0,0,0.9)] backdrop-blur-sm"
+                    }
+                  >
+                    {node.name}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="absolute left-4 top-4 z-20 flex flex-wrap items-center gap-2">
+            <span className="rounded-md bg-sky-950/80 px-2.5 py-1 text-xs font-semibold uppercase leading-4 tracking-tight text-blue-100 backdrop-blur-md">
+              VOSVIEWER DENSITY MODEL
+            </span>
+            <span className="rounded-md bg-sky-950/80 px-2 py-1 text-xs font-medium leading-4 tracking-tight text-slate-400 backdrop-blur-md">
+              Iterasi: 1,420
+            </span>
+            <span className="flex items-center gap-1.5 rounded-md bg-sky-950/80 px-2 py-1 backdrop-blur-md">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-600" />
+              <span className="text-xs font-semibold leading-4 tracking-tight text-emerald-600">
+                Node Aktif: {active.cluster} ({active.pct}%)
+              </span>
+            </span>
+          </div>
+
+          <div className="absolute right-4 top-4 z-20 flex items-center gap-2 rounded-lg bg-sky-950/90 px-3 py-1.5 backdrop-blur-md">
+            <span className="text-xs font-medium leading-4 tracking-tight text-slate-400">Kepadatan Sitasi:</span>
+            <span className="h-2.5 w-28 rounded-full bg-gradient-to-r from-sky-500 via-yellow-500 to-red-500" />
+            <span className="text-[10px] leading-4 text-slate-300">Rendah</span>
+            <span className="text-[10px] leading-4 text-slate-300">Tinggi</span>
+          </div>
+
+          <div className="absolute inset-x-0 bottom-0 z-20 flex flex-col gap-1.5 border-t border-slate-800/60 bg-sky-950/90 px-4 py-2.5 backdrop-blur-md">
+            <div className="flex items-start gap-2">
+              <svg width="13" height="15" viewBox="0 0 13 15" fill="none" aria-hidden="true" className="mt-0.5 shrink-0">
+                <path d="M6.5.8c-2.7 0-4.9 2.2-4.9 4.9 0 3.7 4.9 8.5 4.9 8.5s4.9-4.8 4.9-8.5c0-2.7-2.2-4.9-4.9-4.9z" fill="#f59e0b" />
+                <circle cx="6.5" cy="5.7" r="1.9" fill="#020617" />
+              </svg>
+              <p className="text-xs leading-5 text-white">
+                Klik pada lingkaran topik untuk membedah relasi bibliometrik &amp; menyaring daftar publikasi rujukan di bawah.
+              </p>
+            </div>
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs leading-4">
+              <span className="font-medium text-slate-400">Resolusi: 0.85</span>
+              <span className="text-slate-600">&bull;</span>
+              <span className="font-medium text-slate-400">Metode: Modularity Louvain</span>
+              <span className="text-slate-600">&bull;</span>
+              <span className="font-medium text-slate-400">
+                Klaster Aktif: <span className="font-bold text-white">{active.cluster}</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="rounded-2xl bg-white outline outline-1 outline-offset-[-1px] outline-slate-200/90">
+        <div className="flex items-start justify-between gap-4 border-b border-slate-200/70 p-7">
+          <div className="flex items-start gap-3">
+            <span className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded bg-sky-700">
+              <svg width="12" height="13" viewBox="0 0 12 13" fill="none" aria-hidden="true">
+                <rect x="1" y="1" width="7" height="7" rx="1.5" fill="white" />
+                <rect x="4.5" y="5" width="6.5" height="6.5" rx="1.5" fill="#bae6fd" />
+              </svg>
+            </span>
+            <div>
+              <h2 className="text-lg font-semibold leading-7 text-slate-900">Rekomendasi Jurnal Sesuai Klaster Peta</h2>
+              <p className="mt-0.5 text-sm leading-5 text-slate-500">Daftar publikasi berbobot tinggi yang merepresentasikan klaster yang sedang aktif dipilih.</p>
+            </div>
+          </div>
+          <label className="flex h-10 w-72 shrink-0 items-center gap-2 rounded-xl bg-slate-50 px-3">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#94a3b8" strokeWidth="1.6" strokeLinecap="round" aria-hidden="true">
+              <circle cx="6" cy="6" r="4.5" />
+              <path d="M9.5 9.5L13 13" />
+            </svg>
+            <input
+              value={mapSearch}
+              onChange={event => setMapSearch(event.target.value)}
+              placeholder="Cari judul, penulis, atau kata kunci..."
+              className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-slate-400"
+            />
+          </label>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2 border-b border-slate-200/70 px-7 py-3.5">
+          {filterChips.map(item => (
+            <button
+              key={item.key}
+              type="button"
+              onClick={() => setChip(item.key)}
+              className={`rounded-full px-3 py-1 text-sm font-medium leading-5 transition-colors ${
+                chip === item.key ? "bg-blue-50 text-blue-700 outline outline-1 outline-blue-200" : "text-slate-600 hover:bg-slate-50"
+              }`}
+            >
+              {item.label}
+            </button>
+          ))}
+          {nodeFilter && (
+            <button
+              type="button"
+              onClick={() => setNodeFilter(null)}
+              className="flex items-center gap-1.5 rounded-full bg-sky-50 px-3 py-1 text-sm font-medium leading-5 text-sky-700 outline outline-1 outline-sky-200"
+            >
+              Klaster: {nodeFilter}
+              <svg width="9" height="9" viewBox="0 0 9 9" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" aria-hidden="true">
+                <path d="M1.5 1.5l6 6M7.5 1.5l-6 6" />
+              </svg>
+            </button>
+          )}
+        </div>
+
+        <div className="max-h-[430px] overflow-auto">
+          <table className="w-full min-w-[860px] border-collapse text-left">
+            <thead className="sticky top-0 z-10 bg-slate-50">
+              <tr className="bg-slate-50/60">
+                <th className="px-7 py-3 text-xs font-semibold text-slate-500">Judul</th>
+                <th className="w-24 px-4 py-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setRelevanSort(null);
+                      setYearSort(yearSort === "desc" ? "asc" : "desc");
+                    }}
+                    className={`flex items-center gap-1.5 text-xs font-semibold ${yearSort ? "text-blue-600" : "text-slate-500 hover:text-slate-700"}`}
+                  >
+                    Tahun
+                    <SortArrow dir={yearSort} />
+                  </button>
+                </th>
+                <th className="w-44 px-4 py-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setYearSort(null);
+                      setRelevanSort(relevanSort === "desc" ? "asc" : "desc");
+                    }}
+                    className={`flex items-center gap-1.5 text-xs font-semibold ${relevanSort ? "text-blue-600" : "text-slate-500 hover:text-slate-700"}`}
+                  >
+                    Relevansi
+                    <SortArrow dir={relevanSort} />
+                  </button>
+                </th>
+                <th className="w-44 px-4 py-3 text-xs font-semibold text-slate-500">Sumber</th>
+              </tr>
+            </thead>
+            <tbody>
+              {visibleRows.length === 0 && (
+                <tr>
+                  <td colSpan={4} className="px-7 py-8 text-center text-sm text-slate-400">
+                    Tidak ada artikel yang cocok dengan pencarianmu.
+                  </td>
+                </tr>
+              )}
+              {visibleRows.map(({ row }) => (
+                <tr key={row.title} className="border-t border-slate-100">
+                  <td className="max-w-[514px] px-7 py-4 text-base font-semibold leading-6 text-slate-800">{row.title}</td>
+                  <td className="px-4 py-4 text-sm font-medium text-slate-600">{row.year}</td>
+                  <td className="px-4 py-4">
+                    <span
+                      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${
+                        row.tag === "Sangat relevan"
+                          ? "bg-emerald-50 text-emerald-700 outline outline-1 outline-emerald-200/60"
+                          : row.tag === "Cukup relevan"
+                            ? "bg-blue-50 text-blue-700 outline outline-1 outline-blue-200/60"
+                            : "bg-amber-50 text-amber-700 outline outline-1 outline-amber-200/60"
+                      }`}
+                    >
+                      <span
+                        className={`h-1.5 w-1.5 rounded-full ${
+                          row.tag === "Sangat relevan" ? "bg-emerald-500" : row.tag === "Cukup relevan" ? "bg-blue-500" : "bg-amber-500"
+                        }`}
+                      />
+                      {row.tag}
+                    </span>
+                  </td>
+                  <td className="px-4 py-4">
+                    <span className="flex items-center gap-2.5">
+                      <img
+                        src={sourceLogos[row.source] ?? "/assets/source-logos/openalex.svg"}
+                        alt=""
+                        className="h-6 w-6 shrink-0 object-contain"
+                      />
+                      <span className="text-sm text-slate-600">{row.source}</span>
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <p className="text-center text-xs text-slate-400">Kata kunci pencarian: {query.trim() || "resiliensi perempuan pasca bencana"}</p>
+    </div>
+  );
+}
+
 export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void }) {
   const [view, setView] = useState<JournalView>("home");
   const [query, setQuery] = useState("");
@@ -2197,6 +2684,8 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
           {desktopStage === "results" &&
             (searchType === "review" ? (
               <DesktopLiteratureReview query={query} onBack={() => setDesktopStage("home")} />
+            ) : searchType === "map" ? (
+              <DesktopResearchMap query={query} onBack={() => setDesktopStage("home")} />
             ) : (
               <DesktopSearchResults query={query} onBack={() => setDesktopStage("home")} />
             ))}
