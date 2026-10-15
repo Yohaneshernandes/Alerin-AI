@@ -1,4 +1,4 @@
-import { useEffect, useState, type ChangeEvent, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ChangeEvent, type ReactNode } from "react";
 
 type JournalView = "home" | "collection" | "riwayat";
 
@@ -1191,12 +1191,66 @@ function DesktopLiteratureReview({ query, onBack }: { query: string; onBack: () 
   const matrixHeaders = ["Penelitian", "Fokus", "Metode", "Temuan Utama", "Kontribusi Khas"];
 
   const docNavRows = [
-    { key: "2", title: "Pendahuluan", desc: "Latar belakang, dinamika kerentanan gender, dan konteks kebencanaan", section: 2 },
-    { key: "3", title: "Metodologi dan Cakupan", desc: "Strategi pencarian, kriteria inklusi, dan seleksi 126 artikel", section: 3 },
-    { key: "4", title: "Matriks Literatur", desc: "Fokus, metode, temuan utama, dan kontribusi khas tiap studi", section: 4 },
-    { key: "5", title: "Perbandingan Studi", desc: "Persamaan dan perbedaan metode serta temuan antar studi", section: 5 },
-    { key: "6", title: "Pengelompokan Tema", desc: "Temuan utama dikelompokkan ke dalam lima tema besar", section: 6 },
-    { key: "7–9", title: "Pengelompokan Tema", desc: "Sintesis tema lanjutan beserta celah penelitian yang ditemukan", section: 7 },
+    {
+      key: "2",
+      title: "Pendahuluan",
+      desc: "Latar belakang, dinamika kerentanan gender, dan konteks kebencanaan",
+      section: 2,
+      content: [
+        "Bagian ini memaparkan latar belakang penelitian tentang resiliensi perempuan dalam menghadapi bencana, termasuk dinamika kerentanan gender yang memperberat dampak bencana bagi perempuan.",
+        "Konteks kebencanaan di Indonesia—mulai dari gempa, banjir, hingga pandemi—menjadi fokus utama karena tingginya frekuensi dan dampaknya terhadap kelompok rentan.",
+      ],
+    },
+    {
+      key: "3",
+      title: "Metodologi dan Cakupan",
+      desc: "Strategi pencarian, kriteria inklusi, dan seleksi 126 artikel",
+      section: 3,
+      content: [
+        "Penelusuran dilakukan di lima basis data dengan kata kunci terkait resiliensi perempuan, bencana, dan pemulihan pasca-bencana, menghasilkan 126 artikel yang direduksi menjadi 92 studi setelah penyaringan.",
+        "Kriteria inklusi mencakup publikasi 2020–2026, bahasa Indonesia dan Inggris, serta metode penelitian empiris maupun tinjauan sistematis.",
+      ],
+    },
+    {
+      key: "4",
+      title: "Matriks Literatur",
+      desc: "Fokus, metode, temuan utama, dan kontribusi khas tiap studi",
+      section: 4,
+      content: [
+        "Matriks merangkum fokus, metode, temuan utama, dan kontribusi khas dari studi unggulan agar perbandingan lintas penelitian dapat dilakukan secara cepat.",
+        "Setiap baris memuat sitasi lengkap dan basis sumber agar klaim dalam sintesis ini dapat diverifikasi kembali.",
+      ],
+    },
+    {
+      key: "5",
+      title: "Perbandingan Studi",
+      desc: "Persamaan dan perbedaan metode serta temuan antar studi",
+      section: 5,
+      content: [
+        "Studi-studi dibandingkan berdasarkan pendekatan metodologis, cakupan geografis, serta jenis temuan—memperlihatkan bahwa pendekatan kualitatif mendominasi literatur ini.",
+        "Perbedaan utama terletak pada faktor yang ditekankan: jaringan sosial, akses sumber daya, maupun strategi coping individual.",
+      ],
+    },
+    {
+      key: "6",
+      title: "Pengelompokan Tema",
+      desc: "Temuan utama dikelompokkan ke dalam lima tema besar",
+      section: 6,
+      content: [
+        "Temuan utama dikelompokkan ke dalam lima tema: dukungan sosial, akses sumber daya, keterlibatan komunitas, faktor psikologis, dan pemanfaatan teknologi digital.",
+        "Pengelompokan ini menjadi dasar penyusunan sintesis pada bagian selanjutnya.",
+      ],
+    },
+    {
+      key: "7–9",
+      title: "Pengelompokan Tema",
+      desc: "Sintesis tema lanjutan beserta celah penelitian yang ditemukan",
+      section: 7,
+      content: [
+        "Bagian ini menyintesis tema-tema lanjutan dan memetakan celah penelitian yang belum terjawab, khususnya pada konteks Asia Tenggara.",
+        "Sintesis menunjukkan kebutuhan studi longitudinal berskala besar yang melibatkan perempuan sebagai subjek utama.",
+      ],
+    },
   ];
 
   const [chip, setChip] = useState("semua");
@@ -1206,6 +1260,23 @@ function DesktopLiteratureReview({ query, onBack }: { query: string; onBack: () 
   const [matrixSearch, setMatrixSearch] = useState("");
   const [matrixSort, setMatrixSort] = useState<{ index: number; dir: "asc" | "desc" } | null>(null);
   const [activeSection, setActiveSection] = useState(1);
+  const [openRow, setOpenRow] = useState<string | null>(null);
+  const docRef = useRef<HTMLElement | null>(null);
+  const introRef = useRef<HTMLDivElement | null>(null);
+  const rowRefs = useRef<Record<string, HTMLDivElement | null>>({});
+
+  const goToSection = (section: number) => {
+    setActiveSection(section);
+    const row = docNavRows.find(item => item.section === section);
+    if (row) {
+      setOpenRow(row.key);
+      window.setTimeout(() => rowRefs.current[row.key]?.scrollIntoView({ behavior: "smooth", block: "center" }), 0);
+    } else if (section === 1) {
+      window.setTimeout(() => introRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 0);
+    } else {
+      window.setTimeout(() => docRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 0);
+    }
+  };
 
   const visiblePriority = (() => {
     let rows = priorityRows.filter(row => {
@@ -1237,8 +1308,6 @@ function DesktopLiteratureReview({ query, onBack }: { query: string; onBack: () 
     }
     return rows;
   })();
-
-  const activeSectionTitle = sectionNames[activeSection - 1];
 
   return (
     <div className="mx-auto hidden max-w-[1160px] flex-col gap-5 pb-8 md:flex">
@@ -1565,12 +1634,12 @@ function DesktopLiteratureReview({ query, onBack }: { query: string; onBack: () 
           </div>
           <span className="text-xs font-semibold text-blue-600">Bagian Aktif: {activeSection} dari 12</span>
         </div>
-        <div className="mt-4 flex gap-2.5 overflow-x-auto pb-1">
+        <div className="mt-4 flex gap-2.5 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {sectionNames.map((name, index) => (
             <button
               key={name}
               type="button"
-              onClick={() => setActiveSection(index + 1)}
+              onClick={() => goToSection(index + 1)}
               className={`flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold transition-colors ${
                 activeSection === index + 1
                   ? "bg-blue-50 text-blue-700 outline outline-1 outline-blue-200"
@@ -1590,15 +1659,15 @@ function DesktopLiteratureReview({ query, onBack }: { query: string; onBack: () 
         </div>
       </section>
 
-      <section className="rounded-3xl bg-white p-11 shadow-sm">
-        <div className="flex gap-4 rounded-2xl bg-gradient-to-r from-blue-50/90 via-sky-50/70 to-indigo-50/80 p-6">
+      <section ref={docRef} className="rounded-3xl bg-white p-11 shadow-sm">
+        <div ref={introRef} className="flex gap-4 rounded-2xl bg-gradient-to-r from-blue-50/90 via-sky-50/70 to-indigo-50/80 p-6">
           <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-600/10">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#2563eb" strokeWidth="1.6" strokeLinejoin="round" aria-hidden="true">
               <path d="M10 4.5C8.5 3.3 6.6 3 4 3v12c2.6 0 4.5.3 6 1.5 1.5-1.2 3.4-1.5 6-1.5V3c-2.6 0-4.5.3-6 1.5zM10 4.5v12" />
             </svg>
           </span>
           <div className="min-w-0">
-            <h3 className="text-xl font-bold leading-7 text-slate-900">{activeSectionTitle}</h3>
+            <h3 className="text-xl font-bold leading-7 text-slate-900">Ringkasan Eksekutif</h3>
             <p className="mt-2 text-lg leading-8 text-slate-700">
               Tinjauan literatur ini mengkaji 126 artikel yang tersaring menjadi 92 studi relevan tentang resiliensi perempuan
               dalam menghadapi bencana dan krisis. Temuan menunjukkan bahwa pemulihan perempuan sangat bergantung pada{" "}
@@ -1610,10 +1679,8 @@ function DesktopLiteratureReview({ query, onBack }: { query: string; onBack: () 
         </div>
 
         <div className="mt-8 flex items-center justify-between gap-4">
-          <h3 className="text-2xl font-bold leading-8 text-slate-900">
-            {activeSection}. {activeSectionTitle}
-          </h3>
-          <span className="text-xs leading-4 text-slate-400">Halaman {activeSection} dari 18</span>
+          <h3 className="text-2xl font-bold leading-8 text-slate-900">1. Ringkasan Eksekutif</h3>
+          <span className="text-xs leading-4 text-slate-400">Halaman 1 dari 18</span>
         </div>
         <div className="mt-4 space-y-4">
           <p className="text-lg leading-8 text-slate-700">
@@ -1635,23 +1702,58 @@ function DesktopLiteratureReview({ query, onBack }: { query: string; onBack: () 
 
         <div className="mt-8 space-y-3">
           {docNavRows.map(row => (
-            <button
+            <div
               key={row.key}
-              type="button"
-              onClick={() => setActiveSection(row.section)}
-              className="flex w-full items-center gap-4 rounded-2xl bg-slate-50 px-5 py-4 text-left transition-colors hover:bg-slate-100"
+              ref={element => {
+                rowRefs.current[row.key] = element;
+              }}
+              className="overflow-hidden rounded-2xl bg-slate-50"
             >
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white text-sm font-bold text-blue-600 outline outline-1 outline-slate-200">
-                {row.key}
-              </span>
-              <span className="min-w-0 flex-1">
-                <span className="block text-base font-bold leading-6 text-slate-800">{row.title}</span>
-                <span className="block text-sm leading-5 text-slate-500">{row.desc}</span>
-              </span>
-              <svg width="8" height="13" viewBox="0 0 8 13" fill="none" stroke="#2563eb" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M1.5 1.5L6.5 6.5l-5 5" />
-              </svg>
-            </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveSection(row.section);
+                  setOpenRow(openRow === row.key ? null : row.key);
+                }}
+                className="flex w-full items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-slate-100"
+              >
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white text-sm font-bold text-blue-600 outline outline-1 outline-slate-200">
+                  {row.key}
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block text-base font-bold leading-6 text-slate-800">{row.title}</span>
+                  <span className="block text-sm leading-5 text-slate-500">{row.desc}</span>
+                </span>
+                <svg
+                  width="8"
+                  height="13"
+                  viewBox="0 0 8 13"
+                  fill="none"
+                  stroke="#2563eb"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                  className={`transition-transform ${openRow === row.key ? "rotate-90" : ""}`}
+                >
+                  <path d="M1.5 1.5L6.5 6.5l-5 5" />
+                </svg>
+              </button>
+              {openRow === row.key && (
+                <div className="border-t border-slate-200/70 px-5 py-4">
+                  <p className="text-base font-semibold leading-6 text-slate-800">
+                    {row.key}. {row.title}
+                  </p>
+                  <div className="mt-2 space-y-3">
+                    {row.content.map(paragraph => (
+                      <p key={paragraph} className="text-sm leading-6 text-slate-600">
+                        {paragraph}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           ))}
         </div>
       </section>
