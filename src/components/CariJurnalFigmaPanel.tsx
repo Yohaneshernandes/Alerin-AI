@@ -647,6 +647,16 @@ function UpgradePremiumCell({ value }: { value: string }) {
 }
 
 function UpgradePremiumModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [selectedPlan, setSelectedPlan] = useState<"gratis" | "plus" | "pro">("plus");
+
+  const plans = [
+    { key: "gratis", name: "Gratis", price: "Rp 0", note: "Akses dasar" },
+    { key: "plus", name: "Paket Plus", price: "Rp 49.000", note: "per bulan" },
+    { key: "pro", name: "Paket Pro", price: "Rp 99.000", note: "per bulan" },
+  ] as const;
+
+  const activePlan = plans.find(plan => plan.key === selectedPlan) ?? plans[1];
+
   return (
     <div
       className={`fixed inset-0 z-[330] hidden items-center justify-center p-4 transition-opacity duration-200 md:flex ${open ? "opacity-100" : "pointer-events-none opacity-0"}`}
@@ -677,34 +687,43 @@ function UpgradePremiumModal({ open, onClose }: { open: boolean; onClose: () => 
 
         <div className="min-h-0 flex-1 overflow-y-auto px-8 pb-5 pt-4">
           <div className="grid grid-cols-3 items-start gap-2">
-            <div className="mt-[3px] rounded-xl bg-white p-4 text-center outline outline-[0.79px] outline-offset-[-0.79px] outline-slate-200">
-              <p className="text-xs font-semibold leading-4 text-slate-600">Gratis</p>
-              <p className="mt-1.5 text-lg font-extrabold leading-6 text-slate-900">Rp 0</p>
-              <p className="text-[9.5px] font-medium leading-3 text-slate-400">Akses dasar</p>
-            </div>
-            <div className="relative rounded-xl bg-gradient-to-b from-cyan-50 to-blue-200/70 p-4 text-center outline outline-[1.58px] outline-offset-[-1.58px] outline-blue-500/90">
-              <span className="absolute -top-2 left-1/2 -translate-x-1/2 rounded-full bg-red-500 px-2.5 py-[2px] text-[8.71px] font-bold uppercase leading-3 tracking-tight text-white shadow-sm">
-                Populer
-              </span>
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 24 24"
-                fill="#f59e0b"
-                className="absolute right-2.5 top-2.5 opacity-80"
-                aria-hidden="true"
-              >
-                <path d="M12 2l2.9 6.26L21.5 9.3l-4.75 4.63 1.12 6.57L12 17.4l-5.87 3.1 1.12-6.57L2.5 9.3l6.6-1.04L12 2z" />
-              </svg>
-              <p className="text-xs font-bold leading-4 text-sky-900">Paket Plus</p>
-              <p className="mt-1.5 text-lg font-extrabold leading-6 text-slate-900">Rp 49.000</p>
-              <p className="text-[9.5px] font-semibold leading-3 text-sky-900">per bulan</p>
-            </div>
-            <div className="mt-[3px] rounded-xl bg-white p-4 text-center outline outline-[0.79px] outline-offset-[-0.79px] outline-slate-200">
-              <p className="text-xs font-semibold leading-4 text-slate-600">Paket Pro</p>
-              <p className="mt-1.5 text-lg font-extrabold leading-6 text-slate-900">Rp 99.000</p>
-              <p className="text-[9.5px] font-medium leading-3 text-slate-400">per bulan</p>
-            </div>
+            {plans.map(plan => {
+              const active = selectedPlan === plan.key;
+              return (
+                <button
+                  key={plan.key}
+                  type="button"
+                  aria-pressed={active}
+                  onClick={() => setSelectedPlan(plan.key)}
+                  className={`relative rounded-xl p-4 text-center transition-colors ${
+                    active
+                      ? "bg-gradient-to-b from-cyan-50 to-blue-200/70 outline outline-[1.58px] outline-offset-[-1.58px] outline-blue-500/90"
+                      : "bg-white outline outline-[0.79px] outline-offset-[-0.79px] outline-slate-200 hover:bg-slate-50"
+                  } ${plan.key === "plus" ? "" : "mt-[3px]"}`}
+                >
+                  {plan.key === "plus" && (
+                    <span className="absolute -top-2 left-1/2 -translate-x-1/2 rounded-full bg-red-500 px-2.5 py-[2px] text-[8.71px] font-bold uppercase leading-3 tracking-tight text-white shadow-sm">
+                      Populer
+                    </span>
+                  )}
+                  {plan.key === "plus" && (
+                    <svg
+                      width="12"
+                      height="12"
+                      viewBox="0 0 24 24"
+                      fill="#f59e0b"
+                      className="absolute right-2.5 top-2.5 opacity-80"
+                      aria-hidden="true"
+                    >
+                      <path d="M12 2l2.9 6.26L21.5 9.3l-4.75 4.63 1.12 6.57L12 17.4l-5.87 3.1 1.12-6.57L2.5 9.3l6.6-1.04L12 2z" />
+                    </svg>
+                  )}
+                  <p className={`text-xs leading-4 ${active ? "font-bold text-sky-900" : "font-semibold text-slate-600"}`}>{plan.name}</p>
+                  <p className="mt-1.5 text-lg font-extrabold leading-6 text-slate-900">{plan.price}</p>
+                  <p className={`text-[9.5px] leading-3 ${active ? "font-semibold text-sky-900" : "font-medium text-slate-400"}`}>{plan.note}</p>
+                </button>
+              );
+            })}
           </div>
 
           <div className="mt-4 border-t border-slate-100 pt-4">
@@ -742,10 +761,13 @@ function UpgradePremiumModal({ open, onClose }: { open: boolean; onClose: () => 
         <div className="flex shrink-0 justify-center border-t border-slate-100 bg-slate-50 px-8 py-4">
           <button
             type="button"
-            onClick={onClose}
+            onClick={() => {
+              window.alert(`${activePlan.name} dipilih (${activePlan.price}).`);
+              onClose();
+            }}
             className="flex w-full items-center justify-center gap-1.5 rounded-xl bg-sky-600 px-5 py-3 text-xs font-bold leading-5 text-white shadow-sm hover:bg-sky-700 sm:w-96"
           >
-            Pilih Paket Plus Sekarang (Rp 49.000)
+            Pilih {activePlan.name} Sekarang ({activePlan.price})
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d="M2 6h8M7 3l3 3-3 3" />
             </svg>
