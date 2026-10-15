@@ -1166,11 +1166,11 @@ function DesktopLiteratureReview({ query, onBack }: { query: string; onBack: () 
     { title: "Digital Platforms for Women's Resilience in Crisis Situations: An Empirical Study", year: 2023, relevan: 90, tag: "Perlu ditinjau", kind: "Empiris", source: "Google Scholar" },
   ];
 
-  const sourceBadge: Record<string, { letter: string; className: string }> = {
-    "Google Scholar": { letter: "G", className: "bg-[#4285F4]" },
-    Crossref: { letter: "C", className: "bg-[#C4302B]" },
-    OpenAlex: { letter: "O", className: "bg-slate-900" },
-    DOAJ: { letter: "D", className: "bg-[#E53935]" },
+  const sourceLogos: Record<string, string> = {
+    "Google Scholar": "/assets/source-logos/google-scholar.svg",
+    Crossref: "/assets/source-logos/crossref.svg",
+    OpenAlex: "/assets/source-logos/openalex.svg",
+    DOAJ: "/assets/source-logos/doaj.svg",
   };
 
   const filterChips = [
@@ -1439,10 +1439,12 @@ function DesktopLiteratureReview({ query, onBack }: { query: string; onBack: () 
                     </span>
                   </td>
                   <td className="px-5 py-4">
-                    <span className="flex items-center gap-2">
-                      <span className={`flex h-6 w-6 items-center justify-center rounded-md text-[11px] font-bold text-white ${sourceBadge[row.source]?.className ?? "bg-slate-500"}`}>
-                        {sourceBadge[row.source]?.letter ?? "?"}
-                      </span>
+                    <span className="flex items-center gap-2.5">
+                      <img
+                        src={sourceLogos[row.source] ?? "/assets/source-logos/openalex.svg"}
+                        alt=""
+                        className="h-6 w-6 shrink-0 object-contain"
+                      />
                       <span className="text-sm text-slate-600">{row.source}</span>
                     </span>
                   </td>
