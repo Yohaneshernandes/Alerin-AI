@@ -2006,6 +2006,8 @@ function DesktopSearchResults({
   onOpenTabel,
   onOpenSitasi,
   onOpenAbstrak,
+  analysis = false,
+  fileName = "",
 }: {
   query: string;
   onBack: () => void;
@@ -2015,7 +2017,25 @@ function DesktopSearchResults({
   onOpenTabel: () => void;
   onOpenSitasi: () => void;
   onOpenAbstrak: () => void;
+  analysis?: boolean;
+  fileName?: string;
 }) {
+  const [temuanNav, setTemuanNav] = useState(0);
+  const temuan = temuanAnalisis[temuanNav % temuanAnalisis.length];
+
+  const renderKutipan = (text: string) => {
+    const parts = text.split(/(keputusan pembelian|seluruh kelompok usia)/g);
+    return parts.map((part, index) =>
+      part === "keputusan pembelian" || part === "seluruh kelompok usia" ? (
+        <span key={index} className="border-b-2 border-red-500 font-medium">
+          {part}
+        </span>
+      ) : (
+        part
+      ),
+    );
+  };
+
   return (
     <div className="mx-auto hidden max-w-[1160px] md:block">
       <div className="flex items-center justify-between gap-4">
@@ -2034,6 +2054,127 @@ function DesktopSearchResults({
 
       <div className="mt-6 flex items-start gap-6">
         <div className="flex min-w-0 flex-1 flex-col gap-6">
+          {analysis && (
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]">
+                <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-slate-100">
+                  <svg width="28" height="32" viewBox="0 0 14 16" fill="none" stroke="#64748b" strokeWidth="1.2" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M2 1.5h6l4 4v9H2z" />
+                    <path d="M8 1.5v4h4" />
+                  </svg>
+                </span>
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-bold leading-5 text-slate-800">{fileName || "Skripsi_Nadia_Final.docx"}</p>
+                  <p className="mt-1 flex items-center gap-1.5 text-xs font-medium leading-4 text-sky-700">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                      <rect x="1.5" y="1.5" width="11" height="11" rx="2" fill="#0369a1" />
+                      <path d="M4.5 7.2l1.8 1.8 3.2-3.5" stroke="white" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                    Pemeriksaan selesai
+                  </p>
+                  <p className="mt-1 text-xs leading-4 text-slate-400">42 halaman • 126 sitasi diperiksa</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-4 divide-x divide-slate-200/70 rounded-2xl border border-slate-200/90 bg-white py-5 text-center shadow-sm">
+                {[
+                  ["7", "Temuan"],
+                  ["3", "Sitasi tidak sesuai klaim"],
+                  ["2", "Sumber Kurang kuat"],
+                  ["2", "Referensi tidak kuat"],
+                ].map(([value, label]) => (
+                  <div key={label} className="px-3">
+                    <p className="text-3xl font-extrabold leading-10 text-sky-600">{value}</p>
+                    <p className="mt-0.5 text-[10px] font-bold leading-4 text-slate-600">{label}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
+                <div className="flex flex-wrap items-center gap-3">
+                  <h2 className="text-xl font-bold leading-7 text-slate-900">Temuan {temuanNav + 1} dari 7</h2>
+                  <span className="flex items-center gap-1.5 rounded-md bg-sky-100/70 px-3.5 py-1 text-sm font-semibold leading-4 text-sky-600">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#0284c7" strokeWidth="1.3" strokeLinejoin="round" aria-hidden="true">
+                      <rect x="3" y="2" width="10" height="12" rx="1.5" />
+                      <path d="M5.5 5.5h5M5.5 8h5M5.5 10.5h3" strokeLinecap="round" />
+                    </svg>
+                    BAB II • Halaman {temuan.halaman}
+                  </span>
+                  <span className="flex items-center gap-1.5 rounded-md bg-red-100/70 px-3 py-1 text-xs font-bold uppercase leading-4 tracking-tight text-red-600">
+                    <span className="h-2.5 w-2.5 bg-red-600" aria-hidden="true" />
+                    {temuan.badge}
+                  </span>
+                </div>
+                <div className="flex shrink-0 items-center gap-1.5">
+                  <button
+                    type="button"
+                    aria-label="Temuan sebelumnya"
+                    onClick={() => setTemuanNav(current => (current - 1 + temuanAnalisis.length) % temuanAnalisis.length)}
+                    className="flex h-8 w-8 items-center justify-center rounded-lg bg-white outline outline-1 outline-offset-[-1px] outline-slate-200"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#475569" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M8.5 3L5 7l3.5 4" />
+                    </svg>
+                  </button>
+                  <button
+                    type="button"
+                    aria-label="Temuan berikutnya"
+                    onClick={() => setTemuanNav(current => (current + 1) % temuanAnalisis.length)}
+                    className="flex h-8 w-8 items-center justify-center rounded-lg bg-white outline outline-1 outline-offset-[-1px] outline-slate-200"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#475569" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M5.5 3L9 7l-3.5 4" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <div className="grid gap-4 min-[1180px]:grid-cols-2">
+                <div className="rounded-2xl bg-white p-5 outline outline-1 outline-offset-[-1px] outline-slate-200/90">
+                  <h3 className="text-base font-bold leading-5 text-slate-800">Bagian yang perlu diperbaiki</h3>
+                  <div className="mt-4 rounded-xl bg-blue-50 p-5 outline outline-1 outline-offset-[-1px] outline-sky-600">
+                    <p className="text-base leading-7 text-slate-800">{renderKutipan(temuan.kutipan)}</p>
+                  </div>
+                </div>
+                <div className="rounded-2xl bg-white p-5 outline outline-1 outline-offset-[-1px] outline-slate-200/90">
+                  <div className="flex items-center gap-2">
+                    <span className="flex h-6 w-6 items-center justify-center rounded-md bg-red-100" aria-hidden="true">
+                      <span className="h-3 w-3 bg-red-500" />
+                    </span>
+                    <h3 className="text-base font-bold leading-5 text-slate-800">Mengapa sitasi ini bermasalah?</h3>
+                  </div>
+                  <ul className="mt-4 space-y-3">
+                    {temuan.alasan.map(reason => (
+                      <li key={reason} className="text-xs leading-4 text-zinc-800">
+                        {reason}
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="mt-4 flex items-center gap-2 rounded-xl bg-sky-50/70 px-4 py-3 outline outline-1 outline-offset-[-1px] outline-sky-100">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#0284c7" strokeWidth="1.1" strokeLinejoin="round" aria-hidden="true">
+                      <rect x="3" y="2" width="10" height="12" rx="1.5" />
+                      <path d="M5.5 5.5h5M5.5 8h5M5.5 10.5h3" strokeLinecap="round" />
+                    </svg>
+                    <p className="text-xs font-medium leading-4 text-sky-700">DOI valid • Metadata cocok • Isi sumber tidak mendukung klaim</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="rounded-2xl bg-white p-5 outline outline-1 outline-offset-[-1px] outline-slate-200/90">
+                <h3 className="text-base font-bold leading-5 text-slate-800">Saran perbaikan Alerin</h3>
+                <div className="mt-4 rounded-xl bg-blue-50 px-4 py-4 outline outline-1 outline-offset-[-1px] outline-sky-600">
+                  <p className="text-sm font-medium leading-5 text-slate-800">{temuan.saran}</p>
+                  <span className="mt-3 inline-flex items-center gap-1.5 rounded-xl bg-white px-2.5 py-1 text-[10px] font-medium leading-3 text-slate-800">
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="#334155" strokeWidth="1" aria-hidden="true">
+                      <rect x="1.5" y="1.5" width="9" height="9" rx="1.5" />
+                    </svg>
+                    OpenAlex <span>+4</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+
           <DesktopJournalResultCard
             relevancy="97%"
             showHeader
@@ -2064,7 +2205,9 @@ function DesktopSearchResults({
           />
         </div>
 
-        <aside className="w-64 shrink-0 rounded-2xl bg-white p-6">
+        <aside className="w-64 shrink-0 space-y-4">
+          {analysis && <ProfileCard collection={false} />}
+          <div className="rounded-2xl bg-white p-6">
           <h2 className="text-base font-bold leading-6 text-slate-900">Ringkasan hasil pencarian</h2>
           <p className="pt-1 text-xs leading-4 text-slate-500">
             Alerin menyeleksi hasil secara bertahap sebelum menampilkan jurnal terbaik.
@@ -2095,6 +2238,7 @@ function DesktopSearchResults({
             Tabel penelitian terdahulu
           </button>
           <p className="mt-3 text-center text-sm font-bold leading-4 text-slate-300">Peta Penelitian</p>
+          </div>
         </aside>
       </div>
     </div>
@@ -3399,6 +3543,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
     setView("home");
     setQuery(title);
     setSearchType("journal");
+    setResultMode("search");
     setDesktopStage("loading");
   };
 
@@ -3709,9 +3854,13 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                 alt=""
                 className="w-[290px] animate-[bounce_1.4s_ease-in-out_infinite]"
               />
-              <h1 className="mt-5 text-center text-2xl font-extrabold tracking-[-0.5px] text-slate-800">Menelusuri Jurnal Untukmu</h1>
+              <h1 className="mt-5 text-center text-2xl font-extrabold tracking-[-0.5px] text-slate-800">
+                {resultMode === "analysis" ? "Menganalisis Naskahmu" : "Menelusuri Jurnal Untukmu"}
+              </h1>
               <p className="mt-2 max-w-sm animate-pulse text-center text-sm leading-6 text-slate-500">
-                Alerin sedang mencari jurnal berdasarkan informasi yang kamu berikan.
+                {resultMode === "analysis"
+                  ? "Alerin sedang membaca dokumenmu dan menyiapkan temuan serta rekomendasi sitasi."
+                  : "Alerin sedang mencari jurnal berdasarkan informasi yang kamu berikan."}
               </p>
             </div>
           )}
@@ -3731,6 +3880,8 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                 onOpenTabel={() => setTabelOpen(true)}
                 onOpenSitasi={() => setSitasiOpen(true)}
                 onOpenAbstrak={() => setAbstrakOpen(true)}
+                analysis={resultMode === "analysis"}
+                fileName={fileName}
               />
             ))}
 
@@ -3813,6 +3964,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                         disabled={!canSearch}
                         onClick={() => {
                           setSearchType(type);
+                          setResultMode("search");
                           runSearch();
                         }}
                         className={`rounded-xl px-5 py-2.5 text-sm font-semibold text-white transition-colors ${
@@ -3931,8 +4083,10 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                     <button
                       type="button"
                       onClick={() => {
-                        if (window.matchMedia("(min-width: 768px)").matches) runSearch();
-                        else {
+                        if (window.matchMedia("(min-width: 768px)").matches) {
+                          setResultMode("analysis");
+                          runSearch();
+                        } else {
                           setResultMode("analysis");
                           setTemuanIndex(1);
                           setMobileSearchStage("loading");
