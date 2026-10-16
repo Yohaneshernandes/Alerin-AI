@@ -195,56 +195,88 @@ function Sidebar({
   const [items, setItems] = useState(riwayatSidebar);
   const [menuIndex, setMenuIndex] = useState<number | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <aside className="hidden w-[280px] shrink-0 flex-col border-r border-slate-100 bg-white p-5 md:flex">
+    <aside
+      className={`hidden shrink-0 flex-col overflow-hidden border-r border-slate-100 bg-white transition-all duration-300 md:flex ${
+        collapsed ? "w-[76px] p-3" : "w-[280px] p-5"
+      }`}
+    >
       <div className="flex items-center gap-3">
-        <img src={`${assets}/24a8e.svg`} alt="" />
-        <div className="min-w-0 flex-1">
-          <p className="font-['Inter:Bold'] text-lg font-bold leading-5 text-slate-900">Alerin Jurnal</p>
-          <p className="font-['Inter:Medium'] text-xs font-medium leading-4 text-slate-400">Pendamping Akademik</p>
-        </div>
-        <span aria-hidden="true" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-slate-400">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round">
-            <rect x="1.5" y="2.5" width="13" height="11" rx="2" />
-            <path d="M6 2.5v11" />
-          </svg>
-        </span>
+        <button
+          type="button"
+          onClick={() => setCollapsed(false)}
+          title={collapsed ? "Buka sidebar" : undefined}
+          className="shrink-0 cursor-pointer"
+        >
+          <img src={`${assets}/24a8e.svg`} alt="" />
+        </button>
+        {!collapsed && (
+          <div className="min-w-0 flex-1">
+            <p className="font-['Inter:Bold'] text-lg font-bold leading-5 text-slate-900">Alerin Jurnal</p>
+            <p className="font-['Inter:Medium'] text-xs font-medium leading-4 text-slate-400">Pendamping Akademik</p>
+          </div>
+        )}
+        {!collapsed && (
+          <button
+            type="button"
+            aria-label="Perkecil sidebar"
+            title="Perkecil sidebar"
+            onClick={() => {
+              setMenuIndex(null);
+              setCollapsed(true);
+            }}
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-slate-400 transition-colors hover:bg-slate-50 hover:text-slate-600"
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round">
+              <rect x="1.5" y="2.5" width="13" height="11" rx="2" />
+              <path d="M6 2.5v11" />
+            </svg>
+          </button>
+        )}
       </div>
 
       <nav className="mt-8 space-y-1">
         <button
           type="button"
           onClick={() => onView("home")}
-          className={`flex w-full items-center gap-3.5 rounded-xl px-4 py-3 text-base ${
-            view === "home" ? "bg-sky-100/80 font-semibold text-sky-600" : "font-medium text-slate-600"
-          }`}
+          title={collapsed ? "Beranda Jurnal" : undefined}
+          className={`flex w-full items-center gap-3.5 rounded-xl py-3 text-base ${
+            collapsed ? "justify-center px-0" : "px-4"
+          } ${view === "home" ? "bg-sky-100/80 font-semibold text-sky-600" : "font-medium text-slate-600"}`}
         >
           <img src={`${assets}/${homeIcon}`} alt="" />
-          Beranda Jurnal
+          {!collapsed && "Beranda Jurnal"}
         </button>
         <button
           type="button"
           onClick={() => onView("collection")}
-          className={`flex w-full items-center gap-3.5 rounded-xl px-4 py-3 text-base ${
-            view === "collection" ? "bg-sky-100/80 font-semibold text-sky-600" : "font-medium text-slate-600"
-          }`}
+          title={collapsed ? "Koleksi" : undefined}
+          className={`flex w-full items-center gap-3.5 rounded-xl py-3 text-base ${
+            collapsed ? "justify-center px-0" : "px-4"
+          } ${view === "collection" ? "bg-sky-100/80 font-semibold text-sky-600" : "font-medium text-slate-600"}`}
         >
           <img src={`${assets}/${collectionIcon}`} alt="" />
-          Koleksi
+          {!collapsed && "Koleksi"}
         </button>
         <button
           type="button"
           onClick={onBack}
-          className="flex w-full items-center gap-3.5 rounded-xl px-4 py-3 text-base font-medium text-slate-600 hover:bg-slate-50"
+          title={collapsed ? "Home Alerin" : undefined}
+          className={`flex w-full items-center gap-3.5 rounded-xl py-3 text-base font-medium text-slate-600 hover:bg-slate-50 ${
+            collapsed ? "justify-center px-0" : "px-4"
+          }`}
         >
           <img src={`${assets}/f725b.png`} alt="" className="h-8 w-8 rounded-full object-cover outline outline-1 outline-slate-400/50" />
-          Home Alerin
+          {!collapsed && "Home Alerin"}
         </button>
       </nav>
 
-      <p className="mt-6 px-4 font-['Inter:Bold'] text-sm font-bold uppercase leading-5 tracking-wide text-slate-400">Riwayat</p>
-      <div className="mt-2 space-y-0.5">
+      {!collapsed && (
+        <>
+          <p className="mt-6 px-4 font-['Inter:Bold'] text-sm font-bold uppercase leading-5 tracking-wide text-slate-400">Riwayat</p>
+          <div className="mt-2 space-y-0.5">
         {items.map((item, index) => (
           <div key={`${index}-${item}`} className="group relative">
             <button
@@ -356,25 +388,41 @@ function Sidebar({
             )}
           </div>
         ))}
-      </div>
+          </div>
+        </>
+      )}
 
-      <div className="mt-auto rounded-2xl border border-amber-100/80 bg-gradient-to-br from-amber-50/70 via-blue-50/50 to-indigo-50/60 p-4">
-        <div className="flex items-start gap-2.5">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="#f59e0b" className="mt-0.5 shrink-0" aria-hidden="true">
-            <path d="M12 2l2.9 6.26L21.5 9.3l-4.75 4.63 1.12 6.57L12 17.4l-5.87 3.1 1.12-6.57L2.5 9.3l6.6-1.04L12 2z" />
-          </svg>
-          <p className="text-xs leading-4 text-slate-600">
-            Akses lebih banyak fitur dengan <span className="text-blue-700">Alerin Premium</span>
-          </p>
-        </div>
+      {collapsed ? (
         <button
           type="button"
+          aria-label="Upgrade Sekarang"
+          title="Upgrade Sekarang"
           onClick={onUpgrade}
-          className="mt-3.5 w-full rounded-xl border border-blue-200 bg-white px-3 py-2 text-xs font-semibold text-blue-600 shadow-sm hover:bg-blue-50"
+          className="mt-auto flex h-11 w-11 items-center justify-center rounded-xl border border-amber-100/80 bg-gradient-to-br from-amber-50/70 via-blue-50/50 to-indigo-50/60 text-amber-500 transition-colors hover:bg-amber-50"
         >
-          Upgrade Sekarang
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12 2l2.9 6.26L21.5 9.3l-4.75 4.63 1.12 6.57L12 17.4l-5.87 3.1 1.12-6.57L2.5 9.3l6.6-1.04L12 2z" />
+          </svg>
         </button>
-      </div>
+      ) : (
+        <div className="mt-auto rounded-2xl border border-amber-100/80 bg-gradient-to-br from-amber-50/70 via-blue-50/50 to-indigo-50/60 p-4">
+          <div className="flex items-start gap-2.5">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#f59e0b" className="mt-0.5 shrink-0" aria-hidden="true">
+              <path d="M12 2l2.9 6.26L21.5 9.3l-4.75 4.63 1.12 6.57L12 17.4l-5.87 3.1 1.12-6.57L2.5 9.3l6.6-1.04L12 2z" />
+            </svg>
+            <p className="text-xs leading-4 text-slate-600">
+              Akses lebih banyak fitur dengan <span className="text-blue-700">Alerin Premium</span>
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onUpgrade}
+            className="mt-3.5 w-full rounded-xl border border-blue-200 bg-white px-3 py-2 text-xs font-semibold text-blue-600 shadow-sm hover:bg-blue-50"
+          >
+            Upgrade Sekarang
+          </button>
+        </div>
+      )}
     </aside>
   );
 }
