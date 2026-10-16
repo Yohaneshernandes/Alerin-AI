@@ -1662,22 +1662,26 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
     window.alert("Tabel berhasil disalin.");
   };
 
-  const columnWidths = ["w-14", "w-60", "w-40", "w-40", "w-48", "w-44", "w-24"];
+  const downloadCsv = () => {
+    window.alert("Tabel berhasil diunduh sebagai CSV.");
+  };
+
+  const columnWidths = ["w-16", "w-64", "w-56", "w-56", "w-60", "w-64", "w-28"];
 
   return (
-    <div
-      className="fixed inset-0 z-[340] flex items-center justify-center bg-black/25 p-4 backdrop-blur-[2.55px]"
-      onClick={onClose}
-      role="presentation"
-    >
+    <div className="fixed inset-0 z-[340] bg-black/30" onClick={onClose} role="presentation">
       <div
         role="dialog"
         aria-modal="true"
         aria-label="Tabel penelitian terdahulu"
         onClick={event => event.stopPropagation()}
-        className="flex max-h-[calc(100vh-32px)] w-[1140px] max-w-full flex-col overflow-hidden rounded-3xl bg-white shadow-2xl outline outline-1 outline-offset-[-1px] outline-slate-100"
+        className="absolute inset-x-0 bottom-0 flex max-h-[85dvh] w-full flex-col overflow-hidden rounded-t-[43.42px] bg-white shadow-2xl md:inset-auto md:left-1/2 md:top-1/2 md:max-h-[calc(100vh-48px)] md:w-[1140px] md:max-w-[calc(100vw-32px)] md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-3xl md:outline md:outline-1 md:outline-offset-[-1px] md:outline-slate-100"
       >
-        <div className="flex items-start justify-between gap-4 px-8 pb-4 pt-7">
+        <div className="flex shrink-0 justify-center pb-1.5 pt-5 md:hidden">
+          <span className="h-1.5 w-16 rounded-full bg-slate-300" aria-hidden="true" />
+        </div>
+
+        <div className="flex shrink-0 items-start justify-between gap-4 border-b border-slate-100 pb-5 pl-10 pr-7 pt-3 md:border-b-0 md:px-8 md:pb-4 md:pt-7">
           <div>
             <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-2xl font-bold leading-8 text-slate-900">Tabel penelitian terdahulu</h2>
             <p className="font-['Plus_Jakarta_Sans:Regular'] pt-1 text-sm font-normal leading-5 text-slate-500">
@@ -1688,28 +1692,43 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
             type="button"
             aria-label="Tutup tabel"
             onClick={onClose}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white outline outline-1 outline-offset-[-1px] outline-slate-200 transition-colors hover:bg-slate-50"
+            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white outline outline-1 outline-offset-[-1px] outline-slate-200 transition-colors hover:bg-slate-50 md:h-10 md:w-10 md:rounded-xl"
           >
-            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="#94a3b8" strokeWidth="1.67" strokeLinecap="round" aria-hidden="true">
-              <path d="M1.5 1.5l7 7M8.5 1.5l-7 7" />
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#94a3b8" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+              <path d="M2.5 2.5l9 9M11.5 2.5l-9 9" />
             </svg>
           </button>
         </div>
 
-        <div className="flex flex-col gap-4 overflow-y-auto px-8 py-2">
-          <div className="rounded-xl bg-sky-50 px-4 py-3.5 outline outline-1 outline-offset-[-1px] outline-blue-100">
+        <div className="flex flex-col gap-4 overflow-y-auto px-6 py-5 md:px-8 md:py-4">
+          <div className="hidden rounded-xl bg-sky-50 px-4 py-3.5 outline outline-1 outline-offset-[-1px] outline-blue-100 md:block">
             <p className="font-['Plus_Jakarta_Sans:Medium'] text-sm font-medium leading-5 text-cyan-900">
               Gunakan kolom &ldquo;Perbedaan dan celah&rdquo; untuk menyusun kebaruan penelitian. Selalu cek paper asli sebelum memasukkan tabel ke
               karya ilmiah.
             </p>
           </div>
 
-          <div className="overflow-x-auto rounded-2xl outline outline-1 outline-offset-[-1px] outline-slate-200/90">
-            <table className="w-full min-w-[960px] border-collapse text-left">
+          <div className="flex items-center justify-between gap-3 md:hidden">
+            <p className="flex items-center gap-2 text-sm leading-5 text-slate-600">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#64748b" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M2 8h12M4.5 5.5L2 8l2.5 2.5M11.5 5.5L14 8l-2.5 2.5" />
+              </svg>
+              Geser ke samping untuk melihat seluruh kolom
+            </p>
+            <span className="shrink-0 text-sm font-semibold text-sky-600">3 Jurnal</span>
+          </div>
+
+          <div className="overflow-x-auto rounded-3xl outline outline-1 outline-offset-[-1px] outline-slate-200/80 md:rounded-2xl">
+            <table className="w-full min-w-[1178px] border-collapse text-left">
               <thead>
-                <tr className="bg-slate-50">
+                <tr className="bg-slate-50/90">
                   {headers.map((header, index) => (
-                    <th key={header} className={`${columnWidths[index]} border-b border-slate-200/90 bg-slate-50 px-4 py-3.5 text-xs font-bold leading-5 text-slate-700`}>
+                    <th
+                      key={header}
+                      className={`${columnWidths[index]} border-b border-slate-200/90 bg-slate-50/90 px-5 py-4 text-sm font-bold leading-5 text-slate-600 ${
+                        header === "Perbedaan dan celah" ? "bg-amber-50/30" : ""
+                      } ${header === "Relevansi" ? "text-center" : ""}`}
+                    >
                       {header}
                     </th>
                   ))}
@@ -1718,16 +1737,18 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
               <tbody>
                 {tableRows.map((row, index) => (
                   <tr key={row.study} className={index === 0 ? "" : "border-t border-slate-100"}>
-                    <td className="px-4 pt-4 align-top text-xs font-bold leading-5 text-slate-800">{index + 1}</td>
-                    <td className="px-4 pt-4 align-top">
-                      <p className="text-xs font-bold leading-4 text-slate-900">{row.study}</p>
+                    <td className="px-5 py-4 align-top text-sm font-bold leading-6 text-slate-800">{index + 1}</td>
+                    <td className="px-5 py-4 align-top">
+                      <p className="text-sm font-bold leading-5 text-slate-900">{row.study}</p>
                       <p className="pt-1 text-xs font-normal leading-4 text-slate-500">{row.subtitle}</p>
                     </td>
-                    <td className="p-4 align-top text-xs font-normal leading-5 text-slate-700">{row.tujuan}</td>
-                    <td className="p-4 align-top text-xs font-normal leading-5 text-slate-700">{row.metode}</td>
-                    <td className="p-4 align-top text-xs font-normal leading-5 text-slate-700">{row.temuan}</td>
-                    <td className="p-4 align-top text-xs font-normal leading-5 text-slate-700">{row.celah}</td>
-                    <td className="px-4 pt-4 align-top text-xs font-medium leading-5 text-slate-900">{row.relevansi}</td>
+                    <td className="px-5 py-4 align-top text-sm font-normal leading-6 text-slate-700">{row.tujuan}</td>
+                    <td className="px-5 py-4 align-top text-sm font-normal leading-6 text-slate-700">{row.metode}</td>
+                    <td className="px-5 py-4 align-top text-sm font-normal leading-6 text-slate-700">{row.temuan}</td>
+                    <td className="bg-amber-50/30 px-5 py-4 align-top text-sm font-normal leading-6 text-slate-700">{row.celah}</td>
+                    <td className="px-5 py-4 text-center align-top">
+                      <span className="inline-flex rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">{row.relevansi}</span>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -1735,18 +1756,34 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
           </div>
         </div>
 
-        <div className="flex items-center justify-end gap-3 border-t border-black/10 bg-white px-8 py-6">
-          <button
-            type="button"
-            onClick={copyTable}
-            className="rounded-xl px-5 py-2.5 text-sm font-semibold leading-5 text-slate-700 outline outline-1 outline-offset-[-1px] outline-slate-300 transition-colors hover:bg-slate-50"
-          >
-            Salin tabel
-          </button>
+        <div className="shrink-0 border-t border-slate-100 bg-white px-6 pb-6 pt-5 md:flex md:items-center md:justify-end md:gap-3 md:px-8 md:py-6">
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={copyTable}
+              className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-white px-4 py-3.5 text-sm font-semibold leading-5 text-slate-700 outline outline-1 outline-offset-[-1px] outline-slate-200 transition-colors hover:bg-slate-50 md:flex-none md:rounded-xl md:px-5 md:py-2.5"
+            >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <rect x="5.5" y="5.5" width="8" height="8" rx="1.5" />
+                <path d="M10.5 5.5v-1a2 2 0 0 0-2-2h-5a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h1" />
+              </svg>
+              Salin tabel
+            </button>
+            <button
+              type="button"
+              onClick={downloadCsv}
+              className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-white px-4 py-3.5 text-sm font-semibold leading-5 text-slate-700 outline outline-1 outline-offset-[-1px] outline-slate-200 transition-colors hover:bg-slate-50 md:flex-none md:rounded-xl md:px-5 md:py-2.5"
+            >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M8 2.5v7M5 7l3 3 3-3M3 13h10" />
+              </svg>
+              Unduh CSV
+            </button>
+          </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-xl bg-sky-700 px-7 py-2.5 text-sm font-semibold leading-5 text-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] transition-colors hover:bg-sky-800"
+            className="mt-3 w-full rounded-2xl bg-sky-700 py-4 text-sm font-bold leading-5 text-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] transition-colors hover:bg-sky-800 md:mt-0 md:w-auto md:rounded-xl md:px-7 md:py-2.5 md:text-sm md:font-semibold"
           >
             Selesai
           </button>
@@ -4272,20 +4309,13 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                       </div>
                     ))}
                   </div>
-                  <div className="mt-4 grid grid-cols-2 gap-3">
+                  <div className="mt-4">
                     <button
                       type="button"
                       onClick={() => setTabelOpen(true)}
-                      className="rounded-2xl bg-sky-700 py-3 text-sm font-semibold text-white shadow-sm"
+                      className="w-full rounded-2xl bg-sky-700 py-3.5 text-sm font-semibold text-white shadow-sm"
                     >
                       Tabel penelitian
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => window.alert("Peta Penelitian sedang disiapkan Alerin.")}
-                      className="rounded-2xl bg-slate-600 py-3 text-sm font-semibold text-white shadow-sm"
-                    >
-                      Peta Penelitian
                     </button>
                   </div>
                 </section>
