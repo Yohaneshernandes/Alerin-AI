@@ -4350,10 +4350,12 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                   <button
                     type="button"
                     onClick={() => setActiveFolderId("all")}
-                    className="flex items-center justify-center gap-3 whitespace-nowrap rounded-[10px] bg-[#0066a1] px-5 py-2.5 font-['Plus_Jakarta_Sans:Bold'] text-sm font-bold text-white"
+                    className="flex items-center justify-center gap-2.5 whitespace-nowrap rounded-[10px] bg-[#0066a1] px-5 py-2.5 font-['Plus_Jakarta_Sans:Bold'] text-sm font-bold text-white"
                   >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" />
+                    </svg>
                     {activeFolderId === "all" ? "Semua folder" : (folders.find(folder => folder.id === activeFolderId)?.name ?? "Semua folder")}
-                    <img src={`${collectionAssets}/f08e5.svg`} alt="" />
                   </button>
                 </div>
                 {collectionJournals.length === 0 ? (
