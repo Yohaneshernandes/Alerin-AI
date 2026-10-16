@@ -347,22 +347,12 @@ function Sidebar({
   onBack,
   onUpgrade,
   onOpenRiwayat,
-  folders,
-  activeFolderId,
-  folderCounts,
-  onSelectFolder,
-  onCreateFolder,
 }: {
   view: JournalView;
   onView: (view: JournalView) => void;
   onBack: () => void;
   onUpgrade: () => void;
   onOpenRiwayat: (title: string) => void;
-  folders: CollectionFolder[];
-  activeFolderId: string;
-  folderCounts: Record<string, number>;
-  onSelectFolder: (id: string) => void;
-  onCreateFolder: () => void;
 }) {
   const assets = view === "collection" ? collectionAssets : searchAssets;
   const homeIcon = view === "collection" ? "62b0b.svg" : "b4a91.svg";
@@ -565,52 +555,6 @@ function Sidebar({
         ))}
           </div>
         </>
-      )}
-
-      {!collapsed && (
-        <div className="mt-6">
-          <div className="flex items-center justify-between px-4">
-            <p className="font-['Inter:Bold'] text-sm font-bold uppercase leading-5 tracking-wide text-slate-400">Folder</p>
-            <button
-              type="button"
-              aria-label="Buat folder baru"
-              title="Buat folder baru"
-              onClick={onCreateFolder}
-              className="flex h-6 w-6 items-center justify-center rounded-md border border-slate-200 text-sm font-bold leading-none text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700"
-            >
-              +
-            </button>
-          </div>
-          <div className="mt-2 max-h-56 space-y-0.5 overflow-y-auto pr-1">
-            <button
-              type="button"
-              onClick={() => onSelectFolder("all")}
-              className={`flex w-full items-center gap-1 rounded-lg py-2 pl-2.5 pr-3 text-left text-xs leading-4 ${
-                activeFolderId === "all"
-                  ? "bg-blue-50/70 font-semibold text-blue-900 outline outline-1 outline-blue-200/80"
-                  : "text-slate-600 hover:bg-slate-50"
-              }`}
-            >
-              <span className="min-w-0 flex-1 truncate">Semua jurnal tersimpan</span>
-              <span className="shrink-0 text-[11px] font-semibold text-slate-400">{folderCounts.all ?? 0}</span>
-            </button>
-            {folders.map(folder => (
-              <button
-                key={folder.id}
-                type="button"
-                onClick={() => onSelectFolder(folder.id)}
-                className={`flex w-full items-center gap-1 rounded-lg py-2 pl-2.5 pr-3 text-left text-xs leading-4 ${
-                  activeFolderId === folder.id
-                    ? "bg-blue-50/70 font-semibold text-blue-900 outline outline-1 outline-blue-200/80"
-                    : "text-slate-600 hover:bg-slate-50"
-                }`}
-              >
-                <span className="min-w-0 flex-1 truncate">{folder.name}</span>
-                <span className="shrink-0 text-[11px] font-semibold text-slate-400">{folderCounts[folder.id] ?? 0}</span>
-              </button>
-            ))}
-          </div>
-        </div>
       )}
 
       {collapsed ? (
@@ -3391,13 +3335,6 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
     showToast(`Folder ${name} dibuat`);
   };
 
-  const openFolder = (id: string) => {
-    setActiveFolderId(id);
-    setDesktopStage("home");
-    setMobileSearchStage("home");
-    setView("collection");
-  };
-
   const startSearching = () => {
     setDesktopStage("home");
     setMobileSearchStage("home");
@@ -3445,11 +3382,6 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
         onBack={onBack}
         onUpgrade={() => setUpgradeOpen(true)}
         onOpenRiwayat={openRiwayatPencarian}
-        folders={folders}
-        activeFolderId={activeFolderId}
-        folderCounts={folderCounts}
-        onSelectFolder={openFolder}
-        onCreateFolder={() => setNewFolderOpen(true)}
       />
 
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
