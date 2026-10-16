@@ -466,7 +466,9 @@ function Sidebar({
                 event.stopPropagation();
                 setMenuIndex(menuIndex === index ? null : index);
               }}
-              className="absolute right-2 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-md text-slate-400 transition-colors hover:bg-slate-200/60 hover:text-slate-600"
+              className={`absolute right-2 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-md text-slate-400 transition-opacity hover:bg-slate-200/60 hover:text-slate-600 ${
+                menuIndex === index ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+              }`}
             >
               <svg width="14" height="4" viewBox="0 0 14 4" fill="currentColor" aria-hidden="true">
                 <circle cx="2" cy="2" r="1.5" />
