@@ -947,7 +947,17 @@ function JournalCard({ index }: { index: number }) {
   );
 }
 
-function DesktopJournalResultCard({ relevancy, showHeader = false, onAnalisis }: { relevancy: string; showHeader?: boolean; onAnalisis?: () => void }) {
+function DesktopJournalResultCard({
+  relevancy,
+  showHeader = false,
+  onAnalisis,
+  onSitasi,
+}: {
+  relevancy: string;
+  showHeader?: boolean;
+  onAnalisis?: () => void;
+  onSitasi?: () => void;
+}) {
   const fitBars: [string, number][] = [
     ["Kesesuaian variabel", 98],
     ["Kesesuaian topik", 96],
@@ -1056,6 +1066,7 @@ function DesktopJournalResultCard({ relevancy, showHeader = false, onAnalisis }:
             <button
               key={label}
               type="button"
+              onClick={label === "Buat sitasi" ? onSitasi : undefined}
               className="flex items-center gap-1 rounded-lg bg-white px-3 py-1.5 text-xs font-semibold leading-4 text-slate-700 outline outline-1 outline-offset-[-1px] outline-slate-200"
             >
               {label === "DOI" && (
@@ -1344,9 +1355,155 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
   );
 }
 
+function BuatSitasiModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [activeStyle, setActiveStyle] = useState<"apa" | "mla" | "chicago" | "harvard" | "bibtex">("apa");
+  if (!open) return null;
+
+  const doi = "https://doi.org/10.1108/APJML-03-2022-0214";
+  const journal = "Asia Pacific Journal of Marketing and Logistics";
+  const title = "Live Streaming Commerce and Mimic Purchase Intention: The Role of Parasocial Interaction and Scarcity Nudges";
+  const bibtex = `@article{wongkitrungrueng2023live,
+  title={${title}},
+  author={Wongkitrungrueng, A. and Assarut, N.},
+  journal={${journal}},
+  volume={40},
+  number={3},
+  pages={341--362},
+  year={2023},
+  doi={10.1108/APJML-03-2022-0214}
+}`;
+
+  const styles: Record<"apa" | "mla" | "chicago" | "harvard" | "bibtex", { label: string; before: string; after: string }> = {
+    apa: {
+      label: "APA",
+      before: "Wongkitrungrueng, A., & Assarut, N. (2023). " + title + ". ",
+      after: ".",
+    },
+    mla: {
+      label: "MLA",
+      before: "Wongkitrungrueng, A., and N. Assarut. \u201c" + title + ".\u201d ",
+      after: ", vol. 40, no. 3, 2023, pp. 341\u2013362.",
+    },
+    chicago: {
+      label: "Chicago",
+      before: "Wongkitrungrueng, A., and Nopporn Assarut. \u201c" + title + ".\u201d ",
+      after: " 40, no. 3 (2023): 341\u2013362.",
+    },
+    harvard: {
+      label: "Harvard",
+      before: "Wongkitrungrueng, A. and Assarut, N. (2023) \u2018" + title + "\u2019, ",
+      after: ", 40(3), pp. 341\u2013362.",
+    },
+    bibtex: {
+      label: "BibTeX",
+      before: "",
+      after: "",
+    },
+  };
+
+  const active = styles[activeStyle];
+  const plainText = activeStyle === "bibtex" ? bibtex : `${active.before}${journal}${active.after}\n${doi}`;
+
+  const copyCitation = () => {
+    try {
+      void navigator.clipboard.writeText(plainText);
+    } catch {
+      window.alert("Teks sitasi berhasil disalin.");
+      return;
+    }
+    window.alert("Teks sitasi berhasil disalin.");
+  };
+
+  return (
+    <div className="fixed inset-0 z-[340] flex items-center justify-center bg-black/25 p-4 backdrop-blur-[2.55px]" onClick={onClose} role="presentation">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Buat sitasi jurnal"
+        onClick={event => event.stopPropagation()}
+        className="flex max-h-[calc(100vh-32px)] w-[656px] max-w-full flex-col overflow-hidden rounded-2xl bg-white shadow-[0px_20px_50px_0px_rgba(0,0,0,0.18)] outline outline-1 outline-offset-[-1px] outline-slate-100"
+      >
+        <div className="flex items-center justify-between px-7 pb-2 pt-6">
+          <h2 className="font-['Inter:Bold'] text-xl font-bold leading-8 text-slate-900">Buat sitasi jurnal</h2>
+          <button
+            type="button"
+            aria-label="Tutup sitasi"
+            onClick={onClose}
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full outline outline-1 outline-offset-[-1px] outline-slate-200 transition-colors hover:bg-slate-50"
+          >
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="#64748b" strokeWidth="1.47" strokeLinecap="round" aria-hidden="true">
+              <path d="M1.5 1.5l7 7M8.5 1.5l-7 7" />
+            </svg>
+          </button>
+        </div>
+
+        <div className="flex gap-7 border-b border-slate-200 px-7 pt-3">
+          {(Object.keys(styles) as Array<keyof typeof styles>).map(key => (
+            <button
+              key={key}
+              type="button"
+              onClick={() => setActiveStyle(key)}
+              aria-pressed={activeStyle === key}
+              className={`border-b-[3px] pb-2.5 text-sm leading-5 transition-colors ${
+                activeStyle === key
+                  ? "border-sky-600 font-['Inter:Bold'] font-bold text-slate-900"
+                  : "border-transparent font-['Inter:Medium'] font-medium text-slate-600 hover:text-slate-800"
+              }`}
+            >
+              {styles[key].label}
+            </button>
+          ))}
+        </div>
+
+        <div className="px-7 pb-2 pt-4">
+          {activeStyle === "bibtex" ? (
+            <div className="min-h-36 rounded-xl bg-white p-5 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.02)] outline outline-1 outline-offset-[-1px] outline-slate-200">
+              <pre className="whitespace-pre-wrap font-['JetBrains_Mono:Medium'] text-xs leading-5 text-slate-800">{bibtex}</pre>
+            </div>
+          ) : (
+            <div className="flex min-h-36 flex-col gap-4 rounded-xl bg-white p-5 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.02)] outline outline-1 outline-offset-[-1px] outline-slate-200">
+              <p className="font-['Inter:Regular'] text-sm font-normal leading-6 text-slate-800">
+                {active.before}
+                <span className="italic">{journal}</span>
+                {active.after}
+              </p>
+              <a
+                href={doi}
+                target="_blank"
+                rel="noreferrer"
+                className="font-['Inter:Regular'] text-sm font-normal leading-6 text-sky-600 underline hover:text-sky-700"
+              >
+                {doi}
+              </a>
+            </div>
+          )}
+        </div>
+
+        <div className="flex items-center justify-end gap-3 px-7 pb-7 pt-1">
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-lg px-4 py-2 text-sm font-medium leading-5 text-slate-700 transition-colors hover:bg-slate-50"
+          >
+            Batal
+          </button>
+          <button
+            type="button"
+            onClick={copyCitation}
+            className="rounded-lg bg-sky-600 px-5 py-2 text-sm font-semibold leading-5 tracking-tight text-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] transition-colors hover:bg-sky-700"
+          >
+            Salin teks
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function DesktopSearchResults({ query, onBack }: { query: string; onBack: () => void }) {
   const [ringkasanOpen, setRingkasanOpen] = useState(false);
   const [tabelOpen, setTabelOpen] = useState(false);
+  const [sitasiOpen, setSitasiOpen] = useState(false);
 
   return (
     <div className="mx-auto hidden max-w-[1160px] md:block">
@@ -1366,9 +1523,9 @@ function DesktopSearchResults({ query, onBack }: { query: string; onBack: () => 
 
       <div className="mt-6 flex items-start gap-6">
         <div className="flex min-w-0 flex-1 flex-col gap-6">
-          <DesktopJournalResultCard relevancy="97%" showHeader onAnalisis={() => setRingkasanOpen(true)} />
-          <DesktopJournalResultCard relevancy="92%" onAnalisis={() => setRingkasanOpen(true)} />
-          <DesktopJournalResultCard relevancy="89%" onAnalisis={() => setRingkasanOpen(true)} />
+          <DesktopJournalResultCard relevancy="97%" showHeader onAnalisis={() => setRingkasanOpen(true)} onSitasi={() => setSitasiOpen(true)} />
+          <DesktopJournalResultCard relevancy="92%" onAnalisis={() => setRingkasanOpen(true)} onSitasi={() => setSitasiOpen(true)} />
+          <DesktopJournalResultCard relevancy="89%" onAnalisis={() => setRingkasanOpen(true)} onSitasi={() => setSitasiOpen(true)} />
         </div>
 
         <aside className="w-64 shrink-0 rounded-2xl bg-white p-6">
@@ -1407,6 +1564,7 @@ function DesktopSearchResults({ query, onBack }: { query: string; onBack: () => 
 
       <RingkasanJurnalModal open={ringkasanOpen} onClose={() => setRingkasanOpen(false)} />
       <TabelPenelitianModal open={tabelOpen} onClose={() => setTabelOpen(false)} />
+      <BuatSitasiModal open={sitasiOpen} onClose={() => setSitasiOpen(false)} />
     </div>
   );
 }
