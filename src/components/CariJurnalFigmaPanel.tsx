@@ -2332,6 +2332,88 @@ const sourceLogos: Record<string, string> = {
   DOAJ: "/assets/source-logos/doaj.svg",
 };
 
+const matrixRows = (() => {
+  const curated = [
+    { name: "Sari et al. (2022)", journal: "Jurnal Ketahanan Nasional", cells: ["Dukungan sosial perempuan pasca bencana", "Kualitatif (wawancara mendalam)", "Jaringan sosial mempercepat pemulihan psikologis dan ekonomi.", "Menunjukkan peran sentral komunitas perempuan."] },
+    { name: "Ahmed & Rahman (2021)", journal: "International Journal of Disaster Risk Reduction", cells: ["Akses sumber daya pada tahap respon bencana", "Mixed methods", "Keterbatasan akses informasi menghambat keterlibatan perempuan dalam pengambilan keputusan.", "Mengidentifikasi kesenjangan akses berbasis gender."] },
+    { name: "Putri (2023)", journal: "Jurnal Ilmu Sosial dan Humaniora", cells: ["Strategi coping perempuan korban bencana", "Kualitatif (studi kasus)", "Strategi coping berbasis agama dan dukungan keluarga meningkatkan resiliensi.", "Memberikan perspektif lokal dalam konteks Indonesia."] },
+    { name: "Nguyen et al. (2020)", journal: "Global Environmental Change", cells: ["Peran perempuan dalam manajemen risiko bencana", "Kuantitatif (survei)", "Perempuan lebih aktif dalam kesiapsiagaan komunitas dibanding laki-laki.", "Data komparatif gender lintas negara Asia Tenggara."] },
+  ];
+  const authors = [
+    "Pratama & Lestari",
+    "Aisyah et al.",
+    "Hidayat et al.",
+    "Lim & Susanto",
+    "Rahmawati & Dewi",
+    "Kurniawan et al.",
+    "Wongkitrungrueng & Assarut",
+    "Saputra et al.",
+    "Marinez & Wibowo",
+    "Kusuma et al.",
+    "Tanaka et al.",
+    "Abdullah & Hafizah",
+  ];
+  const journals = [
+    "Jurnal Ketahanan Nasional",
+    "International Journal of Disaster Risk Reduction",
+    "Jurnal Ilmu Sosial dan Humaniora",
+    "Global Environmental Change",
+    "Asia Pacific Journal of Public Health",
+    "Disaster Prevention and Management",
+    "Jurnal Perempuan dan Bencana",
+    "Journal of Humanitarian Affairs",
+  ];
+  const fokus = [
+    "Dukungan sosial perempuan pasca bencana",
+    "Akses sumber daya pada tahap respon bencana",
+    "Strategi coping perempuan korban bencana",
+    "Peran perempuan dalam manajemen risiko bencana",
+    "Kesiapsiagaan berbasis komunitas dan gender",
+    "Pemulihan ekonomi keluarga terdampak",
+    "Keterlibatan perempuan dalam pengambilan keputusan",
+    "Adaptasi komunitas pesisir terhadap perubahan iklim",
+  ];
+  const metode = [
+    "Kualitatif (wawancara mendalam)",
+    "Mixed methods",
+    "Kualitatif (studi kasus)",
+    "Kuantitatif (survei)",
+    "Etnografi (partisipatif)",
+    "Tinjauan sistematis",
+    "Kuantitatif (panel longitudinal)",
+    "Studi kohort prospektif",
+  ];
+  const temuan = [
+    "Jaringan sosial mempercepat pemulihan psikologis dan ekonomi.",
+    "Keterbatasan akses informasi menghambat keterlibatan perempuan dalam pengambilan keputusan.",
+    "Strategi coping berbasis agama dan dukungan keluarga meningkatkan resiliensi.",
+    "Perempuan lebih aktif dalam kesiapsiagaan komunitas dibanding laki-laki.",
+    "Program pemberdayaan mikro meningkatkan ketahanan rumah tangga pasca bencana.",
+    "Partisipasi perempuan dalam perencanaan penanggulangan menaikkan kualitas kebijakan lokal.",
+    "Literasi digital memperluas akses bantuan darurat bagi kelompok rentan.",
+    "Koordinasi lintas sektor memperpendek waktu pemulihan wilayah terdampak.",
+  ];
+  const kontribusi = [
+    "Menunjukkan peran sentral komunitas perempuan.",
+    "Mengidentifikasi kesenjangan akses berbasis gender.",
+    "Memberikan perspektif lokal dalam konteks Indonesia.",
+    "Data komparatif gender lintas negara Asia Tenggara.",
+    "Model pemantauan kebutuhan dasar berbasis kearifan lokal.",
+    "Rekomendasi indikator inklusi gender dalam kesiapsiagaan.",
+    "Bukti empiris dampak platform digital pada daya tahan keluarga.",
+    "Kerangka integrasi mitigasi dan adaptasi berbasis komunitas.",
+  ];
+  const generated = priorityRows.slice(4).map((row, index) => {
+    const i = index + 4;
+    return {
+      name: `${authors[i % authors.length]} (${row.year})`,
+      journal: journals[i % journals.length],
+      cells: [fokus[i % fokus.length], metode[i % metode.length], temuan[i % temuan.length], kontribusi[i % kontribusi.length]],
+    };
+  });
+  return [...curated, ...generated];
+})();
+
 function DesktopLiteratureReview({ query, onBack }: { query: string; onBack: () => void }) {
   const sectionNames = [
     "Ringkasan Eksekutif",
@@ -2362,88 +2444,6 @@ function DesktopLiteratureReview({ query, onBack }: { query: string; onBack: () 
     { key: "teori", label: "Ulasan teori (12)" },
     { key: "empiris", label: "Empiris (46)" },
   ];
-
-  const matrixRows = (() => {
-    const curated = [
-      { name: "Sari et al. (2022)", journal: "Jurnal Ketahanan Nasional", cells: ["Dukungan sosial perempuan pasca bencana", "Kualitatif (wawancara mendalam)", "Jaringan sosial mempercepat pemulihan psikologis dan ekonomi.", "Menunjukkan peran sentral komunitas perempuan."] },
-      { name: "Ahmed & Rahman (2021)", journal: "International Journal of Disaster Risk Reduction", cells: ["Akses sumber daya pada tahap respon bencana", "Mixed methods", "Keterbatasan akses informasi menghambat keterlibatan perempuan dalam pengambilan keputusan.", "Mengidentifikasi kesenjangan akses berbasis gender."] },
-      { name: "Putri (2023)", journal: "Jurnal Ilmu Sosial dan Humaniora", cells: ["Strategi coping perempuan korban bencana", "Kualitatif (studi kasus)", "Strategi coping berbasis agama dan dukungan keluarga meningkatkan resiliensi.", "Memberikan perspektif lokal dalam konteks Indonesia."] },
-      { name: "Nguyen et al. (2020)", journal: "Global Environmental Change", cells: ["Peran perempuan dalam manajemen risiko bencana", "Kuantitatif (survei)", "Perempuan lebih aktif dalam kesiapsiagaan komunitas dibanding laki-laki.", "Data komparatif gender lintas negara Asia Tenggara."] },
-    ];
-    const authors = [
-      "Pratama & Lestari",
-      "Aisyah et al.",
-      "Hidayat et al.",
-      "Lim & Susanto",
-      "Rahmawati & Dewi",
-      "Kurniawan et al.",
-      "Wongkitrungrueng & Assarut",
-      "Saputra et al.",
-      "Marinez & Wibowo",
-      "Kusuma et al.",
-      "Tanaka et al.",
-      "Abdullah & Hafizah",
-    ];
-    const journals = [
-      "Jurnal Ketahanan Nasional",
-      "International Journal of Disaster Risk Reduction",
-      "Jurnal Ilmu Sosial dan Humaniora",
-      "Global Environmental Change",
-      "Asia Pacific Journal of Public Health",
-      "Disaster Prevention and Management",
-      "Jurnal Perempuan dan Bencana",
-      "Journal of Humanitarian Affairs",
-    ];
-    const fokus = [
-      "Dukungan sosial perempuan pasca bencana",
-      "Akses sumber daya pada tahap respon bencana",
-      "Strategi coping perempuan korban bencana",
-      "Peran perempuan dalam manajemen risiko bencana",
-      "Kesiapsiagaan berbasis komunitas dan gender",
-      "Pemulihan ekonomi keluarga terdampak",
-      "Keterlibatan perempuan dalam pengambilan keputusan",
-      "Adaptasi komunitas pesisir terhadap perubahan iklim",
-    ];
-    const metode = [
-      "Kualitatif (wawancara mendalam)",
-      "Mixed methods",
-      "Kualitatif (studi kasus)",
-      "Kuantitatif (survei)",
-      "Etnografi (partisipatif)",
-      "Tinjauan sistematis",
-      "Kuantitatif (panel longitudinal)",
-      "Studi kohort prospektif",
-    ];
-    const temuan = [
-      "Jaringan sosial mempercepat pemulihan psikologis dan ekonomi.",
-      "Keterbatasan akses informasi menghambat keterlibatan perempuan dalam pengambilan keputusan.",
-      "Strategi coping berbasis agama dan dukungan keluarga meningkatkan resiliensi.",
-      "Perempuan lebih aktif dalam kesiapsiagaan komunitas dibanding laki-laki.",
-      "Program pemberdayaan mikro meningkatkan ketahanan rumah tangga pasca bencana.",
-      "Partisipasi perempuan dalam perencanaan penanggulangan menaikkan kualitas kebijakan lokal.",
-      "Literasi digital memperluas akses bantuan darurat bagi kelompok rentan.",
-      "Koordinasi lintas sektor memperpendek waktu pemulihan wilayah terdampak.",
-    ];
-    const kontribusi = [
-      "Menunjukkan peran sentral komunitas perempuan.",
-      "Mengidentifikasi kesenjangan akses berbasis gender.",
-      "Memberikan perspektif lokal dalam konteks Indonesia.",
-      "Data komparatif gender lintas negara Asia Tenggara.",
-      "Model pemantauan kebutuhan dasar berbasis kearifan lokal.",
-      "Rekomendasi indikator inklusi gender dalam kesiapsiagaan.",
-      "Bukti empiris dampak platform digital pada daya tahan keluarga.",
-      "Kerangka integrasi mitigasi dan adaptasi berbasis komunitas.",
-    ];
-    const generated = priorityRows.slice(4).map((row, index) => {
-      const i = index + 4;
-      return {
-        name: `${authors[i % authors.length]} (${row.year})`,
-        journal: journals[i % journals.length],
-        cells: [fokus[i % fokus.length], metode[i % metode.length], temuan[i % temuan.length], kontribusi[i % kontribusi.length]],
-      };
-    });
-    return [...curated, ...generated];
-  })();
 
   const matrixHeaders = ["Penelitian", "Fokus", "Metode", "Temuan Utama", "Kontribusi Khas"];
 
@@ -3024,6 +3024,411 @@ function DesktopLiteratureReview({ query, onBack }: { query: string; onBack: () 
       </section>
 
       <p className="text-center text-xs text-slate-400">Kata kunci pencarian: {query.trim() || "resiliensi perempuan pasca bencana"}</p>
+    </div>
+  );
+}
+
+
+function MobileLiteratureReview() {
+  const [chip, setChip] = useState("semua");
+  const [prioritySearch, setPrioritySearch] = useState("");
+  const [priorityLimit, setPriorityLimit] = useState(6);
+  const [matrixSearch, setMatrixSearch] = useState("");
+  const [matrixLimit, setMatrixLimit] = useState(4);
+  const [activeSection, setActiveSection] = useState(1);
+
+  const stats = [
+    { label: "Total ditemukan", value: "126", accent: "text-slate-900", sub: "text-slate-500", highlight: false },
+    { label: "Duplikasi dihapus", value: "34", accent: "text-rose-600", sub: "text-rose-500", highlight: false },
+    { label: "Siap sintesis", value: "92", accent: "text-slate-900", sub: "text-slate-500", highlight: true },
+    { label: "Prioritas tinggi", value: "24", accent: "text-slate-900", sub: "text-slate-500", highlight: false },
+  ];
+
+  const filterChips = [
+    { key: "semua", label: "Semua (92)" },
+    { key: "relevan", label: "Sangat relevan (24)" },
+    { key: "tinjau", label: "Perlu ditinjau (38)" },
+    { key: "teori", label: "Ulasan teori (12)" },
+    { key: "empiris", label: "Empiris (46)" },
+  ];
+
+  const tagPills: Record<string, { box: string; dot: string }> = {
+    "Sangat relevan": { box: "bg-emerald-50 text-emerald-700 outline-emerald-200/80", dot: "bg-emerald-500" },
+    "Perlu ditinjau": { box: "bg-amber-50 text-amber-700 outline-amber-200/80", dot: "bg-amber-500" },
+    "Cukup relevan": { box: "bg-sky-50 text-sky-700 outline-sky-200/80", dot: "bg-sky-500" },
+  };
+  const sourcePills: Record<string, string> = {
+    "Google Scholar": "bg-blue-50 text-sky-700 outline-blue-100",
+    Crossref: "bg-blue-50 text-sky-700 outline-blue-100",
+    OpenAlex: "bg-purple-50 text-purple-700 outline-purple-200",
+    DOAJ: "bg-emerald-50 text-emerald-700 outline-emerald-200",
+  };
+
+  const structureSections = [
+    { n: 1, label: "Ringkasan Eksekutif" },
+    { n: 2, label: "Pendahuluan" },
+    { n: 3, label: "Metodologi" },
+    { n: 4, label: "Matriks Literatur" },
+  ];
+  const sectionDescs: Record<number, string> = {
+    2: "Latar belakang, dinamika gender, dan konteks kebencanaan",
+    3: "Strategi pencarian, kriteria inklusi, dan seleksi 126 artikel",
+    4: "Fokus, metode, temuan utama, dan kontribusi khas tiap studi",
+  };
+  const sectionPreview: Record<number, string[]> = {
+    1: [
+      "Kajian ini bertujuan untuk mengidentifikasi dan mensintesis faktor-faktor yang membentuk resiliensi perempuan dalam menghadapi bencana dan krisis berdasarkan literatur ilmiah yang relevan. Sebanyak 15 artikel yang memenuhi kriteria inklusi dianalisis menggunakan pendekatan scoping review.",
+      "Dukungan sosial, seperti peran keluarga, komunitas, dan jaringan sosial, terbukti memberikan perlindungan emosional, informasi, dan bantuan praktis. Akses terhadap sumber daya, termasuk ekonomi, pendidikan, layanan kesehatan, dan informasi, menjadi faktor penting yang memungkinkan perempuan memenuhi kebutuhan dasar dan mengambil keputusan strategis.",
+      "Temuan ini menegaskan bahwa resiliensi perempuan merupakan hasil interaksi kompleks antara faktor sosial, struktural, dan individual sehingga intervensi pemulihan harus dirancang komprehensif.",
+    ],
+    2: [
+      "Bagian ini memaparkan latar belakang penelitian tentang resiliensi perempuan dalam menghadapi bencana, termasuk dinamika kerentanan gender yang memperberat dampak bencana bagi kelompok rentan.",
+      "Konteks kebencanaan di Indonesia—mulai dari gempa, banjir, hingga pandemi—menjadi fokus utama karena tingginya frekuensi dan dampaknya terhadap kelompok rentan.",
+    ],
+    3: [
+      "Penelusuran dilakukan di lima basis data dengan kata kunci terkait resiliensi perempuan, bencana, dan pemulihan pasca-bencana, menghasilkan 126 artikel yang direduksi menjadi 92 studi setelah penyaringan.",
+      "Kriteria inklusi mencakup publikasi 2020–2026, bahasa Indonesia dan Inggris, serta metode penelitian empiris maupun tinjauan sistematis.",
+    ],
+    4: [
+      "Matriks merangkum fokus, metode, temuan utama, dan kontribusi khas dari studi unggulan agar perbandingan lintas penelitian dapat dilakukan secara cepat.",
+      "Setiap baris memuat sitasi lengkap dan basis sumber agar klaim dalam sintesis ini dapat diverifikasi kembali.",
+    ],
+  };
+
+  const visiblePriority = priorityRows.filter(row => {
+    if (chip === "relevan" && row.tag !== "Sangat relevan") return false;
+    if (chip === "tinjau" && row.tag !== "Perlu ditinjau") return false;
+    if (chip === "teori" && row.kind !== "Ulasan teori") return false;
+    if (chip === "empiris" && row.kind !== "Empiris") return false;
+    const q = prioritySearch.trim().toLowerCase();
+    if (q && !row.title.toLowerCase().includes(q) && !row.source.toLowerCase().includes(q)) return false;
+    return true;
+  });
+
+  const visibleMatrix = matrixRows.filter(row => {
+    const q = matrixSearch.trim().toLowerCase();
+    return !q || row.name.toLowerCase().includes(q) || row.journal.toLowerCase().includes(q) || row.cells.some(cell => cell.toLowerCase().includes(q));
+  });
+
+  const activeLabel = structureSections.find(item => item.n === activeSection)?.label ?? "Ringkasan Eksekutif";
+  const nextSection = structureSections.find(item => item.n === activeSection + 1);
+
+  return (
+    <div className="flex flex-col gap-5 pb-8">
+      <div>
+        <h2 className="text-[22px] font-bold leading-7 text-slate-900">Tinjau hasil penelusuran literatur</h2>
+        <p className="mt-1.5 text-sm leading-6 text-slate-500">
+          Alerin telah menggabungkan, merapikan, dan memeringkat artikel berdasarkan relevansi topik riset Anda.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        {stats.map(stat => (
+          <div
+            key={stat.label}
+            className={`rounded-[18.92px] p-4 shadow-sm ${stat.highlight ? "bg-white/70 outline outline-1 outline-white" : "bg-white outline outline-1 outline-slate-200/90"}`}
+          >
+            <p className={`text-xs text-slate-500 ${stat.highlight ? "font-semibold" : "font-medium"}`}>{stat.label}</p>
+            <p className="mt-2 flex items-baseline gap-1.5">
+              <span className={`text-2xl font-bold leading-8 ${stat.accent}`}>{stat.value}</span>
+              <span className={`text-sm ${stat.sub} ${stat.highlight ? "font-semibold" : "font-medium"}`}>artikel</span>
+            </p>
+          </div>
+        ))}
+      </div>
+
+      <section className="rounded-[18.92px] bg-white p-4 shadow-sm outline outline-1 outline-slate-200/80">
+        <div className="flex items-center justify-between gap-3">
+          <h3 className="text-[11px] font-bold uppercase leading-4 tracking-wide text-slate-700">Artikel prioritas untuk ditinjau</h3>
+          <span className="shrink-0 text-[11px] font-medium text-slate-400">Total {visiblePriority.length} artikel</span>
+        </div>
+        <label className="mt-3 flex items-center gap-2 rounded-xl bg-slate-50 px-3 py-2.5 outline outline-1 outline-slate-200">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#94a3b8" strokeWidth="1.6" strokeLinecap="round" aria-hidden="true">
+            <circle cx="6" cy="6" r="4.5" />
+            <path d="M9.5 9.5L13 13" />
+          </svg>
+          <input
+            value={prioritySearch}
+            onChange={event => {
+              setPrioritySearch(event.target.value);
+              setPriorityLimit(6);
+            }}
+            placeholder="Cari judul, penulis, kata kunci..."
+            className="min-w-0 flex-1 bg-transparent text-[13px] outline-none placeholder:text-slate-400"
+          />
+        </label>
+        <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+          {filterChips.map(item => (
+            <button
+              key={item.key}
+              type="button"
+              onClick={() => {
+                setChip(item.key);
+                setPriorityLimit(6);
+              }}
+              className={`shrink-0 whitespace-nowrap rounded-full px-3.5 py-1.5 text-xs font-medium transition-colors ${
+                chip === item.key ? "bg-sky-600 text-white" : "bg-slate-100 text-slate-600"
+              }`}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-3 space-y-3">
+          {visiblePriority.slice(0, priorityLimit).map((row, index) => {
+            const tag = tagPills[row.tag] ?? tagPills["Cukup relevan"];
+            return (
+              <article key={`${row.title}-${index}`} className="rounded-[18.92px] bg-slate-50/70 p-4 outline outline-1 outline-slate-200/90">
+                <div className="flex items-start justify-between gap-3">
+                  <h4 className="min-w-0 flex-1 text-sm font-semibold leading-5 text-slate-900">{row.title}</h4>
+                  <button
+                    type="button"
+                    aria-label="Opsi jurnal"
+                    onClick={() => window.alert("Opsi jurnal: Simpan ke Koleksi, Buka PDF, dan Buat sitasi.")}
+                    className="-mr-1 shrink-0 rounded-md px-1.5 py-0.5 text-base leading-5 text-slate-400"
+                  >
+                    ⋮
+                  </button>
+                </div>
+                <div className="mt-2.5 flex flex-wrap items-center gap-2">
+                  <span className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold outline outline-1 ${tag.box}`}>
+                    <span className={`h-2 w-2 rounded-full ${tag.dot}`} />
+                    {row.tag}
+                  </span>
+                  <span className="rounded-md bg-white px-2 py-1 text-[11px] font-medium text-slate-600 outline outline-1 outline-slate-200">{row.year}</span>
+                  <span className={`rounded-md px-2 py-1 text-[11px] font-medium outline outline-1 ${sourcePills[row.source]}`}>{row.source}</span>
+                </div>
+              </article>
+            );
+          })}
+          {visiblePriority.length === 0 && (
+            <p className="py-6 text-center text-xs text-slate-400">Tidak ada jurnal yang cocok dengan pencarianmu.</p>
+          )}
+        </div>
+        {visiblePriority.length > priorityLimit && (
+          <button
+            type="button"
+            onClick={() => setPriorityLimit(limit => limit + 6)}
+            className="mt-3 w-full rounded-xl bg-slate-100 py-2.5 text-xs font-semibold text-slate-600"
+          >
+            Muat lebih banyak ({Math.min(6, visiblePriority.length - priorityLimit)} lagi)
+          </button>
+        )}
+      </section>
+
+      <div className="border-t border-slate-200 pt-6">
+        <h2 className="text-xl font-bold leading-7 text-slate-900">Hasil Analisis Literature Review</h2>
+        <p className="mt-1 text-sm font-medium leading-5 text-sky-700">Resiliensi perempuan dalam menghadapi bencana dan krisis</p>
+      </div>
+
+      <section className="rounded-3xl bg-white p-4 shadow-sm outline outline-1 outline-slate-200/80">
+        <div>
+          <h3 className="text-base font-bold text-slate-800">Matriks Literatur</h3>
+          <p className="mt-0.5 text-sm text-slate-500">Komparasi fokus, metode &amp; kontribusi khas</p>
+        </div>
+        <label className="mt-4 flex items-center gap-2 rounded-xl bg-slate-50 px-3 py-2.5 outline outline-1 outline-slate-200">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#94a3b8" strokeWidth="1.6" strokeLinecap="round" aria-hidden="true">
+            <circle cx="6" cy="6" r="4.5" />
+            <path d="M9.5 9.5L13 13" />
+          </svg>
+          <input
+            value={matrixSearch}
+            onChange={event => {
+              setMatrixSearch(event.target.value);
+              setMatrixLimit(4);
+            }}
+            placeholder="Cari dalam matriks..."
+            className="min-w-0 flex-1 bg-transparent text-[13px] outline-none placeholder:text-slate-400"
+          />
+        </label>
+        <div className="mt-4 space-y-3">
+          {visibleMatrix.slice(0, matrixLimit).map(row => (
+            <article key={row.name} className="rounded-[18.92px] bg-slate-50/60 p-4 outline outline-1 outline-slate-200">
+              <div className="flex items-baseline justify-between gap-3 border-b border-slate-200/60 pb-2.5">
+                <span className="text-sm font-bold text-sky-700">{row.name}</span>
+                <span className="min-w-0 shrink text-right text-xs font-medium leading-4 text-slate-500">{row.journal}</span>
+              </div>
+              <div className="mt-3 grid grid-cols-2 gap-3">
+                <div>
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Fokus</p>
+                  <p className="mt-1 text-sm leading-5 text-slate-700">{row.cells[0]}</p>
+                </div>
+                <div>
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Metode</p>
+                  <p className="mt-1 text-sm leading-5 text-slate-700">{row.cells[1]}</p>
+                </div>
+              </div>
+              <div className="mt-3 space-y-1.5 border-t border-slate-200/50 pt-1.5">
+                <div>
+                  <p className="text-xs font-semibold text-slate-500">Temuan Utama:</p>
+                  <p className="mt-0.5 text-sm leading-5 text-slate-700">{row.cells[2]}</p>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-sky-700">Kontribusi Khas:</p>
+                  <p className="mt-0.5 text-sm leading-5 text-slate-700">{row.cells[3]}</p>
+                </div>
+              </div>
+            </article>
+          ))}
+          {visibleMatrix.length === 0 && (
+            <p className="py-6 text-center text-xs text-slate-400">Tidak ada baris yang cocok dengan pencarianmu.</p>
+          )}
+        </div>
+        {visibleMatrix.length > matrixLimit && (
+          <button
+            type="button"
+            onClick={() => setMatrixLimit(limit => limit + 4)}
+            className="mt-3 w-full rounded-xl bg-slate-100 py-2.5 text-xs font-semibold text-slate-600"
+          >
+            Muat lebih banyak ({Math.min(4, visibleMatrix.length - matrixLimit)} lagi)
+          </button>
+        )}
+      </section>
+
+      <div className="border-t border-slate-200 pt-6">
+        <h2 className="text-xl font-bold leading-7 text-slate-900">Literature Review Siap Digunakan</h2>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {[
+            { label: "Scoping Review", box: "bg-blue-50 text-sky-700 outline-blue-200", icon: true },
+            { label: "15 artikel", box: "bg-slate-100 text-slate-700 outline-slate-200", icon: false },
+            { label: "Berbasis sumber", box: "bg-amber-50 text-amber-800 outline-amber-200", icon: false },
+          ].map(item => (
+            <span key={item.label} className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium outline outline-1 ${item.box}`}>
+              {item.icon && (
+                <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" aria-hidden="true">
+                  <path d="M3 2.5h7.5v9H3zM3 5.5h5.5M5.5 2.5v9" />
+                </svg>
+              )}
+              {item.label}
+            </span>
+          ))}
+        </div>
+        <div className="mt-4 grid grid-cols-2 gap-3">
+          <button
+            type="button"
+            onClick={() => window.alert("Dokumen berhasil diekspor ke Word.")}
+            className="flex items-center justify-center gap-2 rounded-2xl bg-sky-600 py-3 text-sm font-semibold text-white"
+          >
+            <svg width="15" height="15" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" aria-hidden="true">
+              <path d="M2.5 1.5h6l3 3v8h-9zM8.5 1.5v3h3" />
+            </svg>
+            Ekspor ke Word
+          </button>
+          <button
+            type="button"
+            onClick={() => window.alert("Dokumen berhasil diekspor ke PDF.")}
+            className="flex items-center justify-center gap-2 rounded-2xl bg-white py-3 text-sm font-semibold text-slate-700 outline outline-1 outline-slate-200"
+          >
+            <svg width="15" height="15" viewBox="0 0 14 14" fill="none" stroke="#dc2626" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" aria-hidden="true">
+              <path d="M2.5 1.5h6l3 3v8h-9zM8.5 1.5v3h3" />
+            </svg>
+            Ekspor ke PDF
+          </button>
+        </div>
+      </div>
+
+      <div className="rounded-2xl bg-white p-4 shadow-sm outline outline-1 outline-slate-200/90">
+        <div className="flex items-center justify-between gap-3">
+          <h3 className="text-sm font-bold text-slate-800">Keterlacakan Sumber</h3>
+          <span className="text-sm font-bold text-sky-600">80% Valid</span>
+        </div>
+        <div className="mt-2.5 h-2.5 overflow-hidden rounded-full bg-slate-100">
+          <div className="h-full rounded-full bg-sky-600" style={{ width: "80%" }} />
+        </div>
+        <div className="mt-2.5 flex items-center justify-between gap-2 text-xs text-slate-500">
+          <span className="flex items-center gap-1.5">
+            <span className="h-2 w-2 rounded-full bg-emerald-500" />
+            12 klaim terverifikasi
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="h-2 w-2 rounded-full bg-amber-500" />
+            3 manual review
+          </span>
+        </div>
+      </div>
+
+      <div>
+        <div className="flex items-center justify-between gap-2">
+          <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500">Struktur dokumen (12 bagian)</p>
+          <p className="shrink-0 text-xs font-medium text-sky-700">Bagian Aktif: {activeSection} dari 12</p>
+        </div>
+        <div className="mt-2.5 flex gap-2 overflow-x-auto pb-1">
+          {structureSections.map(item => (
+            <button
+              key={item.n}
+              type="button"
+              onClick={() => setActiveSection(item.n)}
+              className={`flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full px-4 py-1.5 text-xs font-medium transition-colors ${
+                activeSection === item.n ? "bg-sky-600 text-white" : "bg-white text-slate-600 outline outline-1 outline-slate-200"
+              }`}
+            >
+              <span
+                className={`flex h-5 w-5 items-center justify-center rounded-full text-[11px] font-bold ${
+                  activeSection === item.n ? "bg-white/20 text-white" : "bg-slate-100 text-slate-600"
+                }`}
+              >
+                {item.n}
+              </span>
+              {item.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="rounded-3xl bg-white p-4 shadow-sm outline outline-1 outline-slate-200/90">
+        <div className="rounded-2xl bg-blue-50/70 p-4 outline outline-1 outline-blue-100">
+          <div className="flex items-center gap-3">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-sky-600">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="white" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" aria-hidden="true">
+                <path d="M3.5 1.5h6l3 3v10h-9z" />
+                <path d="M6 8.5l1.5 1.5L10 7.5" />
+              </svg>
+            </span>
+            <span className="text-sm font-bold text-sky-900">Ringkasan Eksekutif</span>
+          </div>
+          <p className="mt-2 text-sm leading-6 text-sky-800">
+            Literature review ini menganalisis 15 artikel mengenai resiliensi perempuan dalam menghadapi bencana dan krisis. Tiga tema utama: dukungan sosial, akses sumber daya, dan faktor adaptasi internal.
+          </p>
+        </div>
+
+        <div className="mt-4 flex items-center justify-between gap-3 border-b border-slate-100 pb-2.5">
+          <p className="text-sm font-bold text-slate-900">
+            {activeSection}. {activeLabel}
+          </p>
+          <p className="shrink-0 text-xs font-medium text-slate-400">Halaman {activeSection} dari 18</p>
+        </div>
+
+        <div className="mt-3.5 space-y-3.5">
+          {sectionPreview[activeSection]?.map(paragraph => (
+            <p key={paragraph} className="text-sm leading-7 text-slate-600">
+              {paragraph}
+            </p>
+          ))}
+        </div>
+
+        {nextSection && (
+          <button
+            type="button"
+            onClick={() => {
+              setActiveSection(nextSection.n);
+              window.alert(`Membuka bagian ${nextSection.n}. ${nextSection.label}.`);
+            }}
+            className="mt-4 flex w-full items-center gap-3 rounded-2xl bg-slate-50 p-4 text-left outline outline-1 outline-slate-200/70"
+          >
+            <span className="flex h-9 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-200 text-sm font-bold text-slate-700">{nextSection.n}</span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-sm font-bold text-slate-800">
+                {nextSection.n}. {nextSection.label}
+              </span>
+              <span className="mt-0.5 block text-xs leading-4 text-slate-500">{sectionDescs[nextSection.n]}</span>
+            </span>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#94a3b8" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="shrink-0">
+              <path d="M5 3l4 4-4 4" />
+            </svg>
+          </button>
+        )}
+      </div>
     </div>
   );
 }
@@ -3682,12 +4087,14 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                 className="w-[290px] max-w-[82vw] animate-[bounce_1.4s_ease-in-out_infinite]"
               />
               <h1 className="mt-5 text-center font-['Plus_Jakarta_Sans:ExtraBold'] text-[21px] font-extrabold tracking-[-0.5px] text-[#313131]">
-                {resultMode === "analysis" ? "Menganalisis Naskahmu" : "Menulusuri Jurnal Untukmu"}
+                {searchType === "review" ? "Menyusun Tinjauan Literatur" : resultMode === "analysis" ? "Menganalisis Naskahmu" : "Menulusuri Jurnal Untukmu"}
               </h1>
               <p className="mt-2 max-w-[290px] animate-pulse text-center text-xs leading-5 text-[#71717a]">
-                {resultMode === "analysis"
-                  ? "Alerin sedang membaca dokumenmu dan menyiapkan temuan serta rekomendasi sitasi."
-                  : "Alerin sedang mencari jurnal berdasarkan informasi yang kamu berikan."}
+                {searchType === "review"
+                  ? "Alerin sedang menggabungkan, memeringkat, dan merapikan artikel untuk tinjauan literaturmu."
+                  : resultMode === "analysis"
+                    ? "Alerin sedang membaca dokumenmu dan menyiapkan temuan serta rekomendasi sitasi."
+                    : "Alerin sedang mencari jurnal berdasarkan informasi yang kamu berikan."}
               </p>
             </div>
           )}
@@ -3710,6 +4117,10 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                   <h1 className="font-['Plus_Jakarta_Sans:Bold'] text-base font-bold tracking-[-0.4px]">Rekomendasi yang paling relevan</h1>
                 </div>
 
+                {searchType === "review" ? (
+                  <MobileLiteratureReview />
+                ) : (
+                  <>
                 {resultMode === "analysis" && (
                   <>
                     <section className="mt-4 rounded-2xl bg-white p-4 shadow-sm">
@@ -3921,6 +4332,8 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                     </article>
                   ))}
                 </div>
+                  </>
+                )}
               </div>
             </div>
           )}
@@ -3933,12 +4346,14 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                 className="w-[290px] animate-[bounce_1.4s_ease-in-out_infinite]"
               />
               <h1 className="mt-5 text-center text-2xl font-extrabold tracking-[-0.5px] text-slate-800">
-                {resultMode === "analysis" ? "Menganalisis Naskahmu" : "Menelusuri Jurnal Untukmu"}
+                {searchType === "review" ? "Menyusun Tinjauan Literatur" : resultMode === "analysis" ? "Menganalisis Naskahmu" : "Menelusuri Jurnal Untukmu"}
               </h1>
               <p className="mt-2 max-w-sm animate-pulse text-center text-sm leading-6 text-slate-500">
-                {resultMode === "analysis"
-                  ? "Alerin sedang membaca dokumenmu dan menyiapkan temuan serta rekomendasi sitasi."
-                  : "Alerin sedang mencari jurnal berdasarkan informasi yang kamu berikan."}
+                {searchType === "review"
+                  ? "Alerin sedang menggabungkan, memeringkat, dan merapikan artikel untuk tinjauan literaturmu."
+                  : resultMode === "analysis"
+                    ? "Alerin sedang membaca dokumenmu dan menyiapkan temuan serta rekomendasi sitasi."
+                    : "Alerin sedang mencari jurnal berdasarkan informasi yang kamu berikan."}
               </p>
             </div>
           )}
