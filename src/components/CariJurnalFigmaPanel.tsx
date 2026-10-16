@@ -952,11 +952,13 @@ function DesktopJournalResultCard({
   showHeader = false,
   onAnalisis,
   onSitasi,
+  onAbstrak,
 }: {
   relevancy: string;
   showHeader?: boolean;
   onAnalisis?: () => void;
   onSitasi?: () => void;
+  onAbstrak?: () => void;
 }) {
   const fitBars: [string, number][] = [
     ["Kesesuaian variabel", 98],
@@ -1066,7 +1068,7 @@ function DesktopJournalResultCard({
             <button
               key={label}
               type="button"
-              onClick={label === "Buat sitasi" ? onSitasi : undefined}
+              onClick={label === "Buat sitasi" ? onSitasi : label === "Abstrak" ? onAbstrak : undefined}
               className="flex items-center gap-1 rounded-lg bg-white px-3 py-1.5 text-xs font-semibold leading-4 text-slate-700 outline outline-1 outline-offset-[-1px] outline-slate-200"
             >
               {label === "DOI" && (
@@ -1500,10 +1502,109 @@ function BuatSitasiModal({ open, onClose }: { open: boolean; onClose: () => void
   );
 }
 
+function AbstrakJurnalModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [language, setLanguage] = useState<"id" | "original">("id");
+  if (!open) return null;
+
+  const abstracts: Record<"id" | "original", { label: string; text: string }> = {
+    id: {
+      label: "Bahasa Indonesia",
+      text: "Penelitian ini mengkaji bagaimana interaksi parasosial antara pembawa acara dan penonton memengaruhi niat pembelian pada perdagangan melalui siaran langsung. Hasil menunjukkan bahwa kepercayaan kepada pembawa acara menjadi mekanisme penting, sementara pesan kelangkaan\u2014seperti keterbatasan stok dan waktu\u2014memperkuat urgensi untuk membeli. Temuan menegaskan bahwa kualitas hubungan sosial yang dirasakan konsumen dan desain pesan promosi perlu dipertimbangkan secara bersamaan.",
+    },
+    original: {
+      label: "Bahasa asli jurnal",
+      text: "This study examines how parasocial interaction between hosts and viewers influences purchase intention in live streaming commerce. The results show that trust in the host serves as a key mechanism, while scarcity messages, such as limited stock and time constraints, strengthen purchase urgency. The findings emphasize that consumers' perceived social relationship quality and promotional message design should be considered together.",
+    },
+  };
+
+  const active = abstracts[language];
+  const abstractTitle = "Live Streaming Commerce and Mimic Purchase Intention";
+
+  const copyAbstract = () => {
+    const text = `${abstractTitle}\n\n${active.text}`;
+    try {
+      void navigator.clipboard.writeText(text);
+    } catch {
+      window.alert("Abstrak berhasil disalin.");
+      return;
+    }
+    window.alert("Abstrak berhasil disalin.");
+  };
+
+  return (
+    <div className="fixed inset-0 z-[340] flex items-center justify-center bg-black/25 p-4 backdrop-blur-[2.55px]" onClick={onClose} role="presentation">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Abstrak jurnal"
+        onClick={event => event.stopPropagation()}
+        className="flex max-h-[calc(100vh-32px)] w-[749px] max-w-full flex-col overflow-hidden rounded-3xl bg-white shadow-[0px_26.75px_53.5px_-12.84px_rgba(0,0,0,0.25)] outline outline-1 outline-offset-[-1px] outline-slate-100"
+      >
+        <div className="flex flex-col gap-3 px-9 pb-9 pt-7">
+          <div className="flex items-start justify-between gap-4">
+            <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-2xl font-bold leading-9 text-slate-900">Abstrak jurnal</h2>
+            <button
+              type="button"
+              aria-label="Tutup abstrak"
+              onClick={onClose}
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-white p-2.5 outline outline-1 outline-offset-[-1px] outline-slate-200/80 transition-colors hover:bg-slate-50"
+            >
+              <svg width="8" height="8" viewBox="0 0 8 8" fill="none" stroke="#475569" strokeWidth="1.57" strokeLinecap="round" aria-hidden="true">
+                <path d="M1 1l6 6M7 1l-6 6" />
+              </svg>
+            </button>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2 pt-1">
+            {(Object.keys(abstracts) as Array<keyof typeof abstracts>).map(key => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setLanguage(key)}
+                aria-pressed={language === key}
+                className={`rounded-full px-3.5 py-1 font-['Plus_Jakarta_Sans:Medium'] text-xs font-medium leading-4 transition-colors ${
+                  language === key ? "bg-sky-100/90 text-sky-800" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                }`}
+              >
+                {abstracts[key].label}
+              </button>
+            ))}
+          </div>
+
+          <div className="overflow-hidden rounded-2xl bg-sky-50 px-5 pb-5 pt-6 outline outline-1 outline-offset-[-1px] outline-sky-100">
+            <div className="flex flex-col gap-2.5 border-l-4 border-sky-600 pl-3.5">
+              <p className="font-['Plus_Jakarta_Sans:Bold'] text-lg font-bold leading-6 text-slate-900">{abstractTitle}</p>
+              <p className="font-['Plus_Jakarta_Sans:Regular'] text-sm font-normal leading-6 text-slate-700">{active.text}</p>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-end gap-3 pt-5">
+            <button
+              type="button"
+              onClick={copyAbstract}
+              className="rounded-xl bg-white px-5 py-2.5 text-sm font-semibold leading-5 text-slate-800 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] outline outline-1 outline-offset-[-1px] outline-slate-300 transition-colors hover:bg-slate-50"
+            >
+              Salin abstrak
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              className="rounded-xl bg-sky-600 px-6 py-2.5 text-sm font-semibold leading-5 text-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] transition-colors hover:bg-sky-700"
+            >
+              Selesai
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function DesktopSearchResults({ query, onBack }: { query: string; onBack: () => void }) {
   const [ringkasanOpen, setRingkasanOpen] = useState(false);
   const [tabelOpen, setTabelOpen] = useState(false);
   const [sitasiOpen, setSitasiOpen] = useState(false);
+  const [abstrakOpen, setAbstrakOpen] = useState(false);
 
   return (
     <div className="mx-auto hidden max-w-[1160px] md:block">
@@ -1523,9 +1624,15 @@ function DesktopSearchResults({ query, onBack }: { query: string; onBack: () => 
 
       <div className="mt-6 flex items-start gap-6">
         <div className="flex min-w-0 flex-1 flex-col gap-6">
-          <DesktopJournalResultCard relevancy="97%" showHeader onAnalisis={() => setRingkasanOpen(true)} onSitasi={() => setSitasiOpen(true)} />
-          <DesktopJournalResultCard relevancy="92%" onAnalisis={() => setRingkasanOpen(true)} onSitasi={() => setSitasiOpen(true)} />
-          <DesktopJournalResultCard relevancy="89%" onAnalisis={() => setRingkasanOpen(true)} onSitasi={() => setSitasiOpen(true)} />
+          <DesktopJournalResultCard
+            relevancy="97%"
+            showHeader
+            onAnalisis={() => setRingkasanOpen(true)}
+            onSitasi={() => setSitasiOpen(true)}
+            onAbstrak={() => setAbstrakOpen(true)}
+          />
+          <DesktopJournalResultCard relevancy="92%" onAnalisis={() => setRingkasanOpen(true)} onSitasi={() => setSitasiOpen(true)} onAbstrak={() => setAbstrakOpen(true)} />
+          <DesktopJournalResultCard relevancy="89%" onAnalisis={() => setRingkasanOpen(true)} onSitasi={() => setSitasiOpen(true)} onAbstrak={() => setAbstrakOpen(true)} />
         </div>
 
         <aside className="w-64 shrink-0 rounded-2xl bg-white p-6">
@@ -1565,6 +1672,7 @@ function DesktopSearchResults({ query, onBack }: { query: string; onBack: () => 
       <RingkasanJurnalModal open={ringkasanOpen} onClose={() => setRingkasanOpen(false)} />
       <TabelPenelitianModal open={tabelOpen} onClose={() => setTabelOpen(false)} />
       <BuatSitasiModal open={sitasiOpen} onClose={() => setSitasiOpen(false)} />
+      <AbstrakJurnalModal open={abstrakOpen} onClose={() => setAbstrakOpen(false)} />
     </div>
   );
 }
