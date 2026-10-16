@@ -947,7 +947,7 @@ function JournalCard({ index }: { index: number }) {
   );
 }
 
-function DesktopJournalResultCard({ relevancy, showHeader = false }: { relevancy: string; showHeader?: boolean }) {
+function DesktopJournalResultCard({ relevancy, showHeader = false, onAnalisis }: { relevancy: string; showHeader?: boolean; onAnalisis?: () => void }) {
   const fitBars: [string, number][] = [
     ["Kesesuaian variabel", 98],
     ["Kesesuaian topik", 96],
@@ -1049,7 +1049,7 @@ function DesktopJournalResultCard({ relevancy, showHeader = false }: { relevancy
         </div>
 
         <div className="flex flex-wrap items-center gap-2 border-t border-slate-100 pt-4">
-          <button type="button" className="rounded-lg bg-sky-600 px-3.5 py-1.5 text-xs font-semibold leading-4 text-white">
+          <button type="button" onClick={onAnalisis} className="rounded-lg bg-sky-600 px-3.5 py-1.5 text-xs font-semibold leading-4 text-white">
             Analisis lengkap
           </button>
           {actionButtons.map(label => (
@@ -1081,7 +1081,129 @@ function DesktopJournalResultCard({ relevancy, showHeader = false }: { relevancy
   );
 }
 
+function RingkasanJurnalModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  if (!open) return null;
+
+  const mainSummary =
+    "Penelitian ini menunjukkan bahwa interaksi parasosial antara host dan penonton dapat membangun kepercayaan. Ketika interaksi tersebut disertai pesan kelangkaan berupa batas waktu atau stok, niat beli konsumen pada live streaming commerce meningkat.";
+
+  const points = [
+    {
+      title: "Tujuan penelitian",
+      desc: "Menguji pengaruh interaksi parasosial dan dorongan kelangkaan terhadap niat pembelian konsumen dalam konteks live streaming commerce.",
+    },
+    {
+      title: "Metode penelitian",
+      desc: "Pendekatan kuantitatif menggunakan survei cross-sectional. Hubungan antarvariabel dianalisis menggunakan metode SEM-PLS.",
+    },
+    {
+      title: "Temuan penelitian",
+      desc: "Interaksi parasosial meningkatkan kepercayaan kepada host, sedangkan kelangkaan memperkuat urgensi yang mendorong keputusan pembelian.",
+    },
+    {
+      title: "Relevansi penelitian",
+      desc: "Dapat digunakan untuk landasan teori, penyusunan hipotesis, pemilihan variabel, serta pembanding penelitian perilaku konsumen digital.",
+    },
+    {
+      title: "Keterbatasan penelitian",
+      desc: "Data dikumpulkan pada satu periode sehingga belum menjelaskan perubahan perilaku konsumen dalam jangka panjang.",
+    },
+    {
+      title: "Saran penggunaan",
+      desc: "Baca bagian metode dan hasil asli sebelum mengutip. Sesuaikan penerapan temuan dengan konteks objek dan wilayah penelitianmu.",
+    },
+  ];
+
+  const copySummary = () => {
+    const text = [`Ringkasan utama\n${mainSummary}`, ...points.map((point, index) => `${index + 1}. ${point.title}\n${point.desc}`)].join("\n\n");
+    try {
+      void navigator.clipboard.writeText(text);
+    } catch {
+      window.alert("Ringkasan berhasil disalin.");
+      return;
+    }
+    window.alert("Ringkasan berhasil disalin.");
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-[340] flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-[2px]"
+      onClick={onClose}
+      role="presentation"
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Ringkasan Jurnal"
+        onClick={event => event.stopPropagation()}
+        className="flex max-h-[calc(100vh-32px)] w-[820px] max-w-full flex-col overflow-hidden rounded-3xl bg-white shadow-[0px_25px_60px_-15px_rgba(0,0,0,0.30)] outline outline-1 outline-offset-[-1px] outline-slate-100"
+      >
+        <div className="flex items-center justify-between border-b border-slate-100 px-7 pb-4 pt-6">
+          <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-xl font-bold leading-8 text-slate-900">Ringkasan Jurnal</h2>
+          <button
+            type="button"
+            aria-label="Tutup ringkasan"
+            onClick={onClose}
+            className="flex h-8 w-8 items-center justify-center rounded-full outline outline-1 outline-offset-[-1px] outline-slate-200/90 transition-colors hover:bg-slate-50"
+          >
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="#64748b" strokeWidth="1.33" strokeLinecap="round" aria-hidden="true">
+              <path d="M1.5 1.5l7 7M8.5 1.5l-7 7" />
+            </svg>
+          </button>
+        </div>
+
+        <div className="flex max-h-[70vh] flex-col gap-4 overflow-y-auto p-7">
+          <div className="flex flex-col gap-1.5 rounded-xl border-l-[3px] border-sky-600 bg-blue-50 py-5 pl-5 pr-6">
+            <p className="font-['Plus_Jakarta_Sans:ExtraBold'] text-sm font-extrabold leading-5 text-slate-900">Ringkasan utama</p>
+            <p className="font-['Plus_Jakarta_Sans:Medium'] text-sm font-medium leading-5 text-slate-700">{mainSummary}</p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-3 pt-1 min-[640px]:grid-cols-2">
+            {points.map((point, index) => (
+              <div
+                key={point.title}
+                className="flex flex-col gap-2 rounded-xl bg-white p-4 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.02)] outline outline-1 outline-offset-[-1px] outline-slate-200/80"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-sky-100">
+                    <span className="font-['Plus_Jakarta_Sans:Bold'] text-xs font-bold leading-4 text-sky-700">{index + 1}</span>
+                  </span>
+                  <p className="font-['Plus_Jakarta_Sans:Bold'] text-sm font-bold leading-5 text-slate-900">{point.title}</p>
+                </div>
+                <p className="pl-7 font-['Plus_Jakarta_Sans:Medium'] text-xs font-medium leading-5 text-slate-600">{point.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex items-center justify-end gap-3 border-t border-slate-100 bg-white px-7 py-4">
+          <button
+            type="button"
+            onClick={copySummary}
+            className="flex h-10 w-48 items-center justify-center gap-2 rounded-xl bg-white text-sm font-semibold leading-5 text-slate-800 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.03)] outline outline-1 outline-offset-[-1px] outline-slate-200 transition-colors hover:bg-slate-50"
+          >
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <rect x="4.5" y="4.8" width="8" height="8.2" rx="1.5" fill="white" stroke="#0c0a09" strokeWidth="1.3" />
+              <rect x="1.5" y="1" width="8" height="8.2" rx="1.5" fill="white" stroke="#0c0a09" strokeWidth="1.3" />
+            </svg>
+            Salin ringkasan
+          </button>
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-xl bg-sky-700 px-6 py-2.5 text-sm font-semibold leading-5 text-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] transition-colors hover:bg-sky-800"
+          >
+            Selesai
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function DesktopSearchResults({ query, onBack }: { query: string; onBack: () => void }) {
+  const [ringkasanOpen, setRingkasanOpen] = useState(false);
+
   return (
     <div className="mx-auto hidden max-w-[1160px] md:block">
       <div className="flex items-center justify-between gap-4">
@@ -1100,9 +1222,9 @@ function DesktopSearchResults({ query, onBack }: { query: string; onBack: () => 
 
       <div className="mt-6 flex items-start gap-6">
         <div className="flex min-w-0 flex-1 flex-col gap-6">
-          <DesktopJournalResultCard relevancy="97%" showHeader />
-          <DesktopJournalResultCard relevancy="92%" />
-          <DesktopJournalResultCard relevancy="89%" />
+          <DesktopJournalResultCard relevancy="97%" showHeader onAnalisis={() => setRingkasanOpen(true)} />
+          <DesktopJournalResultCard relevancy="92%" onAnalisis={() => setRingkasanOpen(true)} />
+          <DesktopJournalResultCard relevancy="89%" onAnalisis={() => setRingkasanOpen(true)} />
         </div>
 
         <aside className="w-64 shrink-0 rounded-2xl bg-white p-6">
@@ -1134,6 +1256,8 @@ function DesktopSearchResults({ query, onBack }: { query: string; onBack: () => 
           <p className="mt-3 text-center text-sm font-bold leading-4 text-slate-300">Peta Penelitian</p>
         </aside>
       </div>
+
+      <RingkasanJurnalModal open={ringkasanOpen} onClose={() => setRingkasanOpen(false)} />
     </div>
   );
 }
