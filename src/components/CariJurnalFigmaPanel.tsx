@@ -3625,6 +3625,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
   };
 
   const canSearch = query.trim().length >= 5;
+  const analysisReady = Boolean(fileName) || paragraph.trim().length >= 5;
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -4173,6 +4174,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                     </label>
                     <button
                       type="button"
+                      disabled={!analysisReady}
                       onClick={() => {
                         if (window.matchMedia("(min-width: 768px)").matches) {
                           setResultMode("analysis");
@@ -4183,7 +4185,9 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                           setMobileSearchStage("loading");
                         }
                       }}
-                      className="flex items-center justify-center gap-2 rounded-xl bg-[#00629b] px-8 py-3 font-['Plus_Jakarta_Sans:Bold'] text-[13px] font-bold text-white md:w-80 md:bg-sky-700 md:px-5 md:py-2.5 md:font-['Plus_Jakarta_Sans:Bold'] md:text-xs md:font-bold"
+                      className={`flex items-center justify-center gap-2 rounded-xl px-8 py-3 font-['Plus_Jakarta_Sans:Bold'] text-[13px] font-bold text-white md:w-80 md:px-5 md:py-2.5 md:font-['Plus_Jakarta_Sans:Bold'] md:text-xs md:font-bold ${
+                        analysisReady ? "bg-[#00629b] md:bg-sky-700" : "cursor-not-allowed bg-slate-300 md:bg-slate-300"
+                      }`}
                     >
                       <img src={`${mobileAssets}/8802c.svg`} alt="" className="max-w-none origin-center scale-[0.6667] md:hidden" />
                       <img src={`${searchAssets}/550ef.svg`} alt="" className="hidden md:block" />
