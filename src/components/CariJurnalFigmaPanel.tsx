@@ -867,7 +867,7 @@ function FilterPanel({ open, onClose, onApply, onReset }: { open: boolean; onClo
               handleReset();
               onReset();
             }}
-            className="rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-medium text-slate-700"
+            className="shrink-0 whitespace-nowrap rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-medium text-slate-700"
           >
             Atur ulang
           </button>
