@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ChangeEvent, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ChangeEvent, type ReactNode } from "react";
 
 type JournalView = "home" | "collection" | "riwayat";
 
@@ -20,6 +20,171 @@ const journals = [
       "Interaksi parasosial antara host dan penonton, ditambah dorongan kelangkaan seperti batas waktu dan stok, meningkatkan niat beli di live streaming.",
   },
 ];
+
+type CollectionFolder = { id: string; name: string };
+
+type SavedJournal = {
+  id: string;
+  title: string;
+  authors: string;
+  description: string;
+  year: string;
+  relevancy: string;
+  folderId: string;
+};
+
+const defaultFolders: CollectionFolder[] = [
+  { id: "ungrouped", name: "Belum dikelompokkan" },
+  { id: "skripsi", name: "Skripsi" },
+  { id: "variabel", name: "Variabel dependen" },
+  { id: "teori", name: "Landasan teori" },
+  { id: "penelitian", name: "Jenis penelitian" },
+  { id: "hipotesis", name: "Hipotesis Penelitian" },
+];
+
+const initialSavedJournals: SavedJournal[] = [
+  {
+    id: "saved-1",
+    title: journals[0].title,
+    authors: journals[0].authors,
+    description: journals[0].description,
+    year: "2023",
+    relevancy: "97%",
+    folderId: "ungrouped",
+  },
+  {
+    id: "saved-2",
+    title: journals[1].title,
+    authors: journals[1].authors,
+    description: journals[1].description,
+    year: "2023",
+    relevancy: "92%",
+    folderId: "skripsi",
+  },
+];
+
+const desktopResultJournals = [
+  { id: "res-1", title: journals[0].title, authors: journals[0].authors, description: journals[0].description, year: "2023", relevancy: "97%" },
+  { id: "res-2", title: journals[0].title, authors: journals[0].authors, description: journals[0].description, year: "2023", relevancy: "92%" },
+  { id: "res-3", title: journals[0].title, authors: journals[0].authors, description: journals[0].description, year: "2023", relevancy: "89%" },
+];
+
+const mobileResultJournals = [
+  {
+    id: "mres-1",
+    rank: "Paling Relevan #1",
+    score: 97,
+    citation: "2023 • 120 sitasi • Asia Pacific Journal of Marketing and Logistics • DOI terverifikasi",
+    summary:
+      "Interaksi parasosial antara host dan penonton ditambah dorongan kelangkaan seperti batas waktu dan stok meningkatkan niat beli di live streaming commerce.",
+    title: "Live Streaming Commerce and Mimic Purchase Intention: The Role of Parasocial Interaction and Scarcity Nudges",
+    authors: "Wongkitrungrueng, A. & Assarut, N.",
+    description:
+      "Interaksi parasosial antara host dan penonton ditambah dorongan kelangkaan seperti batas waktu dan stok meningkatkan niat beli di live streaming commerce.",
+    year: "2023",
+    relevancy: "97%",
+  },
+  {
+    id: "mres-2",
+    rank: "Rekomendasi #2",
+    score: 89,
+    citation: "2023 • 120 sitasi • Asia Pacific Journal of Marketing and Logistics • DOI terverifikasi",
+    summary: "Studi ini memperkuat hubungan antara interaksi parasosial, dorongan kelangkaan, dan perilaku pembelian digital.",
+    title: "Pengaruh Interaksi Parasosial dan Dorongan Kelangkaan terhadap Niat Beli di Live Streaming Commerce",
+    authors: "Pratama, R. & Lestari, S.",
+    description: "Studi ini memperkuat hubungan antara interaksi parasosial, dorongan kelangkaan, dan perilaku pembelian digital.",
+    year: "2023",
+    relevancy: "89%",
+  },
+];
+
+function Toast({ message }: { message: string | null }) {
+  if (!message) return null;
+  return (
+    <div
+      role="status"
+      className="fixed bottom-20 right-4 z-[360] flex max-w-[calc(100vw-2rem)] items-center gap-2.5 rounded-xl bg-[#1f1f1f] px-4 py-3 text-sm font-medium text-white shadow-2xl md:bottom-6 md:right-6"
+    >
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0" aria-hidden="true">
+        <circle cx="12" cy="12" r="10" />
+        <path d="M8 12.5l2.5 2.5L16 9.5" />
+      </svg>
+      <span>{message}</span>
+    </div>
+  );
+}
+
+function NewFolderModal({
+  open,
+  onClose,
+  onCreate,
+}: {
+  open: boolean;
+  onClose: () => void;
+  onCreate: (name: string) => void;
+}) {
+  const [name, setName] = useState("");
+
+  useEffect(() => {
+    if (!open) setName("");
+  }, [open]);
+
+  if (!open) return null;
+
+  const submit = () => {
+    const trimmed = name.trim();
+    if (!trimmed) return;
+    onCreate(trimmed);
+    onClose();
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-[340] flex items-center justify-center bg-black/25 px-4 backdrop-blur-[2.55px]"
+      onClick={onClose}
+      aria-hidden="true"
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Folder baru"
+        className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl"
+        onClick={event => event.stopPropagation()}
+      >
+        <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-lg font-bold text-[#0f172a]">Folder baru</h2>
+        <p className="mt-1 text-xs leading-5 text-[#64748b]">Buat folder untuk mengelompokkan jurnal tersimpanmu.</p>
+        <input
+          autoFocus
+          value={name}
+          onChange={event => setName(event.target.value)}
+          onKeyDown={event => {
+            if (event.key === "Enter") submit();
+            if (event.key === "Escape") onClose();
+          }}
+          placeholder="Nama folder baru"
+          className="mt-4 w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-3 text-sm text-[#0f172a] outline-none placeholder:text-slate-400 focus:border-sky-400 focus:bg-white"
+        />
+        <div className="mt-5 flex justify-end gap-2">
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-[#64748b] hover:bg-slate-50"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={submit}
+            disabled={!name.trim()}
+            className={`rounded-xl px-5 py-2 text-xs font-semibold text-white ${name.trim() ? "bg-[#00629b] hover:bg-[#005280]" : "cursor-not-allowed bg-slate-200 text-slate-400"}`}
+          >
+            OK
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 const temuanAnalisis = [
   {
@@ -182,12 +347,22 @@ function Sidebar({
   onBack,
   onUpgrade,
   onOpenRiwayat,
+  folders,
+  activeFolderId,
+  folderCounts,
+  onSelectFolder,
+  onCreateFolder,
 }: {
   view: JournalView;
   onView: (view: JournalView) => void;
   onBack: () => void;
   onUpgrade: () => void;
   onOpenRiwayat: (title: string) => void;
+  folders: CollectionFolder[];
+  activeFolderId: string;
+  folderCounts: Record<string, number>;
+  onSelectFolder: (id: string) => void;
+  onCreateFolder: () => void;
 }) {
   const assets = view === "collection" ? collectionAssets : searchAssets;
   const homeIcon = view === "collection" ? "62b0b.svg" : "b4a91.svg";
@@ -390,6 +565,52 @@ function Sidebar({
         ))}
           </div>
         </>
+      )}
+
+      {!collapsed && (
+        <div className="mt-6">
+          <div className="flex items-center justify-between px-4">
+            <p className="font-['Inter:Bold'] text-sm font-bold uppercase leading-5 tracking-wide text-slate-400">Folder</p>
+            <button
+              type="button"
+              aria-label="Buat folder baru"
+              title="Buat folder baru"
+              onClick={onCreateFolder}
+              className="flex h-6 w-6 items-center justify-center rounded-md border border-slate-200 text-sm font-bold leading-none text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700"
+            >
+              +
+            </button>
+          </div>
+          <div className="mt-2 max-h-56 space-y-0.5 overflow-y-auto pr-1">
+            <button
+              type="button"
+              onClick={() => onSelectFolder("all")}
+              className={`flex w-full items-center gap-1 rounded-lg py-2 pl-2.5 pr-3 text-left text-xs leading-4 ${
+                activeFolderId === "all"
+                  ? "bg-blue-50/70 font-semibold text-blue-900 outline outline-1 outline-blue-200/80"
+                  : "text-slate-600 hover:bg-slate-50"
+              }`}
+            >
+              <span className="min-w-0 flex-1 truncate">Semua jurnal tersimpan</span>
+              <span className="shrink-0 text-[11px] font-semibold text-slate-400">{folderCounts.all ?? 0}</span>
+            </button>
+            {folders.map(folder => (
+              <button
+                key={folder.id}
+                type="button"
+                onClick={() => onSelectFolder(folder.id)}
+                className={`flex w-full items-center gap-1 rounded-lg py-2 pl-2.5 pr-3 text-left text-xs leading-4 ${
+                  activeFolderId === folder.id
+                    ? "bg-blue-50/70 font-semibold text-blue-900 outline outline-1 outline-blue-200/80"
+                    : "text-slate-600 hover:bg-slate-50"
+                }`}
+              >
+                <span className="min-w-0 flex-1 truncate">{folder.name}</span>
+                <span className="shrink-0 text-[11px] font-semibold text-slate-400">{folderCounts[folder.id] ?? 0}</span>
+              </button>
+            ))}
+          </div>
+        </div>
       )}
 
       {collapsed ? (
@@ -1057,19 +1278,30 @@ function UpgradePremiumSheet({ open, onClose }: { open: boolean; onClose: () => 
   );
 }
 
-function JournalCard({ index }: { index: number }) {
+function JournalCard({
+  journal,
+  folders,
+  onMove,
+  onRemove,
+}: {
+  journal: SavedJournal;
+  folders: CollectionFolder[];
+  onMove: (folderId: string) => void;
+  onRemove: () => void;
+}) {
+  const activeFolder = folders.find(folder => folder.id === journal.folderId);
   return (
     <article className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-sm">
       <div className="flex flex-wrap gap-2">
         <span className="rounded-full bg-sky-100 px-2.5 py-1 text-[10px] font-semibold text-[#0066a1]">Scopus Q1</span>
-        <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] text-slate-600">2023</span>
+        <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] text-slate-600">{journal.year}</span>
         <span className="rounded-full bg-sky-50 px-2.5 py-1 text-[10px] text-[#0066a1]">Akses terbuka legal</span>
-        <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] text-slate-600">97% relevan</span>
+        <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] text-slate-600">{journal.relevancy} relevan</span>
       </div>
-      <h3 className="mt-4 font-['Plus_Jakarta_Sans:Bold'] text-base font-bold leading-[22px] text-[#0f172a]">{journals[index].title}</h3>
-      <p className="mt-1 font-['Inter:Regular'] text-xs text-[#94a3b8]">{journals[index].authors}</p>
-      <p className="mt-4 font-['Inter:Regular'] text-xs leading-5 text-[#64748b]">{journals[index].description}</p>
-      {index === 0 && (
+      <h3 className="mt-4 font-['Plus_Jakarta_Sans:Bold'] text-base font-bold leading-[22px] text-[#0f172a]">{journal.title}</h3>
+      <p className="mt-1 font-['Inter:Regular'] text-xs text-[#94a3b8]">{journal.authors}</p>
+      <p className="mt-4 font-['Inter:Regular'] text-xs leading-5 text-[#64748b]">{journal.description}</p>
+      {journal.id === "saved-1" && (
         <>
           <div className="mt-4 rounded-xl bg-[#eaf6ff] px-4 py-3 text-xs text-[#475569]">
             <strong className="font-['Inter:Bold'] text-[#0066a1]">Alasan direkomendasikan:</strong> Cocok untuk memperkuat landasan teori dan hubungan antarvariabel.
@@ -1089,10 +1321,25 @@ function JournalCard({ index }: { index: number }) {
         <button type="button" className="flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs">
           <img src={`${collectionAssets}/edcfd.svg`} alt="" /> Buka DOI
         </button>
-        <button type="button" className="flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-1.5 text-xs">
-          Skripsi <img src={`${collectionAssets}/b80d5.svg`} alt="" />
+        <label className="relative flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-1.5 text-xs">
+          <span className="pointer-events-none max-w-24 truncate font-medium">{activeFolder?.name ?? "Belum dikelompokkan"}</span>
+          <select
+            aria-label="Pindahkan jurnal ke folder"
+            value={journal.folderId}
+            onChange={event => onMove(event.target.value)}
+            className="absolute inset-0 h-full w-full cursor-pointer appearance-none opacity-0"
+          >
+            {folders.map(folder => (
+              <option key={folder.id} value={folder.id}>
+                {folder.name}
+              </option>
+            ))}
+          </select>
+          <img src={`${collectionAssets}/b80d5.svg`} alt="" />
+        </label>
+        <button type="button" onClick={onRemove} className="ml-auto rounded-lg bg-[#bd3434] px-4 py-2 text-xs font-semibold text-white">
+          Hapus dari koleksi
         </button>
-        {index === 0 && <button type="button" className="ml-auto rounded-lg bg-[#bd3434] px-4 py-2 text-xs font-semibold text-white">Hapus dari koleksi</button>}
       </div>
     </article>
   );
@@ -1104,12 +1351,18 @@ function DesktopJournalResultCard({
   onAnalisis,
   onSitasi,
   onAbstrak,
+  journal,
+  saved = false,
+  onToggleSave,
 }: {
   relevancy: string;
   showHeader?: boolean;
   onAnalisis?: () => void;
   onSitasi?: () => void;
   onAbstrak?: () => void;
+  journal?: (typeof desktopResultJournals)[number];
+  saved?: boolean;
+  onToggleSave?: () => void;
 }) {
   const fitBars: [string, number][] = [
     ["Kesesuaian variabel", 98],
@@ -1232,12 +1485,25 @@ function DesktopJournalResultCard({
           ))}
           <button
             type="button"
-            className="ml-auto flex items-center gap-1.5 rounded-lg bg-white px-3 py-1.5 text-xs font-semibold leading-4 text-slate-700 outline outline-1 outline-offset-[-1px] outline-slate-200"
+            onClick={journal ? onToggleSave : undefined}
+            aria-pressed={saved}
+            className={`ml-auto flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold leading-4 outline outline-1 outline-offset-[-1px] transition-colors ${
+              saved ? "bg-sky-50 text-sky-700 outline-sky-200" : "bg-white text-slate-700 outline-slate-200"
+            }`}
           >
-            <svg width="12" height="14" viewBox="0 0 12 14" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" aria-hidden="true">
+            <svg
+              width="12"
+              height="14"
+              viewBox="0 0 12 14"
+              fill={saved ? "currentColor" : "none"}
+              stroke="currentColor"
+              strokeWidth="1.2"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
               <path d="M2 1.5h8v11l-4-2.5-4 2.5v-11z" />
             </svg>
-            Simpan
+            {saved ? "Tersimpan" : "Simpan"}
           </button>
         </div>
       </div>
@@ -1751,7 +2017,17 @@ function AbstrakJurnalModal({ open, onClose }: { open: boolean; onClose: () => v
   );
 }
 
-function DesktopSearchResults({ query, onBack }: { query: string; onBack: () => void }) {
+function DesktopSearchResults({
+  query,
+  onBack,
+  savedIds,
+  onToggleSave,
+}: {
+  query: string;
+  onBack: () => void;
+  savedIds: string[];
+  onToggleSave: (journal: (typeof desktopResultJournals)[number]) => void;
+}) {
   const [ringkasanOpen, setRingkasanOpen] = useState(false);
   const [tabelOpen, setTabelOpen] = useState(false);
   const [sitasiOpen, setSitasiOpen] = useState(false);
@@ -1781,9 +2057,28 @@ function DesktopSearchResults({ query, onBack }: { query: string; onBack: () => 
             onAnalisis={() => setRingkasanOpen(true)}
             onSitasi={() => setSitasiOpen(true)}
             onAbstrak={() => setAbstrakOpen(true)}
+            journal={desktopResultJournals[0]}
+            saved={savedIds.includes(desktopResultJournals[0].id)}
+            onToggleSave={() => onToggleSave(desktopResultJournals[0])}
           />
-          <DesktopJournalResultCard relevancy="92%" onAnalisis={() => setRingkasanOpen(true)} onSitasi={() => setSitasiOpen(true)} onAbstrak={() => setAbstrakOpen(true)} />
-          <DesktopJournalResultCard relevancy="89%" onAnalisis={() => setRingkasanOpen(true)} onSitasi={() => setSitasiOpen(true)} onAbstrak={() => setAbstrakOpen(true)} />
+          <DesktopJournalResultCard
+            relevancy="92%"
+            onAnalisis={() => setRingkasanOpen(true)}
+            onSitasi={() => setSitasiOpen(true)}
+            onAbstrak={() => setAbstrakOpen(true)}
+            journal={desktopResultJournals[1]}
+            saved={savedIds.includes(desktopResultJournals[1].id)}
+            onToggleSave={() => onToggleSave(desktopResultJournals[1])}
+          />
+          <DesktopJournalResultCard
+            relevancy="89%"
+            onAnalisis={() => setRingkasanOpen(true)}
+            onSitasi={() => setSitasiOpen(true)}
+            onAbstrak={() => setAbstrakOpen(true)}
+            journal={desktopResultJournals[2]}
+            saved={savedIds.includes(desktopResultJournals[2].id)}
+            onToggleSave={() => onToggleSave(desktopResultJournals[2])}
+          />
         </div>
 
         <aside className="w-64 shrink-0 rounded-2xl bg-white p-6">
@@ -3036,6 +3331,78 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
   const [filterOpen, setFilterOpen] = useState(false);
   const [filterApplied, setFilterApplied] = useState(false);
   const [upgradeOpen, setUpgradeOpen] = useState(false);
+  const [folders, setFolders] = useState<CollectionFolder[]>(defaultFolders);
+  const [savedJournals, setSavedJournals] = useState<SavedJournal[]>(initialSavedJournals);
+  const [activeFolderId, setActiveFolderId] = useState("all");
+  const [newFolderOpen, setNewFolderOpen] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
+  const toastTimer = useRef<number | undefined>(undefined);
+
+  const showToast = (message: string) => {
+    setToast(message);
+    window.clearTimeout(toastTimer.current);
+    toastTimer.current = window.setTimeout(() => setToast(null), 3200);
+  };
+
+  useEffect(() => () => window.clearTimeout(toastTimer.current), []);
+
+  const folderCounts = useMemo(() => {
+    const counts: Record<string, number> = { all: savedJournals.length };
+    for (const folder of folders) counts[folder.id] = 0;
+    for (const journal of savedJournals) counts[journal.folderId] = (counts[journal.folderId] ?? 0) + 1;
+    return counts;
+  }, [savedJournals, folders]);
+
+  const savedIds = useMemo(() => savedJournals.map(journal => journal.id), [savedJournals]);
+
+  const collectionJournals = useMemo(
+    () => (activeFolderId === "all" ? savedJournals : savedJournals.filter(journal => journal.folderId === activeFolderId)),
+    [savedJournals, activeFolderId],
+  );
+
+  const toggleSaveJournal = (journal: Omit<SavedJournal, "folderId">) => {
+    if (savedJournals.some(item => item.id === journal.id)) {
+      setSavedJournals(list => list.filter(item => item.id !== journal.id));
+      showToast("Jurnal dihapus dari Koleksi");
+    } else {
+      setSavedJournals(list => [...list, { ...journal, folderId: "ungrouped" }]);
+      showToast("Jurnal disimpan ke Koleksi");
+    }
+  };
+
+  const moveJournal = (journalId: string, folderId: string) => {
+    const folder = folders.find(item => item.id === folderId);
+    setSavedJournals(list => list.map(item => (item.id === journalId ? { ...item, folderId } : item)));
+    showToast(`Jurnal dipindahkan ke folder ${folder?.name ?? "Belum dikelompokkan"}`);
+  };
+
+  const removeSavedJournal = (journalId: string) => {
+    setSavedJournals(list => list.filter(item => item.id !== journalId));
+    showToast("Jurnal dihapus dari Koleksi");
+  };
+
+  const createFolder = (name: string) => {
+    const id = `folder-${Date.now()}`;
+    setFolders(list => [...list, { id, name }]);
+    setActiveFolderId(id);
+    setDesktopStage("home");
+    setMobileSearchStage("home");
+    setView("collection");
+    showToast(`Folder ${name} dibuat`);
+  };
+
+  const openFolder = (id: string) => {
+    setActiveFolderId(id);
+    setDesktopStage("home");
+    setMobileSearchStage("home");
+    setView("collection");
+  };
+
+  const startSearching = () => {
+    setDesktopStage("home");
+    setMobileSearchStage("home");
+    setView("home");
+  };
 
   useEffect(() => {
     if (mobileSearchStage !== "loading") return;
@@ -3078,6 +3445,11 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
         onBack={onBack}
         onUpgrade={() => setUpgradeOpen(true)}
         onOpenRiwayat={openRiwayatPencarian}
+        folders={folders}
+        activeFolderId={activeFolderId}
+        folderCounts={folderCounts}
+        onSelectFolder={openFolder}
+        onCreateFolder={() => setNewFolderOpen(true)}
       />
 
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
@@ -3274,22 +3646,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                 </div>
 
                 <div className="mt-2 space-y-3">
-                  {[
-                    {
-                      rank: "Paling Relevan #1",
-                      score: 97,
-                      title: "Live Streaming Commerce and Mimic Purchase Intention: The Role of Parasocial Interaction and Scarcity Nudges",
-                      citation: "2023 • 120 sitasi • Asia Pacific Journal of Marketing and Logistics • DOI terverifikasi",
-                      summary: "Interaksi parasosial antara host dan penonton ditambah dorongan kelangkaan seperti batas waktu dan stok meningkatkan niat beli di live streaming commerce.",
-                    },
-                    {
-                      rank: "Rekomendasi #2",
-                      score: 89,
-                      title: "Pengaruh Interaksi Parasosial dan Dorongan Kelangkaan terhadap Niat Beli di Live Streaming Commerce",
-                      citation: "2023 • 120 sitasi • Asia Pacific Journal of Marketing and Logistics • DOI terverifikasi",
-                      summary: "Studi ini memperkuat hubungan antara interaksi parasosial, dorongan kelangkaan, dan perilaku pembelian digital.",
-                    },
-                  ].map((result, index) => (
+                  {mobileResultJournals.map((result, index) => (
                     <article key={result.rank} className="rounded-2xl bg-white p-4 shadow-sm">
                       <p className="text-[9px] font-medium text-slate-400">OpenAlex &amp; Crossref Scopus</p>
                       <div className="mt-1.5 flex items-start justify-between gap-3">
@@ -3357,7 +3714,13 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
 
                       <div className="mt-3 grid grid-cols-3 gap-2 text-[10px] font-semibold">
                         <button type="button" onClick={() => window.alert("Analisis jurnal dibuka.")} className="rounded-xl bg-[#006194] px-2 py-2 text-white">Analisis</button>
-                        <button type="button" onClick={() => window.alert("Jurnal disimpan ke koleksi.")} className="rounded-xl bg-[#f1f4fa] px-2 py-2">Simpan</button>
+                        <button
+                          type="button"
+                          onClick={() => toggleSaveJournal(result)}
+                          className={`rounded-xl px-2 py-2 ${savedIds.includes(result.id) ? "bg-sky-100 font-semibold text-[#006194]" : "bg-[#f1f4fa]"}`}
+                        >
+                          {savedIds.includes(result.id) ? "Tersimpan" : "Simpan"}
+                        </button>
                         <button type="button" onClick={() => window.alert("Sitasi berhasil dibuat.")} className="rounded-xl bg-[#f1f4fa] px-2 py-2">Sitasi</button>
                         <button type="button" onClick={() => window.alert("Abstrak jurnal dibuka.")} className="rounded-xl bg-[#f1f4fa] px-2 py-2">Abstrak</button>
                         <button type="button" onClick={() => window.open("https://doi.org/10.1016/j.jretconser.2020.102345", "_blank", "noopener,noreferrer")} className="rounded-xl bg-[#f1f4fa] px-2 py-2">DOI</button>
@@ -3390,7 +3753,12 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
             ) : searchType === "map" ? (
               <DesktopResearchMap query={query} onBack={() => setDesktopStage("home")} />
             ) : (
-              <DesktopSearchResults query={query} onBack={() => setDesktopStage("home")} />
+              <DesktopSearchResults
+                query={query}
+                onBack={() => setDesktopStage("home")}
+                savedIds={savedIds}
+                onToggleSave={toggleSaveJournal}
+              />
             ))}
 
           {desktopStage !== "home" ? null : view === "home" ? (
@@ -3696,16 +4064,13 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
             </div>
           ) : (
             <>
-            <div data-mobile-collection className="-mt-4 md:hidden">
+            <div className="-mt-4 md:hidden">
               <div className="flex items-center justify-between px-1">
                 <h1 className="font-['Plus_Jakarta_Sans:Bold'] text-lg font-bold tracking-[-0.27px] text-[#0f172a]">Folder Riset</h1>
                 <button
                   type="button"
                   aria-label="Tambah folder"
-                  onClick={() => {
-                    const name = window.prompt("Nama folder riset baru");
-                    if (name?.trim()) window.alert(`Folder “${name.trim()}” berhasil ditambahkan.`);
-                  }}
+                  onClick={() => setNewFolderOpen(true)}
                   className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#0369a1]"
                 >
                   <img src="/assets/jurnal-design/collection-mobile/ce139.svg" alt="" />
@@ -3713,48 +4078,52 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
               </div>
 
               <div className="-mx-4 mt-2 flex gap-2 overflow-x-auto px-4 pb-2 [scrollbar-width:none]">
-                {[
-                  ["all", "55585.svg", "Semua", "2"],
-                  ["skripsi", "22763.svg", "Skripsi", "2"],
-                  ["ungrouped", "d2faf.svg", "Belum dikelompokkan", "0"],
-                ].map(([filter, icon, label, count]) => (
-                  <button
-                    key={filter}
-                    type="button"
-                    data-folder-filter={filter}
-                    onClick={event => {
-                      const container = event.currentTarget.closest("[data-mobile-collection]");
-                      container?.querySelectorAll<HTMLElement>("[data-folder-filter]").forEach(button => {
-                        const active = button === event.currentTarget;
-                        button.classList.toggle("bg-[#00629b]", active);
-                        button.classList.toggle("text-white", active);
-                        button.classList.toggle("bg-white", !active);
-                        button.classList.toggle("text-[#64748b]", !active);
-                      });
-                      container?.querySelectorAll<HTMLElement>("[data-journal-folder]").forEach(card => {
-                        card.hidden = filter !== "all" && card.dataset.journalFolder !== filter;
-                      });
-                    }}
-                    className={`flex shrink-0 items-center gap-2 rounded-full px-3 py-2 text-xs shadow-sm ${
-                      filter === "skripsi" ? "bg-[#00629b] text-white" : "bg-white text-[#64748b]"
-                    }`}
-                  >
-                    <img src={`/assets/jurnal-design/collection-mobile/${icon}`} alt="" className="max-w-none origin-center scale-[0.7]" />
-                    {label}
-                    <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${filter === "skripsi" ? "bg-white text-[#0369a1]" : "bg-slate-100"}`}>{count}</span>
-                  </button>
-                ))}
+                {[{ id: "all", name: "Semua" }, ...folders].map((folder, chipIndex) => {
+                  const active = activeFolderId === folder.id;
+                  const count = folderCounts[folder.id] ?? 0;
+                  return (
+                    <button
+                      key={folder.id}
+                      type="button"
+                      onClick={() => setActiveFolderId(folder.id)}
+                      className={`flex shrink-0 items-center gap-2 rounded-full px-3 py-2 text-xs shadow-sm ${
+                        active ? "bg-[#00629b] text-white" : "bg-white text-[#64748b]"
+                      }`}
+                    >
+                      <img
+                        src={`/assets/jurnal-design/collection-mobile/${["55585.svg", "22763.svg", "d2faf.svg"][chipIndex % 3]}`}
+                        alt=""
+                        className="max-w-none origin-center scale-[0.7]"
+                      />
+                      {folder.name}
+                      <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${active ? "bg-white text-[#0369a1]" : "bg-slate-100"}`}>{count}</span>
+                    </button>
+                  );
+                })}
               </div>
 
+              {collectionJournals.length === 0 ? (
+                <div className="mt-6 flex flex-col items-center rounded-2xl bg-white px-6 py-12 text-center shadow-sm">
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" />
+                  </svg>
+                  <p className="mt-4 max-w-xs text-xs leading-5 text-[#64748b]">
+                    Belum ada jurnal di folder ini. Simpan jurnal dari Beranda atau pindahkan jurnal tersimpan ke folder ini.
+                  </p>
+                  <button type="button" onClick={startSearching} className="mt-5 rounded-xl bg-[#00629b] px-5 py-2.5 text-xs font-semibold text-white">
+                    Mulai mencari jurnal
+                  </button>
+                </div>
+              ) : (
               <div className="mt-2 space-y-3">
-                {journals.map((journal, index) => (
-                  <article key={index} data-journal-folder="skripsi" className="rounded-xl bg-white p-4 shadow-sm">
+                {collectionJournals.map((journal, index) => (
+                  <article key={journal.id} className="rounded-xl bg-white p-4 shadow-sm">
                     <div className="flex items-center gap-2 text-[11px]">
                       <span className="rounded-full bg-sky-100 px-2 py-1 font-semibold text-[#0369a1]">Scopus Q1</span>
-                      <span className="rounded-full bg-slate-100 px-2 py-1 font-semibold text-[#64748b]">2023</span>
+                      <span className="rounded-full bg-slate-100 px-2 py-1 font-semibold text-[#64748b]">{journal.year}</span>
                       <span className="ml-auto flex items-center gap-1 rounded-full bg-sky-50 px-2 py-1 font-semibold text-[#006194]">
                         <img src="/assets/jurnal-design/collection-mobile/4bb5d.svg" alt="" className="max-w-none origin-center scale-[0.7]" />
-                        97% relevan
+                        {journal.relevancy} relevan
                       </span>
                     </div>
 
@@ -3782,7 +4151,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                       <textarea
                         aria-label={`Catatan jurnal ${index + 1}`}
                         placeholder="Masukan catatanmu disini"
-                        onChange={event => window.localStorage.setItem(`alerin-journal-note-${index}`, event.target.value)}
+                        onChange={event => window.localStorage.setItem(`alerin-journal-note-${journal.id}`, event.target.value)}
                         className="mt-2 min-h-16 w-full resize-none rounded-md bg-white p-2 text-xs outline-none shadow-inner"
                       />
                     </label>
@@ -3814,17 +4183,24 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                         <span className="pointer-events-none absolute left-3 top-1/2 flex -translate-y-1/2 items-center gap-2 text-xs font-semibold">
                           <img src="/assets/jurnal-design/collection-mobile/445e6.svg" alt="" className="max-w-none origin-center scale-[0.65]" />
                         </span>
-                        <select aria-label="Pilih folder jurnal" defaultValue="skripsi" className="w-full appearance-none rounded-lg bg-slate-100 py-2.5 pl-9 pr-8 text-xs font-semibold outline-none">
-                          <option value="skripsi">Skripsi</option>
-                          <option value="theory">Landasan teori</option>
-                          <option value="hypothesis">Hipotesis</option>
+                        <select
+                          aria-label="Pilih folder jurnal"
+                          value={journal.folderId}
+                          onChange={event => moveJournal(journal.id, event.target.value)}
+                          className="w-full appearance-none rounded-lg bg-slate-100 py-2.5 pl-9 pr-8 text-xs font-semibold outline-none"
+                        >
+                          {folders.map(folder => (
+                            <option key={folder.id} value={folder.id}>
+                              {folder.name}
+                            </option>
+                          ))}
                         </select>
                         <img src="/assets/jurnal-design/collection-mobile/392b3.svg" alt="" className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2" />
                       </label>
                       <button
                         type="button"
-                        onClick={event => {
-                          if (window.confirm("Hapus jurnal ini dari koleksi?")) event.currentTarget.closest("article")?.remove();
+                        onClick={() => {
+                          if (window.confirm("Hapus jurnal ini dari koleksi?")) removeSavedJournal(journal.id);
                         }}
                         className="flex items-center gap-1.5 rounded-lg bg-[#ffdad6] px-3 text-xs font-medium text-[#93000a]"
                       >
@@ -3835,6 +4211,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                   </article>
                 ))}
               </div>
+              )}
             </div>
 
             <div className="mx-auto hidden max-w-[1160px] gap-5 md:grid lg:grid-cols-[minmax(0,1fr)_280px]">
@@ -3844,14 +4221,42 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                     <h1 className="font-['Plus_Jakarta_Sans:ExtraBold'] text-[28px] font-extrabold tracking-[-0.69px] text-[#003859]">Koleksi jurnal</h1>
                     <p className="mt-1 text-xs text-[#64748b]">Simpan jurnal penting agar mudah ditemukan kembali saat menulis.</p>
                   </div>
-                  <button type="button" className="flex items-center justify-center gap-3 rounded-[10px] bg-[#0066a1] px-5 py-2.5 font-['Plus_Jakarta_Sans:Bold'] text-sm font-bold text-white">
-                    Folder Skripsi <img src={`${collectionAssets}/f08e5.svg`} alt="" />
+                  <button
+                    type="button"
+                    onClick={() => setActiveFolderId("all")}
+                    className="flex items-center justify-center gap-3 rounded-[10px] bg-[#0066a1] px-5 py-2.5 font-['Plus_Jakarta_Sans:Bold'] text-sm font-bold text-white"
+                  >
+                    {activeFolderId === "all"
+                      ? "Semua folder"
+                      : `Folder ${folders.find(folder => folder.id === activeFolderId)?.name ?? ""}`}{" "}
+                    <img src={`${collectionAssets}/f08e5.svg`} alt="" />
                   </button>
                 </div>
-                <div className="mt-5 space-y-4">
-                  <JournalCard index={0} />
-                  <JournalCard index={1} />
-                </div>
+                {collectionJournals.length === 0 ? (
+                  <div className="mt-5 flex flex-col items-center rounded-2xl border border-dashed border-slate-200 bg-white px-6 py-16 text-center">
+                    <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" />
+                    </svg>
+                    <p className="mt-4 max-w-sm text-sm leading-6 text-[#64748b]">
+                      Belum ada jurnal di folder ini. Simpan jurnal dari Beranda atau pindahkan jurnal tersimpan ke folder ini.
+                    </p>
+                    <button type="button" onClick={startSearching} className="mt-5 rounded-xl bg-[#00629b] px-5 py-2.5 text-xs font-semibold text-white">
+                      Mulai mencari jurnal
+                    </button>
+                  </div>
+                ) : (
+                  <div className="mt-5 space-y-4">
+                    {collectionJournals.map(journal => (
+                      <JournalCard
+                        key={journal.id}
+                        journal={journal}
+                        folders={folders}
+                        onMove={folderId => moveJournal(journal.id, folderId)}
+                        onRemove={() => removeSavedJournal(journal.id)}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
 
               <aside className="space-y-4">
@@ -3859,21 +4264,39 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                 <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-sm">
                   <div className="flex items-center justify-between px-2 pb-3">
                     <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-sm font-bold text-[#1e293b]">Folder</h2>
-                    <button type="button" className="flex h-6 w-6 items-center justify-center rounded-md border border-slate-200"><img src={`${collectionAssets}/b2242.svg`} alt="" /></button>
+                    <button
+                      type="button"
+                      aria-label="Buat folder baru"
+                      onClick={() => setNewFolderOpen(true)}
+                      className="flex h-6 w-6 items-center justify-center rounded-md border border-slate-200"
+                    >
+                      <img src={`${collectionAssets}/b2242.svg`} alt="" />
+                    </button>
                   </div>
                   <div className="space-y-1">
-                    {[
-                      ["Semua jurnal tersimpan", "1", false],
-                      ["Belum dikelompokkan", "0", false],
-                      ["Variabel dependen", "1", true],
-                      ["Landasan teori", "0", false],
-                      ["Jenis penelitian", "0", false],
-                      ["Hipotesis Penelitian", "0", false],
-                      ].map(([label, count, active], index) => (
-                      <button key={String(label)} type="button" className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-xs ${active ? "bg-sky-100 text-[#0066a1]" : "text-[#475569]"}`}>
-                        <img src={`${collectionAssets}/${index < 2 ? "8b8d1.svg" : "e1558.svg"}`} alt="" />
-                        <span className="flex-1">{label}</span>
-                        <span>{count}</span>
+                    <button
+                      type="button"
+                      onClick={() => setActiveFolderId("all")}
+                      className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-xs ${
+                        activeFolderId === "all" ? "bg-sky-100 text-[#0066a1]" : "text-[#475569]"
+                      }`}
+                    >
+                      <img src={`${collectionAssets}/8b8d1.svg`} alt="" />
+                      <span className="flex-1">Semua jurnal tersimpan</span>
+                      <span>{folderCounts.all ?? 0}</span>
+                    </button>
+                    {folders.map(folder => (
+                      <button
+                        key={folder.id}
+                        type="button"
+                        onClick={() => setActiveFolderId(folder.id)}
+                        className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-xs ${
+                          activeFolderId === folder.id ? "bg-sky-100 text-[#0066a1]" : "text-[#475569]"
+                        }`}
+                      >
+                        <img src={`${collectionAssets}/e1558.svg`} alt="" />
+                        <span className="flex-1">{folder.name}</span>
+                        <span>{folderCounts[folder.id] ?? 0}</span>
                       </button>
                     ))}
                   </div>
@@ -3930,6 +4353,8 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
       />
       <UpgradePremiumModal open={upgradeOpen} onClose={() => setUpgradeOpen(false)} />
       <UpgradePremiumSheet open={upgradeOpen} onClose={() => setUpgradeOpen(false)} />
+      <NewFolderModal open={newFolderOpen} onClose={() => setNewFolderOpen(false)} onCreate={createFolder} />
+      <Toast message={toast} />
     </div>
   );
 }
