@@ -181,15 +181,19 @@ function Sidebar({
   onView,
   onBack,
   onUpgrade,
+  onOpenRiwayat,
 }: {
   view: JournalView;
   onView: (view: JournalView) => void;
   onBack: () => void;
   onUpgrade: () => void;
+  onOpenRiwayat: (title: string) => void;
 }) {
   const assets = view === "collection" ? collectionAssets : searchAssets;
   const homeIcon = view === "collection" ? "62b0b.svg" : "b4a91.svg";
   const collectionIcon = view === "collection" ? "57aea.svg" : "6f1a2.svg";
+  const [items, setItems] = useState(riwayatSidebar);
+  const [menuIndex, setMenuIndex] = useState<number | null>(null);
 
   return (
     <aside className="hidden w-[280px] shrink-0 flex-col border-r border-slate-100 bg-white p-5 md:flex">
@@ -240,18 +244,110 @@ function Sidebar({
 
       <p className="mt-6 px-4 font-['Inter:Bold'] text-sm font-bold uppercase leading-5 tracking-wide text-slate-400">Riwayat</p>
       <div className="mt-2 space-y-0.5">
-        {riwayatSidebar.map((item, index) => (
-          <button
-            key={item}
-            type="button"
-            onClick={() => onView("riwayat")}
-            className={`flex w-full items-center justify-between gap-2 rounded-lg px-2.5 py-2 text-left text-xs leading-4 ${
-              index === 0 ? "bg-blue-50/70 font-semibold text-blue-900 outline outline-1 outline-blue-200/80" : "text-slate-600"
-            }`}
-          >
-            <span className="truncate">{item}</span>
-            {index === 0 && <span className="shrink-0 text-slate-400" aria-hidden="true">•••</span>}
-          </button>
+        {items.map((item, index) => (
+          <div key={`${index}-${item}`} className="group relative">
+            <button
+              type="button"
+              onClick={() => {
+                setMenuIndex(null);
+                onOpenRiwayat(item);
+              }}
+              className={`flex w-full items-center gap-1 rounded-lg py-2 pl-2.5 pr-9 text-left text-xs leading-4 ${
+                index === 0
+                  ? "bg-blue-50/70 font-semibold text-blue-900 outline outline-1 outline-blue-200/80"
+                  : "text-slate-600 hover:bg-slate-50"
+              }`}
+            >
+              <span className="min-w-0 flex-1 truncate">{item}</span>
+            </button>
+            <button
+              type="button"
+              aria-label={`Opsi untuk ${item}`}
+              onClick={event => {
+                event.stopPropagation();
+                setMenuIndex(menuIndex === index ? null : index);
+              }}
+              className="absolute right-2 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-md text-slate-400 transition-colors hover:bg-slate-200/60 hover:text-slate-600"
+            >
+              <svg width="14" height="4" viewBox="0 0 14 4" fill="currentColor" aria-hidden="true">
+                <circle cx="2" cy="2" r="1.5" />
+                <circle cx="7" cy="2" r="1.5" />
+                <circle cx="12" cy="2" r="1.5" />
+              </svg>
+            </button>
+            {menuIndex === index && (
+              <>
+                <div className="fixed inset-0 z-[345]" onClick={() => setMenuIndex(null)} aria-hidden="true" />
+                <div
+                  className={`absolute right-0 z-[350] w-52 overflow-hidden rounded-2xl bg-[#1f1f1f] py-2 shadow-2xl ${
+                    index >= items.length - 2 ? "bottom-full mb-1" : "top-full mt-1"
+                  }`}
+                >
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const name = window.prompt("Ganti nama riwayat", item);
+                      if (name && name.trim()) setItems(list => list.map((text, i) => (i === index ? name.trim() : text)));
+                      setMenuIndex(null);
+                    }}
+                    className="flex w-full items-center gap-3 px-4 py-2.5 text-sm font-medium text-neutral-100 transition-colors hover:bg-white/10"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M12 20h9" />
+                      <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z" />
+                    </svg>
+                    Ganti nama
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      window.alert("Riwayat disematkan.");
+                      setMenuIndex(null);
+                    }}
+                    className="flex w-full items-center gap-3 px-4 py-2.5 text-sm font-medium text-neutral-100 transition-colors hover:bg-white/10"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M12 17v5" />
+                      <path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z" />
+                    </svg>
+                    Sematkan
+                  </button>
+                  <div className="mx-4 my-1.5 border-t border-white/10" />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      window.alert("Tautan riwayat berhasil disalin.");
+                      setMenuIndex(null);
+                    }}
+                    className="flex w-full items-center gap-3 px-4 py-2.5 text-sm font-medium text-neutral-100 transition-colors hover:bg-white/10"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+                      <path d="M16 6l-4-4-4 4" />
+                      <path d="M12 2v13" />
+                    </svg>
+                    Bagikan
+                  </button>
+                  <div className="mx-4 my-1.5 border-t border-white/10" />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setItems(list => list.filter((_, i) => i !== index));
+                      setMenuIndex(null);
+                    }}
+                    className="flex w-full items-center gap-3 px-4 py-2.5 text-sm font-medium text-red-400 transition-colors hover:bg-red-500/10"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M3 6h18" />
+                      <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                    </svg>
+                    Hapus
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
         ))}
       </div>
 
@@ -2902,6 +2998,13 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
     if (query.trim() || paragraph.trim() || fileName) setDesktopStage("loading");
   };
 
+  const openRiwayatPencarian = (title: string) => {
+    setView("home");
+    setQuery(title);
+    setSearchType("journal");
+    setDesktopStage("loading");
+  };
+
   const canSearch = query.trim().length >= 5;
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -2914,7 +3017,13 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
 
   return (
     <div className="fixed inset-0 z-[300] flex h-dvh w-full overflow-hidden bg-[#f4f7fb] font-['Inter:Regular'] text-[#0f172a] md:bg-[#f3f6f9]">
-      <Sidebar view={view} onView={setView} onBack={onBack} onUpgrade={() => setUpgradeOpen(true)} />
+      <Sidebar
+        view={view}
+        onView={setView}
+        onBack={onBack}
+        onUpgrade={() => setUpgradeOpen(true)}
+        onOpenRiwayat={openRiwayatPencarian}
+      />
 
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
         <header className="flex h-[65px] shrink-0 items-center justify-between border-b border-slate-200/80 bg-white/95 px-[18px] shadow-[0_1px_3px_rgba(0,0,0,0.02)] backdrop-blur-md md:hidden">
