@@ -6647,8 +6647,8 @@ const PintarlyMascotBubble = React.memo(function PintarlyMascotBubble({ pre, bol
   return (
     <div className="flex items-center gap-3 sm:gap-4 mb-6 sm:mb-8 w-full" style={{ animation: "bubbleEnter 0.45s cubic-bezier(0.34,1.56,0.64,1) both" }}>
       <div className="relative shrink-0" style={{ animation: "mascotBob 3s ease-in-out infinite" }}>
-        <div className="w-[72px] h-[72px] sm:w-[80px] sm:h-[80px] rounded-full overflow-hidden flex items-center justify-center" style={{ background: "linear-gradient(135deg,#dbeafe,#c7d2fe)", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1),0 2px 4px -2px rgba(0,0,0,0.1)", border: "2px solid #bfdbfe" }}>
-          <img src="/assets/alerin-logo.png" alt="Alerin" className="w-full h-full object-cover"/>
+        <div className="w-[72px] h-[72px] sm:w-[80px] sm:h-[80px] rounded-full overflow-hidden flex items-center justify-center" style={{ background: "#ffffff", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1),0 2px 4px -2px rgba(0,0,0,0.1)", border: "2px solid #ffffff" }}>
+          <img src="/assets/73c1a.png" alt="Alerin" className="h-[52px] w-[50px] object-contain"/>
         </div>
       </div>
       <div className="relative flex-1 bg-white rounded-[18px] sm:rounded-[24px] px-4 sm:px-5 py-3.5 sm:py-4 drop-shadow-[0px_1px_1px_rgba(0,0,0,0.05)]"
@@ -7639,8 +7639,8 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                     <div className="absolute rounded-full pointer-events-none"
                       style={{ inset: "-28px", background: "radial-gradient(circle, rgba(37,99,235,0.18) 0%, rgba(99,102,241,0.1) 60%, transparent 100%)", filter: "blur(12px)" }}/>
                     <div className="relative flex items-center justify-center rounded-full overflow-hidden mx-auto"
-                      style={{ width: 168, height: 168, background: "linear-gradient(135deg, #dbeafe 0%, #c7d2fe 100%)", border: "3px solid rgba(255,255,255,0.85)", boxShadow: "0px 6.94px 5.2px rgba(0,0,0,0.1), 0px 3.47px 3.47px rgba(0,0,0,0.1)" }}>
-                      <img src="/assets/f725b.png" alt="Alerin" className="h-[140px] w-[140px] rounded-full object-cover"/>
+                      style={{ width: 168, height: 168, background: "#ffffff", border: "3px solid rgba(255,255,255,0.85)", boxShadow: "0px 6.94px 5.2px rgba(0,0,0,0.1), 0px 3.47px 3.47px rgba(0,0,0,0.1)" }}>
+                      <img src="/assets/73c1a.png" alt="Alerin" className="h-[118px] w-[112px] object-contain"/>
                     </div>
                   </div>
 
@@ -9551,7 +9551,7 @@ function ProfilTab({ onTab, onRegister }: { onTab: (t: NavTab) => void; onRegist
             <img src="/assets/6667b.svg" alt="" className="relative z-10 shrink-0 rounded-xl border border-white/70 bg-[linear-gradient(135deg,rgba(52,124,234,0.88),rgba(85,143,223,0.62))] p-2 shadow-[0_6px_18px_rgba(52,124,234,0.28),inset_0_1px_0_rgba(255,255,255,0.45)] backdrop-blur-xl" />
             <span className="relative z-10 min-w-0 flex-1">
               <span className="block font-['Inter:Bold'] text-[15px] font-bold leading-5 text-[#3a3a3b]">Lengkapi Profil Kamu 8/10</span>
-              <span className="mt-0.5 block max-w-profile-description font-['Inter:Medium'] text-[13px] font-medium text-slate-500">Lengkapi profilmu untuk pengalaman yang lebih personal dan menarik.</span>
+              <span className="mt-0.5 block max-w-profile-description font-['Inter:Medium'] text-[13px] font-medium text-slate-500">Lengkapi profilmu untuk pengalaman yang lebih sesuai</span>
             </span>
             <svg className="relative z-10 shrink-0 md:hidden" width="18" height="18" viewBox="0 0 24 24" fill="none" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d="M5 12h14M13 6l6 6-6 6" stroke="var(--color-blue-500)" />
@@ -10472,12 +10472,12 @@ function ProfilTab({ onTab, onRegister }: { onTab: (t: NavTab) => void; onRegist
                     </div>
                     <div className="grid max-h-[250px] gap-2.5 overflow-y-auto overscroll-contain pr-2 sm:max-h-none sm:grid-cols-2 sm:overflow-visible sm:pr-0">
                       {[
-                        ["Default", "Gaya dan bahasa bawaan"],
-                        ["Rapi dan Presisi", "Jawaban terstruktur dan jelas"],
-                        ["Ramah", "Hangat dan akrab"],
-                        ["Lugas", "Langsung ke inti"],
-                        ["Nyentrik", "Menyenangkan dan imajinatif"],
-                        ["Sinis", "Kritis dan analitis"],
+                        ["Default", "Gaya bawaan, mudah diikuti dan tidak berlebihan."],
+                        ["Rapi", "Gunakan struktur bila membantu, tanpa memberi judul pada setiap paragraf."],
+                        ["Ramah", "Lebih hangat, tanpa pujian berlebihan, rayuan, atau bahasa kekanak-kanakan."],
+                        ["Lugas", "Langsung ke inti, tetap sertakan alasan yang diperlukan."],
+                        ["Kreatif", "Contoh atau analogi lebih variatif, tanpa membuat fakta atau sumber palsu."],
+                        ["Kritis", "Periksa asumsi dan kelemahan argumen secara sopan, tanpa sarkasme atau merendahkan pengguna."],
                       ].map(([title, description]) => {
                         const active = communicationStyle === title;
                         return (
@@ -10755,7 +10755,7 @@ function ProfilTab({ onTab, onRegister }: { onTab: (t: NavTab) => void; onRegist
                           {item.icon}
                           <span className="flex flex-col text-left">
                             <span className="text-sm font-medium text-slate-700">{item.label}</span>
-                            {i === 0 && <span className="text-xs text-slate-500 md:text-[11px] md:text-slate-400">Untuk desktop dan mobile</span>}
+                            {i === 0 && <span className="text-xs text-slate-500 md:text-[11px] md:text-slate-400">Cara cepat dalam mengakses Alerin</span>}
                           </span>
                         </div>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="2"><path d="M9 18l6-6-6-6"/></svg>
