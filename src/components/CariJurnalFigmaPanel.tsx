@@ -2364,12 +2364,87 @@ function DesktopLiteratureReview({ query, onBack }: { query: string; onBack: () 
     { key: "empiris", label: "Empiris (46)" },
   ];
 
-  const matrixRows = [
-    { name: "Sari et al. (2022)", journal: "Jurnal Ketahanan Nasional", cells: ["Dukungan sosial perempuan pasca bencana", "Kualitatif (wawancara mendalam)", "Jaringan sosial mempercepat pemulihan psikologis dan ekonomi.", "Menunjukkan peran sentral komunitas perempuan."] },
-    { name: "Ahmed & Rahman (2021)", journal: "International Journal of Disaster Risk Reduction", cells: ["Akses sumber daya pada tahap respon bencana", "Mixed methods", "Keterbatasan akses informasi menghambat keterlibatan perempuan dalam pengambilan keputusan.", "Mengidentifikasi kesenjangan akses berbasis gender."] },
-    { name: "Putri (2023)", journal: "Jurnal Ilmu Sosial dan Humaniora", cells: ["Strategi coping perempuan korban bencana", "Kualitatif (studi kasus)", "Strategi coping berbasis agama dan dukungan keluarga meningkatkan resiliensi.", "Memberikan perspektif lokal dalam konteks Indonesia."] },
-    { name: "Nguyen et al. (2020)", journal: "Global Environmental Change", cells: ["Peran perempuan dalam manajemen risiko bencana", "Kuantitatif (survei)", "Perempuan lebih aktif dalam kesiapsiagaan komunitas dibanding laki-laki.", "Data komparatif gender lintas negara Asia Tenggara."] },
-  ];
+  const matrixRows = (() => {
+    const curated = [
+      { name: "Sari et al. (2022)", journal: "Jurnal Ketahanan Nasional", cells: ["Dukungan sosial perempuan pasca bencana", "Kualitatif (wawancara mendalam)", "Jaringan sosial mempercepat pemulihan psikologis dan ekonomi.", "Menunjukkan peran sentral komunitas perempuan."] },
+      { name: "Ahmed & Rahman (2021)", journal: "International Journal of Disaster Risk Reduction", cells: ["Akses sumber daya pada tahap respon bencana", "Mixed methods", "Keterbatasan akses informasi menghambat keterlibatan perempuan dalam pengambilan keputusan.", "Mengidentifikasi kesenjangan akses berbasis gender."] },
+      { name: "Putri (2023)", journal: "Jurnal Ilmu Sosial dan Humaniora", cells: ["Strategi coping perempuan korban bencana", "Kualitatif (studi kasus)", "Strategi coping berbasis agama dan dukungan keluarga meningkatkan resiliensi.", "Memberikan perspektif lokal dalam konteks Indonesia."] },
+      { name: "Nguyen et al. (2020)", journal: "Global Environmental Change", cells: ["Peran perempuan dalam manajemen risiko bencana", "Kuantitatif (survei)", "Perempuan lebih aktif dalam kesiapsiagaan komunitas dibanding laki-laki.", "Data komparatif gender lintas negara Asia Tenggara."] },
+    ];
+    const authors = [
+      "Pratama & Lestari",
+      "Aisyah et al.",
+      "Hidayat et al.",
+      "Lim & Susanto",
+      "Rahmawati & Dewi",
+      "Kurniawan et al.",
+      "Wongkitrungrueng & Assarut",
+      "Saputra et al.",
+      "Marinez & Wibowo",
+      "Kusuma et al.",
+      "Tanaka et al.",
+      "Abdullah & Hafizah",
+    ];
+    const journals = [
+      "Jurnal Ketahanan Nasional",
+      "International Journal of Disaster Risk Reduction",
+      "Jurnal Ilmu Sosial dan Humaniora",
+      "Global Environmental Change",
+      "Asia Pacific Journal of Public Health",
+      "Disaster Prevention and Management",
+      "Jurnal Perempuan dan Bencana",
+      "Journal of Humanitarian Affairs",
+    ];
+    const fokus = [
+      "Dukungan sosial perempuan pasca bencana",
+      "Akses sumber daya pada tahap respon bencana",
+      "Strategi coping perempuan korban bencana",
+      "Peran perempuan dalam manajemen risiko bencana",
+      "Kesiapsiagaan berbasis komunitas dan gender",
+      "Pemulihan ekonomi keluarga terdampak",
+      "Keterlibatan perempuan dalam pengambilan keputusan",
+      "Adaptasi komunitas pesisir terhadap perubahan iklim",
+    ];
+    const metode = [
+      "Kualitatif (wawancara mendalam)",
+      "Mixed methods",
+      "Kualitatif (studi kasus)",
+      "Kuantitatif (survei)",
+      "Etnografi (partisipatif)",
+      "Tinjauan sistematis",
+      "Kuantitatif (panel longitudinal)",
+      "Studi kohort prospektif",
+    ];
+    const temuan = [
+      "Jaringan sosial mempercepat pemulihan psikologis dan ekonomi.",
+      "Keterbatasan akses informasi menghambat keterlibatan perempuan dalam pengambilan keputusan.",
+      "Strategi coping berbasis agama dan dukungan keluarga meningkatkan resiliensi.",
+      "Perempuan lebih aktif dalam kesiapsiagaan komunitas dibanding laki-laki.",
+      "Program pemberdayaan mikro meningkatkan ketahanan rumah tangga pasca bencana.",
+      "Partisipasi perempuan dalam perencanaan penanggulangan menaikkan kualitas kebijakan lokal.",
+      "Literasi digital memperluas akses bantuan darurat bagi kelompok rentan.",
+      "Koordinasi lintas sektor memperpendek waktu pemulihan wilayah terdampak.",
+    ];
+    const kontribusi = [
+      "Menunjukkan peran sentral komunitas perempuan.",
+      "Mengidentifikasi kesenjangan akses berbasis gender.",
+      "Memberikan perspektif lokal dalam konteks Indonesia.",
+      "Data komparatif gender lintas negara Asia Tenggara.",
+      "Model pemantauan kebutuhan dasar berbasis kearifan lokal.",
+      "Rekomendasi indikator inklusi gender dalam kesiapsiagaan.",
+      "Bukti empiris dampak platform digital pada daya tahan keluarga.",
+      "Kerangka integrasi mitigasi dan adaptasi berbasis komunitas.",
+    ];
+    const generated = priorityRows.slice(4).map((row, index) => {
+      const i = index + 4;
+      return {
+        name: `${authors[i % authors.length]} (${row.year})`,
+        journal: journals[i % journals.length],
+        cells: [fokus[i % fokus.length], metode[i % metode.length], temuan[i % temuan.length], kontribusi[i % kontribusi.length]],
+      };
+    });
+    return [...curated, ...generated];
+  })();
 
   const matrixHeaders = ["Penelitian", "Fokus", "Metode", "Temuan Utama", "Kontribusi Khas"];
 
@@ -2674,12 +2749,12 @@ function DesktopLiteratureReview({ query, onBack }: { query: string; onBack: () 
           </label>
         </div>
 
-        <div className="overflow-x-auto">
+        <div className="max-h-[640px] overflow-auto">
           <table className="w-full min-w-[980px] border-collapse text-left">
             <thead>
               <tr className="bg-slate-50/60">
                 {matrixHeaders.map((header, index) => (
-                  <th key={header} className="px-5 py-3">
+                  <th key={header} className="sticky top-0 z-10 bg-slate-50/60 px-5 py-3">
                     <button
                       type="button"
                       onClick={() =>
@@ -2706,8 +2781,8 @@ function DesktopLiteratureReview({ query, onBack }: { query: string; onBack: () 
                   </td>
                 </tr>
               )}
-              {visibleMatrix.map(row => (
-                <tr key={row.name} className="border-t border-slate-100 align-top">
+              {visibleMatrix.map((row, rowIndex) => (
+                <tr key={`${row.name}-${rowIndex}`} className="border-t border-slate-100 align-top">
                   <td className="w-56 px-5 py-4">
                     <span className="block text-sm font-semibold leading-5 text-blue-600">{row.name}</span>
                     <span className="mt-0.5 block text-xs leading-4 text-slate-400">{row.journal}</span>
