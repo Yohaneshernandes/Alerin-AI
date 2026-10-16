@@ -194,6 +194,7 @@ function Sidebar({
   const collectionIcon = view === "collection" ? "57aea.svg" : "6f1a2.svg";
   const [items, setItems] = useState(riwayatSidebar);
   const [menuIndex, setMenuIndex] = useState<number | null>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
 
   return (
     <aside className="hidden w-[280px] shrink-0 flex-col border-r border-slate-100 bg-white p-5 md:flex">
@@ -250,10 +251,11 @@ function Sidebar({
               type="button"
               onClick={() => {
                 setMenuIndex(null);
+                setActiveIndex(index);
                 onOpenRiwayat(item);
               }}
               className={`flex w-full items-center gap-1 rounded-lg py-2 pl-2.5 pr-9 text-left text-xs leading-4 ${
-                index === 0
+                index === activeIndex
                   ? "bg-blue-50/70 font-semibold text-blue-900 outline outline-1 outline-blue-200/80"
                   : "text-slate-600 hover:bg-slate-50"
               }`}
@@ -333,6 +335,11 @@ function Sidebar({
                     type="button"
                     onClick={() => {
                       setItems(list => list.filter((_, i) => i !== index));
+                      setActiveIndex(current => {
+                        if (index < current) return current - 1;
+                        if (index === current) return 0;
+                        return current;
+                      });
                       setMenuIndex(null);
                     }}
                     className="flex w-full items-center gap-3 px-4 py-2.5 text-sm font-medium text-red-400 transition-colors hover:bg-red-500/10"
