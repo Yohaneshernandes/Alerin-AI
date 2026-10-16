@@ -4032,6 +4032,19 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
   const canSearch = query.trim().length >= 5;
   const analysisReady = Boolean(fileName) || paragraph.trim().length >= 5;
 
+  const renderKutipanUnderline = (text: string) => {
+    const parts = text.split(/(keputusan pembelian|seluruh kelompok usia)/g);
+    return parts.map((part, index) =>
+      part === "keputusan pembelian" || part === "seluruh kelompok usia" ? (
+        <span key={index} className="border-b-2 border-red-500 font-medium text-slate-900">
+          {part}
+        </span>
+      ) : (
+        part
+      ),
+    );
+  };
+
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -4139,35 +4152,42 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                             <p className="mt-0.5 text-[11px] text-[#94a3b8]">42 halaman · 126 sitasi diperiksa</p>
                           </div>
                         </div>
-                        <span className="shrink-0 rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-semibold text-emerald-600">Selesai</span>
+                        <span className="flex shrink-0 items-center gap-1.5 rounded-full bg-sky-50 px-2.5 py-1 text-[11px] font-semibold text-sky-600 outline outline-1 outline-sky-600/40">
+                          <svg width="10" height="8" viewBox="0 0 10 8" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <path d="M1 4l2.5 2.5L9 1" />
+                          </svg>
+                          Selesai
+                        </span>
                       </div>
-                      <div className="mt-3 grid grid-cols-4 rounded-xl bg-[#f1f4fa] py-3 text-center">
+                      <div className="mt-4 grid grid-cols-4 gap-1.5">
                         {[
-                          ["7", "Temuan", "text-[#006194]", ""],
-                          ["3", "Bermasalah", "text-[#e7000b]", "bg-red-50"],
-                          ["2", "Kurang Kuat", "text-[#006194]", ""],
-                          ["2", "Ref. Lemah", "text-[#006194]", ""],
-                        ].map(([value, label, color, bg]) => (
-                          <div key={label} className={`mx-1 rounded-lg ${bg}`}>
-                            <p className={`font-['Plus_Jakarta_Sans:Bold'] text-lg font-bold ${color}`}>{value}</p>
-                            <p className="mt-0.5 text-[9px] font-medium text-[#64748b]">{label}</p>
+                          { value: "7", label: "Temuan", box: "bg-slate-50 outline-slate-100", valueTone: "text-blue-600", labelTone: "text-slate-500" },
+                          { value: "3", label: "Bermasalah", box: "bg-rose-50 outline-rose-100", valueTone: "text-rose-600", labelTone: "text-rose-700" },
+                          { value: "2", label: "Kurang Kuat", box: "bg-slate-50 outline-slate-100", valueTone: "text-slate-700", labelTone: "text-slate-500" },
+                          { value: "2", label: "Ref. Lemah", box: "bg-slate-50 outline-slate-100", valueTone: "text-slate-700", labelTone: "text-slate-500" },
+                        ].map(item => (
+                          <div key={item.label} className={`rounded-2xl p-2 text-center outline outline-1 ${item.box}`}>
+                            <p className={`text-lg font-extrabold leading-6 ${item.valueTone}`}>{item.value}</p>
+                            <p className={`mt-0.5 text-[9px] font-medium leading-3 ${item.labelTone}`}>{item.label}</p>
                           </div>
                         ))}
                       </div>
                     </section>
 
                     <section className="mt-3 rounded-2xl bg-white p-4 shadow-sm">
-                      <div className="flex items-center justify-between gap-2">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
                         <div className="flex min-w-0 items-center gap-2">
-                          <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-sm font-bold">Temuan {temuanIndex} dari 7</h2>
-                          <span className="shrink-0 rounded-md bg-sky-50 px-2 py-0.5 text-[10px] font-semibold text-[#0369a1]">Halaman {temuanAnalisis[temuanIndex - 1].halaman}</span>
+                          <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-xl font-bold text-slate-900">Temuan {temuanIndex} dari 7</h2>
+                          <span className="shrink-0 rounded-lg bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700 outline outline-1 outline-blue-100">
+                            Halaman {temuanAnalisis[temuanIndex - 1].halaman}
+                          </span>
                         </div>
                         <div className="flex shrink-0 gap-1.5">
                           <button
                             type="button"
                             aria-label="Temuan sebelumnya"
                             onClick={() => setTemuanIndex(index => Math.max(1, index - 1))}
-                            className="flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200 text-sm text-[#64748b]"
+                            className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-50 text-base text-slate-400 outline outline-1 outline-slate-200"
                           >
                             ‹
                           </button>
@@ -4175,159 +4195,223 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                             type="button"
                             aria-label="Temuan berikutnya"
                             onClick={() => setTemuanIndex(index => Math.min(7, index + 1))}
-                            className="flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200 text-sm text-[#64748b]"
+                            className="flex h-9 w-9 items-center justify-center rounded-lg bg-white text-base text-slate-700 outline outline-1 outline-slate-200"
                           >
                             ›
                           </button>
                         </div>
                       </div>
 
-                      <div className="mt-3 rounded-xl bg-red-50 p-3">
-                        <p className="text-[10px] font-bold uppercase tracking-wide text-[#e7000b]">⚠ {temuanAnalisis[temuanIndex - 1].badge}</p>
-                        <p className="mt-2.5 text-[11px] font-semibold text-[#475569]">Bagian yang perlu diperbaiki:</p>
-                        <blockquote className="mt-1.5 rounded-lg bg-white p-2.5 font-['Inter:Italic'] text-[11px] italic leading-4 text-[#334155]">
-                          {temuanAnalisis[temuanIndex - 1].kutipan}
+                      <div className="mt-4 inline-flex items-center gap-2 rounded-lg bg-rose-50 px-3 py-2 outline outline-1 outline-rose-200">
+                        <p className="text-xs font-bold uppercase tracking-wide text-rose-700">⚠ {temuanAnalisis[temuanIndex - 1].badge}</p>
+                      </div>
+
+                      <div className="mt-4">
+                        <p className="text-sm font-bold text-slate-700">Bagian yang perlu diperbaiki:</p>
+                        <blockquote className="mt-2 rounded-2xl bg-slate-50 p-4 text-sm font-medium leading-6 text-slate-700 outline outline-1 outline-slate-200">
+                          {renderKutipanUnderline(temuanAnalisis[temuanIndex - 1].kutipan)}
                         </blockquote>
-                        <p className="mt-3 text-[11px] font-bold text-[#e7000b]">Mengapa sitasi ini bermasalah?</p>
-                        <ul className="mt-1.5 space-y-1.5 text-[11px] leading-4 text-[#475569]">
+                      </div>
+
+                      <div className="mt-4 rounded-2xl bg-rose-50/50 p-4 outline outline-1 outline-rose-100">
+                        <p className="text-base font-bold text-rose-800">Mengapa sitasi ini bermasalah?</p>
+                        <ul className="mt-2.5 space-y-2 text-sm leading-6 text-slate-700">
                           {temuanAnalisis[temuanIndex - 1].alasan.map(alasan => (
-                            <li key={alasan} className="flex gap-1.5">
-                              <span className="text-[#e7000b]">•</span>
+                            <li key={alasan} className="flex gap-2">
+                              <span>•</span>
                               <span>{alasan}</span>
                             </li>
                           ))}
                         </ul>
-                        <p className="mt-2.5 text-[10px] font-medium leading-4 text-[#0369a1]">✔ DOI valid · Metadata cocok · Isi sitasi tidak mendukung klaim</p>
+                        <div className="mt-3 rounded-xl bg-sky-50/80 p-3">
+                          <p className="text-xs leading-5 text-sky-800">✔ DOI valid · Metadata cocok · Isi sumber tidak mendukung klaim</p>
+                        </div>
                       </div>
 
-                      <div className="mt-3 rounded-xl bg-sky-50 p-3">
-                        <p className="text-[11px] font-bold text-[#0369a1]">✦ Saran perbaikan Alerin:</p>
-                        <blockquote className="mt-1.5 rounded-lg bg-white p-2.5 font-['Inter:Italic'] text-[11px] italic leading-4 text-[#334155]">
-                          {temuanAnalisis[temuanIndex - 1].saran}
-                        </blockquote>
-                        <div className="mt-2.5 flex items-center justify-between gap-2">
-                          <span className="text-[10px] text-[#64748b]">OpenAlex + 4 verifikasi</span>
-                          <button
-                            type="button"
-                            onClick={() => window.alert("Saran perbaikan Alerin diterapkan ke naskahmu.")}
-                            className="shrink-0 rounded-lg bg-[#006194] px-3 py-1.5 text-[11px] font-semibold text-white"
-                          >
-                            Terapkan ke naskah
-                          </button>
+                      <div className="mt-4">
+                        <p className="text-sm font-bold text-sky-900">✦ Saran perbaikan Alerin:</p>
+                        <div className="mt-2 rounded-2xl bg-sky-50/60 p-4 outline outline-1 outline-sky-200/80">
+                          <p className="text-sm leading-6 text-sky-950">{temuanAnalisis[temuanIndex - 1].saran}</p>
+                          <div className="mt-3 flex items-center justify-between gap-2 border-t border-sky-100 pt-2.5">
+                            <span className="text-xs font-semibold text-sky-700">OpenAlex +4 verifikasi</span>
+                            <button
+                              type="button"
+                              onClick={() => window.alert("Saran perbaikan Alerin diterapkan ke naskahmu.")}
+                              className="shrink-0 text-xs font-bold text-sky-700 underline"
+                            >
+                              Terapkan ke naskah
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </section>
                   </>
                 )}
 
-                <section className="mt-4 rounded-2xl bg-white p-4 shadow-sm">
-                  <h2 className="flex items-center gap-2 font-['Plus_Jakarta_Sans:Bold'] text-base font-bold">
-                    <img src="/assets/jurnal-design/search-flow/ef610.svg" alt="" className="h-5 w-5" />
-                    Ringkasan hasil pencarian
-                  </h2>
-                  <p className="mt-3 text-xs leading-5 text-[#373737]">Alerin menyeleksi hasil secara bertahap sebelum menampilkan jurnal terbaik.</p>
-                  <div className="mt-3 space-y-2 text-[11px] font-medium">
-                    <p className="flex items-center gap-2"><img src="/assets/jurnal-design/search-flow/d6638.svg" alt="" className="h-4 w-4" />Kata kunci: {query.trim() || "live streaming commerce"}</p>
-                    <p className="flex items-center gap-2"><img src="/assets/jurnal-design/search-flow/d6dd5.svg" alt="" className="h-4 w-4" />Tahun: 2024–2026</p>
+                <section className="mt-4 rounded-3xl bg-white p-5 shadow-sm">
+                  <div className="flex items-center gap-2.5">
+                    <span className="h-6 w-6 shrink-0 rounded bg-sky-700" aria-hidden="true" />
+                    <h2 className="text-xl font-bold text-slate-900">Ringkasan hasil pencarian</h2>
                   </div>
-                  <div className="mt-4 grid grid-cols-3 rounded-xl bg-[#f1f4fa] px-2 py-3 text-center">
-                    {[["4,2 jt", "jurnal tersedia"], ["50", "sangat relevan"], ["20", "sangat teratas"]].map(([value, label]) => (
+                  <p className="mt-3 text-sm leading-6 text-neutral-700">Alerin menyeleksi hasil secara bertahap sebelum menampilkan jurnal terbaik.</p>
+                  <div className="mt-3 space-y-2">
+                    <span className="flex h-9 w-fit items-center gap-2 rounded-xl bg-slate-100 px-4 text-sm font-medium text-slate-900">
+                      <span className="h-4 w-4 shrink-0 bg-sky-700" aria-hidden="true" />
+                      Kata kunci: {query.trim() || "interaksi parasosial"}
+                    </span>
+                    <span className="flex h-9 w-fit items-center gap-2 rounded-xl bg-slate-100 px-4 text-sm font-medium text-slate-900">
+                      <span className="h-4 w-4 shrink-0 bg-sky-700" aria-hidden="true" />
+                      Tahun: 2024–2026
+                    </span>
+                  </div>
+                  <div className="mt-4 grid grid-cols-3 gap-2 rounded-2xl bg-slate-100 px-1.5 py-4 text-center">
+                    {[["4,2 jt", "jurnal tersedia"], ["50", "sesuai kriteria"], ["20", "sangat relevan"]].map(([value, label]) => (
                       <div key={value}>
-                        <p className="font-['Plus_Jakarta_Sans:Bold'] text-xl font-bold text-[#006194]">{value}</p>
-                        <p className="mt-0.5 text-[9px] font-semibold text-[#64748b]">{label}</p>
+                        <p className="text-2xl font-bold text-sky-700">{value}</p>
+                        <p className="mt-0.5 text-[10px] font-semibold leading-4 text-slate-500">{label}</p>
                       </div>
                     ))}
                   </div>
-                  <div className="mt-4">
-                    <button type="button" onClick={() => setTabelOpen(true)} className="w-full rounded-xl bg-[#006194] px-3 py-2.5 text-xs font-semibold text-white">Tabel penelitian terdahulu</button>
+                  <div className="mt-4 grid grid-cols-2 gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setTabelOpen(true)}
+                      className="rounded-2xl bg-sky-700 py-3 text-sm font-semibold text-white shadow-sm"
+                    >
+                      Tabel penelitian
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => window.alert("Peta Penelitian sedang disiapkan Alerin.")}
+                      className="rounded-2xl bg-slate-600 py-3 text-sm font-semibold text-white shadow-sm"
+                    >
+                      Peta Penelitian
+                    </button>
                   </div>
                 </section>
 
-                <div className="mt-4 flex items-center justify-between">
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-[#64748b]">Daftar rekomendasi</p>
-                  <p className="text-[11px] font-medium text-[#64748b]">3 dari 20 telaah</p>
+                <div className="mt-4 flex items-center justify-between px-0.5">
+                  <div className="flex items-center gap-2">
+                    <span className="h-4 w-4 shrink-0 bg-sky-700" aria-hidden="true" />
+                    <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500">Daftar rekomendasi</p>
+                  </div>
+                  <p className="text-xs font-medium text-slate-500">3 dari 20 telaah</p>
                 </div>
 
                 <div className="mt-2 space-y-3">
                   {mobileResultJournals.map((result, index) => (
                     <article key={result.rank} className="rounded-2xl bg-white p-4 shadow-sm">
-                      <p className="text-[9px] font-medium text-slate-400">OpenAlex &amp; Crossref Scopus</p>
-                      <div className="mt-1.5 flex items-start justify-between gap-3">
-                        <div className="flex flex-wrap gap-1 text-[9px] font-semibold">
-                          <span className="rounded-md bg-sky-100 px-2 py-1 text-[#0369a1]">Scopus Q1</span>
-                          <span className="rounded-md bg-slate-200 px-2 py-1 text-slate-700">Artikel</span>
-                          <span className="rounded-md bg-slate-200 px-2 py-1 text-slate-700">2023</span>
+                      <p className="text-[10px] font-medium text-slate-400">OpenAlex &amp; Crossref Scopus</p>
+                      <div className="mt-2 flex flex-wrap gap-1.5 text-[10px] font-semibold">
+                        <span className="rounded-md bg-sky-100 px-2 py-1 text-sky-700">Scopus Q1</span>
+                        <span className="rounded-md bg-slate-200 px-2 py-1 text-slate-700">Artikel</span>
+                        <span className="rounded-md bg-slate-200 px-2 py-1 text-slate-700">2023</span>
+                      </div>
+                      <div className="mt-3 flex items-start justify-between gap-3">
+                        <div className="min-w-0 flex-1">
+                          <p className="text-xs font-semibold text-sky-700">{result.rank}</p>
+                          <h2 className="mt-1 text-xl font-bold leading-7 text-slate-900">{result.title}</h2>
+                          <p className="mt-2 text-xs leading-5 text-slate-600">Wongkitrungrueng, A. &amp; Assarut, N.</p>
+                          <p className="mt-1 text-[11px] leading-4 text-slate-500">{result.citation}</p>
                         </div>
-                        <div className="flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-full bg-sky-50 shadow-inner">
-                          <strong className="font-['Plus_Jakarta_Sans:ExtraBold'] text-xl text-[#006194]">{result.score}%</strong>
-                          <span className="text-[7px] font-semibold uppercase text-slate-500">relevansi</span>
+                        <div className="flex h-20 w-20 shrink-0 flex-col items-center justify-center rounded-full bg-sky-50 shadow-inner">
+                          <strong className="text-2xl font-extrabold text-sky-700">{result.score}%</strong>
+                          <span className="text-[8px] font-semibold uppercase tracking-wide text-slate-500">relevansi</span>
                         </div>
                       </div>
-                      <p className="mt-2 text-[11px] font-semibold text-[#0369a1]">{result.rank}</p>
-                      <h2 className="mt-1 font-['Plus_Jakarta_Sans:Bold'] text-base font-bold leading-5">{result.title}</h2>
-                      <p className="mt-2 text-[10px] leading-4 text-slate-600">Wongkitrungrueng, A. &amp; Assarut, N.</p>
-                      <p className="mt-1 text-[10px] leading-4 text-slate-600">{result.citation}</p>
 
-                      <div className="mt-3 rounded-xl bg-[#f1f4fa] p-3">
-                        <p className="text-[10px] font-bold uppercase tracking-wide">Mengapa jurnal ini direkomendasikan?</p>
-                        {[["Kesesuaian variabel", index ? 98 : 99], ["Kesesuaian topik", 96], ["Kesesuaian wilayah", index ? 80 : 93]].map(([label, value]) => (
-                          <div key={String(label)} className="mt-2">
-                            <div className="flex justify-between text-[10px]"><span>{label}</span><strong className="text-[#006194]">{value}%</strong></div>
-                            <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-slate-300"><div className="h-full rounded-full bg-[#006194]" style={{ width: `${value}%` }} /></div>
+                      <div className="mt-4 rounded-2xl bg-slate-100 p-4">
+                        <p className="text-[11px] font-bold uppercase tracking-wide text-slate-900">Mengapa jurnal ini direkomendasikan?</p>
+                        {[["Kesesuaian variabel", index ? 96 : 98], ["Kesesuaian topik", index ? 94 : 96], ["Kesesuaian wilayah", index ? 85 : 90]].map(([label, value]) => (
+                          <div key={String(label)} className="mt-2.5">
+                            <div className="flex justify-between text-xs"><span className="text-slate-700">{label}</span><strong className="text-sky-700">{value}%</strong></div>
+                            <div className="mt-1 h-2 overflow-hidden rounded-full bg-zinc-200"><div className="h-full rounded-full bg-sky-700" style={{ width: `${value}%` }} /></div>
                           </div>
                         ))}
-                        <p className="mt-3 text-[10px] leading-4 text-slate-600">Cocok untuk landasan teori, penyusunan hipotesis, dan pengembangan penelitian.</p>
-                      </div>
-
-                      <div className="mt-3 rounded-xl bg-amber-50 p-3">
-                        <p className="text-[10px] font-bold uppercase tracking-wide text-[#b45309]">Kutipan relevan</p>
-                        <p className="mt-1.5 text-[11px] italic leading-4 text-[#475569]">
-                          "Parasocial interaction strengthens purchase intention when viewers perceive urgency and scarcity."
+                        <p className="mt-3 text-xs leading-5">
+                          <span className="font-medium text-slate-900">Cocok untuk:</span>
+                          <span className="text-slate-500"> landasan teori, penyusunan hipotesis, pembanding penelitian, dan rujukan metode kuantitatif.</span>
                         </p>
+                        <div className="mt-3 rounded-xl bg-amber-50 p-4">
+                          <p className="text-xs leading-5">
+                            <span className="font-semibold text-amber-600">Kutipan relevan:</span>
+                            <span className="font-semibold text-slate-900"> "Parasocial interaction strengthens purchase intention when viewers perceive urgency and scarcity."</span>
+                          </p>
+                        </div>
                       </div>
 
-                      <div className="mt-3 rounded-xl bg-[#f1f4fa] p-3">
-                        <p className="text-[10px] font-bold uppercase tracking-wide">Kredibilitas &amp; akses</p>
+                      <div className="mt-4 rounded-2xl bg-slate-100 p-4">
+                        <p className="text-[11px] font-bold uppercase tracking-wide text-slate-900">Kredibilitas &amp; akses</p>
                         {[
                           ["Scopus Q1 terverifikasi", "Status indeks dicek dari sumber resmi"],
                           ["DOI & metadata cocok", "Judul, penulis, tahun, dan penerbit konsisten"],
                           ["PDF dapat diakses legal", "Versi akses terbuka tersedia dari penerbit"],
                           ["Tidak ada peringatan integritas", "Tidak ditemukan retraksi atau koreksi kritis"],
                         ].map(([judul, detail]) => (
-                          <div key={judul} className="mt-2 flex items-start gap-2">
+                          <div key={judul} className="mt-3 flex items-start gap-2.5">
                             <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-[9px] font-bold text-emerald-600">✓</span>
                             <span className="min-w-0">
-                              <span className="block text-[11px] font-semibold text-[#1e293b]">{judul}</span>
-                              <span className="block text-[10px] leading-4 text-[#94a3b8]">{detail}</span>
+                              <span className="block text-xs font-medium text-slate-900">{judul}</span>
+                              <span className="block text-[11px] leading-4 text-slate-500">{detail}</span>
                             </span>
                           </div>
                         ))}
                       </div>
 
-                      <div className="mt-3 rounded-xl bg-sky-50 p-3">
-                        <p className="text-[10px] font-bold uppercase tracking-wide text-[#006194]">Ringkasan utama</p>
-                        <p className="mt-2 text-[11px] leading-[17px]">{result.summary}</p>
-                        <div className="mt-2 flex flex-wrap gap-1 text-[9px]">
-                          <span className="rounded-md bg-white px-2 py-1">2 kutipan pendukung</span>
-                          <span className="rounded-md bg-white px-2 py-1">Metode SEM-PLS</span>
-                          <span className="rounded-md bg-white px-2 py-1">Studi cross-sectional</span>
-                          <span className="rounded-md bg-white px-2 py-1">Ringkasan Bahasa Indonesia</span>
+                      <div className="mt-4 rounded-2xl bg-sky-50 p-4">
+                        <p className="text-[11px] font-bold uppercase tracking-wide text-sky-700">Ringkasan utama</p>
+                        <p className="mt-2 text-xs leading-5 text-slate-900">{result.summary}</p>
+                        <div className="mt-3 flex flex-wrap gap-1.5 text-[11px]">
+                          <span className="rounded-lg bg-white px-2.5 py-1.5 text-slate-900">2 kutipan pendukung</span>
+                          <span className="rounded-lg bg-white px-2.5 py-1.5 text-slate-900">Metode SEM-PLS</span>
+                          <span className="rounded-lg bg-white px-2.5 py-1.5 text-slate-900">Studi cross-sectional</span>
+                          <span className="rounded-lg bg-white px-2.5 py-1.5 text-sky-700">Ringkasan Bahasa Indonesia</span>
                         </div>
                       </div>
 
-                      <div className="mt-3 grid grid-cols-3 gap-2 text-[10px] font-semibold">
-                        <button type="button" onClick={() => setRingkasanOpen(true)} className="rounded-xl bg-[#006194] px-2 py-2 text-white">Analisis</button>
+                      <div className="mt-4 grid grid-cols-3 gap-2">
+                        <button type="button" onClick={() => setRingkasanOpen(true)} className="flex items-center justify-center gap-1.5 rounded-2xl bg-sky-700 px-2 py-2.5 text-xs font-semibold text-white">
+                          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" strokeLinecap="round" aria-hidden="true">
+                            <path d="M7 1.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6L7 9.7l-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" />
+                          </svg>
+                          Analisis
+                        </button>
                         <button
                           type="button"
                           onClick={() => toggleSaveJournal(result)}
-                          className={`rounded-xl px-2 py-2 ${savedIds.includes(result.id) ? "bg-sky-100 font-semibold text-[#006194]" : "bg-[#f1f4fa]"}`}
+                          className={`flex items-center justify-center gap-1.5 rounded-2xl px-2 py-2.5 text-xs font-medium ${
+                            savedIds.includes(result.id) ? "bg-sky-100 font-semibold text-sky-700" : "bg-slate-100 text-slate-900"
+                          }`}
                         >
+                          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" strokeLinecap="round" aria-hidden="true">
+                            <path d="M3.5 1.5h7v11L7 9.5l-3.5 3z" />
+                          </svg>
                           {savedIds.includes(result.id) ? "Tersimpan" : "Simpan"}
                         </button>
-                        <button type="button" onClick={() => setSitasiOpen(true)} className="rounded-xl bg-[#f1f4fa] px-2 py-2">Sitasi</button>
-                        <button type="button" onClick={() => setAbstrakOpen(true)} className="rounded-xl bg-[#f1f4fa] px-2 py-2">Abstrak</button>
-                        <button type="button" onClick={() => window.open("https://doi.org/10.1016/j.jretconser.2020.102345", "_blank", "noopener,noreferrer")} className="rounded-xl bg-[#f1f4fa] px-2 py-2">DOI</button>
-                        <button type="button" onClick={() => window.alert("PDF dibuka.")} className="rounded-xl bg-[#f1f4fa] px-2 py-2 text-[#006194]">Buka PDF</button>
+                        <button type="button" onClick={() => setSitasiOpen(true)} className="flex items-center justify-center gap-1.5 rounded-2xl bg-slate-100 px-2 py-2.5 text-xs font-medium text-slate-900">
+                          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" strokeLinecap="round" aria-hidden="true">
+                            <path d="M2 2.5h10v7H6l-3 2.5V9.5H2z" />
+                          </svg>
+                          Sitasi
+                        </button>
+                        <button type="button" onClick={() => setAbstrakOpen(true)} className="flex items-center justify-center gap-1.5 rounded-2xl bg-slate-100 px-2 py-2.5 text-xs font-medium text-slate-900">
+                          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" strokeLinecap="round" aria-hidden="true">
+                            <path d="M3 1.5h6l3 3v9H3zM6 7h4M6 10h4" />
+                          </svg>
+                          Abstrak
+                        </button>
+                        <button type="button" onClick={() => window.open("https://doi.org/10.1016/j.jretconser.2020.102345", "_blank", "noopener,noreferrer")} className="flex items-center justify-center gap-1.5 rounded-2xl bg-slate-100 px-2 py-2.5 text-xs font-medium text-slate-900">
+                          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" strokeLinecap="round" aria-hidden="true">
+                            <path d="M5.5 8.5l3-3M4.8 6.3L3.3 7.8a2.1 2.1 0 003 3l1.5-1.5M9.2 7.7l1.5-1.5a2.1 2.1 0 00-3-3L6.2 4.7" />
+                          </svg>
+                          DOI
+                        </button>
+                        <button type="button" onClick={() => window.alert("PDF dibuka.")} className="flex items-center justify-center gap-1.5 rounded-2xl bg-slate-100 px-2 py-2.5 text-xs font-semibold text-sky-700">
+                          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" strokeLinecap="round" aria-hidden="true">
+                            <path d="M3 1.5h6l3 3v9H3zM8.5 1.5v3h3" />
+                          </svg>
+                          Buka PDF
+                        </button>
                       </div>
                     </article>
                   ))}
