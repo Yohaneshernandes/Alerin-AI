@@ -2002,6 +2002,10 @@ function DesktopSearchResults({
   onBack,
   savedIds,
   onToggleSave,
+  onOpenRingkasan,
+  onOpenTabel,
+  onOpenSitasi,
+  onOpenAbstrak,
 }: {
   query: string;
   onBack: () => void;
