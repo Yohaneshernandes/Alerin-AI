@@ -1201,8 +1201,152 @@ function RingkasanJurnalModal({ open, onClose }: { open: boolean; onClose: () =>
   );
 }
 
+function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  if (!open) return null;
+
+  const headers = ["No.", "Penelitian", "Tujuan", "Metode dan sampel", "Temuan utama", "Perbedaan dan celah", "Relevansi"];
+
+  const tableRows = [
+    {
+      study: "Wongkitrungrueng & Assarut (2023)",
+      subtitle: "Live Streaming Commerce and Mimic Purchase Intention",
+      tujuan: "Menguji peran interaksi parasosial dan kelangkaan pada niat beli.",
+      metode: "Survei potong lintang; SEM-PLS; pengguna live commerce.",
+      temuan: "Kepercayaan memediasi pengaruh interaksi parasosial; kelangkaan memperkuat urgensi.",
+      celah: "Belum menguji perubahan perilaku jangka panjang dan konteks Indonesia.",
+      relevansi: "97%",
+    },
+    {
+      study: "Chen, Li & Zhang (2024)",
+      subtitle: "Social Presence, Trust and Purchase Intention",
+      tujuan: "Menganalisis kehadiran sosial dan kredibilitas host.",
+      metode: "Survei 468 responden; SEM.",
+      temuan: "Kehadiran sosial meningkatkan kepercayaan dan keterlibatan konsumen.",
+      celah: "Tidak memasukkan pesan kelangkaan sebagai variabel moderator.",
+      relevansi: "94%",
+    },
+    {
+      study: "Rahmawati & Prasetyo (2024)",
+      subtitle: "Kelangkaan Produk dan Interaksi Host",
+      tujuan: "Menguji keputusan pembelian pada konsumen Indonesia.",
+      metode: "Survei 215 pengguna; regresi berganda.",
+      temuan: "Interaksi host dan kelangkaan berpengaruh positif pada keputusan pembelian.",
+      celah: "Belum menguji mekanisme kepercayaan dan hubungan parasosial secara terpisah.",
+      relevansi: "91%",
+    },
+  ];
+
+  const copyTable = () => {
+    const text = [
+      headers.join("\t"),
+      ...tableRows.map((row, index) => [index + 1, row.study, row.tujuan, row.metode, row.temuan, row.celah, row.relevansi].join("\t")),
+    ].join("\n");
+    try {
+      void navigator.clipboard.writeText(text);
+    } catch {
+      window.alert("Tabel berhasil disalin.");
+      return;
+    }
+    window.alert("Tabel berhasil disalin.");
+  };
+
+  const columnWidths = ["w-14", "w-60", "w-40", "w-40", "w-48", "w-44", "w-24"];
+
+  return (
+    <div
+      className="fixed inset-0 z-[340] flex items-center justify-center bg-black/25 p-4 backdrop-blur-[2.55px]"
+      onClick={onClose}
+      role="presentation"
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Tabel penelitian terdahulu"
+        onClick={event => event.stopPropagation()}
+        className="flex max-h-[calc(100vh-32px)] w-[1140px] max-w-full flex-col overflow-hidden rounded-3xl bg-white shadow-2xl outline outline-1 outline-offset-[-1px] outline-slate-100"
+      >
+        <div className="flex items-start justify-between gap-4 px-8 pb-4 pt-7">
+          <div>
+            <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-2xl font-bold leading-8 text-slate-900">Tabel penelitian terdahulu</h2>
+            <p className="font-['Plus_Jakarta_Sans:Regular'] pt-1 text-sm font-normal leading-5 text-slate-500">
+              Perbandingan jurnal yang direkomendasikan Alerin berdasarkan topik penelitianmu
+            </p>
+          </div>
+          <button
+            type="button"
+            aria-label="Tutup tabel"
+            onClick={onClose}
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white outline outline-1 outline-offset-[-1px] outline-slate-200 transition-colors hover:bg-slate-50"
+          >
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="#94a3b8" strokeWidth="1.67" strokeLinecap="round" aria-hidden="true">
+              <path d="M1.5 1.5l7 7M8.5 1.5l-7 7" />
+            </svg>
+          </button>
+        </div>
+
+        <div className="flex flex-col gap-4 overflow-y-auto px-8 py-2">
+          <div className="rounded-xl bg-sky-50 px-4 py-3.5 outline outline-1 outline-offset-[-1px] outline-blue-100">
+            <p className="font-['Plus_Jakarta_Sans:Medium'] text-sm font-medium leading-5 text-cyan-900">
+              Gunakan kolom &ldquo;Perbedaan dan celah&rdquo; untuk menyusun kebaruan penelitian. Selalu cek paper asli sebelum memasukkan tabel ke
+              karya ilmiah.
+            </p>
+          </div>
+
+          <div className="overflow-x-auto rounded-2xl outline outline-1 outline-offset-[-1px] outline-slate-200/90">
+            <table className="w-full min-w-[960px] border-collapse text-left">
+              <thead>
+                <tr className="bg-slate-50">
+                  {headers.map((header, index) => (
+                    <th key={header} className={`${columnWidths[index]} border-b border-slate-200/90 bg-slate-50 px-4 py-3.5 text-xs font-bold leading-5 text-slate-700`}>
+                      {header}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {tableRows.map((row, index) => (
+                  <tr key={row.study} className={index === 0 ? "" : "border-t border-slate-100"}>
+                    <td className="px-4 pt-4 align-top text-xs font-bold leading-5 text-slate-800">{index + 1}</td>
+                    <td className="px-4 pt-4 align-top">
+                      <p className="text-xs font-bold leading-4 text-slate-900">{row.study}</p>
+                      <p className="pt-1 text-xs font-normal leading-4 text-slate-500">{row.subtitle}</p>
+                    </td>
+                    <td className="p-4 align-top text-xs font-normal leading-5 text-slate-700">{row.tujuan}</td>
+                    <td className="p-4 align-top text-xs font-normal leading-5 text-slate-700">{row.metode}</td>
+                    <td className="p-4 align-top text-xs font-normal leading-5 text-slate-700">{row.temuan}</td>
+                    <td className="p-4 align-top text-xs font-normal leading-5 text-slate-700">{row.celah}</td>
+                    <td className="px-4 pt-4 align-top text-xs font-medium leading-5 text-slate-900">{row.relevansi}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-end gap-3 border-t border-black/10 bg-white px-8 py-6">
+          <button
+            type="button"
+            onClick={copyTable}
+            className="rounded-xl px-5 py-2.5 text-sm font-semibold leading-5 text-slate-700 outline outline-1 outline-offset-[-1px] outline-slate-300 transition-colors hover:bg-slate-50"
+          >
+            Salin tabel
+          </button>
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-xl bg-sky-700 px-7 py-2.5 text-sm font-semibold leading-5 text-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] transition-colors hover:bg-sky-800"
+          >
+            Selesai
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function DesktopSearchResults({ query, onBack }: { query: string; onBack: () => void }) {
   const [ringkasanOpen, setRingkasanOpen] = useState(false);
+  const [tabelOpen, setTabelOpen] = useState(false);
 
   return (
     <div className="mx-auto hidden max-w-[1160px] md:block">
@@ -1250,7 +1394,11 @@ function DesktopSearchResults({ query, onBack }: { query: string; onBack: () => 
             <p className="text-3xl font-extrabold leading-8 text-sky-600">20</p>
             <p className="text-sm font-medium leading-4 text-slate-500">paling relevan untuk ditelaah</p>
           </div>
-          <button type="button" className="mt-5 w-full rounded-lg bg-sky-700 py-3 text-xs font-bold leading-4 text-white">
+          <button
+            type="button"
+            onClick={() => setTabelOpen(true)}
+            className="mt-5 w-full rounded-lg bg-sky-700 py-3 text-xs font-bold leading-4 text-white transition-colors hover:bg-sky-800"
+          >
             Tabel penelitian terdahulu
           </button>
           <p className="mt-3 text-center text-sm font-bold leading-4 text-slate-300">Peta Penelitian</p>
@@ -1258,6 +1406,7 @@ function DesktopSearchResults({ query, onBack }: { query: string; onBack: () => 
       </div>
 
       <RingkasanJurnalModal open={ringkasanOpen} onClose={() => setRingkasanOpen(false)} />
+      <TabelPenelitianModal open={tabelOpen} onClose={() => setTabelOpen(false)} />
     </div>
   );
 }
