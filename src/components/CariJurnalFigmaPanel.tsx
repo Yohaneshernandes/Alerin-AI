@@ -3520,6 +3520,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
   const [query, setQuery] = useState("");
   const [paragraph, setParagraph] = useState("");
   const [fileName, setFileName] = useState("");
+  const [useActiveFilter, setUseActiveFilter] = useState(true);
   const [fileSizeLabel, setFileSizeLabel] = useState("");
   const [mobileSearchStage, setMobileSearchStage] = useState<"home" | "loading" | "results">("home");
   const [desktopStage, setDesktopStage] = useState<"home" | "loading" | "results">("home");
@@ -4149,10 +4150,24 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                     )}
                   </div>
                   <div className="mt-4 flex flex-col gap-3 md:mt-5 md:flex-row md:items-center md:justify-between">
-                    <label className="flex items-center gap-2 text-[13px] text-[#475569] md:text-xs md:font-semibold md:text-slate-700">
-                      <span className="flex h-[18px] w-[18px] items-center justify-center rounded bg-[#0070ba]">
-                        <img src={`${mobileAssets}/9e421.svg`} alt="" className="max-w-none origin-center scale-[0.6667] md:hidden" />
-                        <img src={`${searchAssets}/b5bd9.svg`} alt="" className="hidden md:block" />
+                    <label className="flex cursor-pointer select-none items-center gap-2 text-[13px] text-[#475569] md:text-xs md:font-semibold md:text-slate-700">
+                      <span
+                        className={`flex h-[18px] w-[18px] items-center justify-center rounded ${
+                          useActiveFilter ? "bg-[#0070ba]" : "border border-slate-300 bg-white"
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={useActiveFilter}
+                          onChange={event => setUseActiveFilter(event.target.checked)}
+                          className="sr-only"
+                        />
+                        {useActiveFilter && (
+                          <>
+                            <img src={`${mobileAssets}/9e421.svg`} alt="" className="max-w-none origin-center scale-[0.6667] md:hidden" />
+                            <img src={`${searchAssets}/b5bd9.svg`} alt="" className="hidden md:block" />
+                          </>
+                        )}
                       </span>
                       Gunakan filter aktif pada rekomendasi Alerin
                     </label>
