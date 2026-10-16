@@ -1227,11 +1227,15 @@ function JournalCard({
   folders,
   onMove,
   onRemove,
+  onSitasi,
+  onAbstrak,
 }: {
   journal: SavedJournal;
   folders: CollectionFolder[];
   onMove: (folderId: string) => void;
   onRemove: () => void;
+  onSitasi: () => void;
+  onAbstrak: () => void;
 }) {
   const activeFolder = folders.find(folder => folder.id === journal.folderId);
   return (
@@ -1258,12 +1262,36 @@ function JournalCard({
       )}
       <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-slate-100 pt-4">
         <button type="button" className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs">Lihat detail</button>
-        <button type="button" className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs">Abstrak</button>
-        <button type="button" className="flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs">
-          <img src={`${collectionAssets}/9b4e4.svg`} alt="" /> Buat sitasi
+        <button
+          type="button"
+          onClick={onSitasi}
+          className="flex items-center gap-1 rounded-lg bg-white px-3 py-1.5 text-xs font-semibold leading-4 text-slate-700 outline outline-1 outline-offset-[-1px] outline-slate-200"
+        >
+          Buat sitasi
         </button>
-        <button type="button" className="flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs">
-          <img src={`${collectionAssets}/edcfd.svg`} alt="" /> Buka DOI
+        <button
+          type="button"
+          onClick={onAbstrak}
+          className="flex items-center gap-1 rounded-lg bg-white px-3 py-1.5 text-xs font-semibold leading-4 text-slate-700 outline outline-1 outline-offset-[-1px] outline-slate-200"
+        >
+          Abstrak
+        </button>
+        <button
+          type="button"
+          onClick={() => window.open("https://doi.org/10.1016/j.jretconser.2020.102345", "_blank", "noopener,noreferrer")}
+          className="flex items-center gap-1 rounded-lg bg-white px-3 py-1.5 text-xs font-semibold leading-4 text-slate-700 outline outline-1 outline-offset-[-1px] outline-slate-200"
+        >
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" aria-hidden="true">
+            <rect x="1.5" y="1.5" width="9" height="9" rx="1.5" />
+          </svg>
+          DOI
+        </button>
+        <button
+          type="button"
+          onClick={() => window.alert("PDF dibuka.")}
+          className="flex items-center gap-1 rounded-lg bg-white px-3 py-1.5 text-xs font-semibold leading-4 text-slate-700 outline outline-1 outline-offset-[-1px] outline-slate-200"
+        >
+          Buka PDF
         </button>
         <label className="relative flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-1.5 text-xs">
           <span className="pointer-events-none max-w-24 truncate font-medium">{activeFolder?.name ?? "Belum dikelompokkan"}</span>
@@ -1416,7 +1444,15 @@ function DesktopJournalResultCard({
             <button
               key={label}
               type="button"
-              onClick={label === "Buat sitasi" ? onSitasi : label === "Abstrak" ? onAbstrak : undefined}
+              onClick={
+                label === "Buat sitasi"
+                  ? onSitasi
+                  : label === "Abstrak"
+                    ? onAbstrak
+                    : label === "DOI"
+                      ? () => window.open("https://doi.org/10.1016/j.jretconser.2020.102345", "_blank", "noopener,noreferrer")
+                      : () => window.alert("PDF dibuka.")
+              }
               className="flex items-center gap-1 rounded-lg bg-white px-3 py-1.5 text-xs font-semibold leading-4 text-slate-700 outline outline-1 outline-offset-[-1px] outline-slate-200"
             >
               {label === "DOI" && (
@@ -1971,12 +2007,11 @@ function DesktopSearchResults({
   onBack: () => void;
   savedIds: string[];
   onToggleSave: (journal: (typeof desktopResultJournals)[number]) => void;
+  onOpenRingkasan: () => void;
+  onOpenTabel: () => void;
+  onOpenSitasi: () => void;
+  onOpenAbstrak: () => void;
 }) {
-  const [ringkasanOpen, setRingkasanOpen] = useState(false);
-  const [tabelOpen, setTabelOpen] = useState(false);
-  const [sitasiOpen, setSitasiOpen] = useState(false);
-  const [abstrakOpen, setAbstrakOpen] = useState(false);
-
   return (
     <div className="mx-auto hidden max-w-[1160px] md:block">
       <div className="flex items-center justify-between gap-4">
@@ -1998,27 +2033,27 @@ function DesktopSearchResults({
           <DesktopJournalResultCard
             relevancy="97%"
             showHeader
-            onAnalisis={() => setRingkasanOpen(true)}
-            onSitasi={() => setSitasiOpen(true)}
-            onAbstrak={() => setAbstrakOpen(true)}
+            onAnalisis={onOpenRingkasan}
+            onSitasi={onOpenSitasi}
+            onAbstrak={onOpenAbstrak}
             journal={desktopResultJournals[0]}
             saved={savedIds.includes(desktopResultJournals[0].id)}
             onToggleSave={() => onToggleSave(desktopResultJournals[0])}
           />
           <DesktopJournalResultCard
             relevancy="92%"
-            onAnalisis={() => setRingkasanOpen(true)}
-            onSitasi={() => setSitasiOpen(true)}
-            onAbstrak={() => setAbstrakOpen(true)}
+            onAnalisis={onOpenRingkasan}
+            onSitasi={onOpenSitasi}
+            onAbstrak={onOpenAbstrak}
             journal={desktopResultJournals[1]}
             saved={savedIds.includes(desktopResultJournals[1].id)}
             onToggleSave={() => onToggleSave(desktopResultJournals[1])}
           />
           <DesktopJournalResultCard
             relevancy="89%"
-            onAnalisis={() => setRingkasanOpen(true)}
-            onSitasi={() => setSitasiOpen(true)}
-            onAbstrak={() => setAbstrakOpen(true)}
+            onAnalisis={onOpenRingkasan}
+            onSitasi={onOpenSitasi}
+            onAbstrak={onOpenAbstrak}
             journal={desktopResultJournals[2]}
             saved={savedIds.includes(desktopResultJournals[2].id)}
             onToggleSave={() => onToggleSave(desktopResultJournals[2])}
@@ -2050,7 +2085,7 @@ function DesktopSearchResults({
           </div>
           <button
             type="button"
-            onClick={() => setTabelOpen(true)}
+            onClick={onOpenTabel}
             className="mt-5 w-full rounded-lg bg-sky-700 py-3 text-xs font-bold leading-4 text-white transition-colors hover:bg-sky-800"
           >
             Tabel penelitian terdahulu
@@ -2058,11 +2093,6 @@ function DesktopSearchResults({
           <p className="mt-3 text-center text-sm font-bold leading-4 text-slate-300">Peta Penelitian</p>
         </aside>
       </div>
-
-      <RingkasanJurnalModal open={ringkasanOpen} onClose={() => setRingkasanOpen(false)} />
-      <TabelPenelitianModal open={tabelOpen} onClose={() => setTabelOpen(false)} />
-      <BuatSitasiModal open={sitasiOpen} onClose={() => setSitasiOpen(false)} />
-      <AbstrakJurnalModal open={abstrakOpen} onClose={() => setAbstrakOpen(false)} />
     </div>
   );
 }
@@ -3280,6 +3310,10 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
   const [activeFolderId, setActiveFolderId] = useState("all");
   const [newFolderOpen, setNewFolderOpen] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const [ringkasanOpen, setRingkasanOpen] = useState(false);
+  const [tabelOpen, setTabelOpen] = useState(false);
+  const [sitasiOpen, setSitasiOpen] = useState(false);
+  const [abstrakOpen, setAbstrakOpen] = useState(false);
   const toastTimer = useRef<number | undefined>(undefined);
 
   const showToast = (message: string) => {
@@ -3567,7 +3601,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                     ))}
                   </div>
                   <div className="mt-4">
-                    <button type="button" onClick={() => window.alert("Tabel penelitian ditampilkan.")} className="w-full rounded-xl bg-[#006194] px-3 py-2.5 text-xs font-semibold text-white">Tabel penelitian terdahulu</button>
+                    <button type="button" onClick={() => setTabelOpen(true)} className="w-full rounded-xl bg-[#006194] px-3 py-2.5 text-xs font-semibold text-white">Tabel penelitian terdahulu</button>
                   </div>
                 </section>
 
@@ -3644,7 +3678,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                       </div>
 
                       <div className="mt-3 grid grid-cols-3 gap-2 text-[10px] font-semibold">
-                        <button type="button" onClick={() => window.alert("Analisis jurnal dibuka.")} className="rounded-xl bg-[#006194] px-2 py-2 text-white">Analisis</button>
+                        <button type="button" onClick={() => setRingkasanOpen(true)} className="rounded-xl bg-[#006194] px-2 py-2 text-white">Analisis</button>
                         <button
                           type="button"
                           onClick={() => toggleSaveJournal(result)}
@@ -3652,8 +3686,8 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                         >
                           {savedIds.includes(result.id) ? "Tersimpan" : "Simpan"}
                         </button>
-                        <button type="button" onClick={() => window.alert("Sitasi berhasil dibuat.")} className="rounded-xl bg-[#f1f4fa] px-2 py-2">Sitasi</button>
-                        <button type="button" onClick={() => window.alert("Abstrak jurnal dibuka.")} className="rounded-xl bg-[#f1f4fa] px-2 py-2">Abstrak</button>
+                        <button type="button" onClick={() => setSitasiOpen(true)} className="rounded-xl bg-[#f1f4fa] px-2 py-2">Sitasi</button>
+                        <button type="button" onClick={() => setAbstrakOpen(true)} className="rounded-xl bg-[#f1f4fa] px-2 py-2">Abstrak</button>
                         <button type="button" onClick={() => window.open("https://doi.org/10.1016/j.jretconser.2020.102345", "_blank", "noopener,noreferrer")} className="rounded-xl bg-[#f1f4fa] px-2 py-2">DOI</button>
                         <button type="button" onClick={() => window.alert("PDF dibuka.")} className="rounded-xl bg-[#f1f4fa] px-2 py-2 text-[#006194]">Buka PDF</button>
                       </div>
@@ -3689,6 +3723,10 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                 onBack={() => setDesktopStage("home")}
                 savedIds={savedIds}
                 onToggleSave={toggleSaveJournal}
+                onOpenRingkasan={() => setRingkasanOpen(true)}
+                onOpenTabel={() => setTabelOpen(true)}
+                onOpenSitasi={() => setSitasiOpen(true)}
+                onOpenAbstrak={() => setAbstrakOpen(true)}
               />
             ))}
 
@@ -4091,17 +4129,14 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                       <button type="button" onClick={() => window.alert(`${journal.title}\n\n${journal.authors}`)} className="rounded-lg bg-slate-100 px-3 py-2.5">Lihat detail</button>
                       <button
                         type="button"
-                        onClick={event => event.currentTarget.closest("article")?.querySelector("[data-full-abstract]")?.classList.toggle("hidden")}
+                        onClick={() => setAbstrakOpen(true)}
                         className="rounded-lg bg-slate-100 px-3 py-2.5"
                       >
                         Abstrak
                       </button>
                       <button
                         type="button"
-                        onClick={() => {
-                          void navigator.clipboard?.writeText(`${journal.authors} (2023). ${journal.title}.`);
-                          window.alert("Sitasi berhasil disalin.");
-                        }}
+                        onClick={() => setSitasiOpen(true)}
                         className="rounded-lg bg-sky-100 px-3 py-2.5 text-[#0369a1]"
                       >
                         Buat sitasi
@@ -4184,6 +4219,8 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                         folders={folders}
                         onMove={folderId => moveJournal(journal.id, folderId)}
                         onRemove={() => removeSavedJournal(journal.id)}
+                        onSitasi={() => setSitasiOpen(true)}
+                        onAbstrak={() => setAbstrakOpen(true)}
                       />
                     ))}
                   </div>
@@ -4285,6 +4322,10 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
       <UpgradePremiumModal open={upgradeOpen} onClose={() => setUpgradeOpen(false)} />
       <UpgradePremiumSheet open={upgradeOpen} onClose={() => setUpgradeOpen(false)} />
       <NewFolderModal open={newFolderOpen} onClose={() => setNewFolderOpen(false)} onCreate={createFolder} />
+      <RingkasanJurnalModal open={ringkasanOpen} onClose={() => setRingkasanOpen(false)} />
+      <TabelPenelitianModal open={tabelOpen} onClose={() => setTabelOpen(false)} />
+      <BuatSitasiModal open={sitasiOpen} onClose={() => setSitasiOpen(false)} />
+      <AbstrakJurnalModal open={abstrakOpen} onClose={() => setAbstrakOpen(false)} />
       <Toast message={toast} />
     </div>
   );
