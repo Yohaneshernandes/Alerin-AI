@@ -2239,7 +2239,6 @@ function DesktopSearchResults({
           >
             Tabel penelitian terdahulu
           </button>
-          <p className="mt-3 text-center text-sm font-bold leading-4 text-slate-300">Peta Penelitian</p>
           </div>
         </aside>
       </div>
