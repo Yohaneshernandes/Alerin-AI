@@ -3634,9 +3634,8 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                       </div>
                     ))}
                   </div>
-                  <div className="mt-4 grid grid-cols-2 gap-2">
-                    <button type="button" onClick={() => window.alert("Tabel penelitian ditampilkan.")} className="rounded-xl bg-[#006194] px-3 py-2.5 text-xs font-semibold text-white">Tabel penelitian</button>
-                    <button type="button" onClick={() => window.alert("Peta penelitian ditampilkan.")} className="rounded-xl bg-[#0f172a] px-3 py-2.5 text-xs font-semibold text-white">Peta Penelitian</button>
+                  <div className="mt-4">
+                    <button type="button" onClick={() => window.alert("Tabel penelitian ditampilkan.")} className="w-full rounded-xl bg-[#006194] px-3 py-2.5 text-xs font-semibold text-white">Tabel penelitian terdahulu</button>
                   </div>
                 </section>
 
