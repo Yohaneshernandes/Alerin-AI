@@ -1718,7 +1718,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
       {/* Mobile top header */}
       <div className="md:hidden flex items-center justify-between px-4 py-2.5 shrink-0 bg-white z-40" style={{ borderBottom: "1px solid #f1f5f9" }}>
         <div className="flex items-center gap-2">
-          <img src="/assets/73c1a.png" alt="Alerin" className="size-8 rounded-full border border-white bg-white p-1 object-contain shadow-sm" />
+          <img src="/assets/73c1a.png" alt="Alerin" className="size-8 rounded-full border border-white object-cover shadow-sm" />
           <div>
             <p className="font-bold text-[14px] text-slate-900 leading-none">ALERIN</p>
           </div>
@@ -1763,7 +1763,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
             {sidebarOpen ? (
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5 px-1">
-                  <img src="/assets/73c1a.png" alt="Alerin" className="h-8 w-8 shrink-0 rounded-full bg-white p-1 object-contain" />
+                  <img src="/assets/73c1a.png" alt="Alerin" className="h-8 w-8 shrink-0 rounded-full object-cover" />
                   <div className="min-w-0">
                     <p className="font-display font-700 text-sm text-slate-900 leading-none">Alerin</p>
                     <div className="flex items-center gap-1 mt-0.5">
@@ -1780,7 +1780,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
             ) : (
               <div className="flex flex-col items-center gap-2">
                 <button onClick={() => setSidebarOpen(true)} title="Buka sidebar">
-                  <img src="/assets/73c1a.png" alt="Alerin" className="h-8 w-8 rounded-full bg-white p-1 object-contain" />
+                  <img src="/assets/73c1a.png" alt="Alerin" className="h-8 w-8 rounded-full object-cover" />
                 </button>
               </div>
             )}
@@ -6648,7 +6648,7 @@ const PintarlyMascotBubble = React.memo(function PintarlyMascotBubble({ pre, bol
     <div className="flex items-center gap-3 sm:gap-4 mb-6 sm:mb-8 w-full" style={{ animation: "bubbleEnter 0.45s cubic-bezier(0.34,1.56,0.64,1) both" }}>
       <div className="relative shrink-0" style={{ animation: "mascotBob 3s ease-in-out infinite" }}>
         <div className="w-[72px] h-[72px] sm:w-[80px] sm:h-[80px] rounded-full overflow-hidden flex items-center justify-center" style={{ background: "#ffffff", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1),0 2px 4px -2px rgba(0,0,0,0.1)", border: "2px solid #ffffff" }}>
-          <img src="/assets/73c1a.png" alt="Alerin" className="h-[52px] w-[50px] object-contain"/>
+          <img src="/assets/73c1a.png" alt="Alerin" className="h-full w-full object-cover"/>
         </div>
       </div>
       <div className="relative flex-1 bg-white rounded-[18px] sm:rounded-[24px] px-4 sm:px-5 py-3.5 sm:py-4 drop-shadow-[0px_1px_1px_rgba(0,0,0,0.05)]"
@@ -7436,7 +7436,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
               <img
                 src="/assets/73c1a.png"
                 alt="Alerin"
-                className="w-28 h-28 object-contain"
+                className="h-full w-full object-cover"
               />
             </div>
           </div>
@@ -7500,7 +7500,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
           background: "white",
           boxShadow: "0 4px 30px rgba(37,99,235,0.15)",
         }}>
-          <img src="/assets/73c1a.png" alt="Alerin" className="w-20 h-20 sm:w-24 sm:h-24 object-contain"/>
+          <img src="/assets/73c1a.png" alt="Alerin" className="h-full w-full object-cover"/>
         </div>
       </div>
 
@@ -7640,7 +7640,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                       style={{ inset: "-28px", background: "radial-gradient(circle, rgba(37,99,235,0.18) 0%, rgba(99,102,241,0.1) 60%, transparent 100%)", filter: "blur(12px)" }}/>
                     <div className="relative flex items-center justify-center rounded-full overflow-hidden mx-auto"
                       style={{ width: 168, height: 168, background: "#ffffff", border: "3px solid rgba(255,255,255,0.85)", boxShadow: "0px 6.94px 5.2px rgba(0,0,0,0.1), 0px 3.47px 3.47px rgba(0,0,0,0.1)" }}>
-                      <img src="/assets/73c1a.png" alt="Alerin" className="h-[118px] w-[112px] object-contain"/>
+                      <img src="/assets/73c1a.png" alt="Alerin" className="h-full w-full object-cover"/>
                     </div>
                   </div>
 
