@@ -1718,7 +1718,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
       {/* Mobile top header */}
       <div className="md:hidden flex items-center justify-between px-4 py-2.5 shrink-0 bg-white z-40" style={{ borderBottom: "1px solid #f1f5f9" }}>
         <div className="flex items-center gap-2">
-          <img src="/assets/f725b.png" alt="Alerin" className="size-8 rounded-full border border-white object-cover shadow-sm" />
+          <img src="/assets/73c1a.png" alt="Alerin" className="size-8 rounded-full border border-white bg-white p-1 object-contain shadow-sm" />
           <div>
             <p className="font-bold text-[14px] text-slate-900 leading-none">ALERIN</p>
           </div>
@@ -1763,7 +1763,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
             {sidebarOpen ? (
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5 px-1">
-                  <img src="/assets/f725b.png" alt="Alerin" className="h-8 w-8 shrink-0 rounded-full object-cover" />
+                  <img src="/assets/73c1a.png" alt="Alerin" className="h-8 w-8 shrink-0 rounded-full bg-white p-1 object-contain" />
                   <div className="min-w-0">
                     <p className="font-display font-700 text-sm text-slate-900 leading-none">Alerin</p>
                     <div className="flex items-center gap-1 mt-0.5">
@@ -1780,7 +1780,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
             ) : (
               <div className="flex flex-col items-center gap-2">
                 <button onClick={() => setSidebarOpen(true)} title="Buka sidebar">
-                  <img src="/assets/f725b.png" alt="Alerin" className="h-8 w-8 rounded-full object-cover" />
+                  <img src="/assets/73c1a.png" alt="Alerin" className="h-8 w-8 rounded-full bg-white p-1 object-contain" />
                 </button>
               </div>
             )}
@@ -6919,7 +6919,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
   const MascotBubble = ({ pre, bold, sub }: { pre: string; bold: string; sub?: string }) => (
     <div className="flex items-center gap-3 mb-7 w-full" style={{ animation: "bubbleEnter 0.45s cubic-bezier(0.34,1.56,0.64,1) both" }}>
       <div className="w-14 h-14 rounded-full overflow-hidden shrink-0 drop-shadow-sm" style={{ animation: "mascotBob 3s ease-in-out infinite" }}>
-        <img src="/assets/alerin-logo.png" alt="Alerin" className="w-full h-full object-cover"/>
+        <img src="/assets/73c1a.png" alt="Alerin" className="w-full h-full object-cover"/>
       </div>
       <div className="relative bg-white rounded-2xl px-5 py-3.5 flex-1" style={{ boxShadow: "0 2px 16px rgba(0,0,0,0.08)", borderRadius: "0 20px 20px 20px", animation: "bubblePop 0.4s cubic-bezier(0.34,1.56,0.64,1) 0.1s both" }}>
         <div className="absolute -left-2.5 top-4 w-0 h-0" style={{ borderTop: "8px solid transparent", borderBottom: "8px solid transparent", borderRight: "12px solid white", filter: "drop-shadow(-2px 0 2px rgba(0,0,0,0.06))" }} />
@@ -7199,7 +7199,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
               {/* Header */}
               <div className="flex flex-col items-center px-4 pb-3 pt-4">
                 <div className="mb-2 flex h-[61px] w-[61px] items-center justify-center overflow-hidden rounded-full border-2 border-blue-100 bg-white shadow-md">
-                  <img src="/assets/f725b.png" alt="Alerin" className="h-full w-full object-cover" />
+                  <img src="/assets/73c1a.png" alt="Alerin" className="h-full w-full object-cover" />
                 </div>
                 <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-[22px] font-bold leading-[30px] tracking-[-0.45px] text-[#1b1b1c]">Masuk ke Alerin</h2>
                 <p className="mt-1 w-full text-center font-['Plus_Jakarta_Sans:Regular'] text-[12px] leading-[19px] text-[#71717a]">Selamat datang kembali! Masuk untuk melanjutkan.</p>
@@ -7434,7 +7434,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
             <div className="w-36 h-36 rounded-full overflow-hidden flex items-center justify-center"
               style={{ background: "white", boxShadow: "0 4px 20px rgba(0,0,0,0.08)", animation: "floatUpDown 4s ease-in-out infinite" }}>
               <img
-                src="/assets/alerin-logo.png"
+                src="/assets/73c1a.png"
                 alt="Alerin"
                 className="w-28 h-28 object-contain"
               />
@@ -7500,7 +7500,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
           background: "white",
           boxShadow: "0 4px 30px rgba(37,99,235,0.15)",
         }}>
-          <img src="/assets/alerin-logo.png" alt="Alerin" className="w-20 h-20 sm:w-24 sm:h-24 object-contain"/>
+          <img src="/assets/73c1a.png" alt="Alerin" className="w-20 h-20 sm:w-24 sm:h-24 object-contain"/>
         </div>
       </div>
 
@@ -9342,7 +9342,7 @@ function ProfilTab({ onTab, onRegister }: { onTab: (t: NavTab) => void; onRegist
 
               <div className="text-center">
                 <div className="mx-auto mt-6 flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border-4 border-blue-100 bg-blue-50 shadow-sm">
-                  <img src="/assets/f725b.png" alt="Logo Alerin" className="h-full w-full object-cover" />
+                  <img src="/assets/73c1a.png" alt="Logo Alerin" className="h-full w-full object-cover" />
                 </div>
               <p className="mt-4 text-[18px] font-bold text-slate-800">Buka semua fitur Alerin</p>
                 <p className="mt-1 text-xs leading-5 text-slate-500">Dapatkan dukungan penuh untuk belajar, riset, dan menyelesaikan target akademikmu.</p>
@@ -10251,7 +10251,7 @@ function ProfilTab({ onTab, onRegister }: { onTab: (t: NavTab) => void; onRegist
 
                   {profileView === "about" && (
                     <div className="mx-auto max-w-xl text-center">
-                      <img src="/assets/alerin-logo.png" alt="Alerin" className="mx-auto h-20 w-20 rounded-2xl object-cover" />
+                      <img src="/assets/73c1a.png" alt="Alerin" className="mx-auto h-20 w-20 rounded-2xl object-cover" />
                       <p className="mt-4 font-display text-xl font-bold text-slate-900">Alerin AI</p>
                       <p className="mt-2 text-sm leading-relaxed text-slate-500">Asisten akademik untuk membantu mahasiswa Indonesia belajar, meneliti, dan menyelesaikan tugas akhirnya.</p>
                       <p className="mt-4 text-xs text-slate-400">Versi simulasi 1.0.0</p>

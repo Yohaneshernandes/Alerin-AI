@@ -433,7 +433,7 @@ function Sidebar({
             collapsed ? "justify-center px-0" : "px-4"
           }`}
         >
-          <img src={`${assets}/f725b.png`} alt="" className="h-8 w-8 rounded-full object-cover outline outline-1 outline-slate-400/50" />
+          <img src={`${assets}/73c1a.png`} alt="" className="h-8 w-8 rounded-full object-contain outline outline-1 outline-slate-400/50" />
           {!collapsed && "Home Alerin"}
         </button>
       </nav>
@@ -5071,7 +5071,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
           <button type="button" onClick={onBack} className="relative flex flex-col items-center gap-1 pb-1 text-[10px] font-bold text-[#004f80]">
             <span className="-mt-7 flex h-[46px] w-[46px] items-center justify-center rounded-full border border-white bg-[rgba(123,123,123,0.05)] shadow-lg">
               <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white">
-                <img src={`${mobileAssets}/f725b.png`} alt="Alerin AI" className="h-8 w-8 rounded-full object-cover" />
+                <img src={`${mobileAssets}/73c1a.png`} alt="Alerin AI" className="h-8 w-8 rounded-full object-contain" />
               </span>
             </span>
             ALERIN AI
