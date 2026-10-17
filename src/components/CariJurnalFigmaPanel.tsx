@@ -4508,14 +4508,12 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                         <img src="/assets/jurnal-design/quick-search/8e43d.svg" alt="" className="absolute left-[-19.689px] top-[-18.447px] max-w-none origin-top-left scale-[0.6667]" />
                       </span>
                       Filter
-                      {filterApplied ? (
+                      {filterApplied && (
                         <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-sky-100">
                           <svg width="14" height="11" viewBox="0 0 14 11" fill="none" stroke="#0070ba" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                             <path d="M1.5 5.8l3.8 3.8L12.5 1.5" />
                           </svg>
                         </span>
-                      ) : (
-                        <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[11px] font-bold text-[#0070ba]">10</span>
                       )}
                     </button>
                   </div>
