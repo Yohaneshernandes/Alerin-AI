@@ -4888,7 +4888,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                     </div>
 
                     <div className="mt-2 flex gap-2 rounded-lg bg-sky-50 p-3 text-xs leading-[18px] text-[#0f172a]">
-                      <img src="/assets/jurnal-design/collection-mobile/4f26d.svg" alt="" className="mt-0.5 max-w-none shrink-0 origin-top scale-[0.65]" />
+                      <img src="/assets/jurnal-design/collection-mobile/4f26d.svg" alt="" className="mt-1 h-4 w-[13.5px] shrink-0" />
                       <p><strong className="text-[#006194]">Alasan direkomendasikan:</strong> Cocok untuk memperkuat landasan teori dan hubungan antarvariabel.</p>
                     </div>
 
