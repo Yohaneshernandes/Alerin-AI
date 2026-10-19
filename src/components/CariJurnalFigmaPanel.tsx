@@ -758,19 +758,24 @@ function FilterCheck({
   bold?: boolean;
 }) {
   return (
-    <button type="button" onClick={onToggle} className="flex w-full items-center gap-2 py-0.5 text-left">
+    <button
+      type="button"
+      onClick={onToggle}
+      aria-pressed={checked}
+      className="flex w-full items-center gap-2.5 rounded-lg py-1 text-left transition-colors hover:bg-slate-100/70"
+    >
       <span
-        className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-sm border ${
-          checked ? "border-sky-700 bg-sky-700" : "border-slate-300 bg-white"
+        className={`flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-[5px] border transition-colors ${
+          checked ? "border-[#0369a1] bg-[#0369a1]" : "border-slate-300 bg-white"
         }`}
       >
         {checked && (
-          <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M2.5 6.5l2.5 2.5 4.5-5.5" />
           </svg>
         )}
       </span>
-      <span className={`text-xs ${bold ? "font-semibold text-slate-800" : "text-slate-600"}`}>{label}</span>
+      <span className={`text-sm leading-5 ${bold ? "font-semibold text-slate-800" : "text-slate-600"}`}>{label}</span>
     </button>
   );
 }
@@ -780,33 +785,47 @@ function FilterSection({
   open,
   onToggle,
   children,
+  badge,
   bordered = true,
 }: {
   title: string;
   open: boolean;
   onToggle: () => void;
   children: ReactNode;
+  badge?: number;
   bordered?: boolean;
 }) {
   return (
-    <section className={`pb-5 ${bordered ? "border-b border-slate-200" : "pb-0"}`}>
-      <button type="button" onClick={onToggle} className="flex w-full items-center justify-between py-4 text-left">
-        <span className="text-sm font-bold text-slate-900">{title}</span>
+    <section className={`pb-3 ${bordered ? "mb-3 border-b border-slate-200" : ""}`}>
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-expanded={open}
+        className={`flex w-full items-center justify-between gap-3 rounded-xl border px-3.5 py-3 text-left transition-colors ${
+          open ? "border-sky-200 bg-sky-50/70" : "border-slate-200 bg-slate-50 hover:bg-slate-100"
+        }`}
+      >
+        <span className="flex items-center gap-2">
+          <span className={`text-[15px] font-bold ${open ? "text-[#0369a1]" : "text-slate-900"}`}>{title}</span>
+          {badge && badge > 0 ? (
+            <span className="rounded-full bg-[#0369a1] px-2 py-0.5 text-[11px] font-semibold leading-4 text-white">{badge}</span>
+          ) : null}
+        </span>
         <svg
-          width="14"
-          height="14"
+          width="16"
+          height="16"
           viewBox="0 0 16 16"
           fill="none"
-          stroke="#64748b"
+          stroke={open ? "#0369a1" : "#64748b"}
           strokeWidth="1.6"
           strokeLinecap="round"
-          className={`transition-transform ${open ? "rotate-180" : ""}`}
+          className={`shrink-0 transition-transform ${open ? "rotate-180" : ""}`}
           aria-hidden="true"
         >
           <path d="M4 6l4 4 4-4" />
         </svg>
       </button>
-      {open && <div className="flex flex-col gap-3">{children}</div>}
+      {open && <div className="flex flex-col gap-3.5 px-1 pb-1 pt-3.5">{children}</div>}
     </section>
   );
 }
@@ -819,7 +838,7 @@ function FilterPanel({ open, onClose, onApply, onReset }: { open: boolean; onClo
   const [metode, setMetode] = useState<Record<string, string[]>>({ Eksperimental: [...metodeGroups[0].items] });
   const [bidang, setBidang] = useState<Record<string, boolean>>({ "Bisnis dan manajemen": true });
   const [negara, setNegara] = useState<Record<string, boolean>>({});
-  const [sections, setSections] = useState<Record<string, boolean>>({ umum: true, metodologi: true, bidang: true, negara: true });
+  const [sections, setSections] = useState<Record<string, boolean>>({ umum: true, metodologi: false, bidang: false, negara: false });
 
   const toggleSection = (key: string) => setSections(current => ({ ...current, [key]: !current[key] }));
 
@@ -839,6 +858,11 @@ function FilterPanel({ open, onClose, onApply, onReset }: { open: boolean; onClo
     setNegara({});
   };
 
+  const metodeCount = Object.values(metode).reduce((sum, list) => sum + list.length, 0);
+  const bidangCount = Object.values(bidang).filter(Boolean).length;
+  const negaraCount = Object.values(negara).filter(Boolean).length;
+  const activeCount = (tahun !== "Semua" ? 1 : 0) + metodeCount + bidangCount + negaraCount;
+
   return (
     <>
       <div
@@ -849,79 +873,96 @@ function FilterPanel({ open, onClose, onApply, onReset }: { open: boolean; onClo
       <aside
         role="dialog"
         aria-label="Filter jurnal"
-        className={`fixed right-0 top-0 z-[320] flex h-dvh w-full max-w-[384px] flex-col border-l border-slate-200 bg-white shadow-2xl transition-transform duration-300 ${
+        className={`fixed right-0 top-0 z-[320] flex h-dvh w-full flex-col overflow-hidden rounded-l-[26px] border-l border-slate-200 bg-white shadow-2xl transition-transform duration-300 sm:max-w-[420px] ${
           open ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <header className="flex shrink-0 items-center justify-between border-b border-slate-200 px-6 py-4">
-          <h2 className="text-lg font-bold leading-7 text-slate-900">Filter jurnal</h2>
+        <header className="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 bg-white px-6 py-5">
+          <div>
+            <h2 className="text-xl font-bold leading-7 text-slate-900">Filter jurnal</h2>
+            <p className="mt-0.5 text-sm leading-5 text-slate-500">
+              {activeCount > 0 ? `${activeCount} filter aktif` : "Sesuaikan hasil penelusuranmu"}
+            </p>
+          </div>
           <button
             type="button"
             aria-label="Tutup filter"
             onClick={onClose}
-            className="flex h-7 w-7 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100"
+            className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition-colors hover:bg-slate-200 hover:text-slate-700"
           >
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" aria-hidden="true">
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
               <path d="M4 4l8 8M12 4l-8 8" />
             </svg>
           </button>
         </header>
 
-        <div className="min-h-0 flex-1 overflow-y-auto px-6">
+        <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">
           <FilterSection title="Umum" open={sections.umum} onToggle={() => toggleSection("umum")}>
             <div>
-              <p className="text-xs font-medium leading-4 text-slate-600">Tahun terbit</p>
-              <div className="mt-2.5 flex flex-wrap gap-2">
+              <p className="text-sm font-medium leading-5 text-slate-700">Tahun terbit</p>
+              <div className="mt-3 flex flex-wrap gap-2">
                 {pilihanTahun.map(option => (
                   <button
                     key={option}
                     type="button"
                     onClick={() => setTahun(option)}
-                    className={`rounded-lg px-2.5 py-1 text-xs ${
-                      tahun === option ? "border border-sky-300 bg-sky-100 font-semibold text-sky-700" : "border border-slate-200 text-slate-600"
+                    className={`rounded-full border px-3.5 py-1.5 text-sm leading-5 transition-colors ${
+                      tahun === option
+                        ? "border-[#0369a1] bg-[#0369a1] font-semibold text-white shadow-sm"
+                        : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50"
                     }`}
                   >
                     {option}
                   </button>
                 ))}
               </div>
-              <div className="mt-3 flex items-center gap-2">
+              <div className="mt-3 flex items-center gap-2.5">
                 <input
                   value={tahunAwal}
                   onChange={event => setTahunAwal(event.target.value)}
                   inputMode="numeric"
                   aria-label="Tahun awal"
-                  className="h-7 w-40 rounded-lg border border-slate-300 bg-white px-3 text-center text-xs text-slate-800 outline-none focus:border-sky-400"
+                  className="h-10 w-32 rounded-xl border border-slate-300 bg-white px-3 text-center text-sm font-medium text-slate-800 outline-none transition-colors focus:border-[#0369a1]"
                 />
-                <span className="h-px w-3.5 shrink-0 bg-slate-400" />
+                <span className="shrink-0 text-sm text-slate-400">s/d</span>
                 <input
                   value={tahunAkhir}
                   onChange={event => setTahunAkhir(event.target.value)}
                   inputMode="numeric"
                   aria-label="Tahun akhir"
-                  className="h-7 min-w-0 flex-1 rounded-lg border border-slate-300 bg-white px-3 text-center text-xs text-slate-800 outline-none focus:border-sky-400"
+                  className="h-10 min-w-0 flex-1 rounded-xl border border-slate-300 bg-white px-3 text-center text-sm font-medium text-slate-800 outline-none transition-colors focus:border-[#0369a1]"
                 />
               </div>
             </div>
-            <div className="flex items-center justify-between pt-1">
-              <span className="text-xs font-medium text-slate-700">Hanya akses terbuka</span>
+            <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-3.5 py-3">
+              <span className="text-sm font-medium text-slate-700">Hanya akses terbuka</span>
               <button
                 type="button"
                 role="switch"
                 aria-checked={aksesTerbuka}
                 onClick={() => setAksesTerbuka(value => !value)}
-                className={`flex h-5 w-9 shrink-0 rounded-full p-0.5 transition-colors ${aksesTerbuka ? "bg-sky-700" : "bg-slate-300"}`}
+                className={`flex h-6 w-11 shrink-0 rounded-full p-0.5 transition-colors ${aksesTerbuka ? "bg-[#0369a1]" : "bg-slate-300"}`}
               >
-                <span className={`h-4 w-4 rounded-full border border-white bg-white shadow transition-transform ${aksesTerbuka ? "translate-x-4" : ""}`} />
+                <span className={`h-5 w-5 rounded-full border border-white bg-white shadow transition-transform ${aksesTerbuka ? "translate-x-5" : ""}`} />
               </button>
             </div>
           </FilterSection>
 
-          <FilterSection title="Metodologi" open={sections.metodologi} onToggle={() => toggleSection("metodologi")}>
-            <p className="text-xs leading-4 text-slate-500">Pilih jenis desain penelitian hingga tingkat yang lebih spesifik.</p>
+          <FilterSection
+            title="Metodologi"
+            badge={metodeCount}
+            open={sections.metodologi}
+            onToggle={() => toggleSection("metodologi")}
+          >
+            <p className="text-sm leading-5 text-slate-500">Pilih jenis desain penelitian hingga tingkat yang lebih spesifik.</p>
             {metodeGroups.map(group => (
-              <div key={group.name} className={`rounded-xl border border-slate-200 p-3 ${groupChecked(group.name) ? "bg-sky-50/50" : ""}`}>
-                <div className="flex items-center justify-between gap-2">
+              <div
+                key={group.name}
+                className={`rounded-2xl border p-3.5 transition-colors ${
+                  groupChecked(group.name) ? "border-sky-200 bg-sky-50/60" : "border-slate-200 bg-white"
+                }`}
+              >
+                <div className="flex items-center justify-between gap-2 border-b border-slate-200/80 pb-2.5">
                   <FilterCheck
                     bold
                     checked={(metode[group.name]?.length ?? 0) === group.items.length}
@@ -933,9 +974,11 @@ function FilterPanel({ open, onClose, onApply, onReset }: { open: boolean; onClo
                       }))
                     }
                   />
-                  <span className="shrink-0 text-xs font-medium text-slate-400">{group.items.length} jenis</span>
+                  <span className="shrink-0 rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium leading-4 text-slate-500">
+                    {group.items.length} jenis
+                  </span>
                 </div>
-                <div className="flex flex-col gap-1.5 pl-6 pt-1">
+                <div className="flex flex-col gap-1.5 pl-7 pt-2.5">
                   {group.items.map(item => (
                     <FilterCheck
                       key={item}
@@ -949,9 +992,9 @@ function FilterPanel({ open, onClose, onApply, onReset }: { open: boolean; onClo
             ))}
           </FilterSection>
 
-          <FilterSection title="Bidang studi" open={sections.bidang} onToggle={() => toggleSection("bidang")}>
-            <p className="text-xs leading-4 text-slate-500">23 bidang studi tersedia.</p>
-            <div className="flex flex-col gap-2 pt-1">
+          <FilterSection title="Bidang studi" badge={bidangCount} open={sections.bidang} onToggle={() => toggleSection("bidang")}>
+            <p className="text-sm leading-5 text-slate-500">23 bidang studi tersedia.</p>
+            <div className="flex flex-col gap-1.5 rounded-2xl border border-slate-200 bg-white p-3.5">
               {bidangStudi.map(item => (
                 <FilterCheck
                   key={item}
@@ -964,9 +1007,15 @@ function FilterPanel({ open, onClose, onApply, onReset }: { open: boolean; onClo
             </div>
           </FilterSection>
 
-          <FilterSection title="Negara penelitian" open={sections.negara} onToggle={() => toggleSection("negara")} bordered={false}>
-            <p className="text-xs leading-4 text-slate-500">236 negara dan wilayah.</p>
-            <div className="flex flex-col gap-2 pt-1">
+          <FilterSection
+            title="Negara penelitian"
+            badge={negaraCount}
+            open={sections.negara}
+            onToggle={() => toggleSection("negara")}
+            bordered={false}
+          >
+            <p className="text-sm leading-5 text-slate-500">236 negara dan wilayah.</p>
+            <div className="flex flex-col gap-1.5 rounded-2xl border border-slate-200 bg-white p-3.5">
               {negaraPenelitian.map(item => (
                 <FilterCheck
                   key={item}
@@ -980,14 +1029,14 @@ function FilterPanel({ open, onClose, onApply, onReset }: { open: boolean; onClo
           </FilterSection>
         </div>
 
-        <footer className="flex shrink-0 items-center gap-3 border-t border-slate-200 bg-white p-4">
+        <footer className="flex shrink-0 items-center gap-3 border-t border-slate-200 bg-white/95 px-5 py-4 backdrop-blur">
           <button
             type="button"
             onClick={() => {
               onApply();
               onClose();
             }}
-            className="min-w-0 flex-1 rounded-xl bg-sky-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm sm:flex-none sm:w-60"
+            className="min-w-0 flex-1 rounded-xl bg-[#0369a1] px-4 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#075985]"
           >
             Terapkan filter
           </button>
@@ -997,7 +1046,7 @@ function FilterPanel({ open, onClose, onApply, onReset }: { open: boolean; onClo
               handleReset();
               onReset();
             }}
-            className="shrink-0 whitespace-nowrap rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-medium text-slate-700"
+            className="shrink-0 whitespace-nowrap rounded-xl border border-slate-300 px-4 py-3 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
           >
             Atur ulang
           </button>
