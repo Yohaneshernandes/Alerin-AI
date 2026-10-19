@@ -1196,7 +1196,7 @@ function UpgradePremiumModal({ open, onClose }: { open: boolean; onClose: () => 
               <path d="M4 4l8 8M12 4l-8 8" />
             </svg>
           </button>
-          <h2 className="text-2xl font-extrabold leading-7 text-slate-900">Upgrade ke Alerin Premium!</h2>
+          <h2 className="font-['Inter:Extra_Bold'] text-2xl leading-7 text-slate-900">Upgrade ke Alerin Premium!</h2>
           <p className="mx-auto mt-1.5 max-w-96 text-xs font-medium leading-4 text-zinc-800">
             Akselerasi riset, telaah literatur, dan skripsimu lebih cepat &amp; tuntas dengan asisten bertenaga AI.
           </p>
@@ -1355,7 +1355,7 @@ function UpgradePremiumSheet({ open, onClose }: { open: boolean; onClose: () => 
               <path d="M4 4l8 8M12 4l-8 8" />
             </svg>
           </button>
-          <h2 className="pt-1 text-center text-[20px] font-bold leading-7 text-slate-900">Upgrade ke Alerin Premium!</h2>
+          <h2 className="pt-1 text-center font-['Inter:Bold'] text-[20px] leading-7 text-slate-900">Upgrade ke Alerin Premium!</h2>
           <p className="text-center text-[13px] leading-5 text-slate-500">Akselerasi riset &amp; skripsimu lebih mudah &amp; cepat.</p>
         </div>
 
