@@ -4402,6 +4402,8 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
   const [folders, setFolders] = useState<CollectionFolder[]>(defaultFolders);
   const [savedJournals, setSavedJournals] = useState<SavedJournal[]>(initialSavedJournals);
   const [activeFolderId, setActiveFolderId] = useState("all");
+  const [folderSelectMode, setFolderSelectMode] = useState(false);
+  const [selectedFolderIds, setSelectedFolderIds] = useState<string[]>([]);
   const [newFolderOpen, setNewFolderOpen] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [ringkasanOpen, setRingkasanOpen] = useState(false);
@@ -4451,6 +4453,25 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
   const removeSavedJournal = (journalId: string) => {
     setSavedJournals(list => list.filter(item => item.id !== journalId));
     showToast("Jurnal dihapus dari Koleksi");
+  };
+
+  const toggleFolderSelection = (folderId: string) => {
+    setSelectedFolderIds(list => (list.includes(folderId) ? list.filter(item => item !== folderId) : [...list, folderId]));
+  };
+
+  const exitFolderSelect = () => {
+    setFolderSelectMode(false);
+    setSelectedFolderIds([]);
+  };
+
+  const deleteSelectedFolders = () => {
+    if (selectedFolderIds.length === 0) return;
+    setSavedJournals(list => list.map(item => (selectedFolderIds.includes(item.folderId) ? { ...item, folderId: "ungrouped" } : item)));
+    setFolders(list => list.filter(folder => !selectedFolderIds.includes(folder.id)));
+    if (selectedFolderIds.includes(activeFolderId)) setActiveFolderId("all");
+    const count = selectedFolderIds.length;
+    exitFolderSelect();
+    showToast(`${count} folder dihapus, jurnal dipindahkan ke Belum dikelompokkan`);
   };
 
   const createFolder = (name: string) => {
@@ -5464,43 +5485,106 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
               <aside className="space-y-4">
                 <ProfileCard collection />
                 <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-sm">
-                  <div className="flex items-center justify-between px-2 pb-3">
+                  <div className="flex items-center justify-between gap-2 px-2 pb-3">
                     <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-base font-bold text-[#1e293b]">Folder</h2>
-                    <button
-                      type="button"
-                      aria-label="Buat folder baru"
-                      onClick={() => setNewFolderOpen(true)}
-                      className="flex h-6 w-6 items-center justify-center rounded-md border border-slate-200"
-                    >
-                      <img src={`${collectionAssets}/b2242.svg`} alt="" />
-                    </button>
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => (folderSelectMode ? exitFolderSelect() : setFolderSelectMode(true))}
+                        aria-pressed={folderSelectMode}
+                        className={`rounded-md border px-2.5 py-1 text-xs font-semibold transition-colors ${
+                          folderSelectMode
+                            ? "border-sky-200 bg-sky-50 text-[#0066a1]"
+                            : "border-slate-200 text-[#475569] hover:bg-slate-50"
+                        }`}
+                      >
+                        {folderSelectMode ? "Batal" : "Pilih"}
+                      </button>
+                      {!folderSelectMode && (
+                        <button
+                          type="button"
+                          aria-label="Buat folder baru"
+                          onClick={() => setNewFolderOpen(true)}
+                          className="flex h-6 w-6 items-center justify-center rounded-md border border-slate-200"
+                        >
+                          <img src={`${collectionAssets}/b2242.svg`} alt="" />
+                        </button>
+                      )}
+                    </div>
                   </div>
+
+                  {folderSelectMode && (
+                    <div className="mb-2 flex items-center justify-between gap-2 rounded-xl bg-slate-50 px-3 py-2">
+                      <span className="text-xs text-[#64748b]">{selectedFolderIds.length} folder dipilih</span>
+                      <button
+                        type="button"
+                        disabled={selectedFolderIds.length === 0}
+                        onClick={deleteSelectedFolders}
+                        className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold text-white transition-colors ${
+                          selectedFolderIds.length === 0 ? "cursor-not-allowed bg-slate-300" : "bg-[#bd3434]"
+                        }`}
+                      >
+                        <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                          <path d="M2.5 4.5h11M6 4.5V3h4v1.5M4 4.5l.7 9h6.6l.7-9" />
+                        </svg>
+                        Hapus
+                      </button>
+                    </div>
+                  )}
+
                   <div className="space-y-1">
                     <button
                       type="button"
-                      onClick={() => setActiveFolderId("all")}
-                      className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm ${
-                        activeFolderId === "all" ? "bg-sky-100 text-[#0066a1]" : "text-[#475569]"
+                      onClick={() => (folderSelectMode ? undefined : setActiveFolderId("all"))}
+                      aria-disabled={folderSelectMode}
+                      className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-colors ${
+                        folderSelectMode
+                          ? "text-slate-400"
+                          : activeFolderId === "all"
+                            ? "bg-sky-100 text-[#0066a1]"
+                            : "text-[#475569]"
                       }`}
                     >
-                      <img src={`${collectionAssets}/8b8d1.svg`} alt="" />
+                      <img src={`${collectionAssets}/8b8d1.svg`} alt="" className={folderSelectMode ? "opacity-40" : ""} />
                       <span className="flex-1">Semua jurnal tersimpan</span>
                       <span>{folderCounts.all ?? 0}</span>
                     </button>
-                    {folders.map(folder => (
-                      <button
-                        key={folder.id}
-                        type="button"
-                        onClick={() => setActiveFolderId(folder.id)}
-                        className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm ${
-                          activeFolderId === folder.id ? "bg-sky-100 text-[#0066a1]" : "text-[#475569]"
-                        }`}
-                      >
-                        <img src={`${collectionAssets}/e1558.svg`} alt="" />
-                        <span className="flex-1">{folder.name}</span>
-                        <span>{folderCounts[folder.id] ?? 0}</span>
-                      </button>
-                    ))}
+                    {folders.map(folder => {
+                      const selected = selectedFolderIds.includes(folder.id);
+                      return (
+                        <button
+                          key={folder.id}
+                          type="button"
+                          onClick={() => (folderSelectMode ? toggleFolderSelection(folder.id) : setActiveFolderId(folder.id))}
+                          aria-pressed={folderSelectMode ? selected : undefined}
+                          className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-colors ${
+                            folderSelectMode && selected
+                              ? "bg-rose-50 text-[#bd3434]"
+                              : activeFolderId === folder.id && !folderSelectMode
+                                ? "bg-sky-100 text-[#0066a1]"
+                                : "text-[#475569] hover:bg-slate-50"
+                          }`}
+                        >
+                          {folderSelectMode ? (
+                            <span
+                              className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border ${
+                                selected ? "border-[#bd3434] bg-[#bd3434]" : "border-slate-300 bg-white"
+                              }`}
+                            >
+                              {selected && (
+                                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                  <path d="M1.5 5.2l2.3 2.3 4.7-5" />
+                                </svg>
+                              )}
+                            </span>
+                          ) : (
+                            <img src={`${collectionAssets}/e1558.svg`} alt="" />
+                          )}
+                          <span className="flex-1">{folder.name}</span>
+                          <span>{folderCounts[folder.id] ?? 0}</span>
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               </aside>
