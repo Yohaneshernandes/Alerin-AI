@@ -440,7 +440,7 @@ function Sidebar({
 
       {!collapsed && (
         <>
-          <p className="mt-6 px-4 font-['Inter:Bold'] text-sm font-bold uppercase leading-5 tracking-wide text-slate-400">Riwayat</p>
+          <p className="mt-6 font-['Inter:Bold'] text-sm font-bold uppercase leading-5 tracking-wide text-slate-400">Riwayat</p>
           <div className="mt-2 space-y-0.5">
         {items.map((item, index) => (
           <div key={`${index}-${item}`} className="group relative">
