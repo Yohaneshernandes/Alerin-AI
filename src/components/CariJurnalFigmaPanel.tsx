@@ -65,8 +65,136 @@ const initialSavedJournals: SavedJournal[] = [
 
 const desktopResultJournals = [
   { id: "res-1", title: journals[0].title, authors: journals[0].authors, description: journals[0].description, year: "2023", relevancy: "97%" },
-  { id: "res-2", title: journals[0].title, authors: journals[0].authors, description: journals[0].description, year: "2023", relevancy: "92%" },
-  { id: "res-3", title: journals[0].title, authors: journals[0].authors, description: journals[0].description, year: "2023", relevancy: "89%" },
+  {
+    id: "res-2",
+    title: "The Impact of Digital Literacy on Academic Achievement: A Meta-Analysis of Higher Education Students",
+    authors: "Hidayat, M. & Nugroho, A.",
+    description:
+      "Meta-analisis 43 studi menunjukkan literasi digital memediasi hubungan antara akses teknologi dan capaian akademik mahasiswa.",
+    year: "2022",
+    relevancy: "92%",
+  },
+  {
+    id: "res-3",
+    title: "Strategi Peningkatan Minat Beli pada Live Commerce: Peran Kepercayaan dan Ulasan Konsumen",
+    authors: "Pratama, R. & Lestari, S.",
+    description: "Survei 312 responden pengguna live commerce di Indonesia menemukan kepercayaan dan ulasan konsumen memediasi minat beli.",
+    year: "2024",
+    relevancy: "89%",
+  },
+];
+
+type ResultDetail = {
+  id: string;
+  headerTitle: string;
+  headerNote: string;
+  rank: string;
+  badges: { label: string; tone: "sky" | "slate" }[];
+  citations: string;
+  source: string;
+  fitBars: [string, number][];
+  fitNote: string;
+  quote: string;
+  credibility: [string, string][];
+  summary: string;
+  doiUrl: string;
+  pdfNote: string;
+};
+
+const desktopResultDetails: ResultDetail[] = [
+  {
+    id: "res-1",
+    headerTitle: "Rekomendasi Jurnal",
+    headerNote: "Ditemukan OpenAlex dan Diverifikasi Crossref & Scopus",
+    rank: "Peringkat #1",
+    badges: [
+      { label: "Scopus Q1", tone: "sky" },
+      { label: "Artikel", tone: "slate" },
+      { label: "2023", tone: "slate" },
+      { label: "Akses terbuka legal", tone: "sky" },
+    ],
+    citations: "120 sitasi",
+    source: "Asia Pacific Journal of Marketing and Logistics",
+    fitBars: [
+      ["Kesesuaian variabel", 98],
+      ["Kesesuaian topik", 96],
+      ["Kesesuaian wilayah", 90],
+    ],
+    fitNote: "Cocok untuk: landasan teori, penyusunan hipotesis, pembanding penelitian, dan rujukan metode kuantitatif.",
+    quote: "Parasocial interaction strengthens purchase intention when viewers perceive urgency and scarcity.",
+    credibility: [
+      ["Scopus Q1 terverifikasi", "Status indeks dicek pada sumber resmi"],
+      ["DOI & metadata cocok", "Judul, penulis, tahun, dan penerbit konsisten"],
+      ["PDF dapat diakses legal", "Versi akses terbuka tersedia dari penerbit"],
+      ["Tidak ada peringatan integritas", "Tidak ditemukan retraksi atau koreksi kritis"],
+    ],
+    summary:
+      "Interaksi parasosial antara host dan penonton, ditambah dorongan kelangkaan seperti batas waktu dan stok, meningkatkan niat beli di live streaming commerce. Temuan ini relevan untuk riset perilaku konsumen digital di Asia Tenggara.",
+    doiUrl: "https://doi.org/10.1016/j.jretconser.2020.102345",
+    pdfNote: "PDF Live Streaming Commerce dibuka.",
+  },
+  {
+    id: "res-2",
+    headerTitle: "Studi Meta-Analisis Pendukung",
+    headerNote: "Diverifikasi Scopus & Crossref · 43 studi tergabung",
+    rank: "Peringkat #2",
+    badges: [
+      { label: "Scopus Q1", tone: "sky" },
+      { label: "Meta-analisis", tone: "slate" },
+      { label: "2022", tone: "slate" },
+      { label: "Data terbuka", tone: "sky" },
+    ],
+    citations: "87 sitasi",
+    source: "Journal of Educational Technology & Society",
+    fitBars: [
+      ["Kesesuaian variabel", 94],
+      ["Kesesuaian topik", 92],
+      ["Kesesuaian wilayah", 74],
+    ],
+    fitNote: "Cocok untuk: kerangka konseptual, pembahasan meta-analisis, dan perbandingan efek antarnegara.",
+    quote: "Digital literacy mediates the relationship between technology access and academic achievement.",
+    credibility: [
+      ["Scopus Q1 terverifikasi", "Peringkat SCImago 2023 kategori Education"],
+      ["DOI & metadata cocok", "Metadata sinkron dengan Crossref"],
+      ["Dataset meta-analisis tersedia", "Tabel 43 studi dapat diunduh di repositori penulis"],
+      ["Kutipan per tahun tinggi", "Rata-rata 21 sitasi per tahun sejak 2022"],
+    ],
+    summary:
+      "Meta-analisis 43 studi dari 12 negara menunjukkan literasi digital memediasi hubungan antara akses teknologi dan capaian akademik, dengan efek terbesar pada mahasiswa semester awal. Ukuran efek gabungan berada pada kategori sedang hingga kuat.",
+    doiUrl: "https://doi.org/10.30191/ets.2022.114532",
+    pdfNote: "PDF meta-analisis literasi digital dibuka.",
+  },
+  {
+    id: "res-3",
+    headerTitle: "Referensi Konteks Indonesia",
+    headerNote: "Terakreditasi Sinta 2 · Akses terbuka penuh",
+    rank: "Peringkat #3",
+    badges: [
+      { label: "Sinta 2", tone: "sky" },
+      { label: "Studi empiris", tone: "slate" },
+      { label: "2024", tone: "slate" },
+      { label: "Akses terbuka legal", tone: "sky" },
+    ],
+    citations: "34 sitasi",
+    source: "Jurnal Manajemen dan Kewirausahaan",
+    fitBars: [
+      ["Kesesuaian variabel", 88],
+      ["Kesesuaian topik", 90],
+      ["Kesesuaian wilayah", 95],
+    ],
+    fitNote: "Cocok untuk: konteks Indonesia, rujukan variabel kepercayaan, dan implikasi praktis pemasaran.",
+    quote: "Kepercayaan konsumen memediasi pengaruh ulasan daring terhadap minat beli.",
+    credibility: [
+      ["Sinta 2 terakreditasi", "Akreditasi Kemenristekdikti periode 2024–2028"],
+      ["DOI & metadata cocok", "Judul, penulis, dan penerbit konsisten di Crossref"],
+      ["PDF dapat diakses legal", "Versi akses terbuka tersedia di laman jurnal"],
+      ["Relevan konteks Indonesia", "Sampel 312 responden pengguna e-commerce nasional"],
+    ],
+    summary:
+      "Survei 312 responden pengguna live commerce di Indonesia menemukan kepercayaan dan ulasan konsumen memediasi pengaruh interaksi parasosial terhadap minat beli, terutama pada kategori produk fesyen dan perawatan diri.",
+    doiUrl: "https://doi.org/10.24912/jmk.v6i1.29841",
+    pdfNote: "PDF strategi minat beli live commerce dibuka.",
+  },
 ];
 
 const mobileResultJournals = [
@@ -1402,7 +1530,6 @@ function RelevancyRing({ value }: { value: string }) {
 
 function DesktopJournalResultCard({
   relevancy,
-  showHeader = false,
   onAnalisis,
   onSitasi,
   onAbstrak,
@@ -1411,7 +1538,6 @@ function DesktopJournalResultCard({
   onToggleSave,
 }: {
   relevancy: string;
-  showHeader?: boolean;
   onAnalisis?: () => void;
   onSitasi?: () => void;
   onAbstrak?: () => void;
@@ -1419,45 +1545,40 @@ function DesktopJournalResultCard({
   saved?: boolean;
   onToggleSave?: () => void;
 }) {
-  const fitBars: [string, number][] = [
-    ["Kesesuaian variabel", 98],
-    ["Kesesuaian topik", 96],
-    ["Kesesuaian wilayah", 90],
-  ];
-  const credibilityItems: [string, string][] = [
-    ["Scopus Q1 terverifikasi", "Status indeks dicek pada sumber resmi"],
-    ["DOI & metadata cocok", "Judul, penulis, tahun, dan penerbit konsisten"],
-    ["PDF dapat diakses legal", "Versi akses terbuka tersedia dari penerbit"],
-    ["Tidak ada peringatan integritas", "Tidak ditemukan retraksi atau koreksi kritis"],
-  ];
+  const detail = desktopResultDetails.find(item => item.id === journal?.id) ?? desktopResultDetails[0];
   const actionButtons = ["Buat sitasi", "Abstrak", "DOI", "Buka PDF"];
 
   return (
     <article className="overflow-hidden rounded-2xl bg-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] outline outline-2 outline-offset-[-2px] outline-sky-100">
-      {showHeader && (
-        <div className="flex items-center justify-between border-b border-slate-100 bg-sky-50/40 px-6 py-3">
-          <p className="text-sm font-bold leading-4 text-slate-900">Rekomendasi Jurnal</p>
-          <p className="text-xs font-bold leading-4 text-sky-700">Ditemukan OpenAlex dan Diverifikasi Crossref &amp; Scopus</p>
-        </div>
-      )}
+      <div className="flex items-center justify-between gap-3 border-b border-slate-100 bg-sky-50/40 px-6 py-3">
+        <p className="text-sm font-bold leading-4 text-slate-900">{detail.headerTitle}</p>
+        <p className="text-xs font-bold leading-4 text-sky-700">{detail.headerNote}</p>
+      </div>
       <div className="flex flex-col gap-3 px-6 py-6">
         <div className="flex flex-wrap items-center gap-1.5">
-          <span className="rounded-sm bg-sky-100 px-2 py-0.5 text-xs font-bold leading-4 text-sky-600">Scopus Q1</span>
-          <span className="rounded-sm bg-slate-100 px-2 py-0.5 text-xs font-semibold leading-4 text-slate-700">Artikel</span>
-          <span className="rounded-sm bg-slate-100 px-2 py-0.5 text-xs font-semibold leading-4 text-slate-700">2023</span>
-          <span className="rounded-sm bg-sky-100 px-2 py-0.5 text-xs font-semibold leading-4 text-sky-600">Akses terbuka legal</span>
+          <span className="rounded-sm bg-sky-700 px-2 py-0.5 text-xs font-bold leading-4 text-white">{detail.rank}</span>
+          {detail.badges.map(badge => (
+            <span
+              key={badge.label}
+              className={
+                badge.tone === "sky"
+                  ? "rounded-sm bg-sky-100 px-2 py-0.5 text-xs font-bold leading-4 text-sky-600"
+                  : "rounded-sm bg-slate-100 px-2 py-0.5 text-xs font-semibold leading-4 text-slate-700"
+              }
+            >
+              {badge.label}
+            </span>
+          ))}
         </div>
 
         <div className="flex items-start gap-4">
           <div className="min-w-0 flex-1">
-            <h3 className="text-xl font-bold leading-7 text-slate-900">
-              Live Streaming Commerce and Mimic Purchase Intention: The Role of Parasocial Interaction and Scarcity Nudges
-            </h3>
-            <p className="pt-1 text-xs font-medium leading-4 text-slate-600">Wongkitrungrueng, A. &amp; Assarut, N.</p>
+            <h3 className="text-xl font-bold leading-7 text-slate-900">{journal?.title}</h3>
+            <p className="pt-1 text-xs font-medium leading-4 text-slate-600">{journal?.authors}</p>
             <div className="flex flex-wrap items-center gap-2 pt-0.5 text-xs leading-4">
-              <span className="font-semibold text-sky-600 underline">120 sitasi</span>
+              <span className="font-semibold text-sky-600 underline">{detail.citations}</span>
               <span className="text-slate-500">•</span>
-              <span className="text-slate-500">Asia Pacific Journal of Marketing and Logistics</span>
+              <span className="text-slate-500">{detail.source}</span>
               <span className="text-slate-500">•</span>
               <span className="text-slate-500">DOI terverifikasi</span>
             </div>
@@ -1473,7 +1594,7 @@ function DesktopJournalResultCard({
           <div className="min-w-0 flex-1 rounded-xl bg-sky-50/30 p-4 outline outline-1 outline-offset-[-1px] outline-sky-100">
             <h4 className="text-xs font-bold leading-4 text-slate-900">Mengapa jurnal ini direkomendasikan?</h4>
             <div className="flex flex-col gap-2 pt-3">
-              {fitBars.map(([label, value]) => (
+              {detail.fitBars.map(([label, value]) => (
                 <div key={label} className="flex flex-col gap-1">
                   <div className="flex items-start justify-between text-xs leading-4">
                     <span className="font-semibold text-slate-600">{label}</span>
@@ -1485,17 +1606,15 @@ function DesktopJournalResultCard({
                 </div>
               ))}
             </div>
-            <p className="pt-3 text-xs font-bold leading-4 text-slate-800">
-              Cocok untuk: landasan teori, penyusunan hipotesis, pembanding penelitian, dan rujukan metode kuantitatif.
-            </p>
+            <p className="pt-3 text-xs font-bold leading-4 text-slate-800">{detail.fitNote}</p>
             <p className="mt-3 rounded-lg bg-amber-50 p-2.5 text-xs font-bold leading-4 text-amber-900 outline outline-1 outline-offset-[-1px] outline-amber-200/60">
-              Kutipan relevan: &ldquo;Parasocial interaction strengthens purchase intention when viewers perceive urgency and scarcity.&rdquo;
+              Kutipan relevan: &ldquo;{detail.quote}&rdquo;
             </p>
           </div>
           <div className="w-full shrink-0 rounded-xl bg-white p-4 outline outline-1 outline-offset-[-1px] outline-slate-200 min-[1180px]:w-[300px]">
             <h4 className="text-center text-base font-extrabold leading-5 text-slate-900">Kredibilitas &amp; akses</h4>
             <ul className="flex flex-col">
-              {credibilityItems.map(([title, desc]) => (
+              {detail.credibility.map(([title, desc]) => (
                 <li key={title} className="flex items-start gap-2 py-3">
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#059669" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="mt-0.5 shrink-0" aria-hidden="true">
                     <path d="M2.5 8.5l3.5 3.5 7.5-8" />
@@ -1512,10 +1631,7 @@ function DesktopJournalResultCard({
 
         <div className="rounded-r-xl border-l-4 border-sky-600 bg-sky-50/70 px-4 pb-4 pt-6">
           <p className="text-xs font-bold leading-4 text-sky-600">RINGKASAN UTAMA</p>
-          <p className="pt-1.5 text-xs leading-5 text-slate-700">
-            Interaksi parasosial antara host dan penonton, ditambah dorongan kelangkaan seperti batas waktu dan stok, meningkatkan niat beli di live
-            streaming commerce. Temuan ini relevan untuk riset perilaku konsumen digital di Asia Tenggara.
-          </p>
+          <p className="pt-1.5 text-xs leading-5 text-slate-700">{detail.summary}</p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5 border-t border-slate-100 pt-4">
@@ -1540,8 +1656,8 @@ function DesktopJournalResultCard({
                   : label === "Abstrak"
                     ? onAbstrak
                     : label === "DOI"
-                      ? () => window.open("https://doi.org/10.1016/j.jretconser.2020.102345", "_blank", "noopener,noreferrer")
-                      : () => window.alert("PDF dibuka.")
+                      ? () => window.open(detail.doiUrl, "_blank", "noopener,noreferrer")
+                      : () => window.alert(detail.pdfNote)
               }
               className="flex items-center gap-1.5 rounded-lg bg-white px-4 py-2 text-sm font-semibold leading-5 text-slate-700 outline outline-1 outline-offset-[-1px] outline-slate-200"
             >
@@ -2300,7 +2416,6 @@ function DesktopSearchResults({
 
           <DesktopJournalResultCard
             relevancy="97%"
-            showHeader
             onAnalisis={onOpenRingkasan}
             onSitasi={onOpenSitasi}
             onAbstrak={onOpenAbstrak}
