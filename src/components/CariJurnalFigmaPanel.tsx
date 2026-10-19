@@ -2643,7 +2643,7 @@ function DesktopLiteratureReview({ query, onBack }: { query: string; onBack: () 
     <div className="mx-auto hidden max-w-[1160px] flex-col gap-5 pb-8 md:flex">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold leading-8 text-slate-900">Tinjau hasil penelusuran literatur</h1>
+          <h1 className="font-['Inter:Bold'] text-2xl font-extrabold leading-8 text-slate-900">Tinjau hasil penelusuran literatur</h1>
           <p className="mt-1.5 text-xs leading-5 text-slate-500">
             Alerin telah menggabungkan, merapikan, dan memeringkat artikel berdasarkan relevansi.
           </p>
@@ -3240,7 +3240,7 @@ function MobileLiteratureReview() {
   return (
     <div className="flex flex-col gap-5 pb-8">
       <div>
-        <h2 className="text-[22px] font-bold leading-7 text-slate-900">Tinjau hasil penelusuran literatur</h2>
+        <h2 className="font-['Inter:Bold'] text-[22px] font-bold leading-7 text-slate-900">Tinjau hasil penelusuran literatur</h2>
         <p className="mt-1.5 text-sm leading-6 text-slate-500">
           Alerin telah menggabungkan, merapikan, dan memeringkat artikel berdasarkan relevansi topik riset Anda.
         </p>
