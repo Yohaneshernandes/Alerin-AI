@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type ChangeEvent, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ChangeEvent, type ReactNode, type UIEvent } from "react";
 
 type JournalView = "home" | "collection" | "riwayat";
 
@@ -3969,6 +3969,8 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
   const [searchType, setSearchType] = useState("");
   const [resultMode, setResultMode] = useState<"search" | "analysis">("search");
   const [temuanIndex, setTemuanIndex] = useState(1);
+  const [mobileNavHidden, setMobileNavHidden] = useState(false);
+  const lastMobileScrollY = useRef(0);
   const [filterOpen, setFilterOpen] = useState(false);
   const [filterApplied, setFilterApplied] = useState(false);
   const [upgradeOpen, setUpgradeOpen] = useState(false);
@@ -4047,6 +4049,20 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
     const timer = window.setTimeout(() => setMobileSearchStage("results"), 2400);
     return () => window.clearTimeout(timer);
   }, [mobileSearchStage]);
+
+  useEffect(() => {
+    setMobileNavHidden(false);
+    lastMobileScrollY.current = 0;
+  }, [view, mobileSearchStage]);
+
+  const handleMobileScroll = (event: UIEvent<HTMLElement>) => {
+    const y = event.currentTarget.scrollTop;
+    const delta = y - lastMobileScrollY.current;
+    if (y < 24 || Math.abs(delta) > 120) setMobileNavHidden(false);
+    else if (delta > 6) setMobileNavHidden(true);
+    else if (delta < -6) setMobileNavHidden(false);
+    lastMobileScrollY.current = y;
+  };
 
   useEffect(() => {
     if (desktopStage !== "loading") return;
@@ -4128,7 +4144,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
           </div>
         </header>
 
-        <main className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden px-4 pb-28 pt-7 md:p-7">
+        <main onScroll={handleMobileScroll} className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden px-4 pb-28 pt-7 md:p-7">
           {mobileSearchStage === "loading" && (
             <div className="fixed inset-x-0 bottom-[68px] top-[65px] z-[305] flex flex-col items-center justify-center bg-[#f4f7fb] px-6 md:hidden">
               <img
@@ -4150,7 +4166,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
           )}
 
           {mobileSearchStage === "results" && (
-            <div className="fixed inset-x-0 bottom-[68px] top-[65px] z-[305] overflow-y-auto overflow-x-hidden bg-[#f4f7fb] px-4 pb-6 pt-4 md:hidden">
+            <div onScroll={handleMobileScroll} className="fixed inset-x-0 bottom-[68px] top-[65px] z-[305] overflow-y-auto overflow-x-hidden bg-[#f4f7fb] px-4 pb-6 pt-4 md:hidden">
               <div className="mx-auto max-w-md">
                 <div className="flex items-center gap-2">
                   <button
@@ -5053,7 +5069,10 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
         </main>
       </div>
 
-      <nav className="fixed inset-x-0 bottom-0 z-[310] border-t border-slate-200 bg-white/95 px-3 pb-2 pt-1.5 shadow-[0_-2px_10px_rgba(0,0,0,0.03)] backdrop-blur-md md:hidden">
+      <nav
+        className="fixed inset-x-0 bottom-0 z-[310] border-t border-slate-200 bg-white/95 px-3 pb-2 pt-1.5 shadow-[0_-2px_10px_rgba(0,0,0,0.03)] backdrop-blur-md transition-transform duration-300 ease-out md:hidden"
+        style={{ transform: mobileNavHidden ? "translateY(calc(100% + 36px))" : "translateY(0)" }}
+      >
         <div className="mx-auto grid max-w-md grid-cols-5 items-end">
           <button type="button" onClick={() => setView("home")} aria-current={view === "home" ? "page" : undefined} className={`flex flex-col items-center gap-1 py-1 text-[10px] font-semibold ${view === "home" ? "text-[#00629b]" : "text-slate-400"}`}>
             <span className="flex h-6 items-center"><img src={`${mobileAssets}/62a85.svg`} alt="" className="max-w-none origin-center scale-[0.6667]" style={{ filter: view === "home" ? "none" : "brightness(0) saturate(100%) invert(70%) sepia(14%) saturate(518%) hue-rotate(176deg) brightness(90%) contrast(86%)" }} /></span>
