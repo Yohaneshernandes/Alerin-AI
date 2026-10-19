@@ -3600,30 +3600,40 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
   const [chip, setChip] = useState("semua");
   const [yearSort, setYearSort] = useState<"asc" | "desc" | null>(null);
   const [relevanSort, setRelevanSort] = useState<"asc" | "desc" | null>(null);
+  const [playing, setPlaying] = useState(false);
+  const [progress, setProgress] = useState(1);
+
+  useEffect(() => {
+    if (!playing) return;
+    const id = window.setInterval(() => {
+      setProgress(current => (current >= 1 ? 0 : Math.min(1, current + 0.02)));
+    }, 60);
+    return () => window.clearInterval(id);
+  }, [playing]);
 
   const mapNodes = [
-    { name: "AI Literacy", x: 23, y: 44, size: 36, color: "red", pct: 88, cluster: "AI Literacy & Motivation" },
-    { name: "Learning Motivation", x: 57, y: 52, size: 36, color: "red", pct: 84, cluster: "AI Literacy & Motivation" },
-    { name: "Generative AI", x: 13.3, y: 25, size: 24, color: "amber", pct: 76, cluster: "Generative AI & Tools" },
-    { name: "Digital Learning", x: 51.6, y: 37, size: 24, color: "yellow", pct: 72, cluster: "Digital Learning Systems" },
-    { name: "Academic Engagement", x: 74.2, y: 34, size: 24, color: "yellow", pct: 70, cluster: "Academic Engagement" },
-    { name: "Critical Thinking", x: 18.4, y: 69.7, size: 20, color: "amber", pct: 66, cluster: "Critical Thinking & SRL" },
-    { name: "Self-Regulated Learning", x: 45.9, y: 74.7, size: 20, color: "amber", pct: 64, cluster: "Critical Thinking & SRL" },
+    { name: "AI Literacy", x: 23, y: 44, size: 36, color: "red", pct: 88, cluster: "AI Literacy & Motivation", year: 2018 },
+    { name: "Learning Motivation", x: 57, y: 52, size: 36, color: "red", pct: 84, cluster: "AI Literacy & Motivation", year: 2021 },
+    { name: "Generative AI", x: 13.3, y: 25, size: 24, color: "amber", pct: 76, cluster: "Generative AI & Tools", year: 2023 },
+    { name: "Digital Learning", x: 51.6, y: 37, size: 24, color: "yellow", pct: 72, cluster: "Digital Learning Systems", year: 2020 },
+    { name: "Academic Engagement", x: 74.2, y: 34, size: 24, color: "yellow", pct: 70, cluster: "Academic Engagement", year: 2019 },
+    { name: "Critical Thinking", x: 18.4, y: 69.7, size: 20, color: "amber", pct: 66, cluster: "Critical Thinking & SRL", year: 2017 },
+    { name: "Self-Regulated Learning", x: 45.9, y: 74.7, size: 20, color: "amber", pct: 64, cluster: "Critical Thinking & SRL", year: 2016 },
   ];
 
   const nodeLabels = [
-    { label: "Teacher Education", x: 47, y: 20 },
-    { label: "Digital Competence", x: 37, y: 28 },
-    { label: "Educational Technology", x: 36, y: 40 },
-    { label: "Learning Analytics", x: 44, y: 48 },
-    { label: "AI tools", x: 14, y: 40 },
-    { label: "Problem Solving", x: 19, y: 80 },
-    { label: "Higher Order Thinking", x: 23, y: 84 },
-    { label: "Student Engagement", x: 85, y: 40 },
-    { label: "Blended Learning", x: 87, y: 62 },
-    { label: "Motivation Theory", x: 76, y: 72 },
-    { label: "Online Learning", x: 87, y: 74 },
-    { label: "Self-Efficacy", x: 58, y: 81 },
+    { label: "Teacher Education", x: 47, y: 20, year: 2017 },
+    { label: "Digital Competence", x: 37, y: 28, year: 2019 },
+    { label: "Educational Technology", x: 36, y: 40, year: 2018 },
+    { label: "Learning Analytics", x: 44, y: 48, year: 2020 },
+    { label: "AI tools", x: 14, y: 40, year: 2023 },
+    { label: "Problem Solving", x: 19, y: 80, year: 2018 },
+    { label: "Higher Order Thinking", x: 23, y: 84, year: 2021 },
+    { label: "Student Engagement", x: 85, y: 40, year: 2019 },
+    { label: "Blended Learning", x: 87, y: 62, year: 2021 },
+    { label: "Motivation Theory", x: 76, y: 72, year: 2016 },
+    { label: "Online Learning", x: 87, y: 74, year: 2022 },
+    { label: "Self-Efficacy", x: 58, y: 81, year: 2020 },
   ];
 
   const mapRects = [
@@ -3645,19 +3655,28 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
   ];
 
   const mapEdges = [
-    { from: [13.3, 25], to: [23, 44], color: "#38bdf8" },
-    { from: [23, 44], to: [14, 40], color: "#38bdf8" },
-    { from: [23, 44], to: [57, 52], color: "#ef4444" },
-    { from: [57, 52], to: [51.6, 37], color: "#38bdf8" },
-    { from: [51.6, 37], to: [74.2, 34], color: "#f59e0b" },
-    { from: [57, 52], to: [74.2, 34], color: "#f59e0b" },
-    { from: [57, 52], to: [45.9, 74.7], color: "#38bdf8" },
-    { from: [18.4, 69.7], to: [45.9, 74.7], color: "#38bdf8" },
-    { from: [18.4, 69.7], to: [23, 44], color: "#38bdf8" },
-    { from: [13.3, 25], to: [18.4, 69.7], color: "#38bdf899" },
-    { from: [74.2, 34], to: [87, 62], color: "#38bdf899" },
-    { from: [57, 52], to: [87, 74], color: "#38bdf899" },
+    { from: "Generative AI", to: "AI Literacy", color: "#38bdf8", weight: 1.6 },
+    { from: "AI Literacy", to: "AI tools", color: "#38bdf8", weight: 1.2 },
+    { from: "AI Literacy", to: "Learning Motivation", color: "#ef4444", weight: 3 },
+    { from: "Learning Motivation", to: "Digital Learning", color: "#38bdf8", weight: 1.8 },
+    { from: "Digital Learning", to: "Academic Engagement", color: "#f59e0b", weight: 2.2 },
+    { from: "Learning Motivation", to: "Academic Engagement", color: "#f59e0b", weight: 2.2 },
+    { from: "Learning Motivation", to: "Self-Regulated Learning", color: "#38bdf8", weight: 1.6 },
+    { from: "Critical Thinking", to: "Self-Regulated Learning", color: "#38bdf8", weight: 1.8 },
+    { from: "Critical Thinking", to: "AI Literacy", color: "#38bdf8", weight: 1.2 },
+    { from: "Generative AI", to: "Critical Thinking", color: "#38bdf8", weight: 1 },
+    { from: "Academic Engagement", to: "Blended Learning", color: "#38bdf8", weight: 1 },
+    { from: "Learning Motivation", to: "Online Learning", color: "#38bdf8", weight: 1 },
   ];
+
+  const edgePoint = (name: string) => {
+    const node = mapNodes.find(item => item.name === name);
+    return node ? { x: node.x, y: node.y, year: node.year } : { x: 0, y: 0, year: 0 };
+  };
+
+  const playYearFrom = 2016;
+  const playYearTo = 2024;
+  const playYear = Math.round(playYearFrom + (playYearTo - playYearFrom) * progress);
 
   const glowBlobs = [
     { x: 11, y: 8, size: 320, color: "bg-sky-500/25" },
@@ -3684,7 +3703,22 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
   ];
 
   const active = mapNodes.find(node => node.name === activeNode) ?? mapNodes[0];
-  const blobOpacity = mode === "jaringan" ? 0.15 : mode === "perkembangan" ? 0.5 : 1;
+  const modelLabel =
+    mode === "jaringan" ? "VOSVIEWER NETWORK MODEL" : mode === "perkembangan" ? "VOSVIEWER OVERLAY VISUALIZATION" : "VOSVIEWER DENSITY MODEL";
+  const baseBlobOpacity = mode === "jaringan" ? 0.14 : mode === "perkembangan" ? 0.4 : 1;
+  const blobOpacity = playing ? baseBlobOpacity * (0.72 + 0.28 * Math.abs(Math.sin(progress * Math.PI * 3))) : baseBlobOpacity;
+  const modeHint =
+    mode === "jaringan"
+      ? "Mode jaringan: ketebalan garis menandakan kekuatan relasi bibliometrik antar topik."
+      : mode === "perkembangan"
+        ? "Mode perkembangan: putar timeline untuk melihat kapan tiap topik mulai menguat dalam literatur."
+        : "Mode kepadatan: area paling terang menandakan konsentrasi sitasi tertinggi.";
+
+  const startPlaying = (modeKey: string) => {
+    setMode(modeKey);
+    setProgress(modeKey === "kepadatan" ? 1 : 0);
+    setPlaying(modeKey !== "kepadatan");
+  };
 
   const toggleNode = (name: string) => {
     setActiveNode(name);
@@ -3737,7 +3771,7 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
               <button
                 key={tab.key}
                 type="button"
-                onClick={() => setMode(tab.key)}
+                onClick={() => startPlaying(tab.key)}
                 className={`rounded-md px-3 py-1.5 text-sm font-medium leading-5 transition-colors ${
                   mode === tab.key ? "bg-white text-sky-700 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]" : "text-slate-500 hover:text-slate-700"
                 }`}
@@ -3758,6 +3792,28 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
             </svg>
             <span className="text-xs font-medium leading-4 text-slate-500">Garis Relasi</span>
             <span className={`h-4 w-4 rounded-[3px] transition-colors ${showLines ? "bg-sky-700" : "bg-slate-300"}`} />
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              if (!playing && progress >= 1) setProgress(0);
+              setPlaying(value => !value);
+            }}
+            aria-pressed={playing}
+            className="flex items-center gap-2 rounded-lg bg-white px-3 py-1.5 text-sm font-medium leading-5 text-slate-900 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]"
+          >
+            {playing ? (
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true">
+                <rect x="1.5" y="1" width="3.2" height="10" rx="1" />
+                <rect x="7.3" y="1" width="3.2" height="10" rx="1" />
+              </svg>
+            ) : (
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true">
+                <path d="M2.5 1.6l7 4.4-7 4.4z" />
+              </svg>
+            )}
+            {playing ? "Jeda Peta" : "Putar Peta"}
           </button>
 
           <div className="flex items-center gap-1 rounded-lg bg-white px-2 py-1 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]">
@@ -3827,19 +3883,29 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
 
             {showLines && (
               <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-                {mapEdges.map((edge, index) => (
-                  <line
-                    key={index}
-                    x1={edge.from[0]}
-                    y1={edge.from[1]}
-                    x2={edge.to[0]}
-                    y2={edge.to[1]}
-                    stroke={edge.color}
-                    strokeWidth={1.4}
-                    strokeLinecap="round"
-                    vectorEffect="non-scaling-stroke"
-                  />
-                ))}
+                {mapEdges.map((edge, index) => {
+                  const from = edgePoint(edge.from);
+                  const to = edgePoint(edge.to);
+                  const drawn = mode === "jaringan" ? Math.max(0, Math.min(1, (progress - index * 0.045) * 1.7)) : 1;
+                  const visible = mode !== "perkembangan" || Math.max(from.year, to.year) <= playYear;
+                  return (
+                    <line
+                      key={`${edge.from}-${edge.to}`}
+                      x1={from.x}
+                      y1={from.y}
+                      x2={to.x}
+                      y2={to.y}
+                      stroke={edge.color}
+                      strokeWidth={mode === "jaringan" ? edge.weight * 1.1 : 1.4}
+                      strokeLinecap="round"
+                      vectorEffect="non-scaling-stroke"
+                      pathLength={1}
+                      strokeDasharray={1}
+                      strokeDashoffset={1 - drawn}
+                      style={{ opacity: visible ? (mode === "perkembangan" ? 0.75 : 0.95) : 0.08, transition: "opacity 200ms linear" }}
+                    />
+                  );
+                })}
               </svg>
             )}
 
@@ -3847,23 +3913,38 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
               <span
                 key={label.label}
                 className="absolute -translate-y-1/2 whitespace-nowrap text-xs leading-4 text-blue-300/90"
-                style={{ left: `${label.x}%`, top: `${label.y}%` }}
+                style={{
+                  left: `${label.x}%`,
+                  top: `${label.y}%`,
+                  opacity: mode !== "perkembangan" || label.year <= playYear ? 0.9 : 0.12,
+                  transition: "opacity 200ms linear",
+                }}
               >
                 {label.label}
               </span>
             ))}
 
-            {mapNodes.map(node => {
+            {mapNodes.map((node, index) => {
               const isActive = activeNode === node.name;
               const circleSize = node.size === 36 ? "h-9 w-9" : node.size === 24 ? "h-6 w-6" : "h-5 w-5";
               const innerSize = node.size === 36 ? "h-3 w-3" : node.size === 24 ? "h-2 w-2" : "h-1.5 w-1.5";
               const colorCls =
-                node.color === "red"
-                  ? "bg-red-500 shadow-[0_0_20px_rgba(239,68,68,0.9)]"
-                  : node.color === "yellow"
-                    ? "bg-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.9)]"
-                    : "bg-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.9)]";
+                mode === "perkembangan"
+                  ? node.year >= 2023
+                    ? "bg-red-500 shadow-[0_0_20px_rgba(239,68,68,0.9)]"
+                    : node.year >= 2020
+                      ? "bg-amber-500 shadow-[0_0_16px_rgba(245,158,11,0.9)]"
+                      : node.year >= 2018
+                        ? "bg-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.9)]"
+                        : "bg-sky-400 shadow-[0_0_15px_rgba(56,189,248,0.9)]"
+                  : node.color === "red"
+                    ? "bg-red-500 shadow-[0_0_20px_rgba(239,68,68,0.9)]"
+                    : node.color === "yellow"
+                      ? "bg-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.9)]"
+                      : "bg-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.9)]";
               const outlineCls = isActive ? "outline outline-2 outline-offset-[4px] outline-white/80" : "outline outline-2 outline-offset-[-2px] outline-white";
+              const appeared = mode !== "perkembangan" || node.year <= playYear;
+              const grow = appeared ? Math.max(0.6, Math.min(1, 0.6 + 0.4 * Math.min(1, (progress - index * 0.05) * 1.6))) : 0.5;
               return (
                 <button
                   key={node.name}
@@ -3871,9 +3952,12 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
                   onClick={() => toggleNode(node.name)}
                   aria-pressed={nodeFilter === node.name}
                   className="absolute z-10 flex items-center gap-2"
-                  style={{ left: `${node.x}%`, top: `${node.y}%`, transform: `translate(${-node.size / 2}px, -50%)` }}
+                  style={{ left: `${node.x}%`, top: `${node.y}%`, transform: `translate(${-node.size / 2}px, -50%)`, opacity: appeared ? 1 : 0.28 }}
                 >
-                  <span className={`flex shrink-0 items-center justify-center rounded-full ${circleSize} ${colorCls} ${outlineCls}`}>
+                  <span
+                    className={`flex shrink-0 items-center justify-center rounded-full transition-transform duration-200 ${circleSize} ${colorCls} ${outlineCls}`}
+                    style={{ transform: `scale(${grow})` }}
+                  >
                     <span className={`${innerSize} rounded-full bg-white`} />
                   </span>
                   <span
@@ -3892,7 +3976,7 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
 
           <div className="absolute left-4 top-4 z-20 flex flex-wrap items-center gap-2">
             <span className="rounded-md bg-sky-950/80 px-2.5 py-1 text-xs font-semibold uppercase leading-4 tracking-tight text-blue-100 backdrop-blur-md">
-              VOSVIEWER DENSITY MODEL
+              {modelLabel}
             </span>
             <span className="rounded-md bg-sky-950/80 px-2 py-1 text-xs font-medium leading-4 tracking-tight text-slate-400 backdrop-blur-md">
               Iterasi: 1,420
@@ -3906,11 +3990,52 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
           </div>
 
           <div className="absolute right-4 top-4 z-20 flex items-center gap-2 rounded-lg bg-sky-950/90 px-3 py-1.5 backdrop-blur-md">
-            <span className="text-xs font-medium leading-4 tracking-tight text-slate-400">Kepadatan Sitasi:</span>
-            <span className="h-2.5 w-28 rounded-full bg-gradient-to-r from-sky-500 via-yellow-500 to-red-500" />
-            <span className="text-[10px] leading-4 text-slate-300">Rendah</span>
-            <span className="text-[10px] leading-4 text-slate-300">Tinggi</span>
+            {mode === "jaringan" ? (
+              <>
+                <span className="text-xs font-medium leading-4 tracking-tight text-slate-400">Nodes: 7</span>
+                <span className="text-slate-600">&bull;</span>
+                <span className="text-xs font-medium leading-4 tracking-tight text-slate-400">Relasi: 12</span>
+                <span className="text-slate-600">&bull;</span>
+                <span className="text-xs font-medium leading-4 tracking-tight text-slate-400">Klaster: 5</span>
+              </>
+            ) : mode === "perkembangan" ? (
+              <>
+                <span className="text-xs font-medium leading-4 tracking-tight text-slate-400">Tahun terbit:</span>
+                <span className="h-2.5 w-28 rounded-full bg-gradient-to-r from-sky-400 via-yellow-500 to-red-500" />
+                <span className="text-[10px] leading-4 text-slate-300">2016</span>
+                <span className="text-[10px] leading-4 text-slate-300">2024</span>
+              </>
+            ) : (
+              <>
+                <span className="text-xs font-medium leading-4 tracking-tight text-slate-400">Kepadatan Sitasi:</span>
+                <span className="h-2.5 w-28 rounded-full bg-gradient-to-r from-sky-500 via-yellow-500 to-red-500" />
+                <span className="text-[10px] leading-4 text-slate-300">Rendah</span>
+                <span className="text-[10px] leading-4 text-slate-300">Tinggi</span>
+              </>
+            )}
           </div>
+
+          {mode === "perkembangan" && (
+            <div className="absolute inset-x-4 bottom-[88px] z-20 flex items-center gap-3 rounded-lg bg-sky-950/90 px-3 py-2 backdrop-blur-md">
+              <span className="w-10 shrink-0 text-xs font-bold leading-4 text-white">{playYear}</span>
+              <input
+                type="range"
+                min={0}
+                max={100}
+                value={Math.round(progress * 100)}
+                onMouseDown={() => setPlaying(false)}
+                onChange={event => {
+                  setPlaying(false);
+                  setProgress(Number(event.target.value) / 100);
+                }}
+                aria-label="Timeline perkembangan literatur"
+                className="h-1.5 flex-1 cursor-pointer appearance-none rounded-full bg-slate-700 accent-sky-400"
+              />
+              <span className="shrink-0 text-[10px] leading-4 text-slate-400">
+                {playYearFrom}&ndash;{playYearTo}
+              </span>
+            </div>
+          )}
 
           <div className="absolute inset-x-0 bottom-0 z-20 flex flex-col gap-1.5 border-t border-slate-800/60 bg-sky-950/90 px-4 py-2.5 backdrop-blur-md">
             <div className="flex items-start gap-2">
@@ -3919,7 +4044,7 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
                 <circle cx="6.5" cy="5.7" r="1.9" fill="#020617" />
               </svg>
               <p className="text-xs leading-5 text-white">
-                Klik pada lingkaran topik untuk membedah relasi bibliometrik &amp; menyaring daftar publikasi rujukan di bawah.
+                {modeHint} Klik pada lingkaran topik untuk membedah relasi bibliometrik &amp; menyaring daftar publikasi rujukan di bawah.
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs leading-4">
