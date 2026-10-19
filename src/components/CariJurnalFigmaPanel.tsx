@@ -3101,13 +3101,13 @@ function SearchLoader() {
           ))}
         </div>
       </div>
-      <div className="absolute left-1/2 top-1/2 h-[124px] w-[124px] -translate-x-1/2 -translate-y-1/2">
-        <div className="absolute -bottom-5 -right-5 h-11 w-3.5 rotate-45 rounded-full bg-[#164682]" />
-        <div className="relative h-full w-full overflow-hidden rounded-full bg-[#164682] shadow-[0_10px_30px_-8px_rgba(22,70,130,0.45)]">
+      <div className="absolute left-1/2 top-1/2 h-[132px] w-[132px] -translate-x-1/2 -translate-y-1/2">
+        <div className="absolute left-[102px] top-[96px] h-[56px] w-[14px] origin-top-left rotate-45 rounded-full bg-[#164682]" />
+        <div className="relative h-full w-full overflow-hidden rounded-full bg-[#164682] shadow-[0_12px_32px_-10px_rgba(22,70,130,0.5)]">
           <div className="flex h-full items-center">
-            <div className="flex w-max animate-[alerin-tag-flow_3s_linear_infinite] items-center gap-[60px]">
+            <div className="flex w-max animate-[alerin-tag-flow_3s_linear_infinite] items-center gap-[66px]">
               {items.map((kind, index) => (
-                <LoaderTag key={`lens-${kind}-${index}`} kind={kind} tone="white" size={62} />
+                <LoaderTag key={`lens-${kind}-${index}`} kind={kind} tone="white" size={54} />
               ))}
             </div>
           </div>
