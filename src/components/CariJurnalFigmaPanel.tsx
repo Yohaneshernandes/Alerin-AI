@@ -4691,10 +4691,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                           className="sr-only"
                         />
                         {useActiveFilter && (
-                          <>
-                            <img src={`${mobileAssets}/9e421.svg`} alt="" className="max-w-none origin-center scale-[0.6667] md:hidden" />
-                            <img src={`${searchAssets}/b5bd9.svg`} alt="" className="hidden md:block" />
-                          </>
+                          <img src={`${searchAssets}/b5bd9.svg`} alt="" className="h-4 w-4" />
                         )}
                       </span>
                       Gunakan filter aktif pada rekomendasi Alerin
