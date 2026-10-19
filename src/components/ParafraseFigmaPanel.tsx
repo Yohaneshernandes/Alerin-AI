@@ -203,14 +203,15 @@ export default function ParafraseFigmaPanel({ onBack }: { onBack: () => void }) 
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [fileNotice, setFileNotice] = useState("");
+  const [inputMode, setInputMode] = useState<"text" | "file">("text");
   const [riwayatOpen, setRiwayatOpen] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const words = wordCount(input);
 
   const loadFile = (file: File) => {
     setFileNotice("");
-    if (file.size > 5 * 1024 * 1024) {
-      setFileNotice("Ukuran file maksimal 5 MB.");
+    if (file.size > 2 * 1024 * 1024) {
+      setFileNotice("Ukuran file maksimal 2 MB.");
       return;
     }
     if (file.type === "text/plain" || file.name.endsWith(".txt")) {
@@ -218,6 +219,7 @@ export default function ParafraseFigmaPanel({ onBack }: { onBack: () => void }) 
       reader.onload = event => {
         setInput(String(event.target?.result || "").slice(0, 2000));
         setOutput("");
+        setInputMode("text");
       };
       reader.readAsText(file);
       return;
@@ -471,8 +473,20 @@ export default function ParafraseFigmaPanel({ onBack }: { onBack: () => void }) 
                   Teks Asli
                 </span>
                 <div className="flex rounded-lg border border-[#e4e4e7] bg-[#e4e4e7]/80 p-0.5 text-xs">
-                  <button type="button" className="rounded-md bg-white px-3 py-1 shadow-sm">Teks</button>
-                  <button type="button" onClick={() => fileRef.current?.click()} className="rounded-md px-3 py-1 text-[#71717a]">File</button>
+                  <button
+                    type="button"
+                    onClick={() => setInputMode("text")}
+                    className={`rounded-md px-3 py-1 transition-colors ${inputMode === "text" ? "bg-white text-zinc-900 shadow-sm" : "text-zinc-600"}`}
+                  >
+                    Teks
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setInputMode("file")}
+                    className={`rounded-md px-3 py-1 transition-colors ${inputMode === "file" ? "bg-white text-zinc-900 shadow-sm" : "text-zinc-600"}`}
+                  >
+                    File
+                  </button>
                 </div>
                 <input
                   ref={fileRef}
@@ -486,16 +500,43 @@ export default function ParafraseFigmaPanel({ onBack }: { onBack: () => void }) 
                 />
               </div>
               {fileNotice && <p className="border-b border-blue-100 bg-blue-50 px-5 py-2 text-xs text-blue-700">{fileNotice}</p>}
-              <textarea
-                value={input}
-                maxLength={2000}
-                onChange={event => {
-                  setInput(event.target.value);
-                  setOutput("");
-                }}
-                placeholder="Tempel teks kamu di sini..."
-                className="min-h-[273px] flex-1 resize-none bg-white px-8 py-7 font-['Inter:Regular'] text-base leading-[22px] text-[#18181b] outline-none placeholder:text-[#71717a]"
-              />
+              {inputMode === "file" ? (
+                <div className="flex min-h-[273px] flex-1 items-center justify-center bg-white px-6 py-10">
+                  <button
+                    type="button"
+                    onClick={() => fileRef.current?.click()}
+                    onDragOver={event => event.preventDefault()}
+                    onDrop={event => {
+                      event.preventDefault();
+                      const file = event.dataTransfer.files?.[0];
+                      if (file) loadFile(file);
+                    }}
+                    className="flex w-full flex-col items-center justify-center rounded-2xl bg-neutral-50/30 px-6 py-10 text-center outline outline-2 outline-offset-[-2px] outline-zinc-200 transition-colors hover:bg-blue-50/30 hover:outline-blue-300"
+                  >
+                    <span className="flex size-14 items-center justify-center rounded-full bg-blue-50">
+                      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <path d="M14 17.5V6.5" />
+                        <path d="M9.8 10.7L14 6.5l4.2 4.2" />
+                        <path d="M6.5 17.5V20a2.5 2.5 0 0 0 2.5 2.5h10a2.5 2.5 0 0 0 2.5-2.5v-2.5" />
+                      </svg>
+                    </span>
+                    <span className="mt-3.5 font-['Inter:Bold'] text-base font-semibold leading-6 text-zinc-700">Unggah file di sini</span>
+                    <span className="mt-1 font-['Inter:Medium'] text-sm font-medium leading-5 text-zinc-500">TXT, DOCX, atau PDF</span>
+                    <span className="mt-2 rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium leading-4 text-zinc-500">Maks. 2 MB</span>
+                  </button>
+                </div>
+              ) : (
+                <textarea
+                  value={input}
+                  maxLength={2000}
+                  onChange={event => {
+                    setInput(event.target.value);
+                    setOutput("");
+                  }}
+                  placeholder="Tempel teks kamu di sini..."
+                  className="min-h-[273px] flex-1 resize-none bg-white px-8 py-7 font-['Inter:Regular'] text-base leading-[22px] text-[#18181b] outline-none placeholder:text-[#71717a]"
+                />
+              )}
               <div className="border-t border-[#e4e4e7] bg-[#fafafa] px-5 py-3">
                 <div className="flex items-center justify-between gap-3">
                   <span className="font-['JetBrains_Mono:Medium'] text-sm font-medium text-[#71717a]">
