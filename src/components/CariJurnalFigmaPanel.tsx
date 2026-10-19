@@ -1963,42 +1963,97 @@ function RingkasanJurnalModal({ open, onClose }: { open: boolean; onClose: () =>
 function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   if (!open) return null;
 
-  const headers = ["No.", "Penelitian", "Tujuan", "Metode dan sampel", "Temuan utama", "Perbedaan dan celah", "Relevansi"];
+  const headers = ["No.", "Penelitian", "Variabel penelitian", "Metode penelitian", "Hasil penelitian", "Persamaan dan perbedaan"];
 
   const tableRows = [
     {
-      study: "Wongkitrungrueng & Assarut (2023)",
-      subtitle: "Live Streaming Commerce and Mimic Purchase Intention",
-      tujuan: "Menguji peran interaksi parasosial dan kelangkaan pada niat beli.",
-      metode: "Survei potong lintang; SEM-PLS; pengguna live commerce.",
-      temuan: "Kepercayaan memediasi pengaruh interaksi parasosial; kelangkaan memperkuat urgensi.",
-      celah: "Belum menguji perubahan perilaku jangka panjang dan konteks Indonesia.",
-      relevansi: "97%",
+      study: "Peneliti A (2021)",
+      subtitle: "Pengaruh Literasi Keuangan terhadap Perilaku Pengelolaan Keuangan pada Pelaku UMKM",
+      variabel: "Independen (X): literasi keuangan. Dependen (Y): perilaku pengelolaan keuangan, mencakup pemahaman konsep keuangan, pengelolaan pendapatan, tabungan, pinjaman, dan pengambilan keputusan.",
+      metode: "Kuantitatif dengan metode survei; data kuesioner pelaku UMKM; analisis regresi linear sederhana.",
+      hasil: "Literasi keuangan berpengaruh positif terhadap perilaku pengelolaan keuangan: pelaku usaha lebih mampu menyusun anggaran, mengendalikan pengeluaran, dan mengambil keputusan secara terencana.",
+      perbedaan: "Sama-sama menempatkan literasi keuangan sebagai independen dan perilaku pengelolaan keuangan sebagai dependen. Perbedaannya, penelitian terdahulu hanya memakai satu variabel independen, sedangkan penelitian baru menambahkan sikap keuangan.",
     },
     {
-      study: "Chen, Li & Zhang (2024)",
-      subtitle: "Social Presence, Trust and Purchase Intention",
-      tujuan: "Menganalisis kehadiran sosial dan kredibilitas host.",
-      metode: "Survei 468 responden; SEM.",
-      temuan: "Kehadiran sosial meningkatkan kepercayaan dan keterlibatan konsumen.",
-      celah: "Tidak memasukkan pesan kelangkaan sebagai variabel moderator.",
-      relevansi: "94%",
+      study: "Peneliti B (2021)",
+      subtitle: "Pengaruh Sikap Keuangan terhadap Perilaku Pengelolaan Keuangan",
+      variabel: "Independen: sikap keuangan (cara pandang terhadap uang, orientasi masa depan, kedisiplinan, dan pertimbangan keputusan). Dependen: perilaku pengelolaan keuangan.",
+      metode: "Kuantitatif dengan pendekatan survei; kuesioner pelaku UMKM; analisis regresi untuk menguji hubungan antarvariabel.",
+      hasil: "Perencanaan dan kedisiplinan keuangan mendorong individu mengatur pengeluaran, mempertimbangkan kebutuhan sebelum membeli, serta mengelola dana usaha lebih bertanggung jawab.",
+      perbedaan: "Persamaannya pada penggunaan sikap keuangan. Perbedaannya, penelitian baru menambahkan literasi keuangan serta berbeda dalam lokasi, karakteristik responden, dan indikator pengukuran.",
     },
     {
-      study: "Rahmawati & Prasetyo (2024)",
-      subtitle: "Kelangkaan Produk dan Interaksi Host",
-      tujuan: "Menguji keputusan pembelian pada konsumen Indonesia.",
-      metode: "Survei 215 pengguna; regresi berganda.",
-      temuan: "Interaksi host dan kelangkaan berpengaruh positif pada keputusan pembelian.",
-      celah: "Belum menguji mekanisme kepercayaan dan hubungan parasosial secara terpisah.",
-      relevansi: "91%",
+      study: "Peneliti C (2022)",
+      subtitle: "Hubungan Literasi Keuangan dengan Pengelolaan Keuangan pada Usaha Mikro",
+      variabel: "Independen: literasi keuangan. Dependen: pengelolaan keuangan usaha (pencatatan transaksi, pengelolaan modal, penganggaran, dan pemisahan keuangan pribadi dari usaha).",
+      metode: "Kuantitatif dengan desain survei terhadap pelaku usaha mikro; kuesioner dan analisis statistik.",
+      hasil: "Literasi keuangan berkorelasi positif dengan kemampuan mengelola keuangan usaha, meski juga dipengaruhi pengalaman usaha dan ketersediaan sistem pencatatan.",
+      perbedaan: "Fokus pada usaha mikro dan praktik pencatatan. Penelitian baru memperluas unit analisis ke UMKM serta menambahkan sikap keuangan sebagai variabel independen.",
+    },
+    {
+      study: "Peneliti D (2022)",
+      subtitle: "Pengaruh Sikap Keuangan dan Pendapatan terhadap Perilaku Pengelolaan Keuangan",
+      variabel: "Independen: sikap keuangan dan pendapatan. Dependen: perilaku pengelolaan keuangan.",
+      metode: "Kuantitatif dengan metode survei; kuesioner; regresi linear berganda secara parsial dan simultan.",
+      hasil: "Sikap keuangan yang mendukung perencanaan mendorong kedisiplinan pengelolaan uang, sedangkan tingkat pendapatan memengaruhi kemampuan memenuhi kebutuhan, menabung, dan mengalokasikan dana.",
+      perbedaan: "Persamaannya pada sikap keuangan sebagai independen. Perbedaannya, penelitian terdahulu memakai pendapatan sebagai variabel tambahan, sedangkan penelitian baru memakai literasi keuangan.",
+    },
+    {
+      study: "Peneliti E (2022)",
+      subtitle: "Pengaruh Pengetahuan Keuangan dan Literasi Keuangan terhadap Pengelolaan Keuangan UMKM",
+      variabel: "Independen: pengetahuan keuangan dan literasi keuangan. Dependen: pengelolaan keuangan UMKM.",
+      metode: "Kuantitatif dengan regresi linear berganda untuk menguji pengaruh masing-masing variabel dan pengaruh keduanya secara bersama-sama.",
+      hasil: "Pengetahuan dan literasi keuangan mendukung pengambilan keputusan, namun pengetahuan saja belum tentu menghasilkan pengelolaan yang baik bila tidak diterapkan secara konsisten.",
+      perbedaan: "Penelitian terdahulu memakai pengetahuan keuangan, sedangkan penelitian baru memakai sikap keuangan sebagai variabel independen kedua; definisi operasional hasil yang diukur juga disesuaikan.",
+    },
+    {
+      study: "Peneliti F (2023)",
+      subtitle: "Pengaruh Literasi Keuangan dan Pengalaman Usaha terhadap Perilaku Keuangan Pelaku UMKM",
+      variabel: "Independen: literasi keuangan dan pengalaman usaha (lama menjalankan usaha). Dependen: perilaku keuangan.",
+      metode: "Kuantitatif dengan pendekatan survei; kuesioner pelaku UMKM; regresi linear berganda.",
+      hasil: "Pemahaman keuangan membantu menilai pilihan keuangan, sedangkan pengalaman usaha memberi pembelajaran praktis dalam mengelola modal, menghadapi perubahan pendapatan, dan mengendalikan risiko.",
+      perbedaan: "Persamaannya pada literasi keuangan sebagai independen. Perbedaannya, penelitian terdahulu memakai pengalaman usaha, sedangkan penelitian baru memakai sikap keuangan.",
+    },
+    {
+      study: "Peneliti G (2023)",
+      subtitle: "Pengaruh Sikap Keuangan dan Locus of Control terhadap Perilaku Pengelolaan Keuangan",
+      variabel: "Independen: sikap keuangan dan locus of control (keyakinan atas kendali hasil). Dependen: perilaku pengelolaan keuangan.",
+      metode: "Kuantitatif dengan metode survei; kuesioner untuk mengukur sikap keuangan, locus of control, dan perilaku pengelolaan keuangan; regresi linear berganda.",
+      hasil: "Individu dengan sikap positif terhadap perencanaan dan rasa tanggung jawab atas keputusannya lebih terdorong mengendalikan pengeluaran dan mengevaluasi penggunaan dana secara teratur.",
+      perbedaan: "Persamaannya pada sikap keuangan dan perilaku pengelolaan keuangan. Perbedaannya, penelitian terdahulu memakai locus of control, sedangkan penelitian baru memakai literasi keuangan sebagai independen kedua.",
+    },
+    {
+      study: "Peneliti H (2024)",
+      subtitle: "Pengaruh Literasi Keuangan dan Sikap Keuangan terhadap Pengelolaan Keuangan Pelaku UMKM",
+      variabel: "Independen: literasi keuangan (pemahaman konsep) dan sikap keuangan (kecenderungan merencanakan serta menggunakan dana). Dependen: pengelolaan keuangan UMKM.",
+      metode: "Kuantitatif; kuesioner disusun berdasarkan indikator tiap variabel; regresi linear berganda secara parsial dan simultan.",
+      hasil: "Literasi keuangan berkaitan dengan pemahaman konsep keuangan, sedangkan sikap keuangan berhubungan dengan penerapan perencanaan dan disiplin keuangan; besaran pengaruh mengacu hasil analisis aktual.",
+      perbedaan: "Model variabelnya paling serupa. Penelitian baru perlu menunjukkan perbedaan lokasi penelitian, karakteristik responden, periode pengumpulan data, indikator, dan definisi operasional variabel dependen.",
+    },
+    {
+      study: "Peneliti I (2024)",
+      subtitle: "Pengaruh Pengetahuan Keuangan terhadap Perilaku Keuangan Pelaku Usaha Mikro dan Kecil",
+      variabel: "Independen: pengetahuan keuangan (pemahaman dasar keuangan dan penerapannya pada penganggaran, pengeluaran, tabungan, serta keputusan usaha). Dependen: perilaku keuangan.",
+      metode: "Kuantitatif dengan metode survei; data primer kuesioner pelaku usaha mikro dan kecil; analisis statistik berdasarkan indikator yang ditentukan peneliti.",
+      hasil: "Pemahaman pengelolaan dana membantu merencanakan kebutuhan, mengatur arus kas, dan menilai konsekuensi keputusan keuangan; penerapannya juga dipengaruhi kebiasaan, sikap, dan kondisi usaha.",
+      perbedaan: "Penelitian terdahulu hanya memakai pengetahuan keuangan, sedangkan penelitian baru menambahkan literasi keuangan dan sikap keuangan.",
+    },
+    {
+      study: "Peneliti J (2025)",
+      subtitle: "Analisis Faktor-Faktor yang Memengaruhi Perilaku Pengelolaan Keuangan pada Pelaku UMKM",
+      variabel: "Independen: literasi keuangan, sikap keuangan, dan pengalaman usaha (aspek pemahaman, kecenderungan keputusan, dan pembelajaran praktis). Dependen: perilaku pengelolaan keuangan.",
+      metode: "Kuantitatif dengan desain survei; kuesioner pelaku UMKM; regresi linear berganda untuk menilai pengaruh setiap variabel dan kemampuan model menjelaskan variasi dependen.",
+      hasil: "Ketiga faktor dikaji bersama-sama untuk menjelaskan perilaku pengelolaan keuangan; faktor paling berpengaruh hanya dapat ditetapkan setelah koefisien regresi dan uji signifikansi diperiksa.",
+      perbedaan: "Persamaannya pada literasi keuangan dan sikap keuangan untuk menjelaskan perilaku pengelolaan keuangan UMKM. Perbedaannya, penelitian terdahulu memasukkan pengalaman usaha sebagai variabel tambahan, sedangkan penelitian baru berfokus pada wilayah tertentu.",
     },
   ];
 
   const copyTable = () => {
     const text = [
       headers.join("\t"),
-      ...tableRows.map((row, index) => [index + 1, row.study, row.tujuan, row.metode, row.temuan, row.celah, row.relevansi].join("\t")),
+      ...tableRows.map((row, index) =>
+        [index + 1, `${row.study} — ${row.subtitle}`, row.variabel, row.metode, row.hasil, row.perbedaan].join("\t"),
+      ),
     ].join("\n");
     try {
       void navigator.clipboard.writeText(text);
@@ -2013,7 +2068,7 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
     window.alert("Tabel berhasil diunduh sebagai CSV.");
   };
 
-  const columnWidths = ["w-16", "w-64", "w-56", "w-56", "w-60", "w-64", "w-28"];
+  const columnWidths = ["w-16", "w-72", "w-72", "w-72", "w-72", "w-80"];
 
   return (
     <div className="fixed inset-0 z-[340] bg-black/30" onClick={onClose} role="presentation">
@@ -2050,8 +2105,8 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
         <div className="flex flex-col gap-4 overflow-y-auto px-6 py-5 md:px-8 md:py-4">
           <div className="hidden rounded-xl bg-sky-50 px-4 py-3.5 outline outline-1 outline-offset-[-1px] outline-blue-100 md:block">
             <p className="font-['Plus_Jakarta_Sans:Medium'] text-sm font-medium leading-5 text-cyan-900">
-              Gunakan kolom &ldquo;Perbedaan dan celah&rdquo; untuk menyusun kebaruan penelitian. Selalu cek paper asli sebelum memasukkan tabel ke
-              karya ilmiah.
+              Gunakan kolom &ldquo;Persamaan dan perbedaan&rdquo; untuk menyusun kebaruan penelitian. Selalu cek paper asli sebelum memasukkan tabel
+              ke karya ilmiah.
             </p>
           </div>
 
@@ -2062,19 +2117,19 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
               </svg>
               Geser ke samping untuk melihat seluruh kolom
             </p>
-            <span className="shrink-0 text-sm font-semibold text-sky-600">3 Jurnal</span>
+            <span className="shrink-0 text-sm font-semibold text-sky-600">{tableRows.length} Jurnal</span>
           </div>
 
           <div className="overflow-x-auto rounded-3xl outline outline-1 outline-offset-[-1px] outline-slate-200/80 md:rounded-2xl">
-            <table className="w-full min-w-[1178px] border-collapse text-left">
+            <table className="w-full min-w-[1240px] border-collapse text-left">
               <thead>
                 <tr className="bg-slate-50/90">
                   {headers.map((header, index) => (
                     <th
                       key={header}
                       className={`${columnWidths[index]} border-b border-slate-200/90 bg-slate-50/90 px-5 py-4 text-sm font-bold leading-5 text-slate-600 ${
-                        header === "Perbedaan dan celah" ? "bg-amber-50/30" : ""
-                      } ${header === "Relevansi" ? "text-center" : ""}`}
+                        header === "Persamaan dan perbedaan" ? "bg-amber-50/40 text-amber-900" : ""
+                      }`}
                     >
                       {header}
                     </th>
@@ -2089,13 +2144,10 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
                       <p className="text-sm font-bold leading-5 text-slate-900">{row.study}</p>
                       <p className="pt-1 text-xs font-normal leading-4 text-slate-500">{row.subtitle}</p>
                     </td>
-                    <td className="px-5 py-4 align-top text-sm font-normal leading-6 text-slate-700">{row.tujuan}</td>
+                    <td className="px-5 py-4 align-top text-sm font-normal leading-6 text-slate-700">{row.variabel}</td>
                     <td className="px-5 py-4 align-top text-sm font-normal leading-6 text-slate-700">{row.metode}</td>
-                    <td className="px-5 py-4 align-top text-sm font-normal leading-6 text-slate-700">{row.temuan}</td>
-                    <td className="bg-amber-50/30 px-5 py-4 align-top text-sm font-normal leading-6 text-slate-700">{row.celah}</td>
-                    <td className="px-5 py-4 text-center align-top">
-                      <span className="inline-flex rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">{row.relevansi}</span>
-                    </td>
+                    <td className="px-5 py-4 align-top text-sm font-normal leading-6 text-slate-700">{row.hasil}</td>
+                    <td className="bg-amber-50/40 px-5 py-4 align-top text-sm font-normal leading-6 text-slate-700">{row.perbedaan}</td>
                   </tr>
                 ))}
               </tbody>
