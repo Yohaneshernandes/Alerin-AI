@@ -4855,7 +4855,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                       <img
                         src={`/assets/jurnal-design/collection-mobile/${["55585.svg", "22763.svg", "d2faf.svg"][chipIndex % 3]}`}
                         alt=""
-                        className={`h-[22px] w-[22px] shrink-0 ${active ? "brightness-0 invert" : ""}`}
+                        className={`h-5 w-5 shrink-0 ${active ? "brightness-0 invert" : ""}`}
                       />
                       {folder.name}
                       <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${active ? "bg-white text-[#0369a1]" : "bg-slate-100"}`}>{count}</span>
