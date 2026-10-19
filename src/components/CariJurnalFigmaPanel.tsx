@@ -1173,7 +1173,8 @@ function UpgradePremiumModal({ open, onClose }: { open: boolean; onClose: () => 
           </div>
 
           <div className="mt-4 border-t border-slate-100 pt-4">
-            <div className="flex items-end gap-2 border-b border-slate-100 pb-2.5">
+            <div className="max-h-[236px] overflow-y-auto pr-1">
+            <div className="sticky top-0 z-10 flex items-end gap-2 border-b border-slate-100 bg-white pb-2.5">
               <p className="min-w-0 flex-1 pl-1 text-base font-bold leading-6 tracking-wide text-zinc-800">Manfaat &amp; Fitur Riset</p>
               <span className="w-24 shrink-0 text-center text-[13px] font-semibold leading-5 tracking-wide text-slate-500">Gratis</span>
               <span className="w-24 shrink-0 text-center">
@@ -1201,6 +1202,13 @@ function UpgradePremiumModal({ open, onClose }: { open: boolean; onClose: () => 
                 </span>
               </div>
             ))}
+            </div>
+            <p className="flex items-center justify-center gap-1.5 pt-2.5 text-[11px] font-medium leading-4 text-slate-400">
+              <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M6 2v8M3 7l3 3 3-3" />
+              </svg>
+              Geser untuk melihat {premiumFeatures.length - 3} fitur lainnya
+            </p>
           </div>
         </div>
 
