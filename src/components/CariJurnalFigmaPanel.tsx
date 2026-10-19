@@ -1470,8 +1470,8 @@ function DesktopJournalResultCard({
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 border-t border-slate-100 pt-4">
-          <button type="button" onClick={onAnalisis} className="rounded-lg bg-[#0369a1] px-3.5 py-1.5 text-xs font-semibold leading-4 text-white">
+        <div className="flex flex-wrap items-center gap-2.5 border-t border-slate-100 pt-4">
+          <button type="button" onClick={onAnalisis} className="rounded-lg bg-[#0369a1] px-4 py-2 text-sm font-semibold leading-5 text-white">
             Analisis lengkap
           </button>
           {actionButtons.map(label => (
@@ -1487,10 +1487,10 @@ function DesktopJournalResultCard({
                       ? () => window.open("https://doi.org/10.1016/j.jretconser.2020.102345", "_blank", "noopener,noreferrer")
                       : () => window.alert("PDF dibuka.")
               }
-              className="flex items-center gap-1 rounded-lg bg-white px-3 py-1.5 text-xs font-semibold leading-4 text-slate-700 outline outline-1 outline-offset-[-1px] outline-slate-200"
+              className="flex items-center gap-1.5 rounded-lg bg-white px-4 py-2 text-sm font-semibold leading-5 text-slate-700 outline outline-1 outline-offset-[-1px] outline-slate-200"
             >
               {label === "DOI" && (
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" aria-hidden="true">
                   <rect x="1.5" y="1.5" width="9" height="9" rx="1.5" />
                 </svg>
               )}
@@ -1501,13 +1501,13 @@ function DesktopJournalResultCard({
             type="button"
             onClick={journal ? onToggleSave : undefined}
             aria-pressed={saved}
-            className={`ml-auto flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold leading-4 outline outline-1 outline-offset-[-1px] transition-colors ${
+            className={`ml-auto flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-semibold leading-5 outline outline-1 outline-offset-[-1px] transition-colors ${
               saved ? "bg-sky-50 text-sky-700 outline-sky-200" : "bg-white text-slate-700 outline-slate-200"
             }`}
           >
             <svg
-              width="12"
-              height="14"
+              width="13"
+              height="15"
               viewBox="0 0 12 14"
               fill={saved ? "currentColor" : "none"}
               stroke="currentColor"
