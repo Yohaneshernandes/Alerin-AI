@@ -2468,10 +2468,10 @@ function DesktopLiteratureReview({ query, onBack }: { query: string; onBack: () 
   ];
 
   const stats = [
-    { label: "Total hasil ditemukan", value: "126", tone: "text-blue-600" },
+    { label: "Total hasil ditemukan", value: "126", tone: "text-[#0369a1]" },
     { label: "Duplikasi dihapus", value: "34", tone: "text-red-600" },
-    { label: "Artikel tersisa untuk sintesis", value: "92", tone: "text-blue-600" },
-    { label: "Artikel prioritas tinggi", value: "24", tone: "text-blue-600" },
+    { label: "Artikel tersisa untuk sintesis", value: "92", tone: "text-[#0369a1]" },
+    { label: "Artikel prioritas tinggi", value: "24", tone: "text-[#0369a1]" },
   ];
 
   const filterChips = [
@@ -2701,7 +2701,7 @@ function DesktopLiteratureReview({ query, onBack }: { query: string; onBack: () 
               onClick={() => setChip(item.key)}
               className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors ${
                 chip === item.key
-                  ? "bg-blue-50 text-blue-700 outline outline-1 outline-blue-200"
+                  ? "bg-sky-50 text-sky-700 outline outline-1 outline-sky-200"
                   : "bg-white text-slate-600 outline outline-1 outline-slate-200 hover:bg-slate-50"
               }`}
             >
@@ -2722,7 +2722,7 @@ function DesktopLiteratureReview({ query, onBack }: { query: string; onBack: () 
                       setRelevanSort(null);
                       setYearSort(yearSort === "desc" ? "asc" : "desc");
                     }}
-                    className={`flex items-center gap-1.5 text-xs font-semibold ${yearSort ? "text-blue-600" : "text-slate-500 hover:text-slate-700"}`}
+                    className={`flex items-center gap-1.5 text-xs font-semibold ${yearSort ? "text-[#0369a1]" : "text-slate-500 hover:text-slate-700"}`}
                   >
                     Tahun
                     <SortArrow dir={yearSort} />
@@ -2735,7 +2735,7 @@ function DesktopLiteratureReview({ query, onBack }: { query: string; onBack: () 
                       setYearSort(null);
                       setRelevanSort(relevanSort === "desc" ? "asc" : "desc");
                     }}
-                    className={`flex items-center gap-1.5 text-xs font-semibold ${relevanSort ? "text-blue-600" : "text-slate-500 hover:text-slate-700"}`}
+                    className={`flex items-center gap-1.5 text-xs font-semibold ${relevanSort ? "text-[#0369a1]" : "text-slate-500 hover:text-slate-700"}`}
                   >
                     Relevansi
                     <SortArrow dir={relevanSort} />
@@ -2762,13 +2762,13 @@ function DesktopLiteratureReview({ query, onBack }: { query: string; onBack: () 
                         row.tag === "Sangat relevan"
                           ? "bg-emerald-50 text-emerald-700 outline outline-1 outline-emerald-200/60"
                           : row.tag === "Cukup relevan"
-                            ? "bg-blue-50 text-blue-700 outline outline-1 outline-blue-200/60"
+                            ? "bg-sky-50 text-sky-700 outline outline-1 outline-sky-200/60"
                             : "bg-amber-50 text-amber-700 outline outline-1 outline-amber-200/60"
                       }`}
                     >
                       <span
                         className={`h-1.5 w-1.5 rounded-full ${
-                          row.tag === "Sangat relevan" ? "bg-emerald-500" : row.tag === "Cukup relevan" ? "bg-blue-500" : "bg-amber-500"
+                          row.tag === "Sangat relevan" ? "bg-emerald-500" : row.tag === "Cukup relevan" ? "bg-sky-500" : "bg-amber-500"
                         }`}
                       />
                       {row.tag}
@@ -2793,7 +2793,7 @@ function DesktopLiteratureReview({ query, onBack }: { query: string; onBack: () 
 
       <div className="flex items-center justify-between gap-4 pt-1">
         <div className="flex items-center gap-3">
-          <span className="h-8 w-1.5 rounded-full bg-blue-600" />
+          <span className="h-8 w-1.5 rounded-full bg-[#0369a1]" />
           <h2 className="text-2xl font-bold leading-8 text-slate-900">Hasil Analisis Literature Review</h2>
         </div>
         <p className="text-sm text-slate-500">Resiliensi perempuan dalam menghadapi bencana dan krisis</p>
@@ -2835,7 +2835,7 @@ function DesktopLiteratureReview({ query, onBack }: { query: string; onBack: () 
                         )
                       }
                       className={`flex items-center gap-1.5 text-xs font-semibold ${
-                        matrixSort?.index === index ? "text-blue-600" : "text-slate-500 hover:text-slate-700"
+                        matrixSort?.index === index ? "text-[#0369a1]" : "text-slate-500 hover:text-slate-700"
                       }`}
                     >
                       {header}
@@ -2856,7 +2856,7 @@ function DesktopLiteratureReview({ query, onBack }: { query: string; onBack: () 
               {visibleMatrix.map((row, rowIndex) => (
                 <tr key={`${row.name}-${rowIndex}`} className="border-t border-slate-100 align-top">
                   <td className="w-56 px-5 py-4">
-                    <span className="block text-sm font-semibold leading-5 text-blue-600">{row.name}</span>
+                    <span className="block text-sm font-semibold leading-5 text-[#0369a1]">{row.name}</span>
                     <span className="mt-0.5 block text-xs leading-4 text-slate-400">{row.journal}</span>
                   </td>
                   {row.cells.map((cell, index) => (
@@ -2873,12 +2873,12 @@ function DesktopLiteratureReview({ query, onBack }: { query: string; onBack: () 
 
       <div className="flex items-center justify-between gap-4 pt-1">
         <div className="flex items-center gap-3">
-          <span className="h-8 w-1.5 rounded-full bg-blue-600" />
+          <span className="h-8 w-1.5 rounded-full bg-[#0369a1]" />
           <h2 className="text-2xl font-extrabold leading-8 text-slate-900">Literature Review Siap Digunakan</h2>
         </div>
         <div className="flex items-center gap-2">
           {[
-            { label: "Scoping Review", icon: "text-blue-500", path: "M3 2.5h7.5v9H3zM3 5.5h7.5M5.5 2.5v9" },
+            { label: "Scoping Review", icon: "text-sky-600", path: "M3 2.5h7.5v9H3zM3 5.5h7.5M5.5 2.5v9" },
             { label: "15 artikel", icon: "text-emerald-500", path: "M7 1.5v8M4 6.5L7 9.5l3-3M2.5 12.5h9" },
             { label: "Berbasis sumber", icon: "text-amber-500", path: "M7 1.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6L7 9.7l-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" },
           ].map(item => (
@@ -2963,14 +2963,14 @@ function DesktopLiteratureReview({ query, onBack }: { query: string; onBack: () 
       <section className="rounded-2xl bg-white p-5 shadow-sm">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-2.5">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#2563eb" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-50">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#0369a1" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true">
                 <path d="M2.5 4h11M2.5 8h11M2.5 12h7" />
               </svg>
             </span>
             <span className="text-sm font-bold uppercase tracking-wide text-slate-800">Struktur Dokumen (12 Bagian)</span>
           </div>
-          <span className="text-xs font-semibold text-blue-600">Bagian Aktif: {activeSection} dari 12</span>
+          <span className="text-xs font-semibold text-[#0369a1]">Bagian Aktif: {activeSection} dari 12</span>
         </div>
         <div className="mt-4 flex gap-2.5 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {sectionNames.map((name, index) => (
@@ -2980,13 +2980,13 @@ function DesktopLiteratureReview({ query, onBack }: { query: string; onBack: () 
               onClick={() => goToSection(index + 1)}
               className={`flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold transition-colors ${
                 activeSection === index + 1
-                  ? "bg-blue-50 text-blue-700 outline outline-1 outline-blue-200"
+                  ? "bg-sky-50 text-sky-700 outline outline-1 outline-sky-200"
                   : "bg-slate-50 text-slate-600 outline outline-1 outline-slate-200 hover:bg-slate-100"
               }`}
             >
               <span
                 className={`flex h-5 w-5 items-center justify-center rounded text-[10px] font-bold text-white ${
-                  activeSection === index + 1 ? "bg-blue-600" : "bg-slate-600"
+                  activeSection === index + 1 ? "bg-[#0369a1]" : "bg-slate-600"
                 }`}
               >
                 {index + 1}
@@ -2998,9 +2998,9 @@ function DesktopLiteratureReview({ query, onBack }: { query: string; onBack: () 
       </section>
 
       <section ref={docRef} className="rounded-3xl bg-white p-11 shadow-sm">
-        <div ref={introRef} className="flex gap-4 rounded-2xl bg-gradient-to-r from-blue-50/90 via-sky-50/70 to-indigo-50/80 p-6">
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-600/10">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#2563eb" strokeWidth="1.6" strokeLinejoin="round" aria-hidden="true">
+        <div ref={introRef} className="flex gap-4 rounded-2xl bg-gradient-to-r from-sky-50/90 via-sky-50/70 to-indigo-50/80 p-6">
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#0369a1]/10">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#0369a1" strokeWidth="1.6" strokeLinejoin="round" aria-hidden="true">
               <path d="M10 4.5C8.5 3.3 6.6 3 4 3v12c2.6 0 4.5.3 6 1.5 1.5-1.2 3.4-1.5 6-1.5V3c-2.6 0-4.5.3-6 1.5zM10 4.5v12" />
             </svg>
           </span>
@@ -3055,7 +3055,7 @@ function DesktopLiteratureReview({ query, onBack }: { query: string; onBack: () 
                 }}
                 className="flex w-full items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-slate-100"
               >
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white text-sm font-bold text-blue-600 outline outline-1 outline-slate-200">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white text-sm font-bold text-[#0369a1] outline outline-1 outline-slate-200">
                   {row.key}
                 </span>
                 <span className="min-w-0 flex-1">
@@ -3067,7 +3067,7 @@ function DesktopLiteratureReview({ query, onBack }: { query: string; onBack: () 
                   height="13"
                   viewBox="0 0 8 13"
                   fill="none"
-                  stroke="#2563eb"
+                  stroke="#0369a1"
                   strokeWidth="1.8"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -3182,8 +3182,8 @@ function MobileLiteratureReview() {
     "Cukup relevan": { box: "bg-sky-50 text-sky-700 outline-sky-200/80", dot: "bg-sky-500" },
   };
   const sourcePills: Record<string, string> = {
-    "Google Scholar": "bg-blue-50 text-sky-700 outline-blue-100",
-    Crossref: "bg-blue-50 text-sky-700 outline-blue-100",
+    "Google Scholar": "bg-sky-50 text-sky-700 outline-sky-100",
+    Crossref: "bg-sky-50 text-sky-700 outline-sky-100",
     OpenAlex: "bg-purple-50 text-purple-700 outline-purple-200",
     DOAJ: "bg-emerald-50 text-emerald-700 outline-emerald-200",
   };
@@ -3414,7 +3414,7 @@ function MobileLiteratureReview() {
         <h2 className="text-xl font-bold leading-7 text-slate-900">Literature Review Siap Digunakan</h2>
         <div className="mt-3 flex flex-wrap gap-2">
           {[
-            { label: "Scoping Review", box: "bg-blue-50 text-sky-700 outline-blue-200", icon: true },
+            { label: "Scoping Review", box: "bg-sky-50 text-sky-700 outline-sky-200", icon: true },
             { label: "15 artikel", box: "bg-slate-100 text-slate-700 outline-slate-200", icon: false },
             { label: "Berbasis sumber", box: "bg-amber-50 text-amber-800 outline-amber-200", icon: false },
           ].map(item => (
@@ -3501,7 +3501,7 @@ function MobileLiteratureReview() {
       </div>
 
       <div className="rounded-3xl bg-white p-4 shadow-sm outline outline-1 outline-slate-200/90">
-        <div className="rounded-2xl bg-blue-50/70 p-4 outline outline-1 outline-blue-100">
+        <div className="rounded-2xl bg-sky-50/70 p-4 outline outline-1 outline-sky-100">
           <div className="flex items-center gap-3">
             <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-sky-600">
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="white" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" aria-hidden="true">
