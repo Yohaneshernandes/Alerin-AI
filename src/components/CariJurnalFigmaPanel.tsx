@@ -746,6 +746,15 @@ const bidangStudi = ["Bisnis dan manajemen", "Ilmu sosial", "Pendidikan", "Keseh
 const negaraPenelitian = ["Indonesia", "Asia Tenggara", "Semua negara"];
 const pilihanTahun = ["Semua", "2 tahun terakhir", "5 tahun terakhir", "10 tahun terakhir"];
 
+const tahunSekarang = new Date().getFullYear();
+
+const rentangTahun: Record<string, [string, string]> = {
+  Semua: ["", ""],
+  "2 tahun terakhir": [String(tahunSekarang - 2), String(tahunSekarang)],
+  "5 tahun terakhir": [String(tahunSekarang - 5), String(tahunSekarang)],
+  "10 tahun terakhir": [String(tahunSekarang - 10), String(tahunSekarang)],
+};
+
 function FilterCheck({
   checked,
   label,
@@ -832,8 +841,8 @@ function FilterSection({
 
 function FilterPanel({ open, onClose, onApply, onReset }: { open: boolean; onClose: () => void; onApply: () => void; onReset: () => void }) {
   const [tahun, setTahun] = useState("2 tahun terakhir");
-  const [tahunAwal, setTahunAwal] = useState("2024");
-  const [tahunAkhir, setTahunAkhir] = useState("2026");
+  const [tahunAwal, setTahunAwal] = useState(rentangTahun["2 tahun terakhir"][0]);
+  const [tahunAkhir, setTahunAkhir] = useState(rentangTahun["2 tahun terakhir"][1]);
   const [aksesTerbuka, setAksesTerbuka] = useState(true);
   const [metode, setMetode] = useState<Record<string, string[]>>({ Eksperimental: [...metodeGroups[0].items] });
   const [bidang, setBidang] = useState<Record<string, boolean>>({ "Bisnis dan manajemen": true });
@@ -850,8 +859,19 @@ function FilterPanel({ open, onClose, onApply, onReset }: { open: boolean; onClo
 
   const groupChecked = (group: string) => (metode[group]?.length ?? 0) > 0;
 
+  const pilihRentangTahun = (option: string) => {
+    setTahun(option);
+    const rentang = rentangTahun[option];
+    if (rentang) {
+      setTahunAwal(rentang[0]);
+      setTahunAkhir(rentang[1]);
+    }
+  };
+
   const handleReset = () => {
     setTahun("Semua");
+    setTahunAwal("");
+    setTahunAkhir("");
     setAksesTerbuka(false);
     setMetode({});
     setBidang({});
@@ -905,7 +925,7 @@ function FilterPanel({ open, onClose, onApply, onReset }: { open: boolean; onClo
                   <button
                     key={option}
                     type="button"
-                    onClick={() => setTahun(option)}
+                    onClick={() => pilihRentangTahun(option)}
                     className={`rounded-full border px-3.5 py-1.5 text-sm leading-5 transition-colors ${
                       tahun === option
                         ? "border-[#0369a1] bg-[#0369a1] font-semibold text-white shadow-sm"
@@ -921,16 +941,18 @@ function FilterPanel({ open, onClose, onApply, onReset }: { open: boolean; onClo
                   value={tahunAwal}
                   onChange={event => setTahunAwal(event.target.value)}
                   inputMode="numeric"
+                  placeholder="YYYY"
                   aria-label="Tahun awal"
-                  className="h-10 w-32 rounded-xl border border-slate-300 bg-white px-3 text-center text-sm font-medium text-slate-800 outline-none transition-colors focus:border-[#0369a1]"
+                  className="h-10 w-32 rounded-xl border border-slate-300 bg-white px-3 text-center text-sm font-medium text-slate-800 outline-none transition-colors placeholder:text-slate-400 focus:border-[#0369a1]"
                 />
                 <span className="shrink-0 text-sm text-slate-400">s/d</span>
                 <input
                   value={tahunAkhir}
                   onChange={event => setTahunAkhir(event.target.value)}
                   inputMode="numeric"
+                  placeholder="YYYY"
                   aria-label="Tahun akhir"
-                  className="h-10 min-w-0 flex-1 rounded-xl border border-slate-300 bg-white px-3 text-center text-sm font-medium text-slate-800 outline-none transition-colors focus:border-[#0369a1]"
+                  className="h-10 min-w-0 flex-1 rounded-xl border border-slate-300 bg-white px-3 text-center text-sm font-medium text-slate-800 outline-none transition-colors placeholder:text-slate-400 focus:border-[#0369a1]"
                 />
               </div>
             </div>
