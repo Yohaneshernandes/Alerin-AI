@@ -5070,7 +5070,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                   <div className="mt-5 grid min-w-0 gap-3 md:grid-cols-[1.35fr_0.95fr]">
                     <label className="grid gap-1.5">
                       <span className="font-['Plus_Jakarta_Sans:SemiBold'] text-[14px] font-semibold text-[#334155] md:hidden">Draf / Paragraf Teks</span>
-                      <textarea value={paragraph} onChange={event => setParagraph(event.target.value)} placeholder="Masukkan kalimat atau paragraf yang membutuhkan sitasi." className="min-h-[123px] resize-none rounded-xl border border-slate-200 bg-[rgba(200,226,251,0.24)] p-3 text-[13px] outline-none focus:border-sky-400 md:min-h-44 md:bg-white md:p-4 md:text-xs" />
+                      <textarea value={paragraph} onChange={event => setParagraph(event.target.value)} placeholder="Masukkan kalimat atau paragraf yang membutuhkan sitasi." className="min-h-[123px] resize-none rounded-xl border border-slate-200 bg-[rgba(200,226,251,0.24)] p-3 text-[13px] outline-none focus:border-sky-400 md:min-h-44 md:bg-white md:p-4 md:text-sm" />
                     </label>
                     {fileName ? (
                       <div className="flex min-h-[108px] w-full min-w-0 flex-col items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-sky-200 bg-white p-5 text-center md:min-h-44 md:p-4">
@@ -5118,15 +5118,15 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                           <img src={`${mobileAssets}/36094.svg`} alt="" className="md:hidden" />
                           <img src={`${searchAssets}/f5e87.svg`} alt="" className="hidden md:block" />
                         </span>
-                        <span className="mt-3 text-[13px] font-semibold md:text-xs md:font-bold md:text-slate-800">Unggah artikel atau catatan</span>
-                        <span className="mt-1 text-[12px] text-[#94a3b8] md:text-slate-500">PDF, DOCX, atau TXT hingga 20 MB</span>
-                        <span className="mt-2 rounded-full bg-sky-50 px-2.5 py-1 text-[11px] text-[#004f80] md:bg-transparent md:p-0 md:text-xs md:font-semibold md:text-emerald-600">Belum ada dokumen</span>
+                        <span className="mt-3 text-[13px] font-semibold md:text-sm md:font-bold md:text-slate-800">Unggah artikel atau catatan</span>
+                        <span className="mt-1 text-[12px] text-[#94a3b8] md:text-sm md:text-slate-500">PDF, DOCX, atau TXT hingga 20 MB</span>
+                        <span className="mt-2 rounded-full bg-sky-50 px-2.5 py-1 text-[11px] text-[#004f80] md:bg-transparent md:p-0 md:text-sm md:font-semibold md:text-emerald-600">Belum ada dokumen</span>
                         <input type="file" accept=".pdf,.doc,.docx,.txt" className="sr-only" onChange={handleFileChange} />
                       </label>
                     )}
                   </div>
                   <div className="mt-4 flex flex-col gap-3 md:mt-5 md:flex-row md:items-center md:justify-between">
-                    <label className="flex cursor-pointer select-none items-center gap-2 text-[13px] text-[#475569] md:text-xs md:font-semibold md:text-slate-700">
+                    <label className="flex cursor-pointer select-none items-center gap-2 text-[13px] text-[#475569] md:text-sm md:font-semibold md:text-slate-700">
                       <span
                         className={`flex h-[18px] w-[18px] items-center justify-center rounded ${
                           useActiveFilter ? "bg-[#0070ba]" : "border border-slate-300 bg-white"
@@ -5166,7 +5166,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                       Analisis dan carikan jurnal
                     </button>
                   </div>
-                  <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-slate-100 pt-3 text-[12px] text-[#64748b] md:pt-4 md:font-semibold md:text-slate-500">
+                  <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-slate-100 pt-3 text-[12px] text-[#64748b] md:pt-4 md:font-semibold md:text-sm md:text-slate-500">
                     <span className="w-full md:w-auto">Konsep yang dipahami Alerin:</span>
                     {["interaksi parasosial", "kepercayaan konsumen", "kelangkaan produk", "niat beli"].map(item => (
                       <span key={item} className="rounded-lg bg-slate-100 px-3 py-1 font-['Plus_Jakarta_Sans:SemiBold'] text-[#334155] md:bg-sky-50 md:font-['Plus_Jakarta_Sans:SemiBold'] md:font-semibold md:text-zinc-700">{item}</span>
