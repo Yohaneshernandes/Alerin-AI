@@ -1471,7 +1471,7 @@ function DesktopJournalResultCard({
         </div>
 
         <div className="flex flex-wrap items-center gap-2 border-t border-slate-100 pt-4">
-          <button type="button" onClick={onAnalisis} className="rounded-lg bg-sky-600 px-3.5 py-1.5 text-xs font-semibold leading-4 text-white">
+          <button type="button" onClick={onAnalisis} className="rounded-lg bg-[#0369a1] px-3.5 py-1.5 text-xs font-semibold leading-4 text-white">
             Analisis lengkap
           </button>
           {actionButtons.map(label => (
@@ -2110,7 +2110,7 @@ function DesktopSearchResults({
   return (
     <div className="mx-auto hidden max-w-[1160px] md:block">
       <div className="flex items-center justify-between gap-4">
-        <h1 className="text-2xl font-extrabold leading-8 text-sky-800">Rekomendasi yang paling relevan</h1>
+        <h1 className="font-['Inter:Bold'] text-2xl font-extrabold leading-8 text-slate-900">Rekomendasi yang paling relevan</h1>
         <button
           type="button"
           onClick={onBack}
