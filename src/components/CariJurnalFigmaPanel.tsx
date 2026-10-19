@@ -1319,6 +1319,39 @@ function JournalCard({
   );
 }
 
+function RelevancyRing({ value }: { value: string }) {
+  const parsed = Number.parseInt(value, 10);
+  const percent = Number.isFinite(parsed) ? Math.min(100, Math.max(0, parsed)) : 0;
+  const radius = 34;
+  const circumference = 2 * Math.PI * radius;
+  const dashOffset = circumference * (1 - percent / 100);
+
+  return (
+    <div className="relative flex h-20 w-20 shrink-0 items-center justify-center">
+      <svg
+        className="absolute inset-0 h-full w-full -rotate-90"
+        viewBox="0 0 80 80"
+        fill="none"
+        role="img"
+        aria-label={`Relevansi ${percent}%`}
+      >
+        <circle cx="40" cy="40" r={radius} stroke="#e0f2fe" strokeWidth="5" />
+        <circle
+          cx="40"
+          cy="40"
+          r={radius}
+          stroke="#0369a1"
+          strokeWidth="5"
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          strokeDashoffset={dashOffset}
+        />
+      </svg>
+      <span className="text-xl font-extrabold leading-6 tracking-[-0.4px] text-[#0369a1]">{value}</span>
+    </div>
+  );
+}
+
 function DesktopJournalResultCard({
   relevancy,
   showHeader = false,
@@ -1382,9 +1415,8 @@ function DesktopJournalResultCard({
             </div>
           </div>
           <div className="flex w-28 shrink-0 flex-col items-center">
-            <span className="flex h-20 w-20 items-center justify-center rounded-full text-2xl font-extrabold leading-8 text-sky-600 outline outline-4 outline-offset-[-3.64px] outline-sky-600">
-              {relevancy}
-            </span>
+            <RelevancyRing value={relevancy} />
+
             <span className="pt-1 text-xs font-semibold leading-4 text-slate-500">Relevansi</span>
           </div>
         </div>
