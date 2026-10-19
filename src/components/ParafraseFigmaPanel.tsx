@@ -35,6 +35,166 @@ function wordCount(value: string) {
   return value.trim() ? value.trim().split(/\s+/).length : 0;
 }
 
+const gayaParafrase = ["Semua Gaya", "Akademik", "Ringkas", "Profesional", "Kreatif", "Terstruktur"];
+
+function RiwayatParafraseModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [tab, setTab] = useState<"riwayat" | "tersimpan">("riwayat");
+  const [query, setQuery] = useState("");
+  const [gaya, setGaya] = useState("Semua Gaya");
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  if (!open) return null;
+
+  return (
+    <div
+      className="fixed inset-0 z-[340] flex items-center justify-center bg-slate-900/40 p-4"
+      onClick={onClose}
+      role="presentation"
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Riwayat dan tersimpan"
+        onClick={event => event.stopPropagation()}
+        className="flex max-h-[calc(100dvh-2rem)] w-full max-w-[896px] flex-col overflow-hidden rounded-2xl bg-white shadow-2xl outline outline-1 outline-offset-[-1px] outline-neutral-200"
+      >
+        <header className="flex shrink-0 flex-col gap-5 border-b border-neutral-100 px-6 pb-5 pt-6">
+          <div className="flex items-start justify-between gap-3">
+            <h2 className="font-['Inter:Bold'] text-2xl font-bold leading-7 text-neutral-950">Riwayat &amp; Tersimpan</h2>
+            <div className="flex items-center gap-3">
+              <div className="flex items-start rounded-xl bg-zinc-100 p-1 outline outline-1 outline-offset-[-1px] outline-zinc-200">
+                <button
+                  type="button"
+                  onClick={() => setTab("riwayat")}
+                  className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold leading-4 transition-colors ${
+                    tab === "riwayat" ? "bg-white text-zinc-900 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]" : "text-zinc-600"
+                  }`}
+                >
+                  Riwayat
+                  <span
+                    className={`flex items-center justify-center rounded-lg px-1.5 py-0.5 text-[10px] font-semibold leading-4 ${
+                      tab === "riwayat" ? "bg-neutral-100 text-zinc-600 outline outline-1 outline-offset-[-1px] outline-neutral-300" : "bg-neutral-200 text-zinc-600"
+                    }`}
+                  >
+                    0
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTab("tersimpan")}
+                  className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold leading-4 transition-colors ${
+                    tab === "tersimpan" ? "bg-white text-zinc-900 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]" : "text-zinc-600"
+                  }`}
+                >
+                  Tersimpan
+                  <span className="flex items-center justify-center rounded-lg bg-neutral-200 px-1.5 py-0.5 text-[10px] font-semibold leading-4 text-zinc-600">
+                    0/3
+                  </span>
+                </button>
+              </div>
+              <button
+                type="button"
+                aria-label="Tutup riwayat"
+                onClick={onClose}
+                className="flex items-center justify-center rounded-lg p-1.5 transition-colors hover:bg-zinc-100"
+              >
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#a3a3a3" strokeWidth="1.7" strokeLinecap="round" aria-hidden="true">
+                  <path d="M5.5 5.5l9 9M14.5 5.5l-9 9" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3">
+            <label className="relative min-w-72 flex-1">
+              <img
+                src={`${assets}/fee18.svg`}
+                alt=""
+                className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2"
+              />
+              <input
+                value={query}
+                onChange={event => setQuery(event.target.value)}
+                placeholder="Cari teks riwayat..."
+                className="w-full rounded-lg bg-neutral-50 py-1.5 pl-9 pr-3 text-xs text-zinc-700 outline outline-1 outline-offset-[-1px] outline-zinc-200 placeholder:text-neutral-400 focus:outline-blue-300"
+              />
+            </label>
+            <div className="relative">
+              <button
+                type="button"
+                aria-haspopup="listbox"
+                aria-expanded={menuOpen}
+                onClick={() => setMenuOpen(value => !value)}
+                className="flex h-8 w-28 items-center justify-between gap-1.5 rounded-lg bg-neutral-50 pl-3 pr-2 py-1.5 text-xs font-semibold leading-4 text-zinc-600 outline outline-1 outline-offset-[-1px] outline-zinc-200"
+              >
+                {gaya}
+                <img src={`${assets}/edf2d.svg`} alt="" className="h-4 w-4 shrink-0" />
+              </button>
+              {menuOpen && (
+                <div
+                  role="listbox"
+                  className="absolute right-0 top-[calc(100%+6px)] z-20 flex w-28 flex-col gap-[1.67px] rounded-lg bg-white p-[5px] shadow-[0px_6.67px_8.33px_-5px_rgba(0,0,0,0.1),0px_16.67px_20.83px_-4.17px_rgba(0,0,0,0.1)] outline outline-1 outline-offset-[-1px] outline-zinc-200/90"
+                >
+                  {gayaParafrase.map(option => (
+                    <button
+                      key={option}
+                      type="button"
+                      role="option"
+                      aria-selected={gaya === option}
+                      onClick={() => {
+                        setGaya(option);
+                        setMenuOpen(false);
+                      }}
+                      className={`flex items-center rounded-[10px] px-2.5 py-1.5 text-left text-xs leading-4 transition-colors ${
+                        gaya === option ? "bg-zinc-100 font-medium text-zinc-900" : "font-normal text-zinc-700 hover:bg-slate-50"
+                      }`}
+                    >
+                      {option}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </header>
+
+        <div className="flex min-h-0 flex-1 flex-col items-center justify-center bg-neutral-50/50 px-6 py-16 text-center">
+          <div className="flex size-16 items-center justify-center rounded-2xl bg-zinc-100 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] outline outline-1 outline-offset-[-1px] outline-zinc-200/70">
+            <img src={`${assets}/f6b44.svg`} alt="" className="h-8 w-8" />
+          </div>
+          <p className="mt-4 font-['Inter:Bold'] text-lg font-semibold leading-7 text-zinc-900">
+            {tab === "riwayat" ? "Belum ada riwayat parafrase" : "Belum ada hasil tersimpan"}
+          </p>
+          <p className="mt-1 max-w-md text-sm font-['Inter:Regular'] leading-5 text-zinc-500">
+            {tab === "riwayat"
+              ? "Hasil parafrase akan tersimpan otomatis di sini selama 7 hari."
+              : "Hasil parafrase yang kamu simpan akan muncul di sini."}
+          </p>
+          <span className="mt-4 rounded-full bg-zinc-100/70 px-3.5 py-2 text-xs font-medium leading-4 text-zinc-500 outline outline-1 outline-offset-[-1px] outline-zinc-200/60">
+            {tab === "riwayat" ? "Mulai parafrase di editor untuk membuat riwayat." : "Simpan hasil parafrase untuk menambah daftar tersimpan."}
+          </span>
+        </div>
+
+        <footer className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-t border-neutral-100 bg-white px-6 py-4">
+          <div className="flex items-center gap-2">
+            <img src={`${assets}/f6b44.svg`} alt="" className="h-4 w-4 shrink-0" />
+            <p className="text-xs font-medium leading-4 text-zinc-900">
+              Tersimpan: 0 dari 3 hasil • Kapasitas: 5 MB <span className="text-zinc-500">• Riwayat sementara tidak mengurangi kapasitas penyimpanan.</span>
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-lg bg-neutral-900 px-5 py-2 text-xs font-semibold leading-4 text-white transition-colors hover:bg-neutral-800"
+          >
+            Tutup
+          </button>
+        </footer>
+      </div>
+    </div>
+  );
+}
+
 export default function ParafraseFigmaPanel({ onBack }: { onBack: () => void }) {
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
@@ -43,6 +203,7 @@ export default function ParafraseFigmaPanel({ onBack }: { onBack: () => void }) 
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [fileNotice, setFileNotice] = useState("");
+  const [riwayatOpen, setRiwayatOpen] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const words = wordCount(input);
 
@@ -120,6 +281,7 @@ export default function ParafraseFigmaPanel({ onBack }: { onBack: () => void }) 
           </div>
           <button
             type="button"
+            onClick={() => setRiwayatOpen(true)}
             className="hidden items-center gap-2 rounded-xl border border-[#d4d4d8] bg-white px-[15px] py-2 font-['Plus_Jakarta_Sans:Medium'] text-xs font-medium text-[#27272a] sm:flex"
           >
             <img src={`${assets}/cae7a.svg`} alt="" />
@@ -441,6 +603,8 @@ export default function ParafraseFigmaPanel({ onBack }: { onBack: () => void }) 
           </div>
         </aside>
       </main>
+
+      <RiwayatParafraseModal open={riwayatOpen} onClose={() => setRiwayatOpen(false)} />
     </div>
   );
 }
