@@ -326,3 +326,13 @@ body {
   overflow: hidden;
   line-height: 0;
 }
+
+/* Alerin search loader: tag icons flowing left through the magnifier */
+@keyframes alerin-tag-flow {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-480px);
+  }
+}

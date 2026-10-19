@@ -3066,6 +3066,57 @@ function DesktopLiteratureReview({ query, onBack }: { query: string; onBack: () 
 }
 
 
+type LoaderTagKind = "lightHole" | "midHole" | "midCheck" | "lightCheck";
+
+const loaderTags = {
+  lightHole: { paths: ["M11.2641 38.4684C17.3201 37.9591 30.2648 38.2858 36.5025 38.3431C39.0683 42.2491 44.0193 47.076 47.3273 52.0018C47.6008 57.0994 48.1204 80.5974 45.6067 83.8489C42.9439 85.6206 39.8297 85.2931 36.5889 85.3708C27.3844 85.7447 17.4767 85.4627 8.2267 85.5237C6.27973 85.4702 3.36638 84.9325 2.05587 83.2895C-0.778969 79.7343 0.1749 72.5203 0.0830225 68.1418C-0.0297363 62.7609 0.0429276 57.1358 0.320231 51.8381C3.00389 47.8981 8.12313 42.1246 11.2641 38.4684Z", "M23.8695 45.8202C25.8332 45.8269 27.4561 47.3551 27.5813 49.3157C27.7066 51.2762 26.2913 52.9987 24.3443 53.2552C22.9628 53.4373 21.5951 52.8345 20.797 51.6919C19.9994 50.5493 19.9037 49.0575 20.5498 47.8226C21.1963 46.5877 22.4759 45.8156 23.8695 45.8202Z"], viewBox: "-1 37 50 49" },
+  midHole: { paths: ["M98.1949 38.4669C104.886 37.9823 116.574 38.2793 123.386 38.3428C125.785 41.4104 132.829 49.2402 134.313 52.1624C134.3 57.7688 134.974 78.0864 133.002 83.448C132.34 85.246 125.714 85.3425 123.439 85.4182C114.373 85.7098 105.173 85.4115 96.096 85.5769C91.9226 85.6529 87.5108 84.1962 87.2953 79.2904C86.8948 70.1756 87.1274 60.8574 87.2435 51.7163C90.8226 47.674 94.43 42.792 98.1949 38.4669Z", "M108.943 45.8942C112.78 45.6657 113.12 46.7464 115.523 49.5112C114.444 50.7361 113.201 52.017 112.08 53.2222C107.312 54.4788 105.978 49.8985 108.943 45.8942Z"], viewBox: "86 37 50 49" },
+  midCheck: { paths: ["M310.245 38.2715C316.709 37.7802 328.511 38.0864 335.143 38.1846C338.242 41.2802 343.325 47.8182 346.165 51.383C346.386 55.7695 346.954 78.8924 344.782 83.4255C343.943 85.1814 337.444 85.1785 335.152 85.2457L334.801 85.2549C326.281 85.4567 317.586 85.2495 309.175 85.3873C304.431 85.4651 299.478 84.5476 299.228 79.1142C298.823 70.324 299.073 60.3771 299.115 51.6136C302.798 47.0278 306.294 42.6242 310.245 38.2715Z", "M332.921 54C333.869 54.1479 335.815 56.169 336.659 56.9402C331.397 62.5738 325.642 68.2303 320.192 73.7009C318.822 71.9442 316.504 69.6457 314.905 67.9767L311 64.2524C312.324 63.1206 313.531 61.666 314.696 60.3509C316.291 62.494 318.879 64.8495 320.691 66.8359C324.868 63.0226 328.858 58.0039 332.921 54Z"], viewBox: "298 37 50 49" },
+  lightCheck: { paths: ["M397.071 38.2716C403.599 37.7953 415.417 38.0698 422.087 38.1692C425.44 42.4613 429.646 47.1883 433.179 51.5573C433.292 57.0634 434.566 80.4841 431.229 83.7047C429.258 85.6097 423.891 85.1752 421.218 85.2358C420.976 85.2512 420.73 85.2613 420.487 85.2667C412.294 85.4334 404.066 85.3009 395.868 85.3431C391.855 85.364 386.501 84.8251 386.213 79.5776C385.708 70.332 386.008 60.822 386.079 51.5314C389.011 47.6194 393.734 41.7398 397.071 38.2716Z", "M418.886 54.0469C420.164 54.252 421.454 55.9256 422.431 56.9528C417.591 62.3387 411.297 68.202 406.102 73.6358C404.415 71.7638 402.552 69.8546 400.815 68.0127L396.91 64.2604C398 63.2126 399.307 61.5754 400.314 60.3902C401.659 62.1043 404.398 64.8181 405.985 66.4787C410.362 62.6378 413.995 58.0921 418.886 54.0469Z"], viewBox: "385 37 50 49" },
+};
+
+const loaderTagOrder: LoaderTagKind[] = ["lightHole", "midHole", "midCheck", "lightCheck"];
+
+function LoaderTag({ kind, tone, size = 48 }: { kind: LoaderTagKind; tone: "grey" | "white"; size?: number }) {
+  const entry = loaderTags[kind];
+  const isLight = kind === "lightHole" || kind === "lightCheck";
+  const body = tone === "white" ? "#ffffff" : isLight ? "#D5D5D4" : "#B8B7B7";
+  const detail = tone === "white" ? "#164682" : "#F2F2F1";
+  return (
+    <svg width={size} height={size} viewBox={entry.viewBox} className="shrink-0" aria-hidden="true">
+      <path d={entry.paths[0]} fill={body} />
+      <path d={entry.paths[1]} fill={detail} />
+    </svg>
+  );
+}
+
+function SearchLoader() {
+  const items = Array.from({ length: 24 }, (_, i) => loaderTagOrder[i % loaderTagOrder.length]);
+  return (
+    <div className="relative mx-auto h-[150px] w-[434px] max-w-[92vw] overflow-hidden" aria-hidden="true">
+      <div className="absolute inset-0 flex items-center">
+        <div className="flex w-max animate-[alerin-tag-flow_3s_linear_infinite] items-center gap-[72px]">
+          {items.map((kind, index) => (
+            <LoaderTag key={`${kind}-${index}`} kind={kind} tone="grey" />
+          ))}
+        </div>
+      </div>
+      <div className="absolute left-1/2 top-1/2 h-[124px] w-[124px] -translate-x-1/2 -translate-y-1/2">
+        <div className="absolute -bottom-5 -right-5 h-11 w-3.5 rotate-45 rounded-full bg-[#164682]" />
+        <div className="relative h-full w-full overflow-hidden rounded-full bg-[#164682] shadow-[0_10px_30px_-8px_rgba(22,70,130,0.45)]">
+          <div className="flex h-full items-center">
+            <div className="flex w-max animate-[alerin-tag-flow_3s_linear_infinite] items-center gap-[60px]">
+              {items.map((kind, index) => (
+                <LoaderTag key={`lens-${kind}-${index}`} kind={kind} tone="white" size={62} />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function MobileLiteratureReview() {
   const [chip, setChip] = useState("semua");
   const [prioritySearch, setPrioritySearch] = useState("");
@@ -4147,11 +4198,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
         <main onScroll={handleMobileScroll} className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden px-4 pb-28 pt-7 md:p-7">
           {mobileSearchStage === "loading" && (
             <div className="fixed inset-x-0 bottom-[68px] top-[65px] z-[305] flex flex-col items-center justify-center bg-[#f4f7fb] px-6 md:hidden">
-              <img
-                src="/assets/jurnal-design/search-flow/5e7e4.svg"
-                alt=""
-                className="w-[290px] max-w-[82vw] animate-[bounce_1.4s_ease-in-out_infinite]"
-              />
+              <SearchLoader />
               <h1 className="mt-5 text-center font-['Plus_Jakarta_Sans:ExtraBold'] text-[21px] font-extrabold tracking-[-0.5px] text-[#313131]">
                 {searchType === "review" ? "Menyusun Tinjauan Literatur" : resultMode === "analysis" ? "Menganalisis Naskahmu" : "Menulusuri Jurnal Untukmu"}
               </h1>
@@ -4487,11 +4534,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
 
           {desktopStage === "loading" && (
             <div className="hidden min-h-[70vh] flex-col items-center justify-center md:flex">
-              <img
-                src="/assets/jurnal-design/search-flow/5e7e4.svg"
-                alt=""
-                className="w-[290px] animate-[bounce_1.4s_ease-in-out_infinite]"
-              />
+              <SearchLoader />
               <h1 className="mt-5 text-center text-2xl font-extrabold tracking-[-0.5px] text-slate-800">
                 {searchType === "review" ? "Menyusun Tinjauan Literatur" : resultMode === "analysis" ? "Menganalisis Naskahmu" : "Menelusuri Jurnal Untukmu"}
               </h1>
