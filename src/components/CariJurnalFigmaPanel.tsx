@@ -5405,7 +5405,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <h1 className="font-['Plus_Jakarta_Sans:ExtraBold'] text-[28px] font-extrabold tracking-[-0.69px] text-[#003859]">Koleksi jurnal</h1>
-                    <p className="mt-1 text-xs text-[#64748b]">Simpan jurnal penting agar mudah ditemukan kembali saat menulis.</p>
+                    <p className="mt-1.5 text-sm leading-6 text-[#64748b]">Simpan jurnal penting agar mudah ditemukan kembali saat menulis.</p>
                   </div>
                   <button
                     type="button"
