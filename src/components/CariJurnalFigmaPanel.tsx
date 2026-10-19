@@ -4455,6 +4455,13 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
     setView("home");
   };
 
+  const changeView = (next: JournalView) => {
+    setView(next);
+    setDesktopStage("home");
+    setMobileSearchStage("home");
+    setMobileNavHidden(false);
+  };
+
   useEffect(() => {
     if (mobileSearchStage !== "loading") return;
     const timer = window.setTimeout(() => setMobileSearchStage("results"), 2400);
@@ -4521,7 +4528,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
     <div className="fixed inset-0 z-[300] flex h-dvh w-full overflow-hidden bg-[#f4f7fb] font-['Inter:Regular'] text-[#0f172a] md:bg-[#f3f6f9]">
       <Sidebar
         view={view}
-        onView={setView}
+        onView={changeView}
         onBack={onBack}
         onUpgrade={() => setUpgradeOpen(true)}
         onOpenRiwayat={openRiwayatPencarian}
@@ -4556,7 +4563,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
         </header>
 
         <main onScroll={handleMobileScroll} className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden px-4 pb-28 pt-7 md:p-7">
-          {mobileSearchStage === "loading" && (
+          {mobileSearchStage === "loading" && view === "home" && (
             <div className="fixed inset-x-0 bottom-[68px] top-[65px] z-[305] flex flex-col items-center justify-center bg-[#f4f7fb] px-6 md:hidden">
               <SearchLoader />
               <h1 className="mt-5 text-center font-['Plus_Jakarta_Sans:ExtraBold'] text-[21px] font-extrabold tracking-[-0.5px] text-[#313131]">
@@ -4572,7 +4579,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
             </div>
           )}
 
-          {mobileSearchStage === "results" && (
+          {mobileSearchStage === "results" && view === "home" && (
             <div onScroll={handleMobileScroll} className={`fixed inset-x-0 top-[65px] z-[305] overflow-y-auto overflow-x-hidden bg-[#f4f7fb] px-4 pt-4 transition-[bottom] duration-300 ease-out md:hidden ${mobileNavHidden ? "bottom-0 pb-16" : "bottom-[68px] pb-6"}`}>
               <div className="mx-auto max-w-md">
                 <div className="flex items-center gap-2">
@@ -5494,11 +5501,11 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
         style={{ transform: mobileNavHidden ? "translateY(calc(100% + 36px))" : "translateY(0)" }}
       >
         <div className="mx-auto grid max-w-md grid-cols-5 items-end">
-          <button type="button" onClick={() => setView("home")} aria-current={view === "home" ? "page" : undefined} className={`flex flex-col items-center gap-1 py-1 text-[10px] font-semibold ${view === "home" ? "text-[#00629b]" : "text-slate-400"}`}>
+          <button type="button" onClick={() => changeView("home")} aria-current={view === "home" ? "page" : undefined} className={`flex flex-col items-center gap-1 py-1 text-[10px] font-semibold ${view === "home" ? "text-[#00629b]" : "text-slate-400"}`}>
             <span className="flex h-6 items-center"><img src={`${mobileAssets}/62a85.svg`} alt="" className="max-w-none origin-center scale-[0.6667]" style={{ filter: view === "home" ? "none" : "brightness(0) saturate(100%) invert(70%) sepia(14%) saturate(518%) hue-rotate(176deg) brightness(90%) contrast(86%)" }} /></span>
             Beranda
           </button>
-          <button type="button" onClick={() => setView("collection")} aria-current={view === "collection" ? "page" : undefined} className={`flex flex-col items-center gap-1 py-1 text-[10px] font-medium ${view === "collection" ? "text-[#00629b]" : "text-slate-400"}`}>
+          <button type="button" onClick={() => changeView("collection")} aria-current={view === "collection" ? "page" : undefined} className={`flex flex-col items-center gap-1 py-1 text-[10px] font-medium ${view === "collection" ? "text-[#00629b]" : "text-slate-400"}`}>
             <span className="flex h-6 items-center"><img src={`${mobileAssets}/6978a.svg`} alt="" className="max-w-none origin-center scale-[0.6667]" style={{ filter: view === "collection" ? "brightness(0) saturate(100%) invert(30%) sepia(96%) saturate(1030%) hue-rotate(164deg) brightness(86%) contrast(102%)" : "none" }} /></span>
             Koleksi
           </button>
@@ -5512,10 +5519,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
           </button>
           <button
             type="button"
-            onClick={() => {
-              setMobileSearchStage("home");
-              setView("riwayat");
-            }}
+            onClick={() => changeView("riwayat")}
             aria-current={view === "riwayat" ? "page" : undefined}
             className={`flex flex-col items-center gap-1 py-1 text-[10px] font-medium ${view === "riwayat" ? "text-[#00629b]" : "text-slate-400"}`}
           >
