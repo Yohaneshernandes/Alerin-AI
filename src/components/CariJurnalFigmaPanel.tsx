@@ -2462,7 +2462,7 @@ function DesktopSearchResults({
           />
         </div>
 
-        <aside className="w-64 shrink-0 space-y-4">
+        <aside className="sticky top-2 w-64 shrink-0 self-start space-y-4">
           {analysis && <ProfileCard collection={false} />}
           <div className="rounded-2xl bg-white p-6">
           <h2 className="text-base font-bold leading-6 text-slate-900">Ringkasan hasil pencarian</h2>
