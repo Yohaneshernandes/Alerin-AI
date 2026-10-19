@@ -3328,7 +3328,10 @@ function LoaderTag({ kind, tone, size = 48 }: { kind: LoaderTagKind; tone: "grey
 function SearchLoader() {
   const items = Array.from({ length: 24 }, (_, i) => loaderTagOrder[i % loaderTagOrder.length]);
   return (
-    <div className="relative mx-auto h-[150px] w-[434px] overflow-hidden" aria-hidden="true">
+    <div
+      className="relative mx-auto -my-8 h-[150px] w-[434px] origin-center scale-[0.66] overflow-hidden min-[400px]:-my-6 min-[400px]:scale-[0.78] sm:my-0 sm:scale-100"
+      aria-hidden="true"
+    >
       <div className="absolute inset-x-0 top-[14px] flex h-24 items-center">
         <div className="flex w-max animate-[alerin-tag-flow_3s_linear_infinite] items-center gap-[72px]">
           {items.map((kind, index) => (
@@ -4564,7 +4567,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
 
         <main onScroll={handleMobileScroll} className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden px-4 pb-28 pt-7 md:p-7">
           {mobileSearchStage === "loading" && view === "home" && (
-            <div className="fixed inset-x-0 bottom-[68px] top-[65px] z-[305] flex flex-col items-center justify-center bg-[#f4f7fb] px-6 md:hidden">
+            <div className="fixed inset-x-0 bottom-[68px] top-[65px] z-[305] flex flex-col items-center justify-center overflow-hidden bg-[#f4f7fb] px-6 md:hidden">
               <SearchLoader />
               <h1 className="mt-5 text-center font-['Plus_Jakarta_Sans:ExtraBold'] text-[21px] font-extrabold tracking-[-0.5px] text-[#313131]">
                 {searchType === "review" ? "Menyusun Tinjauan Literatur" : resultMode === "analysis" ? "Menganalisis Naskahmu" : "Menulusuri Jurnal Untukmu"}
