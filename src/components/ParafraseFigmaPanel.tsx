@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, type MouseEvent } from "react";
 
 const assets = "/assets/parafrase-design";
 
@@ -66,6 +66,24 @@ export default function ParafraseFigmaPanel({ onBack }: { onBack: () => void }) 
     setFileNotice(`${file.name} berhasil dipilih. Teks contoh digunakan untuk pratinjau.`);
   };
 
+  const selectLanguage = (event: MouseEvent<HTMLButtonElement>) => {
+    const selected = event.currentTarget;
+    const details = selected.closest("details");
+    const label = details?.querySelector<HTMLElement>("[data-language-label]");
+    details?.querySelectorAll<HTMLElement>("[data-language-option]").forEach(option => {
+      const active = option === selected;
+      option.classList.toggle("bg-[#f4f4f5]", active);
+      option.classList.toggle("font-semibold", active);
+      option.classList.toggle("hover:bg-slate-50", !active);
+      option.querySelectorAll<HTMLElement>("[data-selected-mark]").forEach(mark => {
+        mark.hidden = !active;
+      });
+    });
+    const text = selected.textContent?.trim() ?? "";
+    if (label) label.textContent = text === "Deteksi otomatis" ? "Deteksi Otomatis" : text;
+    details?.removeAttribute("open");
+  };
+
   const runParaphrase = () => {
     if (!input.trim() || loading) return;
     setLoading(true);
@@ -109,10 +127,10 @@ export default function ParafraseFigmaPanel({ onBack }: { onBack: () => void }) 
           </button>
           <button
             type="button"
-            className="flex items-center gap-2 rounded-xl border border-[#d4d4d8] bg-white px-[15px] py-2 font-['Plus_Jakarta_Sans:Medium'] text-xs font-medium text-[#27272a]"
+            className="flex items-center gap-2 rounded-xl border border-[#bfdbfe] bg-[#eff6ff] px-[15px] py-2 font-['Inter:Medium'] text-xs font-medium text-[#3b82f6]"
           >
+            <img src={`${assets}/5ce6f.svg`} alt="" />
             Gratis
-            <img src={`${assets}/850c0.svg`} alt="" />
           </button>
         </div>
       </header>
@@ -128,16 +146,87 @@ export default function ParafraseFigmaPanel({ onBack }: { onBack: () => void }) 
           <div className="grid gap-5 xl:grid-cols-[277px_minmax(0,1fr)_351px] xl:gap-[61px]">
             <div>
               <p className="font-['Plus_Jakarta_Sans:Bold'] text-xs font-bold uppercase tracking-[1px] text-[#3f3f46]">Bahasa hasil</p>
-              <button
-                type="button"
-                className="mt-2 flex w-full items-center justify-between rounded-xl border border-[#e4e4e7] bg-white px-4 py-3 font-['Inter:Medium'] text-sm font-medium text-[#27272a]"
-              >
-                <span className="flex items-center gap-2">
-                  <img src={`${assets}/00f9f.svg`} alt="" />
-                  Deteksi Otomatis
-                </span>
-                <img src={`${assets}/edf2d.svg`} alt="" />
-              </button>
+              <details className="group relative mt-2 w-full">
+                <summary className="flex w-full cursor-pointer list-none items-center justify-between rounded-xl border border-[#e4e4e7] bg-white px-4 py-3 font-['Inter:Medium'] text-sm font-medium text-[#27272a] [&::-webkit-details-marker]:hidden">
+                  <span className="flex items-center gap-2">
+                    <img src={`${assets}/00f9f.svg`} alt="" />
+                    <span data-language-label>Deteksi Otomatis</span>
+                  </span>
+                  <img src={`${assets}/edf2d.svg`} alt="" className="transition-transform group-open:rotate-180" />
+                </summary>
+                <div className="absolute left-0 top-[calc(100%+6px)] z-50 w-full min-w-[280px] max-w-[calc(100vw-2rem)] overflow-hidden rounded-xl border border-[#e4e4e7] bg-white shadow-[0_20px_25px_rgba(15,23,42,0.1),0_10px_10px_rgba(15,23,42,0.04)]">
+                  <div className="border-b border-slate-100 bg-slate-50/60 p-3">
+                    <label className="relative block">
+                      <img src={`${assets}/fee18.svg`} alt="" className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2" />
+                      <input
+                        type="search"
+                        placeholder="Cari bahasa..."
+                        onInput={event => {
+                          const query = event.currentTarget.value.toLowerCase();
+                          event.currentTarget
+                            .closest("details")
+                            ?.querySelectorAll<HTMLElement>("[data-language-option]")
+                            .forEach(option => {
+                              option.hidden = !option.textContent?.toLowerCase().includes(query);
+                            });
+                        }}
+                        className="w-full rounded-lg border border-[#e4e4e7] bg-white py-2 pl-9 pr-3 text-sm outline-none placeholder:text-[#71717a] focus:border-blue-300"
+                      />
+                    </label>
+                  </div>
+                  <div className="max-h-[262px] overflow-y-auto py-1">
+                    <p className="px-3.5 py-1 font-['Inter:Medium'] text-[11px] font-medium uppercase leading-5 tracking-[0.55px] text-[#71717a]">Deteksi cerdas</p>
+                    <button
+                      type="button"
+                      data-language-option
+                      onClick={selectLanguage}
+                      className="flex w-full items-center justify-between bg-[#f4f4f5] px-3.5 py-2.5 text-left text-sm font-semibold"
+                    >
+                      <span className="flex items-center gap-2.5">
+                        <img data-selected-mark src={`${assets}/620fc.svg`} alt="" className="h-4 w-4" />
+                        Deteksi otomatis
+                      </span>
+                      <img data-selected-mark src={`${assets}/00768.svg`} alt="" className="h-4 w-4" />
+                    </button>
+                    <p className="px-3.5 py-1 font-['Inter:Medium'] text-[11px] font-medium uppercase leading-5 tracking-[0.55px] text-[#71717a]">Bahasa populer</p>
+                    {["Bahasa Indonesia", "Bahasa Inggris"].map(language => (
+                      <button
+                        key={language}
+                        type="button"
+                        data-language-option
+                        onClick={selectLanguage}
+                        className="flex w-full items-center justify-between px-3.5 py-2 text-left text-sm hover:bg-slate-50"
+                      >
+                        <span className="flex items-center gap-2.5">
+                          <img data-selected-mark hidden src={`${assets}/620fc.svg`} alt="" className="h-4 w-4" />
+                          {language}
+                        </span>
+                        <img data-selected-mark hidden src={`${assets}/00768.svg`} alt="" className="h-4 w-4" />
+                      </button>
+                    ))}
+                    <p className="border-t border-slate-100 px-3.5 py-1 font-['Inter:Medium'] text-[11px] font-medium uppercase leading-5 tracking-[0.55px] text-[#71717a]">Semua bahasa</p>
+                    {["Bahasa Arab", "Bahasa Belanda", "Bahasa Jepang", "Bahasa Jerman", "Bahasa Mandarin", "Bahasa Prancis", "Bahasa Spanyol"].map(language => (
+                      <button
+                        key={language}
+                        type="button"
+                        data-language-option
+                        onClick={selectLanguage}
+                        className="flex w-full items-center justify-between px-3.5 py-2 text-left text-sm hover:bg-slate-50"
+                      >
+                        <span className="flex items-center gap-2.5">
+                          <img data-selected-mark hidden src={`${assets}/620fc.svg`} alt="" className="h-4 w-4" />
+                          {language}
+                        </span>
+                        <img data-selected-mark hidden src={`${assets}/00768.svg`} alt="" className="h-4 w-4" />
+                      </button>
+                    ))}
+                  </div>
+                  <div className="flex items-center gap-1.5 border-t border-slate-100 bg-slate-50/80 px-3.5 pb-2.5 pt-[11px] text-xs text-[#71717a]">
+                    <span className="h-1.5 w-1.5 rounded-full bg-blue-500" />
+                    24 bahasa didukung
+                  </div>
+                </div>
+              </details>
               <p className="mt-2 text-xs text-[#71717a]">Bahasa antarmuka tidak mengubah bahasa hasil.</p>
             </div>
 
@@ -176,8 +265,8 @@ export default function ParafraseFigmaPanel({ onBack }: { onBack: () => void }) 
               <p className="mt-2 flex items-center gap-2 text-xs text-[#71717a]">
                 <img src={`${assets}/2faaa.svg`} alt="" />
                 {style === "academic"
-                  ? "Mode Akademik mempertahankan terminologi ilmiah dan tata kalimat formal."
-                  : "Mode Ringkas memadatkan kalimat tanpa mengubah makna utama."}
+                  ? "Formal, objektif, dan sesuai untuk tulisan ilmiah."
+                  : "Lebih singkat tanpa mengubah makna utama."}
               </p>
             </div>
 
@@ -305,9 +394,6 @@ export default function ParafraseFigmaPanel({ onBack }: { onBack: () => void }) 
               <p className="font-['Inter:Semi_Bold'] text-base font-semibold">1 kali parafrase menggunakan 1 jatah proses</p>
               <p className="mt-1 max-w-2xl font-['Inter:Regular'] text-xs leading-5 text-[#71717a]">
                 Jatah hanya berkurang setelah hasil parafrase berhasil dibuat. Mengedit, memeriksa ulang, menyimpan, dan mengunduh hasil tidak mengurangi jatah.
-                <span className="mt-1 flex items-center gap-1.5 font-['Inter:Semi_Bold'] text-[#171717]">
-                  <img src={`${assets}/f6b44.svg`} alt="" /> 6 proses tersisa
-                </span>
               </p>
             </div>
             <button
@@ -316,7 +402,7 @@ export default function ParafraseFigmaPanel({ onBack }: { onBack: () => void }) 
               onClick={runParaphrase}
               className="flex min-w-36 items-center justify-center gap-2 rounded-xl bg-[#3b82f6] px-6 py-3 font-['Inter:Semi_Bold'] text-sm font-semibold text-white shadow-[0_7px_16px_rgba(59,130,246,0.22)] transition-colors hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300"
             >
-              <img src={`${assets}/bf9a5.svg`} alt="" className="brightness-0 invert" />
+              <img src={`${assets}/bf9a5.svg`} alt="" />
               Parafrase
             </button>
           </div>
