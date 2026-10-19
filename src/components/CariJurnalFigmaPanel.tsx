@@ -2493,6 +2493,8 @@ function DesktopLiteratureReview({ query, onBack }: { query: string; onBack: () 
       content: [
         "Bagian ini memaparkan latar belakang penelitian tentang resiliensi perempuan dalam menghadapi bencana, termasuk dinamika kerentanan gender yang memperberat dampak bencana bagi perempuan.",
         "Konteks kebencanaan di Indonesia—mulai dari gempa, banjir, hingga pandemi—menjadi fokus utama karena tingginya frekuensi dan dampaknya terhadap kelompok rentan.",
+        "Kerentanan yang berlapis membuat perempuan sering kali menjadi kelompok yang paling terdampak sekaligus paling cepat pulih ketika kebutuhan spesifiknya terpenuhi. Perbedaan akses terhadap informasi, ruang pengambilan keputusan, dan sumber daya ekonomi menjadi variabel pembeda yang muncul konsisten di banyak studi.",
+        "Urgensi kajian ini juga ditopang oleh meningkatnya frekuensi bencana hidrometeorologi di kawasan Asia Tenggara. Kebijakan pemulihan yang netral gender berisiko memperlebar ketimpangan, sehingga sintesis bukti yang sistematis dibutuhkan untuk mengarahkan intervensi yang lebih tepat sasaran.",
       ],
     },
     {
@@ -2503,6 +2505,8 @@ function DesktopLiteratureReview({ query, onBack }: { query: string; onBack: () 
       content: [
         "Penelusuran dilakukan di lima basis data dengan kata kunci terkait resiliensi perempuan, bencana, dan pemulihan pasca-bencana, menghasilkan 126 artikel yang direduksi menjadi 92 studi setelah penyaringan.",
         "Kriteria inklusi mencakup publikasi 2020–2026, bahasa Indonesia dan Inggris, serta metode penelitian empiris maupun tinjauan sistematis.",
+        "Penyaringan dilakukan secara bertahap melalui penghapusan duplikasi, penilaian judul dan abstrak, lalu telaah teks penuh. Dua penilai independen menilai kesesuaian studi dengan kriteria inklusi dan menyelesaikan perbedaan penilaian melalui diskusi konsensus.",
+        "Risiko bias setiap studi dinilai menggunakan instrumen kritikal yang disesuaikan dengan desain penelitian, sementara kualitas pelaporan diperiksa terhadap ketersediaan data, kejelasan metode, dan keterbatasan yang diakui penulis.",
       ],
     },
     {
@@ -2513,6 +2517,8 @@ function DesktopLiteratureReview({ query, onBack }: { query: string; onBack: () 
       content: [
         "Matriks merangkum fokus, metode, temuan utama, dan kontribusi khas dari studi unggulan agar perbandingan lintas penelitian dapat dilakukan secara cepat.",
         "Setiap baris memuat sitasi lengkap dan basis sumber agar klaim dalam sintesis ini dapat diverifikasi kembali.",
+        "Matriks menyusun setiap studi pada empat dimensi—fokus, metode, temuan utama, dan kontribusi khas—sehingga pola kemiripan dan perbedaan antarkajian terlihat langsung tanpa harus membaca seluruh artikel.",
+        "Kolom kontribusi khas menandai kebaruan tiap studi, sementara kolom celah memperlihatkan wilayah yang belum tergarap dan menjadi bahan penting bagi penyusunan sintesis pada bagian berikutnya.",
       ],
     },
     {
@@ -2523,6 +2529,8 @@ function DesktopLiteratureReview({ query, onBack }: { query: string; onBack: () 
       content: [
         "Studi-studi dibandingkan berdasarkan pendekatan metodologis, cakupan geografis, serta jenis temuan—memperlihatkan bahwa pendekatan kualitatif mendominasi literatur ini.",
         "Perbedaan utama terletak pada faktor yang ditekankan: jaringan sosial, akses sumber daya, maupun strategi coping individual.",
+        "Secara metodologis, mayoritas studi mengandalkan wawancara mendalam dan studi kasus dengan jumlah partisipan terbatas. Beberapa penelitian kuantitatif mencoba mengukur tingkat resiliensi, tetapi instrumen yang digunakan belum seragam sehingga perbandingan langsung antarangka sulit dilakukan.",
+        "Perbandingan lintas wilayah menunjukkan bahwa dukungan sosial lebih dominan pada konteks komunitas pedesaan, sedangkan akses layanan digital lebih menentukan pada wilayah perkotaan. Temuan ini menegaskan pemulihan yang efektif harus mempertimbangkan konteks lokal.",
       ],
     },
     {
@@ -2533,16 +2541,44 @@ function DesktopLiteratureReview({ query, onBack }: { query: string; onBack: () 
       content: [
         "Temuan utama dikelompokkan ke dalam lima tema: dukungan sosial, akses sumber daya, keterlibatan komunitas, faktor psikologis, dan pemanfaatan teknologi digital.",
         "Pengelompokan ini menjadi dasar penyusunan sintesis pada bagian selanjutnya.",
+        "Lima tema besar yang teridentifikasi tidak berdiri sendiri, melainkan saling memperkuat. Misalnya, keterlibatan komunitas memperluas akses sumber daya, sementara faktor psikologis menentukan sejauh mana perempuan mampu memanfaatkan dukungan yang tersedia.",
+        "Pemanfaatan teknologi digital muncul sebagai tema yang relatif baru dan tumbuh cepat, terutama pada masa pandemi, ketika layanan tatap muka terbatas dan jaringan daring menjadi kanal utama pemulihan ekonomi.",
       ],
     },
     {
-      key: "7–9",
-      title: "Pengelompokan Tema",
-      desc: "Sintesis tema lanjutan beserta celah penelitian yang ditemukan",
+      key: "7",
+      title: "Sintesis",
+      desc: "Integrasi temuan lintas studi menjadi satu narasi utuh",
       section: 7,
       content: [
-        "Bagian ini menyintesis tema-tema lanjutan dan memetakan celah penelitian yang belum terjawab, khususnya pada konteks Asia Tenggara.",
-        "Sintesis menunjukkan kebutuhan studi longitudinal berskala besar yang melibatkan perempuan sebagai subjek utama.",
+        "Sintesis ini menunjukkan bahwa resiliensi perempuan bukan sifat bawaan, melainkan hasil interaksi dinamis antara faktor sosial, struktural, dan individual yang terbentuk sepanjang proses pemulihan.",
+        "Dukungan sosial dari keluarga dan komunitas berperan sebagai fondasi emosional sekaligus sumber informasi praktis. Akses sumber daya—ekonomi, pendidikan, dan layanan kesehatan—menjadi prasyarat agar perempuan dapat mengambil keputusan strategis bagi keluarganya.",
+        "Faktor individual seperti koping berbasis agama, ketangguhan keluarga, dan kepercayaan diri memperkuat kemampuan adaptasi, tetapi tidak dapat menggantikan peran struktur yang inklusif. Kombinasi ketiganya menentukan kecepatan pemulihan pasca-bencana.",
+        "Secara keseluruhan, bukti yang tersintesis menegaskan bahwa intervensi pemulihan harus dirancang menyeluruh dan sensitif gender, bukan sekadar bantuan jangka pendek yang bersifat seragam.",
+      ],
+    },
+    {
+      key: "8",
+      title: "Evaluasi dan Kritik",
+      desc: "Penilaian kualitas bukti dan keterbatasan tiap studi",
+      section: 8,
+      content: [
+        "Kualitas bukti yang tersedia beragam. Sebagian besar studi memiliki kekuatan pada kedalaman konteks, tetapi lemah dalam kemampuan generalisasi karena sampel berskala kecil dan terbatas pada satu lokasi.",
+        "Beberapa penelitian tidak melaporkan secara rinci prosedur pengambilan sampel dan karakteristik partisipan, sehingga risiko bias seleksi sulit dinilai. Transparansi pelaporan masih menjadi titik lemah yang berulang.",
+        "Definisi operasional resiliensi juga belum seragam: sebagian studi melihatnya sebagai kemampuan pulih, sebagian lain sebagai proses berkelanjutan. Perbedaan konseptual ini menyulitkan sintesis kuantitatif dan membuka ruang tafsir yang lebar.",
+        "Meski demikian, keterbatasan tersebut tidak meniadakan nilai temuan. Pola yang konsisten lintas studi tetap memberi dasar yang cukup kuat untuk merumuskan implikasi praktis dan agenda penelitian berikutnya.",
+      ],
+    },
+    {
+      key: "9",
+      title: "Research Gap",
+      desc: "Celah penelitian yang belum terjawab dan arah lanjutan",
+      section: 9,
+      content: [
+        "Celah paling menonjol adalah kelangkaan studi longitudinal yang mengikuti perempuan melewati siklus pemulihan jangka panjang. Sebagian besar penelitian bersifat potret sesaat dan gagal menangkap perubahan strategi adaptasi sepanjang waktu.",
+        "Konteks Indonesia dan Asia Tenggara masih kurang terwakili meskipun wilayah ini menghadapi risiko bencana yang tinggi. Perbandingan lintas negara dengan latar budaya berbeda juga hampir tidak tersedia.",
+        "Studi yang memisahkan pengalaman perempuan berdasarkan usia, status ekonomi, disabilitas, dan status perkawinan masih jarang, padahal kerentanan di dalam kelompok perempuan sendiri sangat berlapis.",
+        "Selain itu, evaluasi dampak program pemulihan terhadap resiliensi belum banyak dilakukan, sehingga belum jelas intervensi mana yang benar-benar efektif dan layak diperluas.",
       ],
     },
   ];
