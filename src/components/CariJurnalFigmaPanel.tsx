@@ -4303,17 +4303,29 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
 
                 <section className="mt-4 rounded-3xl bg-white p-5 shadow-sm">
                   <div className="flex items-center gap-2.5">
-                    <span className="h-6 w-6 shrink-0 rounded bg-sky-700" aria-hidden="true" />
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded bg-sky-700" aria-hidden="true">
+                      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M4 1.5h5.5L12 4v10.5H4z" />
+                        <path d="M9.5 1.5V4H12" />
+                        <path d="M6 8h4M6 11h4" />
+                      </svg>
+                    </span>
                     <h2 className="text-xl font-bold text-slate-900">Ringkasan hasil pencarian</h2>
                   </div>
                   <p className="mt-3 text-sm leading-6 text-neutral-700">Alerin menyeleksi hasil secara bertahap sebelum menampilkan jurnal terbaik.</p>
                   <div className="mt-3 space-y-2">
                     <span className="flex h-9 w-fit items-center gap-2 rounded-xl bg-slate-100 px-4 text-sm font-medium text-slate-900">
-                      <span className="h-4 w-4 shrink-0 bg-sky-700" aria-hidden="true" />
+                      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#0369a1" strokeWidth="1.6" strokeLinecap="round" aria-hidden="true">
+                        <circle cx="7" cy="7" r="4.5" />
+                        <path d="M10.4 10.4L14 14" />
+                      </svg>
                       Kata kunci: {query.trim() || "interaksi parasosial"}
                     </span>
                     <span className="flex h-9 w-fit items-center gap-2 rounded-xl bg-slate-100 px-4 text-sm font-medium text-slate-900">
-                      <span className="h-4 w-4 shrink-0 bg-sky-700" aria-hidden="true" />
+                      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#0369a1" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <rect x="2" y="3" width="12" height="11" rx="2" />
+                        <path d="M2 6.5h12M5.5 1.5v3M10.5 1.5v3" />
+                      </svg>
                       Tahun: 2024–2026
                     </span>
                   </div>
@@ -4338,7 +4350,12 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
 
                 <div className="mt-4 flex items-center justify-between px-0.5">
                   <div className="flex items-center gap-2">
-                    <span className="h-4 w-4 shrink-0 bg-sky-700" aria-hidden="true" />
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="#0369a1" strokeWidth="1.6" strokeLinecap="round" aria-hidden="true">
+                      <path d="M5.5 4h8.5M5.5 8h8.5M5.5 12h8.5" />
+                      <circle cx="2.5" cy="4" r="1" fill="#0369a1" stroke="none" />
+                      <circle cx="2.5" cy="8" r="1" fill="#0369a1" stroke="none" />
+                      <circle cx="2.5" cy="12" r="1" fill="#0369a1" stroke="none" />
+                    </svg>
                     <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500">Daftar rekomendasi</p>
                   </div>
                   <p className="text-xs font-medium text-slate-500">3 dari 20 telaah</p>
