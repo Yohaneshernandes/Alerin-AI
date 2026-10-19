@@ -4166,7 +4166,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
           )}
 
           {mobileSearchStage === "results" && (
-            <div onScroll={handleMobileScroll} className="fixed inset-x-0 bottom-[68px] top-[65px] z-[305] overflow-y-auto overflow-x-hidden bg-[#f4f7fb] px-4 pb-6 pt-4 md:hidden">
+            <div onScroll={handleMobileScroll} className={`fixed inset-x-0 top-[65px] z-[305] overflow-y-auto overflow-x-hidden bg-[#f4f7fb] px-4 pt-4 transition-[bottom] duration-300 ease-out md:hidden ${mobileNavHidden ? "bottom-0 pb-16" : "bottom-[68px] pb-6"}`}>
               <div className="mx-auto max-w-md">
                 <div className="flex items-center gap-2">
                   <button
