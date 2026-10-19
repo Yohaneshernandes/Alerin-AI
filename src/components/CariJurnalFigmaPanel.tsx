@@ -1319,6 +1319,54 @@ function JournalCard({
   );
 }
 
+function ActionResultIcon({ label }: { label: string }) {
+  const shared = {
+    width: 14,
+    height: 14,
+    viewBox: "0 0 13 13",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: 1.3,
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+    "aria-hidden": true,
+  };
+
+  if (label === "Buat sitasi") {
+    return (
+      <svg {...shared}>
+        <path d="M2 3.1c1.7-.9 3.3-.9 4.5 0v7.8c-1.2-.9-2.8-.9-4.5 0z" />
+        <path d="M11 3.1c-1.7-.9-3.3-.9-4.5 0v7.8c1.2-.9 2.8-.9 4.5 0z" />
+      </svg>
+    );
+  }
+
+  if (label === "Abstrak") {
+    return (
+      <svg {...shared}>
+        <rect x="2.5" y="1.5" width="8" height="10" rx="1.6" />
+        <path d="M4.7 4.4h3.6M4.7 6.5h3.6M4.7 8.6h2.3" />
+      </svg>
+    );
+  }
+
+  if (label === "DOI") {
+    return (
+      <svg {...shared}>
+        <circle cx="6.5" cy="6.5" r="5" />
+        <path d="M1.5 6.5h10M6.5 1.5c1.6 1.8 1.6 8.2 0 10M6.5 1.5c-1.6 1.8-1.6 8.2 0 10" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg {...shared}>
+      <path d="M7.3 1.5H4.1a1.6 1.6 0 00-1.6 1.6v6.8a1.6 1.6 0 001.6 1.6h4.8a1.6 1.6 0 001.6-1.6V4.7z" />
+      <path d="M7.3 1.5v3.2h3.2" />
+    </svg>
+  );
+}
+
 function RelevancyRing({ value }: { value: string }) {
   const parsed = Number.parseInt(value, 10);
   const percent = Number.isFinite(parsed) ? Math.min(100, Math.max(0, parsed)) : 0;
@@ -1471,7 +1519,15 @@ function DesktopJournalResultCard({
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5 border-t border-slate-100 pt-4">
-          <button type="button" onClick={onAnalisis} className="rounded-lg bg-[#0369a1] px-4 py-2 text-sm font-semibold leading-5 text-white">
+          <button
+            type="button"
+            onClick={onAnalisis}
+            className="flex items-center gap-1.5 rounded-lg bg-[#0369a1] px-4 py-2 text-sm font-semibold leading-5 text-white"
+          >
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true">
+              <path d="M6.2 1.6l1.1 2.7 2.7 1.1-2.7 1.1-1.1 2.7-1.1-2.7L2.4 5.4l2.7-1.1z" />
+              <path d="M10.6 7.7l.6 1.5 1.5.6-1.5.6-.6 1.5-.6-1.5-1.5-.6 1.5-.6z" />
+            </svg>
             Analisis lengkap
           </button>
           {actionButtons.map(label => (
@@ -1489,11 +1545,7 @@ function DesktopJournalResultCard({
               }
               className="flex items-center gap-1.5 rounded-lg bg-white px-4 py-2 text-sm font-semibold leading-5 text-slate-700 outline outline-1 outline-offset-[-1px] outline-slate-200"
             >
-              {label === "DOI" && (
-                <svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" aria-hidden="true">
-                  <rect x="1.5" y="1.5" width="9" height="9" rx="1.5" />
-                </svg>
-              )}
+              <ActionResultIcon label={label} />
               {label}
             </button>
           ))}
