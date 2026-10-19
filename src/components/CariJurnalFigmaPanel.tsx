@@ -1390,7 +1390,8 @@ function JournalCard({
           </div>
         </>
       )}
-      <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-slate-100 pt-4">
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-2.5 border-t border-slate-100 pt-4">
+        <div className="flex min-w-0 flex-wrap items-center gap-2.5">
         <button type="button" className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700">Lihat detail</button>
         <button
           type="button"
@@ -1439,7 +1440,8 @@ function JournalCard({
           </select>
           <img src={`${collectionAssets}/b80d5.svg`} alt="" />
         </label>
-        <button type="button" onClick={onRemove} className="ml-auto rounded-lg bg-[#bd3434] px-4 py-2 text-sm font-semibold text-white">
+        </div>
+        <button type="button" onClick={onRemove} className="shrink-0 rounded-lg bg-[#bd3434] px-4 py-2 text-sm font-semibold text-white">
           Hapus dari koleksi
         </button>
       </div>
