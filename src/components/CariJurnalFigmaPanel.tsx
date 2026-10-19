@@ -314,6 +314,63 @@ function NewFolderModal({
   );
 }
 
+function HapusJurnalModal({
+  open,
+  title,
+  onClose,
+  onConfirm,
+}: {
+  open: boolean;
+  title: string;
+  onClose: () => void;
+  onConfirm: () => void;
+}) {
+  if (!open) return null;
+
+  return (
+    <div
+      className="fixed inset-0 z-[340] flex items-center justify-center bg-black/25 px-4 backdrop-blur-[2.55px]"
+      onClick={onClose}
+      aria-hidden="true"
+    >
+      <div
+        role="alertdialog"
+        aria-modal="true"
+        aria-label="Hapus jurnal dari koleksi"
+        className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl"
+        onClick={event => event.stopPropagation()}
+      >
+        <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#ffdad6] text-[#93000a]">
+          <svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M2.5 4.5h11M6 4.5V3h4v1.5M4 4.5l.7 9h6.6l.7-9" />
+            <path d="M6.5 7v4M9.5 7v4" />
+          </svg>
+        </div>
+        <h2 className="mt-4 font-['Plus_Jakarta_Sans:Bold'] text-lg font-bold text-[#0f172a]">Kamu yakin ingin menghapus jurnal ini?</h2>
+        <p className="mt-1.5 text-sm leading-6 text-[#64748b]">
+          <span className="font-semibold text-[#0f172a]">{title}</span> akan dihapus dari Koleksi. Tindakan ini tidak bisa dibatalkan.
+        </p>
+        <div className="mt-5 flex justify-end gap-2">
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-[#64748b] transition-colors hover:bg-slate-50"
+          >
+            Batal
+          </button>
+          <button
+            type="button"
+            onClick={onConfirm}
+            className="rounded-xl bg-[#bd3434] px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#a12b2b]"
+          >
+            Ya, hapus
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const temuanAnalisis = [
   {
     halaman: 18,
@@ -4489,6 +4546,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
   const [tabelOpen, setTabelOpen] = useState(false);
   const [sitasiOpen, setSitasiOpen] = useState(false);
   const [abstrakOpen, setAbstrakOpen] = useState(false);
+  const [hapusJournalId, setHapusJournalId] = useState<string | null>(null);
   const toastTimer = useRef<number | undefined>(undefined);
 
   const showToast = (message: string) => {
@@ -4532,6 +4590,13 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
   const removeSavedJournal = (journalId: string) => {
     setSavedJournals(list => list.filter(item => item.id !== journalId));
     showToast("Jurnal dihapus dari Koleksi");
+  };
+
+  const hapusJournal = savedJournals.find(journal => journal.id === hapusJournalId) ?? null;
+
+  const confirmRemoveSavedJournal = () => {
+    if (hapusJournalId) removeSavedJournal(hapusJournalId);
+    setHapusJournalId(null);
   };
 
   const toggleFolderSelection = (folderId: string) => {
@@ -5499,9 +5564,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                       </label>
                       <button
                         type="button"
-                        onClick={() => {
-                          if (window.confirm("Hapus jurnal ini dari koleksi?")) removeSavedJournal(journal.id);
-                        }}
+                        onClick={() => setHapusJournalId(journal.id)}
                         className="flex items-center gap-1.5 rounded-lg bg-[#ffdad6] px-3 text-xs font-medium text-[#93000a]"
                       >
                         <img src="/assets/jurnal-design/collection-mobile/29816.svg" alt="" className="max-w-none origin-center scale-[0.65]" />
@@ -5552,7 +5615,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                         journal={journal}
                         folders={folders}
                         onMove={folderId => moveJournal(journal.id, folderId)}
-                        onRemove={() => removeSavedJournal(journal.id)}
+                        onRemove={() => setHapusJournalId(journal.id)}
                         onSitasi={() => setSitasiOpen(true)}
                         onAbstrak={() => setAbstrakOpen(true)}
                       />
@@ -5723,6 +5786,12 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
       <TabelPenelitianModal open={tabelOpen} onClose={() => setTabelOpen(false)} />
       <BuatSitasiModal open={sitasiOpen} onClose={() => setSitasiOpen(false)} />
       <AbstrakJurnalModal open={abstrakOpen} onClose={() => setAbstrakOpen(false)} />
+      <HapusJurnalModal
+        open={hapusJournalId !== null}
+        title={hapusJournal?.title ?? "Jurnal ini"}
+        onClose={() => setHapusJournalId(null)}
+        onConfirm={confirmRemoveSavedJournal}
+      />
       <Toast message={toast} />
     </div>
   );
