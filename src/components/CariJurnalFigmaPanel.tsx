@@ -1441,8 +1441,17 @@ function JournalCard({
           <img src={`${collectionAssets}/b80d5.svg`} alt="" />
         </label>
         </div>
-        <button type="button" onClick={onRemove} className="shrink-0 rounded-lg bg-[#bd3434] px-4 py-2 text-sm font-semibold text-white">
-          Hapus dari koleksi
+        <button
+          type="button"
+          onClick={onRemove}
+          aria-label="Hapus dari koleksi"
+          title="Hapus dari koleksi"
+          className="flex shrink-0 items-center justify-center rounded-lg bg-[#bd3434] px-3.5 py-2.5 text-white"
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M2.5 4.5h11M6 4.5V3h4v1.5M4 4.5l.7 9h6.6l.7-9" />
+            <path d="M6.5 7v4M9.5 7v4" />
+          </svg>
         </button>
       </div>
     </article>
