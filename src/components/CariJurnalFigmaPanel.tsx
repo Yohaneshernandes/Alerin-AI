@@ -3727,9 +3727,9 @@ function MobileLiteratureReview() {
 
   return (
     <div className="flex flex-col gap-5 pb-8">
-      <div>
+      <div className="rounded-3xl bg-white px-5 py-6 text-center shadow-sm outline outline-1 outline-offset-[-1px] outline-slate-200/80">
         <h2 className="font-['Inter:Bold'] text-[22px] font-bold leading-7 text-slate-900">Tinjau hasil penelusuran literatur</h2>
-        <p className="mt-1.5 text-sm leading-6 text-slate-500">
+        <p className="mx-auto mt-2 max-w-[300px] text-sm leading-6 text-slate-500">
           Alerin telah menggabungkan, merapikan, dan memeringkat artikel berdasarkan relevansi topik riset Anda.
         </p>
       </div>
