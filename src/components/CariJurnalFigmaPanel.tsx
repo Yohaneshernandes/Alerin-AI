@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type ChangeEvent, type ReactNode, type UIEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type ChangeEvent, type PointerEvent as ReactPointerEvent, type ReactNode, type UIEvent } from "react";
 
 type JournalView = "home" | "collection" | "riwayat";
 
@@ -4132,6 +4132,69 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
   const [playing, setPlaying] = useState(false);
   const [progress, setProgress] = useState(1);
   const [fullscreen, setFullscreen] = useState(false);
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [dragging, setDragging] = useState(false);
+  const graphRef = useRef<HTMLDivElement | null>(null);
+  const dragRef = useRef<{ pointerId: number; startX: number; startY: number; originX: number; originY: number } | null>(null);
+
+  const zoomAt = (nextZoom: number, clientX?: number, clientY?: number) => {
+    const target = Math.max(50, Math.min(200, nextZoom));
+    const rect = graphRef.current?.getBoundingClientRect();
+    if (!rect) {
+      setZoom(target);
+      return;
+    }
+    const centerX = (clientX ?? rect.left + rect.width / 2) - rect.left;
+    const centerY = (clientY ?? rect.top + rect.height / 2) - rect.top;
+    setPan(current => {
+      const ratio = target / zoom;
+      return { x: centerX - (centerX - current.x) * ratio, y: centerY - (centerY - current.y) * ratio };
+    });
+    setZoom(target);
+  };
+
+  const handleMapPointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+    const target = event.target as HTMLElement;
+    if (target.closest("button, [data-map-node]")) return;
+    dragRef.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      originX: pan.x,
+      originY: pan.y,
+    };
+    setDragging(true);
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+
+  const handleMapPointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const drag = dragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+    setPan({ x: drag.originX + event.clientX - drag.startX, y: drag.originY + event.clientY - drag.startY });
+  };
+
+  const handleMapPointerUp = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (dragRef.current?.pointerId !== event.pointerId) return;
+    dragRef.current = null;
+    setDragging(false);
+  };
+
+  const resetMapView = () => {
+    setZoom(100);
+    setPan({ x: 0, y: 0 });
+  };
+
+  useEffect(() => {
+    const element = graphRef.current;
+    if (!element) return;
+    const handleWheel = (event: globalThis.WheelEvent) => {
+      event.preventDefault();
+      zoomAt(zoom + (event.deltaY > 0 ? -10 : 10), event.clientX, event.clientY);
+    };
+    element.addEventListener("wheel", handleWheel, { passive: false });
+    return () => element.removeEventListener("wheel", handleWheel);
+  }, [zoom]);
 
   useEffect(() => {
     if (!playing) return;
@@ -4319,6 +4382,7 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
                   setMode(tab.key);
                   setProgress(0);
                   setPlaying(true);
+                  resetMapView();
                 }}
                 className={`rounded-md px-3 py-1.5 text-sm font-medium leading-5 transition-colors ${
                   mode === tab.key ? "bg-white text-sky-700 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]" : "text-slate-500 hover:text-slate-700"
@@ -4348,16 +4412,23 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
             <button
               type="button"
               aria-label="Perkecil peta"
-              onClick={() => setZoom(value => Math.max(50, value - 10))}
+              onClick={() => zoomAt(zoom - 10)}
               className="flex h-6 w-6 items-center justify-center rounded-sm text-sm font-bold text-slate-500 transition-colors hover:bg-slate-50"
             >
               &minus;
             </button>
-            <span className="w-9 text-center text-xs font-semibold leading-4 text-slate-900">{zoom}%</span>
+            <button
+              type="button"
+              onClick={resetMapView}
+              title="Reset tampilan peta"
+              className="w-9 rounded-sm text-center text-xs font-semibold leading-4 text-slate-900 transition-colors hover:bg-slate-50"
+            >
+              {zoom}%
+            </button>
             <button
               type="button"
               aria-label="Perbesar peta"
-              onClick={() => setZoom(value => Math.min(200, value + 10))}
+              onClick={() => zoomAt(zoom + 10)}
               className="flex h-6 w-6 items-center justify-center rounded-sm text-sm font-bold text-slate-500 transition-colors hover:bg-slate-50"
             >
               +
@@ -4427,9 +4498,15 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
 
           <div className={`flex gap-4 px-5 pb-2 pt-4 md:px-6 ${fullscreen ? "min-h-0 flex-1" : ""}`}>
             <div
-              className={`relative min-w-0 flex-1 overflow-hidden rounded-xl ${
-                fullscreen ? "" : "h-[430px]"
-              } ${
+              ref={graphRef}
+              onPointerDown={handleMapPointerDown}
+              onPointerMove={handleMapPointerMove}
+              onPointerUp={handleMapPointerUp}
+              onPointerCancel={handleMapPointerUp}
+              onDoubleClick={resetMapView}
+              className={`relative min-w-0 flex-1 touch-none select-none overflow-hidden rounded-xl ${
+                dragging ? "cursor-grabbing" : "cursor-grab"
+              } ${fullscreen ? "" : "h-[430px]"} ${
                 mode === "kepadatan"
                   ? "bg-[radial-gradient(circle_at_48%_45%,#1d4ed8_0%,#0b3bb8_55%,#072a8c_100%)]"
                   : "bg-[radial-gradient(circle_at_50%_35%,#f8fbff_0%,#ffffff_65%)]"
@@ -4437,7 +4514,7 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
             >
               {mode === "kepadatan" ? (
                 <>
-                  <div className="absolute inset-0 transition-transform duration-200" style={{ transform: `scale(${zoom / 100})` }}>
+                  <div className="absolute inset-0" style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom / 100})`, transformOrigin: "0 0" }}>
                     {[
                       { x: 8, y: 10, w: 30, h: 34 },
                       { x: 34, y: 62, w: 34, h: 38 },
@@ -4492,21 +4569,26 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
                     ))}
 
                     {mapMainNodes.map(node => (
-                      <div
+                      <button
                         key={node.name}
-                        className="absolute flex -translate-x-1/2 -translate-y-1/2 items-center gap-1.5"
+                        type="button"
+                        data-map-node
+                        onClick={() => toggleNode(node.name)}
+                        aria-pressed={nodeFilter === node.name}
+                        aria-label={`Saring publikasi topik ${node.name}`}
+                        className="absolute flex cursor-pointer -translate-x-1/2 -translate-y-1/2 items-center gap-1.5 text-left"
                         style={{ left: `${node.x}%`, top: `${node.y}%`, opacity: 0.55 + 0.45 * progress }}
                       >
                         <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.95)]" />
                         <span className="whitespace-nowrap text-[13px] font-extrabold leading-4 text-white [text-shadow:0_1px_6px_rgba(2,20,80,0.9)]">
                           {node.name}
                         </span>
-                      </div>
+                      </button>
                     ))}
                   </div>
                 </>
               ) : (
-                <div className="absolute inset-0 transition-transform duration-200" style={{ transform: `scale(${zoom / 100})` }}>
+                <div className="absolute inset-0" style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom / 100})`, transformOrigin: "0 0" }}>
                   {[
                     { x: 12, y: 12, size: 340, color: "rgba(59,130,246,0.16)" },
                     { x: 46, y: 6, size: 320, color: "rgba(52,211,153,0.16)" },
@@ -4620,7 +4702,9 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
                           }}
                         />
                         <span
-                          className={`absolute whitespace-nowrap ${
+                          data-map-node
+                          onClick={() => toggleNode(node.name)}
+                          className={`absolute cursor-pointer whitespace-nowrap ${
                             labelPos === "inside"
                               ? "text-[19px] font-extrabold leading-6 text-slate-900"
                               : "text-[13px] font-extrabold leading-[18px] text-slate-900"
@@ -4637,6 +4721,14 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
                   })}
                 </div>
               )}
+
+              <span
+                className={`pointer-events-none absolute bottom-2.5 left-2.5 z-20 rounded-md px-2 py-1 text-[10px] font-medium leading-4 shadow-sm backdrop-blur-sm ${
+                  mode === "kepadatan" ? "bg-[#072a8c]/75 text-white/85" : "bg-white/85 text-slate-500"
+                }`}
+              >
+                Geser untuk memindahkan · Scroll untuk zoom · Klik topik untuk menyaring
+              </span>
             </div>
 
             {mode === "jaringan" && (
