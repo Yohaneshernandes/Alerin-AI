@@ -3670,6 +3670,12 @@ function MobileLiteratureReview() {
     { key: "empiris", label: "Empiris (46)" },
   ];
 
+  const tagPills: Record<string, { box: string; dot: string }> = {
+    "Sangat relevan": { box: "bg-emerald-50 text-emerald-700 outline-emerald-200/80", dot: "bg-emerald-500" },
+    "Perlu ditinjau": { box: "bg-amber-50 text-amber-700 outline-amber-200/80", dot: "bg-amber-500" },
+    "Cukup relevan": { box: "bg-sky-50 text-sky-700 outline-sky-200/80", dot: "bg-sky-500" },
+  };
+
   const structureSections = [
     { n: 1, label: "Ringkasan Eksekutif" },
     { n: 2, label: "Pendahuluan" },
@@ -3797,8 +3803,12 @@ function MobileLiteratureReview() {
                   </button>
                 </div>
                 <div className="mt-2.5 flex flex-wrap items-center gap-2">
-                  <span className="flex items-center gap-1.5 rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold text-slate-600 outline outline-1 outline-slate-200">
-                    <span className="h-2 w-2 rounded-full bg-slate-400" />
+                  <span
+                    className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold outline outline-1 ${
+                      (tagPills[row.tag] ?? tagPills["Cukup relevan"]).box
+                    }`}
+                  >
+                    <span className={`h-2 w-2 rounded-full ${(tagPills[row.tag] ?? tagPills["Cukup relevan"]).dot}`} />
                     {row.tag}
                   </span>
                   <span className="rounded-md bg-white px-2 py-1 text-[11px] font-medium text-slate-600 outline outline-1 outline-slate-200">{row.year}</span>
