@@ -4537,9 +4537,6 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
               <path d="M6.5 1.5v7M3.8 5.8l2.7 2.7 2.7-2.7M2 11h9" />
             </svg>
             Unduh Gambar
-            <svg width="9" height="6" viewBox="0 0 9 6" fill="none" stroke="#64748b" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M1 1.5L4.5 5 8 1.5" />
-            </svg>
           </button>
 
           <button
