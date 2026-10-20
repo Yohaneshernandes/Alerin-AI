@@ -514,7 +514,7 @@ function ProfileCard({ collection }: { collection: boolean }) {
         <div className="flex items-center gap-2">
           <p className="truncate font-['Inter:Semi_Bold'] text-sm font-semibold text-slate-800">Raka Aditya</p>
           <span className="inline-flex items-center gap-1 rounded-full border border-blue-200 bg-indigo-950 px-2 py-0.5 font-['Inter:Bold'] text-[8px] font-bold text-white">
-            Alerin Plus
+            Plus
             <span className="relative h-3 w-3 overflow-hidden">
               <img src={`${assets}/8923b.png`} alt="" className="absolute -left-2 -top-1 h-12 max-w-none" />
             </span>
@@ -5405,7 +5405,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                       <path d="M9 5l-5 5 5 5" />
                     </svg>
                   </span>
-                  <span className="font-['Inter:Semi_Bold'] text-sm font-semibold text-slate-800">Beranda Alerin</span>
+                  <span className="font-['Inter:Semi_Bold'] text-sm font-semibold text-slate-800">Kembali ke Beranda Alerin</span>
                 </button>
                 <div className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm md:p-6">
                   <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-base font-bold md:text-base">Tiga cara menemukan jurnal</h2>
