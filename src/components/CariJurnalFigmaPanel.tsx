@@ -5352,7 +5352,6 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                         </span>
                         <span className="mt-3 text-[13px] font-semibold md:text-sm md:font-bold md:text-slate-800">Unggah artikel atau catatan</span>
                         <span className="mt-1 text-[12px] text-[#94a3b8] md:text-sm md:text-slate-500">PDF, DOCX, atau TXT hingga 20 MB</span>
-                        <span className="mt-2 rounded-full bg-sky-50 px-2.5 py-1 text-[11px] text-[#004f80] md:bg-transparent md:p-0 md:text-sm md:font-semibold md:text-emerald-600">Belum ada dokumen</span>
                         <input type="file" accept=".pdf,.doc,.docx,.txt" className="sr-only" onChange={handleFileChange} />
                       </label>
                     )}
