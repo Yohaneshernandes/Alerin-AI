@@ -556,14 +556,29 @@ function Sidebar({
           type="button"
           onClick={() => setCollapsed(false)}
           title={collapsed ? "Buka sidebar" : undefined}
-          className="shrink-0 cursor-pointer"
+          aria-label={collapsed ? "Buka sidebar" : "Alerin Jurnal"}
+          className={`group relative flex shrink-0 cursor-pointer items-center justify-center ${
+            collapsed ? "h-11 w-11 rounded-xl" : "h-10 w-10"
+          }`}
         >
-          <img src={`${assets}/24a8e.svg`} alt="" />
+          <img
+            src={`${assets}/24a8e.svg`}
+            alt=""
+            className={`transition-opacity duration-150 ${collapsed ? "h-11 w-11 group-hover:opacity-0" : "h-[26px] w-[26px]"}`}
+          />
+          {collapsed && (
+            <span className="pointer-events-none absolute inset-0 flex items-center justify-center rounded-xl text-slate-500 opacity-0 transition-opacity duration-150 group-hover:bg-sky-50 group-hover:text-sky-600 group-hover:opacity-100">
+              <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <rect x="1.5" y="2.5" width="13" height="11" rx="2" />
+                <path d="M6 2.5v11" />
+                <path d="M10 6.5l-1.5 1.5 1.5 1.5" />
+              </svg>
+            </span>
+          )}
         </button>
         {!collapsed && (
-          <div className="min-w-0 flex-1">
-            <p className="font-['Inter:Bold'] text-lg font-bold leading-5 text-slate-900">Alerin Jurnal</p>
-            <p className="font-['Inter:Medium'] text-xs font-medium leading-4 text-slate-400">Pendamping Akademik</p>
+          <div className="flex min-w-0 flex-1 items-center">
+            <p className="truncate font-['Inter:Bold'] text-lg font-bold leading-6 text-slate-900">Alerin Jurnal</p>
           </div>
         )}
         {!collapsed && (
