@@ -3908,9 +3908,9 @@ function MobileLiteratureReview() {
         )}
       </section>
 
-      <div className="border-t border-slate-200 pt-6">
+      <div className="rounded-3xl bg-white p-5 shadow-sm outline outline-1 outline-offset-[-1px] outline-slate-200/80">
         <h2 className="text-xl font-bold leading-7 text-slate-900">Literature Review Siap Digunakan</h2>
-        <div className="mt-3 flex flex-wrap gap-2">
+        <div className="mt-3.5 flex flex-wrap gap-2">
           {[
             { label: "Scoping Review", box: "bg-sky-50 text-sky-700 outline-sky-200", icon: true },
             { label: "15 artikel", box: "bg-slate-100 text-slate-700 outline-slate-200", icon: false },
