@@ -3532,9 +3532,10 @@ function SearchLoader() {
   const items = Array.from({ length: 24 }, (_, i) => loaderTagOrder[i % loaderTagOrder.length]);
   return (
     <div
-      className="relative mx-auto -my-8 h-[150px] w-[434px] origin-center scale-[0.66] overflow-hidden min-[400px]:-my-6 min-[400px]:scale-[0.78] sm:my-0 sm:scale-100"
+      className="relative mx-auto h-[102px] w-full max-w-[434px] overflow-hidden min-[400px]:h-[120px] sm:h-[150px]"
       aria-hidden="true"
     >
+      <div className="absolute left-1/2 top-0 h-[150px] w-[434px] origin-top -translate-x-1/2 scale-[0.66] min-[400px]:scale-[0.78] sm:scale-100">
       <div className="absolute inset-x-0 top-[14px] flex h-24 items-center">
         <div className="flex w-max animate-[alerin-tag-flow_3s_linear_infinite] items-center gap-[72px]">
           {items.map((kind, index) => (
@@ -3542,10 +3543,10 @@ function SearchLoader() {
           ))}
         </div>
       </div>
-      <svg className="absolute left-0 top-0 h-[148.597px] w-[434px]" viewBox="0 0 433.511 148.597" fill="none" preserveAspectRatio="xMidYMid meet">
+      <svg className="absolute -left-[5px] top-0 h-[148.597px] w-[434px]" viewBox="0 0 433.511 148.597" fill="none" preserveAspectRatio="xMidYMid meet">
         <path d="M215.97 0.155502C218.551 -0.0354165 221.14 -0.0504596 223.721 0.109962C240.121 1.07667 255.465 8.53752 266.356 20.8436C283.195 39.7763 286.624 67.4155 275.277 90.1411C272.888 94.9299 269.463 100.19 265.433 103.761C267.476 105.857 278.705 117.701 280.159 118.221C281.115 117.866 281.487 117.698 282.527 117.608C286.173 120.8 290.754 125.685 294.321 129.257C297.724 132.663 303.437 138.062 306.214 141.691C303.75 144.409 302.038 146.137 299.319 148.597C291.573 140.326 283.149 132.713 275.644 124.64C275.394 123.283 275.582 123.538 276.421 122.023C276.271 121.505 263.504 109.002 262.009 107.52C252.763 116.31 240.902 121.849 228.227 123.298C210.695 125.144 194.721 121.435 180.919 110.181C168.131 99.8779 160.003 84.8793 158.351 68.5372C156.594 52.0656 161.475 35.5731 171.912 22.7127C183.383 8.75643 198.242 1.84828 215.97 0.155502Z" fill="#164682" />
       </svg>
-      <div className="absolute left-[158.5px] top-[-2.5px] h-[128px] w-[128px] overflow-hidden rounded-full">
+      <div className="absolute left-[153px] top-[-2.5px] h-[128px] w-[128px] overflow-hidden rounded-full">
         <div className="flex h-full items-center">
           <div className="flex w-max animate-[alerin-tag-flow_3s_linear_infinite] items-center gap-[66px]">
             {items.map((kind, index) => (
@@ -3553,6 +3554,7 @@ function SearchLoader() {
             ))}
           </div>
         </div>
+      </div>
       </div>
     </div>
   );
