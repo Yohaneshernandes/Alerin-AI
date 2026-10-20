@@ -529,13 +529,11 @@ function ProfileCard({ collection }: { collection: boolean }) {
 function Sidebar({
   view,
   onView,
-  onBack,
   onUpgrade,
   onOpenRiwayat,
 }: {
   view: JournalView;
   onView: (view: JournalView) => void;
-  onBack: () => void;
   onUpgrade: () => void;
   onOpenRiwayat: (title: string) => void;
 }) {
@@ -609,22 +607,6 @@ function Sidebar({
         >
           <img src={`${assets}/${collectionIcon}`} alt="" />
           {!collapsed && "Koleksi"}
-        </button>
-        <button
-          type="button"
-          onClick={onBack}
-          title={collapsed ? "Beranda Alerin" : undefined}
-          className={`flex w-full items-center gap-3.5 rounded-xl py-3 text-base font-medium text-slate-600 hover:bg-slate-50 ${
-            collapsed ? "justify-center px-0" : "px-4"
-          }`}
-        >
-          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-slate-300 text-slate-500">
-            <svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M16 10H4" />
-              <path d="M9 5l-5 5 5 5" />
-            </svg>
-          </span>
-          {!collapsed && "Beranda Alerin"}
         </button>
       </nav>
 
@@ -4770,7 +4752,6 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
       <Sidebar
         view={view}
         onView={changeView}
-        onBack={onBack}
         onUpgrade={() => setUpgradeOpen(true)}
         onOpenRiwayat={openRiwayatPencarian}
       />
@@ -5413,6 +5394,19 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
               </div>
 
               <aside className="space-y-5">
+                <button
+                  type="button"
+                  onClick={onBack}
+                  className="flex w-full items-center gap-3 rounded-2xl border border-slate-200/80 bg-white p-3 text-left shadow-sm transition-colors hover:bg-slate-50"
+                >
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-slate-300 text-slate-500">
+                    <svg width="19" height="19" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M16 10H4" />
+                      <path d="M9 5l-5 5 5 5" />
+                    </svg>
+                  </span>
+                  <span className="font-['Inter:Semi_Bold'] text-sm font-semibold text-slate-800">Beranda Alerin</span>
+                </button>
                 <div className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm md:p-6">
                   <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-base font-bold md:text-base">Tiga cara menemukan jurnal</h2>
                   <p className="mt-2 text-sm leading-5 text-[#64748b] md:font-['Plus_Jakarta_Sans:Regular'] md:text-xs">Pilih cara paling mudah sesuai informasi yang sudah kamu punya.</p>
