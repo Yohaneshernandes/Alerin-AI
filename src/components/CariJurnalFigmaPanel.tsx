@@ -3963,11 +3963,167 @@ function MobileLiteratureReview() {
 }
 
 
+const mapClusters = [
+  { label: "Literasi AI", items: 28, color: "#3b82f6" },
+  { label: "Motivasi & Pembelajaran", items: 24, color: "#34d399" },
+  { label: "Keterampilan Kognitif", items: 18, color: "#a855f7" },
+  { label: "Dampak & Tantangan", items: 12, color: "#fbbf24" },
+  { label: "Konteks Pendidikan", items: 8, color: "#9ca3af" },
+];
+
+type MapNode = {
+  name: string;
+  x: number;
+  y: number;
+  r: number;
+  cluster: number;
+  year: number;
+  labelPos: "inside" | "top" | "bottom" | "left" | "right";
+};
+
+const mapMainNodes: MapNode[] = [
+  { name: "AI literacy", x: 43, y: 46, r: 46, cluster: 0, year: 2024.2, labelPos: "inside" },
+  { name: "generative AI", x: 31, y: 21, r: 22, cluster: 0, year: 2024.8, labelPos: "top" },
+  { name: "student engagement", x: 53, y: 15, r: 20, cluster: 1, year: 2023.6, labelPos: "top" },
+  { name: "educational technology", x: 82, y: 22, r: 19, cluster: 0, year: 2023.1, labelPos: "top" },
+  { name: "learning motivation", x: 64, y: 35, r: 31, cluster: 1, year: 2023.4, labelPos: "right" },
+  { name: "critical thinking", x: 47, y: 78, r: 21, cluster: 2, year: 2023.3, labelPos: "bottom" },
+  { name: "self-regulated learning", x: 71, y: 55, r: 15, cluster: 2, year: 2022.6, labelPos: "right" },
+  { name: "digital literacy", x: 28, y: 81, r: 23, cluster: 3, year: 2023.9, labelPos: "bottom" },
+  { name: "higher education", x: 22, y: 57, r: 20, cluster: 3, year: 2022.8, labelPos: "top" },
+  { name: "AI anxiety", x: 17, y: 71, r: 12, cluster: 3, year: 2024.6, labelPos: "left" },
+  { name: "chatGPT", x: 19, y: 37, r: 16, cluster: 4, year: 2024.9, labelPos: "top" },
+  { name: "academic performance", x: 68, y: 80, r: 14, cluster: 4, year: 2022.9, labelPos: "right" },
+];
+
+const mapSmallNodes: Array<{ x: number; y: number; r: number; cluster: number }> = [
+  { x: 28, y: 14, r: 7, cluster: 0 },
+  { x: 38, y: 11, r: 6, cluster: 0 },
+  { x: 45, y: 13, r: 5, cluster: 0 },
+  { x: 50, y: 12, r: 4, cluster: 0 },
+  { x: 30, y: 31, r: 6, cluster: 0 },
+  { x: 39, y: 32, r: 5, cluster: 0 },
+  { x: 24, y: 29, r: 5, cluster: 0 },
+  { x: 35, y: 39, r: 4, cluster: 0 },
+  { x: 48, y: 29, r: 5, cluster: 0 },
+  { x: 52, y: 27, r: 4, cluster: 0 },
+  { x: 30, y: 44, r: 4, cluster: 0 },
+  { x: 22, y: 46, r: 5, cluster: 0 },
+  { x: 35, y: 55, r: 4, cluster: 0 },
+  { x: 43, y: 61, r: 5, cluster: 0 },
+  { x: 26, y: 21, r: 4, cluster: 0 },
+  { x: 78, y: 13, r: 6, cluster: 0 },
+  { x: 86, y: 16, r: 5, cluster: 0 },
+  { x: 88, y: 27, r: 5, cluster: 0 },
+  { x: 74, y: 29, r: 4, cluster: 0 },
+  { x: 84, y: 33, r: 5, cluster: 0 },
+  { x: 50, y: 9, r: 6, cluster: 1 },
+  { x: 58, y: 12, r: 5, cluster: 1 },
+  { x: 63, y: 9, r: 5, cluster: 1 },
+  { x: 68, y: 17, r: 6, cluster: 1 },
+  { x: 72, y: 25, r: 5, cluster: 1 },
+  { x: 60, y: 23, r: 4, cluster: 1 },
+  { x: 76, y: 19, r: 4, cluster: 1 },
+  { x: 55, y: 29, r: 4, cluster: 1 },
+  { x: 62, y: 27, r: 4, cluster: 1 },
+  { x: 70, y: 43, r: 4, cluster: 1 },
+  { x: 74, y: 34, r: 4, cluster: 1 },
+  { x: 66, y: 47, r: 5, cluster: 1 },
+  { x: 56, y: 57, r: 7, cluster: 2 },
+  { x: 63, y: 59, r: 5, cluster: 2 },
+  { x: 60, y: 65, r: 5, cluster: 2 },
+  { x: 66, y: 69, r: 6, cluster: 2 },
+  { x: 72, y: 63, r: 4, cluster: 2 },
+  { x: 55, y: 71, r: 4, cluster: 2 },
+  { x: 58, y: 75, r: 5, cluster: 2 },
+  { x: 50, y: 85, r: 5, cluster: 2 },
+  { x: 44, y: 83, r: 4, cluster: 2 },
+  { x: 62, y: 81, r: 4, cluster: 2 },
+  { x: 74, y: 71, r: 5, cluster: 2 },
+  { x: 16, y: 59, r: 6, cluster: 3 },
+  { x: 22, y: 65, r: 5, cluster: 3 },
+  { x: 28, y: 69, r: 5, cluster: 3 },
+  { x: 34, y: 73, r: 6, cluster: 3 },
+  { x: 40, y: 75, r: 5, cluster: 3 },
+  { x: 24, y: 78, r: 5, cluster: 3 },
+  { x: 18, y: 81, r: 4, cluster: 3 },
+  { x: 30, y: 87, r: 5, cluster: 3 },
+  { x: 36, y: 84, r: 4, cluster: 3 },
+  { x: 20, y: 53, r: 4, cluster: 3 },
+  { x: 26, y: 49, r: 5, cluster: 3 },
+  { x: 14, y: 67, r: 4, cluster: 3 },
+  { x: 18, y: 35, r: 5, cluster: 4 },
+  { x: 26, y: 33, r: 4, cluster: 4 },
+  { x: 30, y: 41, r: 4, cluster: 4 },
+  { x: 16, y: 43, r: 4, cluster: 4 },
+  { x: 24, y: 47, r: 4, cluster: 4 },
+  { x: 64, y: 75, r: 5, cluster: 4 },
+  { x: 68, y: 81, r: 5, cluster: 4 },
+  { x: 72, y: 79, r: 4, cluster: 4 },
+  { x: 76, y: 85, r: 4, cluster: 4 },
+  { x: 58, y: 85, r: 4, cluster: 4 },
+  { x: 66, y: 65, r: 4, cluster: 4 },
+  { x: 70, y: 59, r: 4, cluster: 4 },
+  { x: 74, y: 54, r: 4, cluster: 4 },
+];
+
+const mapMainEdges: Array<[number, number]> = [
+  [0, 1],
+  [0, 2],
+  [0, 3],
+  [0, 4],
+  [1, 2],
+  [1, 3],
+  [1, 4],
+  [2, 3],
+  [2, 4],
+  [3, 4],
+  [0, 5],
+  [0, 6],
+  [0, 7],
+  [0, 8],
+  [1, 9],
+  [1, 10],
+  [1, 11],
+];
+
+const mapYearStops = [
+  { year: 2020, rgb: [37, 99, 235] },
+  { year: 2021, rgb: [14, 165, 233] },
+  { year: 2022, rgb: [45, 212, 191] },
+  { year: 2023, rgb: [74, 222, 128] },
+  { year: 2024, rgb: [250, 204, 21] },
+  { year: 2025, rgb: [251, 146, 60] },
+  { year: 2026, rgb: [239, 68, 68] },
+];
+
+const mapYearGradient = "linear-gradient(90deg,#2563eb,#0ea5e9,#2dd4bf,#4ade80,#facc15,#fb923c,#ef4444)";
+
+function mapYearColor(year: number) {
+  const clamped = Math.max(2020, Math.min(2026, year));
+  for (let index = 0; index < mapYearStops.length - 1; index += 1) {
+    const start = mapYearStops[index];
+    const end = mapYearStops[index + 1];
+    if (clamped >= start.year && clamped <= end.year) {
+      const ratio = (clamped - start.year) / (end.year - start.year);
+      const rgb = start.rgb.map((value, channel) => Math.round(value + (end.rgb[channel] - value) * ratio));
+      return `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
+    }
+  }
+  return "rgb(239, 68, 68)";
+}
+
+function mapCurve(from: { x: number; y: number }, to: { x: number; y: number }, bend: number) {
+  const midX = (from.x + to.x) / 2 + (to.y - from.y) * bend;
+  const midY = (from.y + to.y) / 2 - (to.x - from.x) * bend;
+  return `M${from.x} ${from.y} Q${midX} ${midY} ${to.x} ${to.y}`;
+}
+
 function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => void }) {
-  const [mode, setMode] = useState("kepadatan");
+  const [mode, setMode] = useState("jaringan");
   const [showLines, setShowLines] = useState(true);
   const [zoom, setZoom] = useState(100);
-  const [activeNode, setActiveNode] = useState("AI Literacy");
+  const [activeNode, setActiveNode] = useState("AI literacy");
   const [nodeFilter, setNodeFilter] = useState<string | null>(null);
   const [mapSearch, setMapSearch] = useState("");
   const [chip, setChip] = useState("semua");
@@ -3975,91 +4131,74 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
   const [relevanSort, setRelevanSort] = useState<"asc" | "desc" | null>(null);
   const [playing, setPlaying] = useState(false);
   const [progress, setProgress] = useState(1);
+  const [fullscreen, setFullscreen] = useState(false);
 
   useEffect(() => {
     if (!playing) return;
     const id = window.setInterval(() => {
-      setProgress(current => (current >= 1 ? 0 : Math.min(1, current + 0.02)));
-    }, 60);
+      setProgress(current => {
+        if (mode === "kepadatan") return current >= 0.995 ? 0 : Math.min(1, current + 0.02);
+        return Math.min(1, current + (mode === "perkembangan" ? 0.012 : 0.018));
+      });
+    }, 50);
     return () => window.clearInterval(id);
-  }, [playing]);
+  }, [playing, mode]);
 
-  const mapNodes = [
-    { name: "AI Literacy", x: 23, y: 44, size: 36, color: "red", pct: 88, cluster: "AI Literacy & Motivation", year: 2018 },
-    { name: "Learning Motivation", x: 57, y: 52, size: 36, color: "red", pct: 84, cluster: "AI Literacy & Motivation", year: 2021 },
-    { name: "Generative AI", x: 13.3, y: 25, size: 24, color: "amber", pct: 76, cluster: "Generative AI & Tools", year: 2023 },
-    { name: "Digital Learning", x: 51.6, y: 37, size: 24, color: "yellow", pct: 72, cluster: "Digital Learning Systems", year: 2020 },
-    { name: "Academic Engagement", x: 74.2, y: 34, size: 24, color: "yellow", pct: 70, cluster: "Academic Engagement", year: 2019 },
-    { name: "Critical Thinking", x: 18.4, y: 69.7, size: 20, color: "amber", pct: 66, cluster: "Critical Thinking & SRL", year: 2017 },
-    { name: "Self-Regulated Learning", x: 45.9, y: 74.7, size: 20, color: "amber", pct: 64, cluster: "Critical Thinking & SRL", year: 2016 },
-  ];
+  useEffect(() => {
+    if (playing && mode !== "kepadatan" && progress >= 1) setPlaying(false);
+  }, [playing, mode, progress]);
 
-  const nodeLabels = [
-    { label: "Teacher Education", x: 47, y: 20, year: 2017 },
-    { label: "Digital Competence", x: 37, y: 28, year: 2019 },
-    { label: "Educational Technology", x: 36, y: 40, year: 2018 },
-    { label: "Learning Analytics", x: 44, y: 48, year: 2020 },
-    { label: "AI tools", x: 14, y: 40, year: 2023 },
-    { label: "Problem Solving", x: 19, y: 80, year: 2018 },
-    { label: "Higher Order Thinking", x: 23, y: 84, year: 2021 },
-    { label: "Student Engagement", x: 85, y: 40, year: 2019 },
-    { label: "Blended Learning", x: 87, y: 62, year: 2021 },
-    { label: "Motivation Theory", x: 76, y: 72, year: 2016 },
-    { label: "Online Learning", x: 87, y: 74, year: 2022 },
-    { label: "Self-Efficacy", x: 58, y: 81, year: 2020 },
-  ];
+  useEffect(() => {
+    if (!fullscreen) return;
+    const handleKey = (event: globalThis.KeyboardEvent) => {
+      if (event.key === "Escape") setFullscreen(false);
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [fullscreen]);
 
-  const mapRects = [
-    { x: 29, y: 42.6, w: 38.4, h: 7.4, color: "outline outline-4 outline-offset-[-2px] outline-red-500/90" },
-    { x: 19, y: 25.6, w: 9, h: 16.7, color: "outline outline-2 outline-offset-[-1px] outline-sky-400/60" },
-    { x: 25, y: 44.2, w: 4, h: 24, color: "outline outline-2 outline-offset-[-1px] outline-sky-400/60" },
-    { x: 29, y: 29.2, w: 11.2, h: 14.9, color: "outline outline-1 outline-offset-[-1px] outline-sky-400/40" },
-    { x: 39.5, y: 29.2, w: 16, h: 7.4, color: "outline outline-2 outline-offset-[-1px] outline-sky-400/60" },
-    { x: 56, y: 36.4, w: 11.2, h: 11.9, color: "outline outline-2 outline-offset-[-1px] outline-sky-400/60" },
-    { x: 67, y: 33.7, w: 14.4, h: 14.9, color: "outline outline-2 outline-offset-[-1px] outline-amber-500/75" },
-    { x: 56, y: 33.7, w: 25.5, h: 1.4, color: "outline outline-1 outline-offset-[-1px] outline-sky-400/50" },
-    { x: 54.5, y: 49.6, w: 12.8, h: 20.4, color: "outline outline-2 outline-offset-[-1px] outline-sky-400/60" },
-    { x: 25, y: 67.2, w: 28.7, h: 4.5, color: "outline outline-1 outline-offset-[-1px] outline-sky-400/50" },
-    { x: 14, y: 25.6, w: 4.8, h: 14.9, color: "outline outline-1 outline-offset-[-1px] outline-sky-400/30" },
-    { x: 67, y: 49.6, w: 17.6, h: 11.9, color: "outline outline-1 outline-offset-[-1px] outline-sky-400/40" },
-    { x: 54.5, y: 71.7, w: 8, h: 6.7, color: "outline outline-1 outline-offset-[-1px] outline-sky-400/40" },
-    { x: 22.5, y: 67.2, w: 2.4, h: 11.9, color: "outline outline-1 outline-offset-[-1px] outline-sky-400/30" },
-    { x: 39.5, y: 21.1, w: 9.6, h: 8.2, color: "outline outline-1 outline-offset-[-1px] outline-sky-400/30" },
-  ];
+  const nearestMain = (node: { x: number; y: number }) =>
+    mapMainNodes.reduce(
+      (best, candidate) => {
+        const distance = Math.hypot(candidate.x - node.x, candidate.y - node.y);
+        return distance < best.distance ? { node: candidate, distance } : best;
+      },
+      { node: mapMainNodes[0], distance: Number.POSITIVE_INFINITY },
+    ).node;
 
-  const mapEdges = [
-    { from: "Generative AI", to: "AI Literacy", color: "#38bdf8", weight: 1.6 },
-    { from: "AI Literacy", to: "AI tools", color: "#38bdf8", weight: 1.2 },
-    { from: "AI Literacy", to: "Learning Motivation", color: "#ef4444", weight: 3 },
-    { from: "Learning Motivation", to: "Digital Learning", color: "#38bdf8", weight: 1.8 },
-    { from: "Digital Learning", to: "Academic Engagement", color: "#f59e0b", weight: 2.2 },
-    { from: "Learning Motivation", to: "Academic Engagement", color: "#f59e0b", weight: 2.2 },
-    { from: "Learning Motivation", to: "Self-Regulated Learning", color: "#38bdf8", weight: 1.6 },
-    { from: "Critical Thinking", to: "Self-Regulated Learning", color: "#38bdf8", weight: 1.8 },
-    { from: "Critical Thinking", to: "AI Literacy", color: "#38bdf8", weight: 1.2 },
-    { from: "Generative AI", to: "Critical Thinking", color: "#38bdf8", weight: 1 },
-    { from: "Academic Engagement", to: "Blended Learning", color: "#38bdf8", weight: 1 },
-    { from: "Learning Motivation", to: "Online Learning", color: "#38bdf8", weight: 1 },
-  ];
+  const edgeList = (() => {
+    const list: Array<{ key: string; from: { x: number; y: number }; to: { x: number; y: number }; color: string; year: number; weight: number }> = [];
+    mapMainEdges.forEach(([fromIndex, toIndex], index) => {
+      const from = mapMainNodes[fromIndex];
+      const to = mapMainNodes[toIndex];
+      const year = Math.max(from.year, to.year);
+      list.push({
+        key: `main-${fromIndex}-${toIndex}-${index}`,
+        from,
+        to,
+        color: mode === "perkembangan" ? mapYearColor(year) : mapClusters[from.cluster].color,
+        year,
+        weight: 1.5,
+      });
+    });
+    mapSmallNodes.forEach((node, index) => {
+      const anchor = nearestMain(node);
+      const year = anchor.year;
+      list.push({
+        key: `small-${index}`,
+        from: node,
+        to: anchor,
+        color: mode === "perkembangan" ? mapYearColor(year) : mapClusters[node.cluster].color,
+        year,
+        weight: 1,
+      });
+    });
+    return list;
+  })();
 
-  const edgePoint = (name: string) => {
-    const node = mapNodes.find(item => item.name === name);
-    return node ? { x: node.x, y: node.y, year: node.year } : { x: 0, y: 0, year: 0 };
-  };
-
-  const playYearFrom = 2016;
-  const playYearTo = 2024;
-  const playYear = Math.round(playYearFrom + (playYearTo - playYearFrom) * progress);
-
-  const glowBlobs = [
-    { x: 11, y: 8, size: 320, color: "bg-sky-500/25" },
-    { x: 50, y: 18, size: 320, color: "bg-red-500/20" },
-    { x: 7, y: 3, size: 208, color: "bg-indigo-500/25" },
-    { x: 40, y: 11, size: 224, color: "bg-sky-500/20" },
-    { x: 68, y: 7, size: 224, color: "bg-amber-500/20" },
-    { x: 15, y: 50, size: 192, color: "bg-indigo-500/20" },
-    { x: 42, y: 56, size: 208, color: "bg-sky-500/20" },
-  ];
+  const playYear = 2020 + 6 * progress;
+  const densityScale = 0.55 + 0.45 * progress;
+  const pulseScale = playing && mode === "kepadatan" ? 1 + 0.05 * Math.sin(progress * Math.PI * 6) : 1;
 
   const tabs = [
     { key: "jaringan", label: "Jaringan" },
@@ -4075,31 +4214,40 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
     { key: "empiris", label: "Empiris (46)" },
   ];
 
-  const active = mapNodes.find(node => node.name === activeNode) ?? mapNodes[0];
-  const modelLabel =
-    mode === "jaringan" ? "VOSVIEWER NETWORK MODEL" : mode === "perkembangan" ? "VOSVIEWER OVERLAY VISUALIZATION" : "VOSVIEWER DENSITY MODEL";
-  const baseBlobOpacity = mode === "jaringan" ? 0.14 : mode === "perkembangan" ? 0.4 : 1;
-  const blobOpacity = playing ? baseBlobOpacity * (0.72 + 0.28 * Math.abs(Math.sin(progress * Math.PI * 3))) : baseBlobOpacity;
-  const modeHint =
-    mode === "jaringan"
-      ? "Mode jaringan: ketebalan garis menandakan kekuatan relasi bibliometrik antar topik."
-      : mode === "perkembangan"
-        ? "Mode perkembangan: putar timeline untuk melihat kapan tiap topik mulai menguat dalam literatur."
-        : "Mode kepadatan: area paling terang menandakan konsentrasi sitasi tertinggi.";
-
-  const startPlaying = (modeKey: string) => {
-    setMode(modeKey);
-    setProgress(modeKey === "kepadatan" ? 1 : 0);
-    setPlaying(modeKey !== "kepadatan");
-  };
+  const modeInfo =
+    mode === "perkembangan"
+      ? {
+          title: "Peta Perkembangan",
+          subtitle: "Menampilkan rata-rata tahun publikasi setiap topik.",
+          hint: "Putar simulasi untuk melihat kapan tiap topik mulai menguat dalam literatur.",
+          stats: ["Jumlah item: 90", "Rentang tahun: 2020–2026", "Rata-rata: 2023.6"],
+        }
+      : mode === "kepadatan"
+        ? {
+            title: "Peta Kepadatan",
+            subtitle: "Menampilkan tingkat konsentrasi topik dalam penelitian.",
+            hint: "Putar simulasi untuk melihat intensitas konsentrasi sitasi pada setiap topik.",
+            stats: ["Jumlah item: 90", "Area padat: 5", "Resolusi: 0.85"],
+          }
+        : {
+            title: "Peta Jaringan",
+            subtitle: "Menampilkan hubungan antar topik berdasarkan kemunculan bersama.",
+            hint: "Putar simulasi untuk melihat pembentukan hubungan antar topik satu per satu.",
+            stats: ["Jumlah item: 90", "Jumlah hubungan: 340", "Cluster: 5"],
+          };
 
   const toggleNode = (name: string) => {
     setActiveNode(name);
     setNodeFilter(current => (current === name ? null : name));
   };
 
+  const togglePlay = () => {
+    if (!playing && progress >= 1) setProgress(0);
+    setPlaying(value => !value);
+  };
+
   const visibleRows = (() => {
-    let rows = priorityRows.map((row, index) => ({ row, node: mapNodes[index % mapNodes.length].name }));
+    let rows = priorityRows.map((row, index) => ({ row, node: mapMainNodes[index % mapMainNodes.length].name }));
     if (nodeFilter) rows = rows.filter(item => item.node === nodeFilter);
     rows = rows.filter(item => {
       const { row } = item;
@@ -4116,13 +4264,36 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
     return rows;
   })();
 
+  const modeIcon =
+    mode === "perkembangan" ? (
+      <svg width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+        <circle cx="15" cy="15" r="11.5" />
+        <path d="M15 8.5V15l4.5 3" />
+      </svg>
+    ) : mode === "kepadatan" ? (
+      <svg width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="#2563eb" strokeWidth="1.8" strokeLinejoin="round" aria-hidden="true">
+        <path d="M15 4.5L27 11l-12 6.5L3 11z" />
+        <path d="M3 15.5L15 22l12-6.5" />
+        <path d="M3 20L15 26.5 27 20" />
+      </svg>
+    ) : (
+      <svg width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="#2563eb" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+        <circle cx="15" cy="7" r="4" />
+        <circle cx="6" cy="23" r="4" />
+        <circle cx="24" cy="23" r="4" />
+        <path d="M13.2 10.4L7.8 19.6M16.8 10.4l5.4 9.2M10 23h10" />
+      </svg>
+    );
+
+  const heatSpots = mapMainNodes.map(node => ({ ...node, size: node.r * 5.6 }));
+
   return (
     <div className="mx-auto hidden max-w-[1160px] flex-col gap-5 pb-8 md:flex">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold leading-8 text-slate-900">Visualisasi Klaster &amp; Kepadatan Sitasi</h1>
+          <h1 className="text-2xl font-extrabold leading-8 text-slate-900">Peta Penelitian</h1>
           <p className="mt-1.5 text-xs leading-5 text-slate-500">
-            Jelajahi peta topik berdasarkan {priorityRows.length} publikasi dan klik lingkaran topik untuk menyaring rekomendasi.
+            Jelajahi peta topik dari {priorityRows.length} publikasi, lalu putar simulasi untuk melihat jaringan, kepadatan sitasi, dan perkembangan tahun terbitnya.
           </p>
         </div>
         <button
@@ -4144,7 +4315,11 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
               <button
                 key={tab.key}
                 type="button"
-                onClick={() => startPlaying(tab.key)}
+                onClick={() => {
+                  setMode(tab.key);
+                  setProgress(0);
+                  setPlaying(true);
+                }}
                 className={`rounded-md px-3 py-1.5 text-sm font-medium leading-5 transition-colors ${
                   mode === tab.key ? "bg-white text-sky-700 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]" : "text-slate-500 hover:text-slate-700"
                 }`}
@@ -4154,40 +4329,20 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
             ))}
           </div>
 
-          <button
-            type="button"
-            onClick={() => setShowLines(value => !value)}
-            aria-pressed={showLines}
-            className="flex items-center gap-2 rounded-lg bg-white px-3 py-1.5 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]"
-          >
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#64748b" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true">
-              <path d="M5.6 8.4l2.8-2.8M4.4 6.4L2.9 7.9a2.47 2.47 0 103.5 3.5l1.5-1.5M9.6 7.6l1.5-1.5a2.47 2.47 0 10-3.5-3.5L6.1 4.1" />
-            </svg>
-            <span className="text-xs font-medium leading-4 text-slate-500">Garis Relasi</span>
-            <span className={`h-4 w-4 rounded-[3px] transition-colors ${showLines ? "bg-sky-700" : "bg-slate-300"}`} />
-          </button>
-
-          <button
-            type="button"
-            onClick={() => {
-              if (!playing && progress >= 1) setProgress(0);
-              setPlaying(value => !value);
-            }}
-            aria-pressed={playing}
-            className="flex items-center gap-2 rounded-lg bg-white px-3 py-1.5 text-sm font-medium leading-5 text-slate-900 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]"
-          >
-            {playing ? (
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true">
-                <rect x="1.5" y="1" width="3.2" height="10" rx="1" />
-                <rect x="7.3" y="1" width="3.2" height="10" rx="1" />
+          {mode !== "kepadatan" && (
+            <button
+              type="button"
+              onClick={() => setShowLines(value => !value)}
+              aria-pressed={showLines}
+              className="flex items-center gap-2 rounded-lg bg-white px-3 py-1.5 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]"
+            >
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#64748b" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true">
+                <path d="M5.6 8.4l2.8-2.8M4.4 6.4L2.9 7.9a2.47 2.47 0 103.5 3.5l1.5-1.5M9.6 7.6l1.5-1.5a2.47 2.47 0 10-3.5-3.5L6.1 4.1" />
               </svg>
-            ) : (
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true">
-                <path d="M2.5 1.6l7 4.4-7 4.4z" />
-              </svg>
-            )}
-            {playing ? "Jeda Peta" : "Putar Peta"}
-          </button>
+              <span className="text-xs font-medium leading-4 text-slate-500">Garis Relasi</span>
+              <span className={`h-4 w-4 rounded-[3px] transition-colors ${showLines ? "bg-sky-700" : "bg-slate-300"}`} />
+            </button>
+          )}
 
           <div className="flex items-center gap-1 rounded-lg bg-white px-2 py-1 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]">
             <button
@@ -4236,199 +4391,338 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
           </button>
         </div>
 
-        <div className="relative mt-4 h-[538px] overflow-hidden rounded-2xl bg-slate-900 shadow-[0px_12px_32px_0px_rgba(3,15,38,0.18)]">
-          <div className="absolute inset-0 transition-transform duration-200" style={{ transform: `scale(${zoom / 100})` }}>
-            {glowBlobs.map((blob, index) => (
-              <span
-                key={index}
-                className={`absolute rounded-full blur-3xl transition-opacity duration-300 ${blob.color}`}
-                style={{ left: `${blob.x}%`, top: `${blob.y}%`, width: blob.size, height: blob.size, opacity: blobOpacity }}
-              />
-            ))}
+        <div
+          className={
+            fullscreen
+              ? "fixed inset-3 z-[400] flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_24px_80px_rgba(2,6,23,0.35)] md:inset-6"
+              : "mt-4 overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04)]"
+          }
+        >
+          <div className="flex items-start justify-between gap-4 px-5 pt-5 md:px-6">
+            <div className="flex items-start gap-3">
+              <span className="mt-0.5 shrink-0">{modeIcon}</span>
+              <div>
+                <h3 className="font-['Plus_Jakarta_Sans:Bold'] text-xl font-bold leading-7 text-slate-900">{modeInfo.title}</h3>
+                <p className="mt-1 text-sm leading-5 text-slate-500">{modeInfo.subtitle}</p>
+              </div>
+            </div>
+            <button
+              type="button"
+              aria-label={fullscreen ? "Keluar dari layar penuh" : "Tampilkan peta layar penuh"}
+              aria-pressed={fullscreen}
+              onClick={() => setFullscreen(value => !value)}
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700"
+            >
+              {fullscreen ? (
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M6 2v4H2M10 2v4h4M6 14v-4H2M10 14v-4h4" />
+                </svg>
+              ) : (
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M2 6V2h4M14 6V2h-4M2 10v4h4M14 10v4h-4" />
+                </svg>
+              )}
+            </button>
+          </div>
 
-            {mapRects.map((rect, index) => (
-              <span
-                key={index}
-                className={`absolute ${rect.color}`}
-                style={{ left: `${rect.x}%`, top: `${rect.y}%`, width: `${rect.w}%`, height: `${rect.h}%` }}
-              />
-            ))}
+          <div className={`flex gap-4 px-5 pb-2 pt-4 md:px-6 ${fullscreen ? "min-h-0 flex-1" : ""}`}>
+            <div
+              className={`relative min-w-0 flex-1 overflow-hidden rounded-xl ${
+                fullscreen ? "" : "h-[430px]"
+              } ${
+                mode === "kepadatan"
+                  ? "bg-[radial-gradient(circle_at_48%_45%,#1d4ed8_0%,#0b3bb8_55%,#072a8c_100%)]"
+                  : "bg-[radial-gradient(circle_at_50%_35%,#f8fbff_0%,#ffffff_65%)]"
+              }`}
+            >
+              {mode === "kepadatan" ? (
+                <>
+                  <div className="absolute inset-0 transition-transform duration-200" style={{ transform: `scale(${zoom / 100})` }}>
+                    {[
+                      { x: 8, y: 10, w: 30, h: 34 },
+                      { x: 34, y: 62, w: 34, h: 38 },
+                      { x: 62, y: 4, w: 30, h: 30 },
+                      { x: 74, y: 68, w: 28, h: 32 },
+                    ].map((blob, index) => (
+                      <span
+                        key={`ambient-${index}`}
+                        className="absolute rounded-full blur-[42px]"
+                        style={{ left: `${blob.x}%`, top: `${blob.y}%`, width: `${blob.w}%`, height: `${blob.h}%`, background: "rgba(56,189,248,0.35)" }}
+                      />
+                    ))}
 
-            {showLines && (
-              <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-                {mapEdges.map((edge, index) => {
-                  const from = edgePoint(edge.from);
-                  const to = edgePoint(edge.to);
-                  const drawn = mode === "jaringan" ? Math.max(0, Math.min(1, (progress - index * 0.045) * 1.7)) : 1;
-                  const visible = mode !== "perkembangan" || Math.max(from.year, to.year) <= playYear;
-                  return (
-                    <line
-                      key={`${edge.from}-${edge.to}`}
-                      x1={from.x}
-                      y1={from.y}
-                      x2={to.x}
-                      y2={to.y}
-                      stroke={edge.color}
-                      strokeWidth={mode === "jaringan" ? edge.weight * 1.1 : 1.4}
-                      strokeLinecap="round"
-                      vectorEffect="non-scaling-stroke"
-                      pathLength={1}
-                      strokeDasharray={1}
-                      strokeDashoffset={1 - drawn}
-                      style={{ opacity: visible ? (mode === "perkembangan" ? 0.75 : 0.95) : 0.08, transition: "opacity 200ms linear" }}
+                    {heatSpots.map(spot => (
+                      <span
+                        key={spot.name}
+                        className="absolute -translate-x-1/2 -translate-y-1/2 transition-[width,height] duration-300"
+                        style={{
+                          left: `${spot.x}%`,
+                          top: `${spot.y}%`,
+                          width: spot.size * densityScale * pulseScale,
+                          height: spot.size * densityScale * pulseScale * 0.82,
+                          opacity: progress <= 0 ? 0 : 1,
+                        }}
+                      >
+                        <span
+                          className="absolute inset-0 rounded-full"
+                          style={{
+                            background: "radial-gradient(circle, rgba(74,222,128,0.95) 0%, rgba(34,197,94,0.5) 40%, rgba(29,78,216,0) 74%)",
+                            filter: "blur(14px)",
+                          }}
+                        />
+                        <span
+                          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
+                          style={{
+                            width: "62%",
+                            height: "62%",
+                            background: "radial-gradient(circle, rgba(250,204,21,0.95) 0%, rgba(250,204,21,0.55) 48%, rgba(250,204,21,0) 78%)",
+                            filter: "blur(10px)",
+                          }}
+                        />
+                        <span
+                          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
+                          style={{
+                            width: "34%",
+                            height: "34%",
+                            background: "radial-gradient(circle, rgba(239,68,68,0.98) 0%, rgba(239,68,68,0.7) 52%, rgba(239,68,68,0) 82%)",
+                            filter: "blur(7px)",
+                          }}
+                        />
+                      </span>
+                    ))}
+
+                    {mapMainNodes.map(node => (
+                      <div
+                        key={node.name}
+                        className="absolute flex -translate-x-1/2 -translate-y-1/2 items-center gap-1.5"
+                        style={{ left: `${node.x}%`, top: `${node.y}%`, opacity: 0.55 + 0.45 * progress }}
+                      >
+                        <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.95)]" />
+                        <span className="whitespace-nowrap text-[13px] font-extrabold leading-4 text-white [text-shadow:0_1px_6px_rgba(2,20,80,0.9)]">
+                          {node.name}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <div className="absolute inset-0 transition-transform duration-200" style={{ transform: `scale(${zoom / 100})` }}>
+                  {[
+                    { x: 12, y: 12, size: 340, color: "rgba(59,130,246,0.16)" },
+                    { x: 46, y: 6, size: 320, color: "rgba(52,211,153,0.16)" },
+                    { x: 68, y: 24, size: 360, color: "rgba(168,85,247,0.14)" },
+                    { x: 6, y: 56, size: 300, color: "rgba(251,191,36,0.16)" },
+                    { x: 76, y: 62, size: 260, color: "rgba(156,163,175,0.16)" },
+                  ].map((blob, index) => (
+                    <span
+                      key={`glow-${index}`}
+                      className="absolute rounded-full blur-[70px] transition-opacity duration-300"
+                      style={{
+                        left: `${blob.x}%`,
+                        top: `${blob.y}%`,
+                        width: blob.size,
+                        height: blob.size,
+                        background: blob.color,
+                        opacity: mode === "perkembangan" ? 0.7 : 1,
+                      }}
                     />
-                  );
-                })}
-              </svg>
+                  ))}
+
+                  {showLines && (
+                    <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                      {edgeList.map((edge, index) => {
+                        const bend = index % 2 === 0 ? 0.06 : -0.06;
+                        const drawn = mode === "jaringan" ? Math.max(0, Math.min(1, (progress - index * 0.006) * 1.9)) : 1;
+                        const visible = mode !== "perkembangan" || edge.year <= playYear;
+                        const opacity =
+                          mode === "jaringan" ? 0.42 : mode === "perkembangan" ? (visible ? 0.4 : 0.05) : 0.2;
+                        return (
+                          <path
+                            key={edge.key}
+                            d={mapCurve(edge.from, edge.to, bend)}
+                            fill="none"
+                            stroke={edge.color}
+                            strokeWidth={mode === "jaringan" ? edge.weight : 1}
+                            strokeLinecap="round"
+                            vectorEffect="non-scaling-stroke"
+                            pathLength={1}
+                            strokeDasharray={1}
+                            strokeDashoffset={mode === "jaringan" ? 1 - drawn : 0}
+                            style={{ opacity, transition: "opacity 250ms linear" }}
+                          />
+                        );
+                      })}
+                    </svg>
+                  )}
+
+                  {mapSmallNodes.map((node, index) => {
+                    const anchor = nearestMain(node);
+                    const appeared = mode !== "perkembangan" || anchor.year <= playYear;
+                    const color = mode === "perkembangan" ? mapYearColor(anchor.year) : mapClusters[node.cluster].color;
+                    const reveal = mode === "jaringan" ? Math.max(0, Math.min(1, (progress - index * 0.004) * 2.2)) : 1;
+                    return (
+                      <span
+                        key={`small-${index}`}
+                        className="absolute rounded-full transition-[opacity,transform] duration-300"
+                        style={{
+                          left: `${node.x}%`,
+                          top: `${node.y}%`,
+                          width: node.r * 2,
+                          height: node.r * 2,
+                          marginLeft: -node.r,
+                          marginTop: -node.r,
+                          background: color,
+                          opacity: (appeared ? 0.9 : 0.14) * reveal,
+                          transform: `scale(${0.6 + 0.4 * reveal})`,
+                          boxShadow: `0 2px 6px -1px ${color}66`,
+                        }}
+                      />
+                    );
+                  })}
+
+                  {mapMainNodes.map((node, index) => {
+                    const appeared = mode !== "perkembangan" || node.year <= playYear;
+                    const color = mode === "perkembangan" ? mapYearColor(node.year) : mapClusters[node.cluster].color;
+                    const reveal = mode === "jaringan" ? Math.max(0, Math.min(1, 0.35 + (progress - index * 0.012) * 2.4)) : 1;
+                    const active = activeNode === node.name;
+                    const labelPos = mode === "perkembangan" && node.labelPos === "inside" ? "right" : node.labelPos;
+                    const labelGap = node.r + 12;
+                    const translate =
+                      labelPos === "inside"
+                        ? "translate(-50%, -50%)"
+                        : labelPos === "top"
+                          ? `translate(-50%, calc(-100% - ${labelGap}px))`
+                          : labelPos === "bottom"
+                            ? `translate(-50%, ${labelGap}px)`
+                            : labelPos === "left"
+                              ? `translate(calc(-100% - ${labelGap}px), -50%)`
+                              : `translate(${labelGap}px, -50%)`;
+                    const textAlign = labelPos === "left" ? "right" : labelPos === "right" ? "left" : "center";
+                    return (
+                      <div key={node.name} className="absolute z-10" style={{ left: `${node.x}%`, top: `${node.y}%`, opacity: appeared ? 1 : 0.5 }}>
+                        <button
+                          type="button"
+                          onClick={() => toggleNode(node.name)}
+                          aria-pressed={nodeFilter === node.name}
+                          aria-label={`Saring publikasi topik ${node.name}`}
+                          className="absolute left-0 top-0 rounded-full border-[3px] border-white transition-transform duration-200"
+                          style={{
+                            width: node.r * 2,
+                            height: node.r * 2,
+                            transform: `translate(-50%, -50%) scale(${reveal})`,
+                            background: color,
+                            backgroundImage:
+                              "linear-gradient(145deg, rgba(255,255,255,0.65) 0%, rgba(255,255,255,0) 52%)",
+                            boxShadow: active
+                              ? `0 0 0 4px ${color}33, 0 10px 24px -8px ${color}cc`
+                              : `0 8px 22px -8px ${color}99`,
+                            filter: appeared ? "none" : "grayscale(0.85)",
+                          }}
+                        />
+                        <span
+                          className={`absolute whitespace-nowrap ${
+                            labelPos === "inside"
+                              ? "text-[19px] font-extrabold leading-6 text-slate-900"
+                              : "text-[13px] font-extrabold leading-[18px] text-slate-900"
+                          }`}
+                          style={{ transform: translate, textAlign }}
+                        >
+                          <span className="block">{node.name}</span>
+                          {mode === "perkembangan" && (
+                            <span className="block text-[12px] font-bold text-slate-500">({node.year.toFixed(1)})</span>
+                          )}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            {mode === "jaringan" && (
+              <aside className="w-[264px] shrink-0 self-center rounded-xl border border-slate-200/90 bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
+                <p className="text-[15px] font-semibold leading-6 text-slate-900">Cluster Topik</p>
+                <ul className="mt-4 space-y-3.5">
+                  {mapClusters.map(cluster => (
+                    <li key={cluster.label} className="flex items-start gap-3">
+                      <span className="mt-0.5 h-3.5 w-3.5 shrink-0 rounded-full" style={{ background: cluster.color }} />
+                      <span className="text-sm leading-5 text-slate-600">
+                        {cluster.label} <span className="text-slate-500">({cluster.items} item)</span>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </aside>
             )}
-
-            {nodeLabels.map(label => (
-              <span
-                key={label.label}
-                className="absolute -translate-y-1/2 whitespace-nowrap text-xs leading-4 text-blue-300/90"
-                style={{
-                  left: `${label.x}%`,
-                  top: `${label.y}%`,
-                  opacity: mode !== "perkembangan" || label.year <= playYear ? 0.9 : 0.12,
-                  transition: "opacity 200ms linear",
-                }}
-              >
-                {label.label}
-              </span>
-            ))}
-
-            {mapNodes.map((node, index) => {
-              const isActive = activeNode === node.name;
-              const circleSize = node.size === 36 ? "h-9 w-9" : node.size === 24 ? "h-6 w-6" : "h-5 w-5";
-              const innerSize = node.size === 36 ? "h-3 w-3" : node.size === 24 ? "h-2 w-2" : "h-1.5 w-1.5";
-              const colorCls =
-                mode === "perkembangan"
-                  ? node.year >= 2023
-                    ? "bg-red-500 shadow-[0_0_20px_rgba(239,68,68,0.9)]"
-                    : node.year >= 2020
-                      ? "bg-amber-500 shadow-[0_0_16px_rgba(245,158,11,0.9)]"
-                      : node.year >= 2018
-                        ? "bg-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.9)]"
-                        : "bg-sky-400 shadow-[0_0_15px_rgba(56,189,248,0.9)]"
-                  : node.color === "red"
-                    ? "bg-red-500 shadow-[0_0_20px_rgba(239,68,68,0.9)]"
-                    : node.color === "yellow"
-                      ? "bg-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.9)]"
-                      : "bg-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.9)]";
-              const outlineCls = isActive ? "outline outline-2 outline-offset-[4px] outline-white/80" : "outline outline-2 outline-offset-[-2px] outline-white";
-              const appeared = mode !== "perkembangan" || node.year <= playYear;
-              const grow = appeared ? Math.max(0.6, Math.min(1, 0.6 + 0.4 * Math.min(1, (progress - index * 0.05) * 1.6))) : 0.5;
-              return (
-                <button
-                  key={node.name}
-                  type="button"
-                  onClick={() => toggleNode(node.name)}
-                  aria-pressed={nodeFilter === node.name}
-                  className="absolute z-10 flex items-center gap-2"
-                  style={{ left: `${node.x}%`, top: `${node.y}%`, transform: `translate(${-node.size / 2}px, -50%)`, opacity: appeared ? 1 : 0.28 }}
-                >
-                  <span
-                    className={`flex shrink-0 items-center justify-center rounded-full transition-transform duration-200 ${circleSize} ${colorCls} ${outlineCls}`}
-                    style={{ transform: `scale(${grow})` }}
-                  >
-                    <span className={`${innerSize} rounded-full bg-white`} />
-                  </span>
-                  <span
-                    className={
-                      node.size === 36
-                        ? "rounded-md bg-slate-900/60 px-2.5 py-1 text-lg font-bold leading-6 text-white shadow-[0px_2px_8px_rgba(0,0,0,0.9)] backdrop-blur-sm"
-                        : "whitespace-nowrap rounded-sm bg-slate-900/50 px-2 py-0.5 text-xs font-semibold leading-5 text-white shadow-[0px_2px_4px_rgba(0,0,0,0.9)] backdrop-blur-sm"
-                    }
-                  >
-                    {node.name}
-                  </span>
-                </button>
-              );
-            })}
           </div>
 
-          <div className="absolute left-4 top-4 z-20 flex flex-wrap items-center gap-2">
-            <span className="rounded-md bg-sky-950/80 px-2.5 py-1 text-xs font-semibold uppercase leading-4 tracking-tight text-blue-100 backdrop-blur-md">
-              {modelLabel}
-            </span>
-            <span className="rounded-md bg-sky-950/80 px-2 py-1 text-xs font-medium leading-4 tracking-tight text-slate-400 backdrop-blur-md">
-              Iterasi: 1,420
-            </span>
-            <span className="flex items-center gap-1.5 rounded-md bg-sky-950/80 px-2 py-1 backdrop-blur-md">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-600" />
-              <span className="text-xs font-semibold leading-4 tracking-tight text-emerald-600">
-                Node Aktif: {active.cluster} ({active.pct}%)
-              </span>
-            </span>
-          </div>
-
-          <div className="absolute right-4 top-4 z-20 flex items-center gap-2 rounded-lg bg-sky-950/90 px-3 py-1.5 backdrop-blur-md">
-            {mode === "jaringan" ? (
-              <>
-                <span className="text-xs font-medium leading-4 tracking-tight text-slate-400">Nodes: 7</span>
-                <span className="text-slate-600">&bull;</span>
-                <span className="text-xs font-medium leading-4 tracking-tight text-slate-400">Relasi: 12</span>
-                <span className="text-slate-600">&bull;</span>
-                <span className="text-xs font-medium leading-4 tracking-tight text-slate-400">Klaster: 5</span>
-              </>
-            ) : mode === "perkembangan" ? (
-              <>
-                <span className="text-xs font-medium leading-4 tracking-tight text-slate-400">Tahun terbit:</span>
-                <span className="h-2.5 w-28 rounded-full bg-gradient-to-r from-sky-400 via-yellow-500 to-red-500" />
-                <span className="text-[10px] leading-4 text-slate-300">2016</span>
-                <span className="text-[10px] leading-4 text-slate-300">2024</span>
-              </>
-            ) : (
-              <>
-                <span className="text-xs font-medium leading-4 tracking-tight text-slate-400">Kepadatan Sitasi:</span>
-                <span className="h-2.5 w-28 rounded-full bg-gradient-to-r from-sky-500 via-yellow-500 to-red-500" />
-                <span className="text-[10px] leading-4 text-slate-300">Rendah</span>
-                <span className="text-[10px] leading-4 text-slate-300">Tinggi</span>
-              </>
-            )}
-          </div>
-
-          {mode === "perkembangan" && (
-            <div className="absolute inset-x-4 bottom-[88px] z-20 flex items-center gap-3 rounded-lg bg-sky-950/90 px-3 py-2 backdrop-blur-md">
-              <span className="w-10 shrink-0 text-xs font-bold leading-4 text-white">{playYear}</span>
-              <input
-                type="range"
-                min={0}
-                max={100}
-                value={Math.round(progress * 100)}
-                onMouseDown={() => setPlaying(false)}
-                onChange={event => {
-                  setPlaying(false);
-                  setProgress(Number(event.target.value) / 100);
-                }}
-                aria-label="Timeline perkembangan literatur"
-                className="h-1.5 flex-1 cursor-pointer appearance-none rounded-full bg-slate-700 accent-sky-400"
-              />
-              <span className="shrink-0 text-[10px] leading-4 text-slate-400">
-                {playYearFrom}&ndash;{playYearTo}
-              </span>
+          {mode !== "jaringan" && (
+            <div className="px-5 pb-1 md:px-6">
+              {mode === "perkembangan" ? (
+                <div className="mx-auto max-w-[900px]">
+                  <div className="h-3.5 rounded-full" style={{ backgroundImage: mapYearGradient }} />
+                  <div className="mt-2 flex justify-between text-xs font-medium leading-4 text-slate-500">
+                    {[2020, 2021, 2022, 2023, 2024, 2025, 2026].map(year => (
+                      <span key={year}>{year}</span>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-wrap items-center justify-center gap-3 text-sm font-medium leading-5 text-slate-500">
+                  <span>Rendah</span>
+                  <span className="h-3.5 w-[420px] max-w-full rounded-full" style={{ backgroundImage: mapYearGradient }} />
+                  <span>Tinggi</span>
+                </div>
+              )}
             </div>
           )}
 
-          <div className="absolute inset-x-0 bottom-0 z-20 flex flex-col gap-1.5 border-t border-slate-800/60 bg-sky-950/90 px-4 py-2.5 backdrop-blur-md">
-            <div className="flex items-start gap-2">
-              <svg width="13" height="15" viewBox="0 0 13 15" fill="none" aria-hidden="true" className="mt-0.5 shrink-0">
-                <path d="M6.5.8c-2.7 0-4.9 2.2-4.9 4.9 0 3.7 4.9 8.5 4.9 8.5s4.9-4.8 4.9-8.5c0-2.7-2.2-4.9-4.9-4.9z" fill="#f59e0b" />
-                <circle cx="6.5" cy="5.7" r="1.9" fill="#020617" />
-              </svg>
-              <p className="text-xs leading-5 text-white">
-                {modeHint} Klik pada lingkaran topik untuk membedah relasi bibliometrik &amp; menyaring daftar publikasi rujukan di bawah.
-              </p>
-            </div>
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs leading-4">
-              <span className="font-medium text-slate-400">Resolusi: 0.85</span>
-              <span className="text-slate-600">&bull;</span>
-              <span className="font-medium text-slate-400">Metode: Modularity Louvain</span>
-              <span className="text-slate-600">&bull;</span>
-              <span className="font-medium text-slate-400">
-                Klaster Aktif: <span className="font-bold text-white">{active.cluster}</span>
+          <div className="mt-2 flex flex-wrap items-center gap-3 border-t border-slate-100 px-5 py-3 md:px-6">
+            <button
+              type="button"
+              onClick={togglePlay}
+              aria-pressed={playing}
+              className="flex items-center gap-1.5 rounded-lg bg-[#0369a1] px-3 py-1.5 text-xs font-semibold leading-4 text-white transition-colors hover:bg-[#075985]"
+            >
+              {playing ? (
+                <svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true">
+                  <rect x="1.5" y="1" width="3.2" height="10" rx="1" />
+                  <rect x="7.3" y="1" width="3.2" height="10" rx="1" />
+                </svg>
+              ) : (
+                <svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true">
+                  <path d="M2.5 1.6l7 4.4-7 4.4z" />
+                </svg>
+              )}
+              {playing ? "Jeda Simulasi" : "Putar Simulasi"}
+            </button>
+            <span className="w-14 shrink-0 text-xs font-semibold leading-4 text-slate-700">
+              {mode === "perkembangan" ? playYear.toFixed(1) : `${Math.round(progress * 100)}%`}
+            </span>
+            <input
+              type="range"
+              min={0}
+              max={100}
+              value={Math.round(progress * 100)}
+              onChange={event => {
+                setPlaying(false);
+                setProgress(Number(event.target.value) / 100);
+              }}
+              aria-label="Kontrol simulasi peta"
+              className="h-1.5 min-w-32 flex-1 cursor-pointer appearance-none rounded-full bg-slate-200 accent-[#0369a1]"
+            />
+            <span className="shrink-0 text-[11px] leading-4 text-slate-400">
+              {mode === "perkembangan" ? "Simulasi tahun 2020–2026" : modeInfo.hint}
+            </span>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-slate-100 px-5 py-3 text-sm leading-5 text-slate-500 md:px-6">
+            {modeInfo.stats.map((stat, index) => (
+              <span key={stat} className="flex items-center gap-4">
+                {index > 0 && <span className="h-4 w-px bg-slate-300" />}
+                {stat}
               </span>
-            </div>
+            ))}
           </div>
         </div>
       </section>
