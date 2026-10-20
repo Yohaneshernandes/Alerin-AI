@@ -558,13 +558,13 @@ function Sidebar({
           title={collapsed ? "Buka sidebar" : undefined}
           aria-label={collapsed ? "Buka sidebar" : "Alerin Jurnal"}
           className={`group relative flex shrink-0 cursor-pointer items-center justify-center ${
-            collapsed ? "h-11 w-11 rounded-xl" : "h-12 w-12"
+            collapsed ? "h-11 w-11 rounded-xl" : "h-[52px] w-[52px]"
           }`}
         >
           <img
             src={`${assets}/24a8e.svg`}
             alt=""
-            className={`transition-opacity duration-150 ${collapsed ? "h-11 w-11 group-hover:opacity-0" : "h-[38px] w-[38px]"}`}
+            className={`transition-opacity duration-150 ${collapsed ? "h-11 w-11 group-hover:opacity-0" : "h-[44px] w-[44px]"}`}
           />
           {collapsed && (
             <span className="pointer-events-none absolute inset-0 flex items-center justify-center rounded-xl text-slate-500 opacity-0 transition-opacity duration-150 group-hover:bg-sky-50 group-hover:text-sky-600 group-hover:opacity-100">
