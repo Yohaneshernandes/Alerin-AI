@@ -3727,26 +3727,26 @@ function MobileLiteratureReview() {
 
   return (
     <div className="flex flex-col gap-5 pb-8">
-      <div className="rounded-3xl bg-white px-5 py-6 text-center shadow-sm outline outline-1 outline-offset-[-1px] outline-slate-200/80">
+      <div className="rounded-3xl bg-white p-5 text-center shadow-sm outline outline-1 outline-offset-[-1px] outline-slate-200/80">
         <h2 className="font-['Inter:Bold'] text-[22px] font-bold leading-7 text-slate-900">Tinjau hasil penelusuran literatur</h2>
         <p className="mx-auto mt-2 max-w-[300px] text-sm leading-6 text-slate-500">
           Alerin telah menggabungkan, merapikan, dan memeringkat artikel berdasarkan relevansi topik riset Anda.
         </p>
-      </div>
 
-      <div className="grid grid-cols-2 gap-3">
-        {stats.map(stat => (
-          <div
-            key={stat.label}
-            className={`rounded-[18.92px] p-4 shadow-sm ${stat.highlight ? "bg-white/70 outline outline-1 outline-white" : "bg-white outline outline-1 outline-slate-200/90"}`}
-          >
-            <p className={`text-xs text-slate-500 ${stat.highlight ? "font-semibold" : "font-medium"}`}>{stat.label}</p>
-            <p className="mt-2 flex items-baseline gap-1.5">
-              <span className={`text-2xl font-bold leading-8 ${stat.accent}`}>{stat.value}</span>
-              <span className={`text-sm ${stat.sub} ${stat.highlight ? "font-semibold" : "font-medium"}`}>artikel</span>
-            </p>
-          </div>
-        ))}
+        <div className="mt-5 grid grid-cols-2 gap-3 text-left">
+          {stats.map(stat => (
+            <div
+              key={stat.label}
+              className={`rounded-[18.92px] p-4 ${stat.highlight ? "bg-sky-50/70 outline outline-1 outline-sky-100" : "bg-slate-50/70 outline outline-1 outline-slate-200/70"}`}
+            >
+              <p className={`text-xs text-slate-500 ${stat.highlight ? "font-semibold" : "font-medium"}`}>{stat.label}</p>
+              <p className="mt-2 flex items-baseline gap-1.5">
+                <span className={`text-2xl font-bold leading-8 ${stat.accent}`}>{stat.value}</span>
+                <span className={`text-sm ${stat.sub} ${stat.highlight ? "font-semibold" : "font-medium"}`}>artikel</span>
+              </p>
+            </div>
+          ))}
+        </div>
       </div>
 
       <section className="rounded-[18.92px] bg-white p-4 shadow-sm outline outline-1 outline-slate-200/80">
