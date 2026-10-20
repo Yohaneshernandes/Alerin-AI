@@ -1555,9 +1555,6 @@ function JournalCard({
           onClick={() => window.open("https://doi.org/10.1016/j.jretconser.2020.102345", "_blank", "noopener,noreferrer")}
           className="flex items-center gap-1.5 rounded-lg bg-white px-4 py-2 text-sm font-semibold leading-5 text-slate-700 outline outline-1 outline-offset-[-1px] outline-slate-200"
         >
-          <svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" aria-hidden="true">
-            <rect x="1.5" y="1.5" width="9" height="9" rx="1.5" />
-          </svg>
           DOI
         </button>
         <button
@@ -1567,8 +1564,8 @@ function JournalCard({
         >
           Buka PDF
         </button>
-        <label className="relative flex items-center gap-2 rounded-lg border border-slate-200 px-4 py-2 text-sm">
-          <span className="pointer-events-none max-w-24 truncate font-medium">{activeFolder?.name ?? "Belum dikelompokkan"}</span>
+        <label className="relative flex items-center gap-2 rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700">
+          <span className="pointer-events-none max-w-24 truncate font-semibold text-slate-700">{activeFolder?.name ?? "Belum dikelompokkan"}</span>
           <select
             aria-label="Pindahkan jurnal ke folder"
             value={journal.folderId}
