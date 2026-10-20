@@ -1845,6 +1845,7 @@ function DesktopJournalResultCard({
 }
 
 function RingkasanJurnalModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [expanded, setExpanded] = useState<number[]>([0, 1]);
   if (!open) return null;
 
   const mainSummary =
@@ -1853,26 +1854,32 @@ function RingkasanJurnalModal({ open, onClose }: { open: boolean; onClose: () =>
   const points = [
     {
       title: "Tujuan penelitian",
+      hint: "Fokus dan sasaran penelitian",
       desc: "Menguji pengaruh interaksi parasosial dan dorongan kelangkaan terhadap niat pembelian konsumen dalam konteks live streaming commerce.",
     },
     {
       title: "Metode penelitian",
+      hint: "Kuantitatif survei & analisis SEM-PLS",
       desc: "Pendekatan kuantitatif menggunakan survei cross-sectional. Hubungan antarvariabel dianalisis menggunakan metode SEM-PLS.",
     },
     {
-      title: "Temuan penelitian",
+      title: "Temuan utama",
+      hint: "Hasil utama penelitian",
       desc: "Interaksi parasosial meningkatkan kepercayaan kepada host, sedangkan kelangkaan memperkuat urgensi yang mendorong keputusan pembelian.",
     },
     {
-      title: "Relevansi penelitian",
+      title: "Relevansi untuk penelitianmu",
+      hint: "Landasan hipotesis & teori variabel",
       desc: "Dapat digunakan untuk landasan teori, penyusunan hipotesis, pemilihan variabel, serta pembanding penelitian perilaku konsumen digital.",
     },
     {
       title: "Keterbatasan penelitian",
+      hint: "Data satu periode survei",
       desc: "Data dikumpulkan pada satu periode sehingga belum menjelaskan perubahan perilaku konsumen dalam jangka panjang.",
     },
     {
       title: "Saran penggunaan",
+      hint: "Cek metode & verifikasi sumber asli",
       desc: "Baca bagian metode dan hasil asli sebelum mengutip. Sesuaikan penerapan temuan dengan konteks objek dan wilayah penelitianmu.",
     },
   ];
@@ -1888,9 +1895,13 @@ function RingkasanJurnalModal({ open, onClose }: { open: boolean; onClose: () =>
     window.alert("Ringkasan berhasil disalin.");
   };
 
+  const togglePoint = (index: number) => {
+    setExpanded(current => (current.includes(index) ? current.filter(item => item !== index) : [...current, index]));
+  };
+
   return (
     <div
-      className="fixed inset-0 z-[340] flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-[2px]"
+      className="fixed inset-0 z-[340] flex items-end justify-center bg-slate-900/50 backdrop-blur-[2px] md:items-center md:p-4"
       onClick={onClose}
       role="presentation"
     >
@@ -1899,62 +1910,111 @@ function RingkasanJurnalModal({ open, onClose }: { open: boolean; onClose: () =>
         aria-modal="true"
         aria-label="Ringkasan Jurnal"
         onClick={event => event.stopPropagation()}
-        className="flex max-h-[calc(100vh-32px)] w-[820px] max-w-full flex-col overflow-hidden rounded-3xl bg-white shadow-[0px_25px_60px_-15px_rgba(0,0,0,0.30)] outline outline-1 outline-offset-[-1px] outline-slate-100"
+        className="flex max-h-[92dvh] w-full flex-col overflow-hidden rounded-t-[32px] bg-white shadow-[0px_25px_60px_-15px_rgba(0,0,0,0.30)] md:max-h-[calc(100vh-32px)] md:w-[820px] md:max-w-full md:rounded-3xl md:outline md:outline-1 md:outline-offset-[-1px] md:outline-slate-100"
       >
-        <div className="flex items-center justify-between border-b border-slate-100 px-7 pb-4 pt-6">
-          <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-xl font-bold leading-8 text-slate-900">Ringkasan Jurnal</h2>
+        <div className="flex shrink-0 justify-center pb-1 pt-3 md:hidden">
+          <span className="h-1.5 w-16 rounded-full bg-slate-300/80" aria-hidden="true" />
+        </div>
+
+        <div className="flex shrink-0 items-center justify-between gap-4 border-b border-slate-100 px-6 pb-4 pt-2 md:px-7 md:pb-4 md:pt-6">
+          <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-2xl font-bold leading-9 text-slate-900 md:text-xl md:leading-8">Ringkasan Jurnal</h2>
           <button
             type="button"
             aria-label="Tutup ringkasan"
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-full outline outline-1 outline-offset-[-1px] outline-slate-200/90 transition-colors hover:bg-slate-50"
+            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white outline outline-1 outline-offset-[-1px] outline-slate-200/80 transition-colors hover:bg-slate-50 md:h-8 md:w-8 md:outline-slate-200/90"
           >
-            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="#64748b" strokeWidth="1.33" strokeLinecap="round" aria-hidden="true">
-              <path d="M1.5 1.5l7 7M8.5 1.5l-7 7" />
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#94a3b8" strokeWidth="1.6" strokeLinecap="round" aria-hidden="true">
+              <path d="M2.5 2.5l9 9M11.5 2.5l-9 9" />
             </svg>
           </button>
         </div>
 
-        <div className="flex max-h-[70vh] flex-col gap-4 overflow-y-auto p-7">
-          <div className="flex flex-col gap-1.5 rounded-xl border-l-[3px] border-sky-600 bg-blue-50 py-5 pl-5 pr-6">
-            <p className="font-['Plus_Jakarta_Sans:ExtraBold'] text-sm font-extrabold leading-5 text-slate-900">Ringkasan utama</p>
-            <p className="font-['Plus_Jakarta_Sans:Medium'] text-sm font-medium leading-5 text-slate-700">{mainSummary}</p>
+        <div className="min-h-0 flex-1 overflow-y-auto px-6 py-6 md:max-h-[70vh] md:p-7">
+          <div className="flex flex-col gap-2 rounded-2xl border-l-4 border-sky-600 bg-sky-50/70 px-5 py-5 md:gap-1.5 md:rounded-xl md:bg-blue-50 md:pl-5 md:pr-6">
+            <p className="font-['Plus_Jakarta_Sans:Bold'] text-base font-bold leading-6 text-slate-900 md:text-sm md:font-extrabold md:leading-5">Ringkasan utama</p>
+            <p className="font-['Plus_Jakarta_Sans:Regular'] text-[15px] leading-7 text-slate-700 md:text-sm md:font-medium md:leading-5">{mainSummary}</p>
           </div>
 
-          <div className="grid grid-cols-1 gap-3 pt-1 min-[640px]:grid-cols-2">
-            {points.map((point, index) => (
-              <div
-                key={point.title}
-                className="flex flex-col gap-2 rounded-xl bg-white p-4 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.02)] outline outline-1 outline-offset-[-1px] outline-slate-200/80"
-              >
-                <div className="flex items-center gap-2">
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-sky-100">
-                    <span className="font-['Plus_Jakarta_Sans:Bold'] text-xs font-bold leading-4 text-sky-700">{index + 1}</span>
-                  </span>
-                  <p className="font-['Plus_Jakarta_Sans:Bold'] text-sm font-bold leading-5 text-slate-900">{point.title}</p>
+          <div className="mt-5 flex flex-col gap-3 md:mt-4 md:grid md:grid-cols-2 md:gap-3">
+            {points.map((point, index) => {
+              const isOpen = expanded.includes(index);
+              return (
+                <div
+                  key={point.title}
+                  className={`overflow-hidden rounded-3xl bg-white outline outline-1 outline-offset-[-1px] md:flex md:flex-col md:gap-2 md:rounded-xl md:p-4 md:shadow-[0px_1px_2px_0px_rgba(0,0,0,0.02)] ${
+                    isOpen
+                      ? "shadow-[0px_1px_2px_0px_rgba(0,0,0,0.03)] outline-sky-500/60 md:outline-slate-200/80"
+                      : "outline-slate-200 md:outline-slate-200/80"
+                  }`}
+                >
+                  <button
+                    type="button"
+                    onClick={() => togglePoint(index)}
+                    aria-expanded={isOpen}
+                    className="flex w-full items-center justify-between gap-3 p-5 text-left md:pointer-events-none md:p-0"
+                  >
+                    <span className="flex min-w-0 items-center gap-3.5 md:gap-2">
+                      <span
+                        className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full md:h-5 md:w-5 ${
+                          isOpen ? "bg-sky-600 text-white md:bg-sky-100 md:text-sky-700" : "bg-sky-100 text-sky-700"
+                        }`}
+                      >
+                        <span className="font-['Plus_Jakarta_Sans:Bold'] text-base font-bold leading-6 md:text-xs md:leading-4">{index + 1}</span>
+                      </span>
+                      <span className="min-w-0">
+                        <span className="block font-['Plus_Jakarta_Sans:Bold'] text-lg font-bold leading-6 text-slate-900 md:text-sm md:leading-5">{point.title}</span>
+                        {!isOpen && <span className="mt-0.5 block truncate text-sm leading-5 text-slate-400 md:hidden">{point.hint}</span>}
+                      </span>
+                    </span>
+                    <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full md:hidden ${isOpen ? "bg-sky-50" : ""}`}>
+                      <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 14 14"
+                        fill="none"
+                        stroke={isOpen ? "#0284c7" : "#94a3b8"}
+                        strokeWidth="1.8"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        aria-hidden="true"
+                        className={isOpen ? "" : "-rotate-90"}
+                      >
+                        <path d="M3 5.5l4 4 4-4" />
+                      </svg>
+                    </span>
+                  </button>
+                  <div className={`px-5 pb-5 pl-[68px] pr-5 md:block md:px-0 md:pb-0 md:pl-7 ${isOpen ? "block" : "hidden"}`}>
+                    <p className="font-['Plus_Jakarta_Sans:Regular'] text-[15px] leading-7 text-slate-600 md:text-xs md:font-medium md:leading-5">{point.desc}</p>
+                  </div>
                 </div>
-                <p className="pl-7 font-['Plus_Jakarta_Sans:Medium'] text-xs font-medium leading-5 text-slate-600">{point.desc}</p>
-              </div>
-            ))}
+              );
+            })}
+          </div>
+
+          <div className="mt-5 rounded-2xl bg-slate-100/90 px-5 py-4 md:hidden">
+            <p className="text-center text-[13px] font-semibold leading-6 text-slate-500">
+              <span className="text-slate-700">Catatan:</span> Ringkasan Alerin membantu memahami isi secara cepat, namun tetap disarankan memverifikasi kutipan langsung dari manuskrip asli.
+            </p>
           </div>
         </div>
 
-        <div className="flex items-center justify-end gap-3 border-t border-slate-100 bg-white px-7 py-4">
+        <div className="flex shrink-0 items-center gap-3 border-t border-slate-100 bg-white px-6 pb-6 pt-4 md:justify-end md:px-7 md:py-4">
           <button
             type="button"
             onClick={copySummary}
-            className="flex h-10 w-48 items-center justify-center gap-2 rounded-xl bg-white text-sm font-semibold leading-5 text-slate-800 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.03)] outline outline-1 outline-offset-[-1px] outline-slate-200 transition-colors hover:bg-slate-50"
+            className="flex h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-white text-sm font-semibold leading-5 text-slate-800 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.03)] outline outline-1 outline-offset-[-1px] outline-slate-200 transition-colors hover:bg-slate-50 md:h-10 md:w-48 md:flex-none"
           >
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-              <rect x="4.5" y="4.8" width="8" height="8.2" rx="1.5" fill="white" stroke="#0c0a09" strokeWidth="1.3" />
-              <rect x="1.5" y="1" width="8" height="8.2" rx="1.5" fill="white" stroke="#0c0a09" strokeWidth="1.3" />
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#0f172a" strokeWidth="1.3" aria-hidden="true">
+              <rect x="5" y="5.5" width="8" height="8.2" rx="1.5" />
+              <rect x="2" y="2" width="8" height="8.2" rx="1.5" />
             </svg>
             Salin ringkasan
           </button>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-xl bg-sky-700 px-6 py-2.5 text-sm font-semibold leading-5 text-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] transition-colors hover:bg-sky-800"
+            className="h-12 flex-1 rounded-xl bg-sky-700 text-sm font-bold leading-5 text-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] transition-colors hover:bg-sky-800 md:h-10 md:w-auto md:flex-none md:px-6 md:py-2.5 md:font-semibold"
           >
             Selesai
           </button>
@@ -1965,6 +2025,7 @@ function RingkasanJurnalModal({ open, onClose }: { open: boolean; onClose: () =>
 }
 
 function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [fullTable, setFullTable] = useState(false);
   if (!open) return null;
 
   const headers = ["No.", "Penelitian", "Variabel penelitian", "Metode penelitian", "Hasil penelitian", "Persamaan dan perbedaan"];
@@ -2072,18 +2133,25 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
     window.alert("Tabel berhasil diunduh sebagai CSV.");
   };
 
+  const closeTable = () => {
+    setFullTable(false);
+    onClose();
+  };
+
   const columnWidths = ["w-16", "w-72", "w-72", "w-72", "w-72", "w-80"];
 
   return (
-    <div className="fixed inset-0 z-[340] bg-black/30" onClick={onClose} role="presentation">
+    <div className="fixed inset-0 z-[340] bg-black/30" onClick={closeTable} role="presentation">
       <div
         role="dialog"
         aria-modal="true"
         aria-label="Tabel penelitian terdahulu"
         onClick={event => event.stopPropagation()}
-        className="absolute inset-x-0 bottom-0 flex max-h-[85dvh] w-full flex-col overflow-hidden rounded-t-[43.42px] bg-white shadow-2xl md:inset-auto md:left-1/2 md:top-1/2 md:max-h-[calc(100vh-48px)] md:w-[1140px] md:max-w-[calc(100vw-32px)] md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-3xl md:outline md:outline-1 md:outline-offset-[-1px] md:outline-slate-100"
+        className={`absolute inset-x-0 bottom-0 flex w-full flex-col overflow-hidden bg-white shadow-2xl ${
+          fullTable ? "top-0 h-[100dvh] max-h-none rounded-none" : "max-h-[93dvh] rounded-t-[43.42px]"
+        } md:inset-auto md:left-1/2 md:top-1/2 md:h-auto md:max-h-[calc(100vh-48px)] md:w-[1140px] md:max-w-[calc(100vw-32px)] md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-3xl md:outline md:outline-1 md:outline-offset-[-1px] md:outline-slate-100`}
       >
-        <div className="flex shrink-0 justify-center pb-1.5 pt-5 md:hidden">
+        <div className={`flex shrink-0 justify-center pb-1.5 pt-5 md:hidden ${fullTable ? "hidden" : ""}`}>
           <span className="h-1.5 w-16 rounded-full bg-slate-300" aria-hidden="true" />
         </div>
 
@@ -2097,7 +2165,7 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
           <button
             type="button"
             aria-label="Tutup tabel"
-            onClick={onClose}
+            onClick={closeTable}
             className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white outline outline-1 outline-offset-[-1px] outline-slate-200 transition-colors hover:bg-slate-50 md:h-10 md:w-10 md:rounded-xl"
           >
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#94a3b8" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
@@ -2106,7 +2174,7 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
           </button>
         </div>
 
-        <div className="flex flex-col gap-4 overflow-y-auto px-6 py-5 md:px-8 md:py-4">
+        <div className={`flex flex-col gap-4 px-6 py-5 md:px-8 md:py-4 ${fullTable ? "min-h-0 flex-1 overflow-y-auto" : "overflow-y-auto"}`}>
           <div className="hidden rounded-xl bg-sky-50 px-4 py-3.5 outline outline-1 outline-offset-[-1px] outline-blue-100 md:block">
             <p className="font-['Plus_Jakarta_Sans:Medium'] text-sm font-medium leading-5 text-cyan-900">
               Gunakan kolom &ldquo;Persamaan dan perbedaan&rdquo; untuk menyusun kebaruan penelitian. Selalu cek paper asli sebelum memasukkan tabel
@@ -2121,7 +2189,26 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
               </svg>
               Geser ke samping untuk melihat seluruh kolom
             </p>
-            <span className="shrink-0 text-sm font-semibold text-sky-600">{tableRows.length} Jurnal</span>
+            <div className="flex shrink-0 items-center gap-2.5">
+              <span className="text-sm font-semibold text-sky-600">{tableRows.length} Jurnal</span>
+              <button
+                type="button"
+                onClick={() => setFullTable(value => !value)}
+                aria-pressed={fullTable}
+                className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-600 transition-colors hover:bg-slate-50"
+              >
+                {fullTable ? (
+                  <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M6 2v4H2M10 2v4h4M6 14v-4H2M10 14v-4h4" />
+                  </svg>
+                ) : (
+                  <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M2 6V2h4M14 6V2h-4M2 10v4h4M14 10v4h-4" />
+                  </svg>
+                )}
+                {fullTable ? "Perkecil" : "Layar penuh"}
+              </button>
+            </div>
           </div>
 
           <div className="overflow-x-auto rounded-3xl outline outline-1 outline-offset-[-1px] outline-slate-200/80 md:rounded-2xl">
@@ -2175,7 +2262,7 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
             <button
               type="button"
               onClick={downloadCsv}
-              className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-white px-4 py-3.5 text-sm font-semibold leading-5 text-slate-700 outline outline-1 outline-offset-[-1px] outline-slate-200 transition-colors hover:bg-slate-50 md:flex-none md:rounded-xl md:px-5 md:py-2.5"
+              className="hidden flex-1 items-center justify-center gap-2 rounded-2xl bg-white px-4 py-3.5 text-sm font-semibold leading-5 text-slate-700 outline outline-1 outline-offset-[-1px] outline-slate-200 transition-colors hover:bg-slate-50 md:flex md:flex-none md:rounded-xl md:px-5 md:py-2.5"
             >
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M8 2.5v7M5 7l3 3 3-3M3 13h10" />
@@ -2185,7 +2272,7 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
           </div>
           <button
             type="button"
-            onClick={onClose}
+            onClick={closeTable}
             className="mt-3 w-full rounded-2xl bg-sky-700 py-4 text-sm font-bold leading-5 text-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] transition-colors hover:bg-sky-800 md:mt-0 md:w-auto md:rounded-xl md:px-7 md:py-2.5 md:text-sm md:font-semibold"
           >
             Selesai
@@ -3583,18 +3670,6 @@ function MobileLiteratureReview() {
     { key: "empiris", label: "Empiris (46)" },
   ];
 
-  const tagPills: Record<string, { box: string; dot: string }> = {
-    "Sangat relevan": { box: "bg-emerald-50 text-emerald-700 outline-emerald-200/80", dot: "bg-emerald-500" },
-    "Perlu ditinjau": { box: "bg-amber-50 text-amber-700 outline-amber-200/80", dot: "bg-amber-500" },
-    "Cukup relevan": { box: "bg-sky-50 text-sky-700 outline-sky-200/80", dot: "bg-sky-500" },
-  };
-  const sourcePills: Record<string, string> = {
-    "Google Scholar": "bg-sky-50 text-sky-700 outline-sky-100",
-    Crossref: "bg-sky-50 text-sky-700 outline-sky-100",
-    OpenAlex: "bg-purple-50 text-purple-700 outline-purple-200",
-    DOAJ: "bg-emerald-50 text-emerald-700 outline-emerald-200",
-  };
-
   const structureSections = [
     { n: 1, label: "Ringkasan Eksekutif" },
     { n: 2, label: "Pendahuluan" },
@@ -3708,7 +3783,6 @@ function MobileLiteratureReview() {
 
         <div className="mt-3 space-y-3">
           {visiblePriority.slice(0, priorityLimit).map((row, index) => {
-            const tag = tagPills[row.tag] ?? tagPills["Cukup relevan"];
             return (
               <article key={`${row.title}-${index}`} className="rounded-[18.92px] bg-slate-50/70 p-4 outline outline-1 outline-slate-200/90">
                 <div className="flex items-start justify-between gap-3">
@@ -3723,12 +3797,19 @@ function MobileLiteratureReview() {
                   </button>
                 </div>
                 <div className="mt-2.5 flex flex-wrap items-center gap-2">
-                  <span className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold outline outline-1 ${tag.box}`}>
-                    <span className={`h-2 w-2 rounded-full ${tag.dot}`} />
+                  <span className="flex items-center gap-1.5 rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold text-slate-600 outline outline-1 outline-slate-200">
+                    <span className="h-2 w-2 rounded-full bg-slate-400" />
                     {row.tag}
                   </span>
                   <span className="rounded-md bg-white px-2 py-1 text-[11px] font-medium text-slate-600 outline outline-1 outline-slate-200">{row.year}</span>
-                  <span className={`rounded-md px-2 py-1 text-[11px] font-medium outline outline-1 ${sourcePills[row.source]}`}>{row.source}</span>
+                  <span className="flex items-center gap-1.5 rounded-md bg-white px-2 py-1 text-[11px] font-medium text-slate-600 outline outline-1 outline-slate-200">
+                    <img
+                      src={sourceLogos[row.source] ?? "/assets/source-logos/openalex.svg"}
+                      alt=""
+                      className="h-3.5 w-3.5 shrink-0 object-contain"
+                    />
+                    {row.source}
+                  </span>
                 </div>
               </article>
             );
@@ -5220,7 +5301,9 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                 </div>
 
                 {searchType === "review" ? (
-                  <MobileLiteratureReview />
+                  <div className="mt-5">
+                    <MobileLiteratureReview />
+                  </div>
                 ) : (
                   <>
                 {resultMode === "analysis" && (
@@ -5796,7 +5879,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                 <button
                   type="button"
                   onClick={onBack}
-                  className="flex w-full items-center gap-3 rounded-2xl border border-slate-200/80 bg-white p-3 text-left shadow-sm transition-colors hover:bg-slate-50"
+                  className="hidden w-full items-center gap-3 rounded-2xl border border-slate-200/80 bg-white p-3 text-left shadow-sm transition-colors hover:bg-slate-50 md:flex"
                 >
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-slate-300 text-slate-500">
                     <svg width="19" height="19" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
