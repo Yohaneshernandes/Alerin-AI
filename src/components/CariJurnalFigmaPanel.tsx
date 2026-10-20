@@ -613,18 +613,23 @@ function Sidebar({
         <button
           type="button"
           onClick={onBack}
-          title={collapsed ? "Home Alerin" : undefined}
+          title={collapsed ? "Beranda Alerin" : undefined}
           className={`flex w-full items-center gap-3.5 rounded-xl py-3 text-base font-medium text-slate-600 hover:bg-slate-50 ${
             collapsed ? "justify-center px-0" : "px-4"
           }`}
         >
-          <img src={`${assets}/73c1a.png`} alt="" className="h-8 w-8 rounded-full object-cover outline outline-1 outline-slate-400/50" />
-          {!collapsed && "Home Alerin"}
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-slate-300 text-slate-500">
+            <svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M16 10H4" />
+              <path d="M9 5l-5 5 5 5" />
+            </svg>
+          </span>
+          {!collapsed && "Beranda Alerin"}
         </button>
       </nav>
 
       {!collapsed && (
-        <>
+        <div className="min-h-0 flex-1 overflow-y-auto">
           <p className="mt-6 font-['Inter:Bold'] text-sm font-bold uppercase leading-5 tracking-wide text-slate-400">Riwayat</p>
           <div className="mt-2 space-y-0.5">
         {items.map((item, index) => (
@@ -741,7 +746,7 @@ function Sidebar({
           </div>
         ))}
           </div>
-        </>
+        </div>
       )}
 
       {collapsed ? (
@@ -757,23 +762,28 @@ function Sidebar({
           </svg>
         </button>
       ) : (
-        <div className="mt-auto rounded-2xl border border-amber-100/80 bg-gradient-to-br from-amber-50/70 via-blue-50/50 to-indigo-50/60 p-4">
-          <div className="flex items-start gap-2.5">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="#f59e0b" className="mt-0.5 shrink-0" aria-hidden="true">
-              <path d="M12 2l2.9 6.26L21.5 9.3l-4.75 4.63 1.12 6.57L12 17.4l-5.87 3.1 1.12-6.57L2.5 9.3l6.6-1.04L12 2z" />
-            </svg>
-            <p className="text-xs leading-4 text-slate-600">
-              Akses lebih banyak fitur dengan <span className="text-blue-700">Alerin Premium</span>
-            </p>
+        <>
+          <div className="mt-auto rounded-2xl border border-amber-100/80 bg-gradient-to-br from-amber-50/70 via-blue-50/50 to-indigo-50/60 p-4">
+            <div className="flex items-start gap-2.5">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="#f59e0b" className="mt-0.5 shrink-0" aria-hidden="true">
+                <path d="M12 2l2.9 6.26L21.5 9.3l-4.75 4.63 1.12 6.57L12 17.4l-5.87 3.1 1.12-6.57L2.5 9.3l6.6-1.04L12 2z" />
+              </svg>
+              <p className="text-xs leading-4 text-slate-600">
+                Akses lebih banyak fitur dengan <span className="text-blue-700">Alerin Premium</span>
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={onUpgrade}
+              className="mt-3.5 w-full rounded-xl border border-blue-200 bg-white px-3 py-2 text-xs font-semibold text-blue-600 shadow-sm hover:bg-blue-50"
+            >
+              Upgrade Sekarang
+            </button>
           </div>
-          <button
-            type="button"
-            onClick={onUpgrade}
-            className="mt-3.5 w-full rounded-xl border border-blue-200 bg-white px-3 py-2 text-xs font-semibold text-blue-600 shadow-sm hover:bg-blue-50"
-          >
-            Upgrade Sekarang
-          </button>
-        </div>
+          <div className="mt-3">
+            <ProfileCard collection={view === "collection"} />
+          </div>
+        </>
       )}
     </aside>
   );
@@ -5403,7 +5413,6 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
               </div>
 
               <aside className="space-y-5">
-                <div className="hidden md:block"><ProfileCard collection={false} /></div>
                 <div className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm md:p-6">
                   <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-base font-bold md:text-base">Tiga cara menemukan jurnal</h2>
                   <p className="mt-2 text-sm leading-5 text-[#64748b] md:font-['Plus_Jakarta_Sans:Regular'] md:text-xs">Pilih cara paling mudah sesuai informasi yang sudah kamu punya.</p>
