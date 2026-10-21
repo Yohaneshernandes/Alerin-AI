@@ -1819,7 +1819,7 @@ function DesktopJournalResultCard({
   onToggleSave?: () => void;
 }) {
   const detail = desktopResultDetails.find(item => item.id === journal?.id) ?? desktopResultDetails[0];
-  const actionButtons = ["Abstrak", "Buka PDF"];
+  const actionButtons = ["Buat sitasi", "Abstrak", "Buka PDF"];
 
   return (
     <article className="overflow-hidden rounded-2xl bg-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] outline outline-2 outline-offset-[-2px] outline-sky-100">
@@ -1892,14 +1892,19 @@ function DesktopJournalResultCard({
                 </li>
               ))}
             </ul>
-            <a
-              href={detail.doiUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-3 inline-flex text-xs font-semibold leading-4 text-sky-700 underline"
-            >
-              Buka tautan DOI
-            </a>
+            <div className="mt-3 flex justify-end">
+              <a
+                href={detail.doiUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-lg bg-sky-50 px-3 py-1.5 text-xs font-semibold leading-4 text-sky-700 outline outline-1 outline-offset-[-1px] outline-sky-200 transition-colors hover:bg-sky-100"
+              >
+                <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M5.5 8.5l3-3M4.8 6.3L3.3 7.8a2.1 2.1 0 003 3l1.5-1.5M9.2 7.7l1.5-1.5a2.1 2.1 0 00-3-3L6.2 4.7" />
+                </svg>
+                Buka tautan DOI
+              </a>
+            </div>
           </div>
         </div>
 
@@ -2040,7 +2045,7 @@ function RingkasanJurnalModal({ open, onClose }: { open: boolean; onClose: () =>
         </div>
 
         <div className="flex shrink-0 items-center justify-between gap-4 border-b border-slate-100 px-6 pb-4 pt-2 md:px-7 md:pb-4 md:pt-6">
-          <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-2xl font-bold leading-9 text-slate-900 md:text-xl md:leading-8">Ringkasan Jurnal</h2>
+          <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-xl font-bold leading-7 text-slate-900 md:text-xl md:leading-8">Ringkasan Jurnal</h2>
           <button
             type="button"
             aria-label="Tutup ringkasan"
@@ -2055,8 +2060,8 @@ function RingkasanJurnalModal({ open, onClose }: { open: boolean; onClose: () =>
 
         <div className="min-h-0 flex-1 overflow-y-auto px-6 py-6 md:max-h-[70vh] md:p-7">
           <div className="flex flex-col gap-2 rounded-2xl border-l-4 border-sky-600 bg-sky-50/70 px-5 py-5 md:gap-1.5 md:rounded-xl md:bg-blue-50 md:pl-5 md:pr-6">
-            <p className="font-['Plus_Jakarta_Sans:Bold'] text-base font-bold leading-6 text-slate-900 md:text-sm md:font-extrabold md:leading-5">Ringkasan utama</p>
-            <p className="font-['Plus_Jakarta_Sans:Regular'] text-[15px] leading-7 text-slate-700 md:text-sm md:font-medium md:leading-5">{mainSummary}</p>
+            <p className="font-['Plus_Jakarta_Sans:Bold'] text-sm font-bold leading-5 text-slate-900 md:text-sm md:font-extrabold md:leading-5">Ringkasan utama</p>
+            <p className="font-['Plus_Jakarta_Sans:Regular'] text-[13px] leading-6 text-slate-700 md:text-sm md:font-medium md:leading-5">{mainSummary}</p>
           </div>
 
           <div className="mt-5 flex flex-col gap-3 md:mt-4 md:grid md:grid-cols-2 md:gap-3">
@@ -2075,7 +2080,7 @@ function RingkasanJurnalModal({ open, onClose }: { open: boolean; onClose: () =>
                     type="button"
                     onClick={() => togglePoint(index)}
                     aria-expanded={isOpen}
-                    className="flex w-full items-center justify-between gap-3 p-5 text-left md:pointer-events-none md:p-0"
+                    className="flex w-full items-center justify-between gap-3 p-4 text-left md:pointer-events-none md:p-0"
                   >
                     <span className="flex min-w-0 items-center gap-3.5 md:gap-2">
                       <span
@@ -2083,11 +2088,11 @@ function RingkasanJurnalModal({ open, onClose }: { open: boolean; onClose: () =>
                           isOpen ? "bg-sky-600 text-white md:bg-sky-100 md:text-sky-700" : "bg-sky-100 text-sky-700"
                         }`}
                       >
-                        <span className="font-['Plus_Jakarta_Sans:Bold'] text-base font-bold leading-6 md:text-xs md:leading-4">{index + 1}</span>
+                        <span className="font-['Plus_Jakarta_Sans:Bold'] text-sm font-bold leading-5 md:text-xs md:leading-4">{index + 1}</span>
                       </span>
                       <span className="min-w-0">
-                        <span className="block font-['Plus_Jakarta_Sans:Bold'] text-lg font-bold leading-6 text-slate-900 md:text-sm md:leading-5">{point.title}</span>
-                        {!isOpen && <span className="mt-0.5 block truncate text-sm leading-5 text-slate-400 md:hidden">{point.hint}</span>}
+                        <span className="block font-['Plus_Jakarta_Sans:Bold'] text-[15px] font-bold leading-5 text-slate-900 md:text-sm md:leading-5">{point.title}</span>
+                        {!isOpen && <span className="mt-0.5 block truncate text-xs leading-4 text-slate-400 md:hidden">{point.hint}</span>}
                       </span>
                     </span>
                     <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full md:hidden ${isOpen ? "bg-sky-50" : ""}`}>
@@ -2107,8 +2112,8 @@ function RingkasanJurnalModal({ open, onClose }: { open: boolean; onClose: () =>
                       </svg>
                     </span>
                   </button>
-                  <div className={`px-5 pb-5 pl-[68px] pr-5 md:block md:px-0 md:pb-0 md:pl-7 ${isOpen ? "block" : "hidden"}`}>
-                    <p className="font-['Plus_Jakarta_Sans:Regular'] text-[15px] leading-7 text-slate-600 md:text-xs md:font-medium md:leading-5">{point.desc}</p>
+                  <div className={`px-4 pb-4 pl-[60px] pr-4 md:block md:px-0 md:pb-0 md:pl-7 ${isOpen ? "block" : "hidden"}`}>
+                    <p className="font-['Plus_Jakarta_Sans:Regular'] text-[13px] leading-6 text-slate-600 md:text-xs md:font-medium md:leading-5">{point.desc}</p>
                   </div>
                 </div>
               );
@@ -2116,7 +2121,7 @@ function RingkasanJurnalModal({ open, onClose }: { open: boolean; onClose: () =>
           </div>
 
           <div className="mt-5 rounded-2xl bg-slate-100/90 px-5 py-4 md:hidden">
-            <p className="text-center text-[13px] font-semibold leading-6 text-slate-500">
+            <p className="text-center text-xs font-semibold leading-5 text-slate-500">
               <span className="text-slate-700">Catatan:</span> Ringkasan Alerin membantu memahami isi secara cepat, namun tetap disarankan memverifikasi kutipan langsung dari manuskrip asli.
             </p>
           </div>
@@ -5620,14 +5625,19 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                             </span>
                           </div>
                         ))}
-                        <a
-                          href="https://doi.org/10.20886/jpkf.2022.6.1.16-28"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="mt-1 inline-flex text-[13px] font-semibold leading-5 text-sky-700 underline"
-                        >
-                          Buka tautan DOI
-                        </a>
+                        <div className="mt-3 flex justify-end">
+                          <a
+                            href="https://doi.org/10.20886/jpkf.2022.6.1.16-28"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 rounded-lg bg-white px-3 py-1.5 text-[13px] font-semibold leading-5 text-sky-700 outline outline-1 outline-offset-[-1px] outline-sky-200"
+                          >
+                            <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                              <path d="M5.5 8.5l3-3M4.8 6.3L3.3 7.8a2.1 2.1 0 003 3l1.5-1.5M9.2 7.7l1.5-1.5a2.1 2.1 0 00-3-3L6.2 4.7" />
+                            </svg>
+                            Buka tautan DOI
+                          </a>
+                        </div>
                       </div>
 
                       <div className="mt-4 rounded-2xl bg-sky-50 p-4">
@@ -5659,6 +5669,12 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                             <path d="M3.5 1.5h7v11L7 9.5l-3.5 3z" />
                           </svg>
                           {savedIds.includes(result.id) ? "Tersimpan" : "Simpan"}
+                        </button>
+                        <button type="button" onClick={() => setSitasiOpen(true)} className="flex items-center justify-center gap-1.5 rounded-2xl bg-slate-100 px-2 py-2.5 text-xs font-medium text-slate-900">
+                          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" strokeLinecap="round" aria-hidden="true">
+                            <path d="M2 2.5h10v7H6l-3 2.5V9.5H2z" />
+                          </svg>
+                          Sitasi
                         </button>
                         <button type="button" onClick={() => setAbstrakOpen(true)} className="flex items-center justify-center gap-1.5 rounded-2xl bg-slate-100 px-2 py-2.5 text-xs font-medium text-slate-900">
                           <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" strokeLinecap="round" aria-hidden="true">
