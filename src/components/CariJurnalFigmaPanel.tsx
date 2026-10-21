@@ -2292,17 +2292,17 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
         aria-label="Tabel penelitian terdahulu"
         onClick={event => event.stopPropagation()}
         className={`absolute inset-x-0 bottom-0 flex w-full flex-col overflow-hidden bg-white shadow-2xl ${
-          fullTable ? "top-0 h-[100dvh] max-h-none rounded-none" : "max-h-[93dvh] rounded-t-[43.42px]"
+          fullTable ? "top-0 h-[100dvh] max-h-none rounded-none" : "h-[94dvh] max-h-[97dvh] rounded-t-[43.42px]"
         } md:inset-auto md:left-1/2 md:top-1/2 md:h-auto md:max-h-[calc(100vh-48px)] md:w-[1140px] md:max-w-[calc(100vw-32px)] md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-3xl md:outline md:outline-1 md:outline-offset-[-1px] md:outline-slate-100`}
       >
         <div className={`flex shrink-0 justify-center pb-1.5 pt-5 md:hidden ${fullTable ? "hidden" : ""}`}>
           <span className="h-1.5 w-16 rounded-full bg-slate-300" aria-hidden="true" />
         </div>
 
-        <div className="flex shrink-0 items-start justify-between gap-4 border-b border-slate-100 pb-5 pl-10 pr-7 pt-3 md:border-b-0 md:px-8 md:pb-4 md:pt-7">
+        <div className="flex shrink-0 items-start justify-between gap-3 border-b border-slate-100 pb-4 pl-6 pr-5 pt-2 md:border-b-0 md:gap-4 md:px-8 md:pb-4 md:pt-7">
           <div>
-            <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-2xl font-bold leading-8 text-slate-900">Tabel penelitian terdahulu</h2>
-            <p className="font-['Plus_Jakarta_Sans:Regular'] pt-1 text-sm font-normal leading-5 text-slate-500">
+            <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-xl font-bold leading-7 text-slate-900 md:text-2xl md:leading-8">Tabel penelitian terdahulu</h2>
+            <p className="font-['Plus_Jakarta_Sans:Regular'] pt-1 text-xs font-normal leading-5 text-slate-500 md:text-sm">
               Perbandingan jurnal yang direkomendasikan Alerin berdasarkan topik penelitianmu
             </p>
           </div>
@@ -2318,7 +2318,7 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
           </button>
         </div>
 
-        <div className={`flex flex-col gap-4 px-6 py-5 md:px-8 md:py-4 ${fullTable ? "min-h-0 flex-1 overflow-y-auto" : "overflow-y-auto"}`}>
+        <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-6 py-5 md:px-8 md:py-4">
           <div className="hidden rounded-xl bg-sky-50 px-4 py-3.5 outline outline-1 outline-offset-[-1px] outline-blue-100 md:block">
             <p className="font-['Plus_Jakarta_Sans:Medium'] text-sm font-medium leading-5 text-cyan-900">
               Gunakan kolom &ldquo;Persamaan dan perbedaan&rdquo; untuk menyusun kebaruan penelitian. Selalu cek paper asli sebelum memasukkan tabel
@@ -2350,14 +2350,14 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
             </div>
           </div>
 
-          <div className="rounded-3xl outline outline-1 outline-offset-[-1px] outline-slate-200/80 md:rounded-2xl">
-            <table className="w-full table-fixed border-collapse text-left">
+          <div className="overflow-x-auto rounded-3xl outline outline-1 outline-offset-[-1px] outline-slate-200/80 md:rounded-2xl">
+            <table className="w-[720px] table-fixed border-collapse text-left md:w-full">
               <thead>
                 <tr className="bg-slate-50/90">
                   {headers.map((header, index) => (
                     <th
                       key={header}
-                      className={`${columnWidths[index]} border-b border-slate-200/90 bg-slate-50/90 px-2 py-3 text-[10px] font-bold leading-4 text-slate-600 md:px-3 md:text-xs md:leading-5 ${
+                      className={`${columnWidths[index]} border-b border-slate-200/90 bg-slate-50/90 px-2 py-3 text-[11px] font-bold leading-4 text-slate-600 md:px-3 md:text-xs md:leading-5 ${
                         header === "Persamaan dan perbedaan" ? "bg-amber-50/40 text-amber-900" : ""
                       }`}
                     >
@@ -2369,15 +2369,15 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
               <tbody>
                 {tableRows.map((row, index) => (
                   <tr key={row.study} className={index === 0 ? "" : "border-t border-slate-100"}>
-                    <td className="px-2 py-3 align-top text-[10px] font-bold leading-4 text-slate-800 md:px-3 md:text-xs md:leading-5">{index + 1}</td>
+                    <td className="px-2 py-3 align-top text-[11px] font-bold leading-4 text-slate-800 md:px-3 md:text-xs md:leading-5">{index + 1}</td>
                     <td className="px-2 py-3 align-top md:px-3">
                       <p className="text-[10px] font-bold leading-4 text-slate-900 md:text-xs md:leading-5">{row.study}</p>
-                      <p className="pt-1 text-[9px] font-normal leading-3 text-slate-500 md:text-[11px] md:leading-4">{row.subtitle}</p>
+                      <p className="pt-1 text-[10px] font-normal leading-4 text-slate-500 md:text-[11px] md:leading-4">{row.subtitle}</p>
                     </td>
-                    <td className="px-2 py-3 align-top text-[10px] font-normal leading-4 text-slate-700 md:px-3 md:text-xs md:leading-5">{row.variabel}</td>
-                    <td className="px-2 py-3 align-top text-[10px] font-normal leading-4 text-slate-700 md:px-3 md:text-xs md:leading-5">{row.metode}</td>
-                    <td className="px-2 py-3 align-top text-[10px] font-normal leading-4 text-slate-700 md:px-3 md:text-xs md:leading-5">{row.hasil}</td>
-                    <td className="bg-amber-50/40 px-2 py-3 align-top text-[10px] font-normal leading-4 text-slate-700 md:px-3 md:text-xs md:leading-5">{row.perbedaan}</td>
+                    <td className="px-2 py-3 align-top text-[11px] font-normal leading-5 text-slate-700 md:px-3 md:text-xs md:leading-5">{row.variabel}</td>
+                    <td className="px-2 py-3 align-top text-[11px] font-normal leading-5 text-slate-700 md:px-3 md:text-xs md:leading-5">{row.metode}</td>
+                    <td className="px-2 py-3 align-top text-[11px] font-normal leading-5 text-slate-700 md:px-3 md:text-xs md:leading-5">{row.hasil}</td>
+                    <td className="bg-amber-50/40 px-2 py-3 align-top text-[11px] font-normal leading-5 text-slate-700 md:px-3 md:text-xs md:leading-5">{row.perbedaan}</td>
                   </tr>
                 ))}
               </tbody>
@@ -2385,12 +2385,11 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
           </div>
         </div>
 
-        <div className="shrink-0 border-t border-slate-100 bg-white px-6 pb-6 pt-5 md:flex md:items-center md:justify-end md:gap-3 md:px-8 md:py-6">
-          <div className="flex gap-3">
+        <div className="flex shrink-0 items-center gap-3 border-t border-slate-100 bg-white px-5 pb-5 pt-4 md:justify-end md:px-8 md:py-6">
             <button
               type="button"
               onClick={copyTable}
-              className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-white px-4 py-3.5 text-sm font-semibold leading-5 text-slate-700 outline outline-1 outline-offset-[-1px] outline-slate-200 transition-colors hover:bg-slate-50 md:flex-none md:rounded-xl md:px-5 md:py-2.5"
+              className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-white px-4 py-3.5 text-sm font-semibold leading-5 text-slate-700 outline outline-1 outline-offset-[-1px] outline-slate-200 transition-colors hover:bg-slate-50 md:order-1 md:flex-none md:rounded-xl md:px-5 md:py-2.5"
             >
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <rect x="5.5" y="5.5" width="8" height="8" rx="1.5" />
@@ -2398,14 +2397,13 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
               </svg>
               Salin tabel
             </button>
-          </div>
-          <button
-            type="button"
-            onClick={closeTable}
-            className="mt-3 w-full rounded-2xl bg-sky-700 py-4 text-sm font-bold leading-5 text-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] transition-colors hover:bg-sky-800 md:mt-0 md:w-auto md:rounded-xl md:px-7 md:py-2.5 md:text-sm md:font-semibold"
-          >
-            Selesai
-          </button>
+            <button
+              type="button"
+              onClick={closeTable}
+              className="flex-1 rounded-2xl bg-sky-700 py-4 text-sm font-bold leading-5 text-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] transition-colors hover:bg-sky-800 md:order-2 md:w-auto md:flex-none md:rounded-xl md:px-7 md:py-2.5 md:text-sm md:font-semibold"
+            >
+              Selesai
+            </button>
         </div>
       </div>
     </div>
