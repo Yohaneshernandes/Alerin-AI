@@ -6602,9 +6602,11 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                       <button
                         type="button"
                         onClick={() => setHapusJournalId(journal.id)}
-                        className="flex items-center gap-1.5 rounded-lg bg-[#ffdad6] px-3 text-xs font-medium text-[#93000a]"
+                        className="flex shrink-0 items-center gap-1.5 rounded-lg bg-white px-3 text-xs font-medium text-[#bd3434] outline outline-1 outline-offset-[-1px] outline-rose-200 transition-colors hover:bg-rose-50"
                       >
-                        <img src="/assets/jurnal-design/collection-mobile/29816.svg" alt="" className="max-w-none origin-center scale-[0.65]" />
+                        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                          <path d="M2.5 4.5h11M6 4.5V3h4v1.5M4 4.5l.7 9h6.6l.7-9" />
+                        </svg>
                         Hapus
                       </button>
                     </div>
