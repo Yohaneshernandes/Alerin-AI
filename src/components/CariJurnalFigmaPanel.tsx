@@ -4305,6 +4305,7 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
   const [fullscreen, setFullscreen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const [analysisOpen, setAnalysisOpen] = useState<number | null>(null);
+  const [integratedOpen, setIntegratedOpen] = useState(false);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [dragging, setDragging] = useState(false);
   const graphRef = useRef<HTMLDivElement | null>(null);
@@ -5292,6 +5293,110 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
             );
           })}
         </div>
+      </section>
+
+      <section className="rounded-2xl bg-white p-6 shadow-sm">
+        <button
+          type="button"
+          onClick={() => setIntegratedOpen(value => !value)}
+          aria-expanded={integratedOpen}
+          className="flex w-full items-center justify-between gap-4 text-left"
+        >
+          <span className="min-w-0">
+            <span className="flex flex-wrap items-center gap-2">
+              <span className="text-lg font-semibold leading-7 text-slate-900">Analisis Terpadu Peta Penelitian</span>
+              <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-[11px] font-semibold text-slate-600">Statis</span>
+            </span>
+            <span className="mt-1 block text-sm leading-5 text-slate-500">
+              Gabungan temuan Peta Jaringan, Kepadatan, dan Perkembangan.
+            </span>
+          </span>
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 14 14"
+            fill="none"
+            stroke="#0369a1"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+            className={`shrink-0 transition-transform ${integratedOpen ? "rotate-90" : ""}`}
+          >
+            <path d="M5 2.5L9.5 7 5 11.5" />
+          </svg>
+        </button>
+
+        {integratedOpen && (
+          <div className="mt-5 space-y-6 border-t border-slate-100 pt-5">
+            <div>
+              <h3 className="text-base font-bold leading-6 text-slate-900">1. Hubungan antartopik penelitian</h3>
+              <p className="mt-2 text-sm leading-7 text-slate-600">
+                Peta Jaringan menunjukkan bahwa AI Literacy memiliki keterhubungan dengan berbagai topik pembelajaran, termasuk Learning Motivation, Critical Thinking, dan Student Engagement.
+              </p>
+              <p className="mt-2 text-sm leading-7 text-slate-600">
+                Hal ini menunjukkan adanya keterkaitan tematik dalam artikel yang dianalisis, tetapi belum membuktikan hubungan sebab-akibat di antara variabel tersebut.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-base font-bold leading-6 text-slate-900">2. Konsentrasi penelitian</h3>
+              <p className="mt-2 text-sm leading-7 text-slate-600">
+                Peta Kepadatan menunjukkan bahwa AI Literacy dan Learning Motivation berada pada area dengan konsentrasi relatif tinggi.
+              </p>
+              <p className="mt-2 text-sm leading-7 text-slate-600">
+                Kondisi ini mengindikasikan bahwa kedua topik memiliki posisi menonjol dalam kumpulan literatur, sedangkan beberapa topik lain berada pada area dengan konsentrasi lebih rendah.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-base font-bold leading-6 text-slate-900">3. Perkembangan publikasi</h3>
+              <p className="mt-2 text-sm leading-7 text-slate-600">
+                Peta Perkembangan menunjukkan bahwa Generative AI memiliki rata-rata tahun publikasi yang lebih baru dibandingkan Learning Motivation dan beberapa topik pembelajaran lainnya.
+              </p>
+              <p className="mt-2 text-sm leading-7 text-slate-600">
+                Perbedaan ini dapat menjadi petunjuk untuk menelusuri pembahasan AI yang lebih baru dalam konteks pendidikan, meskipun belum cukup untuk menyimpulkan adanya peningkatan tren penelitian.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-base font-bold leading-6 text-slate-900">4. Potensi arah penelitian</h3>
+              <p className="mt-2 text-sm leading-7 text-slate-600">
+                Berdasarkan gabungan ketiga peta, beberapa hubungan yang layak ditelusuri lebih lanjut dalam contoh simulasi adalah:
+              </p>
+              <ul className="mt-2 space-y-1.5 text-sm leading-6 text-slate-600">
+                <li className="flex items-start gap-2">
+                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-sky-600" />
+                  AI Literacy dan Learning Motivation.
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-sky-600" />
+                  Generative AI dan Self-Regulated Learning.
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-sky-600" />
+                  AI Literacy dan Critical Thinking.
+                </li>
+              </ul>
+              <p className="mt-3 text-sm leading-7 text-slate-600">
+                Ketiga hubungan tersebut merupakan arah eksplorasi, bukan research gap yang telah tervalidasi. Pemeriksaan artikel pendukung diperlukan untuk mengetahui temuan, metode, keterbatasan, dan pertanyaan yang belum terjawab.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-base font-bold leading-6 text-slate-900">5. Kesimpulan Gabungan Alerin</h3>
+              <p className="mt-2 text-sm leading-7 text-slate-600">
+                Berdasarkan simulasi 100 artikel ilmiah, AI Literacy dan Learning Motivation memiliki keterkaitan yang menonjol dalam jaringan penelitian serta berada pada area dengan konsentrasi relatif tinggi.
+              </p>
+              <p className="mt-2 text-sm leading-7 text-slate-600">
+                Sementara itu, Generative AI memiliki rata-rata tahun publikasi yang relatif lebih baru, sehingga dapat menjadi salah satu topik untuk ditelusuri dalam kaitannya dengan motivasi dan proses pembelajaran mahasiswa.
+              </p>
+              <p className="mt-2 text-sm leading-7 text-slate-600">
+                Secara keseluruhan, ketiga peta memberikan gambaran mengenai hubungan, konsentrasi, dan perbedaan waktu publikasi. Hasil ini dapat membantu menentukan fokus penelusuran literatur berikutnya, tetapi belum cukup untuk memastikan kebaruan penelitian atau menetapkan research gap.
+              </p>
+            </div>
+          </div>
+        )}
       </section>
 
       <p className="text-center text-xs text-slate-400">Kata kunci pencarian: {query.trim() || "resiliensi perempuan pasca bencana"}</p>
