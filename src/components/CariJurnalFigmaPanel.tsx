@@ -2351,13 +2351,13 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
           </div>
 
           <div className="overflow-x-auto rounded-3xl outline outline-1 outline-offset-[-1px] outline-slate-200/80 md:rounded-2xl">
-            <table className="w-[720px] table-fixed border-collapse text-left md:w-full">
+            <table className="w-[760px] table-fixed border-collapse text-left md:w-full">
               <thead>
                 <tr className="bg-slate-50/90">
                   {headers.map((header, index) => (
                     <th
                       key={header}
-                      className={`${columnWidths[index]} border-b border-slate-200/90 bg-slate-50/90 px-2 py-3 text-[11px] font-bold leading-4 text-slate-600 md:px-3 md:text-xs md:leading-5 ${
+                      className={`${columnWidths[index]} border-b border-slate-200/90 bg-slate-50/90 px-2 py-3 text-[12px] font-bold leading-5 text-slate-600 md:px-3 md:text-xs md:leading-5 ${
                         header === "Persamaan dan perbedaan" ? "bg-amber-50/40 text-amber-900" : ""
                       }`}
                     >
@@ -2369,15 +2369,15 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
               <tbody>
                 {tableRows.map((row, index) => (
                   <tr key={row.study} className={index === 0 ? "" : "border-t border-slate-100"}>
-                    <td className="px-2 py-3 align-top text-[11px] font-bold leading-4 text-slate-800 md:px-3 md:text-xs md:leading-5">{index + 1}</td>
+                    <td className="px-2 py-3 align-top text-[12px] font-bold leading-5 text-slate-800 md:px-3 md:text-xs md:leading-5">{index + 1}</td>
                     <td className="px-2 py-3 align-top md:px-3">
-                      <p className="text-[10px] font-bold leading-4 text-slate-900 md:text-xs md:leading-5">{row.study}</p>
-                      <p className="pt-1 text-[10px] font-normal leading-4 text-slate-500 md:text-[11px] md:leading-4">{row.subtitle}</p>
+                      <p className="text-[13px] font-bold leading-5 text-slate-900 md:text-xs md:leading-5">{row.study}</p>
+                      <p className="pt-1 text-[11px] font-normal leading-4 text-slate-500 md:text-[11px] md:leading-4">{row.subtitle}</p>
                     </td>
-                    <td className="px-2 py-3 align-top text-[11px] font-normal leading-5 text-slate-700 md:px-3 md:text-xs md:leading-5">{row.variabel}</td>
-                    <td className="px-2 py-3 align-top text-[11px] font-normal leading-5 text-slate-700 md:px-3 md:text-xs md:leading-5">{row.metode}</td>
-                    <td className="px-2 py-3 align-top text-[11px] font-normal leading-5 text-slate-700 md:px-3 md:text-xs md:leading-5">{row.hasil}</td>
-                    <td className="bg-amber-50/40 px-2 py-3 align-top text-[11px] font-normal leading-5 text-slate-700 md:px-3 md:text-xs md:leading-5">{row.perbedaan}</td>
+                    <td className="px-2 py-3 align-top text-[12px] font-normal leading-5 text-slate-700 md:px-3 md:text-xs md:leading-5">{row.variabel}</td>
+                    <td className="px-2 py-3 align-top text-[12px] font-normal leading-5 text-slate-700 md:px-3 md:text-xs md:leading-5">{row.metode}</td>
+                    <td className="px-2 py-3 align-top text-[12px] font-normal leading-5 text-slate-700 md:px-3 md:text-xs md:leading-5">{row.hasil}</td>
+                    <td className="bg-amber-50/40 px-2 py-3 align-top text-[12px] font-normal leading-5 text-slate-700 md:px-3 md:text-xs md:leading-5">{row.perbedaan}</td>
                   </tr>
                 ))}
               </tbody>
