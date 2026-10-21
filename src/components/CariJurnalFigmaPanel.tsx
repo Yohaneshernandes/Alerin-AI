@@ -4622,7 +4622,7 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
                 <div
                   role="dialog"
                   aria-label="Cara membaca peta"
-                  className="absolute right-0 top-full z-30 mt-2 w-[340px] rounded-xl border border-slate-200 bg-white p-4 shadow-[0_16px_40px_rgba(15,23,42,0.16)]"
+                  className="absolute right-0 top-full z-30 mt-2 max-h-[70vh] w-[340px] overflow-y-auto rounded-xl border border-slate-200 bg-white p-4 shadow-[0_16px_40px_rgba(15,23,42,0.16)]"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <p className="text-sm font-bold leading-5 text-slate-900">Cara Membaca Peta</p>
@@ -4637,9 +4637,61 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
                       </svg>
                     </button>
                   </div>
-                  <p className="mt-2 text-xs leading-5 text-slate-600">
-                    Lingkaran menunjukkan kata kunci penelitian. Semakin besar lingkaran, semakin sering kata kunci tersebut muncul. Garis menunjukkan keterkaitan antar topik, sedangkan warna menunjukkan kelompok penelitian dengan tema yang berhubungan.
-                  </p>
+                  {mode === "jaringan" && (
+                    <p className="mt-2 text-xs leading-5 text-slate-600">
+                      Lingkaran menunjukkan kata kunci penelitian. Semakin besar lingkaran, semakin sering kata kunci tersebut muncul. Garis menunjukkan keterkaitan antar topik, sedangkan warna menunjukkan kelompok penelitian dengan tema yang berhubungan.
+                    </p>
+                  )}
+
+                  {mode === "kepadatan" && (
+                    <>
+                      <p className="mt-2 text-xs leading-5 text-slate-600">
+                        Peta Kepadatan menunjukkan konsentrasi topik dalam kumpulan artikel yang dianalisis melalui perbedaan warna.
+                      </p>
+                      <div className="mt-3 space-y-2 rounded-lg bg-slate-50 p-3">
+                        {[
+                          ["#dc2626", "Merah", "Kepadatan sangat tinggi"],
+                          ["#eab308", "Kuning", "Kepadatan tinggi"],
+                          ["#22c55e", "Hijau", "Kepadatan sedang"],
+                          ["#2563eb", "Biru", "Kepadatan rendah"],
+                        ].map(([color, name, label]) => (
+                          <div key={name} className="flex items-center gap-2.5 text-xs leading-5">
+                            <span className="h-4 w-4 shrink-0 rounded-[4px]" style={{ background: color }} />
+                            <span className="w-14 shrink-0 font-semibold text-slate-800">{name}</span>
+                            <span className="text-slate-600">{label}</span>
+                          </div>
+                        ))}
+                      </div>
+                      <p className="mt-3 text-xs leading-5 text-slate-600">
+                        Semakin hangat warna pada suatu area, semakin tinggi konsentrasi item berbobot di sekitarnya. Warna tidak menunjukkan kualitas penelitian ataupun secara langsung membuktikan adanya research gap.
+                      </p>
+                    </>
+                  )}
+
+                  {mode === "perkembangan" && (
+                    <>
+                      <p className="mt-2 text-xs leading-5 text-slate-600">
+                        Peta Perkembangan membantu kamu melihat perbedaan periode publikasi pada setiap topik penelitian.
+                      </p>
+                      <ul className="mt-3 space-y-2 text-xs leading-5 text-slate-600">
+                        <li>
+                          <span className="font-semibold text-slate-800">Warna:</span> menggambarkan rata-rata tahun publikasi artikel yang berkaitan dengan suatu topik, sesuai legenda waktu pada peta.
+                        </li>
+                        <li>
+                          <span className="font-semibold text-slate-800">Lingkaran:</span> menunjukkan topik yang dianalisis.
+                        </li>
+                        <li>
+                          <span className="font-semibold text-slate-800">Garis:</span> menunjukkan hubungan antar topik berdasarkan metode jaringan yang digunakan.
+                        </li>
+                        <li>
+                          <span className="font-semibold text-slate-800">Angka tahun:</span> menunjukkan rata-rata tahun publikasi, bukan tahun pertama kali topik tersebut diteliti.
+                        </li>
+                      </ul>
+                      <p className="mt-3 text-xs leading-5 text-slate-600">
+                        Topik dengan rata-rata tahun lebih baru tidak otomatis sedang mengalami peningkatan popularitas. Untuk mengetahui tren pertumbuhan, diperlukan data jumlah publikasi per tahun.
+                      </p>
+                    </>
+                  )}
                 </div>
               </>
             )}
