@@ -3297,7 +3297,7 @@ function DesktopLiteratureReview({ query, onBack, onOpenSitasi }: { query: strin
             <h2 className="text-lg font-bold leading-7 text-slate-900">Artikel prioritas untuk ditinjau</h2>
             <p className="mt-0.5 text-sm leading-5 text-slate-500">Berikut adalah artikel dengan relevansi tertinggi untuk topik Anda.</p>
           </div>
-          <label className="flex h-10 w-72 shrink-0 items-center gap-2 rounded-xl bg-slate-50 px-3">
+          <label className="flex h-10 w-full shrink-0 items-center gap-2 rounded-xl bg-slate-50 px-3 md:w-72">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#94a3b8" strokeWidth="1.6" strokeLinecap="round" aria-hidden="true">
               <circle cx="6" cy="6" r="4.5" />
               <path d="M9.5 9.5L13 13" />
@@ -4593,18 +4593,18 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
   ];
 
   return (
-    <div className="mx-auto hidden max-w-[1160px] flex-col gap-5 pb-8 md:flex">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-extrabold leading-8 text-slate-900">Peta Penelitian</h1>
-          <p className="mt-1.5 text-xs leading-5 text-slate-500">
+    <div className="mx-auto flex w-full max-w-[1160px] flex-col gap-4 pb-10 md:gap-5 md:pb-8">
+      <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between md:gap-4">
+        <div className="min-w-0">
+          <h1 className="text-xl font-extrabold leading-7 text-slate-900 md:text-2xl md:leading-8">Peta Penelitian</h1>
+          <p className="mt-1 text-xs leading-5 text-slate-500 md:mt-1.5">
             Jelajahi peta topik dari {priorityRows.length} publikasi, lalu geser slider untuk melihat jaringan, kepadatan sitasi, dan perkembangan tahun terbitnya.
           </p>
         </div>
         <button
           type="button"
           onClick={onBack}
-          className="flex shrink-0 items-center gap-2 rounded-[9.88px] bg-sky-700 px-5 py-2.5 text-sm font-bold leading-5 text-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]"
+          className="flex shrink-0 items-center justify-center gap-2 self-start rounded-[9.88px] bg-sky-700 px-4 py-2.5 text-sm font-bold leading-5 text-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] md:px-5"
         >
           <svg width="14" height="12" viewBox="0 0 14 12" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M12 6H2M5.5 2.5L2 6l3.5 3.5" />
@@ -4613,7 +4613,7 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
         </button>
       </div>
 
-      <section className="rounded-2xl bg-white p-6 shadow-sm">
+      <section className="rounded-2xl bg-white p-4 shadow-sm md:p-6">
         <div className="flex flex-wrap items-center gap-2">
           <div className="flex rounded-lg bg-slate-100 p-1">
             {tabs.map(tab => (
@@ -4713,7 +4713,7 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
                 <div
                   role="dialog"
                   aria-label="Cara membaca peta"
-                  className="absolute right-0 top-full z-30 mt-2 max-h-[70vh] w-[340px] overflow-y-auto rounded-xl border border-slate-200 bg-white p-4 shadow-[0_16px_40px_rgba(15,23,42,0.16)]"
+                  className="absolute right-0 top-full z-30 mt-2 max-h-[70vh] w-[min(340px,calc(100vw-2.5rem))] overflow-y-auto rounded-xl border border-slate-200 bg-white p-4 shadow-[0_16px_40px_rgba(15,23,42,0.16)]"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <p className="text-sm font-bold leading-5 text-slate-900">Cara Membaca Peta</p>
@@ -4797,7 +4797,7 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
               : "mt-4 overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04)]"
           }
         >
-          <div className="flex items-start justify-between gap-4 px-5 pt-5 md:px-6">
+          <div className="flex items-start justify-between gap-3 px-4 pt-4 md:gap-4 md:px-6 md:pt-5">
             <div className="flex items-start gap-3">
               <span className="mt-0.5 shrink-0">{modeIcon}</span>
               <div>
@@ -4824,7 +4824,7 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
             </button>
           </div>
 
-          <div className={`flex gap-4 px-5 pb-2 pt-4 md:px-6 ${fullscreen ? "min-h-0 flex-1" : ""}`}>
+          <div className={`flex gap-4 px-4 pb-2 pt-3 md:px-6 md:pt-4 ${fullscreen ? "min-h-0 flex-1" : ""}`}>
             <div
               ref={graphRef}
               onPointerDown={handleMapPointerDown}
@@ -4834,7 +4834,7 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
               onDoubleClick={resetMapView}
               className={`relative min-w-0 flex-1 touch-none select-none overflow-hidden rounded-xl ${
                 dragging ? "cursor-grabbing" : "cursor-grab"
-              } ${fullscreen ? "" : "h-[430px]"} ${
+              } ${fullscreen ? "" : "h-[300px] md:h-[430px]"} ${
                 mode === "kepadatan"
                   ? "bg-[radial-gradient(circle_at_48%_45%,#1d4ed8_0%,#0b3bb8_55%,#072a8c_100%)]"
                   : "bg-[radial-gradient(circle_at_50%_35%,#f8fbff_0%,#ffffff_65%)]"
@@ -5109,7 +5109,7 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
       </section>
 
       <section className="rounded-2xl bg-white outline outline-1 outline-offset-[-1px] outline-slate-200/90">
-        <div className="flex items-start justify-between gap-4 border-b border-slate-200/70 p-7">
+        <div className="flex flex-col gap-3 border-b border-slate-200/70 p-4 md:flex-row md:items-start md:justify-between md:gap-4 md:p-7">
           <div className="flex items-start gap-3">
             <span className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded bg-sky-700">
               <svg width="12" height="13" viewBox="0 0 12 13" fill="none" aria-hidden="true">
@@ -5136,7 +5136,7 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
           </label>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 border-b border-slate-200/70 px-7 py-3.5">
+        <div className="flex flex-wrap items-center gap-2 border-b border-slate-200/70 px-4 py-3 md:px-7 md:py-3.5">
           {filterChips.map(item => (
             <button
               key={item.key}
@@ -5163,7 +5163,7 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
           )}
         </div>
 
-        <div className="max-h-[430px] overflow-auto">
+        <div className="hidden max-h-[430px] overflow-auto md:block">
           <table className="w-full min-w-[860px] border-collapse text-left">
             <thead className="sticky top-0 z-10 bg-slate-50">
               <tr className="bg-slate-50/60">
@@ -5242,9 +5242,43 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
             </tbody>
           </table>
         </div>
+
+        <div className="md:hidden">
+          {visibleRows.length === 0 && (
+            <p className="px-4 py-8 text-center text-sm text-slate-400">Tidak ada artikel yang cocok dengan pencarianmu.</p>
+          )}
+          {visibleRows.map(({ row }) => (
+            <div key={row.title} className="border-t border-slate-100 px-4 py-3">
+              <p className="text-sm font-semibold leading-5 text-slate-800">{row.title}</p>
+              <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-2">
+                <span className="text-xs font-medium text-slate-600">{row.year}</span>
+                <span
+                  className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-semibold ${
+                    row.tag === "Sangat relevan"
+                      ? "bg-emerald-50 text-emerald-700 outline outline-1 outline-emerald-200/60"
+                      : row.tag === "Cukup relevan"
+                        ? "bg-blue-50 text-blue-700 outline outline-1 outline-blue-200/60"
+                        : "bg-amber-50 text-amber-700 outline outline-1 outline-amber-200/60"
+                  }`}
+                >
+                  <span
+                    className={`h-1.5 w-1.5 rounded-full ${
+                      row.tag === "Sangat relevan" ? "bg-emerald-500" : row.tag === "Cukup relevan" ? "bg-blue-500" : "bg-amber-500"
+                    }`}
+                  />
+                  {row.tag}
+                </span>
+                <span className="flex min-w-0 items-center gap-1.5">
+                  <img src={sourceLogos[row.source] ?? "/assets/source-logos/openalex.svg"} alt="" className="h-4 w-4 shrink-0 object-contain" />
+                  <span className="truncate text-xs text-slate-600">{row.source}</span>
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
       </section>
 
-      <section className="rounded-2xl bg-white p-6 shadow-sm">
+      <section className="rounded-2xl bg-white p-4 shadow-sm md:p-6">
         <div>
           <h2 className="text-lg font-semibold leading-7 text-slate-900">Hasil Analisis Alerin</h2>
           <p className="mt-1 text-sm leading-5 text-slate-500">
@@ -5315,7 +5349,7 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
         </div>
       </section>
 
-      <section className="rounded-2xl bg-white p-6 shadow-sm">
+      <section className="rounded-2xl bg-white p-4 shadow-sm md:p-6">
         <button
           type="button"
           onClick={() => setIntegratedOpen(value => !value)}
@@ -5667,22 +5701,34 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
           {mobileSearchStage === "results" && view === "home" && (
             <div onScroll={handleMobileScroll} className={`fixed inset-x-0 top-[65px] z-[305] overflow-y-auto overflow-x-hidden bg-[#f4f7fb] px-4 pt-4 transition-[bottom] duration-300 ease-out md:hidden ${mobileNavHidden ? "bottom-0 pb-16" : "bottom-[68px] pb-6"}`}>
               <div className="mx-auto max-w-md">
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    aria-label="Kembali ke pencarian"
-                    onClick={() => {
-                      setMobileSearchStage("home");
-                      setSearchType("");
-                    }}
-                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white shadow-sm"
-                  >
-                    <img src="/assets/jurnal-design/search-flow/19ff4.svg" alt="" />
-                  </button>
-                  <h1 className="font-['Plus_Jakarta_Sans:Bold'] text-base font-bold tracking-[-0.4px]">Rekomendasi yang paling relevan</h1>
-                </div>
+                {searchType !== "map" && (
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      aria-label="Kembali ke pencarian"
+                      onClick={() => {
+                        setMobileSearchStage("home");
+                        setSearchType("");
+                      }}
+                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white shadow-sm"
+                    >
+                      <img src="/assets/jurnal-design/search-flow/19ff4.svg" alt="" />
+                    </button>
+                    <h1 className="font-['Plus_Jakarta_Sans:Bold'] text-base font-bold tracking-[-0.4px]">Rekomendasi yang paling relevan</h1>
+                  </div>
+                )}
 
-                {searchType === "review" ? (
+                {searchType === "map" ? (
+                  <div className="mt-1">
+                    <DesktopResearchMap
+                      query={query}
+                      onBack={() => {
+                        setMobileSearchStage("home");
+                        setSearchType("");
+                      }}
+                    />
+                  </div>
+                ) : searchType === "review" ? (
                   <div className="mt-5">
                     <MobileLiteratureReview />
                   </div>
