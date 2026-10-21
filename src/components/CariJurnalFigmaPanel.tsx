@@ -2597,24 +2597,28 @@ function AbstrakJurnalModal({ open, onClose }: { open: boolean; onClose: () => v
   };
 
   return (
-    <div className="fixed inset-0 z-[340] flex items-center justify-center bg-black/25 p-4 backdrop-blur-[2.55px]" onClick={onClose} role="presentation">
+    <div className="fixed inset-0 z-[340] flex items-end justify-center bg-black/30 backdrop-blur-[2px] md:items-center md:p-4" onClick={onClose} role="presentation">
       <div
         role="dialog"
         aria-modal="true"
         aria-label="Abstrak jurnal"
         onClick={event => event.stopPropagation()}
-        className="flex max-h-[calc(100vh-32px)] w-[749px] max-w-full flex-col overflow-hidden rounded-3xl bg-white shadow-[0px_26.75px_53.5px_-12.84px_rgba(0,0,0,0.25)] outline outline-1 outline-offset-[-1px] outline-slate-100"
+        className="flex max-h-[92dvh] w-full flex-col overflow-hidden rounded-t-[28px] bg-white pb-[env(safe-area-inset-bottom)] shadow-[0px_26.75px_53.5px_-12.84px_rgba(0,0,0,0.25)] md:max-h-[calc(100vh-32px)] md:w-[749px] md:max-w-full md:rounded-3xl md:pb-0 md:outline md:outline-1 md:outline-offset-[-1px] md:outline-slate-100"
       >
-        <div className="flex flex-col gap-3 px-9 pb-9 pt-7">
-          <div className="flex items-start justify-between gap-4">
-            <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-2xl font-bold leading-9 text-slate-900">Abstrak jurnal</h2>
+        <div className="flex shrink-0 justify-center pb-1 pt-3 md:hidden">
+          <span className="h-1.5 w-16 rounded-full bg-slate-300" aria-hidden="true" />
+        </div>
+
+        <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-6 pb-4 pt-2 md:px-9 md:pb-9 md:pt-7">
+          <div className="flex items-start justify-between gap-3">
+            <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-xl font-bold leading-7 text-slate-900 md:text-2xl md:leading-9">Abstrak jurnal</h2>
             <button
               type="button"
               aria-label="Tutup abstrak"
               onClick={onClose}
-              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-white p-2.5 outline outline-1 outline-offset-[-1px] outline-slate-200/80 transition-colors hover:bg-slate-50"
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-slate-100 p-2.5 outline outline-1 outline-offset-[-1px] outline-slate-200 transition-colors hover:bg-slate-200 md:h-8 md:w-8 md:rounded-xl md:bg-white md:hover:bg-slate-50"
             >
-              <svg width="8" height="8" viewBox="0 0 8 8" fill="none" stroke="#475569" strokeWidth="1.57" strokeLinecap="round" aria-hidden="true">
+              <svg width="10" height="10" viewBox="0 0 8 8" fill="none" stroke="#475569" strokeWidth="1.57" strokeLinecap="round" aria-hidden="true">
                 <path d="M1 1l6 6M7 1l-6 6" />
               </svg>
             </button>
@@ -2627,7 +2631,7 @@ function AbstrakJurnalModal({ open, onClose }: { open: boolean; onClose: () => v
                 type="button"
                 onClick={() => setLanguage(key)}
                 aria-pressed={language === key}
-                className={`rounded-full px-3.5 py-1 font-['Plus_Jakarta_Sans:Medium'] text-xs font-medium leading-4 transition-colors ${
+                className={`rounded-full px-3.5 py-1.5 font-['Plus_Jakarta_Sans:Medium'] text-[13px] font-medium leading-5 transition-colors md:py-1 md:text-xs md:leading-4 ${
                   language === key ? "bg-sky-100/90 text-sky-800" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                 }`}
               >
@@ -2639,26 +2643,30 @@ function AbstrakJurnalModal({ open, onClose }: { open: boolean; onClose: () => v
           <div className="overflow-hidden rounded-2xl bg-sky-50 px-5 pb-5 pt-6 outline outline-1 outline-offset-[-1px] outline-sky-100">
             <div className="flex flex-col gap-2.5 border-l-4 border-sky-600 pl-3.5">
               <p className="font-['Plus_Jakarta_Sans:Bold'] text-lg font-bold leading-6 text-slate-900">{abstractTitle}</p>
-              <p className="font-['Plus_Jakarta_Sans:Regular'] text-sm font-normal leading-6 text-slate-700">{active.text}</p>
+              <p className="font-['Plus_Jakarta_Sans:Regular'] text-[15px] font-normal leading-7 text-slate-700 md:text-sm md:leading-6">{active.text}</p>
             </div>
           </div>
+        </div>
 
-          <div className="flex items-center justify-end gap-3 pt-5">
-            <button
-              type="button"
-              onClick={copyAbstract}
-              className="rounded-xl bg-white px-5 py-2.5 text-sm font-semibold leading-5 text-slate-800 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] outline outline-1 outline-offset-[-1px] outline-slate-300 transition-colors hover:bg-slate-50"
-            >
-              Salin
-            </button>
-            <button
-              type="button"
-              onClick={onClose}
-              className="rounded-xl bg-sky-600 px-6 py-2.5 text-sm font-semibold leading-5 text-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] transition-colors hover:bg-sky-700"
-            >
-              Selesai
-            </button>
-          </div>
+        <div className="flex shrink-0 items-center justify-end gap-3 border-t border-slate-100 px-6 py-3 md:border-0 md:px-9 md:pb-9 md:pt-0">
+          <button
+            type="button"
+            onClick={copyAbstract}
+            className="rounded-xl bg-white px-5 py-2.5 text-[15px] font-semibold leading-5 text-slate-800 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] outline outline-1 outline-offset-[-1px] outline-slate-300 transition-colors hover:bg-slate-50 md:text-sm"
+          >
+            Salin
+          </button>
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-xl bg-sky-600 px-6 py-2.5 text-[15px] font-semibold leading-5 text-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] transition-colors hover:bg-sky-700 md:text-sm"
+          >
+            Selesai
+          </button>
+        </div>
+
+        <div className="flex shrink-0 justify-center pb-2 pt-1 md:hidden">
+          <span className="h-1.5 w-32 rounded-full bg-slate-300/80" aria-hidden="true" />
         </div>
       </div>
     </div>
