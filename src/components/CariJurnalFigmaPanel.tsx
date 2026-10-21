@@ -1633,6 +1633,13 @@ function JournalCard({
   onAbstrak: () => void;
 }) {
   const activeFolder = folders.find(folder => folder.id === journal.folderId);
+  const [note, setNote] = useState(() => {
+    try {
+      return window.localStorage.getItem(`alerin-journal-note-${journal.id}`) ?? "";
+    } catch {
+      return "";
+    }
+  });
   return (
     <article className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-sm">
       <div className="flex flex-wrap gap-2">
@@ -1649,10 +1656,23 @@ function JournalCard({
           <div className="mt-4 rounded-xl bg-[#eaf6ff] px-4 py-3 text-sm leading-6 text-[#475569]">
             <strong className="font-['Inter:Bold'] text-[#0066a1]">Alasan direkomendasikan:</strong> Cocok untuk memperkuat landasan teori dan hubungan antarvariabel.
           </div>
-          <div className="mt-4 min-h-24 rounded-xl border border-slate-200 bg-[#f1f5f9] p-4">
-            <p className="font-['Plus_Jakarta_Sans:Bold'] text-base font-bold text-[#1e293b]">Catatan Pribadi</p>
-            <p className="mt-2 text-sm text-[#94a3b8]">Kamu bisa menuliskan catatan pribadi di sini......</p>
-          </div>
+          <label className="mt-4 block min-h-24 cursor-text rounded-xl border border-slate-200 bg-[#f1f5f9] p-4 transition-colors focus-within:border-sky-300 focus-within:bg-white">
+            <span className="block font-['Plus_Jakarta_Sans:Bold'] text-base font-bold text-[#1e293b]">Catatan Pribadi</span>
+            <textarea
+              value={note}
+              onChange={event => {
+                setNote(event.target.value);
+                try {
+                  window.localStorage.setItem(`alerin-journal-note-${journal.id}`, event.target.value);
+                } catch {
+                  /* ignore storage errors */
+                }
+              }}
+              placeholder="Kamu bisa menuliskan catatan pribadi di sini..."
+              aria-label={`Catatan pribadi ${journal.title}`}
+              className="mt-2 block min-h-14 w-full resize-none bg-transparent text-sm leading-6 text-[#475569] outline-none placeholder:text-[#94a3b8]"
+            />
+          </label>
         </>
       )}
       <div className="mt-4 flex flex-wrap items-center justify-between gap-2.5 border-t border-slate-100 pt-4">
