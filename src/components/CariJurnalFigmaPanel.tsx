@@ -3049,7 +3049,7 @@ const matrixRows = (() => {
   return [...curated, ...generated];
 })();
 
-function DesktopLiteratureReview({ query, onBack }: { query: string; onBack: () => void }) {
+function DesktopLiteratureReview({ query, onBack, onOpenSitasi }: { query: string; onBack: () => void; onOpenSitasi: () => void }) {
   const sectionNames = [
     "Ringkasan Eksekutif",
     "Pendahuluan",
@@ -3525,7 +3525,7 @@ function DesktopLiteratureReview({ query, onBack }: { query: string; onBack: () 
           </button>
           <button
             type="button"
-            onClick={() => window.alert("Daftar sitasi ditampilkan.")}
+            onClick={onOpenSitasi}
             className="flex items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-sm font-semibold text-slate-700 outline outline-1 outline-slate-200 transition-colors hover:bg-slate-50"
           >
             <svg width="15" height="15" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" aria-hidden="true">
@@ -5673,7 +5673,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
 
           {desktopStage === "results" &&
             (searchType === "review" ? (
-              <DesktopLiteratureReview query={query} onBack={() => setDesktopStage("home")} />
+              <DesktopLiteratureReview query={query} onBack={() => setDesktopStage("home")} onOpenSitasi={() => setSitasiOpen(true)} />
             ) : searchType === "map" ? (
               <DesktopResearchMap query={query} onBack={() => setDesktopStage("home")} />
             ) : (
