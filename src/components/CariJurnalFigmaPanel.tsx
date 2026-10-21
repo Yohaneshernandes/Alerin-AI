@@ -3972,9 +3972,9 @@ function MobileLiteratureReview() {
         )}
       </section>
 
-      <div className="border-t border-slate-200 pt-6">
+      <div className="border-t border-slate-200 px-3 pt-6 text-center">
         <h2 className="text-xl font-bold leading-7 text-slate-900">Hasil Analisis Literature Review</h2>
-        <p className="mt-1 text-sm font-medium leading-5 text-sky-700">Resiliensi perempuan dalam menghadapi bencana dan krisis</p>
+        <p className="mx-auto mt-1 max-w-[300px] text-sm font-medium leading-5 text-sky-700">Resiliensi perempuan dalam menghadapi bencana dan krisis</p>
       </div>
 
       <section className="rounded-3xl bg-white p-4 shadow-sm outline outline-1 outline-slate-200/80">
@@ -4065,25 +4065,25 @@ function MobileLiteratureReview() {
             Ekspor ke PDF
           </button>
         </div>
-      </div>
 
-      <div className="rounded-2xl bg-white p-4 shadow-sm outline outline-1 outline-slate-200/90">
-        <div className="flex items-center justify-between gap-3">
-          <h3 className="text-sm font-bold text-slate-800">Keterlacakan Sumber</h3>
-          <span className="text-sm font-bold text-sky-600">80% Valid</span>
-        </div>
-        <div className="mt-2.5 h-2.5 overflow-hidden rounded-full bg-slate-100">
-          <div className="h-full rounded-full bg-sky-600" style={{ width: "80%" }} />
-        </div>
-        <div className="mt-2.5 flex items-center justify-between gap-2 text-xs text-slate-500">
-          <span className="flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full bg-emerald-500" />
-            12 klaim terverifikasi
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full bg-amber-500" />
-            3 manual review
-          </span>
+        <div className="mt-5 border-t border-slate-100 pt-4">
+          <div className="flex items-center justify-between gap-3">
+            <h3 className="text-sm font-bold text-slate-800">Keterlacakan Sumber</h3>
+            <span className="text-sm font-bold text-sky-600">80% Valid</span>
+          </div>
+          <div className="mt-2.5 h-2.5 overflow-hidden rounded-full bg-slate-100">
+            <div className="h-full rounded-full bg-sky-600" style={{ width: "80%" }} />
+          </div>
+          <div className="mt-2.5 flex items-center justify-between gap-2 text-xs text-slate-500">
+            <span className="flex items-center gap-1.5">
+              <span className="h-2 w-2 rounded-full bg-emerald-500" />
+              12 klaim terverifikasi
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="h-2 w-2 rounded-full bg-amber-500" />
+              3 manual review
+            </span>
+          </div>
         </div>
       </div>
 
