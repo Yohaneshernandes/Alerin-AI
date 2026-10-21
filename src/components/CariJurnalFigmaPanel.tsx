@@ -1902,7 +1902,7 @@ function DesktopJournalResultCard({
             <ul className="mt-1 flex flex-col">
               {detail.credibility.map(([title, desc]) => (
                 <li key={title} className="flex items-start gap-2.5 py-2.5">
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#059669" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="mt-0.5 shrink-0" aria-hidden="true">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#0284c7" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="mt-0.5 shrink-0" aria-hidden="true">
                     <path d="M2.5 8.5l3.5 3.5 7.5-8" />
                   </svg>
                   <div className="min-w-0">
@@ -5976,7 +5976,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                           ["Jumlah sitasi", "Artikel ini dikutip dalam 45 karya ilmiah lainnya."],
                         ].map(([judul, detail]) => (
                           <div key={judul} className="mt-3 flex items-start gap-2.5">
-                            <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-[9px] font-bold text-emerald-600">✓</span>
+                            <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-sky-100 text-[9px] font-bold text-sky-600">✓</span>
                             <span className="min-w-0">
                               <span className="block text-sm font-medium text-slate-900">{judul}</span>
                               <span className="block text-[13px] leading-5 text-slate-500">{detail}</span>
