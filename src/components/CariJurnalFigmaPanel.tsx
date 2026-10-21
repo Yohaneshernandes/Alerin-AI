@@ -5060,6 +5060,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
   const [mobileSearchStage, setMobileSearchStage] = useState<"home" | "loading" | "results">("home");
   const [desktopStage, setDesktopStage] = useState<"home" | "loading" | "results">("home");
   const [searchType, setSearchType] = useState("");
+  const [searchMenuOpen, setSearchMenuOpen] = useState(false);
   const [resultMode, setResultMode] = useState<"search" | "analysis">("search");
   const [temuanIndex, setTemuanIndex] = useState(1);
   const [mobileNavHidden, setMobileNavHidden] = useState(false);
@@ -5754,20 +5755,75 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                     >
                       {searchType === "review" ? "Literatur Review" : searchType === "map" ? "Peta Penelitian" : "Cari jurnal"}
                     </button>
-                    <label className="relative flex min-h-12 items-center justify-center rounded-lg border border-black/15 bg-white shadow-[0_4px_4px_rgba(0,0,0,0.1)]">
-                      <span className="sr-only">Pilih jenis pencarian</span>
-                      <select
-                        value={searchType}
-                        onChange={event => setSearchType(event.target.value)}
-                        className="absolute inset-0 z-10 h-full w-full cursor-pointer appearance-none opacity-0"
+                    <div className="relative">
+                      <button
+                        type="button"
+                        onClick={() => setSearchMenuOpen(open => !open)}
+                        aria-expanded={searchMenuOpen}
+                        aria-haspopup="listbox"
+                        className="flex min-h-12 w-full items-center justify-center rounded-lg border border-black/15 bg-white shadow-[0_4px_4px_rgba(0,0,0,0.1)] transition-colors active:bg-slate-50"
                       >
-                        <option value="" disabled>Cari jurnal</option>
-                        <option value="journal">Cari jurnal</option>
-                        <option value="review">Literatur Review</option>
-                        <option value="map">Peta Penelitian</option>
-                      </select>
-                      <img src="/assets/jurnal-design/quick-search/9490a.svg" alt="" className="pointer-events-none max-w-none origin-center scale-[0.6667]" />
-                    </label>
+                        <span className="sr-only">Pilih jenis pencarian</span>
+                        <svg
+                          width="12"
+                          height="20"
+                          viewBox="0 0 12 20"
+                          fill="none"
+                          stroke="#0369a1"
+                          strokeWidth="2.6"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          aria-hidden="true"
+                          className={`transition-transform duration-200 ${searchMenuOpen ? "rotate-90" : ""}`}
+                        >
+                          <path d="M3 4l6 6-6 6" />
+                        </svg>
+                      </button>
+                      {searchMenuOpen && (
+                        <>
+                          <button
+                            type="button"
+                            aria-label="Tutup pilihan"
+                            onClick={() => setSearchMenuOpen(false)}
+                            className="fixed inset-0 z-20 cursor-default"
+                          />
+                          <div
+                            role="listbox"
+                            aria-label="Jenis pencarian"
+                            className="absolute right-0 top-full z-30 mt-2 w-52 overflow-hidden rounded-xl border border-slate-200 bg-white p-1.5 shadow-lg"
+                          >
+                            {(
+                              [
+                                ["journal", "Cari jurnal"],
+                                ["review", "Literatur Review"],
+                                ["map", "Peta Penelitian"],
+                              ] as const
+                            ).map(([value, label]) => (
+                              <button
+                                key={value}
+                                type="button"
+                                role="option"
+                                aria-selected={searchType === value}
+                                onClick={() => {
+                                  setSearchType(value);
+                                  setSearchMenuOpen(false);
+                                }}
+                                className={`flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-left text-sm font-semibold transition-colors ${
+                                  searchType === value ? "bg-sky-50 text-[#0369a1]" : "text-slate-700 hover:bg-slate-50"
+                                }`}
+                              >
+                                {label}
+                                {searchType === value && (
+                                  <svg width="12" height="10" viewBox="0 0 12 10" fill="none" stroke="#0369a1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                    <path d="M1.5 5l3 3 6-6.5" />
+                                  </svg>
+                                )}
+                              </button>
+                            ))}
+                          </div>
+                        </>
+                      )}
+                    </div>
                   </div>
                 </section>
 
