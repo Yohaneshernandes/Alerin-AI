@@ -2483,7 +2483,7 @@ function BuatSitasiModal({ open, onClose }: { open: boolean; onClose: () => void
         </div>
 
         <div className="flex items-center justify-between gap-3 px-6 pb-2 pt-2 md:px-7 md:pb-2 md:pt-6">
-          <h2 className="font-['Inter:Bold'] text-2xl font-bold leading-8 text-slate-900 md:text-xl">Buat sitasi jurnal</h2>
+          <h2 className="font-['Inter:Bold'] text-xl font-bold leading-7 text-slate-900">Buat sitasi jurnal</h2>
           <button
             type="button"
             aria-label="Tutup sitasi"
