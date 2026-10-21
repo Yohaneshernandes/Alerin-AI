@@ -5842,7 +5842,6 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                             <path d="M2 1.5h6l4 4v9H2z" />
                             <path d="M8 1.5v4h4" />
                           </svg>
-                          <span className="absolute bottom-1 text-[9px] font-extrabold uppercase leading-none tracking-tight text-sky-600 md:bottom-[3px] md:text-[6px]">PDF</span>
                         </span>
                         <p className="mt-4 w-full truncate px-2 text-base font-bold leading-6 text-slate-900 md:mt-3 md:text-xs md:text-slate-800 md:leading-4">{fileName}</p>
                         <p className="mt-2 text-sm font-medium leading-5 text-slate-500 md:mt-1.5 md:text-xs md:leading-4">
