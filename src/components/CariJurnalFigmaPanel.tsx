@@ -5501,8 +5501,8 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                         <div className="min-w-0 flex-1">
                           <p className="text-xs font-semibold text-sky-700">{result.rank}</p>
                           <h2 className="mt-1 text-xl font-bold leading-7 text-slate-900">{result.title}</h2>
-                          <p className="mt-2 text-xs leading-5 text-slate-600">Wongkitrungrueng, A. &amp; Assarut, N.</p>
-                          <p className="mt-1 text-[11px] leading-4 text-slate-500">{result.citation}</p>
+                          <p className="mt-2 text-sm leading-6 text-slate-600">Wongkitrungrueng, A. &amp; Assarut, N.</p>
+                          <p className="mt-1 text-[13px] leading-5 text-slate-500">{result.citation}</p>
                         </div>
                         <div className="flex h-20 w-20 shrink-0 flex-col items-center justify-center rounded-full bg-sky-50 shadow-inner">
                           <strong className="text-2xl font-extrabold text-sky-700">{result.score}%</strong>
@@ -5511,19 +5511,19 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                       </div>
 
                       <div className="mt-4 rounded-2xl bg-slate-100 p-4">
-                        <p className="text-[11px] font-bold uppercase tracking-wide text-slate-900">Mengapa jurnal ini direkomendasikan?</p>
+                        <p className="text-[13px] font-bold uppercase tracking-wide text-slate-900">Mengapa jurnal ini direkomendasikan?</p>
                         {[["Kesesuaian variabel", index ? 96 : 98], ["Kesesuaian topik", index ? 94 : 96], ["Kesesuaian wilayah", index ? 85 : 90]].map(([label, value]) => (
                           <div key={String(label)} className="mt-2.5">
-                            <div className="flex justify-between text-xs"><span className="text-slate-700">{label}</span><strong className="text-sky-700">{value}%</strong></div>
+                            <div className="flex justify-between text-sm"><span className="text-slate-700">{label}</span><strong className="text-sky-700">{value}%</strong></div>
                             <div className="mt-1 h-2 overflow-hidden rounded-full bg-zinc-200"><div className="h-full rounded-full bg-sky-700" style={{ width: `${value}%` }} /></div>
                           </div>
                         ))}
-                        <p className="mt-3 text-xs leading-5">
+                        <p className="mt-3 text-sm leading-6">
                           <span className="font-medium text-slate-900">Cocok untuk:</span>
                           <span className="text-slate-500"> landasan teori, penyusunan hipotesis, pembanding penelitian, dan rujukan metode kuantitatif.</span>
                         </p>
                         <div className="mt-3 rounded-xl bg-amber-50 p-4">
-                          <p className="text-xs leading-5">
+                          <p className="text-sm leading-6">
                             <span className="font-semibold text-amber-600">Kutipan relevan:</span>
                             <span className="font-semibold text-slate-900"> "Parasocial interaction strengthens purchase intention when viewers perceive urgency and scarcity."</span>
                           </p>
@@ -5531,7 +5531,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                       </div>
 
                       <div className="mt-4 rounded-2xl bg-slate-100 p-4">
-                        <p className="text-[11px] font-bold uppercase tracking-wide text-slate-900">Kredibilitas &amp; akses</p>
+                        <p className="text-[13px] font-bold uppercase tracking-wide text-slate-900">Kredibilitas &amp; akses</p>
                         {[
                           ["Scopus Q1 terverifikasi", "Status indeks dicek dari sumber resmi"],
                           ["DOI & metadata cocok", "Judul, penulis, tahun, dan penerbit konsisten"],
@@ -5541,17 +5541,17 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                           <div key={judul} className="mt-3 flex items-start gap-2.5">
                             <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-[9px] font-bold text-emerald-600">✓</span>
                             <span className="min-w-0">
-                              <span className="block text-xs font-medium text-slate-900">{judul}</span>
-                              <span className="block text-[11px] leading-4 text-slate-500">{detail}</span>
+                              <span className="block text-sm font-medium text-slate-900">{judul}</span>
+                              <span className="block text-[13px] leading-5 text-slate-500">{detail}</span>
                             </span>
                           </div>
                         ))}
                       </div>
 
                       <div className="mt-4 rounded-2xl bg-sky-50 p-4">
-                        <p className="text-[11px] font-bold uppercase tracking-wide text-sky-700">Ringkasan utama</p>
-                        <p className="mt-2 text-xs leading-5 text-slate-900">{result.summary}</p>
-                        <div className="mt-3 flex flex-wrap gap-1.5 text-[11px]">
+                        <p className="text-[13px] font-bold uppercase tracking-wide text-sky-700">Ringkasan utama</p>
+                        <p className="mt-2 text-sm leading-6 text-slate-900">{result.summary}</p>
+                        <div className="mt-3 flex flex-wrap gap-1.5 text-xs">
                           <span className="rounded-lg bg-white px-2.5 py-1.5 text-slate-900">2 kutipan pendukung</span>
                           <span className="rounded-lg bg-white px-2.5 py-1.5 text-slate-900">Metode SEM-PLS</span>
                           <span className="rounded-lg bg-white px-2.5 py-1.5 text-slate-900">Studi cross-sectional</span>
