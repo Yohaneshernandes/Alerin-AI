@@ -4331,7 +4331,6 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
   const [chip, setChip] = useState("semua");
   const [yearSort, setYearSort] = useState<"asc" | "desc" | null>(null);
   const [relevanSort, setRelevanSort] = useState<"asc" | "desc" | null>(null);
-  const [playing, setPlaying] = useState(false);
   const [progress, setProgress] = useState(1);
   const [fullscreen, setFullscreen] = useState(false);
   const [pan, setPan] = useState({ x: 0, y: 0 });
@@ -4399,21 +4398,6 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
   }, [zoom]);
 
   useEffect(() => {
-    if (!playing) return;
-    const id = window.setInterval(() => {
-      setProgress(current => {
-        if (mode === "kepadatan") return current >= 0.995 ? 0 : Math.min(1, current + 0.02);
-        return Math.min(1, current + (mode === "perkembangan" ? 0.012 : 0.018));
-      });
-    }, 50);
-    return () => window.clearInterval(id);
-  }, [playing, mode]);
-
-  useEffect(() => {
-    if (playing && mode !== "kepadatan" && progress >= 1) setPlaying(false);
-  }, [playing, mode, progress]);
-
-  useEffect(() => {
     if (!fullscreen) return;
     const handleKey = (event: globalThis.KeyboardEvent) => {
       if (event.key === "Escape") setFullscreen(false);
@@ -4463,7 +4447,7 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
 
   const playYear = 2020 + 6 * progress;
   const densityScale = 0.55 + 0.45 * progress;
-  const pulseScale = playing && mode === "kepadatan" ? 1 + 0.05 * Math.sin(progress * Math.PI * 6) : 1;
+  const pulseScale = 1;
 
   const tabs = [
     { key: "jaringan", label: "Jaringan" },
@@ -4504,11 +4488,6 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
   const toggleNode = (name: string) => {
     setActiveNode(name);
     setNodeFilter(current => (current === name ? null : name));
-  };
-
-  const togglePlay = () => {
-    if (!playing && progress >= 1) setProgress(0);
-    setPlaying(value => !value);
   };
 
   const visibleRows = (() => {
@@ -4582,8 +4561,7 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
                 type="button"
                 onClick={() => {
                   setMode(tab.key);
-                  setProgress(0);
-                  setPlaying(true);
+                  setProgress(1);
                   resetMapView();
                 }}
                 className={`rounded-md px-3 py-1.5 text-sm font-medium leading-5 transition-colors ${
@@ -4940,24 +4918,6 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
           )}
 
           <div className="mt-2 flex flex-wrap items-center gap-3 border-t border-slate-100 px-5 py-3 md:px-6">
-            <button
-              type="button"
-              onClick={togglePlay}
-              aria-pressed={playing}
-              className="flex items-center gap-1.5 rounded-lg bg-[#0369a1] px-3 py-1.5 text-xs font-semibold leading-4 text-white transition-colors hover:bg-[#075985]"
-            >
-              {playing ? (
-                <svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true">
-                  <rect x="1.5" y="1" width="3.2" height="10" rx="1" />
-                  <rect x="7.3" y="1" width="3.2" height="10" rx="1" />
-                </svg>
-              ) : (
-                <svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true">
-                  <path d="M2.5 1.6l7 4.4-7 4.4z" />
-                </svg>
-              )}
-              {playing ? "Jeda Simulasi" : "Putar Simulasi"}
-            </button>
             <span className="w-14 shrink-0 text-xs font-semibold leading-4 text-slate-700">
               {mode === "perkembangan" ? playYear.toFixed(1) : `${Math.round(progress * 100)}%`}
             </span>
@@ -4966,10 +4926,7 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
               min={0}
               max={100}
               value={Math.round(progress * 100)}
-              onChange={event => {
-                setPlaying(false);
-                setProgress(Number(event.target.value) / 100);
-              }}
+              onChange={event => setProgress(Number(event.target.value) / 100)}
               aria-label="Kontrol simulasi peta"
               className="h-1.5 min-w-32 flex-1 cursor-pointer appearance-none rounded-full bg-slate-200 accent-[#0369a1]"
             />
