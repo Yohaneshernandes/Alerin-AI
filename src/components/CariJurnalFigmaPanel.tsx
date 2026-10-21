@@ -4303,6 +4303,7 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
   const [relevanSort, setRelevanSort] = useState<"asc" | "desc" | null>(null);
   const [progress, setProgress] = useState(1);
   const [fullscreen, setFullscreen] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(false);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [dragging, setDragging] = useState(false);
   const graphRef = useRef<HTMLDivElement | null>(null);
@@ -4438,20 +4439,20 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
       ? {
           title: "Peta Perkembangan",
           subtitle: "Menampilkan rata-rata tahun publikasi setiap topik.",
-          hint: "Putar simulasi untuk melihat kapan tiap topik mulai menguat dalam literatur.",
+          hint: "Geser slider untuk melihat kapan tiap topik mulai menguat dalam literatur.",
           stats: ["Jumlah item: 90", "Rentang tahun: 2020–2026", "Rata-rata: 2023.6"],
         }
       : mode === "kepadatan"
         ? {
             title: "Peta Kepadatan",
             subtitle: "Menampilkan tingkat konsentrasi topik dalam penelitian.",
-            hint: "Putar simulasi untuk melihat intensitas konsentrasi sitasi pada setiap topik.",
+            hint: "Geser slider untuk melihat intensitas konsentrasi sitasi pada setiap topik.",
             stats: ["Jumlah item: 90", "Area padat: 5", "Resolusi: 0.85"],
           }
         : {
             title: "Peta Jaringan",
             subtitle: "Menampilkan hubungan antar topik berdasarkan kemunculan bersama.",
-            hint: "Putar simulasi untuk melihat pembentukan hubungan antar topik satu per satu.",
+            hint: "Geser slider untuk melihat pembentukan hubungan antar topik satu per satu.",
             stats: ["Jumlah item: 90", "Jumlah hubungan: 340", "Topik: 5"],
           };
 
@@ -4507,7 +4508,7 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
         <div>
           <h1 className="text-2xl font-extrabold leading-8 text-slate-900">Peta Penelitian</h1>
           <p className="mt-1.5 text-xs leading-5 text-slate-500">
-            Jelajahi peta topik dari {priorityRows.length} publikasi, lalu putar simulasi untuk melihat jaringan, kepadatan sitasi, dan perkembangan tahun terbitnya.
+            Jelajahi peta topik dari {priorityRows.length} publikasi, lalu geser slider untuk melihat jaringan, kepadatan sitasi, dan perkembangan tahun terbitnya.
           </p>
         </div>
         <button
@@ -4595,6 +4596,54 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
             </svg>
             Unduh Gambar
           </button>
+
+          <div className="relative ml-auto">
+            <button
+              type="button"
+              onClick={() => setHelpOpen(value => !value)}
+              aria-expanded={helpOpen}
+              className="flex items-center gap-1.5 rounded-lg bg-white px-3 py-1.5 text-sm font-medium leading-5 text-slate-900 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] transition-colors hover:bg-slate-50"
+            >
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="#0369a1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <circle cx="8" cy="8" r="6.5" />
+                <path d="M8 7.2v4" />
+                <circle cx="8" cy="4.9" r="0.9" fill="#0369a1" stroke="none" />
+              </svg>
+              Panduan Peta
+            </button>
+            {helpOpen && (
+              <>
+                <button
+                  type="button"
+                  aria-label="Tutup panduan peta"
+                  onClick={() => setHelpOpen(false)}
+                  className="fixed inset-0 z-20 cursor-default"
+                />
+                <div
+                  role="dialog"
+                  aria-label="Cara membaca peta"
+                  className="absolute right-0 top-full z-30 mt-2 w-[340px] rounded-xl border border-slate-200 bg-white p-4 shadow-[0_16px_40px_rgba(15,23,42,0.16)]"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <p className="text-sm font-bold leading-5 text-slate-900">Cara Membaca Peta</p>
+                    <button
+                      type="button"
+                      aria-label="Tutup"
+                      onClick={() => setHelpOpen(false)}
+                      className="-mr-1 -mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-50"
+                    >
+                      <svg width="11" height="11" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+                        <path d="M2.5 2.5l9 9M11.5 2.5l-9 9" />
+                      </svg>
+                    </button>
+                  </div>
+                  <p className="mt-2 text-xs leading-5 text-slate-600">
+                    Lingkaran menunjukkan kata kunci penelitian. Semakin besar lingkaran, semakin sering kata kunci tersebut muncul. Garis menunjukkan keterkaitan antar topik, sedangkan warna menunjukkan kelompok penelitian dengan tema yang berhubungan.
+                  </p>
+                </div>
+              </>
+            )}
+          </div>
 
         </div>
 
