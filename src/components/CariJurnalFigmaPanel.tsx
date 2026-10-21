@@ -1877,22 +1877,22 @@ function DesktopJournalResultCard({
               Kutipan relevan: &ldquo;{detail.quote}&rdquo;
             </p>
           </div>
-          <div className="w-full shrink-0 rounded-xl bg-white p-4 outline outline-1 outline-offset-[-1px] outline-slate-200 min-[1180px]:w-[300px]">
+          <div className="w-full shrink-0 rounded-xl bg-white p-4 outline outline-1 outline-offset-[-1px] outline-slate-200 min-[1180px]:w-[320px] min-[1180px]:self-start">
             <h4 className="text-center text-base font-extrabold leading-5 text-slate-900">Kredibilitas &amp; akses</h4>
-            <ul className="flex flex-col">
+            <ul className="mt-1 flex flex-col">
               {detail.credibility.map(([title, desc]) => (
-                <li key={title} className="flex items-start gap-2 py-3">
+                <li key={title} className="flex items-start gap-2.5 py-2.5">
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#059669" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="mt-0.5 shrink-0" aria-hidden="true">
                     <path d="M2.5 8.5l3.5 3.5 7.5-8" />
                   </svg>
-                  <div>
+                  <div className="min-w-0">
                     <p className="text-xs font-bold leading-4 text-slate-800">{title}</p>
-                    <p className="text-xs leading-4 text-slate-500">{desc}</p>
+                    <p className="pt-0.5 text-xs leading-4 text-slate-500">{desc}</p>
                   </div>
                 </li>
               ))}
             </ul>
-            <div className="mt-3 flex justify-end">
+            <div className="mt-2 flex justify-end">
               <a
                 href={detail.doiUrl}
                 target="_blank"
