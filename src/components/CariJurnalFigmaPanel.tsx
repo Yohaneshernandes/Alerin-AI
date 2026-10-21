@@ -4304,6 +4304,7 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
   const [progress, setProgress] = useState(1);
   const [fullscreen, setFullscreen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
+  const [analysisOpen, setAnalysisOpen] = useState<number | null>(null);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [dragging, setDragging] = useState(false);
   const graphRef = useRef<HTMLDivElement | null>(null);
@@ -4502,6 +4503,74 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
 
   const heatSpots = mapMainNodes.map(node => ({ ...node, size: node.r * 5.6 }));
 
+  const analysisRows =
+    mode === "kepadatan"
+      ? [
+          {
+            title: "Hasil Analisis Alerin",
+            subtitle: "Konsentrasi topik pada peta kepadatan",
+            paragraphs: [
+              "Berdasarkan Peta Kepadatan, area AI Literacy dan Learning Motivation menunjukkan konsentrasi yang relatif tinggi dibandingkan beberapa topik lainnya. Hal ini menunjukkan bahwa kedua topik berada dalam wilayah jaringan dengan banyak item atau bobot yang terkonsentrasi.",
+              "Sementara itu, Generative AI, Critical Thinking, dan Self-Regulated Learning memperlihatkan kepadatan yang bervariasi dan relatif lebih rendah pada beberapa area. Perbedaan kepadatan ini dapat membantu pengguna menentukan topik yang perlu ditelusuri lebih jauh. Namun, konsentrasi yang rendah tidak berarti suatu topik belum pernah diteliti.",
+            ],
+          },
+          {
+            title: "Kesimpulan Alerin",
+            subtitle: "Topik padat dan peluang penelusuran lanjutan",
+            paragraphs: [
+              "AI Literacy dan Learning Motivation merupakan dua area yang memiliki konsentrasi penelitian menonjol dalam kumpulan artikel yang dianalisis. Topik dengan kepadatan lebih rendah, seperti Self-Regulated Learning dan AI Anxiety, dapat menjadi bahan eksplorasi lanjutan untuk mengetahui apakah terdapat pertanyaan penelitian yang belum terjawab.",
+              "Kepadatan yang rendah merupakan petunjuk untuk melakukan penelusuran tambahan, bukan bukti adanya research gap.",
+            ],
+          },
+        ]
+      : mode === "perkembangan"
+        ? [
+            {
+              title: "Hasil Analisis Alerin",
+              subtitle: "Rata-rata tahun publikasi tiap topik",
+              paragraphs: [
+                "Berdasarkan simulasi, diperoleh rata-rata tahun publikasi beberapa topik berikut.",
+                "Dalam kumpulan artikel ini, Generative AI memiliki rata-rata tahun publikasi yang lebih baru dibandingkan AI Literacy, Learning Motivation, dan Self-Regulated Learning. Pola tersebut menunjukkan adanya perbedaan waktu publikasi antartopik, dengan Generative AI lebih banyak direpresentasikan oleh artikel yang relatif baru dalam sampel.",
+                "Namun, untuk memastikan apakah minat penelitian Generative AI benar-benar meningkat, perlu dibandingkan jumlah publikasi pada setiap tahun.",
+              ],
+            },
+            {
+              title: "Kesimpulan Alerin",
+              subtitle: "Perbedaan periode dan batasan interpretasi",
+              paragraphs: [
+                "Generative AI dan AI Literacy termasuk topik dengan rata-rata tahun publikasi yang relatif lebih baru, sedangkan Self-Regulated Learning dan Academic Performance memiliki rata-rata yang lebih lama dalam kumpulan artikel ini. Hal tersebut dapat menjadi dasar untuk menelusuri bagaimana pembahasan AI dalam pendidikan berkaitan dengan topik pembelajaran yang sudah lebih dahulu diteliti.",
+                "Perbedaan waktu publikasi tidak dengan sendirinya membuktikan adanya perubahan fokus penelitian secara global atau menjamin kebaruan suatu topik.",
+              ],
+            },
+          ]
+        : [
+            {
+              title: "Hasil Analisis Alerin",
+              subtitle: "Struktur jaringan dan topik dominan",
+              paragraphs: [
+                "Berdasarkan simulasi 100 artikel penelitian periode 2020–2026, diperoleh 90 kata kunci yang dipetakan, 340 hubungan antarkata kunci, dan 5 kelompok penelitian.",
+                "AI Literacy menjadi salah satu topik yang paling menonjol dengan kemunculan dalam 28 artikel, diikuti Learning Motivation (24 artikel) dan Generative AI (21 artikel). Dalam peta, AI Literacy memiliki sejumlah hubungan dengan Learning Motivation, Generative AI, Critical Thinking, serta Student Engagement. Hal ini menunjukkan bahwa literasi AI dibahas bersama dengan berbagai aspek pembelajaran mahasiswa dalam kumpulan artikel yang dianalisis.",
+              ],
+            },
+            {
+              title: "Kesimpulan Alerin",
+              subtitle: "Implikasi dan batasan interpretasi",
+              paragraphs: [
+                "AI Literacy merupakan salah satu topik sentral dalam jaringan penelitian yang dianalisis. Keterkaitannya dengan Learning Motivation dan topik pembelajaran lainnya menunjukkan adanya ruang untuk menelusuri hubungan kedua variabel lebih lanjut.",
+                "Meski demikian, hubungan pada peta belum membuktikan bahwa literasi AI meningkatkan atau menurunkan motivasi belajar. Untuk memahami hubungan tersebut, perlu dilakukan pemeriksaan terhadap metode dan temuan artikel pendukung.",
+              ],
+            },
+          ];
+
+  const perkembanganYears = [
+    ["Self-Regulated Learning", "2022,6"],
+    ["Academic Performance", "2022,9"],
+    ["Learning Motivation", "2023,4"],
+    ["Student Engagement", "2023,6"],
+    ["AI Literacy", "2024,2"],
+    ["Generative AI", "2024,8"],
+  ];
+
   return (
     <div className="mx-auto hidden max-w-[1160px] flex-col gap-5 pb-8 md:flex">
       <div className="flex items-start justify-between gap-4">
@@ -4533,6 +4602,7 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
                 onClick={() => {
                   setMode(tab.key);
                   setProgress(1);
+                  setAnalysisOpen(null);
                   resetMapView();
                 }}
                 className={`rounded-md px-3 py-1.5 text-sm font-medium leading-5 transition-colors ${
@@ -5150,6 +5220,77 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
               ))}
             </tbody>
           </table>
+        </div>
+      </section>
+
+      <section className="rounded-2xl bg-white p-6 shadow-sm">
+        <div>
+          <h2 className="text-lg font-semibold leading-7 text-slate-900">Hasil Analisis Alerin</h2>
+          <p className="mt-1 text-sm leading-5 text-slate-500">
+            Ringkasan otomatis berdasarkan parameter peta yang sedang ditampilkan.
+          </p>
+        </div>
+        <div className="mt-4 flex flex-col gap-3">
+          {analysisRows.map((item, index) => {
+            const isOpen = analysisOpen === index;
+            return (
+              <div key={item.title} className="overflow-hidden rounded-2xl bg-slate-50/80 outline outline-1 outline-offset-[-1px] outline-slate-200/70">
+                <button
+                  type="button"
+                  onClick={() => setAnalysisOpen(isOpen ? null : index)}
+                  aria-expanded={isOpen}
+                  className="flex w-full items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-slate-100/70"
+                >
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-sm font-semibold text-sky-700 outline outline-1 outline-offset-[-1px] outline-slate-200">
+                    {index + 1}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-base font-semibold leading-6 text-slate-900">{item.title}</span>
+                    <span className="mt-0.5 block text-sm leading-5 text-slate-500">{item.subtitle}</span>
+                  </span>
+                  <svg
+                    width="9"
+                    height="14"
+                    viewBox="0 0 9 14"
+                    fill="none"
+                    stroke="#0369a1"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                    className={`shrink-0 transition-transform ${isOpen ? "rotate-90" : ""}`}
+                  >
+                    <path d="M1.5 1.5L7 7l-5.5 5.5" />
+                  </svg>
+                </button>
+                {isOpen && (
+                  <div className="border-t border-slate-200/70 px-5 py-5">
+                    <div className="space-y-3">
+                      {item.paragraphs.map(paragraph => (
+                        <p key={paragraph} className="text-sm leading-7 text-slate-600">
+                          {paragraph}
+                        </p>
+                      ))}
+                    </div>
+                    {mode === "perkembangan" && index === 0 && (
+                      <div className="mt-4 overflow-hidden rounded-xl border border-slate-200 bg-white">
+                        <div className="grid grid-cols-2 bg-slate-100 px-4 py-2 text-xs font-semibold text-slate-600">
+                          <span>Topik</span>
+                          <span className="text-right">Rata-rata tahun</span>
+                        </div>
+                        {perkembanganYears.map(([topic, year]) => (
+                          <div key={topic} className="grid grid-cols-2 border-t border-slate-100 px-4 py-2 text-sm text-slate-700">
+                            <span>{topic}</span>
+                            <span className="text-right font-semibold text-slate-800">{year}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </section>
 
