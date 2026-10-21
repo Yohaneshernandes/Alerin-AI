@@ -9,13 +9,13 @@ const mobileAssets = "/assets/jurnal-design/mobile";
 const journals = [
   {
     title: "Live Streaming Commerce and Mimic Purchase Intention: The Role of Parasocial Interaction and Scarcity Nudges",
-    authors: "Wongkitrungrueng, A. & Assarut, N.",
+    authors: "Rahmawati, D. & Pratama, A.",
     description:
       "Interaksi parasosial antara host dan penonton, ditambah dorongan kelangkaan seperti batas waktu dan stok, meningkatkan niat beli di live streaming commerce. Temuan ini relevan untuk riset perilaku konsumen digital di Asia Tenggara.",
   },
   {
     title: "Live Streaming Commerce and Mimic Purchase Intention: The Role of Parasocial Interaction and Scarcity Nudges",
-    authors: "Wongkitrungrueng, A. & Assarut, N.",
+    authors: "Rahmawati, D. & Pratama, A.",
     description:
       "Interaksi parasosial antara host dan penonton, ditambah dorongan kelangkaan seperti batas waktu dan stok, meningkatkan niat beli di live streaming.",
   },
@@ -105,94 +105,100 @@ const desktopResultDetails: ResultDetail[] = [
   {
     id: "res-1",
     headerTitle: "Rekomendasi Jurnal",
-    headerNote: "Ditemukan OpenAlex dan Diverifikasi Crossref & Scopus",
-    rank: "Peringkat #1",
+    headerNote: "",
+    rank: "Rekomendasi 1",
     badges: [
-      { label: "Scopus Q1", tone: "sky" },
-      { label: "Artikel", tone: "slate" },
+      { label: "Artikel Jurnal", tone: "sky" },
       { label: "2023", tone: "slate" },
-      { label: "Akses terbuka legal", tone: "sky" },
+      { label: "Akses Terbuka", tone: "sky" },
     ],
-    citations: "120 sitasi",
-    source: "Asia Pacific Journal of Marketing and Logistics",
+    citations: "",
+    source: "Jurnal Kajian Pemasaran Digital",
     fitBars: [
       ["Kesesuaian variabel", 98],
       ["Kesesuaian topik", 96],
-      ["Kesesuaian wilayah", 90],
+      ["Kesesuaian konteks", 94],
+      ["Kesesuaian metode", 91],
+      ["Kesesuaian teori", 89],
+      ["Kesesuaian periode", 93],
     ],
     fitNote: "Cocok untuk: landasan teori, penyusunan hipotesis, pembanding penelitian, dan rujukan metode kuantitatif.",
     quote: "Parasocial interaction strengthens purchase intention when viewers perceive urgency and scarcity.",
     credibility: [
-      ["Scopus Q1 terverifikasi", "Status indeks dicek pada sumber resmi"],
-      ["DOI & metadata cocok", "Judul, penulis, tahun, dan penerbit konsisten"],
-      ["PDF dapat diakses legal", "Versi akses terbuka tersedia dari penerbit"],
-      ["Tidak ada peringatan integritas", "Tidak ditemukan retraksi atau koreksi kritis"],
+      ["Sumber metadata", "OpenAlex dan Crossref"],
+      ["Penerbit", "Pusat Studi Bisnis Digital Nusantara"],
+      ["DOI terverifikasi", "DOI: 10.20886/jpkf.2022.6.1.16-28"],
+      ["Jumlah sitasi", "Artikel ini dikutip dalam 45 karya ilmiah lainnya."],
     ],
     summary:
       "Interaksi parasosial antara host dan penonton, ditambah dorongan kelangkaan seperti batas waktu dan stok, meningkatkan niat beli di live streaming commerce. Temuan ini relevan untuk riset perilaku konsumen digital di Asia Tenggara.",
-    doiUrl: "https://doi.org/10.1016/j.jretconser.2020.102345",
+    doiUrl: "https://doi.org/10.20886/jpkf.2022.6.1.16-28",
     pdfNote: "PDF Live Streaming Commerce dibuka.",
   },
   {
     id: "res-2",
-    headerTitle: "Studi Meta-Analisis Pendukung",
-    headerNote: "Diverifikasi Scopus & Crossref · 43 studi tergabung",
-    rank: "Peringkat #2",
+    headerTitle: "Rekomendasi Jurnal",
+    headerNote: "",
+    rank: "Rekomendasi 2",
     badges: [
-      { label: "Scopus Q1", tone: "sky" },
-      { label: "Meta-analisis", tone: "slate" },
+      { label: "Artikel Jurnal", tone: "sky" },
       { label: "2022", tone: "slate" },
-      { label: "Data terbuka", tone: "sky" },
+      { label: "Akses Terbuka", tone: "sky" },
     ],
-    citations: "87 sitasi",
-    source: "Journal of Educational Technology & Society",
+    citations: "",
+    source: "Jurnal Kajian Pemasaran Digital",
     fitBars: [
       ["Kesesuaian variabel", 94],
       ["Kesesuaian topik", 92],
-      ["Kesesuaian wilayah", 74],
+      ["Kesesuaian konteks", 90],
+      ["Kesesuaian metode", 88],
+      ["Kesesuaian teori", 86],
+      ["Kesesuaian periode", 91],
     ],
     fitNote: "Cocok untuk: kerangka konseptual, pembahasan meta-analisis, dan perbandingan efek antarnegara.",
     quote: "Digital literacy mediates the relationship between technology access and academic achievement.",
     credibility: [
-      ["Scopus Q1 terverifikasi", "Peringkat SCImago 2023 kategori Education"],
-      ["DOI & metadata cocok", "Metadata sinkron dengan Crossref"],
-      ["Dataset meta-analisis tersedia", "Tabel 43 studi dapat diunduh di repositori penulis"],
-      ["Kutipan per tahun tinggi", "Rata-rata 21 sitasi per tahun sejak 2022"],
+      ["Sumber metadata", "OpenAlex dan Crossref"],
+      ["Penerbit", "Pusat Studi Bisnis Digital Nusantara"],
+      ["DOI terverifikasi", "DOI: 10.20886/jpkf.2022.6.1.16-28"],
+      ["Jumlah sitasi", "Artikel ini dikutip dalam 45 karya ilmiah lainnya."],
     ],
     summary:
       "Meta-analisis 43 studi dari 12 negara menunjukkan literasi digital memediasi hubungan antara akses teknologi dan capaian akademik, dengan efek terbesar pada mahasiswa semester awal. Ukuran efek gabungan berada pada kategori sedang hingga kuat.",
-    doiUrl: "https://doi.org/10.30191/ets.2022.114532",
+    doiUrl: "https://doi.org/10.20886/jpkf.2022.6.1.16-28",
     pdfNote: "PDF meta-analisis literasi digital dibuka.",
   },
   {
     id: "res-3",
-    headerTitle: "Referensi Konteks Indonesia",
-    headerNote: "Terakreditasi Sinta 2 · Akses terbuka penuh",
-    rank: "Peringkat #3",
+    headerTitle: "Rekomendasi Jurnal",
+    headerNote: "",
+    rank: "Rekomendasi 3",
     badges: [
-      { label: "Sinta 2", tone: "sky" },
-      { label: "Studi empiris", tone: "slate" },
+      { label: "Artikel Jurnal", tone: "sky" },
       { label: "2024", tone: "slate" },
-      { label: "Akses terbuka legal", tone: "sky" },
+      { label: "Akses Terbuka", tone: "sky" },
     ],
-    citations: "34 sitasi",
-    source: "Jurnal Manajemen dan Kewirausahaan",
+    citations: "",
+    source: "Jurnal Kajian Pemasaran Digital",
     fitBars: [
       ["Kesesuaian variabel", 88],
       ["Kesesuaian topik", 90],
-      ["Kesesuaian wilayah", 95],
+      ["Kesesuaian konteks", 95],
+      ["Kesesuaian metode", 84],
+      ["Kesesuaian teori", 87],
+      ["Kesesuaian periode", 96],
     ],
     fitNote: "Cocok untuk: konteks Indonesia, rujukan variabel kepercayaan, dan implikasi praktis pemasaran.",
     quote: "Kepercayaan konsumen memediasi pengaruh ulasan daring terhadap minat beli.",
     credibility: [
-      ["Sinta 2 terakreditasi", "Akreditasi Kemenristekdikti periode 2024–2028"],
-      ["DOI & metadata cocok", "Judul, penulis, dan penerbit konsisten di Crossref"],
-      ["PDF dapat diakses legal", "Versi akses terbuka tersedia di laman jurnal"],
-      ["Relevan konteks Indonesia", "Sampel 312 responden pengguna e-commerce nasional"],
+      ["Sumber metadata", "OpenAlex dan Crossref"],
+      ["Penerbit", "Pusat Studi Bisnis Digital Nusantara"],
+      ["DOI terverifikasi", "DOI: 10.20886/jpkf.2022.6.1.16-28"],
+      ["Jumlah sitasi", "Artikel ini dikutip dalam 45 karya ilmiah lainnya."],
     ],
     summary:
       "Survei 312 responden pengguna live commerce di Indonesia menemukan kepercayaan dan ulasan konsumen memediasi pengaruh interaksi parasosial terhadap minat beli, terutama pada kategori produk fesyen dan perawatan diri.",
-    doiUrl: "https://doi.org/10.24912/jmk.v6i1.29841",
+    doiUrl: "https://doi.org/10.20886/jpkf.2022.6.1.16-28",
     pdfNote: "PDF strategi minat beli live commerce dibuka.",
   },
 ];
@@ -200,13 +206,13 @@ const desktopResultDetails: ResultDetail[] = [
 const mobileResultJournals = [
   {
     id: "mres-1",
-    rank: "Paling Relevan #1",
+    rank: "Rekomendasi 1",
     score: 97,
-    citation: "2023 • 120 sitasi • Asia Pacific Journal of Marketing and Logistics • DOI terverifikasi",
+    citation: "2023 • Jurnal Kajian Pemasaran Digital",
     summary:
       "Interaksi parasosial antara host dan penonton ditambah dorongan kelangkaan seperti batas waktu dan stok meningkatkan niat beli di live streaming commerce.",
     title: "Live Streaming Commerce and Mimic Purchase Intention: The Role of Parasocial Interaction and Scarcity Nudges",
-    authors: "Wongkitrungrueng, A. & Assarut, N.",
+    authors: "Rahmawati, D. & Pratama, A.",
     description:
       "Interaksi parasosial antara host dan penonton ditambah dorongan kelangkaan seperti batas waktu dan stok meningkatkan niat beli di live streaming commerce.",
     year: "2023",
@@ -216,7 +222,7 @@ const mobileResultJournals = [
     id: "mres-2",
     rank: "Rekomendasi #2",
     score: 89,
-    citation: "2023 • 120 sitasi • Asia Pacific Journal of Marketing and Logistics • DOI terverifikasi",
+    citation: "2023 • Jurnal Kajian Pemasaran Digital",
     summary: "Studi ini memperkuat hubungan antara interaksi parasosial, dorongan kelangkaan, dan perilaku pembelian digital.",
     title: "Pengaruh Interaksi Parasosial dan Dorongan Kelangkaan terhadap Niat Beli di Live Streaming Commerce",
     authors: "Pratama, R. & Lestari, S.",
@@ -500,7 +506,7 @@ const riwayatSidebar = [
   "Analisis Regresi Variabel Parasosial",
   "Tinjauan Teori TAM Skripsi Bab II",
   "Evaluasi Sitasi & Parafrase Bab 4",
-  "Rekomendasi Jurnal Scopus Q1",
+  "Rekomendasi Jurnal Terverifikasi Alerin",
   "Buat Rumusan Masalah E-Commerce",
   "Penjelasan Uji Validitas & Reliabilitas",
 ];
@@ -912,6 +918,12 @@ function FilterPanel({ open, onClose, onApply, onReset }: { open: boolean; onClo
   const [bidang, setBidang] = useState<Record<string, boolean>>({ "Bisnis dan manajemen": true });
   const [negara, setNegara] = useState<Record<string, boolean>>({});
   const [sections, setSections] = useState<Record<string, boolean>>({ umum: true, metodologi: false, bidang: false, negara: false });
+  const [bidangTambahan, setBidangTambahan] = useState<string[]>([]);
+  const [negaraTambahan, setNegaraTambahan] = useState<string[]>([]);
+  const [bidangLain, setBidangLain] = useState("");
+  const [negaraLain, setNegaraLain] = useState("");
+  const [bidangLainOpen, setBidangLainOpen] = useState(false);
+  const [negaraLainOpen, setNegaraLainOpen] = useState(false);
 
   const toggleSection = (key: string) => setSections(current => ({ ...current, [key]: !current[key] }));
 
@@ -922,6 +934,20 @@ function FilterPanel({ open, onClose, onApply, onReset }: { open: boolean; onClo
     });
 
   const groupChecked = (group: string) => (metode[group]?.length ?? 0) > 0;
+
+  const tambahOpsi = (
+    value: string,
+    daftar: string[],
+    setDaftar: (next: string[]) => void,
+    setTerpilih: (updater: (current: Record<string, boolean>) => Record<string, boolean>) => void,
+    reset: () => void,
+  ) => {
+    const trimmed = value.trim();
+    if (!trimmed || daftar.includes(trimmed)) return;
+    setDaftar([...daftar, trimmed]);
+    setTerpilih(current => ({ ...current, [trimmed]: true }));
+    reset();
+  };
 
   const pilihRentangTahun = (option: string) => {
     setTahun(option);
@@ -1090,6 +1116,54 @@ function FilterPanel({ open, onClose, onApply, onReset }: { open: boolean; onClo
                   onToggle={() => setBidang(current => ({ ...current, [item]: !current[item] }))}
                 />
               ))}
+              {bidangTambahan.map(item => (
+                <FilterCheck
+                  key={item}
+                  bold
+                  checked={Boolean(bidang[item])}
+                  label={item}
+                  onToggle={() => setBidang(current => ({ ...current, [item]: !current[item] }))}
+                />
+              ))}
+              {bidangLainOpen ? (
+                <div className="mt-1 flex gap-2">
+                  <input
+                    autoFocus
+                    value={bidangLain}
+                    onChange={event => setBidangLain(event.target.value)}
+                    onKeyDown={event => {
+                      if (event.key !== "Enter") return;
+                      event.preventDefault();
+                      tambahOpsi(bidangLain, bidangTambahan, setBidangTambahan, setBidang, () => {
+                        setBidangLain("");
+                        setBidangLainOpen(false);
+                      });
+                    }}
+                    placeholder="Tulis bidang studi lain"
+                    className="min-w-0 flex-1 rounded-lg border border-slate-300 bg-white px-2.5 py-2 text-sm text-slate-800 outline-none focus:border-[#0369a1]"
+                  />
+                  <button
+                    type="button"
+                    onClick={() =>
+                      tambahOpsi(bidangLain, bidangTambahan, setBidangTambahan, setBidang, () => {
+                        setBidangLain("");
+                        setBidangLainOpen(false);
+                      })
+                    }
+                    className="shrink-0 rounded-lg bg-[#0369a1] px-3 py-2 text-sm font-semibold text-white"
+                  >
+                    Tambah
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setBidangLainOpen(true)}
+                  className="mt-1 flex items-center gap-1.5 rounded-lg px-1 py-1.5 text-sm font-semibold text-[#0369a1]"
+                >
+                  + Opsi lainnya
+                </button>
+              )}
             </div>
           </FilterSection>
 
@@ -1111,6 +1185,54 @@ function FilterPanel({ open, onClose, onApply, onReset }: { open: boolean; onClo
                   onToggle={() => setNegara(current => ({ ...current, [item]: !current[item] }))}
                 />
               ))}
+              {negaraTambahan.map(item => (
+                <FilterCheck
+                  key={item}
+                  bold
+                  checked={Boolean(negara[item])}
+                  label={item}
+                  onToggle={() => setNegara(current => ({ ...current, [item]: !current[item] }))}
+                />
+              ))}
+              {negaraLainOpen ? (
+                <div className="mt-1 flex gap-2">
+                  <input
+                    autoFocus
+                    value={negaraLain}
+                    onChange={event => setNegaraLain(event.target.value)}
+                    onKeyDown={event => {
+                      if (event.key !== "Enter") return;
+                      event.preventDefault();
+                      tambahOpsi(negaraLain, negaraTambahan, setNegaraTambahan, setNegara, () => {
+                        setNegaraLain("");
+                        setNegaraLainOpen(false);
+                      });
+                    }}
+                    placeholder="Tulis negara atau wilayah lain"
+                    className="min-w-0 flex-1 rounded-lg border border-slate-300 bg-white px-2.5 py-2 text-sm text-slate-800 outline-none focus:border-[#0369a1]"
+                  />
+                  <button
+                    type="button"
+                    onClick={() =>
+                      tambahOpsi(negaraLain, negaraTambahan, setNegaraTambahan, setNegara, () => {
+                        setNegaraLain("");
+                        setNegaraLainOpen(false);
+                      })
+                    }
+                    className="shrink-0 rounded-lg bg-[#0369a1] px-3 py-2 text-sm font-semibold text-white"
+                  >
+                    Tambah
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setNegaraLainOpen(true)}
+                  className="mt-1 flex items-center gap-1.5 rounded-lg px-1 py-1.5 text-sm font-semibold text-[#0369a1]"
+                >
+                  + Opsi lainnya
+                </button>
+              )}
             </div>
           </FilterSection>
         </div>
@@ -1152,7 +1274,7 @@ const premiumFeatures = [
   },
   {
     title: "Akses Basis Data Bereputasi",
-    desc: "Scopus, SINTA 1-6, Crossref & OpenAlex",
+    desc: "Crossref, OpenAlex & basis data terverifikasi Alerin",
     gratis: "10/hari",
     plus: "Unlimited",
     pro: "Unlimited + API",
@@ -1369,7 +1491,7 @@ function UpgradePremiumModal({ open, onClose }: { open: boolean; onClose: () => 
 
 const mobilePremiumFeatures = [
   { title: "Sintesis Literatur AI", desc: "Ringkas ratusan jurnal instan" },
-  { title: "Akses SINTA & Scopus", desc: "Index Q1-Q4 & SINTA 1-6" },
+  { title: "Akses Basis Data Terverifikasi", desc: "Index jurnal yang tervalidasi Alerin" },
   { title: "Cek Sitasi & Referensi", desc: "Format APA, IEEE, Harvard" },
   { title: "Peta Bibliometrik", desc: "Visualisasi novelty & gap riset" },
 ];
@@ -1514,9 +1636,9 @@ function JournalCard({
   return (
     <article className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-sm">
       <div className="flex flex-wrap gap-2">
-        <span className="rounded-full bg-sky-100 px-2.5 py-1 text-xs font-semibold text-[#0066a1]">Scopus Q1</span>
+        <span className="rounded-full bg-sky-100 px-2.5 py-1 text-xs font-semibold text-[#0066a1]">Artikel Jurnal</span>
         <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs text-slate-600">{journal.year}</span>
-        <span className="rounded-full bg-sky-50 px-2.5 py-1 text-xs text-[#0066a1]">Akses terbuka legal</span>
+        <span className="rounded-full bg-sky-50 px-2.5 py-1 text-xs text-[#0066a1]">Akses Terbuka</span>
         <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs text-slate-600">{journal.relevancy} relevan</span>
       </div>
       <h3 className="mt-4 font-['Plus_Jakarta_Sans:Bold'] text-lg font-bold leading-6 text-[#0f172a]">{journal.title}</h3>
@@ -1697,13 +1819,12 @@ function DesktopJournalResultCard({
   onToggleSave?: () => void;
 }) {
   const detail = desktopResultDetails.find(item => item.id === journal?.id) ?? desktopResultDetails[0];
-  const actionButtons = ["Buat sitasi", "Abstrak", "DOI", "Buka PDF"];
+  const actionButtons = ["Abstrak", "Buka PDF"];
 
   return (
     <article className="overflow-hidden rounded-2xl bg-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] outline outline-2 outline-offset-[-2px] outline-sky-100">
       <div className="flex items-center justify-between gap-3 border-b border-slate-100 bg-sky-50/40 px-6 py-3">
         <p className="text-sm font-bold leading-4 text-slate-900">{detail.headerTitle}</p>
-        <p className="text-xs font-bold leading-4 text-sky-700">{detail.headerNote}</p>
       </div>
       <div className="flex flex-col gap-3 px-6 py-6">
         <div className="flex flex-wrap items-center gap-1.5">
@@ -1726,13 +1847,7 @@ function DesktopJournalResultCard({
           <div className="min-w-0 flex-1">
             <h3 className="text-xl font-bold leading-7 text-slate-900">{journal?.title}</h3>
             <p className="pt-1 text-xs font-medium leading-4 text-slate-600">{journal?.authors}</p>
-            <div className="flex flex-wrap items-center gap-2 pt-0.5 text-xs leading-4">
-              <span className="font-semibold text-sky-600 underline">{detail.citations}</span>
-              <span className="text-slate-500">•</span>
-              <span className="text-slate-500">{detail.source}</span>
-              <span className="text-slate-500">•</span>
-              <span className="text-slate-500">DOI terverifikasi</span>
-            </div>
+            <p className="pt-0.5 text-xs leading-4 text-slate-500">{detail.source}</p>
           </div>
           <div className="flex w-28 shrink-0 flex-col items-center">
             <RelevancyRing value={relevancy} />
@@ -1777,6 +1892,14 @@ function DesktopJournalResultCard({
                 </li>
               ))}
             </ul>
+            <a
+              href={detail.doiUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 inline-flex text-xs font-semibold leading-4 text-sky-700 underline"
+            >
+              Buka tautan DOI
+            </a>
           </div>
         </div>
 
@@ -2129,16 +2252,12 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
     window.alert("Tabel berhasil disalin.");
   };
 
-  const downloadCsv = () => {
-    window.alert("Tabel berhasil diunduh sebagai CSV.");
-  };
-
   const closeTable = () => {
     setFullTable(false);
     onClose();
   };
 
-  const columnWidths = ["w-16", "w-72", "w-72", "w-72", "w-72", "w-80"];
+  const columnWidths = ["w-[5%]", "w-[19%]", "w-[20%]", "w-[17%]", "w-[20%]", "w-[19%]"];
 
   return (
     <div className="fixed inset-0 z-[340] bg-black/30" onClick={closeTable} role="presentation">
@@ -2183,12 +2302,7 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
           </div>
 
           <div className="flex items-center justify-between gap-3 md:hidden">
-            <p className="flex items-center gap-2 text-sm leading-5 text-slate-600">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#64748b" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M2 8h12M4.5 5.5L2 8l2.5 2.5M11.5 5.5L14 8l-2.5 2.5" />
-              </svg>
-              Geser ke samping untuk melihat seluruh kolom
-            </p>
+            <p className="text-sm leading-5 text-slate-600">Seluruh kolom ditampilkan dalam satu tampilan.</p>
             <div className="flex shrink-0 items-center gap-2.5">
               <span className="text-sm font-semibold text-sky-600">{tableRows.length} Jurnal</span>
               <button
@@ -2211,14 +2325,14 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
             </div>
           </div>
 
-          <div className="overflow-x-auto rounded-3xl outline outline-1 outline-offset-[-1px] outline-slate-200/80 md:rounded-2xl">
-            <table className="w-full min-w-[1240px] border-collapse text-left">
+          <div className="rounded-3xl outline outline-1 outline-offset-[-1px] outline-slate-200/80 md:rounded-2xl">
+            <table className="w-full table-fixed border-collapse text-left">
               <thead>
                 <tr className="bg-slate-50/90">
                   {headers.map((header, index) => (
                     <th
                       key={header}
-                      className={`${columnWidths[index]} border-b border-slate-200/90 bg-slate-50/90 px-5 py-4 text-sm font-bold leading-5 text-slate-600 ${
+                      className={`${columnWidths[index]} border-b border-slate-200/90 bg-slate-50/90 px-2 py-3 text-[10px] font-bold leading-4 text-slate-600 md:px-3 md:text-xs md:leading-5 ${
                         header === "Persamaan dan perbedaan" ? "bg-amber-50/40 text-amber-900" : ""
                       }`}
                     >
@@ -2230,15 +2344,15 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
               <tbody>
                 {tableRows.map((row, index) => (
                   <tr key={row.study} className={index === 0 ? "" : "border-t border-slate-100"}>
-                    <td className="px-5 py-4 align-top text-sm font-bold leading-6 text-slate-800">{index + 1}</td>
-                    <td className="px-5 py-4 align-top">
-                      <p className="text-sm font-bold leading-5 text-slate-900">{row.study}</p>
-                      <p className="pt-1 text-xs font-normal leading-4 text-slate-500">{row.subtitle}</p>
+                    <td className="px-2 py-3 align-top text-[10px] font-bold leading-4 text-slate-800 md:px-3 md:text-xs md:leading-5">{index + 1}</td>
+                    <td className="px-2 py-3 align-top md:px-3">
+                      <p className="text-[10px] font-bold leading-4 text-slate-900 md:text-xs md:leading-5">{row.study}</p>
+                      <p className="pt-1 text-[9px] font-normal leading-3 text-slate-500 md:text-[11px] md:leading-4">{row.subtitle}</p>
                     </td>
-                    <td className="px-5 py-4 align-top text-sm font-normal leading-6 text-slate-700">{row.variabel}</td>
-                    <td className="px-5 py-4 align-top text-sm font-normal leading-6 text-slate-700">{row.metode}</td>
-                    <td className="px-5 py-4 align-top text-sm font-normal leading-6 text-slate-700">{row.hasil}</td>
-                    <td className="bg-amber-50/40 px-5 py-4 align-top text-sm font-normal leading-6 text-slate-700">{row.perbedaan}</td>
+                    <td className="px-2 py-3 align-top text-[10px] font-normal leading-4 text-slate-700 md:px-3 md:text-xs md:leading-5">{row.variabel}</td>
+                    <td className="px-2 py-3 align-top text-[10px] font-normal leading-4 text-slate-700 md:px-3 md:text-xs md:leading-5">{row.metode}</td>
+                    <td className="px-2 py-3 align-top text-[10px] font-normal leading-4 text-slate-700 md:px-3 md:text-xs md:leading-5">{row.hasil}</td>
+                    <td className="bg-amber-50/40 px-2 py-3 align-top text-[10px] font-normal leading-4 text-slate-700 md:px-3 md:text-xs md:leading-5">{row.perbedaan}</td>
                   </tr>
                 ))}
               </tbody>
@@ -2258,16 +2372,6 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
                 <path d="M10.5 5.5v-1a2 2 0 0 0-2-2h-5a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h1" />
               </svg>
               Salin tabel
-            </button>
-            <button
-              type="button"
-              onClick={downloadCsv}
-              className="hidden flex-1 items-center justify-center gap-2 rounded-2xl bg-white px-4 py-3.5 text-sm font-semibold leading-5 text-slate-700 outline outline-1 outline-offset-[-1px] outline-slate-200 transition-colors hover:bg-slate-50 md:flex md:flex-none md:rounded-xl md:px-5 md:py-2.5"
-            >
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M8 2.5v7M5 7l3 3 3-3M3 13h10" />
-              </svg>
-              Unduh CSV
             </button>
           </div>
           <button
@@ -2510,7 +2614,7 @@ function AbstrakJurnalModal({ open, onClose }: { open: boolean; onClose: () => v
               onClick={copyAbstract}
               className="rounded-xl bg-white px-5 py-2.5 text-sm font-semibold leading-5 text-slate-800 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] outline outline-1 outline-offset-[-1px] outline-slate-300 transition-colors hover:bg-slate-50"
             >
-              Salin abstrak
+              Salin
             </button>
             <button
               type="button"
@@ -2736,9 +2840,9 @@ function DesktopSearchResults({
         <aside className="sticky top-2 w-64 shrink-0 self-start space-y-4">
           {analysis && <ProfileCard collection={false} />}
           <div className="rounded-2xl bg-white p-6">
-          <h2 className="text-base font-bold leading-6 text-slate-900">Ringkasan hasil pencarian</h2>
+          <h2 className="text-base font-bold leading-6 text-slate-900">Ringkasan Hasil Pencarian</h2>
           <p className="pt-1 text-xs leading-4 text-slate-500">
-            Alerin menyeleksi hasil secara bertahap sebelum menampilkan jurnal terbaik.
+            Alerin menelusuri dan menyaring jurnal berdasarkan relevansi dengan pencarianmu untuk menampilkan hasil yang paling sesuai.
           </p>
           <div className="flex flex-col items-start gap-2 pt-4">
             <span className="rounded-md bg-slate-100 px-2.5 py-1 text-xs font-semibold leading-4 text-slate-700">
@@ -4389,7 +4493,7 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
             title: "Peta Jaringan",
             subtitle: "Menampilkan hubungan antar topik berdasarkan kemunculan bersama.",
             hint: "Putar simulasi untuk melihat pembentukan hubungan antar topik satu per satu.",
-            stats: ["Jumlah item: 90", "Jumlah hubungan: 340", "Cluster: 5"],
+            stats: ["Jumlah item: 90", "Jumlah hubungan: 340", "Topik: 5"],
           };
 
   const toggleNode = (name: string) => {
@@ -4539,17 +4643,6 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
             Unduh Gambar
           </button>
 
-          <button
-            type="button"
-            onClick={() => window.alert("Data klaster berhasil diunduh sebagai CSV.")}
-            className="flex items-center gap-1.5 rounded-lg bg-white px-3 py-1.5 text-sm font-medium leading-5 text-slate-900 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]"
-          >
-            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="#0f172a" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true">
-              <rect x="1.5" y="1.5" width="10" height="10" rx="1.5" />
-              <path d="M1.5 5h10M1.5 8.5h10M5.5 1.5v10" />
-            </svg>
-            CSV Data
-          </button>
         </div>
 
         <div
@@ -4717,9 +4810,6 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
                             strokeWidth={mode === "jaringan" ? edge.weight : 1}
                             strokeLinecap="round"
                             vectorEffect="non-scaling-stroke"
-                            pathLength={1}
-                            strokeDasharray={1}
-                            strokeDashoffset={mode === "jaringan" ? 1 - drawn : 0}
                             style={{ opacity, transition: "opacity 250ms linear" }}
                           />
                         );
@@ -4821,21 +4911,6 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
               </span>
             </div>
 
-            {mode === "jaringan" && (
-              <aside className="w-[264px] shrink-0 self-center rounded-xl border border-slate-200/90 bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
-                <p className="text-[15px] font-semibold leading-6 text-slate-900">Cluster Topik</p>
-                <ul className="mt-4 space-y-3.5">
-                  {mapClusters.map(cluster => (
-                    <li key={cluster.label} className="flex items-start gap-3">
-                      <span className="mt-0.5 h-3.5 w-3.5 shrink-0 rounded-full" style={{ background: cluster.color }} />
-                      <span className="text-sm leading-5 text-slate-600">
-                        {cluster.label} <span className="text-slate-500">({cluster.items} item)</span>
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </aside>
-            )}
           </div>
 
           {mode !== "jaringan" && (
@@ -4919,7 +4994,7 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
               </svg>
             </span>
             <div>
-              <h2 className="text-lg font-semibold leading-7 text-slate-900">Rekomendasi Jurnal Sesuai Klaster Peta</h2>
+              <h2 className="text-lg font-semibold leading-7 text-slate-900">Rekomendasi Jurnal Peta Penelitian</h2>
               <p className="mt-0.5 text-sm leading-5 text-slate-500">Daftar publikasi berbobot tinggi yang merepresentasikan klaster yang sedang aktif dipilih.</p>
             </div>
           </div>
@@ -5437,9 +5512,9 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                         <path d="M6 8h4M6 11h4" />
                       </svg>
                     </span>
-                    <h2 className="text-xl font-bold text-slate-900">Ringkasan hasil pencarian</h2>
+                    <h2 className="text-xl font-bold text-slate-900">Ringkasan Hasil Pencarian</h2>
                   </div>
-                  <p className="mt-3 text-sm leading-6 text-neutral-700">Alerin menyeleksi hasil secara bertahap sebelum menampilkan jurnal terbaik.</p>
+                  <p className="mt-3 text-sm leading-6 text-neutral-700">Alerin menelusuri dan menyaring jurnal berdasarkan relevansi dengan pencarianmu untuk menampilkan hasil yang paling sesuai.</p>
                   <div className="mt-3 space-y-2">
                     <span className="flex h-9 w-fit items-center gap-2 rounded-xl bg-slate-100 px-4 text-sm font-medium text-slate-900">
                       <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#0369a1" strokeWidth="1.6" strokeLinecap="round" aria-hidden="true">
@@ -5491,18 +5566,17 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                 <div className="mt-2 space-y-3">
                   {mobileResultJournals.map((result, index) => (
                     <article key={result.rank} className="rounded-2xl bg-white p-4 shadow-sm">
-                      <p className="text-[10px] font-medium text-slate-400">OpenAlex &amp; Crossref Scopus</p>
+                      <p className="text-[11px] font-medium text-slate-400">OpenAlex &amp; Crossref</p>
                       <div className="mt-2 flex flex-wrap gap-1.5 text-[10px] font-semibold">
-                        <span className="rounded-md bg-sky-100 px-2 py-1 text-sky-700">Scopus Q1</span>
-                        <span className="rounded-md bg-slate-200 px-2 py-1 text-slate-700">Artikel</span>
-                        <span className="rounded-md bg-slate-200 px-2 py-1 text-slate-700">2023</span>
+                        <span className="rounded-md bg-sky-100 px-2 py-1 text-sky-700">Artikel Jurnal</span>
+                        <span className="rounded-md bg-slate-200 px-2 py-1 text-slate-700">{result.year}</span>
+                        <span className="rounded-md bg-sky-100 px-2 py-1 text-sky-700">Akses Terbuka</span>
                       </div>
                       <div className="mt-3 flex items-start justify-between gap-3">
                         <div className="min-w-0 flex-1">
                           <p className="text-xs font-semibold text-sky-700">{result.rank}</p>
                           <h2 className="mt-1 text-xl font-bold leading-7 text-slate-900">{result.title}</h2>
-                          <p className="mt-2 text-sm leading-6 text-slate-600">Wongkitrungrueng, A. &amp; Assarut, N.</p>
-                          <p className="mt-1 text-[13px] leading-5 text-slate-500">{result.citation}</p>
+                          <p className="mt-2 text-sm leading-6 text-slate-600">{result.authors}</p>
                         </div>
                         <div className="flex h-20 w-20 shrink-0 flex-col items-center justify-center rounded-full bg-sky-50 shadow-inner">
                           <strong className="text-2xl font-extrabold text-sky-700">{result.score}%</strong>
@@ -5512,7 +5586,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
 
                       <div className="mt-4 rounded-2xl bg-slate-100 p-4">
                         <p className="text-[13px] font-bold uppercase tracking-wide text-slate-900">Mengapa jurnal ini direkomendasikan?</p>
-                        {[["Kesesuaian variabel", index ? 96 : 98], ["Kesesuaian topik", index ? 94 : 96], ["Kesesuaian wilayah", index ? 85 : 90]].map(([label, value]) => (
+                        {[["Kesesuaian variabel", index ? 94 : 98], ["Kesesuaian topik", index ? 92 : 96], ["Kesesuaian konteks", index ? 90 : 94], ["Kesesuaian metode", index ? 88 : 91], ["Kesesuaian teori", index ? 86 : 89], ["Kesesuaian periode", index ? 91 : 93]].map(([label, value]) => (
                           <div key={String(label)} className="mt-2.5">
                             <div className="flex justify-between text-sm"><span className="text-slate-700">{label}</span><strong className="text-sky-700">{value}%</strong></div>
                             <div className="mt-1 h-2 overflow-hidden rounded-full bg-zinc-200"><div className="h-full rounded-full bg-sky-700" style={{ width: `${value}%` }} /></div>
@@ -5533,10 +5607,10 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                       <div className="mt-4 rounded-2xl bg-slate-100 p-4">
                         <p className="text-[13px] font-bold uppercase tracking-wide text-slate-900">Kredibilitas &amp; akses</p>
                         {[
-                          ["Scopus Q1 terverifikasi", "Status indeks dicek dari sumber resmi"],
-                          ["DOI & metadata cocok", "Judul, penulis, tahun, dan penerbit konsisten"],
-                          ["PDF dapat diakses legal", "Versi akses terbuka tersedia dari penerbit"],
-                          ["Tidak ada peringatan integritas", "Tidak ditemukan retraksi atau koreksi kritis"],
+                          ["Sumber metadata", "OpenAlex dan Crossref"],
+                          ["Penerbit", "Pusat Studi Bisnis Digital Nusantara"],
+                          ["DOI terverifikasi", "DOI: 10.20886/jpkf.2022.6.1.16-28"],
+                          ["Jumlah sitasi", "Artikel ini dikutip dalam 45 karya ilmiah lainnya."],
                         ].map(([judul, detail]) => (
                           <div key={judul} className="mt-3 flex items-start gap-2.5">
                             <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-[9px] font-bold text-emerald-600">✓</span>
@@ -5546,6 +5620,14 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                             </span>
                           </div>
                         ))}
+                        <a
+                          href="https://doi.org/10.20886/jpkf.2022.6.1.16-28"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-1 inline-flex text-[13px] font-semibold leading-5 text-sky-700 underline"
+                        >
+                          Buka tautan DOI
+                        </a>
                       </div>
 
                       <div className="mt-4 rounded-2xl bg-sky-50 p-4">
@@ -5578,23 +5660,11 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                           </svg>
                           {savedIds.includes(result.id) ? "Tersimpan" : "Simpan"}
                         </button>
-                        <button type="button" onClick={() => setSitasiOpen(true)} className="flex items-center justify-center gap-1.5 rounded-2xl bg-slate-100 px-2 py-2.5 text-xs font-medium text-slate-900">
-                          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" strokeLinecap="round" aria-hidden="true">
-                            <path d="M2 2.5h10v7H6l-3 2.5V9.5H2z" />
-                          </svg>
-                          Sitasi
-                        </button>
                         <button type="button" onClick={() => setAbstrakOpen(true)} className="flex items-center justify-center gap-1.5 rounded-2xl bg-slate-100 px-2 py-2.5 text-xs font-medium text-slate-900">
                           <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" strokeLinecap="round" aria-hidden="true">
                             <path d="M3 1.5h6l3 3v9H3zM6 7h4M6 10h4" />
                           </svg>
                           Abstrak
-                        </button>
-                        <button type="button" onClick={() => window.open("https://doi.org/10.1016/j.jretconser.2020.102345", "_blank", "noopener,noreferrer")} className="flex items-center justify-center gap-1.5 rounded-2xl bg-slate-100 px-2 py-2.5 text-xs font-medium text-slate-900">
-                          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" strokeLinecap="round" aria-hidden="true">
-                            <path d="M5.5 8.5l3-3M4.8 6.3L3.3 7.8a2.1 2.1 0 003 3l1.5-1.5M9.2 7.7l1.5-1.5a2.1 2.1 0 00-3-3L6.2 4.7" />
-                          </svg>
-                          DOI
                         </button>
                         <button type="button" onClick={() => window.alert("PDF dibuka.")} className="flex items-center justify-center gap-1.5 rounded-2xl bg-slate-100 px-2 py-2.5 text-xs font-semibold text-sky-700">
                           <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" strokeLinecap="round" aria-hidden="true">
@@ -5829,7 +5899,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
 
                 <section className="mt-4 rounded-2xl border border-slate-200/80 bg-white px-4 py-[22px] shadow-sm md:p-6">
                   <h2 className="text-center font-['Plus_Jakarta_Sans:Bold'] text-[17px] font-bold md:text-left md:text-base">Cari rujukan dari tulisanmu</h2>
-                  <p className="mx-auto mt-2 max-w-lg text-center font-['Plus_Jakarta_Sans:Regular'] text-xs leading-[19.5px] text-[#232323] md:mx-0 md:mt-1 md:max-w-none md:text-left md:text-base md:leading-6 md:text-[#475569]">Tempel kalimat atau paragraf yang ingin kamu perkuat dengan sitasi. Alerin akan membantu mencari artikel jurnal yang relevan untuk mendukung tulisanmu.</p>
+                  <p className="mx-auto mt-2 max-w-lg text-center font-['Plus_Jakarta_Sans:Regular'] text-xs leading-[19.5px] text-[#232323] md:mx-0 md:mt-1 md:max-w-none md:text-left md:text-base md:leading-6 md:text-[#475569]">Tempel kalimat atau unggah file yang ingin kamu perkuat dengan sitasi. Alerin akan membantu mencari artikel jurnal yang relevan untuk mendukung tulisanmu.</p>
                   <div className="mt-5 grid min-w-0 gap-3 md:grid-cols-[1.35fr_0.95fr]">
                     <label className="grid gap-1.5">
                       <span className="font-['Plus_Jakarta_Sans:SemiBold'] text-[14px] font-semibold text-[#334155] md:hidden">Draf / Paragraf Teks</span>
@@ -5927,12 +5997,6 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                       Analisis dan carikan jurnal
                     </button>
                   </div>
-                  <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-slate-100 pt-3 text-[12px] text-[#64748b] md:pt-4 md:font-semibold md:text-sm md:text-slate-500">
-                    <span className="w-full md:w-auto">Konsep yang dipahami Alerin:</span>
-                    {["interaksi parasosial", "kepercayaan konsumen", "kelangkaan produk", "niat beli"].map(item => (
-                      <span key={item} className="rounded-lg bg-slate-100 px-3 py-1 font-['Plus_Jakarta_Sans:SemiBold'] text-[#334155] md:bg-sky-50 md:font-['Plus_Jakarta_Sans:SemiBold'] md:font-semibold md:text-zinc-700">{item}</span>
-                    ))}
-                  </div>
                 </section>
 
               </div>
@@ -5953,12 +6017,12 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                 </button>
                 <div className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm md:p-6">
                   <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-base font-bold md:text-base">Tiga cara menemukan jurnal</h2>
-                  <p className="mt-2 text-sm leading-5 text-[#64748b] md:font-['Plus_Jakarta_Sans:Regular'] md:text-xs">Pilih cara paling mudah sesuai informasi yang sudah kamu punya.</p>
+                  <p className="mt-2 text-sm leading-5 text-[#64748b] md:font-['Plus_Jakarta_Sans:Regular'] md:text-xs">Pilih cara pencarian sesuai informasi yang sudah kamu miliki.</p>
                   <ol className="mt-4 space-y-2 md:mt-6 md:space-y-6">
                     {[
-                      ["1", "Ketik kata kunci", "Cocok jika sudah tahu topik, penulis, atau variabel.", "Cocok jika sudah tahu topik, penulis, atau variabel."],
-                      ["2", "Tempel tulisan", "Alerin memahami teori dan konteks paragrafmu.", "Alerin memahami narasi atau konteks paragrafmu."],
-                      ["3", "Unggah dokumen", "Alerin mengambil konsep penting dari artikel atau catatan.", "Alerin membantu koreksi file untuk mengecek kekurangan atau kesalahan referensi yang digunakan."],
+                      ["1", "Ketik kata kunci", "Gunakan topik, variabel, nama penulis, atau informasi lain untuk menemukan jurnal yang relevan.", "Gunakan topik, variabel, nama penulis, atau informasi lain untuk menemukan jurnal yang relevan."],
+                      ["2", "Tempel tulisan", "Tempel paragraf atau bagian tulisanmu. Alerin akan memahami konteksnya dan mencarikan jurnal yang dapat mendukung isi tulisan tersebut.", "Tempel paragraf atau bagian tulisanmu. Alerin akan memahami konteksnya dan mencarikan jurnal yang dapat mendukung isi tulisan tersebut."],
+                      ["3", "Unggah dokumen", "Unggah dokumen untuk memeriksa penggunaan referensi dan menemukan bagian yang membutuhkan sumber, sitasi, atau jurnal pendukung.", "Unggah dokumen untuk memeriksa penggunaan referensi dan menemukan bagian yang membutuhkan sumber, sitasi, atau jurnal pendukung."],
                     ].map(([number, title, descriptionMobile, descriptionDesktop]) => (
                       <li key={number} className="flex gap-3 rounded-xl border border-slate-100/80 bg-slate-50 p-3 md:rounded-none md:border-0 md:bg-transparent md:p-0">
                         <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-sky-100 text-sm font-bold text-[#0070ba] md:h-8 md:w-8 md:rounded-xl md:text-sky-600">{number}</span>
@@ -6086,7 +6150,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                 {collectionJournals.map((journal, index) => (
                   <article key={journal.id} className="rounded-xl bg-white p-4 shadow-sm">
                     <div className="flex items-center gap-2 text-[11px]">
-                      <span className="rounded-full bg-sky-100 px-2 py-1 font-semibold text-[#0369a1]">Scopus Q1</span>
+                      <span className="rounded-full bg-sky-100 px-2 py-1 font-semibold text-[#0369a1]">Artikel Jurnal</span>
                       <span className="rounded-full bg-slate-100 px-2 py-1 font-semibold text-[#64748b]">{journal.year}</span>
                       <span className="ml-auto flex items-center gap-1 rounded-full bg-sky-50 px-2 py-1 font-semibold text-[#006194]">
                         <img src="/assets/jurnal-design/collection-mobile/4bb5d.svg" alt="" className="max-w-none origin-center scale-[0.7]" />
@@ -6287,7 +6351,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                       }`}
                     >
                       <img src={`${collectionAssets}/8b8d1.svg`} alt="" className={folderSelectMode ? "opacity-40" : ""} />
-                      <span className="flex-1">Semua jurnal tersimpan</span>
+                      <span className="flex-1">Semua</span>
                       <span>{folderCounts.all ?? 0}</span>
                     </button>
                     {folders.map(folder => {
