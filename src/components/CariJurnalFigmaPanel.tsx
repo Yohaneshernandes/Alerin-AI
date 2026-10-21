@@ -2470,36 +2470,40 @@ function BuatSitasiModal({ open, onClose }: { open: boolean; onClose: () => void
   };
 
   return (
-    <div className="fixed inset-0 z-[340] flex items-center justify-center bg-black/25 p-4 backdrop-blur-[2.55px]" onClick={onClose} role="presentation">
+    <div className="fixed inset-0 z-[340] flex items-end justify-center bg-black/30 backdrop-blur-[2px] md:items-center md:p-4" onClick={onClose} role="presentation">
       <div
         role="dialog"
         aria-modal="true"
         aria-label="Buat sitasi jurnal"
         onClick={event => event.stopPropagation()}
-        className="flex max-h-[calc(100vh-32px)] w-[656px] max-w-full flex-col overflow-hidden rounded-2xl bg-white shadow-[0px_20px_50px_0px_rgba(0,0,0,0.18)] outline outline-1 outline-offset-[-1px] outline-slate-100"
+        className="flex max-h-[92dvh] w-full flex-col overflow-hidden rounded-t-[28px] bg-white pb-[env(safe-area-inset-bottom)] shadow-[0px_20px_50px_0px_rgba(0,0,0,0.18)] md:max-h-[calc(100vh-32px)] md:w-[656px] md:max-w-full md:rounded-2xl md:pb-0 md:outline md:outline-1 md:outline-offset-[-1px] md:outline-slate-100"
       >
-        <div className="flex items-center justify-between px-7 pb-2 pt-6">
-          <h2 className="font-['Inter:Bold'] text-xl font-bold leading-8 text-slate-900">Buat sitasi jurnal</h2>
+        <div className="flex shrink-0 justify-center pb-1 pt-3 md:hidden">
+          <span className="h-1.5 w-16 rounded-full bg-slate-300" aria-hidden="true" />
+        </div>
+
+        <div className="flex items-center justify-between gap-3 px-6 pb-2 pt-2 md:px-7 md:pb-2 md:pt-6">
+          <h2 className="font-['Inter:Bold'] text-2xl font-bold leading-8 text-slate-900 md:text-xl">Buat sitasi jurnal</h2>
           <button
             type="button"
             aria-label="Tutup sitasi"
             onClick={onClose}
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full outline outline-1 outline-offset-[-1px] outline-slate-200 transition-colors hover:bg-slate-50"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-slate-100 outline outline-1 outline-offset-[-1px] outline-slate-200 transition-colors hover:bg-slate-200 md:h-8 md:w-8 md:bg-transparent md:hover:bg-slate-50"
           >
-            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="#64748b" strokeWidth="1.47" strokeLinecap="round" aria-hidden="true">
+            <svg width="12" height="12" viewBox="0 0 10 10" fill="none" stroke="#64748b" strokeWidth="1.47" strokeLinecap="round" aria-hidden="true">
               <path d="M1.5 1.5l7 7M8.5 1.5l-7 7" />
             </svg>
           </button>
         </div>
 
-        <div className="flex gap-7 border-b border-slate-200 px-7 pt-3">
+        <div className="flex shrink-0 gap-6 overflow-x-auto border-b border-slate-200 px-6 pt-3 [scrollbar-width:none] md:gap-7 md:overflow-x-visible md:px-7">
           {(Object.keys(styles) as Array<keyof typeof styles>).map(key => (
             <button
               key={key}
               type="button"
               onClick={() => setActiveStyle(key)}
               aria-pressed={activeStyle === key}
-              className={`border-b-[3px] pb-2.5 text-sm leading-5 transition-colors ${
+              className={`shrink-0 border-b-[3px] pb-2.5 text-base leading-6 transition-colors md:text-sm md:leading-5 ${
                 activeStyle === key
                   ? "border-sky-600 font-['Inter:Bold'] font-bold text-slate-900"
                   : "border-transparent font-['Inter:Medium'] font-medium text-slate-600 hover:text-slate-800"
@@ -2510,14 +2514,14 @@ function BuatSitasiModal({ open, onClose }: { open: boolean; onClose: () => void
           ))}
         </div>
 
-        <div className="px-7 pb-2 pt-4">
+        <div className="min-h-0 flex-1 overflow-y-auto px-5 pb-3 pt-4 md:px-7 md:pb-2">
           {activeStyle === "bibtex" ? (
-            <div className="min-h-36 rounded-xl bg-white p-5 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.02)] outline outline-1 outline-offset-[-1px] outline-slate-200">
-              <pre className="whitespace-pre-wrap font-['JetBrains_Mono:Medium'] text-xs leading-5 text-slate-800">{bibtex}</pre>
+            <div className="min-h-36 rounded-2xl bg-white p-5 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.02)] outline outline-1 outline-offset-[-1px] outline-slate-200">
+              <pre className="whitespace-pre-wrap font-['JetBrains_Mono:Medium'] text-[13px] leading-6 text-slate-800">{bibtex}</pre>
             </div>
           ) : (
-            <div className="flex min-h-36 flex-col gap-4 rounded-xl bg-white p-5 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.02)] outline outline-1 outline-offset-[-1px] outline-slate-200">
-              <p className="font-['Inter:Regular'] text-sm font-normal leading-6 text-slate-800">
+            <div className="flex min-h-36 flex-col gap-4 rounded-2xl bg-white p-6 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.02)] outline outline-1 outline-offset-[-1px] outline-slate-200">
+              <p className="font-['Inter:Regular'] text-[16px] font-normal leading-8 text-slate-800 md:text-sm md:leading-6">
                 {active.before}
                 <span className="italic">{journal}</span>
                 {active.after}
@@ -2526,7 +2530,7 @@ function BuatSitasiModal({ open, onClose }: { open: boolean; onClose: () => void
                 href={doi}
                 target="_blank"
                 rel="noreferrer"
-                className="font-['Inter:Regular'] text-sm font-normal leading-6 text-sky-600 underline hover:text-sky-700"
+                className="break-words font-['Inter:Regular'] text-[16px] font-normal leading-8 text-sky-600 underline hover:text-sky-700 md:text-sm md:leading-6"
               >
                 {doi}
               </a>
@@ -2534,21 +2538,29 @@ function BuatSitasiModal({ open, onClose }: { open: boolean; onClose: () => void
           )}
         </div>
 
-        <div className="flex items-center justify-end gap-3 px-7 pb-7 pt-1">
+        <div className="flex shrink-0 items-center justify-end gap-2 border-t border-slate-100 px-5 py-3 md:gap-3 md:border-0 md:px-7 md:pb-7 md:pt-1">
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg px-4 py-2 text-sm font-medium leading-5 text-slate-700 transition-colors hover:bg-slate-50"
+            className="rounded-lg px-4 py-2.5 text-base font-medium leading-5 text-slate-700 transition-colors hover:bg-slate-50 md:py-2 md:text-sm"
           >
             Batal
           </button>
           <button
             type="button"
             onClick={copyCitation}
-            className="rounded-lg bg-sky-600 px-5 py-2 text-sm font-semibold leading-5 tracking-tight text-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] transition-colors hover:bg-sky-700"
+            className="flex items-center gap-2 rounded-xl bg-sky-600 px-5 py-2.5 text-base font-semibold leading-5 tracking-tight text-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] transition-colors hover:bg-sky-700 md:py-2 md:text-sm"
           >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <rect x="5.5" y="5.5" width="8" height="8" rx="1.5" />
+              <path d="M10.5 5.5v-1a2 2 0 0 0-2-2h-5a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h1" />
+            </svg>
             Salin teks
           </button>
+        </div>
+
+        <div className="flex shrink-0 justify-center pb-2 pt-1 md:hidden">
+          <span className="h-1.5 w-32 rounded-full bg-slate-300/80" aria-hidden="true" />
         </div>
       </div>
     </div>
