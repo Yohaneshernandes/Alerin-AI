@@ -3474,20 +3474,6 @@ function DesktopLiteratureReview({ query, onBack, onOpenSitasi }: { query: strin
           <span className="h-8 w-1.5 rounded-full bg-[#0369a1]" />
           <h2 className="text-2xl font-extrabold leading-8 text-slate-900">Literature Review Siap Digunakan</h2>
         </div>
-        <div className="flex items-center gap-2">
-          {[
-            { label: "Scoping Review", icon: "text-sky-600", path: "M3 2.5h7.5v9H3zM3 5.5h7.5M5.5 2.5v9" },
-            { label: "15 artikel", icon: "text-emerald-500", path: "M7 1.5v8M4 6.5L7 9.5l3-3M2.5 12.5h9" },
-            { label: "Berbasis sumber", icon: "text-amber-500", path: "M7 1.5l1.6 3.3 3.6.5-2.6 2.5.6 3.6L7 9.7l-3.2 1.7.6-3.6-2.6-2.5 3.6-.5z" },
-          ].map(item => (
-            <span key={item.label} className="flex items-center gap-1.5 rounded-lg bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm outline outline-1 outline-slate-200">
-              <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" strokeLinecap="round" className={item.icon} aria-hidden="true">
-                <path d={item.path} />
-              </svg>
-              {item.label}
-            </span>
-          ))}
-        </div>
       </div>
 
       <section className="flex items-stretch gap-5 rounded-2xl bg-white p-5 shadow-sm">
@@ -4019,22 +4005,6 @@ function MobileLiteratureReview() {
 
       <div className="rounded-3xl bg-white p-5 shadow-sm outline outline-1 outline-offset-[-1px] outline-slate-200/80">
         <h2 className="text-xl font-bold leading-7 text-slate-900">Literature Review Siap Digunakan</h2>
-        <div className="mt-3.5 flex flex-wrap gap-2">
-          {[
-            { label: "Scoping Review", box: "bg-sky-50 text-sky-700 outline-sky-200", icon: true },
-            { label: "15 artikel", box: "bg-slate-100 text-slate-700 outline-slate-200", icon: false },
-            { label: "Berbasis sumber", box: "bg-amber-50 text-amber-800 outline-amber-200", icon: false },
-          ].map(item => (
-            <span key={item.label} className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium outline outline-1 ${item.box}`}>
-              {item.icon && (
-                <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" aria-hidden="true">
-                  <path d="M3 2.5h7.5v9H3zM3 5.5h5.5M5.5 2.5v9" />
-                </svg>
-              )}
-              {item.label}
-            </span>
-          ))}
-        </div>
         <div className="mt-4 grid grid-cols-2 gap-3">
           <button
             type="button"
