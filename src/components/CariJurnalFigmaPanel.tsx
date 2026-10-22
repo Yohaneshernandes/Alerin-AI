@@ -5620,6 +5620,29 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
 
   const topicSuggestions = searchType === "map" ? mapTopicSuggestions : reviewTopicSuggestions;
 
+  const guideContent =
+    searchType === "review"
+      ? {
+          title: "Panduan Literatur Review",
+          intro: "Alerin akan membantu menemukan jurnal ilmiah yang relevan dan menyusun literatur review berdasarkan topik penelitianmu.",
+          steps: [
+            "Masukkan topik penelitian atau pilih rekomendasi dari Alerin sesuai kebutuhanmu.",
+            "Tentukan periode publikasi jurnal yang ingin digunakan.",
+            "Tentukan jumlah jurnal yang dibutuhkan untuk menyusun literatur review.",
+          ],
+        }
+      : searchType === "map"
+        ? {
+            title: "Panduan Peta Penelitian",
+            intro: "Alerin akan membantu menemukan jurnal yang relevan dan menyusun peta penelitian untuk mengidentifikasi keterkaitan, kepadatan topik dan perkembangan penelitian.",
+            steps: [
+              "Masukkan topik penelitian atau gunakan rekomendasi Alerin sesuai kebutuhanmu.",
+              "Pilih periode publikasi jurnal yang ingin dianalisis.",
+              "Tentukan jumlah jurnal yang akan digunakan sebagai dasar penyusunan peta penelitian.",
+            ],
+          }
+        : null;
+
   const toggleReviewTopic = (topic: string) => {
     setReviewTopics(list => (list.includes(topic) ? list.filter(item => item !== topic) : [...list, topic]));
   };
@@ -6454,26 +6477,37 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                   <span className="font-['Inter:Semi_Bold'] text-sm font-semibold text-slate-800">Kembali ke Beranda Alerin</span>
                 </button>
                 <div className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm md:p-6">
-                  <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-base font-bold md:text-base">Tiga cara menemukan jurnal</h2>
-                  <p className="mt-2 text-sm leading-5 text-[#64748b] md:font-['Plus_Jakarta_Sans:Regular'] md:text-xs">Pilih cara pencarian sesuai informasi yang sudah kamu miliki.</p>
-                  <ol className="mt-4 space-y-2 md:mt-6 md:space-y-6">
-                    {[
-                      ["1", "Ketik kata kunci", "Gunakan topik, variabel, nama penulis, atau informasi lain untuk menemukan jurnal yang relevan.", "Gunakan topik, variabel, nama penulis, atau informasi lain untuk menemukan jurnal yang relevan."],
-                      ["2", "Tempel tulisan", "Tempel paragraf atau bagian tulisanmu. Alerin akan memahami konteksnya dan mencarikan jurnal yang dapat mendukung isi tulisan tersebut.", "Tempel paragraf atau bagian tulisanmu. Alerin akan memahami konteksnya dan mencarikan jurnal yang dapat mendukung isi tulisan tersebut."],
-                      ["3", "Unggah dokumen", "Unggah dokumen untuk memeriksa penggunaan referensi dan menemukan bagian yang membutuhkan sumber, sitasi, atau jurnal pendukung.", "Unggah dokumen untuk memeriksa penggunaan referensi dan menemukan bagian yang membutuhkan sumber, sitasi, atau jurnal pendukung."],
-                    ].map(([number, title, descriptionMobile, descriptionDesktop]) => (
-                      <li key={number} className="flex gap-3 rounded-xl border border-slate-100/80 bg-slate-50 p-3 md:rounded-none md:border-0 md:bg-transparent md:p-0">
-                        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-sky-100 text-sm font-bold text-[#0070ba] md:h-8 md:w-8 md:rounded-xl md:text-sky-600">{number}</span>
-                        <span>
-                          <strong className="block text-sm md:text-sm">{title}</strong>
-                          <span className="mt-0.5 block text-xs leading-5 text-[#64748b] md:mt-1 md:text-xs md:leading-5">
-                            <span className="md:hidden">{descriptionMobile}</span>
-                            <span className="hidden md:inline">{descriptionDesktop}</span>
+                  <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-base font-bold md:text-base">{guideContent?.title ?? "Tiga cara menemukan jurnal"}</h2>
+                  <p className="mt-2 text-sm leading-5 text-[#64748b] md:font-['Plus_Jakarta_Sans:Regular'] md:text-xs">{guideContent?.intro ?? "Pilih cara pencarian sesuai informasi yang sudah kamu miliki."}</p>
+                  {guideContent ? (
+                    <ol className="mt-4 space-y-2 md:mt-6 md:space-y-4">
+                      {guideContent.steps.map((step, index) => (
+                        <li key={step} className="flex gap-3 rounded-xl border border-slate-100/80 bg-slate-50 p-3 md:rounded-none md:border-0 md:bg-transparent md:p-0">
+                          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-sky-100 text-sm font-bold text-[#0070ba] md:h-8 md:w-8 md:rounded-xl md:text-sky-600">{index + 1}</span>
+                          <span className="text-sm leading-5 text-slate-700 md:text-xs md:leading-5">{step}</span>
+                        </li>
+                      ))}
+                    </ol>
+                  ) : (
+                    <ol className="mt-4 space-y-2 md:mt-6 md:space-y-6">
+                      {[
+                        ["1", "Ketik kata kunci", "Gunakan topik, variabel, nama penulis, atau informasi lain untuk menemukan jurnal yang relevan.", "Gunakan topik, variabel, nama penulis, atau informasi lain untuk menemukan jurnal yang relevan."],
+                        ["2", "Tempel tulisan", "Tempel paragraf atau bagian tulisanmu. Alerin akan memahami konteksnya dan mencarikan jurnal yang dapat mendukung isi tulisan tersebut.", "Tempel paragraf atau bagian tulisanmu. Alerin akan memahami konteksnya dan mencarikan jurnal yang dapat mendukung isi tulisan tersebut."],
+                        ["3", "Unggah dokumen", "Unggah dokumen untuk memeriksa penggunaan referensi dan menemukan bagian yang membutuhkan sumber, sitasi, atau jurnal pendukung.", "Unggah dokumen untuk memeriksa penggunaan referensi dan menemukan bagian yang membutuhkan sumber, sitasi, atau jurnal pendukung."],
+                      ].map(([number, title, descriptionMobile, descriptionDesktop]) => (
+                        <li key={number} className="flex gap-3 rounded-xl border border-slate-100/80 bg-slate-50 p-3 md:rounded-none md:border-0 md:bg-transparent md:p-0">
+                          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-sky-100 text-sm font-bold text-[#0070ba] md:h-8 md:w-8 md:rounded-xl md:text-sky-600">{number}</span>
+                          <span>
+                            <strong className="block text-sm md:text-sm">{title}</strong>
+                            <span className="mt-0.5 block text-xs leading-5 text-[#64748b] md:mt-1 md:text-xs md:leading-5">
+                              <span className="md:hidden">{descriptionMobile}</span>
+                              <span className="hidden md:inline">{descriptionDesktop}</span>
+                            </span>
                           </span>
-                        </span>
-                      </li>
-                    ))}
-                  </ol>
+                        </li>
+                      ))}
+                    </ol>
+                  )}
                 </div>
               </aside>
             </div>
