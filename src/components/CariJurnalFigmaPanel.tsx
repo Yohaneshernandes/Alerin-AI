@@ -5612,10 +5612,10 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
   ];
 
   const mapTopicSuggestions = [
-    "Research Trends in AI Education",
-    "Publication Network and Collaboration",
-    "Topic Clusters in Learning Motivation",
-    "Emerging Research Directions 2020–2026",
+    "Petakan penelitian tentang AI generatif dalam pendidikan",
+    "Petakan penelitian tentang kesehatan mental pada mahasiswa.",
+    "Petakan penelitian tentang pemasaran digital pada UMKM.",
+    "Petakan penelitian tentang literasi keuangan pada generasi Z.",
   ];
 
   const topicSuggestions = searchType === "map" ? mapTopicSuggestions : reviewTopicSuggestions;
