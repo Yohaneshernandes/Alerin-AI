@@ -5604,11 +5604,21 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
     else setMobileSearchStage("loading");
   };
 
-  const recommendedTopics = [
+  const reviewTopicSuggestions = [
     "AI Literacy in Higher Education",
     "Learning Motivation and Academic Achievement",
     "Generative AI in Education",
+    "Digital Literacy and Student Engagement",
   ];
+
+  const mapTopicSuggestions = [
+    "Research Trends in AI Education",
+    "Publication Network and Collaboration",
+    "Topic Clusters in Learning Motivation",
+    "Emerging Research Directions 2020–2026",
+  ];
+
+  const topicSuggestions = searchType === "map" ? mapTopicSuggestions : reviewTopicSuggestions;
 
   const toggleReviewTopic = (topic: string) => {
     setReviewTopics(list => (list.includes(topic) ? list.filter(item => item !== topic) : [...list, topic]));
@@ -6203,7 +6213,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                         <span className="text-[11px] text-slate-400 md:text-xs">Pilih satu atau lebih</span>
                       </div>
                       <div className="mt-3 grid gap-2">
-                        {recommendedTopics.map(topic => {
+                        {topicSuggestions.map(topic => {
                           const checked = reviewTopics.includes(topic);
                           return (
                             <label key={topic} className={`flex cursor-pointer items-center gap-2.5 rounded-xl border px-3 py-2.5 transition-colors ${checked ? "border-sky-200 bg-sky-50/50" : "border-slate-200 bg-white hover:bg-slate-50"}`}>
