@@ -5638,7 +5638,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
     setDesktopStage("loading");
   };
 
-  const canSearch = query.trim().length >= 5;
+  const canSearch = query.trim().length >= 3;
   const analysisReady = Boolean(fileName) || paragraph.trim().length >= 5;
 
   const renderKutipanUnderline = (text: string) => {
@@ -6126,7 +6126,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                           onChange={event => setQuery(event.target.value)}
                           onKeyDown={event => {
                             if (event.key !== "Enter") return;
-                            if (query.trim().length < 5) return;
+                            if (query.trim().length < 3) return;
                             if (window.matchMedia("(min-width: 768px)").matches) runSearch();
                             else {
                               setResultMode("search");
