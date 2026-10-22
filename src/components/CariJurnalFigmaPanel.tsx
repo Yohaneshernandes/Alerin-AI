@@ -6125,7 +6125,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                     "Buat visualisasi peta penelitian"
                   ) : (
                     <>
-                      Temukan jurnal yang tepat <br className="md:hidden" />untuk tulisanmu
+                      Temukan jurnal yang tepat <br className="md:hidden" />sesuai kebutuhanmu
                     </>
                   )}
                 </h1>
@@ -6133,7 +6133,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                   {searchType === "review" ? (
                     "Alerin membantu mencari jurnal relevan berdasarkan topik penelitian yang relevan untuk memproses literature review."
                   ) : searchType === "map" ? (
-                    "Temukan hubungan, kepadatan, dan perkembangan topik berdasarkan topik penelitian yang kamu inginkan."
+                    "Temukan hubungan, kepadatan, dan perkembangan topik berdasarkan topik penelitian."
                   ) : (
                     <>
                       Cari dengan kata kunci atau biarkan Alerin memahami <br className="md:hidden" />paragraf dan dokumenmu.
