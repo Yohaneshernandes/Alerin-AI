@@ -5642,12 +5642,21 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
         }
       : searchType === "map"
         ? {
-            title: "Panduan Peta Penelitian",
-            intro: "Alerin akan membantu menemukan jurnal yang relevan dan menyusun peta penelitian untuk mengidentifikasi keterkaitan, kepadatan topik dan perkembangan penelitian.",
+            title: "Tiga langkah menyusun peta penelitian",
+            intro: "Tentukan kebutuhan penelitianmu agar Alerin dapat menemukan jurnal yang relevan dan menyusun peta penelitian untuk melihat keterkaitan topik, kepadatan kajian, serta perkembangan penelitian.",
             steps: [
-              { description: "Masukkan topik penelitian atau gunakan rekomendasi Alerin sesuai kebutuhanmu." },
-              { description: "Pilih periode publikasi jurnal yang ingin dianalisis." },
-              { description: "Tentukan jumlah jurnal yang akan digunakan sebagai dasar penyusunan peta penelitian." },
+              {
+                title: "Masukkan topik penelitian",
+                description: "Tuliskan topik penelitian atau pilih rekomendasi dari Alerin sesuai kebutuhanmu.",
+              },
+              {
+                title: "Tentukan periode publikasi",
+                description: "Pilih rentang tahun publikasi jurnal yang ingin dianalisis untuk melihat perkembangan penelitian.",
+              },
+              {
+                title: "Tentukan jumlah jurnal",
+                description: "Pilih jumlah jurnal yang akan digunakan sebagai dasar penyusunan peta penelitian.",
+              },
             ],
           }
         : null;
