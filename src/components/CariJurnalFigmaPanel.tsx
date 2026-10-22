@@ -6186,10 +6186,8 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                           </svg>
                         ) : (
                           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                            <circle cx="4" cy="4" r="1.7" />
-                            <circle cx="12" cy="4" r="1.7" />
-                            <circle cx="8" cy="12" r="1.7" />
-                            <path d="M5.2 5.4l2 4.4M10.8 5.4l-2 4.4" />
+                            <path d="M1.5 3.5l4-1.5 5 1.5 4-1.5v10l-4 1.5-5-1.5-4 1.5z" />
+                            <path d="M5.5 2v10M10.5 3.5v10" />
                           </svg>
                         )}
                         {label}
@@ -6288,14 +6286,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                       </div>
                     </div>
 
-                    <div className="mt-5 flex flex-col gap-3 border-t border-slate-100 pt-4 md:flex-row md:items-center md:justify-between">
-                      <label className="flex cursor-pointer select-none items-center gap-2 text-[13px] text-[#475569] md:text-sm md:font-semibold md:text-slate-700">
-                        <span className={`flex h-[18px] w-[18px] items-center justify-center rounded ${useActiveFilter ? "bg-[#0070ba]" : "border border-slate-300 bg-white"}`}>
-                          <input type="checkbox" checked={useActiveFilter} onChange={event => setUseActiveFilter(event.target.checked)} className="sr-only" />
-                          {useActiveFilter && <img src={`${searchAssets}/b5bd9.svg`} alt="" className="h-4 w-4" />}
-                        </span>
-                        Gunakan filter aktif pada rekomendasi Alerin
-                      </label>
+                    <div className="mt-5 flex flex-col gap-3 border-t border-slate-100 pt-4 md:flex-row md:items-center md:justify-end">
                       <button
                         type="button"
                         disabled={reviewTopic.trim().length < 3}
@@ -6310,10 +6301,8 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                       >
                         {searchType === "map" ? (
                           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                            <circle cx="4" cy="4" r="1.7" />
-                            <circle cx="12" cy="4" r="1.7" />
-                            <circle cx="8" cy="12" r="1.7" />
-                            <path d="M5.2 5.4l2 4.4M10.8 5.4l-2 4.4" />
+                            <path d="M1.5 3.5l4-1.5 5 1.5 4-1.5v10l-4 1.5-5-1.5-4 1.5z" />
+                            <path d="M5.5 2v10M10.5 3.5v10" />
                           </svg>
                         ) : (
                           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
