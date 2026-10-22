@@ -6119,7 +6119,9 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
             <div className="mx-auto grid max-w-[1160px] gap-5 lg:grid-cols-[minmax(0,1fr)_280px]">
               <div>
                 <h1 className="text-center font-['Plus_Jakarta_Sans:ExtraBold'] text-2xl font-extrabold leading-[33px] tracking-[-0.6px] text-[#0f172a] md:text-left md:text-[26px] md:leading-9 md:tracking-normal md:text-[#003859]">
-                  {searchType === "review" || searchType === "map" ? (
+                  {searchType === "review" ? (
+                    "Buat literatur review penelitian"
+                  ) : searchType === "map" ? (
                     "Buat visualisasi peta penelitian"
                   ) : (
                     <>
@@ -6128,7 +6130,9 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                   )}
                 </h1>
                 <p className="mt-2 text-center font-['Plus_Jakarta_Sans:Regular'] text-xs leading-[19.5px] text-[#232323] md:text-left md:text-base md:leading-6 md:text-[#475569]">
-                  {searchType === "review" || searchType === "map" ? (
+                  {searchType === "review" ? (
+                    "Alerin membantu mencari jurnal relevan berdasarkan topik penelitian yang relevan untuk memproses literature review."
+                  ) : searchType === "map" ? (
                     "Temukan hubungan, kepadatan, dan perkembangan topik berdasarkan topik penelitian yang kamu inginkan."
                   ) : (
                     <>
