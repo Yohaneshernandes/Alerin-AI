@@ -6135,7 +6135,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                         aria-selected={active}
                         onClick={() => setSearchType(type)}
                         className={`flex flex-1 items-center justify-center gap-2 rounded-xl px-2.5 py-2.5 text-xs font-semibold transition-colors md:w-64 md:flex-none md:px-4 md:text-sm ${
-                          active ? "bg-sky-600 text-white shadow-sm" : "text-slate-600 hover:bg-slate-50"
+                          active ? "bg-[#00629b] text-white shadow-sm md:bg-sky-700" : "text-slate-600 hover:bg-slate-50"
                         }`}
                       >
                         {type === "journal" ? (
