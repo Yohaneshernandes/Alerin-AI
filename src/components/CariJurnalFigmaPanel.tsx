@@ -5443,8 +5443,11 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
   const [fileSizeLabel, setFileSizeLabel] = useState("");
   const [mobileSearchStage, setMobileSearchStage] = useState<"home" | "loading" | "results">("home");
   const [desktopStage, setDesktopStage] = useState<"home" | "loading" | "results">("home");
-  const [searchType, setSearchType] = useState("");
-  const [searchMenuOpen, setSearchMenuOpen] = useState(false);
+  const [searchType, setSearchType] = useState<"journal" | "review" | "map">("journal");
+  const [reviewTopic, setReviewTopic] = useState("AI Literacy dan Motivasi Belajar Mahasiswa");
+  const [reviewPeriod, setReviewPeriod] = useState("2020-2026");
+  const [reviewCount, setReviewCount] = useState("100");
+  const [reviewTopics, setReviewTopics] = useState<string[]>([]);
   const [resultMode, setResultMode] = useState<"search" | "analysis">("search");
   const [temuanIndex, setTemuanIndex] = useState(1);
   const [mobileNavHidden, setMobileNavHidden] = useState(false);
@@ -5588,6 +5591,26 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
     if (query.trim() || paragraph.trim() || fileName) setDesktopStage("loading");
   };
 
+  const startStructuredSearch = (type: "review" | "map") => {
+    const topic = reviewTopic.trim();
+    if (topic.length < 3) return;
+    setQuery(topic);
+    setSearchType(type);
+    setResultMode("search");
+    if (window.matchMedia("(min-width: 768px)").matches) setDesktopStage("loading");
+    else setMobileSearchStage("loading");
+  };
+
+  const recommendedTopics = [
+    "AI Literacy in Higher Education",
+    "Learning Motivation and Academic Achievement",
+    "Generative AI in Education",
+  ];
+
+  const toggleReviewTopic = (topic: string) => {
+    setReviewTopics(list => (list.includes(topic) ? list.filter(item => item !== topic) : [...list, topic]));
+  };
+
   const openRiwayatPencarian = (title: string) => {
     setView("home");
     setQuery(title);
@@ -5684,7 +5707,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                       aria-label="Kembali ke pencarian"
                       onClick={() => {
                         setMobileSearchStage("home");
-                        setSearchType("");
+                        setSearchType("journal");
                       }}
                       className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white shadow-sm"
                     >
@@ -5700,7 +5723,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                       query={query}
                       onBack={() => {
                         setMobileSearchStage("home");
-                        setSearchType("");
+                        setSearchType("journal");
                       }}
                     />
                   </div>
@@ -6046,30 +6069,195 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
           {desktopStage !== "home" ? null : view === "home" ? (
             <div className="mx-auto grid max-w-[1160px] gap-5 lg:grid-cols-[minmax(0,1fr)_280px]">
               <div>
-                <h1 className="text-center font-['Plus_Jakarta_Sans:ExtraBold'] text-2xl font-extrabold leading-[33px] tracking-[-0.6px] text-[#0f172a] md:text-left md:text-[26px] md:leading-9 md:tracking-normal md:text-[#003859]">
+                <div
+                  role="tablist"
+                  aria-label="Jenis pencarian"
+                  className="flex w-full items-center gap-1 rounded-2xl bg-white p-1 outline outline-1 outline-slate-200/90 md:w-[799px]"
+                >
+                  {(
+                    [
+                      ["journal", "Cari Jurnal"],
+                      ["review", "Literatur Review"],
+                      ["map", "Peta Penelitian"],
+                    ] as const
+                  ).map(([type, label]) => {
+                    const active = searchType === type;
+                    return (
+                      <button
+                        key={type}
+                        type="button"
+                        role="tab"
+                        aria-selected={active}
+                        onClick={() => setSearchType(type)}
+                        className={`flex flex-1 items-center justify-center gap-2 rounded-xl px-2.5 py-2.5 text-xs font-semibold transition-colors md:w-64 md:flex-none md:px-4 md:text-sm ${
+                          active ? "bg-sky-600 text-white shadow-sm" : "text-slate-600 hover:bg-slate-50"
+                        }`}
+                      >
+                        {type === "journal" ? (
+                          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <circle cx="7" cy="7" r="4.5" />
+                            <path d="M10.5 10.5L14 14" />
+                          </svg>
+                        ) : type === "review" ? (
+                          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <path d="M2.5 3.5h4.2c.7 0 1.3.6 1.3 1.3v8.7c0-.7-.6-1.3-1.3-1.3H2.5z" />
+                            <path d="M13.5 3.5H9.3c-.7 0-1.3.6-1.3 1.3v8.7c0-.7.6-1.3 1.3-1.3h4.2z" />
+                          </svg>
+                        ) : (
+                          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <circle cx="4" cy="4" r="1.7" />
+                            <circle cx="12" cy="4" r="1.7" />
+                            <circle cx="8" cy="12" r="1.7" />
+                            <path d="M5.2 5.4l2 4.4M10.8 5.4l-2 4.4" />
+                          </svg>
+                        )}
+                        {label}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <h1 className="mt-5 text-center font-['Plus_Jakarta_Sans:ExtraBold'] text-2xl font-extrabold leading-[33px] tracking-[-0.6px] text-[#0f172a] md:text-left md:text-[26px] md:leading-9 md:tracking-normal md:text-[#003859]">
                   Temukan jurnal yang tepat <br className="md:hidden" />untuk tulisanmu
                 </h1>
                 <p className="mt-2 text-center font-['Plus_Jakarta_Sans:Regular'] text-xs leading-[19.5px] text-[#232323] md:text-left md:text-base md:leading-6 md:text-[#475569]">Cari dengan kata kunci atau biarkan Alerin memahami <br className="md:hidden" />paragraf dan dokumenmu.</p>
 
-                <section className="mt-5 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm md:mt-7 md:p-6">
-                  <div className="flex items-center justify-between gap-3">
-                    <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-[17px] font-bold md:text-base">Pencarian cepat</h2>
-                    <button type="button" onClick={() => setFilterOpen(true)} aria-expanded={filterOpen} className="flex items-center gap-2 font-['Plus_Jakarta_Sans:SemiBold'] text-xs font-semibold text-[#334155] md:text-sm md:hidden">
-                      <span className="relative h-[19.689px] w-[17.143px] shrink-0 overflow-hidden">
-                        <img src="/assets/jurnal-design/quick-search/8e43d.svg" alt="" className="absolute left-[-19.689px] top-[-18.447px] max-w-none origin-top-left scale-[0.6667]" />
-                      </span>
-                      Filter
-                      {filterApplied && (
-                        <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-sky-100">
-                          <svg width="14" height="11" viewBox="0 0 14 11" fill="none" stroke="#0070ba" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                            <path d="M1.5 5.8l3.8 3.8L12.5 1.5" />
+                {searchType === "review" || searchType === "map" ? (
+                  <section className="mt-5 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm md:mt-7 md:p-6">
+                    <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-[17px] font-bold md:text-base">Topik penelitian</h2>
+                    <label className="mt-3 flex min-w-0 items-center gap-2 rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-3 md:bg-white md:px-4">
+                      <svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="#94a3b8" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="shrink-0">
+                        <circle cx="7" cy="7" r="4.5" />
+                        <path d="M10.5 10.5L14 14" />
+                      </svg>
+                      <input
+                        value={reviewTopic}
+                        onChange={event => setReviewTopic(event.target.value)}
+                        onKeyDown={event => {
+                          if (event.key === "Enter") startStructuredSearch(searchType);
+                        }}
+                        placeholder="AI Literacy dan Motivasi Belajar Mahasiswa"
+                        className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-slate-400"
+                      />
+                      {reviewTopic && (
+                        <button type="button" aria-label="Hapus topik" onClick={() => setReviewTopic("")} className="shrink-0 rounded-full p-1 text-slate-400 hover:bg-slate-100">
+                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" aria-hidden="true">
+                            <path d="M3.5 3.5l7 7M10.5 3.5l-7 7" />
+                          </svg>
+                        </button>
+                      )}
+                    </label>
+                    <div className="mt-3 flex gap-1.5 rounded-xl bg-sky-50 px-3 py-2.5 text-[12px] leading-5 text-sky-800 md:text-xs">
+                      <span className="font-bold">Contoh:</span>
+                      <span>Artificial Intelligence dan motivasi belajar mahasiswa, atau gunakan beberapa kata kunci yang dipisahkan.</span>
+                    </div>
+
+                    <div className="mt-4 grid gap-3 md:grid-cols-2">
+                      <label className="block">
+                        <span className="font-['Plus_Jakarta_Sans:SemiBold'] text-xs font-semibold text-slate-700">Periode publikasi</span>
+                        <span className="relative mt-1.5 block">
+                          <select
+                            value={reviewPeriod}
+                            onChange={event => setReviewPeriod(event.target.value)}
+                            className="w-full appearance-none rounded-xl border border-slate-200 bg-white px-3 py-2.5 pr-9 text-sm text-slate-800 outline-none focus:border-sky-400"
+                          >
+                            <option value="2020-2026">2020 – 2026</option>
+                            <option value="2015-2026">2015 – 2026</option>
+                            <option value="2010-2026">2010 – 2026</option>
+                          </select>
+                          <svg width="12" height="8" viewBox="0 0 12 8" fill="none" stroke="#64748b" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2">
+                            <path d="M1 1.5L6 6.5l5-5" />
                           </svg>
                         </span>
-                      )}
-                    </button>
-                  </div>
+                      </label>
+                      <label className="block">
+                        <span className="font-['Plus_Jakarta_Sans:SemiBold'] text-xs font-semibold text-slate-700">Jumlah jurnal</span>
+                        <span className="relative mt-1.5 block">
+                          <select
+                            value={reviewCount}
+                            onChange={event => setReviewCount(event.target.value)}
+                            className="w-full appearance-none rounded-xl border border-slate-200 bg-white px-3 py-2.5 pr-9 text-sm text-slate-800 outline-none focus:border-sky-400"
+                          >
+                            <option value="50">50 jurnal</option>
+                            <option value="100">100 jurnal</option>
+                            <option value="200">200 jurnal</option>
+                            <option value="300">300 jurnal</option>
+                          </select>
+                          <svg width="12" height="8" viewBox="0 0 12 8" fill="none" stroke="#64748b" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2">
+                            <path d="M1 1.5L6 6.5l5-5" />
+                          </svg>
+                        </span>
+                      </label>
+                    </div>
 
-                  <div className="mt-4 flex min-w-0 items-stretch gap-3">
+                    <div className="mt-5">
+                      <div className="flex items-center justify-between gap-3">
+                        <p className="font-['Plus_Jakarta_Sans:SemiBold'] text-[13px] font-semibold text-slate-800 md:text-sm">Rekomendasi topik</p>
+                        <span className="text-[11px] text-slate-400 md:text-xs">Pilih satu atau lebih</span>
+                      </div>
+                      <div className="mt-3 grid gap-2">
+                        {recommendedTopics.map(topic => {
+                          const checked = reviewTopics.includes(topic);
+                          return (
+                            <label key={topic} className={`flex cursor-pointer items-center gap-2.5 rounded-xl border px-3 py-2.5 transition-colors ${checked ? "border-sky-200 bg-sky-50/50" : "border-slate-200 bg-white hover:bg-slate-50"}`}>
+                              <span className={`flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded ${checked ? "bg-[#0070ba]" : "border border-slate-300 bg-white"}`}>
+                                <input type="checkbox" checked={checked} onChange={() => toggleReviewTopic(topic)} className="sr-only" />
+                                {checked && (
+                                  <svg width="11" height="9" viewBox="0 0 12 10" fill="none" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                    <path d="M1.5 5l3 3 6-6.5" />
+                                  </svg>
+                                )}
+                              </span>
+                              <span className="text-[13px] font-medium text-slate-700 md:text-sm">{topic}</span>
+                            </label>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    <div className="mt-5 flex flex-col gap-3 border-t border-slate-100 pt-4 md:flex-row md:items-center md:justify-between">
+                      <label className="flex cursor-pointer select-none items-center gap-2 text-[13px] text-[#475569] md:text-sm md:font-semibold md:text-slate-700">
+                        <span className={`flex h-[18px] w-[18px] items-center justify-center rounded ${useActiveFilter ? "bg-[#0070ba]" : "border border-slate-300 bg-white"}`}>
+                          <input type="checkbox" checked={useActiveFilter} onChange={event => setUseActiveFilter(event.target.checked)} className="sr-only" />
+                          {useActiveFilter && <img src={`${searchAssets}/b5bd9.svg`} alt="" className="h-4 w-4" />}
+                        </span>
+                        Gunakan filter aktif pada rekomendasi Alerin
+                      </label>
+                      <button
+                        type="button"
+                        disabled={reviewTopic.trim().length < 3}
+                        onClick={() => startStructuredSearch(searchType)}
+                        className={`flex items-center justify-center gap-2 rounded-xl px-5 py-3 font-['Plus_Jakarta_Sans:Bold'] text-[13px] font-bold text-white md:py-2.5 md:text-xs ${
+                          reviewTopic.trim().length < 3
+                            ? "cursor-not-allowed bg-slate-300"
+                            : searchType === "map"
+                              ? "bg-[#00629b] shadow-[0px_2px_10px_0px_rgba(0,117,232,0.30)] md:bg-sky-700"
+                              : "bg-[#00629b] md:bg-sky-700"
+                        }`}
+                      >
+                        {searchType === "map" ? (
+                          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <circle cx="4" cy="4" r="1.7" />
+                            <circle cx="12" cy="4" r="1.7" />
+                            <circle cx="8" cy="12" r="1.7" />
+                            <path d="M5.2 5.4l2 4.4M10.8 5.4l-2 4.4" />
+                          </svg>
+                        ) : (
+                          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <path d="M2.5 3.5h4.2c.7 0 1.3.6 1.3 1.3v8.7c0-.7-.6-1.3-1.3-1.3H2.5z" />
+                            <path d="M13.5 3.5H9.3c-.7 0-1.3.6-1.3 1.3v8.7c0-.7.6-1.3 1.3-1.3h4.2z" />
+                          </svg>
+                        )}
+                        {searchType === "map" ? "Buat Peta Penelitian" : "Analisis dan buat tinjauan literatur"}
+                      </button>
+                    </div>
+                  </section>
+                ) : (
+                  <>
+                <section className="mt-5 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm md:mt-7 md:p-6">
+                  <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-[17px] font-bold md:text-base">Pencarian cepat</h2>
+
+                  <div className="mt-4 flex min-w-0 items-stretch gap-2 md:gap-3">
                     <label className="flex min-w-0 flex-1 items-center gap-2 rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-3 md:bg-white md:px-4">
                         <img src="/assets/jurnal-design/quick-search/f5f78.svg" alt="" className="max-w-none origin-center scale-[0.6667]" />
                         <input
@@ -6078,6 +6266,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                           onKeyDown={event => {
                             if (event.key !== "Enter") return;
                             if (query.trim().length < 3) return;
+                            setSearchType("journal");
                             if (window.matchMedia("(min-width: 768px)").matches) runSearch();
                             else {
                               setResultMode("search");
@@ -6092,14 +6281,14 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                       type="button"
                       onClick={() => setFilterOpen(true)}
                       aria-expanded={filterOpen}
-                      className="hidden shrink-0 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 md:flex"
+                      className="flex shrink-0 items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-700 md:gap-2 md:px-4 md:text-sm"
                     >
                       <span className="relative h-[19.689px] w-[17.143px] shrink-0 overflow-hidden">
                         <img src="/assets/jurnal-design/quick-search/8e43d.svg" alt="" className="absolute left-[-19.689px] top-[-18.447px] max-w-none origin-top-left scale-[0.6667]" />
                       </span>
                       Filter
                       {filterApplied && (
-                        <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-sky-100">
+                        <span className="flex h-5 w-5 items-center justify-center rounded-lg bg-sky-100 md:h-6 md:w-6">
                           <svg width="14" height="11" viewBox="0 0 14 11" fill="none" stroke="#0070ba" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                             <path d="M1.5 5.8l3.8 3.8L12.5 1.5" />
                           </svg>
@@ -6108,123 +6297,27 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                     </button>
                   </div>
 
-                  <div className="mt-4 hidden flex-wrap gap-4 md:flex">
-                    {[
-                      ["journal", "Cari jurnal"],
-                      ["review", "Literatur Review"],
-                      ["map", "Peta Penelitian"],
-                    ].map(([type, label]) => (
-                      <button
-                        key={type}
-                        type="button"
-                        disabled={!canSearch}
-                        onClick={() => {
-                          setSearchType(type);
-                          setResultMode("search");
-                          runSearch();
-                        }}
-                        className={`rounded-xl px-5 py-2.5 text-sm font-semibold text-white transition-colors ${
-                          !canSearch ? "cursor-not-allowed bg-slate-200 text-slate-400" : searchType === type ? "bg-[#00629b]" : "bg-sky-700"
-                        }`}
-                      >
-                        {label}
-                      </button>
-                    ))}
-                  </div>
-
-                  <div className="mt-4 grid grid-cols-[minmax(0,1fr)_52px] gap-2 md:hidden">
+                  <div className="mt-4 grid grid-cols-[minmax(0,1fr)] gap-2 md:hidden">
                     <button
                       type="button"
                       disabled={!canSearch}
                       onClick={() => {
-                        if (!searchType) setSearchType("journal");
-                        if (window.matchMedia("(min-width: 768px)").matches) runSearch();
-                        else {
-                          setResultMode("search");
-                          setMobileSearchStage("loading");
-                        }
+                        setSearchType("journal");
+                        setResultMode("search");
+                        setMobileSearchStage("loading");
                       }}
-                      className={`rounded-xl px-4 py-3 text-center font-['Plus_Jakarta_Sans:SemiBold'] text-sm font-semibold text-white transition-colors md:bg-[#0070ba] ${
+                      className={`rounded-xl px-4 py-3 text-center font-['Plus_Jakarta_Sans:SemiBold'] text-sm font-semibold text-white transition-colors ${
                         !canSearch ? "cursor-not-allowed bg-slate-200 text-slate-400" : "bg-[#00629b]"
                       }`}
                     >
-                      {searchType === "review" ? "Literatur Review" : searchType === "map" ? "Peta Penelitian" : "Cari jurnal"}
+                      Cari jurnal
                     </button>
-                    <div className="relative">
-                      <button
-                        type="button"
-                        onClick={() => setSearchMenuOpen(open => !open)}
-                        aria-expanded={searchMenuOpen}
-                        aria-haspopup="listbox"
-                        className="flex min-h-12 w-full items-center justify-center rounded-lg border border-black/15 bg-white shadow-[0_4px_4px_rgba(0,0,0,0.1)] transition-colors active:bg-slate-50"
-                      >
-                        <span className="sr-only">Pilih jenis pencarian</span>
-                        <svg
-                          width="12"
-                          height="20"
-                          viewBox="0 0 12 20"
-                          fill="none"
-                          stroke="#0369a1"
-                          strokeWidth="2.6"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          aria-hidden="true"
-                          className={`transition-transform duration-200 ${searchMenuOpen ? "rotate-90" : ""}`}
-                        >
-                          <path d="M3 4l6 6-6 6" />
-                        </svg>
-                      </button>
-                      {searchMenuOpen && (
-                        <>
-                          <button
-                            type="button"
-                            aria-label="Tutup pilihan"
-                            onClick={() => setSearchMenuOpen(false)}
-                            className="fixed inset-0 z-20 cursor-default"
-                          />
-                          <div
-                            role="listbox"
-                            aria-label="Jenis pencarian"
-                            className="absolute right-0 top-full z-30 mt-2 w-52 overflow-hidden rounded-xl border border-slate-200 bg-white p-1.5 shadow-lg"
-                          >
-                            {(
-                              [
-                                ["journal", "Cari jurnal"],
-                                ["review", "Literatur Review"],
-                                ["map", "Peta Penelitian"],
-                              ] as const
-                            ).map(([value, label]) => (
-                              <button
-                                key={value}
-                                type="button"
-                                role="option"
-                                aria-selected={searchType === value}
-                                onClick={() => {
-                                  setSearchType(value);
-                                  setSearchMenuOpen(false);
-                                }}
-                                className={`flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-left text-sm font-semibold transition-colors ${
-                                  searchType === value ? "bg-sky-50 text-[#0369a1]" : "text-slate-700 hover:bg-slate-50"
-                                }`}
-                              >
-                                {label}
-                                {searchType === value && (
-                                  <svg width="12" height="10" viewBox="0 0 12 10" fill="none" stroke="#0369a1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                                    <path d="M1.5 5l3 3 6-6.5" />
-                                  </svg>
-                                )}
-                              </button>
-                            ))}
-                          </div>
-                        </>
-                      )}
-                    </div>
                   </div>
                 </section>
 
                 <section className="mt-4 rounded-2xl border border-slate-200/80 bg-white px-4 py-[22px] shadow-sm md:p-6">
                   <h2 className="text-center font-['Plus_Jakarta_Sans:Bold'] text-[17px] font-bold md:text-left md:text-base">Cari rujukan dari tulisanmu</h2>
-                  <p className="mx-auto mt-2 max-w-lg text-center font-['Plus_Jakarta_Sans:Regular'] text-xs leading-[19.5px] text-[#232323] md:mx-0 md:mt-1 md:max-w-none md:text-left md:text-base md:leading-6 md:text-[#475569]">Tempel kalimat atau unggah file yang ingin kamu perkuat dengan sitasi. Alerin akan membantu mencari artikel jurnal yang relevan untuk mendukung tulisanmu.</p>
+                  <p className="mx-auto mt-2 max-w-lg text-center font-['Plus_Jakarta_Sans:Regular'] text-xs leading-[19.5px] text-[#232323] md:mx-0 md:mt-1 md:max-w-none md:text-left md:text-base md:leading-6 md:text-[#475569]">Tempel kalimat atau paragraf yang ingin kamu perkuat dengan sitasi. Alerin akan membantu mencari artikel jurnal yang relevan untuk mendukung tulisanmu.</p>
                   <div className="mt-5 grid min-w-0 gap-3 md:grid-cols-[1.35fr_0.95fr]">
                     <label className="grid gap-1.5">
                       <span className="font-['Plus_Jakarta_Sans:SemiBold'] text-[14px] font-semibold text-[#334155] md:hidden">Draf / Paragraf Teks</span>
@@ -6323,6 +6416,8 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                     </button>
                   </div>
                 </section>
+                  </>
+                )}
 
               </div>
 
