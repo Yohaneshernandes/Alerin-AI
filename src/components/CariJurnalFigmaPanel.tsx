@@ -1886,7 +1886,7 @@ function DesktopJournalResultCard({
                 </div>
               ))}
             </div>
-            <p className="mt-3 rounded-lg bg-amber-50 p-2.5 text-xs font-bold leading-4 text-amber-900 outline outline-1 outline-offset-[-1px] outline-amber-200/60">
+            <p className="mt-3 rounded-lg bg-[#f1f5f9] p-2.5 text-xs font-bold leading-4 text-slate-700 outline outline-1 outline-offset-[-1px] outline-slate-200">
               Kutipan relevan: &ldquo;{detail.quote}&rdquo;
             </p>
           </div>
@@ -5913,9 +5913,9 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                             <div className="mt-1 h-2 overflow-hidden rounded-full bg-zinc-200"><div className="h-full rounded-full bg-sky-700" style={{ width: `${value}%` }} /></div>
                           </div>
                         ))}
-                        <div className="mt-3 rounded-xl bg-amber-50 p-4">
+                        <div className="mt-3 rounded-xl bg-[#f1f5f9] p-4 outline outline-1 outline-slate-200">
                           <p className="text-sm leading-6">
-                            <span className="font-semibold text-amber-600">Kutipan relevan:</span>
+                            <span className="font-semibold text-slate-700">Kutipan relevan:</span>
                             <span className="font-semibold text-slate-900"> "Parasocial interaction strengthens purchase intention when viewers perceive urgency and scarcity."</span>
                           </p>
                         </div>
