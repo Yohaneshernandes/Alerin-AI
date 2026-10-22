@@ -2873,7 +2873,6 @@ function DesktopSearchResults({
         </div>
 
         <aside className="sticky top-2 w-64 shrink-0 self-start space-y-4">
-          {analysis && <ProfileCard collection={false} />}
           <div className="rounded-2xl bg-white p-6">
           <h2 className="text-base font-bold leading-6 text-slate-900">Ringkasan Hasil Pencarian</h2>
           <p className="pt-1 text-xs leading-4 text-slate-500">
@@ -3480,31 +3479,6 @@ function DesktopLiteratureReview({ query, onBack, onOpenSitasi }: { query: strin
       </div>
 
       <section className="rounded-2xl bg-white p-5 shadow-sm">
-        <div className="rounded-xl bg-slate-50 p-4">
-          <p className="text-sm font-bold leading-5 text-slate-800">Keterlacakan Sumber</p>
-          <div className="mt-3 flex items-end justify-between gap-3">
-            <div className="flex flex-col gap-2">
-              <span className="flex items-center gap-2 text-xs leading-4 text-slate-600">
-                <span className="h-2 w-2 rounded-full bg-sky-600" />
-                12 klaim terverifikasi
-              </span>
-              <span className="flex items-center gap-2 text-xs leading-4 text-slate-600">
-                <span className="h-2 w-2 rounded-full bg-amber-400" />
-                3 manual
-              </span>
-            </div>
-            <div className="text-right">
-              <p className="text-xs font-medium leading-4 text-slate-500">80% Valid</p>
-              <div className="mt-1.5 flex h-2 w-24 overflow-hidden rounded-full bg-slate-200">
-                <span className="h-full w-4/5 bg-sky-600" />
-                <span className="h-full w-1/5 bg-amber-400" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="rounded-2xl bg-white p-5 shadow-sm">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-2.5">
             <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-50">
@@ -3959,26 +3933,6 @@ function MobileLiteratureReview() {
             </svg>
             Ekspor ke PDF
           </button>
-        </div>
-
-        <div className="mt-5 border-t border-slate-100 pt-4">
-          <div className="flex items-center justify-between gap-3">
-            <h3 className="text-sm font-bold text-slate-800">Keterlacakan Sumber</h3>
-            <span className="text-sm font-bold text-sky-600">80% Valid</span>
-          </div>
-          <div className="mt-2.5 h-2.5 overflow-hidden rounded-full bg-slate-100">
-            <div className="h-full rounded-full bg-sky-600" style={{ width: "80%" }} />
-          </div>
-          <div className="mt-2.5 flex items-center justify-between gap-2 text-xs text-slate-500">
-            <span className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-emerald-500" />
-              12 klaim terverifikasi
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-amber-500" />
-              3 manual review
-            </span>
-          </div>
         </div>
       </div>
 
@@ -5031,8 +4985,8 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
               </svg>
             </span>
             <div>
-              <h2 className="text-lg font-semibold leading-7 text-slate-900">Rekomendasi Jurnal Peta Penelitian</h2>
-              <p className="mt-0.5 text-sm leading-5 text-slate-500">Daftar publikasi berbobot tinggi yang merepresentasikan klaster yang sedang aktif dipilih.</p>
+              <h2 className="text-lg font-semibold leading-7 text-slate-900">Jurnal yang Digunakan</h2>
+              <p className="mt-0.5 text-sm leading-5 text-slate-500">Daftar jurnal yang menjadi dasar pembuatan peta penelitian.</p>
             </div>
           </div>
           <label className="flex h-10 w-72 shrink-0 items-center gap-2 rounded-xl bg-slate-50 px-3">
