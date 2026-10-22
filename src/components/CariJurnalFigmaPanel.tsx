@@ -5605,10 +5605,10 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
   };
 
   const reviewTopicSuggestions = [
-    "AI Literacy in Higher Education",
-    "Learning Motivation and Academic Achievement",
-    "Generative AI in Education",
-    "Digital Literacy and Student Engagement",
+    "Tinjau literatur tentang AI generatif dalam pendidikan",
+    "Tinjau literatur tentang kesehatan mental mahasiswa",
+    "Tinjau literatur tentang pemasaran digital pada UMKM",
+    "Tinjau literatur tentang motivasi belajar mahasiswa",
   ];
 
   const mapTopicSuggestions = [
