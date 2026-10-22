@@ -5623,12 +5623,21 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
   const guideContent =
     searchType === "review"
       ? {
-          title: "Panduan Literatur Review",
-          intro: "Alerin akan membantu menemukan jurnal ilmiah yang relevan dan menyusun literatur review berdasarkan topik penelitianmu.",
+          title: "Tiga langkah menyusun literatur review",
+          intro: "Tentukan kebutuhan penelitianmu agar Alerin dapat menemukan jurnal yang relevan dan menyusun literatur review sesuai topikmu.",
           steps: [
-            "Masukkan topik penelitian atau pilih rekomendasi dari Alerin sesuai kebutuhanmu.",
-            "Tentukan periode publikasi jurnal yang ingin digunakan.",
-            "Tentukan jumlah jurnal yang dibutuhkan untuk menyusun literatur review.",
+            {
+              title: "Masukkan topik penelitian",
+              description: "Tuliskan topik penelitian atau pilih rekomendasi dari Alerin sesuai kebutuhanmu.",
+            },
+            {
+              title: "Tentukan periode publikasi",
+              description: "Pilih rentang tahun publikasi jurnal yang ingin digunakan sebagai referensi penelitian.",
+            },
+            {
+              title: "Tentukan jumlah jurnal",
+              description: "Pilih jumlah jurnal yang dibutuhkan untuk menyusun literatur review.",
+            },
           ],
         }
       : searchType === "map"
@@ -5636,9 +5645,9 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
             title: "Panduan Peta Penelitian",
             intro: "Alerin akan membantu menemukan jurnal yang relevan dan menyusun peta penelitian untuk mengidentifikasi keterkaitan, kepadatan topik dan perkembangan penelitian.",
             steps: [
-              "Masukkan topik penelitian atau gunakan rekomendasi Alerin sesuai kebutuhanmu.",
-              "Pilih periode publikasi jurnal yang ingin dianalisis.",
-              "Tentukan jumlah jurnal yang akan digunakan sebagai dasar penyusunan peta penelitian.",
+              { description: "Masukkan topik penelitian atau gunakan rekomendasi Alerin sesuai kebutuhanmu." },
+              { description: "Pilih periode publikasi jurnal yang ingin dianalisis." },
+              { description: "Tentukan jumlah jurnal yang akan digunakan sebagai dasar penyusunan peta penelitian." },
             ],
           }
         : null;
@@ -6496,9 +6505,12 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                   {guideContent ? (
                     <ol className="mt-4 space-y-2 md:mt-6 md:space-y-4">
                       {guideContent.steps.map((step, index) => (
-                        <li key={step} className="flex gap-3 rounded-xl border border-slate-100/80 bg-slate-50 p-3 md:rounded-none md:border-0 md:bg-transparent md:p-0">
+                        <li key={step.description} className="flex gap-3 rounded-xl border border-slate-100/80 bg-slate-50 p-3 md:rounded-none md:border-0 md:bg-transparent md:p-0">
                           <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-sky-100 text-sm font-bold text-[#0070ba] md:h-8 md:w-8 md:rounded-xl md:text-sky-600">{index + 1}</span>
-                          <span className="text-sm leading-5 text-slate-700 md:text-xs md:leading-5">{step}</span>
+                          <span className="min-w-0">
+                            {step.title && <strong className="block text-sm md:text-sm">{step.title}</strong>}
+                            <span className={step.title ? "mt-0.5 block text-xs leading-5 text-[#64748b] md:mt-1 md:text-xs md:leading-5" : "block text-sm leading-5 text-slate-700 md:text-xs md:leading-5"}>{step.description}</span>
+                          </span>
                         </li>
                       ))}
                     </ol>
