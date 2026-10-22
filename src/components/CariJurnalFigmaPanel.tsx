@@ -5448,7 +5448,8 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
   const [desktopStage, setDesktopStage] = useState<"home" | "loading" | "results">("home");
   const [searchType, setSearchType] = useState<"journal" | "review" | "map">("journal");
   const [reviewTopic, setReviewTopic] = useState("");
-  const [reviewPeriod, setReviewPeriod] = useState("2020-2026");
+  const [reviewYearFrom, setReviewYearFrom] = useState("2020");
+  const [reviewYearTo, setReviewYearTo] = useState("2026");
   const [reviewCount, setReviewCount] = useState("100");
   const [resultMode, setResultMode] = useState<"search" | "analysis">("search");
   const [temuanIndex, setTemuanIndex] = useState(1);
@@ -6224,19 +6225,26 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                     <div className="mt-4 grid gap-3 md:grid-cols-2">
                       <label className="block">
                         <span className="font-['Plus_Jakarta_Sans:SemiBold'] text-xs font-semibold text-slate-700">Periode publikasi</span>
-                        <span className="relative mt-1.5 block">
-                          <select
-                            value={reviewPeriod}
-                            onChange={event => setReviewPeriod(event.target.value)}
-                            className="w-full appearance-none rounded-xl border border-slate-200 bg-white px-3 py-2.5 pr-9 text-sm text-slate-800 outline-none focus:border-sky-400"
-                          >
-                            <option value="2020-2026">2020 – 2026</option>
-                            <option value="2015-2026">2015 – 2026</option>
-                            <option value="2010-2026">2010 – 2026</option>
-                          </select>
-                          <svg width="12" height="8" viewBox="0 0 12 8" fill="none" stroke="#64748b" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2">
-                            <path d="M1 1.5L6 6.5l5-5" />
-                          </svg>
+                        <span className="mt-1.5 flex items-center gap-2">
+                          <input
+                            value={reviewYearFrom}
+                            onChange={event => setReviewYearFrom(event.target.value.replace(/[^0-9]/g, "").slice(0, 4))}
+                            inputMode="numeric"
+                            maxLength={4}
+                            aria-label="Tahun awal publikasi"
+                            placeholder="2020"
+                            className="min-w-0 flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-center text-sm text-slate-800 outline-none placeholder:text-slate-400 focus:border-sky-400"
+                          />
+                          <span className="text-sm text-slate-400">–</span>
+                          <input
+                            value={reviewYearTo}
+                            onChange={event => setReviewYearTo(event.target.value.replace(/[^0-9]/g, "").slice(0, 4))}
+                            inputMode="numeric"
+                            maxLength={4}
+                            aria-label="Tahun akhir publikasi"
+                            placeholder="2026"
+                            className="min-w-0 flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-center text-sm text-slate-800 outline-none placeholder:text-slate-400 focus:border-sky-400"
+                          />
                         </span>
                       </label>
                       <label className="block">
