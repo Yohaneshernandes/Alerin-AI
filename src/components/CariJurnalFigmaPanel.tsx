@@ -6131,7 +6131,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                 </h1>
                 <p className="mt-2 text-center font-['Plus_Jakarta_Sans:Regular'] text-xs leading-[19.5px] text-[#232323] md:text-left md:text-base md:leading-6 md:text-[#475569]">
                   {searchType === "review" ? (
-                    "Alerin membantu mencari jurnal relevan berdasarkan topik penelitian yang relevan untuk memproses literature review."
+                    "Alerin membantu mencari jurnal relevan untuk memproses literature review."
                   ) : searchType === "map" ? (
                     "Temukan hubungan, kepadatan, dan perkembangan topik berdasarkan topik penelitian."
                   ) : (
