@@ -54,10 +54,11 @@ const initialSavedJournals: SavedJournal[] = [
   },
   {
     id: "saved-2",
-    title: journals[1].title,
-    authors: journals[1].authors,
-    description: journals[1].description,
-    year: "2023",
+    title: "The Impact of Digital Literacy on Academic Achievement: A Meta-Analysis of Higher Education Students",
+    authors: "Hidayat, M. & Nugroho, A.",
+    description:
+      "Meta-analisis 43 studi menunjukkan literasi digital memediasi hubungan antara akses teknologi dan capaian akademik mahasiswa.",
+    year: "2022",
     relevancy: "92%",
     folderId: "skripsi",
   },
@@ -1649,30 +1650,29 @@ function JournalCard({
       <h3 className="mt-4 font-['Plus_Jakarta_Sans:Bold'] text-lg font-bold leading-6 text-[#0f172a]">{journal.title}</h3>
       <p className="mt-1 font-['Inter:Regular'] text-sm text-[#94a3b8]">{journal.authors}</p>
       <p className="mt-4 font-['Inter:Regular'] text-sm leading-6 text-[#64748b]">{journal.description}</p>
-      {journal.id === "saved-1" && (
-        <>
-          <div className="mt-4 rounded-xl bg-[#eaf6ff] px-4 py-3 text-sm leading-6 text-[#475569]">
-            <strong className="font-['Inter:Bold'] text-[#0066a1]">Alasan direkomendasikan:</strong> Cocok untuk memperkuat landasan teori dan hubungan antarvariabel.
-          </div>
-          <label className="mt-4 block min-h-24 cursor-text rounded-xl border border-slate-200 bg-[#f1f5f9] p-4 transition-colors focus-within:border-sky-300 focus-within:bg-white">
-            <span className="block font-['Plus_Jakarta_Sans:Bold'] text-base font-bold text-[#1e293b]">Catatan Pribadi</span>
-            <textarea
-              value={note}
-              onChange={event => {
-                setNote(event.target.value);
-                try {
-                  window.localStorage.setItem(`alerin-journal-note-${journal.id}`, event.target.value);
-                } catch {
-                  /* ignore storage errors */
-                }
-              }}
-              placeholder="Kamu bisa menuliskan catatan pribadi di sini..."
-              aria-label={`Catatan pribadi ${journal.title}`}
-              className="mt-2 block min-h-14 w-full resize-none bg-transparent text-sm leading-6 text-[#475569] outline-none placeholder:text-[#94a3b8]"
-            />
-          </label>
-        </>
-      )}
+      <div className="mt-4 rounded-xl bg-[#eaf6ff] px-4 py-3 text-sm leading-6 text-[#475569]">
+        <strong className="font-['Inter:Bold'] text-[#0066a1]">Alasan direkomendasikan:</strong>{" "}
+        {journal.id === "saved-2"
+          ? "Cocok sebagai pembanding temuan dan rujukan metode meta-analisis."
+          : "Cocok untuk memperkuat landasan teori dan hubungan antarvariabel."}
+      </div>
+      <label className="mt-4 block min-h-24 cursor-text rounded-xl border border-slate-200 bg-[#f1f5f9] p-4 transition-colors focus-within:border-sky-300 focus-within:bg-white">
+        <span className="block font-['Plus_Jakarta_Sans:Bold'] text-base font-bold text-[#1e293b]">Catatan Pribadi</span>
+        <textarea
+          value={note}
+          onChange={event => {
+            setNote(event.target.value);
+            try {
+              window.localStorage.setItem(`alerin-journal-note-${journal.id}`, event.target.value);
+            } catch {
+              /* ignore storage errors */
+            }
+          }}
+          placeholder="Kamu bisa menuliskan catatan pribadi di sini..."
+          aria-label={`Catatan pribadi ${journal.title}`}
+          className="mt-2 block min-h-14 w-full resize-none bg-transparent text-sm leading-6 text-[#475569] outline-none placeholder:text-[#94a3b8]"
+        />
+      </label>
       <div className="mt-4 flex flex-wrap items-center justify-between gap-2.5 border-t border-slate-100 pt-4">
         <div className="flex min-w-0 flex-wrap items-center gap-2.5">
         <button type="button" onClick={onDetail} className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700">Lihat detail</button>
@@ -2937,12 +2937,20 @@ const priorityRows = (() => {
     for (let i = 0; i < max; i++) for (const list of lists) if (i < list.length) out.push(list[i]);
     return out;
   };
+  const authorPool = [
+    "Rahmawati, D. & Pratama, A.",
+    "Hidayat, M. & Nugroho, A.",
+    "Sari, N. & Wibowo, R.",
+    "Lestari, P. & Kurniawan, B.",
+    "Putri, A. & Santoso, D.",
+    "Fajar, M. & Anggraini, S.",
+  ];
   const head = [
-    { title: "Resilience among Women in Disaster Contexts: A Systematic Literature Review", year: 2023, relevan: 97, tag: "Sangat relevan", kind: "Ulasan teori", source: "Google Scholar" },
-    { title: "Gendered Impacts of Natural Disasters: A Global Review", year: 2022, relevan: 95, tag: "Sangat relevan", kind: "Ulasan teori", source: "Crossref" },
-    { title: "Community Resilience and Women's Leadership in Disaster Recovery", year: 2021, relevan: 91, tag: "Perlu ditinjau", kind: "Ulasan teori", source: "OpenAlex" },
-    { title: "The Role of Social Support in Post-Disaster Recovery for Women", year: 2020, relevan: 93, tag: "Sangat relevan", kind: "Ulasan teori", source: "DOAJ" },
-    { title: "Digital Platforms for Women's Resilience in Crisis Situations: An Empirical Study", year: 2023, relevan: 90, tag: "Perlu ditinjau", kind: "Empiris", source: "Google Scholar" },
+    { title: "Resilience among Women in Disaster Contexts: A Systematic Literature Review", authors: authorPool[0], year: 2023, relevan: 97, tag: "Sangat relevan", kind: "Ulasan teori", source: "Google Scholar" },
+    { title: "Gendered Impacts of Natural Disasters: A Global Review", authors: authorPool[1], year: 2022, relevan: 95, tag: "Sangat relevan", kind: "Ulasan teori", source: "Crossref" },
+    { title: "Community Resilience and Women's Leadership in Disaster Recovery", authors: authorPool[2], year: 2021, relevan: 91, tag: "Perlu ditinjau", kind: "Ulasan teori", source: "OpenAlex" },
+    { title: "The Role of Social Support in Post-Disaster Recovery for Women", authors: authorPool[3], year: 2020, relevan: 93, tag: "Sangat relevan", kind: "Ulasan teori", source: "DOAJ" },
+    { title: "Digital Platforms for Women's Resilience in Crisis Situations: An Empirical Study", authors: authorPool[4], year: 2023, relevan: 90, tag: "Perlu ditinjau", kind: "Empiris", source: "Google Scholar" },
   ];
   const topics = [
     "Women's Resilience in Disasters",
@@ -2981,6 +2989,7 @@ const priorityRows = (() => {
   const sources = ["Google Scholar", "Crossref", "OpenAlex", "DOAJ"];
   const extra = Array.from({ length: 87 }, (_, index) => ({
     title: `${topics[index % topics.length]}${suffixes[Math.floor(index / topics.length) % suffixes.length]}`,
+    authors: authorPool[index % authorPool.length],
     year: 2026 - (index % 7),
     relevan: Math.max(58, 94 - Math.floor(index * 0.42)),
     tag: tags[index],
@@ -3325,6 +3334,7 @@ function DesktopLiteratureReview({ query, onBack, onOpenSitasi }: { query: strin
           <table className="w-full min-w-[760px] border-collapse text-left">
             <thead className="sticky top-0 z-10 bg-slate-50">
               <tr className="bg-slate-50/60">
+                <th className="px-5 py-3 text-xs font-semibold text-slate-500">Penulis</th>
                 <th className="px-5 py-3 text-xs font-semibold text-slate-500">Judul</th>
                 <th className="px-5 py-3">
                   <button
@@ -3337,19 +3347,6 @@ function DesktopLiteratureReview({ query, onBack, onOpenSitasi }: { query: strin
                   >
                     Tahun
                     <SortArrow dir={yearSort} />
-                  </button>
-                </th>
-                <th className="px-5 py-3">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setYearSort(null);
-                      setRelevanSort(relevanSort === "desc" ? "asc" : "desc");
-                    }}
-                    className={`flex items-center gap-1.5 text-xs font-semibold ${relevanSort ? "text-[#0369a1]" : "text-slate-500 hover:text-slate-700"}`}
-                  >
-                    Relevansi
-                    <SortArrow dir={relevanSort} />
                   </button>
                 </th>
                 <th className="px-5 py-3 text-xs font-semibold text-slate-500">Sumber</th>
@@ -3365,26 +3362,9 @@ function DesktopLiteratureReview({ query, onBack, onOpenSitasi }: { query: strin
               )}
               {visiblePriority.map(row => (
                 <tr key={row.title} className="border-t border-slate-100">
+                  <td className="max-w-[200px] px-5 py-4 text-sm text-slate-600">{row.authors}</td>
                   <td className="max-w-[380px] px-5 py-4 text-sm font-medium leading-5 text-slate-800">{row.title}</td>
                   <td className="px-5 py-4 text-sm text-slate-600">{row.year}</td>
-                  <td className="px-5 py-4">
-                    <span
-                      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${
-                        row.tag === "Sangat relevan"
-                          ? "bg-emerald-50 text-emerald-700 outline outline-1 outline-emerald-200/60"
-                          : row.tag === "Cukup relevan"
-                            ? "bg-sky-50 text-sky-700 outline outline-1 outline-sky-200/60"
-                            : "bg-amber-50 text-amber-700 outline outline-1 outline-amber-200/60"
-                      }`}
-                    >
-                      <span
-                        className={`h-1.5 w-1.5 rounded-full ${
-                          row.tag === "Sangat relevan" ? "bg-emerald-500" : row.tag === "Cukup relevan" ? "bg-sky-500" : "bg-amber-500"
-                        }`}
-                      />
-                      {row.tag}
-                    </span>
-                  </td>
                   <td className="px-5 py-4">
                     <span className="flex items-center gap-2.5">
                       <img
@@ -3483,57 +3463,24 @@ function DesktopLiteratureReview({ query, onBack, onOpenSitasi }: { query: strin
       </section>
 
       <div className="flex items-center justify-between gap-4 pt-1">
-        <div className="flex items-center gap-3">
-          <span className="h-8 w-1.5 rounded-full bg-[#0369a1]" />
+        <div className="flex min-w-0 items-center gap-3">
+          <span className="h-8 w-1.5 shrink-0 rounded-full bg-[#0369a1]" />
           <h2 className="text-2xl font-extrabold leading-8 text-slate-900">Literature Review Siap Digunakan</h2>
         </div>
+        <button
+          type="button"
+          onClick={() => window.alert("Dokumen berhasil diekspor ke PDF.")}
+          className="flex shrink-0 items-center justify-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 outline outline-1 outline-slate-200 transition-colors hover:bg-slate-50"
+        >
+          <svg width="15" height="15" viewBox="0 0 14 14" fill="none" stroke="#dc2626" strokeWidth="1.5" strokeLinejoin="round" aria-hidden="true">
+            <path d="M2.5 1.5h6l3 3v8h-9zM8.5 1.5v3h3" />
+          </svg>
+          Ekspor ke PDF
+        </button>
       </div>
 
-      <section className="flex items-stretch gap-5 rounded-2xl bg-white p-5 shadow-sm">
-        <div className="grid min-w-0 flex-1 grid-cols-2 gap-3">
-          <button
-            type="button"
-            onClick={() => window.alert("Dokumen berhasil diekspor ke Word.")}
-            className="flex items-center justify-center gap-2 rounded-xl bg-sky-600 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-sky-700"
-          >
-            <svg width="15" height="15" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" aria-hidden="true">
-              <path d="M2.5 1.5h6l3 3v8h-9zM8.5 1.5v3h3" />
-            </svg>
-            Ekspor ke Word
-          </button>
-          <button
-            type="button"
-            onClick={() => window.alert("Dokumen berhasil diekspor ke PDF.")}
-            className="flex items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-sm font-semibold text-slate-700 outline outline-1 outline-slate-200 transition-colors hover:bg-slate-50"
-          >
-            <svg width="15" height="15" viewBox="0 0 14 14" fill="none" stroke="#dc2626" strokeWidth="1.5" strokeLinejoin="round" aria-hidden="true">
-              <path d="M2.5 1.5h6l3 3v8h-9zM8.5 1.5v3h3" />
-            </svg>
-            Ekspor ke PDF
-          </button>
-          <button
-            type="button"
-            onClick={() => window.alert("Teks literatur review disalin ke papan klip.")}
-            className="flex items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-sm font-semibold text-slate-700 outline outline-1 outline-slate-200 transition-colors hover:bg-slate-50"
-          >
-            <svg width="15" height="15" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" aria-hidden="true">
-              <rect x="4.5" y="4.5" width="8" height="8" rx="1.5" />
-              <path d="M9.5 4.5v-2a1.5 1.5 0 0 0-1.5-1.5H3A1.5 1.5 0 0 0 1.5 2.5V8A1.5 1.5 0 0 0 3 9.5h1.5" />
-            </svg>
-            Salin Teks
-          </button>
-          <button
-            type="button"
-            onClick={onOpenSitasi}
-            className="flex items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-sm font-semibold text-slate-700 outline outline-1 outline-slate-200 transition-colors hover:bg-slate-50"
-          >
-            <svg width="15" height="15" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" aria-hidden="true">
-              <path d="M5.5 4.5H3.8A1.3 1.3 0 0 0 2.5 5.8v4.4a1.3 1.3 0 0 0 1.3 1.3h4.4a1.3 1.3 0 0 0 1.3-1.3V5.8a1.3 1.3 0 0 0-1.3-1.3H7M5 2.5h4M5 5h4" />
-            </svg>
-            Lihat Sitasi
-          </button>
-        </div>
-        <div className="w-72 shrink-0 rounded-xl bg-slate-50 p-4">
+      <section className="rounded-2xl bg-white p-5 shadow-sm">
+        <div className="rounded-xl bg-slate-50 p-4">
           <p className="text-sm font-bold leading-5 text-slate-800">Keterlacakan Sumber</p>
           <div className="mt-3 flex items-end justify-between gap-3">
             <div className="flex flex-col gap-2">
@@ -4000,22 +3947,12 @@ function MobileLiteratureReview() {
       </section>
 
       <div className="rounded-3xl bg-white p-5 shadow-sm outline outline-1 outline-offset-[-1px] outline-slate-200/80">
-        <h2 className="text-xl font-bold leading-7 text-slate-900">Literature Review Siap Digunakan</h2>
-        <div className="mt-4 grid grid-cols-2 gap-3">
-          <button
-            type="button"
-            onClick={() => window.alert("Dokumen berhasil diekspor ke Word.")}
-            className="flex items-center justify-center gap-2 rounded-2xl bg-sky-600 py-3 text-sm font-semibold text-white"
-          >
-            <svg width="15" height="15" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" aria-hidden="true">
-              <path d="M2.5 1.5h6l3 3v8h-9zM8.5 1.5v3h3" />
-            </svg>
-            Ekspor ke Word
-          </button>
+        <div className="flex items-center justify-between gap-3">
+          <h2 className="text-xl font-bold leading-7 text-slate-900">Literature Review Siap Digunakan</h2>
           <button
             type="button"
             onClick={() => window.alert("Dokumen berhasil diekspor ke PDF.")}
-            className="flex items-center justify-center gap-2 rounded-2xl bg-white py-3 text-sm font-semibold text-slate-700 outline outline-1 outline-slate-200"
+            className="flex shrink-0 items-center justify-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 outline outline-1 outline-slate-200"
           >
             <svg width="15" height="15" viewBox="0 0 14 14" fill="none" stroke="#dc2626" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" aria-hidden="true">
               <path d="M2.5 1.5h6l3 3v8h-9zM8.5 1.5v3h3" />
