@@ -610,13 +610,13 @@ function Sidebar({
         <button
           type="button"
           onClick={() => onView("home")}
-          title={collapsed ? "Beranda Jurnal" : undefined}
+          title={collapsed ? "Beranda" : undefined}
           className={`flex w-full items-center gap-3.5 rounded-xl py-3 text-base ${
             collapsed ? "justify-center px-0" : "px-4"
           } ${view === "home" ? "bg-sky-100/80 font-semibold text-sky-600" : "font-medium text-slate-600"}`}
         >
           <img src={`${assets}/${homeIcon}`} alt="" />
-          {!collapsed && "Beranda Jurnal"}
+          {!collapsed && "Beranda"}
         </button>
         <button
           type="button"
