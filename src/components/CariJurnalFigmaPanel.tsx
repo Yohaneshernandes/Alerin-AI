@@ -5450,7 +5450,6 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
   const [reviewTopic, setReviewTopic] = useState("AI Literacy dan Motivasi Belajar Mahasiswa");
   const [reviewPeriod, setReviewPeriod] = useState("2020-2026");
   const [reviewCount, setReviewCount] = useState("100");
-  const [reviewTopics, setReviewTopics] = useState<string[]>([]);
   const [resultMode, setResultMode] = useState<"search" | "analysis">("search");
   const [temuanIndex, setTemuanIndex] = useState(1);
   const [mobileNavHidden, setMobileNavHidden] = useState(false);
@@ -5660,10 +5659,6 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
             ],
           }
         : null;
-
-  const toggleReviewTopic = (topic: string) => {
-    setReviewTopics(list => (list.includes(topic) ? list.filter(item => item !== topic) : [...list, topic]));
-  };
 
   const openRiwayatPencarian = (title: string) => {
     setView("home");
@@ -6268,19 +6263,22 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                       <p className="font-['Plus_Jakarta_Sans:SemiBold'] text-[13px] font-semibold text-slate-800 md:text-sm">Rekomendasi topik</p>
                       <div className="mt-3 grid gap-2">
                         {topicSuggestions.map(topic => {
-                          const checked = reviewTopics.includes(topic);
+                          const selected = reviewTopic === topic;
                           return (
-                            <label key={topic} className={`flex cursor-pointer items-center gap-2.5 rounded-xl border px-3 py-2.5 transition-colors ${checked ? "border-sky-200 bg-sky-50/50" : "border-slate-200 bg-white hover:bg-slate-50"}`}>
-                              <span className={`flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded ${checked ? "bg-[#0070ba]" : "border border-slate-300 bg-white"}`}>
-                                <input type="checkbox" checked={checked} onChange={() => toggleReviewTopic(topic)} className="sr-only" />
-                                {checked && (
-                                  <svg width="11" height="9" viewBox="0 0 12 10" fill="none" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                                    <path d="M1.5 5l3 3 6-6.5" />
-                                  </svg>
-                                )}
-                              </span>
-                              <span className="text-[13px] font-medium text-slate-700 md:text-sm">{topic}</span>
-                            </label>
+                            <button
+                              key={topic}
+                              type="button"
+                              onClick={() => setReviewTopic(topic)}
+                              aria-pressed={selected}
+                              className={`flex w-full items-center gap-2.5 rounded-xl border px-3 py-2.5 text-left transition-colors ${selected ? "border-sky-300 bg-sky-50" : "border-slate-200 bg-white hover:border-sky-200 hover:bg-slate-50"}`}
+                            >
+                              <span className={`min-w-0 flex-1 text-[13px] font-medium md:text-sm ${selected ? "text-sky-800" : "text-slate-700"}`}>{topic}</span>
+                              {selected && (
+                                <svg width="14" height="11" viewBox="0 0 14 11" fill="none" stroke="#0070ba" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="shrink-0">
+                                  <path d="M1.5 5.8l3.8 3.8L12.5 1.5" />
+                                </svg>
+                              )}
+                            </button>
                           );
                         })}
                       </div>
