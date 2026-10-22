@@ -6267,10 +6267,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                     </div>
 
                     <div className="mt-5">
-                      <div className="flex items-center justify-between gap-3">
-                        <p className="font-['Plus_Jakarta_Sans:SemiBold'] text-[13px] font-semibold text-slate-800 md:text-sm">Rekomendasi topik</p>
-                        <span className="text-[11px] text-slate-400 md:text-xs">Pilih satu atau lebih</span>
-                      </div>
+                      <p className="font-['Plus_Jakarta_Sans:SemiBold'] text-[13px] font-semibold text-slate-800 md:text-sm">Rekomendasi topik</p>
                       <div className="mt-3 grid gap-2">
                         {topicSuggestions.map(topic => {
                           const checked = reviewTopics.includes(topic);
