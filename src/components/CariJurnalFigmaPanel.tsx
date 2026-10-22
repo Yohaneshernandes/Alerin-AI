@@ -5609,8 +5609,8 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
   const guideContent: { title: string; intro: string; steps: { title?: string; description: string }[] } | null =
     searchType === "review"
       ? {
-          title: "Cara menyusun literatur review",
-          intro: "Tentukan kebutuhan penelitianmu agar Alerin dapat menemukan jurnal yang relevan dan menyusun literatur review sesuai topikmu.",
+          title: "Cara Buat literature review",
+          intro: "Tentukan topik penelitian sesuai fokus yang ingin kamu teliti.",
           steps: [
             {
               title: "Masukkan topik penelitian",
@@ -5628,8 +5628,8 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
         }
       : searchType === "map"
         ? {
-            title: "Cara menyusun peta penelitian",
-            intro: "Tentukan kebutuhan penelitianmu agar Alerin dapat menemukan jurnal yang relevan dan menyusun peta penelitian untuk melihat keterkaitan topik, kepadatan kajian, serta perkembangan penelitian.",
+            title: "Cara Lihat Peta Penelitian",
+            intro: "Tentukan topik penelitian sesuai fokus yang ingin kamu cari.",
             steps: [
               {
                 title: "Masukkan topik penelitian",
