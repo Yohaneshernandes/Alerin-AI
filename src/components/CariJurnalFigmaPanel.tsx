@@ -6489,7 +6489,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                   <span className="font-['Inter:Semi_Bold'] text-sm font-semibold text-slate-800">Kembali ke Beranda Alerin</span>
                 </button>
                 <div className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm md:p-6">
-                  <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-base font-bold md:text-base">{guideContent?.title ?? "Tiga cara menemukan jurnal"}</h2>
+                  <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-base font-bold md:text-base">{guideContent?.title ?? "Cara menemukan jurnal"}</h2>
                   <p className="mt-2 text-sm leading-5 text-[#64748b] md:font-['Plus_Jakarta_Sans:Regular'] md:text-xs">{guideContent?.intro ?? "Pilih cara pencarian sesuai informasi yang sudah kamu miliki."}</p>
                   {guideContent ? (
                     <ol className="mt-4 space-y-2 md:mt-6 md:space-y-4">
