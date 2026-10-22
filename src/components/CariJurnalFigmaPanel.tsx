@@ -6338,7 +6338,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                       <path d="M9 5l-5 5 5 5" />
                     </svg>
                   </span>
-                  <span className="font-['Inter:Semi_Bold'] text-sm font-semibold text-slate-800">Kembali</span>
+                  <span className="font-['Inter:Semi_Bold'] text-sm font-semibold text-slate-800">Kembali ke Beranda Alerin</span>
                 </button>
                 <div className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm md:p-6">
                   <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-base font-bold md:text-base">Tiga cara menemukan jurnal</h2>
