@@ -3415,7 +3415,7 @@ function DesktopLiteratureReview({ query, onBack, onOpenSitasi }: { query: strin
           <div>
             <h2 className="text-lg font-bold leading-7 text-slate-900">Matriks Literatur</h2>
             <p className="mt-0.5 text-sm leading-5 text-slate-500">
-              Daftar studi yang dianalisis beserta fokus, metode, temuan utama, dan kontribusi khasnya.
+              Daftar studi yang dianalisis beserta fokus, teori, metode, temuan utama, dan kontribusi penelitian.
             </p>
           </div>
           <label className="flex h-10 w-64 shrink-0 items-center gap-2 rounded-xl bg-slate-50 px-3">
