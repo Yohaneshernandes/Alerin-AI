@@ -6110,7 +6110,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
               <div>
                 <h1 className="text-center font-['Plus_Jakarta_Sans:ExtraBold'] text-2xl font-extrabold leading-[33px] tracking-[-0.6px] text-[#0f172a] md:text-left md:text-[26px] md:leading-9 md:tracking-normal md:text-[#003859]">
                   {searchType === "review" ? (
-                    "Buat literatur review sesuai kebutuhan penelitianmu"
+                    "Buat literatur review dari jurnal yang paling relevan"
                   ) : searchType === "map" ? (
                     "Buat peta penelitian sesuai yang kamu butuhkan"
                   ) : (
@@ -6123,10 +6123,10 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                   {searchType === "review" ? (
                     "Alerin membantu mencari jurnal relevan untuk memproses literature review."
                   ) : searchType === "map" ? (
-                    "Temukan hubungan penelitian, kepadatan topik, dan perkembangan artikel"
+                    "Kenali topik yang saling berkaitan, banyak diteliti, serta perkembangannya."
                   ) : (
                     <>
-                      Cari dengan kata kunci atau biarkan Alerin memahami <br className="md:hidden" />paragraf atau file dokumen.
+                      Cari dengan kata kunci atau biarkan Alerin memahami <br className="md:hidden" />paragraf atau dokumen.
                     </>
                   )}
                 </p>
@@ -6335,8 +6335,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                       type="button"
                       onClick={() => setFilterOpen(true)}
                       aria-expanded={filterOpen}
-                      disabled={referenceActive}
-                      className="flex shrink-0 items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-700 disabled:cursor-not-allowed disabled:opacity-50 md:gap-2 md:px-4 md:text-sm"
+                      className="flex shrink-0 items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-700 md:gap-2 md:px-4 md:text-sm"
                     >
                       <span className="relative h-[19.689px] w-[17.143px] shrink-0 overflow-hidden">
                         <img src="/assets/jurnal-design/quick-search/8e43d.svg" alt="" className="absolute left-[-19.689px] top-[-18.447px] max-w-none origin-top-left scale-[0.6667]" />
