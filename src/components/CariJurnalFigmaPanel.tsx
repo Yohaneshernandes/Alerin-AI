@@ -6124,7 +6124,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
               <div>
                 <h1 className="text-center font-['Plus_Jakarta_Sans:ExtraBold'] text-2xl font-extrabold leading-[33px] tracking-[-0.6px] text-[#0f172a] md:text-left md:text-[26px] md:leading-9 md:tracking-normal md:text-[#003859]">
                   {searchType === "review" ? (
-                    "Buat literatur review penelitian"
+                    "Buat literatur review sesuai kebutuhan penelitianmu"
                   ) : searchType === "map" ? (
                     "Buat visualisasi peta penelitian"
                   ) : (
