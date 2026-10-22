@@ -128,6 +128,7 @@ const desktopResultDetails: ResultDetail[] = [
       ["Penerbit", "Pusat Studi Bisnis Digital Nusantara"],
       ["DOI terverifikasi", "DOI: 10.20886/jpkf.2022.6.1.16-28"],
       ["Jumlah sitasi", "Artikel ini dikutip dalam 45 karya ilmiah lainnya."],
+      ["Sumber", "OpenAlex dan Crossref"],
     ],
     summary:
       "Penelitian ini menunjukkan bahwa interaksi parasosial antara host dan penonton dapat membangun kepercayaan. Ketika interaksi tersebut disertai pesan kelangkaan berupa batas waktu atau stok, niat beli konsumen pada live streaming commerce meningkat...",
@@ -160,6 +161,7 @@ const desktopResultDetails: ResultDetail[] = [
       ["Penerbit", "Pusat Studi Bisnis Digital Nusantara"],
       ["DOI terverifikasi", "DOI: 10.20886/jpkf.2022.6.1.16-28"],
       ["Jumlah sitasi", "Artikel ini dikutip dalam 45 karya ilmiah lainnya."],
+      ["Sumber", "OpenAlex dan Crossref"],
     ],
     summary:
       "Meta-analisis 43 studi dari 12 negara menunjukkan literasi digital memediasi hubungan antara akses teknologi dan capaian akademik, dengan efek terbesar pada mahasiswa semester awal. Ukuran efek gabungan berada pada kategori sedang hingga kuat.",
@@ -192,6 +194,7 @@ const desktopResultDetails: ResultDetail[] = [
       ["Penerbit", "Pusat Studi Bisnis Digital Nusantara"],
       ["DOI terverifikasi", "DOI: 10.20886/jpkf.2022.6.1.16-28"],
       ["Jumlah sitasi", "Artikel ini dikutip dalam 45 karya ilmiah lainnya."],
+      ["Sumber", "OpenAlex dan Crossref"],
     ],
     summary:
       "Survei 312 responden pengguna live commerce di Indonesia menemukan kepercayaan dan ulasan konsumen memediasi pengaruh interaksi parasosial terhadap minat beli, terutama pada kategori produk fesyen dan perawatan diri.",
@@ -5684,7 +5687,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
           {mobileSearchStage === "loading" && view === "home" && (
             <div className="fixed inset-x-0 bottom-[68px] top-[65px] z-[305] flex flex-col items-center justify-center overflow-hidden bg-[#f4f7fb] px-6 md:hidden">
               <SearchLoader />
-              <h1 className="mt-5 text-center font-['Plus_Jakarta_Sans:ExtraBold'] text-[21px] font-extrabold tracking-[-0.5px] text-[#313131]">
+              <h1 className="text-center font-['Plus_Jakarta_Sans:ExtraBold'] text-[21px] font-extrabold tracking-[-0.5px] text-[#313131]">
                 {searchType === "review" ? "Menyusun Tinjauan Literatur" : resultMode === "analysis" ? "Menganalisis Naskahmu" : "Menulusuri Jurnal Untukmu"}
               </h1>
               <p className="mt-2 max-w-[290px] animate-pulse text-center text-xs leading-5 text-[#71717a]">
@@ -5950,6 +5953,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                           ["Penerbit", "Pusat Studi Bisnis Digital Nusantara"],
                           ["DOI terverifikasi", "DOI: 10.20886/jpkf.2022.6.1.16-28"],
                           ["Jumlah sitasi", "Artikel ini dikutip dalam 45 karya ilmiah lainnya."],
+                          ["Sumber", "OpenAlex dan Crossref"],
                         ].map(([judul, detail]) => (
                           <div key={judul} className="mt-3 flex items-start gap-2.5">
                             <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-sky-100 text-[9px] font-bold text-sky-600">✓</span>
@@ -6069,10 +6073,15 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
           {desktopStage !== "home" ? null : view === "home" ? (
             <div className="mx-auto grid max-w-[1160px] gap-5 lg:grid-cols-[minmax(0,1fr)_280px]">
               <div>
+                <h1 className="text-center font-['Plus_Jakarta_Sans:ExtraBold'] text-2xl font-extrabold leading-[33px] tracking-[-0.6px] text-[#0f172a] md:text-left md:text-[26px] md:leading-9 md:tracking-normal md:text-[#003859]">
+                  Temukan jurnal yang tepat <br className="md:hidden" />untuk tulisanmu
+                </h1>
+                <p className="mt-2 text-center font-['Plus_Jakarta_Sans:Regular'] text-xs leading-[19.5px] text-[#232323] md:text-left md:text-base md:leading-6 md:text-[#475569]">Cari dengan kata kunci atau biarkan Alerin memahami <br className="md:hidden" />paragraf dan dokumenmu.</p>
+
                 <div
                   role="tablist"
                   aria-label="Jenis pencarian"
-                  className="flex w-full items-center gap-1 rounded-2xl bg-white p-1 outline outline-1 outline-slate-200/90 md:w-[799px]"
+                  className="mt-5 flex w-full items-center gap-1 rounded-2xl bg-white p-1 outline outline-1 outline-slate-200/90 md:mt-6 md:w-[799px]"
                 >
                   {(
                     [
@@ -6117,13 +6126,8 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                   })}
                 </div>
 
-                <h1 className="mt-5 text-center font-['Plus_Jakarta_Sans:ExtraBold'] text-2xl font-extrabold leading-[33px] tracking-[-0.6px] text-[#0f172a] md:text-left md:text-[26px] md:leading-9 md:tracking-normal md:text-[#003859]">
-                  Temukan jurnal yang tepat <br className="md:hidden" />untuk tulisanmu
-                </h1>
-                <p className="mt-2 text-center font-['Plus_Jakarta_Sans:Regular'] text-xs leading-[19.5px] text-[#232323] md:text-left md:text-base md:leading-6 md:text-[#475569]">Cari dengan kata kunci atau biarkan Alerin memahami <br className="md:hidden" />paragraf dan dokumenmu.</p>
-
                 {searchType === "review" || searchType === "map" ? (
-                  <section className="mt-5 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm md:mt-7 md:p-6">
+                  <section className="mt-4 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm md:mt-5 md:p-6">
                     <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-[17px] font-bold md:text-base">Topik penelitian</h2>
                     <label className="mt-3 flex min-w-0 items-center gap-2 rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-3 md:bg-white md:px-4">
                       <svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="#94a3b8" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="shrink-0">
@@ -6254,7 +6258,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                   </section>
                 ) : (
                   <>
-                <section className="mt-5 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm md:mt-7 md:p-6">
+                <section className="mt-4 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm md:mt-5 md:p-6">
                   <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-[17px] font-bold md:text-base">Pencarian cepat</h2>
 
                   <div className="mt-4 flex min-w-0 items-stretch gap-2 md:gap-3">
