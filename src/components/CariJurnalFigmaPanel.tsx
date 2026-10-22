@@ -125,10 +125,10 @@ const desktopResultDetails: ResultDetail[] = [
     fitNote: "Cocok untuk: landasan teori, penyusunan hipotesis, pembanding penelitian, dan rujukan metode kuantitatif.",
     quote: "Parasocial interaction strengthens purchase intention when viewers perceive urgency and scarcity.",
     credibility: [
+      ["Sumber", "OpenAlex dan Crossref"],
       ["Penerbit", "Pusat Studi Bisnis Digital Nusantara"],
       ["DOI terverifikasi", "DOI: 10.20886/jpkf.2022.6.1.16-28"],
       ["Jumlah sitasi", "Artikel ini dikutip dalam 45 karya ilmiah lainnya."],
-      ["Sumber", "OpenAlex dan Crossref"],
     ],
     summary:
       "Penelitian ini menunjukkan bahwa interaksi parasosial antara host dan penonton dapat membangun kepercayaan. Ketika interaksi tersebut disertai pesan kelangkaan berupa batas waktu atau stok, niat beli konsumen pada live streaming commerce meningkat...",
@@ -158,10 +158,10 @@ const desktopResultDetails: ResultDetail[] = [
     fitNote: "Cocok untuk: kerangka konseptual, pembahasan meta-analisis, dan perbandingan efek antarnegara.",
     quote: "Digital literacy mediates the relationship between technology access and academic achievement.",
     credibility: [
+      ["Sumber", "OpenAlex dan Crossref"],
       ["Penerbit", "Pusat Studi Bisnis Digital Nusantara"],
       ["DOI terverifikasi", "DOI: 10.20886/jpkf.2022.6.1.16-28"],
       ["Jumlah sitasi", "Artikel ini dikutip dalam 45 karya ilmiah lainnya."],
-      ["Sumber", "OpenAlex dan Crossref"],
     ],
     summary:
       "Meta-analisis 43 studi dari 12 negara menunjukkan literasi digital memediasi hubungan antara akses teknologi dan capaian akademik, dengan efek terbesar pada mahasiswa semester awal. Ukuran efek gabungan berada pada kategori sedang hingga kuat.",
@@ -191,10 +191,10 @@ const desktopResultDetails: ResultDetail[] = [
     fitNote: "Cocok untuk: konteks Indonesia, rujukan variabel kepercayaan, dan implikasi praktis pemasaran.",
     quote: "Kepercayaan konsumen memediasi pengaruh ulasan daring terhadap minat beli.",
     credibility: [
+      ["Sumber", "OpenAlex dan Crossref"],
       ["Penerbit", "Pusat Studi Bisnis Digital Nusantara"],
       ["DOI terverifikasi", "DOI: 10.20886/jpkf.2022.6.1.16-28"],
       ["Jumlah sitasi", "Artikel ini dikutip dalam 45 karya ilmiah lainnya."],
-      ["Sumber", "OpenAlex dan Crossref"],
     ],
     summary:
       "Survei 312 responden pengguna live commerce di Indonesia menemukan kepercayaan dan ulasan konsumen memediasi pengaruh interaksi parasosial terhadap minat beli, terutama pada kategori produk fesyen dan perawatan diri.",
@@ -5114,20 +5114,8 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
           </label>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 border-b border-slate-200/70 px-4 py-3 md:px-7 md:py-3.5">
-          {filterChips.map(item => (
-            <button
-              key={item.key}
-              type="button"
-              onClick={() => setChip(item.key)}
-              className={`rounded-full px-3 py-1 text-sm font-medium leading-5 transition-colors ${
-                chip === item.key ? "bg-blue-50 text-blue-700 outline outline-1 outline-blue-200" : "text-slate-600 hover:bg-slate-50"
-              }`}
-            >
-              {item.label}
-            </button>
-          ))}
-          {nodeFilter && (
+        {nodeFilter && (
+          <div className="flex flex-wrap items-center gap-2 border-b border-slate-200/70 px-4 py-3 md:px-7 md:py-3.5">
             <button
               type="button"
               onClick={() => setNodeFilter(null)}
@@ -5138,8 +5126,8 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
                 <path d="M1.5 1.5l6 6M7.5 1.5l-6 6" />
               </svg>
             </button>
-          )}
-        </div>
+          </div>
+        )}
 
         <div className="hidden max-h-[430px] overflow-auto md:block">
           <table className="w-full min-w-[860px] border-collapse text-left">
@@ -6000,10 +5988,10 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                       <div className="mt-4 rounded-2xl bg-slate-100 p-4">
                         <p className="text-[13px] font-bold uppercase tracking-wide text-slate-900">Kredibilitas</p>
                         {[
+                          ["Sumber", "OpenAlex dan Crossref"],
                           ["Penerbit", "Pusat Studi Bisnis Digital Nusantara"],
                           ["DOI terverifikasi", "DOI: 10.20886/jpkf.2022.6.1.16-28"],
                           ["Jumlah sitasi", "Artikel ini dikutip dalam 45 karya ilmiah lainnya."],
-                          ["Sumber", "OpenAlex dan Crossref"],
                         ].map(([judul, detail]) => (
                           <div key={judul} className="mt-3 flex items-start gap-2.5">
                             <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-sky-100 text-[9px] font-bold text-sky-600">✓</span>
@@ -6141,7 +6129,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                     "Temukan hubungan penelitian, kepadatan topik, dan perkembangan artikel"
                   ) : (
                     <>
-                      Cari dengan kata kunci atau biarkan Alerin memahami <br className="md:hidden" />paragraf dan dokumenmu.
+                      Cari dengan kata kunci atau biarkan Alerin memahami <br className="md:hidden" />paragraf atau file dokumen.
                     </>
                   )}
                 </p>
@@ -6219,7 +6207,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                     </label>
                     <div className="mt-3 flex gap-1.5 rounded-xl bg-sky-50 px-3 py-2.5 text-[12px] leading-5 text-sky-800 md:text-xs">
                       <span className="font-bold">Contoh:</span>
-                      <span>{searchType === "review" ? "Tinjau literatur tentang literasi keuangan mahasiswa" : "Artificial Intelligence dan motivasi belajar mahasiswa, atau gunakan beberapa kata kunci yang dipisahkan."}</span>
+                      <span>{searchType === "review" ? "Tinjau literatur tentang literasi keuangan mahasiswa, atau gunakan beberapa kata kunci yang dipisahkan." : "Artificial Intelligence dan motivasi belajar mahasiswa, atau gunakan beberapa kata kunci yang dipisahkan."}</span>
                     </div>
 
                     <div className="mt-4 grid gap-3 md:grid-cols-2">
