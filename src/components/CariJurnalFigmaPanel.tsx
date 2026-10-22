@@ -5620,7 +5620,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
 
   const topicSuggestions = searchType === "map" ? mapTopicSuggestions : reviewTopicSuggestions;
 
-  const guideContent =
+  const guideContent: { title: string; intro: string; steps: { title?: string; description: string }[] } | null =
     searchType === "review"
       ? {
           title: "Tiga langkah menyusun literatur review",
