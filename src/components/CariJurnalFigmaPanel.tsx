@@ -5447,7 +5447,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
   const [mobileSearchStage, setMobileSearchStage] = useState<"home" | "loading" | "results">("home");
   const [desktopStage, setDesktopStage] = useState<"home" | "loading" | "results">("home");
   const [searchType, setSearchType] = useState<"journal" | "review" | "map">("journal");
-  const [reviewTopic, setReviewTopic] = useState("AI Literacy dan Motivasi Belajar Mahasiswa");
+  const [reviewTopic, setReviewTopic] = useState("");
   const [reviewPeriod, setReviewPeriod] = useState("2020-2026");
   const [reviewCount, setReviewCount] = useState("100");
   const [resultMode, setResultMode] = useState<"search" | "analysis">("search");
@@ -5622,7 +5622,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
   const guideContent: { title: string; intro: string; steps: { title?: string; description: string }[] } | null =
     searchType === "review"
       ? {
-          title: "Tiga langkah menyusun literatur review",
+          title: "Cara menyusun literatur review",
           intro: "Tentukan kebutuhan penelitianmu agar Alerin dapat menemukan jurnal yang relevan dan menyusun literatur review sesuai topikmu.",
           steps: [
             {
@@ -6165,7 +6165,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                         role="tab"
                         aria-selected={active}
                         onClick={() => setSearchType(type)}
-                        className={`flex flex-1 items-center justify-center gap-2 rounded-xl px-2.5 py-2.5 text-xs font-semibold transition-colors md:w-64 md:flex-none md:px-4 md:text-sm ${
+                        className={`flex flex-1 items-center justify-center gap-2 rounded-xl px-2.5 py-2.5 text-xs font-semibold transition-colors md:px-4 md:text-sm ${
                           active ? "bg-[#00629b] text-white shadow-sm md:bg-sky-700" : "text-slate-600 hover:bg-slate-50"
                         }`}
                       >
@@ -6205,7 +6205,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                         onKeyDown={event => {
                           if (event.key === "Enter") startStructuredSearch(searchType);
                         }}
-                        placeholder="AI Literacy dan Motivasi Belajar Mahasiswa"
+                        placeholder="Ketik topik penelitianmu"
                         className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-slate-400"
                       />
                       {reviewTopic && (
