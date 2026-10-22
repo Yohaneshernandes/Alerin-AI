@@ -1621,6 +1621,7 @@ function JournalCard({
   onRemove,
   onSitasi,
   onAbstrak,
+  onDetail,
 }: {
   journal: SavedJournal;
   folders: CollectionFolder[];
@@ -1628,6 +1629,7 @@ function JournalCard({
   onRemove: () => void;
   onSitasi: () => void;
   onAbstrak: () => void;
+  onDetail: () => void;
 }) {
   const activeFolder = folders.find(folder => folder.id === journal.folderId);
   const [note, setNote] = useState(() => {
@@ -1673,7 +1675,7 @@ function JournalCard({
       )}
       <div className="mt-4 flex flex-wrap items-center justify-between gap-2.5 border-t border-slate-100 pt-4">
         <div className="flex min-w-0 flex-wrap items-center gap-2.5">
-        <button type="button" className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700">Lihat detail</button>
+        <button type="button" onClick={onDetail} className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700">Lihat detail</button>
         <button
           type="button"
           onClick={onSitasi}
@@ -6673,7 +6675,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                     </label>
 
                     <div className="mt-3 grid grid-cols-2 gap-2 text-xs font-semibold">
-                      <button type="button" onClick={() => window.alert(`${journal.title}\n\n${journal.authors}`)} className="rounded-lg bg-slate-100 px-3 py-2.5">Lihat detail</button>
+                      <button type="button" onClick={() => setRingkasanOpen(true)} className="rounded-lg bg-slate-100 px-3 py-2.5">Lihat detail</button>
                       <button
                         type="button"
                         onClick={() => setAbstrakOpen(true)}
@@ -6767,6 +6769,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                         onMove={folderId => moveJournal(journal.id, folderId)}
                         onRemove={() => setHapusJournalId(journal.id)}
                         onSitasi={() => setSitasiOpen(true)}
+                        onDetail={() => setRingkasanOpen(true)}
                         onAbstrak={() => setAbstrakOpen(true)}
                       />
                     ))}
