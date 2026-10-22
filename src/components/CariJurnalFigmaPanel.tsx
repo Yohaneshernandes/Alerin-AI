@@ -6301,7 +6301,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                             <path d="M13.5 3.5H9.3c-.7 0-1.3.6-1.3 1.3v8.7c0-.7.6-1.3 1.3-1.3h4.2z" />
                           </svg>
                         )}
-                        {searchType === "map" ? "Buat Peta Penelitian" : "Analisis dan buat tinjauan literatur"}
+                        {searchType === "map" ? "Buat Peta Penelitian" : "Buat Literature Review"}
                       </button>
                     </div>
                   </section>
