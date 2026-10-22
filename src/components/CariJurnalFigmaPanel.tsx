@@ -5641,7 +5641,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
         }
       : searchType === "map"
         ? {
-            title: "Tiga langkah menyusun peta penelitian",
+            title: "Cara menyusun peta penelitian",
             intro: "Tentukan kebutuhan penelitianmu agar Alerin dapat menemukan jurnal yang relevan dan menyusun peta penelitian untuk melihat keterkaitan topik, kepadatan kajian, serta perkembangan penelitian.",
             steps: [
               {
