@@ -3279,9 +3279,9 @@ function DesktopLiteratureReview({ query, onBack, onOpenSitasi }: { query: strin
     <div className="mx-auto hidden max-w-[1160px] flex-col gap-5 pb-8 md:flex">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="font-['Inter:Bold'] text-2xl font-extrabold leading-8 text-slate-900">Tinjau hasil penelusuran literatur</h1>
+          <h1 className="font-['Inter:Bold'] text-2xl font-extrabold leading-8 text-slate-900">Hasil Literature Review</h1>
           <p className="mt-1.5 text-xs leading-5 text-slate-500">
-            Alerin telah menggabungkan, merapikan, dan memeringkat artikel berdasarkan relevansi.
+            Alerin telah mengumpulkan jurnal yang relevan berdasarkan topik yang kamu masukkan sebagai referensi untuk menyusun literature review.
           </p>
         </div>
         <button
@@ -3757,9 +3757,9 @@ function MobileLiteratureReview() {
   return (
     <div className="flex flex-col gap-5 pb-8">
       <div className="rounded-3xl bg-white p-5 text-center shadow-sm outline outline-1 outline-offset-[-1px] outline-slate-200/80">
-        <h2 className="font-['Inter:Bold'] text-[22px] font-bold leading-7 text-slate-900">Tinjau hasil penelusuran literatur</h2>
+        <h2 className="font-['Inter:Bold'] text-[22px] font-bold leading-7 text-slate-900">Hasil Literature Review</h2>
         <p className="mx-auto mt-2 max-w-[300px] text-sm leading-6 text-slate-500">
-          Alerin telah menggabungkan, merapikan, dan memeringkat artikel berdasarkan relevansi topik riset Anda.
+          Alerin telah mengumpulkan jurnal yang relevan berdasarkan topik yang kamu masukkan sebagai referensi untuk menyusun literature review.
         </p>
 
         <div className="mt-5 grid grid-cols-2 gap-3 text-left">
@@ -5022,7 +5022,8 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
           <table className="w-full min-w-[860px] border-collapse text-left">
             <thead className="sticky top-0 z-10 bg-slate-50">
               <tr className="bg-slate-50/60">
-                <th className="px-7 py-3 text-xs font-semibold text-slate-500">Judul</th>
+                <th className="w-56 px-7 py-3 text-xs font-semibold text-slate-500">Penulis</th>
+                <th className="px-4 py-3 text-xs font-semibold text-slate-500">Judul</th>
                 <th className="w-24 px-4 py-3">
                   <button
                     type="button"
@@ -5034,19 +5035,6 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
                   >
                     Tahun
                     <SortArrow dir={yearSort} />
-                  </button>
-                </th>
-                <th className="w-44 px-4 py-3">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setYearSort(null);
-                      setRelevanSort(relevanSort === "desc" ? "asc" : "desc");
-                    }}
-                    className={`flex items-center gap-1.5 text-xs font-semibold ${relevanSort ? "text-blue-600" : "text-slate-500 hover:text-slate-700"}`}
-                  >
-                    Relevansi
-                    <SortArrow dir={relevanSort} />
                   </button>
                 </th>
                 <th className="w-44 px-4 py-3 text-xs font-semibold text-slate-500">Sumber</th>
@@ -5062,26 +5050,9 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
               )}
               {visibleRows.map(({ row }) => (
                 <tr key={row.title} className="border-t border-slate-100">
-                  <td className="max-w-[514px] px-7 py-4 text-base font-semibold leading-6 text-slate-800">{row.title}</td>
+                  <td className="w-56 px-7 py-4 text-sm text-slate-600">{row.authors}</td>
+                  <td className="max-w-[514px] px-4 py-4 text-base font-semibold leading-6 text-slate-800">{row.title}</td>
                   <td className="px-4 py-4 text-sm font-medium text-slate-600">{row.year}</td>
-                  <td className="px-4 py-4">
-                    <span
-                      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${
-                        row.tag === "Sangat relevan"
-                          ? "bg-emerald-50 text-emerald-700 outline outline-1 outline-emerald-200/60"
-                          : row.tag === "Cukup relevan"
-                            ? "bg-blue-50 text-blue-700 outline outline-1 outline-blue-200/60"
-                            : "bg-amber-50 text-amber-700 outline outline-1 outline-amber-200/60"
-                      }`}
-                    >
-                      <span
-                        className={`h-1.5 w-1.5 rounded-full ${
-                          row.tag === "Sangat relevan" ? "bg-emerald-500" : row.tag === "Cukup relevan" ? "bg-blue-500" : "bg-amber-500"
-                        }`}
-                      />
-                      {row.tag}
-                    </span>
-                  </td>
                   <td className="px-4 py-4">
                     <span className="flex items-center gap-2.5">
                       <img
