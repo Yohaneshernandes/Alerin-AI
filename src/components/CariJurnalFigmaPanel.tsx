@@ -6173,7 +6173,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                         type="button"
                         disabled={reviewTopic.trim().length < 3}
                         onClick={() => startStructuredSearch(searchType)}
-                        className={`flex items-center justify-center gap-2 rounded-xl px-5 py-3 font-['Plus_Jakarta_Sans:Bold'] text-[13px] font-bold text-white md:py-2.5 md:text-xs ${
+                        className={`flex items-center justify-center gap-2 rounded-xl px-7 py-3.5 font-['Plus_Jakarta_Sans:Bold'] text-sm font-bold text-white md:px-8 md:py-3 md:text-sm ${
                           reviewTopic.trim().length < 3
                             ? "cursor-not-allowed bg-slate-300"
                             : searchType === "map"
