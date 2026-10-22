@@ -5624,6 +5624,9 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
 
   const canSearch = query.trim().length >= 3;
   const analysisReady = Boolean(fileName) || paragraph.trim().length >= 5;
+  const quickActive = query.trim().length > 0;
+  const referenceActive = paragraph.trim().length > 0 || Boolean(fileName);
+  const primaryDisabled = quickActive ? !canSearch : !analysisReady;
 
   const renderKutipanUnderline = (text: string) => {
     const parts = text.split(/(keputusan pembelian|seluruh kelompok usia)/g);
@@ -6278,14 +6281,16 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                             }
                           }}
                           placeholder="Ketik topik, judul, penulis, variabel, atau DOI"
-                          className="min-w-0 flex-1 bg-transparent text-xs outline-none placeholder:text-slate-400 md:text-sm"
+                          disabled={referenceActive}
+                          className="min-w-0 flex-1 bg-transparent text-xs outline-none placeholder:text-slate-400 disabled:cursor-not-allowed disabled:text-slate-400 md:text-sm"
                         />
                     </label>
                     <button
                       type="button"
                       onClick={() => setFilterOpen(true)}
                       aria-expanded={filterOpen}
-                      className="flex shrink-0 items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-700 md:gap-2 md:px-4 md:text-sm"
+                      disabled={referenceActive}
+                      className="flex shrink-0 items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-700 disabled:cursor-not-allowed disabled:opacity-50 md:gap-2 md:px-4 md:text-sm"
                     >
                       <span className="relative h-[19.689px] w-[17.143px] shrink-0 overflow-hidden">
                         <img src="/assets/jurnal-design/quick-search/8e43d.svg" alt="" className="absolute left-[-19.689px] top-[-18.447px] max-w-none origin-top-left scale-[0.6667]" />
@@ -6300,23 +6305,6 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                       )}
                     </button>
                   </div>
-
-                  <div className="mt-4 grid grid-cols-[minmax(0,1fr)] gap-2 md:hidden">
-                    <button
-                      type="button"
-                      disabled={!canSearch}
-                      onClick={() => {
-                        setSearchType("journal");
-                        setResultMode("search");
-                        setMobileSearchStage("loading");
-                      }}
-                      className={`rounded-xl px-4 py-3 text-center font-['Plus_Jakarta_Sans:SemiBold'] text-sm font-semibold text-white transition-colors ${
-                        !canSearch ? "cursor-not-allowed bg-slate-200 text-slate-400" : "bg-[#00629b]"
-                      }`}
-                    >
-                      Cari jurnal
-                    </button>
-                  </div>
                 </section>
 
                 <section className="mt-4 rounded-2xl border border-slate-200/80 bg-white px-4 py-[22px] shadow-sm md:p-6">
@@ -6325,7 +6313,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                   <div className="mt-5 grid min-w-0 gap-3 md:grid-cols-[1.35fr_0.95fr]">
                     <label className="grid gap-1.5">
                       <span className="font-['Plus_Jakarta_Sans:SemiBold'] text-[14px] font-semibold text-[#334155] md:hidden">Draf / Paragraf Teks</span>
-                      <textarea value={paragraph} onChange={event => setParagraph(event.target.value)} placeholder="Masukkan kalimat atau paragraf yang membutuhkan sitasi." className="min-h-[123px] resize-none rounded-xl border border-slate-200 bg-[rgba(200,226,251,0.24)] p-3 text-[13px] outline-none focus:border-sky-400 md:min-h-44 md:bg-white md:p-4 md:text-sm" />
+                      <textarea value={paragraph} onChange={event => setParagraph(event.target.value)} disabled={quickActive} placeholder="Masukkan kalimat atau paragraf yang membutuhkan sitasi." className="min-h-[123px] resize-none rounded-xl border border-slate-200 bg-[rgba(200,226,251,0.24)] p-3 text-[13px] outline-none focus:border-sky-400 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400 md:min-h-44 md:bg-white md:p-4 md:text-sm md:disabled:bg-slate-100" />
                     </label>
                     {fileName ? (
                       <div className="flex min-h-[108px] w-full min-w-0 flex-col items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-sky-200 bg-white p-5 text-center md:min-h-44 md:p-4">
@@ -6367,14 +6355,14 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                         </div>
                       </div>
                     ) : (
-                      <label className="flex min-h-[108px] cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-sky-300 bg-sky-50/40 p-4 text-center md:min-h-44 md:border-2 md:border-dashed md:border-sky-200 md:bg-white">
+                      <label aria-disabled={quickActive} className={`flex min-h-[108px] flex-col items-center justify-center rounded-xl border-2 border-dashed border-sky-300 bg-sky-50/40 p-4 text-center md:min-h-44 md:border-2 md:border-dashed md:border-sky-200 md:bg-white ${quickActive ? "cursor-not-allowed opacity-50" : "cursor-pointer"}`}>
                         <span className="flex h-[53px] w-[53px] items-center justify-center rounded-full border border-sky-100 bg-white shadow-sm md:h-9 md:w-9 md:rounded-lg md:border-0 md:bg-sky-50 md:shadow-none">
                           <img src={`${mobileAssets}/36094.svg`} alt="" className="md:hidden" />
                           <img src={`${searchAssets}/f5e87.svg`} alt="" className="hidden md:block" />
                         </span>
                         <span className="mt-3 text-[13px] font-semibold md:text-sm md:font-bold md:text-slate-800">Unggah artikel atau catatan</span>
                         <span className="mt-1 text-[12px] text-[#94a3b8] md:text-sm md:text-slate-500">PDF, DOCX, atau TXT hingga 20 MB</span>
-                        <input type="file" accept=".pdf,.doc,.docx,.txt" className="sr-only" onChange={handleFileChange} />
+                        <input type="file" accept=".pdf,.doc,.docx,.txt" className="sr-only" disabled={quickActive} onChange={handleFileChange} />
                       </label>
                     )}
                   </div>
@@ -6399,8 +6387,15 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                     </label>
                     <button
                       type="button"
-                      disabled={!analysisReady}
+                      disabled={primaryDisabled}
                       onClick={() => {
+                        if (quickActive) {
+                          setSearchType("journal");
+                          setResultMode("search");
+                          if (window.matchMedia("(min-width: 768px)").matches) runSearch();
+                          else setMobileSearchStage("loading");
+                          return;
+                        }
                         if (window.matchMedia("(min-width: 768px)").matches) {
                           setResultMode("analysis");
                           runSearch();
@@ -6411,12 +6406,21 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                         }
                       }}
                       className={`flex items-center justify-center gap-2 rounded-xl px-8 py-3 font-['Plus_Jakarta_Sans:Bold'] text-[13px] font-bold text-white md:w-80 md:px-5 md:py-2.5 md:font-['Plus_Jakarta_Sans:Bold'] md:text-xs md:font-bold ${
-                        analysisReady ? "bg-[#00629b] md:bg-sky-700" : "cursor-not-allowed bg-slate-300 md:bg-slate-300"
+                        primaryDisabled ? "cursor-not-allowed bg-slate-300 md:bg-slate-300" : "bg-[#00629b] md:bg-sky-700"
                       }`}
                     >
-                      <img src={`${mobileAssets}/8802c.svg`} alt="" className="max-w-none origin-center scale-[0.6667] md:hidden" />
-                      <img src={`${searchAssets}/550ef.svg`} alt="" className="hidden md:block" />
-                      Analisis dan carikan jurnal
+                      {quickActive ? (
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                          <circle cx="7" cy="7" r="4.5" />
+                          <path d="M10.5 10.5L14 14" />
+                        </svg>
+                      ) : (
+                        <>
+                          <img src={`${mobileAssets}/8802c.svg`} alt="" className="max-w-none origin-center scale-[0.6667] md:hidden" />
+                          <img src={`${searchAssets}/550ef.svg`} alt="" className="hidden md:block" />
+                        </>
+                      )}
+                      {quickActive ? "Cari jurnal" : "Analisis dan carikan jurnal"}
                     </button>
                   </div>
                 </section>
