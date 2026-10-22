@@ -6148,7 +6148,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                 <div
                   role="tablist"
                   aria-label="Jenis pencarian"
-                  className="mt-5 flex w-full items-center gap-1 rounded-2xl bg-white p-1 outline outline-1 outline-slate-200/90 md:mt-6 md:w-[799px]"
+                  className="mt-5 flex w-full items-center gap-1 rounded-2xl bg-white p-1 outline outline-1 outline-slate-200/90 md:mt-6"
                 >
                   {(
                     [
