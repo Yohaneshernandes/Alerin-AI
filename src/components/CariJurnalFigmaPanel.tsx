@@ -125,13 +125,12 @@ const desktopResultDetails: ResultDetail[] = [
     fitNote: "Cocok untuk: landasan teori, penyusunan hipotesis, pembanding penelitian, dan rujukan metode kuantitatif.",
     quote: "Parasocial interaction strengthens purchase intention when viewers perceive urgency and scarcity.",
     credibility: [
-      ["Sumber metadata", "OpenAlex dan Crossref"],
       ["Penerbit", "Pusat Studi Bisnis Digital Nusantara"],
       ["DOI terverifikasi", "DOI: 10.20886/jpkf.2022.6.1.16-28"],
       ["Jumlah sitasi", "Artikel ini dikutip dalam 45 karya ilmiah lainnya."],
     ],
     summary:
-      "Interaksi parasosial antara host dan penonton, ditambah dorongan kelangkaan seperti batas waktu dan stok, meningkatkan niat beli di live streaming commerce. Temuan ini relevan untuk riset perilaku konsumen digital di Asia Tenggara.",
+      "Penelitian ini menunjukkan bahwa interaksi parasosial antara host dan penonton dapat membangun kepercayaan. Ketika interaksi tersebut disertai pesan kelangkaan berupa batas waktu atau stok, niat beli konsumen pada live streaming commerce meningkat...",
     doiUrl: "https://doi.org/10.20886/jpkf.2022.6.1.16-28",
     pdfNote: "PDF Live Streaming Commerce dibuka.",
   },
@@ -158,7 +157,6 @@ const desktopResultDetails: ResultDetail[] = [
     fitNote: "Cocok untuk: kerangka konseptual, pembahasan meta-analisis, dan perbandingan efek antarnegara.",
     quote: "Digital literacy mediates the relationship between technology access and academic achievement.",
     credibility: [
-      ["Sumber metadata", "OpenAlex dan Crossref"],
       ["Penerbit", "Pusat Studi Bisnis Digital Nusantara"],
       ["DOI terverifikasi", "DOI: 10.20886/jpkf.2022.6.1.16-28"],
       ["Jumlah sitasi", "Artikel ini dikutip dalam 45 karya ilmiah lainnya."],
@@ -191,7 +189,6 @@ const desktopResultDetails: ResultDetail[] = [
     fitNote: "Cocok untuk: konteks Indonesia, rujukan variabel kepercayaan, dan implikasi praktis pemasaran.",
     quote: "Kepercayaan konsumen memediasi pengaruh ulasan daring terhadap minat beli.",
     credibility: [
-      ["Sumber metadata", "OpenAlex dan Crossref"],
       ["Penerbit", "Pusat Studi Bisnis Digital Nusantara"],
       ["DOI terverifikasi", "DOI: 10.20886/jpkf.2022.6.1.16-28"],
       ["Jumlah sitasi", "Artikel ini dikutip dalam 45 karya ilmiah lainnya."],
@@ -210,7 +207,7 @@ const mobileResultJournals = [
     score: 97,
     citation: "2023 • Jurnal Kajian Pemasaran Digital",
     summary:
-      "Interaksi parasosial antara host dan penonton ditambah dorongan kelangkaan seperti batas waktu dan stok meningkatkan niat beli di live streaming commerce.",
+      "Penelitian ini menunjukkan bahwa interaksi parasosial antara host dan penonton dapat membangun kepercayaan. Ketika interaksi tersebut disertai pesan kelangkaan berupa batas waktu atau stok, niat beli konsumen pada live streaming commerce meningkat...",
     title: "Live Streaming Commerce and Mimic Purchase Intention: The Role of Parasocial Interaction and Scarcity Nudges",
     authors: "Rahmawati, D. & Pratama, A.",
     description:
@@ -1843,9 +1840,6 @@ function DesktopJournalResultCard({
 
   return (
     <article className="overflow-hidden rounded-2xl bg-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] outline outline-2 outline-offset-[-2px] outline-sky-100">
-      <div className="flex items-center justify-between gap-3 border-b border-slate-100 bg-sky-50/40 px-6 py-3">
-        <p className="text-sm font-bold leading-4 text-slate-900">{detail.headerTitle}</p>
-      </div>
       <div className="flex flex-col gap-3 px-6 py-6">
         <div className="flex flex-wrap items-center gap-1.5">
           <span className="rounded-sm bg-sky-700 px-2 py-0.5 text-xs font-bold leading-4 text-white">{detail.rank}</span>
@@ -1892,13 +1886,12 @@ function DesktopJournalResultCard({
                 </div>
               ))}
             </div>
-            <p className="pt-3 text-xs font-bold leading-4 text-slate-800">{detail.fitNote}</p>
             <p className="mt-3 rounded-lg bg-amber-50 p-2.5 text-xs font-bold leading-4 text-amber-900 outline outline-1 outline-offset-[-1px] outline-amber-200/60">
               Kutipan relevan: &ldquo;{detail.quote}&rdquo;
             </p>
           </div>
           <div className="w-full shrink-0 rounded-xl bg-white p-4 outline outline-1 outline-offset-[-1px] outline-slate-200 min-[1180px]:w-[320px] min-[1180px]:self-start">
-            <h4 className="text-center text-base font-extrabold leading-5 text-slate-900">Kredibilitas &amp; akses</h4>
+            <h4 className="text-center text-base font-extrabold leading-5 text-slate-900">Kredibilitas</h4>
             <ul className="mt-1 flex flex-col">
               {detail.credibility.map(([title, desc]) => (
                 <li key={title} className="flex items-start gap-2.5 py-2.5">
@@ -1907,24 +1900,22 @@ function DesktopJournalResultCard({
                   </svg>
                   <div className="min-w-0">
                     <p className="text-xs font-bold leading-4 text-slate-800">{title}</p>
-                    <p className="pt-0.5 text-xs leading-4 text-slate-500">{desc}</p>
+                    {title === "DOI terverifikasi" ? (
+                      <a
+                        href={detail.doiUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block pt-0.5 text-xs leading-4 text-sky-600 underline underline-offset-2 hover:text-sky-700"
+                      >
+                        {desc}
+                      </a>
+                    ) : (
+                      <p className="pt-0.5 text-xs leading-4 text-slate-500">{desc}</p>
+                    )}
                   </div>
                 </li>
               ))}
             </ul>
-            <div className="mt-2 flex justify-end">
-              <a
-                href={detail.doiUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-lg bg-sky-50 px-3 py-1.5 text-xs font-semibold leading-4 text-sky-700 outline outline-1 outline-offset-[-1px] outline-sky-200 transition-colors hover:bg-sky-100"
-              >
-                <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d="M5.5 8.5l3-3M4.8 6.3L3.3 7.8a2.1 2.1 0 003 3l1.5-1.5M9.2 7.7l1.5-1.5a2.1 2.1 0 00-3-3L6.2 4.7" />
-                </svg>
-                Buka tautan DOI
-              </a>
-            </div>
           </div>
         </div>
 
@@ -2157,7 +2148,7 @@ function RingkasanJurnalModal({ open, onClose }: { open: boolean; onClose: () =>
               <rect x="5" y="5.5" width="8" height="8.2" rx="1.5" />
               <rect x="2" y="2" width="8" height="8.2" rx="1.5" />
             </svg>
-            Salin ringkasan
+            Salin
           </button>
           <button
             type="button"
@@ -2321,8 +2312,8 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
         <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-6 py-5 md:px-8 md:py-4">
           <div className="hidden rounded-xl bg-sky-50 px-4 py-3.5 outline outline-1 outline-offset-[-1px] outline-blue-100 md:block">
             <p className="font-['Plus_Jakarta_Sans:Medium'] text-sm font-medium leading-5 text-cyan-900">
-              Gunakan kolom &ldquo;Persamaan dan perbedaan&rdquo; untuk menyusun kebaruan penelitian. Selalu cek paper asli sebelum memasukkan tabel
-              ke karya ilmiah.
+              Gunakan kolom &ldquo;Persamaan dan Perbedaan&rdquo; untuk menemukan kebaruan penelitian. Periksa jurnal aslinya sebelum memasukkan data ke
+              dalam karya ilmiah.
             </p>
           </div>
 
@@ -3089,7 +3080,7 @@ const matrixRows = (() => {
 
 function DesktopLiteratureReview({ query, onBack, onOpenSitasi }: { query: string; onBack: () => void; onOpenSitasi: () => void }) {
   const sectionNames = [
-    "Ringkasan Eksekutif",
+    "Ringkasan Utama",
     "Pendahuluan",
     "Metodologi dan Cakupan",
     "Matriks Literatur",
@@ -3327,23 +3318,6 @@ function DesktopLiteratureReview({ query, onBack, onOpenSitasi }: { query: strin
               className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-slate-400"
             />
           </label>
-        </div>
-
-        <div className="flex flex-wrap gap-2 px-5">
-          {filterChips.map(item => (
-            <button
-              key={item.key}
-              type="button"
-              onClick={() => setChip(item.key)}
-              className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors ${
-                chip === item.key
-                  ? "bg-sky-50 text-sky-700 outline outline-1 outline-sky-200"
-                  : "bg-white text-slate-600 outline outline-1 outline-slate-200 hover:bg-slate-50"
-              }`}
-            >
-              {item.label}
-            </button>
-          ))}
         </div>
 
         <div className="mt-4 max-h-[460px] overflow-auto">
@@ -3627,7 +3601,7 @@ function DesktopLiteratureReview({ query, onBack, onOpenSitasi }: { query: strin
             </svg>
           </span>
           <div className="min-w-0">
-            <h3 className="text-xl font-bold leading-7 text-slate-900">Ringkasan Eksekutif</h3>
+            <h3 className="text-xl font-bold leading-7 text-slate-900">Ringkasan Utama</h3>
             <p className="mt-2 text-lg leading-8 text-slate-700">
               Tinjauan literatur ini mengkaji 126 artikel yang tersaring menjadi 92 studi relevan tentang resiliensi perempuan
               dalam menghadapi bencana dan krisis. Temuan menunjukkan bahwa pemulihan perempuan sangat bergantung pada{" "}
@@ -3639,7 +3613,7 @@ function DesktopLiteratureReview({ query, onBack, onOpenSitasi }: { query: strin
         </div>
 
         <div className="mt-8 flex items-center justify-between gap-4">
-          <h3 className="text-2xl font-bold leading-8 text-slate-900">1. Ringkasan Eksekutif</h3>
+          <h3 className="text-2xl font-bold leading-8 text-slate-900">1. Ringkasan Utama</h3>
           <span className="text-xs leading-4 text-slate-400">Halaman 1 dari 18</span>
         </div>
         <div className="mt-4 space-y-4">
@@ -3810,7 +3784,7 @@ function MobileLiteratureReview() {
   };
 
   const structureSections = [
-    { n: 1, label: "Ringkasan Eksekutif" },
+    { n: 1, label: "Ringkasan Utama" },
     { n: 2, label: "Pendahuluan" },
     { n: 3, label: "Metodologi" },
     { n: 4, label: "Matriks Literatur" },
@@ -3855,7 +3829,7 @@ function MobileLiteratureReview() {
     return !q || row.name.toLowerCase().includes(q) || row.journal.toLowerCase().includes(q) || row.cells.some(cell => cell.toLowerCase().includes(q));
   });
 
-  const activeLabel = structureSections.find(item => item.n === activeSection)?.label ?? "Ringkasan Eksekutif";
+  const activeLabel = structureSections.find(item => item.n === activeSection)?.label ?? "Ringkasan Utama";
   const nextSection = structureSections.find(item => item.n === activeSection + 1);
 
   return (
@@ -3902,23 +3876,6 @@ function MobileLiteratureReview() {
             className="min-w-0 flex-1 bg-transparent text-[13px] outline-none placeholder:text-slate-400"
           />
         </label>
-        <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
-          {filterChips.map(item => (
-            <button
-              key={item.key}
-              type="button"
-              onClick={() => {
-                setChip(item.key);
-                setPriorityLimit(6);
-              }}
-              className={`shrink-0 whitespace-nowrap rounded-full px-3.5 py-1.5 text-xs font-medium transition-colors ${
-                chip === item.key ? "bg-sky-600 text-white" : "bg-slate-100 text-slate-600"
-              }`}
-            >
-              {item.label}
-            </button>
-          ))}
-        </div>
 
         <div className="mt-3 space-y-3">
           {visiblePriority.slice(0, priorityLimit).map((row, index) => {
@@ -3980,7 +3937,7 @@ function MobileLiteratureReview() {
       <section className="rounded-3xl bg-white p-4 shadow-sm outline outline-1 outline-slate-200/80">
         <div>
           <h3 className="text-base font-bold text-slate-800">Matriks Literatur</h3>
-          <p className="mt-0.5 text-sm text-slate-500">Komparasi fokus, metode &amp; kontribusi khas</p>
+          <p className="mt-0.5 text-sm text-slate-500">Daftar studi yang dianalisis beserta fokus, teori, metode, temuan utama, dan kontribusi penelitian.</p>
         </div>
         <label className="mt-4 flex items-center gap-2 rounded-xl bg-slate-50 px-3 py-2.5 outline outline-1 outline-slate-200">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#94a3b8" strokeWidth="1.6" strokeLinecap="round" aria-hidden="true">
@@ -4124,7 +4081,7 @@ function MobileLiteratureReview() {
                 <path d="M6 8.5l1.5 1.5L10 7.5" />
               </svg>
             </span>
-            <span className="text-sm font-bold text-sky-900">Ringkasan Eksekutif</span>
+            <span className="text-sm font-bold text-sky-900">Ringkasan Utama</span>
           </div>
           <p className="mt-2 text-sm leading-6 text-sky-800">
             Literature review ini menganalisis 15 artikel mengenai resiliensi perempuan dalam menghadapi bencana dan krisis. Tiga tema utama: dukungan sosial, akses sumber daya, dan faktor adaptasi internal.
@@ -4546,7 +4503,7 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
     mode === "kepadatan"
       ? [
           {
-            title: "Hasil Analisis Alerin",
+            title: "Interpretasi Hasil Analisis",
             subtitle: "Konsentrasi topik pada peta kepadatan",
             paragraphs: [
               "Berdasarkan Peta Kepadatan, area AI Literacy dan Learning Motivation menunjukkan konsentrasi yang relatif tinggi dibandingkan beberapa topik lainnya. Hal ini menunjukkan bahwa kedua topik berada dalam wilayah jaringan dengan banyak item atau bobot yang terkonsentrasi.",
@@ -4554,7 +4511,7 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
             ],
           },
           {
-            title: "Kesimpulan Alerin",
+            title: "Kesimpulan dan Implikasi Penelitian",
             subtitle: "Topik padat dan peluang penelusuran lanjutan",
             paragraphs: [
               "AI Literacy dan Learning Motivation merupakan dua area yang memiliki konsentrasi penelitian menonjol dalam kumpulan artikel yang dianalisis. Topik dengan kepadatan lebih rendah, seperti Self-Regulated Learning dan AI Anxiety, dapat menjadi bahan eksplorasi lanjutan untuk mengetahui apakah terdapat pertanyaan penelitian yang belum terjawab.",
@@ -4565,7 +4522,7 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
       : mode === "perkembangan"
         ? [
             {
-              title: "Hasil Analisis Alerin",
+              title: "Interpretasi Hasil Analisis",
               subtitle: "Rata-rata tahun publikasi tiap topik",
               paragraphs: [
                 "Berdasarkan simulasi, diperoleh rata-rata tahun publikasi beberapa topik berikut.",
@@ -4574,7 +4531,7 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
               ],
             },
             {
-              title: "Kesimpulan Alerin",
+              title: "Kesimpulan dan Implikasi Penelitian",
               subtitle: "Perbedaan periode dan batasan interpretasi",
               paragraphs: [
                 "Generative AI dan AI Literacy termasuk topik dengan rata-rata tahun publikasi yang relatif lebih baru, sedangkan Self-Regulated Learning dan Academic Performance memiliki rata-rata yang lebih lama dalam kumpulan artikel ini. Hal tersebut dapat menjadi dasar untuk menelusuri bagaimana pembahasan AI dalam pendidikan berkaitan dengan topik pembelajaran yang sudah lebih dahulu diteliti.",
@@ -4584,7 +4541,7 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
           ]
         : [
             {
-              title: "Hasil Analisis Alerin",
+              title: "Interpretasi Hasil Analisis",
               subtitle: "Struktur jaringan dan topik dominan",
               paragraphs: [
                 "Berdasarkan simulasi 100 artikel penelitian periode 2020–2026, diperoleh 90 kata kunci yang dipetakan, 340 hubungan antarkata kunci, dan 5 kelompok penelitian.",
@@ -4592,7 +4549,7 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
               ],
             },
             {
-              title: "Kesimpulan Alerin",
+              title: "Kesimpulan dan Implikasi Penelitian",
               subtitle: "Implikasi dan batasan interpretasi",
               paragraphs: [
                 "AI Literacy merupakan salah satu topik sentral dalam jaringan penelitian yang dianalisis. Keterkaitannya dengan Learning Motivation dan topik pembelajaran lainnya menunjukkan adanya ruang untuk menelusuri hubungan kedua variabel lebih lanjut.",
@@ -5298,7 +5255,9 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
 
       <section className="rounded-2xl bg-white p-4 shadow-sm md:p-6">
         <div>
-          <h2 className="text-lg font-semibold leading-7 text-slate-900">Hasil Analisis Alerin</h2>
+          <h2 className="text-lg font-semibold leading-7 text-slate-900">
+            {mode === "kepadatan" ? "Analisis Peta Kepadatan" : mode === "perkembangan" ? "Analisis Peta Perkembangan" : "Analisis Peta Jaringan"}
+          </h2>
           <p className="mt-1 text-sm leading-5 text-slate-500">
             Ringkasan otomatis berdasarkan parameter peta yang sedang ditampilkan.
           </p>
@@ -5376,8 +5335,7 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
         >
           <span className="min-w-0">
             <span className="flex flex-wrap items-center gap-2">
-              <span className="text-lg font-semibold leading-7 text-slate-900">Analisis Terpadu Peta Penelitian</span>
-              <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-[11px] font-semibold text-slate-600">Statis</span>
+              <span className="text-lg font-semibold leading-7 text-slate-900">Analisis Peta Penelitian</span>
             </span>
             <span className="mt-1 block text-sm leading-5 text-slate-500">
               Gabungan temuan Peta Jaringan, Kepadatan, dan Perkembangan.
@@ -5402,7 +5360,7 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
         {integratedOpen && (
           <div className="mt-5 space-y-6 border-t border-slate-100 pt-5">
             <div>
-              <h3 className="text-base font-bold leading-6 text-slate-900">1. Hubungan antartopik penelitian</h3>
+              <h3 className="text-base font-bold leading-6 text-slate-900">1. Analisis Keterkaitan Antar Topik Penelitian</h3>
               <p className="mt-2 text-sm leading-7 text-slate-600">
                 Peta Jaringan menunjukkan bahwa AI Literacy memiliki keterhubungan dengan berbagai topik pembelajaran, termasuk Learning Motivation, Critical Thinking, dan Student Engagement.
               </p>
@@ -5412,7 +5370,7 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
             </div>
 
             <div>
-              <h3 className="text-base font-bold leading-6 text-slate-900">2. Konsentrasi penelitian</h3>
+              <h3 className="text-base font-bold leading-6 text-slate-900">2. Analisis Konsentrasi Penelitian</h3>
               <p className="mt-2 text-sm leading-7 text-slate-600">
                 Peta Kepadatan menunjukkan bahwa AI Literacy dan Learning Motivation berada pada area dengan konsentrasi relatif tinggi.
               </p>
@@ -5422,7 +5380,7 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
             </div>
 
             <div>
-              <h3 className="text-base font-bold leading-6 text-slate-900">3. Perkembangan publikasi</h3>
+              <h3 className="text-base font-bold leading-6 text-slate-900">3. Analisis Perkembangan Publikasi Ilmiah</h3>
               <p className="mt-2 text-sm leading-7 text-slate-600">
                 Peta Perkembangan menunjukkan bahwa Generative AI memiliki rata-rata tahun publikasi yang lebih baru dibandingkan Learning Motivation dan beberapa topik pembelajaran lainnya.
               </p>
@@ -5432,7 +5390,7 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
             </div>
 
             <div>
-              <h3 className="text-base font-bold leading-6 text-slate-900">4. Potensi arah penelitian</h3>
+              <h3 className="text-base font-bold leading-6 text-slate-900">4. Identifikasi Potensi Arah Penelitian</h3>
               <p className="mt-2 text-sm leading-7 text-slate-600">
                 Berdasarkan gabungan ketiga peta, beberapa hubungan yang layak ditelusuri lebih lanjut dalam contoh simulasi adalah:
               </p>
@@ -5456,7 +5414,7 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
             </div>
 
             <div>
-              <h3 className="text-base font-bold leading-6 text-slate-900">5. Kesimpulan Gabungan Alerin</h3>
+              <h3 className="text-base font-bold leading-6 text-slate-900">5. Sintesis Temuan dan Implikasi Penelitian</h3>
               <p className="mt-2 text-sm leading-7 text-slate-600">
                 Berdasarkan simulasi 100 artikel ilmiah, AI Literacy dan Learning Motivation memiliki keterkaitan yang menonjol dalam jaringan penelitian serta berada pada area dengan konsentrasi relatif tinggi.
               </p>
@@ -5955,10 +5913,6 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                             <div className="mt-1 h-2 overflow-hidden rounded-full bg-zinc-200"><div className="h-full rounded-full bg-sky-700" style={{ width: `${value}%` }} /></div>
                           </div>
                         ))}
-                        <p className="mt-3 text-sm leading-6">
-                          <span className="font-medium text-slate-900">Cocok untuk:</span>
-                          <span className="text-slate-500"> landasan teori, penyusunan hipotesis, pembanding penelitian, dan rujukan metode kuantitatif.</span>
-                        </p>
                         <div className="mt-3 rounded-xl bg-amber-50 p-4">
                           <p className="text-sm leading-6">
                             <span className="font-semibold text-amber-600">Kutipan relevan:</span>
@@ -5968,9 +5922,8 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                       </div>
 
                       <div className="mt-4 rounded-2xl bg-slate-100 p-4">
-                        <p className="text-[13px] font-bold uppercase tracking-wide text-slate-900">Kredibilitas &amp; akses</p>
+                        <p className="text-[13px] font-bold uppercase tracking-wide text-slate-900">Kredibilitas</p>
                         {[
-                          ["Sumber metadata", "OpenAlex dan Crossref"],
                           ["Penerbit", "Pusat Studi Bisnis Digital Nusantara"],
                           ["DOI terverifikasi", "DOI: 10.20886/jpkf.2022.6.1.16-28"],
                           ["Jumlah sitasi", "Artikel ini dikutip dalam 45 karya ilmiah lainnya."],
@@ -5979,23 +5932,21 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                             <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-sky-100 text-[9px] font-bold text-sky-600">✓</span>
                             <span className="min-w-0">
                               <span className="block text-sm font-medium text-slate-900">{judul}</span>
-                              <span className="block text-[13px] leading-5 text-slate-500">{detail}</span>
+                              {judul === "DOI terverifikasi" ? (
+                                <a
+                                  href="https://doi.org/10.20886/jpkf.2022.6.1.16-28"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="block text-[13px] leading-5 text-sky-600 underline underline-offset-2"
+                                >
+                                  {detail}
+                                </a>
+                              ) : (
+                                <span className="block text-[13px] leading-5 text-slate-500">{detail}</span>
+                              )}
                             </span>
                           </div>
                         ))}
-                        <div className="mt-3 flex justify-end">
-                          <a
-                            href="https://doi.org/10.20886/jpkf.2022.6.1.16-28"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 rounded-lg bg-white px-3 py-1.5 text-[13px] font-semibold leading-5 text-sky-700 outline outline-1 outline-offset-[-1px] outline-sky-200"
-                          >
-                            <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                              <path d="M5.5 8.5l3-3M4.8 6.3L3.3 7.8a2.1 2.1 0 003 3l1.5-1.5M9.2 7.7l1.5-1.5a2.1 2.1 0 00-3-3L6.2 4.7" />
-                            </svg>
-                            Buka tautan DOI
-                          </a>
-                        </div>
                       </div>
 
                       <div className="mt-4 rounded-2xl bg-sky-50 p-4">
@@ -6387,7 +6338,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                       <path d="M9 5l-5 5 5 5" />
                     </svg>
                   </span>
-                  <span className="font-['Inter:Semi_Bold'] text-sm font-semibold text-slate-800">Kembali ke Beranda Alerin</span>
+                  <span className="font-['Inter:Semi_Bold'] text-sm font-semibold text-slate-800">Kembali</span>
                 </button>
                 <div className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm md:p-6">
                   <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-base font-bold md:text-base">Tiga cara menemukan jurnal</h2>
