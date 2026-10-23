@@ -2818,13 +2818,6 @@ function DesktopSearchResults({
                       </li>
                     ))}
                   </ul>
-                  <div className="mt-4 flex items-center gap-2 rounded-xl bg-sky-50/70 px-4 py-3 outline outline-1 outline-offset-[-1px] outline-sky-100">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#0284c7" strokeWidth="1.1" strokeLinejoin="round" aria-hidden="true">
-                      <rect x="3" y="2" width="10" height="12" rx="1.5" />
-                      <path d="M5.5 5.5h5M5.5 8h5M5.5 10.5h3" strokeLinecap="round" />
-                    </svg>
-                    <p className="text-xs font-medium leading-4 text-sky-700">DOI valid • Metadata cocok • Isi sumber tidak mendukung klaim</p>
-                  </div>
                 </div>
               </div>
 
@@ -5723,9 +5716,6 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                             </li>
                           ))}
                         </ul>
-                        <div className="mt-3 rounded-xl bg-sky-50/80 p-3">
-                          <p className="text-xs leading-5 text-sky-800">✔ DOI valid · Metadata cocok · Isi sumber tidak mendukung klaim</p>
-                        </div>
                       </div>
 
                       <div className="mt-4">
