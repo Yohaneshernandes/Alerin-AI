@@ -65,6 +65,80 @@ const initialSavedJournals: SavedJournal[] = [
   },
 ];
 
+type SavedLiterature = {
+  id: string;
+  title: string;
+  topic: string;
+  sources: string;
+  period: string;
+  folderId: string;
+  date: string;
+};
+
+type SavedResearchMap = {
+  id: string;
+  title: string;
+  topic: string;
+  sources: string;
+  clusters: string;
+  folderId: string;
+  date: string;
+};
+
+const defaultLiteratureFolders: CollectionFolder[] = [
+  { id: "ungrouped", name: "Belum dikelompokkan" },
+  { id: "skripsi", name: "Skripsi" },
+  { id: "jurnal", name: "Review Jurnal" },
+];
+
+const initialSavedLiterature: SavedLiterature[] = [
+  {
+    id: "lit-1",
+    title: "Literatur Review: Resiliensi Perempuan pasca Bencana",
+    topic: "Resiliensi perempuan dalam menghadapi bencana dan krisis",
+    sources: "15 jurnal",
+    period: "2020–2026",
+    folderId: "skripsi",
+    date: "Hari ini",
+  },
+  {
+    id: "lit-2",
+    title: "Literatur Review: Literasi Keuangan Mahasiswa",
+    topic: "Literasi keuangan mahasiswa",
+    sources: "12 jurnal",
+    period: "2021–2026",
+    folderId: "jurnal",
+    date: "Kemarin",
+  },
+];
+
+const defaultMapFolders: CollectionFolder[] = [
+  { id: "ungrouped", name: "Belum dikelompokkan" },
+  { id: "skripsi", name: "Skripsi" },
+  { id: "tema", name: "Pemetaan Tema" },
+];
+
+const initialSavedMaps: SavedResearchMap[] = [
+  {
+    id: "map-1",
+    title: "Peta Penelitian: AI Generatif dalam Pendidikan",
+    topic: "AI generatif dalam pendidikan",
+    sources: "100 jurnal",
+    clusters: "5 klaster",
+    folderId: "skripsi",
+    date: "Hari ini",
+  },
+  {
+    id: "map-2",
+    title: "Peta Penelitian: Pemasaran Digital UMKM",
+    topic: "Pemasaran digital pada UMKM",
+    sources: "80 jurnal",
+    clusters: "4 klaster",
+    folderId: "tema",
+    date: "3 hari lalu",
+  },
+];
+
 const desktopResultJournals = [
   { id: "res-1", title: journals[0].title, authors: journals[0].authors, description: journals[0].description, year: "2023", relevancy: "97%" },
   {
@@ -5365,6 +5439,13 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
   const [folders, setFolders] = useState<CollectionFolder[]>(defaultFolders);
   const [savedJournals, setSavedJournals] = useState<SavedJournal[]>(initialSavedJournals);
   const [activeFolderId, setActiveFolderId] = useState("all");
+  const [collectionTab, setCollectionTab] = useState<"journal" | "review" | "map">("journal");
+  const [literatureFolders, setLiteratureFolders] = useState<CollectionFolder[]>(defaultLiteratureFolders);
+  const [savedLiterature] = useState<SavedLiterature[]>(initialSavedLiterature);
+  const [activeLiteratureFolderId, setActiveLiteratureFolderId] = useState("all");
+  const [mapFolders, setMapFolders] = useState<CollectionFolder[]>(defaultMapFolders);
+  const [savedMaps] = useState<SavedResearchMap[]>(initialSavedMaps);
+  const [activeMapFolderId, setActiveMapFolderId] = useState("all");
   const [folderSelectMode, setFolderSelectMode] = useState(false);
   const [selectedFolderIds, setSelectedFolderIds] = useState<string[]>([]);
   const [newFolderOpen, setNewFolderOpen] = useState(false);
@@ -5397,6 +5478,23 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
     () => (activeFolderId === "all" ? savedJournals : savedJournals.filter(journal => journal.folderId === activeFolderId)),
     [savedJournals, activeFolderId],
   );
+
+  const literatureCounts = useMemo(() => {
+    const counts: Record<string, number> = { all: savedLiterature.length };
+    for (const folder of literatureFolders) counts[folder.id] = 0;
+    for (const item of savedLiterature) counts[item.folderId] = (counts[item.folderId] ?? 0) + 1;
+    return counts;
+  }, [savedLiterature, literatureFolders]);
+
+  const mapCounts = useMemo(() => {
+    const counts: Record<string, number> = { all: savedMaps.length };
+    for (const folder of mapFolders) counts[folder.id] = 0;
+    for (const item of savedMaps) counts[item.folderId] = (counts[item.folderId] ?? 0) + 1;
+    return counts;
+  }, [savedMaps, mapFolders]);
+
+  const collectionLiterature = activeLiteratureFolderId === "all" ? savedLiterature : savedLiterature.filter(item => item.folderId === activeLiteratureFolderId);
+  const collectionMaps = activeMapFolderId === "all" ? savedMaps : savedMaps.filter(item => item.folderId === activeMapFolderId);
 
   const toggleSaveJournal = (journal: Omit<SavedJournal, "folderId">) => {
     if (savedJournals.some(item => item.id === journal.id)) {
@@ -6709,21 +6807,88 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
               <div>
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <h1 className="font-['Plus_Jakarta_Sans:ExtraBold'] text-[28px] font-extrabold tracking-[-0.69px] text-[#003859]">Koleksi jurnal</h1>
-                    <p className="mt-1.5 text-sm leading-6 text-[#64748b]">Simpan jurnal penting agar mudah ditemukan kembali saat menulis.</p>
+                    <h1 className="font-['Plus_Jakarta_Sans:ExtraBold'] text-[28px] font-extrabold tracking-[-0.69px] text-[#003859]">
+                      {collectionTab === "journal" ? "Koleksi jurnal" : collectionTab === "review" ? "Koleksi literatur review" : "Koleksi peta penelitian"}
+                    </h1>
+                    <p className="mt-1.5 text-sm leading-6 text-[#64748b]">
+                      {collectionTab === "journal"
+                        ? "Simpan jurnal penting agar mudah ditemukan kembali saat menulis."
+                        : collectionTab === "review"
+                          ? "Simpan hasil literature review agar mudah dibuka kembali saat menulis."
+                          : "Simpan peta penelitian agar mudah dibuka kembali saat menyusun karya."}
+                    </p>
                   </div>
                   <button
                     type="button"
-                    onClick={() => setActiveFolderId("all")}
+                    onClick={() =>
+                      collectionTab === "journal"
+                        ? setActiveFolderId("all")
+                        : collectionTab === "review"
+                          ? setActiveLiteratureFolderId("all")
+                          : setActiveMapFolderId("all")
+                    }
                     className="flex items-center justify-center gap-2.5 whitespace-nowrap rounded-[10px] bg-[#0066a1] px-5 py-2.5 font-['Plus_Jakarta_Sans:Bold'] text-sm font-bold text-white"
                   >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                       <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" />
                     </svg>
-                    {activeFolderId === "all" ? "Semua folder" : (folders.find(folder => folder.id === activeFolderId)?.name ?? "Semua folder")}
+                    {collectionTab === "journal"
+                      ? activeFolderId === "all"
+                        ? "Semua folder"
+                        : (folders.find(folder => folder.id === activeFolderId)?.name ?? "Semua folder")
+                      : collectionTab === "review"
+                        ? activeLiteratureFolderId === "all"
+                          ? "Semua folder"
+                          : (literatureFolders.find(folder => folder.id === activeLiteratureFolderId)?.name ?? "Semua folder")
+                        : activeMapFolderId === "all"
+                          ? "Semua folder"
+                          : (mapFolders.find(folder => folder.id === activeMapFolderId)?.name ?? "Semua folder")}
                   </button>
                 </div>
-                {collectionJournals.length === 0 ? (
+
+                <div role="tablist" aria-label="Jenis koleksi" className="mt-5 flex w-full items-center gap-1 rounded-2xl bg-white p-1 outline outline-1 outline-slate-200/90">
+                  {(
+                    [
+                      ["journal", "Koleksi Jurnal"],
+                      ["review", "Literatur Review"],
+                      ["map", "Peta Penelitian"],
+                    ] as const
+                  ).map(([type, label]) => {
+                    const active = collectionTab === type;
+                    return (
+                      <button
+                        key={type}
+                        type="button"
+                        role="tab"
+                        aria-selected={active}
+                        onClick={() => setCollectionTab(type)}
+                        className={`flex flex-1 items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-xs font-semibold transition-colors md:text-sm ${
+                          active ? "bg-[#00629b] text-white shadow-sm md:bg-sky-700" : "text-slate-600 hover:bg-slate-50"
+                        }`}
+                      >
+                        {type === "journal" ? (
+                          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <rect x="2.5" y="2" width="11" height="12" rx="1.5" />
+                            <path d="M5 5h6M5 8h6M5 11h4" />
+                          </svg>
+                        ) : type === "review" ? (
+                          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <path d="M2.5 3.5h5v9h-5zM8.5 3.5h5v9h-5z" />
+                            <path d="M4.5 6h1M4.5 8.5h1M10.5 6h1M10.5 8.5h1" />
+                          </svg>
+                        ) : (
+                          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <path d="M2 3l4-1 4 1 4-1v11l-4 1-4-1-4 1z" />
+                            <path d="M6 2v11M10 3v11" />
+                          </svg>
+                        )}
+                        {label}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {collectionTab === "journal" ? collectionJournals.length === 0 ? (
                   <div className="mt-5 flex flex-col items-center rounded-2xl border border-dashed border-slate-200 bg-white px-6 py-16 text-center">
                     <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                       <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" />
@@ -6750,6 +6915,72 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                       />
                     ))}
                   </div>
+                ) : collectionTab === "review" ? (
+                  collectionLiterature.length === 0 ? (
+                    <div className="mt-5 flex flex-col items-center rounded-2xl border border-dashed border-slate-200 bg-white px-6 py-16 text-center">
+                      <p className="max-w-sm text-sm leading-6 text-[#64748b]">Belum ada literature review di folder ini.</p>
+                      <button type="button" onClick={startSearching} className="mt-5 rounded-xl bg-[#00629b] px-5 py-2.5 text-xs font-semibold text-white">
+                        Mulai literature review
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="mt-5 space-y-4">
+                      {collectionLiterature.map(item => (
+                        <article key={item.id} className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold text-slate-600">{item.period}</span>
+                            <span className="rounded-full bg-sky-50 px-2.5 py-1 text-[11px] font-semibold text-[#00629b]">{item.sources}</span>
+                          </div>
+                          <h3 className="mt-3 text-lg font-bold leading-6 text-slate-900">{item.title}</h3>
+                          <p className="mt-1 text-sm leading-6 text-slate-500">{item.topic}</p>
+                          <div className="mt-4 flex items-center justify-between gap-3 border-t border-slate-100 pt-3">
+                            <span className="text-xs text-slate-400">
+                              {item.date} · {literatureFolders.find(folder => folder.id === item.folderId)?.name ?? "Belum dikelompokkan"}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => openRiwayatPencarian({ label: item.title, query: item.topic, type: "review", waktu: item.date })}
+                              className="rounded-xl bg-[#00629b] px-4 py-2 text-xs font-semibold text-white"
+                            >
+                              Buka
+                            </button>
+                          </div>
+                        </article>
+                      ))}
+                    </div>
+                  )
+                ) : collectionMaps.length === 0 ? (
+                  <div className="mt-5 flex flex-col items-center rounded-2xl border border-dashed border-slate-200 bg-white px-6 py-16 text-center">
+                    <p className="max-w-sm text-sm leading-6 text-[#64748b]">Belum ada peta penelitian di folder ini.</p>
+                    <button type="button" onClick={startSearching} className="mt-5 rounded-xl bg-[#00629b] px-5 py-2.5 text-xs font-semibold text-white">
+                      Mulai peta penelitian
+                    </button>
+                  </div>
+                ) : (
+                  <div className="mt-5 space-y-4">
+                    {collectionMaps.map(item => (
+                      <article key={item.id} className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold text-slate-600">{item.sources}</span>
+                          <span className="rounded-full bg-sky-50 px-2.5 py-1 text-[11px] font-semibold text-[#00629b]">{item.clusters}</span>
+                        </div>
+                        <h3 className="mt-3 text-lg font-bold leading-6 text-slate-900">{item.title}</h3>
+                        <p className="mt-1 text-sm leading-6 text-slate-500">{item.topic}</p>
+                        <div className="mt-4 flex items-center justify-between gap-3 border-t border-slate-100 pt-3">
+                          <span className="text-xs text-slate-400">
+                            {item.date} · {mapFolders.find(folder => folder.id === item.folderId)?.name ?? "Belum dikelompokkan"}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => openRiwayatPencarian({ label: item.title, query: item.topic, type: "map", waktu: item.date })}
+                            className="rounded-xl bg-[#00629b] px-4 py-2 text-xs font-semibold text-white"
+                          >
+                            Buka
+                          </button>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
                 )}
               </div>
 
@@ -6769,7 +7000,10 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                 </button>
                 <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-sm">
                   <div className="flex items-center justify-between gap-2 px-2 pb-3">
-                    <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-base font-bold text-[#1e293b]">Folder</h2>
+                    <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-base font-bold text-[#1e293b]">
+                      {collectionTab === "journal" ? "Folder Jurnal" : collectionTab === "review" ? "Folder Literatur" : "Folder Peta"}
+                    </h2>
+                    {collectionTab === "journal" && (
                     <div className="flex items-center gap-1.5">
                       <button
                         type="button"
@@ -6794,9 +7028,10 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                         </button>
                       )}
                     </div>
+                    )}
                   </div>
 
-                  {folderSelectMode && (
+                  {collectionTab === "journal" && folderSelectMode && (
                     <div className="mb-2 flex items-center justify-between gap-2 rounded-xl bg-slate-50 px-3 py-2">
                       <span className="text-xs text-[#64748b]">{selectedFolderIds.length} folder dipilih</span>
                       <button
@@ -6816,6 +7051,8 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                   )}
 
                   <div className="space-y-1">
+                    {collectionTab === "journal" ? (
+                    <>
                     <button
                       type="button"
                       onClick={() => (folderSelectMode ? undefined : setActiveFolderId("all"))}
@@ -6868,6 +7105,44 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                         </button>
                       );
                     })}
+                    </>
+                    ) : (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => (collectionTab === "review" ? setActiveLiteratureFolderId("all") : setActiveMapFolderId("all"))}
+                          className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-colors ${
+                            (collectionTab === "review" ? activeLiteratureFolderId : activeMapFolderId) === "all"
+                              ? "bg-sky-100 text-[#0066a1]"
+                              : "text-[#475569]"
+                          }`}
+                        >
+                          <img src={`${collectionAssets}/8b8d1.svg`} alt="" />
+                          <span className="flex-1">Semua</span>
+                          <span>{collectionTab === "review" ? (literatureCounts.all ?? 0) : (mapCounts.all ?? 0)}</span>
+                        </button>
+                        {(collectionTab === "review" ? literatureFolders : mapFolders).map(folder => {
+                          const activeId = collectionTab === "review" ? activeLiteratureFolderId : activeMapFolderId;
+                          const counts = collectionTab === "review" ? literatureCounts : mapCounts;
+                          return (
+                            <button
+                              key={folder.id}
+                              type="button"
+                              onClick={() =>
+                                collectionTab === "review" ? setActiveLiteratureFolderId(folder.id) : setActiveMapFolderId(folder.id)
+                              }
+                              className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-colors ${
+                                activeId === folder.id ? "bg-sky-100 text-[#0066a1]" : "text-[#475569] hover:bg-slate-50"
+                              }`}
+                            >
+                              <img src={`${collectionAssets}/e1558.svg`} alt="" />
+                              <span className="flex-1">{folder.name}</span>
+                              <span>{counts[folder.id] ?? 0}</span>
+                            </button>
+                          );
+                        })}
+                      </>
+                    )}
                   </div>
                 </div>
               </aside>
