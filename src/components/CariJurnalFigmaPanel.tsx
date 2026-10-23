@@ -4333,7 +4333,17 @@ function mapCurve(from: { x: number; y: number }, to: { x: number; y: number }, 
   return `M${from.x} ${from.y} Q${midX} ${midY} ${to.x} ${to.y}`;
 }
 
-function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => void }) {
+function DesktopResearchMap({
+  query,
+  onBack,
+  onSave,
+  saved,
+}: {
+  query: string;
+  onBack: () => void;
+  onSave: () => void;
+  saved: boolean;
+}) {
   const [mode, setMode] = useState("jaringan");
   const [showLines, setShowLines] = useState(true);
   const [zoom, setZoom] = useState(100);
@@ -4623,16 +4633,30 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
             Jelajahi peta topik dari {priorityRows.length} publikasi, lalu geser slider untuk melihat jaringan, kepadatan sitasi, dan perkembangan tahun terbitnya.
           </p>
         </div>
-        <button
-          type="button"
-          onClick={onBack}
-          className="flex shrink-0 items-center justify-center gap-2 self-start rounded-[9.88px] bg-sky-700 px-4 py-2.5 text-sm font-bold leading-5 text-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] md:px-5"
-        >
-          <svg width="14" height="12" viewBox="0 0 14 12" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M12 6H2M5.5 2.5L2 6l3.5 3.5" />
-          </svg>
-          Kembali ke Pencarian
-        </button>
+        <div className="flex shrink-0 items-center gap-2">
+          <button
+            type="button"
+            onClick={onSave}
+            className={`flex items-center gap-2 rounded-[9.88px] px-4 py-2.5 text-sm font-bold leading-5 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] outline outline-1 ${
+              saved ? "bg-sky-50 text-sky-700 outline-sky-200" : "bg-white text-slate-700 outline-slate-200"
+            }`}
+          >
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M4 2.5h8a1 1 0 0 1 1 1v10l-5-3-5 3v-10a1 1 0 0 1 1-1z" />
+            </svg>
+            {saved ? "Tersimpan" : "Simpan ke Koleksi"}
+          </button>
+          <button
+            type="button"
+            onClick={onBack}
+            className="flex shrink-0 items-center justify-center gap-2 rounded-[9.88px] bg-sky-700 px-4 py-2.5 text-sm font-bold leading-5 text-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] md:px-5"
+          >
+            <svg width="14" height="12" viewBox="0 0 14 12" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M12 6H2M5.5 2.5L2 6l3.5 3.5" />
+            </svg>
+            Kembali ke Pencarian
+          </button>
+        </div>
       </div>
 
       <section className="rounded-2xl bg-white p-4 shadow-sm md:p-6">
@@ -4856,7 +4880,7 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
               onDoubleClick={resetMapView}
               className={`relative min-w-0 flex-1 touch-none select-none overflow-hidden rounded-xl ${
                 dragging ? "cursor-grabbing" : "cursor-grab"
-              } ${fullscreen ? "" : "h-[300px] md:h-[430px]"} ${
+              } ${fullscreen ? "" : "h-[340px] md:h-[560px]"} ${
                 mode === "kepadatan"
                   ? "bg-[radial-gradient(circle_at_48%_45%,#1d4ed8_0%,#0b3bb8_55%,#072a8c_100%)]"
                   : "bg-[radial-gradient(circle_at_50%_35%,#f8fbff_0%,#ffffff_65%)]"
@@ -5479,7 +5503,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
   const [savedLiterature, setSavedLiterature] = useState<SavedLiterature[]>(initialSavedLiterature);
   const [activeLiteratureFolderId, setActiveLiteratureFolderId] = useState("all");
   const [mapFolders, setMapFolders] = useState<CollectionFolder[]>(defaultMapFolders);
-  const [savedMaps] = useState<SavedResearchMap[]>(initialSavedMaps);
+  const [savedMaps, setSavedMaps] = useState<SavedResearchMap[]>(initialSavedMaps);
   const [activeMapFolderId, setActiveMapFolderId] = useState("all");
   const [folderSelectMode, setFolderSelectMode] = useState(false);
   const [selectedFolderIds, setSelectedFolderIds] = useState<string[]>([]);
@@ -5588,6 +5612,51 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
     setReviewYearTo(item.yearTo);
     setReviewCount(String(item.count));
     setSearchType("review");
+    setResultMode("search");
+    if (window.matchMedia("(min-width: 768px)").matches) setDesktopStage("loading");
+    else setMobileSearchStage("loading");
+  };
+
+  const saveResearchMap = () => {
+    const topic = (query.trim() || reviewTopic.trim() || "AI generatif dalam pendidikan").replace(/\s+/g, " ");
+    const count = Number.parseInt(reviewCount, 10) || 100;
+    const displayTopic = topic.charAt(0).toUpperCase() + topic.slice(1);
+    const nextItem: SavedResearchMap = {
+      id: `map-${Date.now()}`,
+      title: `Peta Penelitian: ${displayTopic}`,
+      topic,
+      sources: `${count} jurnal`,
+      clusters: "5 klaster",
+      folderId: "ungrouped",
+      date: "Hari ini",
+    };
+    setSavedMaps(list => {
+      const existing = list.find(item => item.topic.toLowerCase() === topic.toLowerCase());
+      if (existing) {
+        return list.map(item => (item.id === existing.id ? { ...nextItem, id: existing.id, folderId: item.folderId, date: item.date } : item));
+      }
+      return [nextItem, ...list];
+    });
+    showToast("Peta penelitian disimpan ke Koleksi");
+  };
+
+  const moveMap = (id: string, folderId: string) => {
+    setSavedMaps(list => list.map(item => (item.id === id ? { ...item, folderId } : item)));
+    const folder = mapFolders.find(item => item.id === folderId);
+    showToast(`Peta penelitian dipindahkan ke ${folder?.name ?? "Belum dikelompokkan"}`);
+  };
+
+  const removeMap = (id: string) => {
+    setSavedMaps(list => list.filter(item => item.id !== id));
+    showToast("Peta penelitian dihapus dari Koleksi");
+  };
+
+  const openSavedMap = (item: SavedResearchMap) => {
+    setView("home");
+    setQuery(item.topic);
+    setReviewTopic(item.topic);
+    setReviewCount(item.sources.replace(/[^0-9]/g, "") || "100");
+    setSearchType("map");
     setResultMode("search");
     if (window.matchMedia("(min-width: 768px)").matches) setDesktopStage("loading");
     else setMobileSearchStage("loading");
@@ -5899,6 +5968,8 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                         setMobileSearchStage("home");
                         setSearchType("journal");
                       }}
+                      onSave={saveResearchMap}
+                      saved={savedMaps.some(item => item.topic.toLowerCase() === (query.trim() || reviewTopic.trim()).toLowerCase())}
                     />
                   </div>
                 ) : searchType === "review" ? (
@@ -6227,7 +6298,12 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                 saved={savedLiterature.some(item => item.topic.toLowerCase() === (query.trim() || reviewTopic.trim()).toLowerCase())}
               />
             ) : searchType === "map" ? (
-              <DesktopResearchMap query={query} onBack={() => setDesktopStage("home")} />
+              <DesktopResearchMap
+                query={query}
+                onBack={() => setDesktopStage("home")}
+                onSave={saveResearchMap}
+                saved={savedMaps.some(item => item.topic.toLowerCase() === (query.trim() || reviewTopic.trim()).toLowerCase())}
+              />
             ) : (
               <DesktopSearchResults
                 query={query}
@@ -7092,17 +7168,50 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                         </div>
                         <h3 className="mt-3 text-lg font-bold leading-6 text-slate-900">{item.title}</h3>
                         <p className="mt-1 text-sm leading-6 text-slate-500">{item.topic}</p>
-                        <div className="mt-4 flex items-center justify-between gap-3 border-t border-slate-100 pt-3">
+                        <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-3">
                           <span className="text-xs text-slate-400">
                             {item.date} · {mapFolders.find(folder => folder.id === item.folderId)?.name ?? "Belum dikelompokkan"}
                           </span>
-                          <button
-                            type="button"
-                            onClick={() => openRiwayatPencarian({ label: item.title, query: item.topic, type: "map", waktu: item.date })}
-                            className="rounded-xl bg-[#00629b] px-4 py-2 text-xs font-semibold text-white"
-                          >
-                            Buka
-                          </button>
+                          <div className="flex flex-wrap items-center justify-end gap-2">
+                            <button
+                              type="button"
+                              onClick={() => removeMap(item.id)}
+                              className="flex items-center gap-1.5 rounded-xl border border-rose-200 px-3.5 py-2 text-xs font-semibold text-rose-600 transition-colors hover:bg-rose-50"
+                            >
+                              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                <path d="M2.5 4.5h11M6 4.5V3h4v1.5M4 4.5l.7 9h6.6l.7-9" />
+                              </svg>
+                              Hapus
+                            </button>
+                            <label className="relative">
+                              <select
+                                aria-label="Pilih folder peta"
+                                value={item.folderId}
+                                onChange={event => moveMap(item.id, event.target.value)}
+                                className="appearance-none rounded-xl border border-slate-200 bg-white py-2 pl-3 pr-8 text-xs font-semibold text-slate-700 outline-none"
+                              >
+                                {mapFolders.map(folder => (
+                                  <option key={folder.id} value={folder.id}>
+                                    {folder.name}
+                                  </option>
+                                ))}
+                              </select>
+                              <svg width="10" height="7" viewBox="0 0 12 8" fill="none" stroke="#64748b" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2">
+                                <path d="M1 1.5L6 6.5l5-5" />
+                              </svg>
+                            </label>
+                            <button
+                              type="button"
+                              onClick={() => openSavedMap(item)}
+                              className="flex items-center gap-1.5 rounded-xl bg-[#0066a1] px-4 py-2 text-xs font-semibold text-white"
+                            >
+                              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                <path d="M1.5 8s2.5-4.5 6.5-4.5S14.5 8 14.5 8 12 12.5 8 12.5 1.5 8 1.5 8z" />
+                                <circle cx="8" cy="8" r="1.8" />
+                              </svg>
+                              Lihat Detail
+                            </button>
+                          </div>
                         </div>
                       </article>
                     ))}
