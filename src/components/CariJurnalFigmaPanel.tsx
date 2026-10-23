@@ -2746,10 +2746,10 @@ function DesktopSearchResults({
 
               <div className="grid grid-cols-4 divide-x divide-slate-200/70 rounded-2xl border border-slate-200/90 bg-white py-5 text-center shadow-sm">
                 {[
-                  ["7", "Temuan"],
-                  ["3", "Sitasi tidak sesuai klaim"],
-                  ["2", "Sumber Kurang kuat"],
-                  ["2", "Referensi tidak kuat"],
+                  ["7", "Total temuan"],
+                  ["3", "Sitasi tanpa daftar pustaka"],
+                  ["2", "Referensi belum dikutip"],
+                  ["2", "Data sitasi tidak cocok"],
                 ].map(([value, label]) => (
                   <div key={label} className="px-3">
                     <p className="text-3xl font-extrabold leading-10 text-sky-600">{value}</p>
