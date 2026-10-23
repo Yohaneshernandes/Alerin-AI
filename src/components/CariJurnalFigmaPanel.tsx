@@ -3315,8 +3315,8 @@ function DesktopLiteratureReview({ query, onBack, onOpenSitasi }: { query: strin
       <section className="rounded-2xl bg-white shadow-sm">
         <div className="flex items-start justify-between gap-4 p-5">
           <div>
-            <h2 className="text-lg font-bold leading-7 text-slate-900">Artikel prioritas untuk ditinjau</h2>
-            <p className="mt-0.5 text-sm leading-5 text-slate-500">Berikut adalah artikel dengan relevansi tertinggi untuk topik Anda.</p>
+            <h2 className="text-lg font-bold leading-7 text-slate-900">Jurnal yang Digunakan</h2>
+            <p className="mt-0.5 text-sm leading-5 text-slate-500">Daftar jurnal yang menjadi sumber penyusunan literature review.</p>
           </div>
           <label className="flex h-10 w-full shrink-0 items-center gap-2 rounded-xl bg-slate-50 px-3 md:w-72">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#94a3b8" strokeWidth="1.6" strokeLinecap="round" aria-hidden="true">
@@ -3783,7 +3783,7 @@ function MobileLiteratureReview() {
 
       <section className="rounded-[18.92px] bg-white p-4 shadow-sm outline outline-1 outline-slate-200/80">
         <div className="flex items-center justify-between gap-3">
-          <h3 className="text-[11px] font-bold uppercase leading-4 tracking-wide text-slate-700">Artikel prioritas untuk ditinjau</h3>
+          <h3 className="text-[11px] font-bold uppercase leading-4 tracking-wide text-slate-700">Jurnal yang Digunakan</h3>
           <span className="shrink-0 text-[11px] font-medium text-slate-400">Total {visiblePriority.length} artikel</span>
         </div>
         <label className="mt-3 flex items-center gap-2 rounded-xl bg-slate-50 px-3 py-2.5 outline outline-1 outline-slate-200">
