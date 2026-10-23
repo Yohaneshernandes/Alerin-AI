@@ -3167,6 +3167,18 @@ function DesktopLiteratureReview({ query, onBack, onOpenSitasi }: { query: strin
 
   const docNavRows = [
     {
+      key: "1",
+      title: "Ringkasan Utama",
+      desc: "Inti temuan, faktor utama, dan arah sintesis",
+      section: 1,
+      content: [
+        "Tinjauan literatur ini mengkaji 126 artikel yang tersaring menjadi 92 studi relevan tentang resiliensi perempuan dalam menghadapi bencana dan krisis. Temuan menunjukkan bahwa pemulihan perempuan sangat bergantung pada dukungan sosial, ketersediaan akses sumber daya ekonomi dan informasi, serta faktor individual/psikologis seperti koping berbasis agama dan keluarga.",
+        "Kajian ini mengompilasi 92 artikel terpilih dari 126 hasil penelusuran setelah proses penghapusan duplikasi dan penyaringan berdasarkan kriteria inklusi. Sebagian besar studi menggunakan pendekatan kualitatif, dengan jumlah sampel yang terbatas, sehingga generalisasi temuan masih perlu kehati-hatian.",
+        "Tiga faktor utama paling konsisten muncul lintas studi: dukungan sosial dari keluarga dan komunitas, akses sumber daya serta informasi pada tahap respon bencana, dan faktor individual/psikologis perempuan. Ketiadaan salah satu faktor terbukti memperlambat pemulihan psikologis pasca-bencana.",
+        "Celah penelitian masih terbuka pada konteks Asia Tenggara, khususnya Indonesia, yang didominasi studi berskala kecil dan bersifat lokal. Dokumen ini menyusun sintesis dua belas bagian untuk menjawab kebutuhan tersebut sekaligus memetakan arah penelitian lanjutan.",
+      ],
+    },
+    {
       key: "2",
       title: "Pendahuluan",
       desc: "Latar belakang, dinamika kerentanan gender, dan konteks kebencanaan",
@@ -3262,6 +3274,39 @@ function DesktopLiteratureReview({ query, onBack, onOpenSitasi }: { query: strin
         "Selain itu, evaluasi dampak program pemulihan terhadap resiliensi belum banyak dilakukan, sehingga belum jelas intervensi mana yang benar-benar efektif dan layak diperluas.",
       ],
     },
+    {
+      key: "10",
+      title: "Posisi Penelitian",
+      desc: "Letak kebaruan penelitian dalam lanskap literatur",
+      section: 10,
+      content: [
+        "Penelitian ini memposisikan diri sebagai sintesis yang melengkapi studi sebelumnya dengan menekankan keterkaitan antara dukungan sosial, akses sumber daya, dan faktor psikologis dalam satu kerangka utuh.",
+        "Berbeda dari kajian yang berfokus pada satu faktor, penelitian ini menyoroti interaksi antarfaktor dan implikasinya bagi kebijakan pemulihan yang sensitif gender.",
+        "Kebaruan lain terletak pada konteks Indonesia dan Asia Tenggara yang masih jarang dibandingkan secara sistematis, sehingga temuan dapat menjadi rujukan bagi penelitian serupa di wilayah lain.",
+      ],
+    },
+    {
+      key: "11",
+      title: "Kesimpulan",
+      desc: "Ringkasan jawaban dan implikasi penelitian",
+      section: 11,
+      content: [
+        "Resiliensi perempuan pasca-bencana terbentuk dari kombinasi dukungan sosial, akses sumber daya, dan kapasitas individual yang saling memperkuat.",
+        "Intervensi pemulihan perlu dirancang inklusif dan sensitif gender, dengan memperhatikan konteks lokal serta kebutuhan kelompok rentan.",
+        "Keterbatasan bukti menuntut penelitian lanjutan yang lebih longitudinal, komparatif, dan representatif agar temuan dapat digeneralisasi secara lebih luas.",
+      ],
+    },
+    {
+      key: "12",
+      title: "Daftar Pustaka",
+      desc: "Referensi utama yang menjadi dasar sintesis",
+      section: 12,
+      content: [
+        "Daftar pustaka memuat 92 studi terpilih yang menjadi dasar sintesis, mencakup artikel jurnal nasional dan internasional terbitan 2020–2026.",
+        "Setiap entri disusun menurut gaya APA edisi ketujuh dan dilengkapi DOI bila tersedia agar dapat diverifikasi kembali.",
+        "Referensi yang tidak memenuhi kriteria inklusi atau tidak dapat ditelusuri sumber aslinya tidak dimasukkan ke dalam daftar.",
+      ],
+    },
   ];
 
   const [chip, setChip] = useState("semua");
@@ -3273,7 +3318,6 @@ function DesktopLiteratureReview({ query, onBack, onOpenSitasi }: { query: strin
   const [activeSection, setActiveSection] = useState(1);
   const [openRow, setOpenRow] = useState<string | null>(null);
   const docRef = useRef<HTMLElement | null>(null);
-  const introRef = useRef<HTMLDivElement | null>(null);
   const rowRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   const goToSection = (section: number) => {
@@ -3282,8 +3326,6 @@ function DesktopLiteratureReview({ query, onBack, onOpenSitasi }: { query: strin
     if (row) {
       setOpenRow(row.key);
       window.setTimeout(() => rowRefs.current[row.key]?.scrollIntoView({ behavior: "smooth", block: "center" }), 0);
-    } else if (section === 1) {
-      window.setTimeout(() => introRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 0);
     } else {
       window.setTimeout(() => docRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 0);
     }
@@ -3561,47 +3603,7 @@ function DesktopLiteratureReview({ query, onBack, onOpenSitasi }: { query: strin
       </section>
 
       <section ref={docRef} className="rounded-3xl bg-white p-11 shadow-sm">
-        <div ref={introRef} className="flex gap-4 rounded-2xl bg-gradient-to-r from-sky-50/90 via-sky-50/70 to-indigo-50/80 p-6">
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#0369a1]/10">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#0369a1" strokeWidth="1.6" strokeLinejoin="round" aria-hidden="true">
-              <path d="M10 4.5C8.5 3.3 6.6 3 4 3v12c2.6 0 4.5.3 6 1.5 1.5-1.2 3.4-1.5 6-1.5V3c-2.6 0-4.5.3-6 1.5zM10 4.5v12" />
-            </svg>
-          </span>
-          <div className="min-w-0">
-            <h3 className="text-xl font-bold leading-7 text-slate-900">Ringkasan Utama</h3>
-            <p className="mt-2 text-lg leading-8 text-slate-700">
-              Tinjauan literatur ini mengkaji 126 artikel yang tersaring menjadi 92 studi relevan tentang resiliensi perempuan
-              dalam menghadapi bencana dan krisis. Temuan menunjukkan bahwa pemulihan perempuan sangat bergantung pada{" "}
-              <span className="font-semibold text-slate-900">dukungan sosial</span>, ketersediaan{" "}
-              <span className="font-semibold text-slate-900">akses sumber daya</span> ekonomi dan informasi, serta{" "}
-              <span className="font-semibold text-slate-900">faktor individual/psikologis</span> seperti koping berbasis agama dan keluarga.
-            </p>
-          </div>
-        </div>
-
-        <div className="mt-8 flex items-center justify-between gap-4">
-          <h3 className="text-2xl font-bold leading-8 text-slate-900">1. Ringkasan Utama</h3>
-          <span className="text-xs leading-4 text-slate-400">Halaman 1 dari 18</span>
-        </div>
-        <div className="mt-4 space-y-4">
-          <p className="text-lg leading-8 text-slate-700">
-            Kajian ini mengompilasi 92 artikel terpilih dari 126 hasil penelusuran setelah proses penghapusan duplikasi dan
-            penyaringan berdasarkan kriteria inklusi. Sebagian besar studi menggunakan pendekatan kualitatif, dengan jumlah
-            sampel yang terbatas, sehingga generalisasi temuan masih perlu kehati-hatian.
-          </p>
-          <p className="text-lg leading-8 text-slate-700">
-            Tiga faktor utama paling konsisten muncul lintas studi: dukungan sosial dari keluarga dan komunitas, akses
-            sumber daya serta informasi pada tahap respon bencana, dan faktor individual/psikologis perempuan. Ketiadaan
-            salah satu faktor terbukti memperlambat pemulihan psikologis pasca-bencana.
-          </p>
-          <p className="text-lg leading-8 text-slate-700">
-            Celah penelitian masih terbuka pada konteks Asia Tenggara, khususnya Indonesia, yang didominasi studi berskala
-            kecil dan bersifat lokal. Dokumen ini menyusun sintesis dua belas bagian untuk menjawab kebutuhan tersebut
-            sekaligus memetakan arah penelitian lanjutan.
-          </p>
-        </div>
-
-        <div className="mt-8 space-y-3">
+        <div className="space-y-3">
           {docNavRows.map(row => (
             <div
               key={row.key}
