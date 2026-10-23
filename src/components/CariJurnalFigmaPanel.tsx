@@ -775,14 +775,9 @@ function Sidebar({
       ) : (
         <>
           <div className="mt-auto rounded-2xl border border-amber-100/80 bg-gradient-to-br from-amber-50/70 via-blue-50/50 to-indigo-50/60 p-4">
-            <div className="flex items-start gap-2.5">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="#f59e0b" className="mt-0.5 shrink-0" aria-hidden="true">
-                <path d="M12 2l2.9 6.26L21.5 9.3l-4.75 4.63 1.12 6.57L12 17.4l-5.87 3.1 1.12-6.57L2.5 9.3l6.6-1.04L12 2z" />
-              </svg>
-              <p className="text-xs leading-4 text-slate-600">
-                Akses lebih banyak fitur dengan <span className="text-blue-700">Alerin Premium</span>
-              </p>
-            </div>
+            <p className="text-xs leading-4 text-slate-600">
+              Akses lebih banyak fitur dengan <span className="text-blue-700">Alerin Premium</span>
+            </p>
             <button
               type="button"
               onClick={onUpgrade}
