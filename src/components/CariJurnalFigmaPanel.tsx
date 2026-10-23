@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type ChangeEvent, type PointerEvent as ReactPointerEvent, type ReactNode, type UIEvent } from "react";
 
 type JournalView = "home" | "collection" | "riwayat";
+type RiwayatItem = { label: string; query: string; type: "journal" | "review" | "map"; waktu: string };
 
 const searchAssets = "/assets/jurnal-design/search";
 const collectionAssets = "/assets/jurnal-design/collection";
@@ -538,16 +539,22 @@ function Sidebar({
   onView,
   onUpgrade,
   onOpenRiwayat,
+  riwayatItems,
+  onRenameRiwayat,
+  onDeleteRiwayat,
 }: {
   view: JournalView;
   onView: (view: JournalView) => void;
   onUpgrade: () => void;
-  onOpenRiwayat: (title: string) => void;
+  onOpenRiwayat: (item: RiwayatItem) => void;
+  riwayatItems: RiwayatItem[];
+  onRenameRiwayat: (index: number, label: string) => void;
+  onDeleteRiwayat: (index: number) => void;
 }) {
   const assets = view === "collection" ? collectionAssets : searchAssets;
   const homeIcon = view === "collection" ? "62b0b.svg" : "b4a91.svg";
   const collectionIcon = view === "collection" ? "57aea.svg" : "6f1a2.svg";
-  const [items, setItems] = useState(riwayatSidebar);
+  const items = riwayatItems.map(item => item.label);
   const [menuIndex, setMenuIndex] = useState<number | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [collapsed, setCollapsed] = useState(false);
@@ -643,7 +650,7 @@ function Sidebar({
               onClick={() => {
                 setMenuIndex(null);
                 setActiveIndex(index);
-                onOpenRiwayat(item);
+                onOpenRiwayat(riwayatItems[index]);
               }}
               className={`flex w-full items-center gap-1 rounded-lg py-2 pl-2.5 pr-9 text-left text-xs leading-4 ${
                 index === activeIndex
@@ -682,7 +689,7 @@ function Sidebar({
                     type="button"
                     onClick={() => {
                       const name = window.prompt("Ganti nama riwayat", item);
-                      if (name && name.trim()) setItems(list => list.map((text, i) => (i === index ? name.trim() : text)));
+                      if (name && name.trim()) onRenameRiwayat(index, name.trim());
                       setMenuIndex(null);
                     }}
                     className="flex w-full items-center gap-3 px-4 py-2.5 text-sm font-medium text-neutral-100 transition-colors hover:bg-white/10"
@@ -727,7 +734,7 @@ function Sidebar({
                   <button
                     type="button"
                     onClick={() => {
-                      setItems(list => list.filter((_, i) => i !== index));
+                      onDeleteRiwayat(index);
                       setActiveIndex(current => {
                         if (index < current) return current - 1;
                         if (index === current) return 0;
@@ -5329,6 +5336,16 @@ function DesktopResearchMap({ query, onBack }: { query: string; onBack: () => vo
 
 export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void }) {
   const [view, setView] = useState<JournalView>("home");
+  const [riwayatItems, setRiwayatItems] = useState<RiwayatItem[]>(() => {
+    const fallback = riwayatSidebar.map(label => ({ label, query: label, type: "journal" as const, waktu: "Tersimpan" }));
+    try {
+      const stored = JSON.parse(window.localStorage.getItem("alerin-jurnal-riwayat") ?? "null");
+      if (Array.isArray(stored) && stored.length > 0) return stored as RiwayatItem[];
+    } catch {
+      return fallback;
+    }
+    return fallback;
+  });
   const [query, setQuery] = useState("");
   const [paragraph, setParagraph] = useState("");
   const [fileName, setFileName] = useState("");
@@ -5480,6 +5497,33 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
     return () => window.clearTimeout(timer);
   }, [desktopStage]);
 
+  useEffect(() => {
+    try {
+      window.localStorage.setItem("alerin-jurnal-riwayat", JSON.stringify(riwayatItems));
+    } catch {
+      // localStorage can be unavailable in private mode
+    }
+  }, [riwayatItems]);
+
+  const addRiwayat = (item: { label: string; query: string; type: RiwayatItem["type"] }) => {
+    const waktu = new Date().toLocaleString("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+    setRiwayatItems(list => [
+      { ...item, waktu },
+      ...list.filter(existing => !(existing.query === item.query && existing.type === item.type)),
+    ].slice(0, 12));
+  };
+
+  useEffect(() => {
+    if (desktopStage !== "loading" && mobileSearchStage !== "loading") return;
+    const topic =
+      searchType === "journal"
+        ? query.trim() || (fileName ? `Analisis file ${fileName}` : paragraph.trim().slice(0, 60))
+        : reviewTopic.trim() || query.trim();
+    if (topic.trim().length < 3) return;
+    addRiwayat({ label: topic.trim(), query: topic.trim(), type: searchType });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [desktopStage, mobileSearchStage]);
+
   const runSearch = () => {
     if (query.trim() || paragraph.trim() || fileName) setDesktopStage("loading");
   };
@@ -5551,12 +5595,14 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
           }
         : null;
 
-  const openRiwayatPencarian = (title: string) => {
+  const openRiwayatPencarian = (item: RiwayatItem) => {
     setView("home");
-    setQuery(title);
-    setSearchType("journal");
+    setQuery(item.query);
+    setSearchType(item.type);
+    if (item.type !== "journal") setReviewTopic(item.query);
     setResultMode("search");
-    setDesktopStage("loading");
+    if (window.matchMedia("(min-width: 768px)").matches) setDesktopStage("loading");
+    else setMobileSearchStage("loading");
   };
 
   const canSearch = query.trim().length >= 3;
@@ -5593,6 +5639,9 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
         onView={changeView}
         onUpgrade={() => setUpgradeOpen(true)}
         onOpenRiwayat={openRiwayatPencarian}
+        riwayatItems={riwayatItems}
+        onRenameRiwayat={(index, label) => setRiwayatItems(list => list.map((item, i) => (i === index ? { ...item, label } : item)))}
+        onDeleteRiwayat={index => setRiwayatItems(list => list.filter((_, i) => i !== index))}
       />
 
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
@@ -6434,6 +6483,39 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                 <p className="mt-1 text-xs leading-5 text-[#64748b] md:text-sm">Pencarian yang pernah kamu lakukan di Alerin Jurnal.</p>
 
                 <div className="mt-4 space-y-3">
+                  {riwayatItems.map((item, index) => (
+                    <article key={`${item.type}-${item.query}-${index}`} className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <p className="truncate font-['Plus_Jakarta_Sans:SemiBold'] text-sm font-semibold text-[#0f172a]">{item.label}</p>
+                          <p className="mt-1 flex items-center gap-1.5 text-[11px] text-[#94a3b8]">
+                            <img src={`${mobileAssets}/3a1cb.svg`} alt="" className="h-3.5 w-3.5 opacity-60" />
+                            {item.waktu} · {item.type === "review" ? "Literature Review" : item.type === "map" ? "Peta Penelitian" : "Cari Jurnal"}
+                          </p>
+                        </div>
+                        <span className="shrink-0 rounded-full bg-sky-50 px-2.5 py-1 text-[10px] font-semibold text-[#0066a1]">
+                          {item.type === "review" ? "Literature Review" : item.type === "map" ? "Peta Penelitian" : "Jurnal"}
+                        </span>
+                      </div>
+
+                      <div className="mt-3 flex gap-2 border-t border-slate-100 pt-3">
+                        <button
+                          type="button"
+                          onClick={() => openRiwayatPencarian(item)}
+                          className="flex-1 rounded-xl bg-[#00629b] px-4 py-2.5 text-xs font-semibold text-white"
+                        >
+                          Cari lagi
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setRiwayatItems(list => list.filter((_, i) => i !== index))}
+                          className="rounded-xl border border-slate-200 px-4 py-2.5 text-xs font-semibold text-[#64748b]"
+                        >
+                          Hapus
+                        </button>
+                      </div>
+                    </article>
+                  ))}
                   {riwayatPencarian.map(item => (
                     <article key={item.query} className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm">
                       <div className="flex items-start justify-between gap-3">
