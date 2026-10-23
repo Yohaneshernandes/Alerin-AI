@@ -6185,19 +6185,16 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                       <label className="block">
                         <span className="font-['Plus_Jakarta_Sans:SemiBold'] text-xs font-semibold text-slate-700">Jumlah jurnal</span>
                         <span className="relative mt-1.5 block">
-                          <select
+                          <input
                             value={reviewCount}
-                            onChange={event => setReviewCount(event.target.value)}
-                            className="w-full appearance-none rounded-xl border border-slate-200 bg-white px-3 py-2.5 pr-9 text-sm text-slate-800 outline-none focus:border-sky-400"
-                          >
-                            <option value="50">50 jurnal</option>
-                            <option value="100">100 jurnal</option>
-                            <option value="200">200 jurnal</option>
-                            <option value="300">300 jurnal</option>
-                          </select>
-                          <svg width="12" height="8" viewBox="0 0 12 8" fill="none" stroke="#64748b" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2">
-                            <path d="M1 1.5L6 6.5l5-5" />
-                          </svg>
+                            onChange={event => setReviewCount(event.target.value.replace(/[^0-9]/g, "").slice(0, 4))}
+                            inputMode="numeric"
+                            maxLength={4}
+                            aria-label="Jumlah jurnal"
+                            placeholder="100"
+                            className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 pr-16 text-sm text-slate-800 outline-none placeholder:text-slate-400 focus:border-sky-400"
+                          />
+                          <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm text-slate-500">jurnal</span>
                         </span>
                       </label>
                     </div>
