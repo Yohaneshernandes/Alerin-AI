@@ -6760,7 +6760,19 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
               </div>
 
               <aside className="space-y-4">
-                <ProfileCard collection />
+                <button
+                  type="button"
+                  onClick={onBack}
+                  className="flex w-full items-center gap-3 rounded-2xl border border-slate-200/80 bg-white p-3 text-left shadow-sm transition-colors hover:bg-slate-50"
+                >
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-slate-300 text-slate-500">
+                    <svg width="19" height="19" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M16 10H4" />
+                      <path d="M9 5l-5 5 5 5" />
+                    </svg>
+                  </span>
+                  <span className="font-['Inter:Semi_Bold'] text-sm font-semibold text-slate-800">Kembali ke Beranda Alerin</span>
+                </button>
                 <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-sm">
                   <div className="flex items-center justify-between gap-2 px-2 pb-3">
                     <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-base font-bold text-[#1e293b]">Folder</h2>
