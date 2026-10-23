@@ -3000,10 +3000,10 @@ const sourceLogos: Record<string, string> = {
 
 const matrixRows = (() => {
   const curated = [
-    { name: "Sari et al. (2022)", journal: "Jurnal Ketahanan Nasional", cells: ["Dukungan sosial perempuan pasca bencana", "Kualitatif (wawancara mendalam)", "Jaringan sosial mempercepat pemulihan psikologis dan ekonomi.", "Menunjukkan peran sentral komunitas perempuan."] },
-    { name: "Ahmed & Rahman (2021)", journal: "International Journal of Disaster Risk Reduction", cells: ["Akses sumber daya pada tahap respon bencana", "Mixed methods", "Keterbatasan akses informasi menghambat keterlibatan perempuan dalam pengambilan keputusan.", "Mengidentifikasi kesenjangan akses berbasis gender."] },
-    { name: "Putri (2023)", journal: "Jurnal Ilmu Sosial dan Humaniora", cells: ["Strategi coping perempuan korban bencana", "Kualitatif (studi kasus)", "Strategi coping berbasis agama dan dukungan keluarga meningkatkan resiliensi.", "Memberikan perspektif lokal dalam konteks Indonesia."] },
-    { name: "Nguyen et al. (2020)", journal: "Global Environmental Change", cells: ["Peran perempuan dalam manajemen risiko bencana", "Kuantitatif (survei)", "Perempuan lebih aktif dalam kesiapsiagaan komunitas dibanding laki-laki.", "Data komparatif gender lintas negara Asia Tenggara."] },
+    { name: "Sari et al. (2022)", journal: "Jurnal Ketahanan Nasional", cells: ["Dukungan sosial perempuan pasca bencana", "Teori modal sosial dan resiliensi komunitas", "Kualitatif (wawancara mendalam)", "Jaringan sosial mempercepat pemulihan psikologis dan ekonomi.", "Menunjukkan peran sentral komunitas perempuan."] },
+    { name: "Ahmed & Rahman (2021)", journal: "International Journal of Disaster Risk Reduction", cells: ["Akses sumber daya pada tahap respon bencana", "Teori akses sumber daya dan kerentanan gender", "Mixed methods", "Keterbatasan akses informasi menghambat keterlibatan perempuan dalam pengambilan keputusan.", "Mengidentifikasi kesenjangan akses berbasis gender."] },
+    { name: "Putri (2023)", journal: "Jurnal Ilmu Sosial dan Humaniora", cells: ["Strategi coping perempuan korban bencana", "Teori coping religius dan dukungan sosial", "Kualitatif (studi kasus)", "Strategi coping berbasis agama dan dukungan keluarga meningkatkan resiliensi.", "Memberikan perspektif lokal dalam konteks Indonesia."] },
+    { name: "Nguyen et al. (2020)", journal: "Global Environmental Change", cells: ["Peran perempuan dalam manajemen risiko bencana", "Teori kesiapsiagaan berbasis komunitas dan gender", "Kuantitatif (survei)", "Perempuan lebih aktif dalam kesiapsiagaan komunitas dibanding laki-laki.", "Data komparatif gender lintas negara Asia Tenggara."] },
   ];
   const authors = [
     "Pratama & Lestari",
@@ -3038,6 +3038,16 @@ const matrixRows = (() => {
     "Pemulihan ekonomi keluarga terdampak",
     "Keterlibatan perempuan dalam pengambilan keputusan",
     "Adaptasi komunitas pesisir terhadap perubahan iklim",
+  ];
+  const teori = [
+    "Teori modal sosial dan resiliensi komunitas",
+    "Kerentanan gender dalam manajemen bencana",
+    "Coping religius dan dukungan keluarga",
+    "Partisipasi gender dalam kesiapsiagaan",
+    "Pemberdayaan ekonomi rumah tangga",
+    "Tata kelola inklusif dan partisipasi publik",
+    "Literasi digital dan akses informasi",
+    "Kolaborasi lintas sektor dan adaptasi iklim",
   ];
   const metode = [
     "Kualitatif (wawancara mendalam)",
@@ -3074,7 +3084,7 @@ const matrixRows = (() => {
     return {
       name: `${authors[i % authors.length]} (${row.year})`,
       journal: journals[i % journals.length],
-      cells: [fokus[i % fokus.length], metode[i % metode.length], temuan[i % temuan.length], kontribusi[i % kontribusi.length]],
+      cells: [fokus[i % fokus.length], teori[i % teori.length], metode[i % metode.length], temuan[i % temuan.length], kontribusi[i % kontribusi.length]],
     };
   });
   return [...curated, ...generated];
@@ -3111,7 +3121,7 @@ function DesktopLiteratureReview({ query, onBack, onOpenSitasi }: { query: strin
     { key: "empiris", label: "Empiris (46)" },
   ];
 
-  const matrixHeaders = ["Penelitian", "Fokus", "Metode", "Temuan Utama", "Kontribusi Khas"];
+  const matrixHeaders = ["Penelitian", "Fokus", "Teori", "Metode", "Temuan Utama", "Kontribusi Khas"];
 
   const docNavRows = [
     {
@@ -3141,12 +3151,12 @@ function DesktopLiteratureReview({ query, onBack, onOpenSitasi }: { query: strin
     {
       key: "4",
       title: "Matriks Literatur",
-      desc: "Fokus, metode, temuan utama, dan kontribusi khas tiap studi",
+      desc: "Fokus, teori, metode, temuan utama, dan kontribusi khas tiap studi",
       section: 4,
       content: [
-        "Matriks merangkum fokus, metode, temuan utama, dan kontribusi khas dari studi unggulan agar perbandingan lintas penelitian dapat dilakukan secara cepat.",
+        "Matriks merangkum fokus, teori, metode, temuan utama, dan kontribusi khas dari studi unggulan agar perbandingan lintas penelitian dapat dilakukan secara cepat.",
         "Setiap baris memuat sitasi lengkap dan basis sumber agar klaim dalam sintesis ini dapat diverifikasi kembali.",
-        "Matriks menyusun setiap studi pada empat dimensi—fokus, metode, temuan utama, dan kontribusi khas—sehingga pola kemiripan dan perbedaan antarkajian terlihat langsung tanpa harus membaca seluruh artikel.",
+        "Matriks menyusun setiap studi pada lima dimensi—fokus, teori, metode, temuan utama, dan kontribusi khas—sehingga pola kemiripan dan perbedaan antarkajian terlihat langsung tanpa harus membaca seluruh artikel.",
         "Kolom kontribusi khas menandai kebaruan tiap studi, sementara kolom celah memperlihatkan wilayah yang belum tergarap dan menjadi bahan penting bagi penyusunan sintesis pada bagian berikutnya.",
       ],
     },
@@ -3405,7 +3415,7 @@ function DesktopLiteratureReview({ query, onBack, onOpenSitasi }: { query: strin
         </div>
 
         <div className="max-h-[640px] overflow-auto">
-          <table className="w-full min-w-[980px] border-collapse text-left">
+          <table className="w-full min-w-[1180px] border-collapse text-left">
             <thead>
               <tr className="bg-slate-50/60">
                 {matrixHeaders.map((header, index) => (
@@ -3431,7 +3441,7 @@ function DesktopLiteratureReview({ query, onBack, onOpenSitasi }: { query: strin
             <tbody>
               {visibleMatrix.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-5 py-8 text-center text-sm text-slate-400">
+                  <td colSpan={6} className="px-5 py-8 text-center text-sm text-slate-400">
                     Tidak ada baris yang cocok dengan pencarianmu.
                   </td>
                 </tr>
@@ -3481,7 +3491,7 @@ function DesktopLiteratureReview({ query, onBack, onOpenSitasi }: { query: strin
             </span>
             <span className="text-sm font-bold uppercase tracking-wide text-slate-800">Struktur Dokumen (12 Bagian)</span>
           </div>
-          <span className="text-xs font-semibold text-[#0369a1]">Bagian Aktif: {activeSection} dari 12</span>
+          <span className="text-xs font-semibold text-[#0369a1]">Bagian {activeSection} dari 12</span>
         </div>
         <div className="mt-4 flex gap-2.5 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {sectionNames.map((name, index) => (
@@ -3882,18 +3892,22 @@ function MobileLiteratureReview() {
                   <p className="mt-1 text-sm leading-5 text-slate-700">{row.cells[0]}</p>
                 </div>
                 <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Metode</p>
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Teori</p>
                   <p className="mt-1 text-sm leading-5 text-slate-700">{row.cells[1]}</p>
+                </div>
+                <div>
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Metode</p>
+                  <p className="mt-1 text-sm leading-5 text-slate-700">{row.cells[2]}</p>
                 </div>
               </div>
               <div className="mt-3 space-y-1.5 border-t border-slate-200/50 pt-1.5">
                 <div>
                   <p className="text-xs font-semibold text-slate-500">Temuan Utama:</p>
-                  <p className="mt-0.5 text-sm leading-5 text-slate-700">{row.cells[2]}</p>
+                  <p className="mt-0.5 text-sm leading-5 text-slate-700">{row.cells[3]}</p>
                 </div>
                 <div>
                   <p className="text-xs font-semibold text-sky-700">Kontribusi Khas:</p>
-                  <p className="mt-0.5 text-sm leading-5 text-slate-700">{row.cells[3]}</p>
+                  <p className="mt-0.5 text-sm leading-5 text-slate-700">{row.cells[4]}</p>
                 </div>
               </div>
             </article>
@@ -3932,7 +3946,7 @@ function MobileLiteratureReview() {
       <div>
         <div className="flex items-center justify-between gap-2">
           <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500">Struktur dokumen (12 bagian)</p>
-          <p className="shrink-0 text-xs font-medium text-sky-700">Bagian Aktif: {activeSection} dari 12</p>
+          <p className="shrink-0 text-xs font-medium text-sky-700">Bagian {activeSection} dari 12</p>
         </div>
         <div className="mt-2.5 flex gap-2 overflow-x-auto pb-1">
           {structureSections.map(item => (
