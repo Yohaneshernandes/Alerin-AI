@@ -98,6 +98,7 @@ type ResultDetail = {
   quote: string;
   credibility: [string, string][];
   summary: string;
+  summaryMore?: string;
   doiUrl: string;
   pdfNote: string;
 };
@@ -132,6 +133,8 @@ const desktopResultDetails: ResultDetail[] = [
     ],
     summary:
       "Penelitian ini menunjukkan bahwa interaksi parasosial antara host dan penonton dapat membangun kepercayaan. Ketika interaksi tersebut disertai pesan kelangkaan berupa batas waktu atau stok, niat beli konsumen pada live streaming commerce meningkat...",
+    summaryMore:
+      "Temuan ini menegaskan bahwa kepercayaan yang terbentuk melalui interaksi parasosial menjadi kunci konversi, sehingga pelaku usaha perlu menjaga kualitas interaksi dan menyampaikan kelangkaan secara jujur agar niat beli berlanjut menjadi pembelian.",
     doiUrl: "https://doi.org/10.20886/jpkf.2022.6.1.16-28",
     pdfNote: "PDF Live Streaming Commerce dibuka.",
   },
@@ -1837,6 +1840,7 @@ function DesktopJournalResultCard({
   onToggleSave?: () => void;
 }) {
   const detail = desktopResultDetails.find(item => item.id === journal?.id) ?? desktopResultDetails[0];
+  const [summaryExpanded, setSummaryExpanded] = useState(false);
   const actionButtons = ["Buat sitasi", "Abstrak", "Buka PDF"];
 
   return (
@@ -1922,7 +1926,27 @@ function DesktopJournalResultCard({
 
         <div className="rounded-r-xl border-l-4 border-sky-600 bg-sky-50/70 px-4 pb-4 pt-6">
           <p className="text-xs font-bold leading-4 text-sky-600">RINGKASAN UTAMA</p>
-          <p className="pt-1.5 text-xs leading-5 text-slate-700">{detail.summary}</p>
+          <p className="pt-1.5 text-xs leading-5 text-slate-700">
+            {detail.summaryMore ? (
+              summaryExpanded ? (
+                `${detail.summary.replace(/\.\.\.$/, "")}. ${detail.summaryMore}`
+              ) : (
+                <>
+                  {detail.summary.replace(/\.\.\.$/, "")}
+                  <button
+                    type="button"
+                    onClick={() => setSummaryExpanded(true)}
+                    aria-label="Tampilkan ringkasan lengkap"
+                    className="font-bold text-sky-700"
+                  >
+                    ...
+                  </button>
+                </>
+              )
+            ) : (
+              detail.summary
+            )}
+          </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5 border-t border-slate-100 pt-4">
@@ -2168,13 +2192,14 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
   const [fullTable, setFullTable] = useState(false);
   if (!open) return null;
 
-  const headers = ["No.", "Penelitian", "Variabel penelitian", "Metode penelitian", "Hasil penelitian", "Persamaan dan perbedaan"];
+  const headers = ["No.", "Penelitian", "Variabel penelitian", "Teori", "Metode penelitian", "Hasil penelitian", "Persamaan dan perbedaan"];
 
   const tableRows = [
     {
       study: "Peneliti A (2021)",
       subtitle: "Pengaruh Literasi Keuangan terhadap Perilaku Pengelolaan Keuangan pada Pelaku UMKM",
       variabel: "Independen (X): literasi keuangan. Dependen (Y): perilaku pengelolaan keuangan, mencakup pemahaman konsep keuangan, pengelolaan pendapatan, tabungan, pinjaman, dan pengambilan keputusan.",
+      teori: "Teori perilaku keuangan (financial behavior theory)",
       metode: "Kuantitatif dengan metode survei; data kuesioner pelaku UMKM; analisis regresi linear sederhana.",
       hasil: "Literasi keuangan berpengaruh positif terhadap perilaku pengelolaan keuangan: pelaku usaha lebih mampu menyusun anggaran, mengendalikan pengeluaran, dan mengambil keputusan secara terencana.",
       perbedaan: "Sama-sama menempatkan literasi keuangan sebagai independen dan perilaku pengelolaan keuangan sebagai dependen. Perbedaannya, penelitian terdahulu hanya memakai satu variabel independen, sedangkan penelitian baru menambahkan sikap keuangan.",
@@ -2183,6 +2208,7 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
       study: "Peneliti B (2021)",
       subtitle: "Pengaruh Sikap Keuangan terhadap Perilaku Pengelolaan Keuangan",
       variabel: "Independen: sikap keuangan (cara pandang terhadap uang, orientasi masa depan, kedisiplinan, dan pertimbangan keputusan). Dependen: perilaku pengelolaan keuangan.",
+      teori: "Theory of Planned Behavior (sikap dan niat berperilaku)",
       metode: "Kuantitatif dengan pendekatan survei; kuesioner pelaku UMKM; analisis regresi untuk menguji hubungan antarvariabel.",
       hasil: "Perencanaan dan kedisiplinan keuangan mendorong individu mengatur pengeluaran, mempertimbangkan kebutuhan sebelum membeli, serta mengelola dana usaha lebih bertanggung jawab.",
       perbedaan: "Persamaannya pada penggunaan sikap keuangan. Perbedaannya, penelitian baru menambahkan literasi keuangan serta berbeda dalam lokasi, karakteristik responden, dan indikator pengukuran.",
@@ -2191,6 +2217,7 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
       study: "Peneliti C (2022)",
       subtitle: "Hubungan Literasi Keuangan dengan Pengelolaan Keuangan pada Usaha Mikro",
       variabel: "Independen: literasi keuangan. Dependen: pengelolaan keuangan usaha (pencatatan transaksi, pengelolaan modal, penganggaran, dan pemisahan keuangan pribadi dari usaha).",
+      teori: "Teori literasi keuangan dan pengelolaan keuangan",
       metode: "Kuantitatif dengan desain survei terhadap pelaku usaha mikro; kuesioner dan analisis statistik.",
       hasil: "Literasi keuangan berkorelasi positif dengan kemampuan mengelola keuangan usaha, meski juga dipengaruhi pengalaman usaha dan ketersediaan sistem pencatatan.",
       perbedaan: "Fokus pada usaha mikro dan praktik pencatatan. Penelitian baru memperluas unit analisis ke UMKM serta menambahkan sikap keuangan sebagai variabel independen.",
@@ -2199,6 +2226,7 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
       study: "Peneliti D (2022)",
       subtitle: "Pengaruh Sikap Keuangan dan Pendapatan terhadap Perilaku Pengelolaan Keuangan",
       variabel: "Independen: sikap keuangan dan pendapatan. Dependen: perilaku pengelolaan keuangan.",
+      teori: "Teori alokasi pendapatan dan perilaku konsumen",
       metode: "Kuantitatif dengan metode survei; kuesioner; regresi linear berganda secara parsial dan simultan.",
       hasil: "Sikap keuangan yang mendukung perencanaan mendorong kedisiplinan pengelolaan uang, sedangkan tingkat pendapatan memengaruhi kemampuan memenuhi kebutuhan, menabung, dan mengalokasikan dana.",
       perbedaan: "Persamaannya pada sikap keuangan sebagai independen. Perbedaannya, penelitian terdahulu memakai pendapatan sebagai variabel tambahan, sedangkan penelitian baru memakai literasi keuangan.",
@@ -2207,6 +2235,7 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
       study: "Peneliti E (2022)",
       subtitle: "Pengaruh Pengetahuan Keuangan dan Literasi Keuangan terhadap Pengelolaan Keuangan UMKM",
       variabel: "Independen: pengetahuan keuangan dan literasi keuangan. Dependen: pengelolaan keuangan UMKM.",
+      teori: "Teori pengetahuan dan literasi keuangan",
       metode: "Kuantitatif dengan regresi linear berganda untuk menguji pengaruh masing-masing variabel dan pengaruh keduanya secara bersama-sama.",
       hasil: "Pengetahuan dan literasi keuangan mendukung pengambilan keputusan, namun pengetahuan saja belum tentu menghasilkan pengelolaan yang baik bila tidak diterapkan secara konsisten.",
       perbedaan: "Penelitian terdahulu memakai pengetahuan keuangan, sedangkan penelitian baru memakai sikap keuangan sebagai variabel independen kedua; definisi operasional hasil yang diukur juga disesuaikan.",
@@ -2215,6 +2244,7 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
       study: "Peneliti F (2023)",
       subtitle: "Pengaruh Literasi Keuangan dan Pengalaman Usaha terhadap Perilaku Keuangan Pelaku UMKM",
       variabel: "Independen: literasi keuangan dan pengalaman usaha (lama menjalankan usaha). Dependen: perilaku keuangan.",
+      teori: "Teori pembelajaran pengalaman (experiential learning)",
       metode: "Kuantitatif dengan pendekatan survei; kuesioner pelaku UMKM; regresi linear berganda.",
       hasil: "Pemahaman keuangan membantu menilai pilihan keuangan, sedangkan pengalaman usaha memberi pembelajaran praktis dalam mengelola modal, menghadapi perubahan pendapatan, dan mengendalikan risiko.",
       perbedaan: "Persamaannya pada literasi keuangan sebagai independen. Perbedaannya, penelitian terdahulu memakai pengalaman usaha, sedangkan penelitian baru memakai sikap keuangan.",
@@ -2223,6 +2253,7 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
       study: "Peneliti G (2023)",
       subtitle: "Pengaruh Sikap Keuangan dan Locus of Control terhadap Perilaku Pengelolaan Keuangan",
       variabel: "Independen: sikap keuangan dan locus of control (keyakinan atas kendali hasil). Dependen: perilaku pengelolaan keuangan.",
+      teori: "Teori locus of control",
       metode: "Kuantitatif dengan metode survei; kuesioner untuk mengukur sikap keuangan, locus of control, dan perilaku pengelolaan keuangan; regresi linear berganda.",
       hasil: "Individu dengan sikap positif terhadap perencanaan dan rasa tanggung jawab atas keputusannya lebih terdorong mengendalikan pengeluaran dan mengevaluasi penggunaan dana secara teratur.",
       perbedaan: "Persamaannya pada sikap keuangan dan perilaku pengelolaan keuangan. Perbedaannya, penelitian terdahulu memakai locus of control, sedangkan penelitian baru memakai literasi keuangan sebagai independen kedua.",
@@ -2231,6 +2262,7 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
       study: "Peneliti H (2024)",
       subtitle: "Pengaruh Literasi Keuangan dan Sikap Keuangan terhadap Pengelolaan Keuangan Pelaku UMKM",
       variabel: "Independen: literasi keuangan (pemahaman konsep) dan sikap keuangan (kecenderungan merencanakan serta menggunakan dana). Dependen: pengelolaan keuangan UMKM.",
+      teori: "Teori literasi dan sikap keuangan",
       metode: "Kuantitatif; kuesioner disusun berdasarkan indikator tiap variabel; regresi linear berganda secara parsial dan simultan.",
       hasil: "Literasi keuangan berkaitan dengan pemahaman konsep keuangan, sedangkan sikap keuangan berhubungan dengan penerapan perencanaan dan disiplin keuangan; besaran pengaruh mengacu hasil analisis aktual.",
       perbedaan: "Model variabelnya paling serupa. Penelitian baru perlu menunjukkan perbedaan lokasi penelitian, karakteristik responden, periode pengumpulan data, indikator, dan definisi operasional variabel dependen.",
@@ -2239,6 +2271,7 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
       study: "Peneliti I (2024)",
       subtitle: "Pengaruh Pengetahuan Keuangan terhadap Perilaku Keuangan Pelaku Usaha Mikro dan Kecil",
       variabel: "Independen: pengetahuan keuangan (pemahaman dasar keuangan dan penerapannya pada penganggaran, pengeluaran, tabungan, serta keputusan usaha). Dependen: perilaku keuangan.",
+      teori: "Teori perilaku keuangan (financial behavior theory)",
       metode: "Kuantitatif dengan metode survei; data primer kuesioner pelaku usaha mikro dan kecil; analisis statistik berdasarkan indikator yang ditentukan peneliti.",
       hasil: "Pemahaman pengelolaan dana membantu merencanakan kebutuhan, mengatur arus kas, dan menilai konsekuensi keputusan keuangan; penerapannya juga dipengaruhi kebiasaan, sikap, dan kondisi usaha.",
       perbedaan: "Penelitian terdahulu hanya memakai pengetahuan keuangan, sedangkan penelitian baru menambahkan literasi keuangan dan sikap keuangan.",
@@ -2247,6 +2280,7 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
       study: "Peneliti J (2025)",
       subtitle: "Analisis Faktor-Faktor yang Memengaruhi Perilaku Pengelolaan Keuangan pada Pelaku UMKM",
       variabel: "Independen: literasi keuangan, sikap keuangan, dan pengalaman usaha (aspek pemahaman, kecenderungan keputusan, dan pembelajaran praktis). Dependen: perilaku pengelolaan keuangan.",
+      teori: "Theory of Planned Behavior dan literasi keuangan",
       metode: "Kuantitatif dengan desain survei; kuesioner pelaku UMKM; regresi linear berganda untuk menilai pengaruh setiap variabel dan kemampuan model menjelaskan variasi dependen.",
       hasil: "Ketiga faktor dikaji bersama-sama untuk menjelaskan perilaku pengelolaan keuangan; faktor paling berpengaruh hanya dapat ditetapkan setelah koefisien regresi dan uji signifikansi diperiksa.",
       perbedaan: "Persamaannya pada literasi keuangan dan sikap keuangan untuk menjelaskan perilaku pengelolaan keuangan UMKM. Perbedaannya, penelitian terdahulu memasukkan pengalaman usaha sebagai variabel tambahan, sedangkan penelitian baru berfokus pada wilayah tertentu.",
@@ -2257,7 +2291,7 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
     const text = [
       headers.join("\t"),
       ...tableRows.map((row, index) =>
-        [index + 1, `${row.study} — ${row.subtitle}`, row.variabel, row.metode, row.hasil, row.perbedaan].join("\t"),
+        [index + 1, `${row.study} — ${row.subtitle}`, row.variabel, row.teori, row.metode, row.hasil, row.perbedaan].join("\t"),
       ),
     ].join("\n");
     try {
@@ -2274,7 +2308,7 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
     onClose();
   };
 
-  const columnWidths = ["w-[5%]", "w-[19%]", "w-[20%]", "w-[17%]", "w-[20%]", "w-[19%]"];
+  const columnWidths = ["w-[4%]", "w-[16%]", "w-[18%]", "w-[15%]", "w-[15%]", "w-[16%]", "w-[16%]"];
 
   return (
     <div className="fixed inset-0 z-[340] bg-black/30" onClick={closeTable} role="presentation">
@@ -2343,7 +2377,7 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
           </div>
 
           <div className="overflow-x-auto rounded-3xl outline outline-1 outline-offset-[-1px] outline-slate-200/80 md:rounded-2xl">
-            <table className="w-[760px] table-fixed border-collapse text-left md:w-full">
+            <table className="w-[900px] table-fixed border-collapse text-left md:w-full">
               <thead>
                 <tr className="bg-slate-50/90">
                   {headers.map((header, index) => (
@@ -2367,6 +2401,7 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
                       <p className="pt-1 text-[11px] font-normal leading-4 text-slate-500 md:text-[11px] md:leading-4">{row.subtitle}</p>
                     </td>
                     <td className="px-2 py-3 align-top text-[12px] font-normal leading-5 text-slate-700 md:px-3 md:text-xs md:leading-5">{row.variabel}</td>
+                    <td className="px-2 py-3 align-top text-[12px] font-normal leading-5 text-slate-700 md:px-3 md:text-xs md:leading-5">{row.teori}</td>
                     <td className="px-2 py-3 align-top text-[12px] font-normal leading-5 text-slate-700 md:px-3 md:text-xs md:leading-5">{row.metode}</td>
                     <td className="px-2 py-3 align-top text-[12px] font-normal leading-5 text-slate-700 md:px-3 md:text-xs md:leading-5">{row.hasil}</td>
                     <td className="bg-amber-50/40 px-2 py-3 align-top text-[12px] font-normal leading-5 text-slate-700 md:px-3 md:text-xs md:leading-5">{row.perbedaan}</td>
@@ -2753,7 +2788,7 @@ function DesktopSearchResults({
                 ].map(([value, label]) => (
                   <div key={label} className="px-3">
                     <p className="text-3xl font-extrabold leading-10 text-sky-600">{value}</p>
-                    <p className="mt-0.5 text-[10px] font-bold leading-4 text-slate-600">{label}</p>
+                    <p className="mt-0.5 text-[11px] font-bold leading-4 text-slate-600 md:text-xs">{label}</p>
                   </div>
                 ))}
               </div>
