@@ -6154,7 +6154,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                     </label>
                     <div className="mt-3 flex gap-1.5 rounded-xl bg-sky-50 px-3 py-2.5 text-[12px] leading-5 text-sky-800 md:text-xs">
                       <span className="font-bold">Contoh:</span>
-                      <span>{searchType === "review" ? "Tinjau literatur tentang literasi keuangan mahasiswa, atau gunakan beberapa kata kunci yang dipisahkan." : "Artificial Intelligence dan motivasi belajar mahasiswa, atau gunakan beberapa kata kunci yang dipisahkan."}</span>
+                      <span>{searchType === "review" ? "Tinjau literatur tentang literasi keuangan mahasiswa." : "Artificial Intelligence dan motivasi belajar mahasiswa."}</span>
                     </div>
 
                     <div className="mt-4 grid gap-3 md:grid-cols-2">
