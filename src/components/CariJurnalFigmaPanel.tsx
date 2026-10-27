@@ -212,7 +212,7 @@ const desktopResultDetails: ResultDetail[] = [
     credibility: [
       ["Sumber", "OpenAlex dan Crossref"],
       ["Penerbit", "Pusat Studi Bisnis Digital Nusantara"],
-      ["DOI terverifikasi", "DOI: 10.20886/jpkf.2022.6.1.16-28"],
+      ["DOI terverifikasi", "https://doi.org/10.21776/ub.jpt.2026.011.2"],
       ["Jumlah sitasi", "Artikel ini dikutip dalam 45 karya ilmiah lainnya."],
     ],
     summary:
@@ -246,7 +246,7 @@ const desktopResultDetails: ResultDetail[] = [
     credibility: [
       ["Sumber", "OpenAlex dan Crossref"],
       ["Penerbit", "Pusat Studi Bisnis Digital Nusantara"],
-      ["DOI terverifikasi", "DOI: 10.20886/jpkf.2022.6.1.16-28"],
+      ["DOI terverifikasi", "https://doi.org/10.21776/ub.jpt.2026.011.2"],
       ["Jumlah sitasi", "Artikel ini dikutip dalam 45 karya ilmiah lainnya."],
     ],
     summary:
@@ -278,13 +278,184 @@ const desktopResultDetails: ResultDetail[] = [
     credibility: [
       ["Sumber", "OpenAlex dan Crossref"],
       ["Penerbit", "Pusat Studi Bisnis Digital Nusantara"],
-      ["DOI terverifikasi", "DOI: 10.20886/jpkf.2022.6.1.16-28"],
+      ["DOI terverifikasi", "https://doi.org/10.21776/ub.jpt.2026.011.2"],
       ["Jumlah sitasi", "Artikel ini dikutip dalam 45 karya ilmiah lainnya."],
     ],
     summary:
       "Survei 312 responden pengguna live commerce di Indonesia menemukan kepercayaan dan ulasan konsumen memediasi pengaruh interaksi parasosial terhadap minat beli, terutama pada kategori produk fesyen dan perawatan diri.",
     doiUrl: "https://doi.org/10.20886/jpkf.2022.6.1.16-28",
     pdfNote: "PDF strategi minat beli live commerce dibuka.",
+  },
+];
+
+const JOURNAL_FEEDBACK_REASONS = [
+  { id: "topik-variabel", label: "Topik/Variabel Kurang Pas" },
+  { id: "metode-penelitian", label: "Metode Penelitian Berbeda" },
+  { id: "tahun-publikasi", label: "Tahun Publikasi Terlalu Tua" },
+  { id: "kutipan-doi", label: "Kutipan/DOI Tidak Valid" },
+  { id: "lainnya", label: "Lainnya" },
+];
+
+const alternativeJournalsPool = [
+  {
+    id: "alt-1",
+    title: "Omnichannel Customer Experience in Digital Retail: Examining the Interplay of Personalization and Trust",
+    authors: "Wicaksono, B. & Setiawan, I.",
+    description: "Studi empiris 420 konsumen e-commerce Indonesia membuktikan bahwa integrasi omnichannel dan pesan personalisasi memperkuat niat beli ulang.",
+    year: "2025",
+    relevancy: "98%",
+    detail: {
+      id: "alt-1",
+      headerTitle: "Rekomendasi Jurnal",
+      headerNote: "",
+      rank: "Rekomendasi Baru",
+      badges: [
+        { label: "2025", tone: "slate" as const },
+        { label: "Akses Terbuka", tone: "sky" as const },
+      ],
+      citations: "",
+      source: "Indonesian Journal of Information Systems & Retail Marketing",
+      fitBars: [
+        ["Kesesuaian variabel", 99],
+        ["Kesesuaian topik", 97],
+        ["Kesesuaian konteks", 95],
+        ["Kesesuaian metode", 94],
+        ["Kesesuaian teori", 92],
+        ["Kesesuaian periode", 96],
+      ] as [string, number][],
+      fitNote: "Cocok untuk: penguatan variabel perilaku konsumen digital terkini dan metode SEM-PLS.",
+      quote: "Personalized interaction significantly mitigates uncertainty and boosts consumer purchasing decisions in digital platforms.",
+      credibility: [
+        ["Sumber", "Scopus Q1, OpenAlex dan Crossref"],
+        ["Penerbit", "Pusat Publikasi Riset Manajemen"],
+        ["DOI terverifikasi", "DOI: 10.1016/j.ijisrm.2025.02.011"],
+        ["Jumlah sitasi", "Artikel ini dikutip dalam 18 karya ilmiah terbaru."],
+      ] as [string, string][],
+      summary: "Penelitian ini mengkaji pengaruh integrasi omnichannel dan sistem personalisasi terhadap loyalitas serta niat beli pelanggan ritel digital di Indonesia...",
+      summaryMore: "Hasil analisis menunjukkan bahwa transparansi ulasan dan respon host secara real-time berkontribusi paling dominan dalam membentuk kepercayaan belanja online.",
+      doiUrl: "https://doi.org/10.1016/j.ijisrm.2025.02.011",
+      pdfNote: "PDF Omnichannel Customer Experience dibuka.",
+    },
+  },
+  {
+    id: "alt-2",
+    title: "The Role of Social Proof and Algorithmic Recommendations in Driving Urgency and Purchase Behavior",
+    authors: "Kusuma, A. & Wardhana, T.",
+    description: "Analisis eksperimen kuantitatif pada 550 pengguna media sosial mengungkap peran social proof dinamis dalam mempercepat keputusan belanja.",
+    year: "2024",
+    relevancy: "95%",
+    detail: {
+      id: "alt-2",
+      headerTitle: "Rekomendasi Jurnal",
+      headerNote: "",
+      rank: "Rekomendasi Baru",
+      badges: [
+        { label: "2024", tone: "slate" as const },
+        { label: "Akses Terbuka", tone: "sky" as const },
+      ],
+      citations: "",
+      source: "Journal of Consumer Psychology & Digital Commerce",
+      fitBars: [
+        ["Kesesuaian variabel", 96],
+        ["Kesesuaian topik", 95],
+        ["Kesesuaian konteks", 92],
+        ["Kesesuaian metode", 93],
+        ["Kesesuaian teori", 90],
+        ["Kesesuaian periode", 95],
+      ] as [string, number][],
+      fitNote: "Cocok untuk: analisis behavioral economics, consumer psychology, dan rujukan eksperimental.",
+      quote: "Dynamic cues of scarcity and peer validation create a synergistic boost to immediate checkout rates.",
+      credibility: [
+        ["Sumber", "Crossref, DOAJ, dan OpenAlex"],
+        ["Penerbit", "Asosiasi Riset Perilaku Digital"],
+        ["DOI terverifikasi", "DOI: 10.1080/jcpdc.2024.11.045"],
+        ["Jumlah sitasi", "Artikel ini dikutip dalam 29 karya ilmiah."],
+      ] as [string, string][],
+      summary: "Studi ini membuktikan bahwa kombinasi social proof real-time dan notifikasi kelangkaan secara signifikan menaikkan konversi pada platform live shopping...",
+      summaryMore: "Peneliti merekomendasikan penggunaan indikator stok yang akurat agar tidak menimbulkan skeptisisme konsumen.",
+      doiUrl: "https://doi.org/10.1080/jcpdc.2024.11.045",
+      pdfNote: "PDF Social Proof & Algorithmic Recommendations dibuka.",
+    },
+  },
+  {
+    id: "alt-3",
+    title: "Investigating Hedonic Motivation and Live Streamer Characteristics on Impulsive Buying Decisions",
+    authors: "Sari, M. N. & Santoso, H.",
+    description: "Penelitian berbasis structural equation modeling menunjukkan motivasi hedonis dan daya tarik streamer menjadi pendorong utama pembelian impulsif.",
+    year: "2024",
+    relevancy: "93%",
+    detail: {
+      id: "alt-3",
+      headerTitle: "Rekomendasi Jurnal",
+      headerNote: "",
+      rank: "Rekomendasi Baru",
+      badges: [
+        { label: "2024", tone: "slate" as const },
+        { label: "Akses Terbuka", tone: "sky" as const },
+      ],
+      citations: "",
+      source: "Asia Pacific Journal of Marketing and Logistics",
+      fitBars: [
+        ["Kesesuaian variabel", 95],
+        ["Kesesuaian topik", 93],
+        ["Kesesuaian konteks", 91],
+        ["Kesesuaian metode", 90],
+        ["Kesesuaian teori", 92],
+        ["Kesesuaian periode", 94],
+      ] as [string, number][],
+      fitNote: "Cocok untuk: tinjauan motivasi hedonis, impulsive buying, dan analisis streamer persona.",
+      quote: "Streamer authenticity directly triggers emotional arousal, mediating hedonic values into rapid transactions.",
+      credibility: [
+        ["Sumber", "Emerald Insight, OpenAlex, dan Crossref"],
+        ["Penerbit", "Emerald Publishing Limited"],
+        ["DOI terverifikasi", "DOI: 10.1108/APJML-05-2024-0312"],
+        ["Jumlah sitasi", "Artikel ini dikutip dalam 34 karya ilmiah."],
+      ] as [string, string][],
+      summary: "Fokus penelitian ini membedah bagaimana karakteristik streamer yang interaktif dan karismatik membangkitkan gairah emosional penonton untuk melakukan pembelian spontan...",
+      summaryMore: "Implikasi praktis bagi digital marketer adalah membina streamer agar lebih berfokus pada storytelling daripada sekadar berjualan agresif.",
+      doiUrl: "https://doi.org/10.1108/APJML-05-2024-0312",
+      pdfNote: "PDF Hedonic Motivation dibuka.",
+    },
+  },
+  {
+    id: "alt-4",
+    title: "Digital Marketing Capabilities and SME Performance: Moderating Role of Competitive Intensity",
+    authors: "Fauzi, M. & Siregar, D.",
+    description: "Kajian kuantitatif pada 380 pelaku UMKM di sektor retail menemukan kapabilitas pemasaran digital meningkatkan penjualan secara berkelanjutan.",
+    year: "2023",
+    relevancy: "91%",
+    detail: {
+      id: "alt-4",
+      headerTitle: "Rekomendasi Jurnal",
+      headerNote: "",
+      rank: "Rekomendasi Baru",
+      badges: [
+        { label: "2023", tone: "slate" as const },
+        { label: "Akses Terbuka", tone: "sky" as const },
+      ],
+      citations: "",
+      source: "Journal of Small Business and Enterprise Development",
+      fitBars: [
+        ["Kesesuaian variabel", 94],
+        ["Kesesuaian topik", 92],
+        ["Kesesuaian konteks", 89],
+        ["Kesesuaian metode", 91],
+        ["Kesesuaian teori", 88],
+        ["Kesesuaian periode", 93],
+      ] as [string, number][],
+      fitNote: "Cocok untuk: penelitian bisnis kecil, kapabilitas dinamis, dan analisis moderasi intensitas kompetitif.",
+      quote: "Digital marketing capabilities act as dynamic assets that shield small enterprises against adverse market shifts.",
+      credibility: [
+        ["Sumber", "Scopus, Crossref, dan OpenAlex"],
+        ["Penerbit", "Emerald Publishing Limited"],
+        ["DOI terverifikasi", "DOI: 10.1108/JSBED-09-2023-0401"],
+        ["Jumlah sitasi", "Artikel ini dikutip dalam 26 karya ilmiah."],
+      ] as [string, string][],
+      summary: "Penelitian ini menggarisbawahi pentingnya adopsi kapabilitas analitik dan konten digital bagi UMKM untuk mempertahankan keunggulan bersaing...",
+      summaryMore: "Studi ini merekomendasikan pelatihan berkelanjutan bagi wirausahawan agar mampu mengoptimalkan data konsumen.",
+      doiUrl: "https://doi.org/10.1108/JSBED-09-2023-0401",
+      pdfNote: "PDF Digital Marketing Capabilities dibuka.",
+    },
   },
 ];
 
@@ -371,7 +542,7 @@ function NewFolderModal({
         onClick={event => event.stopPropagation()}
       >
         <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-lg font-bold text-[#0f172a]">Folder baru</h2>
-        <p className="mt-1 text-xs leading-5 text-[#64748b]">Buat folder untuk mengelompokkan jurnal tersimpanmu.</p>
+        <p className="mt-1 text-xs leading-5 text-[#64748b]">Buat folder untuk mengelompokkan koleksi tersimpanmu.</p>
         <input
           autoFocus
           value={name}
@@ -598,21 +769,80 @@ const riwayatSidebar = [
 
 function ProfileCard({ collection }: { collection: boolean }) {
   const assets = collection ? collectionAssets : searchAssets;
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [menuPosition, setMenuPosition] = useState({ left: 0, bottom: 0 });
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
   return (
-    <div className="flex items-center gap-3 rounded-2xl border border-slate-200/80 bg-white p-3 shadow-sm">
-      <img src={`${assets}/48c68.png`} alt="Raka Aditya" className="h-10 w-10 rounded-full object-cover" />
-      <div className="min-w-0">
-        <div className="flex items-center gap-2">
-          <p className="truncate font-['Inter:Semi_Bold'] text-sm font-semibold text-slate-800">Raka Aditya</p>
-          <span className="inline-flex items-center gap-1 rounded-full border border-blue-200 bg-indigo-950 px-2 py-0.5 font-['Inter:Bold'] text-[8px] font-bold text-white">
-            Plus
-            <span className="relative h-3 w-3 overflow-hidden">
-              <img src={`${assets}/8923b.png`} alt="" className="absolute -left-2 -top-1 h-12 max-w-none" />
+    <div>
+      <button
+        ref={buttonRef}
+        type="button"
+        aria-haspopup="menu"
+        aria-expanded={menuOpen}
+        onClick={() => {
+          const rect = buttonRef.current?.getBoundingClientRect();
+          if (rect) setMenuPosition({ left: rect.right + 12, bottom: window.innerHeight - rect.bottom });
+          setMenuOpen(open => !open);
+        }}
+        className="flex w-full items-center gap-3 rounded-2xl border border-slate-200/80 bg-white p-3 text-left shadow-sm transition-colors hover:bg-slate-50"
+      >
+        <img src={`${assets}/48c68.png`} alt="Raka Aditya" className="h-10 w-10 rounded-full object-cover" />
+        <div className="min-w-0">
+          <div className="flex items-center gap-2">
+            <p className="truncate font-['Inter:Semi_Bold'] text-sm font-semibold text-slate-800">Raka Aditya</p>
+            <span className="inline-flex items-center gap-1 rounded-full border border-blue-200 bg-indigo-950 px-2 py-0.5 font-['Inter:Bold'] text-[8px] font-bold text-white">
+              Plus
+              <span className="relative h-3 w-3 overflow-hidden">
+                <img src={`${assets}/8923b.png`} alt="" className="absolute -left-2 -top-1 h-12 max-w-none" />
+              </span>
             </span>
-          </span>
+          </div>
+          <p className="mt-0.5 font-['Inter:Regular'] text-xs text-slate-400">Manajemen · Semester 6</p>
         </div>
-        <p className="mt-0.5 font-['Inter:Regular'] text-xs text-slate-400">Manajemen · Semester 6</p>
-      </div>
+      </button>
+
+      {menuOpen && (
+        <>
+          <div className="fixed inset-0 z-[345]" onClick={() => setMenuOpen(false)} aria-hidden="true" />
+          <div
+            role="menu"
+            className="fixed z-[350] w-56 overflow-hidden rounded-2xl border border-slate-100 bg-white p-2 shadow-[0_12px_40px_rgba(0,0,0,0.13)]"
+            style={{ left: menuPosition.left, bottom: menuPosition.bottom }}
+          >
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => {
+                window.alert("Profil Raka Aditya dibuka.");
+                setMenuOpen(false);
+              }}
+              className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50"
+            >
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+              Profil
+            </button>
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => {
+                window.alert("Alerin dapat dipasang sebagai pintasan desktop.");
+                setMenuOpen(false);
+              }}
+              className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50"
+            >
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+                <rect x="3" y="3" width="18" height="14" rx="2" />
+                <path d="M8 21h8M12 17v4M9 8l3 3 3-3M12 5v6" />
+              </svg>
+              Pasang Pintasan
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 }
@@ -625,6 +855,8 @@ function Sidebar({
   riwayatItems,
   onRenameRiwayat,
   onDeleteRiwayat,
+  activeRiwayatKey,
+  onSelectRiwayatKey,
 }: {
   view: JournalView;
   onView: (view: JournalView) => void;
@@ -633,26 +865,26 @@ function Sidebar({
   riwayatItems: RiwayatItem[];
   onRenameRiwayat: (index: number, label: string) => void;
   onDeleteRiwayat: (index: number) => void;
+  activeRiwayatKey: string | null;
+  onSelectRiwayatKey: (key: string | null) => void;
 }) {
   const assets = view === "collection" ? collectionAssets : searchAssets;
   const homeIcon = view === "collection" ? "62b0b.svg" : "b4a91.svg";
   const collectionIcon = view === "collection" ? "57aea.svg" : "6f1a2.svg";
   const items = riwayatItems.map(item => item.label);
   const [menuIndex, setMenuIndex] = useState<number | null>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
   const [collapsed, setCollapsed] = useState(false);
 
   return (
     <aside
-      className={`hidden shrink-0 flex-col overflow-hidden border-r border-slate-100 bg-white transition-all duration-300 md:flex ${
-        collapsed ? "w-[76px] p-3" : "w-[280px] p-5"
+      className={`hidden shrink-0 flex-col border-r border-slate-100 bg-white transition-all duration-300 md:flex ${
+        collapsed ? "w-[76px] overflow-visible p-3" : "w-[280px] overflow-hidden p-5"
       }`}
     >
       <div className="flex items-center gap-3">
         <button
           type="button"
           onClick={() => setCollapsed(false)}
-          title={collapsed ? "Buka sidebar" : undefined}
           aria-label={collapsed ? "Buka sidebar" : "Alerin Jurnal"}
           className={`group relative flex shrink-0 cursor-pointer items-center justify-center ${
             collapsed ? "h-11 w-11 rounded-xl" : "h-[52px] w-[52px]"
@@ -664,13 +896,16 @@ function Sidebar({
             className={`transition-opacity duration-150 ${collapsed ? "h-11 w-11 group-hover:opacity-0" : "h-[44px] w-[44px]"}`}
           />
           {collapsed && (
-            <span className="pointer-events-none absolute inset-0 flex items-center justify-center rounded-xl text-slate-500 opacity-0 transition-opacity duration-150 group-hover:bg-sky-50 group-hover:text-sky-600 group-hover:opacity-100">
-              <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <rect x="1.5" y="2.5" width="13" height="11" rx="2" />
-                <path d="M6 2.5v11" />
-                <path d="M10 6.5l-1.5 1.5 1.5 1.5" />
-              </svg>
-            </span>
+            <>
+              <span className="pointer-events-none absolute inset-0 flex items-center justify-center rounded-xl text-slate-500 opacity-0 transition-opacity duration-150 group-hover:bg-sky-50 group-hover:text-sky-600 group-hover:opacity-100">
+                <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <rect x="1.5" y="2.5" width="13" height="11" rx="2" />
+                  <path d="M6 2.5v11" />
+                  <path d="M10 6.5l-1.5 1.5 1.5 1.5" />
+                </svg>
+              </span>
+              <span className="pointer-events-none absolute left-full top-1/2 z-[999] ml-3 -translate-y-1/2 whitespace-nowrap rounded-full bg-[#1f1f1f] px-4 py-2 text-sm font-semibold text-white opacity-0 shadow-lg transition-opacity duration-200 group-hover:opacity-100">Buka sidebar</span>
+            </>
           )}
         </button>
         {!collapsed && (
@@ -701,48 +936,64 @@ function Sidebar({
         <button
           type="button"
           onClick={() => onView("home")}
-          title={collapsed ? "Beranda" : undefined}
-          className={`flex w-full items-center gap-3.5 rounded-xl py-3 text-base ${
+          className={`group/nav relative flex w-full items-center gap-3.5 rounded-xl py-3 text-base ${
             collapsed ? "justify-center px-0" : "px-4"
           } ${view === "home" ? "bg-sky-100/80 font-semibold text-sky-600" : "font-medium text-slate-600"}`}
         >
           <img src={`${assets}/${homeIcon}`} alt="" />
           {!collapsed && "Beranda"}
+          {collapsed && (
+            <span className="pointer-events-none absolute left-full top-1/2 z-[999] ml-3 -translate-y-1/2 whitespace-nowrap rounded-full bg-[#1f1f1f] px-4 py-2 text-sm font-semibold text-white opacity-0 shadow-lg transition-opacity duration-200 group-hover/nav:opacity-100">Beranda</span>
+          )}
         </button>
         <button
           type="button"
           onClick={() => onView("collection")}
-          title={collapsed ? "Koleksi" : undefined}
-          className={`flex w-full items-center gap-3.5 rounded-xl py-3 text-base ${
+          className={`group/nav relative flex w-full items-center gap-3.5 rounded-xl py-3 text-base ${
             collapsed ? "justify-center px-0" : "px-4"
           } ${view === "collection" ? "bg-sky-100/80 font-semibold text-sky-600" : "font-medium text-slate-600"}`}
         >
           <img src={`${assets}/${collectionIcon}`} alt="" />
           {!collapsed && "Koleksi"}
+          {collapsed && (
+            <span className="pointer-events-none absolute left-full top-1/2 z-[999] ml-3 -translate-y-1/2 whitespace-nowrap rounded-full bg-[#1f1f1f] px-4 py-2 text-sm font-semibold text-white opacity-0 shadow-lg transition-opacity duration-200 group-hover/nav:opacity-100">Koleksi</span>
+          )}
         </button>
       </nav>
 
       {!collapsed && (
-        <div className="min-h-0 flex-1 overflow-y-auto">
-          <p className="mt-6 font-['Inter:Bold'] text-sm font-bold uppercase leading-5 tracking-wide text-slate-400">Riwayat</p>
-          <div className="mt-2 space-y-0.5">
-        {items.map((item, index) => (
-          <div key={`${index}-${item}`} className="group relative">
-            <button
-              type="button"
-              onClick={() => {
-                setMenuIndex(null);
-                setActiveIndex(index);
-                onOpenRiwayat(riwayatItems[index]);
-              }}
-              className={`flex w-full items-center gap-1 rounded-lg py-2 pl-2.5 pr-9 text-left text-xs leading-4 ${
-                index === activeIndex
-                  ? "bg-blue-50/70 font-semibold text-blue-900 outline outline-1 outline-blue-200/80"
-                  : "text-slate-600 hover:bg-slate-50"
-              }`}
-            >
-              <span className="min-w-0 flex-1 truncate">{item}</span>
-            </button>
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+          <p className="mt-6 shrink-0 px-[10px] font-['Inter:Bold'] text-sm font-bold uppercase leading-5 tracking-wide text-slate-400">Riwayat</p>
+          <div className="mt-2 min-h-0 flex-1 space-y-0.5 overflow-y-auto pl-1.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        {items.map((item, index) => {
+          const itemKey = `${riwayatItems[index].type}:${riwayatItems[index].query.trim().toLowerCase()}`;
+          const isItemActive = Boolean(activeRiwayatKey && activeRiwayatKey === itemKey);
+          return (
+            <div key={`${index}-${item}`} className="group relative">
+              <button
+                type="button"
+                onClick={() => {
+                  setMenuIndex(null);
+                  onSelectRiwayatKey(itemKey);
+                  onOpenRiwayat(riwayatItems[index]);
+                }}
+                className={`flex w-full items-center gap-1 rounded-lg py-2 pl-2.5 pr-9 text-left text-xs leading-4 transition-colors ${
+                  isItemActive
+                    ? "bg-blue-50/70 font-semibold text-blue-900 outline outline-1 outline-blue-200/80"
+                    : "text-slate-600 hover:bg-slate-50"
+                }`}
+              >
+                <span className="flex min-w-0 flex-1 items-center gap-2">
+                  <span className="min-w-0 flex-1 truncate">{item}</span>
+                  <span className="inline-flex shrink-0 rounded-full bg-sky-50 px-2 py-0.5 text-[9px] font-semibold leading-3 text-sky-700">
+                    {riwayatItems[index].type === "review"
+                      ? "Literature Review"
+                      : riwayatItems[index].type === "map"
+                        ? "Peta Penelitian"
+                        : "Cari Jurnal"}
+                  </span>
+                </span>
+              </button>
             <button
               type="button"
               aria-label={`Opsi untuk ${item}`}
@@ -817,12 +1068,11 @@ function Sidebar({
                   <button
                     type="button"
                     onClick={() => {
+                      const deletedKey = `${riwayatItems[index].type}:${riwayatItems[index].query.trim().toLowerCase()}`;
+                      if (activeRiwayatKey === deletedKey) {
+                        onSelectRiwayatKey(null);
+                      }
                       onDeleteRiwayat(index);
-                      setActiveIndex(current => {
-                        if (index < current) return current - 1;
-                        if (index === current) return 0;
-                        return current;
-                      });
                       setMenuIndex(null);
                     }}
                     className="flex w-full items-center gap-3 px-4 py-2.5 text-sm font-medium text-red-400 transition-colors hover:bg-red-500/10"
@@ -838,7 +1088,8 @@ function Sidebar({
               </>
             )}
           </div>
-        ))}
+          );
+        })}
           </div>
         </div>
       )}
@@ -847,19 +1098,19 @@ function Sidebar({
         <button
           type="button"
           aria-label="Upgrade Sekarang"
-          title="Upgrade Sekarang"
           onClick={onUpgrade}
-          className="mt-auto flex h-11 w-11 items-center justify-center rounded-xl border border-amber-100/80 bg-gradient-to-br from-amber-50/70 via-blue-50/50 to-indigo-50/60 text-amber-500 transition-colors hover:bg-amber-50"
+          className="group/nav relative mt-auto flex h-11 w-11 items-center justify-center rounded-xl border border-amber-100/80 bg-gradient-to-br from-amber-50/70 via-blue-50/50 to-indigo-50/60 text-amber-500 transition-colors hover:bg-amber-50"
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path d="M12 2l2.9 6.26L21.5 9.3l-4.75 4.63 1.12 6.57L12 17.4l-5.87 3.1 1.12-6.57L2.5 9.3l6.6-1.04L12 2z" />
           </svg>
+          <span className="pointer-events-none absolute left-full top-1/2 z-[999] ml-3 -translate-y-1/2 whitespace-nowrap rounded-full bg-[#1f1f1f] px-4 py-2 text-sm font-semibold text-white opacity-0 shadow-lg transition-opacity duration-200 group-hover/nav:opacity-100">Upgrade Sekarang</span>
         </button>
       ) : (
         <>
           <div className="mt-auto rounded-2xl border border-amber-100/80 bg-gradient-to-br from-amber-50/70 via-blue-50/50 to-indigo-50/60 p-4">
-            <p className="text-xs leading-4 text-slate-600">
-              Akses lebih banyak fitur dengan <span className="text-blue-700">Alerin Premium</span>
+            <p className="text-center text-xs leading-4 text-slate-600">
+              Akses lebih banyak fitur dengan <span className="text-center text-blue-700">Alerin Pro</span>
             </p>
             <button
               type="button"
@@ -898,8 +1149,32 @@ const metodeGroups = [
   { name: "Lainnya", items: ["Studi simulasi", "Artikel komentar", "Analisis historis"] },
 ];
 
-const bidangStudi = ["Bisnis dan manajemen", "Ilmu sosial", "Pendidikan", "Kesehatan"];
-const negaraPenelitian = ["Indonesia", "Asia Tenggara", "Semua negara"];
+const bidangStudi = [
+  "Bisnis dan manajemen",
+  "Ilmu sosial",
+  "Pendidikan",
+  "Kesehatan",
+  "Kedokteran",
+  "Ilmu komputer",
+  "Teknik dan rekayasa",
+  "Ekonomi dan keuangan",
+  "Psikologi",
+  "Hukum",
+  "Ilmu lingkungan",
+  "Pertanian dan perikanan",
+  "Biologi",
+  "Fisika",
+  "Kimia",
+  "Matematika",
+  "Seni dan humaniora",
+  "Ilmu komunikasi",
+  "Ilmu politik",
+  "Farmasi",
+  "Arsitektur",
+  "Linguistik dan sastra",
+  "Filsafat",
+];
+const negaraPenelitian = ["Semua negara", "Indonesia", "Asia Tenggara"];
 const pilihanTahun = ["Semua", "2 tahun terakhir", "5 tahun terakhir", "10 tahun terakhir"];
 
 const tahunSekarang = new Date().getFullYear();
@@ -916,28 +1191,37 @@ function FilterCheck({
   label,
   onToggle,
   bold = false,
+  radio = false,
 }: {
   checked: boolean;
   label: string;
   onToggle: () => void;
   bold?: boolean;
+  radio?: boolean;
 }) {
   return (
     <button
       type="button"
       onClick={onToggle}
-      aria-pressed={checked}
+      role={radio ? "radio" : "checkbox"}
+      aria-checked={checked}
       className="flex w-full items-center gap-2.5 rounded-lg py-1 text-left transition-colors hover:bg-slate-100/70"
     >
       <span
-        className={`flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-[5px] border transition-colors ${
+        className={`flex h-[18px] w-[18px] shrink-0 items-center justify-center transition-colors ${
+          radio ? "rounded-full" : "rounded-[5px]"
+        } border ${
           checked ? "border-[#0369a1] bg-[#0369a1]" : "border-slate-300 bg-white"
         }`}
       >
         {checked && (
-          <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M2.5 6.5l2.5 2.5 4.5-5.5" />
-          </svg>
+          radio ? (
+            <span className="h-2 w-2 rounded-full bg-white" />
+          ) : (
+            <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M2.5 6.5l2.5 2.5 4.5-5.5" />
+            </svg>
+          )
         )}
       </span>
       <span className={`text-sm leading-5 ${bold ? "font-semibold text-slate-800" : "text-slate-600"}`}>{label}</span>
@@ -1191,65 +1475,81 @@ function FilterPanel({ open, onClose, onApply, onReset }: { open: boolean; onClo
           </FilterSection>
 
           <FilterSection title="Bidang studi" badge={bidangCount} open={sections.bidang} onToggle={() => toggleSection("bidang")}>
-            <p className="text-sm leading-5 text-slate-500">23 bidang studi tersedia.</p>
-            <div className="flex flex-col gap-1.5 rounded-2xl border border-slate-200 bg-white p-3.5">
-              {bidangStudi.map(item => (
-                <FilterCheck
-                  key={item}
-                  bold
-                  checked={Boolean(bidang[item])}
-                  label={item}
-                  onToggle={() => setBidang(current => ({ ...current, [item]: !current[item] }))}
-                />
-              ))}
-              {bidangTambahan.map(item => (
-                <FilterCheck
-                  key={item}
-                  bold
-                  checked={Boolean(bidang[item])}
-                  label={item}
-                  onToggle={() => setBidang(current => ({ ...current, [item]: !current[item] }))}
-                />
-              ))}
-              {bidangLainOpen ? (
-                <div className="mt-1 flex gap-2">
-                  <input
-                    autoFocus
-                    value={bidangLain}
-                    onChange={event => setBidangLain(event.target.value)}
-                    onKeyDown={event => {
-                      if (event.key !== "Enter") return;
-                      event.preventDefault();
-                      tambahOpsi(bidangLain, bidangTambahan, setBidangTambahan, setBidang, () => {
-                        setBidangLain("");
-                        setBidangLainOpen(false);
-                      });
-                    }}
-                    placeholder="Tulis bidang studi lain"
-                    className="min-w-0 flex-1 rounded-lg border border-slate-300 bg-white px-2.5 py-2 text-sm text-slate-800 outline-none focus:border-[#0369a1]"
+            <p className="text-sm leading-5 text-slate-500">23 bidang studi tersedia (pilih satu).</p>
+            <div className="flex flex-col rounded-2xl border border-slate-200 bg-white p-3.5">
+              <div className="flex max-h-56 flex-col gap-1 overflow-y-auto pr-1">
+                {bidangStudi.map(item => (
+                  <FilterCheck
+                    key={item}
+                    bold
+                    radio
+                    checked={Boolean(bidang[item])}
+                    label={item}
+                    onToggle={() => setBidang(current => (current[item] ? {} : { [item]: true }))}
                   />
+                ))}
+                {bidangTambahan.map(item => (
+                  <FilterCheck
+                    key={item}
+                    bold
+                    radio
+                    checked={Boolean(bidang[item])}
+                    label={item}
+                    onToggle={() => setBidang(current => (current[item] ? {} : { [item]: true }))}
+                  />
+                ))}
+              </div>
+              <div className="mt-2 border-t border-slate-100 pt-2">
+                {bidangLainOpen ? (
+                  <div className="flex gap-2">
+                    <input
+                      autoFocus
+                      value={bidangLain}
+                      onChange={event => setBidangLain(event.target.value)}
+                      onKeyDown={event => {
+                        if (event.key !== "Enter") return;
+                        event.preventDefault();
+                        const trimmed = bidangLain.trim();
+                        if (trimmed) {
+                          if (!bidangTambahan.includes(trimmed) && !bidangStudi.includes(trimmed)) {
+                            setBidangTambahan(curr => [...curr, trimmed]);
+                          }
+                          setBidang({ [trimmed]: true });
+                          setBidangLain("");
+                          setBidangLainOpen(false);
+                        }
+                      }}
+                      placeholder="Tulis bidang studi lain"
+                      className="min-w-0 flex-1 rounded-lg border border-slate-300 bg-white px-2.5 py-2 text-sm text-slate-800 outline-none focus:border-[#0369a1]"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const trimmed = bidangLain.trim();
+                        if (trimmed) {
+                          if (!bidangTambahan.includes(trimmed) && !bidangStudi.includes(trimmed)) {
+                            setBidangTambahan(curr => [...curr, trimmed]);
+                          }
+                          setBidang({ [trimmed]: true });
+                          setBidangLain("");
+                          setBidangLainOpen(false);
+                        }
+                      }}
+                      className="shrink-0 rounded-lg bg-[#0369a1] px-3 py-2 text-sm font-semibold text-white"
+                    >
+                      Tambah
+                    </button>
+                  </div>
+                ) : (
                   <button
                     type="button"
-                    onClick={() =>
-                      tambahOpsi(bidangLain, bidangTambahan, setBidangTambahan, setBidang, () => {
-                        setBidangLain("");
-                        setBidangLainOpen(false);
-                      })
-                    }
-                    className="shrink-0 rounded-lg bg-[#0369a1] px-3 py-2 text-sm font-semibold text-white"
+                    onClick={() => setBidangLainOpen(true)}
+                    className="flex items-center gap-1.5 rounded-lg px-1 py-1.5 text-sm font-semibold text-[#0369a1] hover:underline"
                   >
-                    Tambah
+                    + Opsi lainnya
                   </button>
-                </div>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => setBidangLainOpen(true)}
-                  className="mt-1 flex items-center gap-1.5 rounded-lg px-1 py-1.5 text-sm font-semibold text-[#0369a1]"
-                >
-                  + Opsi lainnya
-                </button>
-              )}
+                )}
+              </div>
             </div>
           </FilterSection>
 
@@ -1907,29 +2207,155 @@ function RelevancyRing({ value }: { value: string }) {
   );
 }
 
+function JournalCardSkeleton({ rank }: { rank?: string }) {
+  return (
+    <article className="overflow-hidden rounded-2xl bg-white p-6 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] outline outline-2 outline-offset-[-2px] outline-sky-100 animate-pulse">
+      <div className="flex items-center gap-2">
+        <span className="h-5 w-24 rounded-sm bg-sky-200" />
+        <span className="h-5 w-14 rounded-sm bg-slate-200" />
+        <span className="h-5 w-24 rounded-sm bg-sky-100" />
+      </div>
+
+      <div className="mt-4 flex items-start gap-4">
+        <div className="min-w-0 flex-1 space-y-2.5">
+          <div className="h-6 w-11/12 rounded-md bg-slate-200" />
+          <div className="h-5 w-3/4 rounded-md bg-slate-200" />
+          <div className="h-3.5 w-1/3 rounded-md bg-slate-100" />
+          <div className="h-3.5 w-1/4 rounded-md bg-slate-100" />
+        </div>
+        <div className="flex w-28 shrink-0 flex-col items-center">
+          <div className="h-20 w-20 rounded-full border-4 border-slate-200 bg-slate-100/60" />
+          <div className="mt-1 h-3 w-14 rounded bg-slate-200" />
+        </div>
+      </div>
+
+      <div className="mt-4 flex flex-col gap-3 min-[1180px]:flex-row">
+        <div className="min-w-0 flex-1 rounded-xl bg-sky-50/40 p-4 outline outline-1 outline-offset-[-1px] outline-sky-100 space-y-2.5">
+          <div className="h-3.5 w-48 rounded bg-slate-200" />
+          <div className="space-y-2 pt-2">
+            {[90, 85, 75, 80].map((w, idx) => (
+              <div key={idx} className="space-y-1">
+                <div className="flex justify-between">
+                  <div className="h-2.5 w-24 rounded bg-slate-200" />
+                  <div className="h-2.5 w-7 rounded bg-slate-200" />
+                </div>
+                <div className="h-1.5 w-full rounded-full bg-slate-200">
+                  <div className="h-1.5 rounded-full bg-sky-300" style={{ width: `${w}%` }} />
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-3 h-8 rounded-lg bg-slate-100" />
+        </div>
+        <div className="w-full shrink-0 rounded-xl bg-white p-4 outline outline-1 outline-offset-[-1px] outline-slate-200 min-[1180px]:w-[320px] space-y-3">
+          <div className="mx-auto h-4 w-24 rounded bg-slate-200" />
+          <div className="space-y-2.5 pt-1">
+            {[1, 2, 3, 4].map(n => (
+              <div key={n} className="flex items-start gap-2.5">
+                <div className="mt-0.5 h-4 w-4 shrink-0 rounded-full bg-sky-200" />
+                <div className="flex-1 space-y-1">
+                  <div className="h-3 w-24 rounded bg-slate-200" />
+                  <div className="h-2.5 w-40 rounded bg-slate-100" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-4 rounded-r-xl border-l-4 border-sky-400 bg-sky-50/70 p-4 space-y-2">
+        <div className="h-3 w-28 rounded bg-sky-300" />
+        <div className="h-3 w-full rounded bg-slate-200" />
+        <div className="h-3 w-4/5 rounded bg-slate-200" />
+      </div>
+
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-2.5 border-t border-slate-100 pt-4">
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="h-9 w-32 rounded-lg bg-sky-700/30" />
+          <div className="h-9 w-24 rounded-lg bg-slate-100" />
+          <div className="h-9 w-20 rounded-lg bg-slate-100" />
+          <div className="h-9 w-28 rounded-lg bg-amber-100/60" />
+        </div>
+        <div className="h-9 w-24 rounded-lg bg-slate-100" />
+      </div>
+
+      <div className="mt-3 flex items-center justify-center gap-2 text-xs font-semibold text-sky-700">
+        <svg className="h-4 w-4 animate-spin text-sky-600" fill="none" viewBox="0 0 24 24">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+        </svg>
+        <span>Sedang mencari rekomendasi pengganti untuk {rank ?? "kartu ini"}...</span>
+      </div>
+    </article>
+  );
+}
+
 function DesktopJournalResultCard({
   relevancy,
   onAnalisis,
   onSitasi,
   onAbstrak,
   journal,
+  detailOverride,
   saved = false,
   onToggleSave,
+  onReplaceJournal,
 }: {
   relevancy: string;
   onAnalisis?: () => void;
   onSitasi?: () => void;
   onAbstrak?: () => void;
   journal?: (typeof desktopResultJournals)[number];
+  detailOverride?: ResultDetail;
   saved?: boolean;
   onToggleSave?: () => void;
+  onReplaceJournal?: (journalId: string, reasons: string[]) => Promise<void> | void;
 }) {
-  const detail = desktopResultDetails.find(item => item.id === journal?.id) ?? desktopResultDetails[0];
+  const detail = detailOverride ?? desktopResultDetails.find(item => item.id === journal?.id) ?? desktopResultDetails[0];
   const [summaryExpanded, setSummaryExpanded] = useState(false);
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+  const [selectedReasons, setSelectedReasons] = useState<string[]>([]);
+  const [otherReasonText, setOtherReasonText] = useState("");
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const isSubmitEnabled = selectedReasons.length > 0;
+
+  const toggleReason = (id: string) => {
+    setSelectedReasons(prev =>
+      prev.includes(id) ? prev.filter(r => r !== id) : [...prev, id]
+    );
+  };
+
+  const handleProcessReplacement = async () => {
+    if (!isSubmitEnabled || isRefreshing || !journal) return;
+    setIsRefreshing(true);
+    try {
+      const payloadReasons = selectedReasons.includes("lainnya") && otherReasonText.trim()
+        ? [...selectedReasons.filter(r => r !== "lainnya"), `Lainnya: ${otherReasonText.trim()}`]
+        : selectedReasons;
+
+      // Simulated API response delay
+      await new Promise(resolve => setTimeout(resolve, 1100));
+
+      if (onReplaceJournal) {
+        await onReplaceJournal(journal.id, payloadReasons);
+      }
+      setIsFeedbackOpen(false);
+      setSelectedReasons([]);
+      setOtherReasonText("");
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
+  if (isRefreshing) {
+    return <JournalCardSkeleton rank={detail.rank} />;
+  }
+
   const actionButtons = ["Buat sitasi", "Abstrak", "Buka PDF"];
 
   return (
-    <article className="overflow-hidden rounded-2xl bg-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] outline outline-2 outline-offset-[-2px] outline-sky-100">
+    <article className="overflow-hidden rounded-2xl bg-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] outline outline-2 outline-offset-[-2px] outline-sky-100 transition-shadow hover:shadow-md">
       <div className="flex flex-col gap-3 px-6 py-6">
         <div className="flex flex-wrap items-center gap-1.5">
           <span className="rounded-sm bg-sky-700 px-2 py-0.5 text-xs font-bold leading-4 text-white">{detail.rank}</span>
@@ -2010,42 +2436,46 @@ function DesktopJournalResultCard({
         </div>
 
         <div className="rounded-r-xl border-l-4 border-sky-600 bg-sky-50/70 px-4 pb-4 pt-6">
-          <p className="text-xs font-bold leading-4 text-sky-600">RINGKASAN UTAMA</p>
-          <p className="pt-1.5 text-xs leading-5 text-slate-700">
-            {detail.summaryMore ? (
-              summaryExpanded ? (
-                `${detail.summary.replace(/\.\.\.$/, "")}. ${detail.summaryMore}`
-              ) : (
-                <>
-                  {detail.summary.replace(/\.\.\.$/, "")}
-                  <button
-                    type="button"
-                    onClick={() => setSummaryExpanded(true)}
-                    aria-label="Tampilkan ringkasan lengkap"
-                    className="font-bold text-sky-700"
-                  >
-                    ...
-                  </button>
-                </>
-              )
-            ) : (
-              detail.summary
-            )}
-          </p>
+          <div className="flex items-center justify-between gap-4">
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-bold leading-4 text-sky-600">RINGKASAN UTAMA</p>
+              <p className="pt-1.5 text-xs leading-5 text-slate-700">
+                {detail.summaryMore ? (
+                  summaryExpanded ? (
+                    `${detail.summary.replace(/\.\.\.$/, "")}. ${detail.summaryMore}`
+                  ) : (
+                    <>
+                      {detail.summary.replace(/\.\.\.$/, "")}
+                      <button
+                        type="button"
+                        onClick={() => setSummaryExpanded(true)}
+                        aria-label="Tampilkan ringkasan lengkap"
+                        className="font-bold text-sky-700"
+                      >
+                        ...
+                      </button>
+                    </>
+                  )
+                ) : (
+                  detail.summary
+                )}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={onAnalisis}
+              className="flex shrink-0 items-center gap-1.5 rounded-lg bg-[#0369a1] px-4 py-2 text-sm font-semibold leading-5 text-white shadow-xs transition-colors hover:bg-[#025684]"
+            >
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true">
+                <path d="M6.2 1.6l1.1 2.7 2.7 1.1-2.7 1.1-1.1 2.7-1.1-2.7L2.4 5.4l2.7-1.1z" />
+                <path d="M10.6 7.7l.6 1.5 1.5.6-1.5.6-.6 1.5-.6-1.5-1.5-.6 1.5-.6z" />
+              </svg>
+              Lihat Detail
+            </button>
+          </div>
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5 border-t border-slate-100 pt-4">
-          <button
-            type="button"
-            onClick={onAnalisis}
-            className="flex items-center gap-1.5 rounded-lg bg-[#0369a1] px-4 py-2 text-sm font-semibold leading-5 text-white"
-          >
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true">
-              <path d="M6.2 1.6l1.1 2.7 2.7 1.1-2.7 1.1-1.1 2.7-1.1-2.7L2.4 5.4l2.7-1.1z" />
-              <path d="M10.6 7.7l.6 1.5 1.5.6-1.5.6-.6 1.5-.6-1.5-1.5-.6 1.5-.6z" />
-            </svg>
-            Analisis lengkap
-          </button>
           {actionButtons.map(label => (
             <button
               key={label}
@@ -2059,17 +2489,61 @@ function DesktopJournalResultCard({
                       ? () => window.open(detail.doiUrl, "_blank", "noopener,noreferrer")
                       : () => window.alert(detail.pdfNote)
               }
-              className="flex items-center gap-1.5 rounded-lg bg-white px-4 py-2 text-sm font-semibold leading-5 text-slate-700 outline outline-1 outline-offset-[-1px] outline-slate-200"
+              className="flex items-center gap-1.5 rounded-lg bg-white px-4 py-2 text-sm font-semibold leading-5 text-slate-700 outline outline-1 outline-offset-[-1px] outline-slate-200 hover:bg-slate-50 transition-colors"
             >
               <ActionResultIcon label={label} />
               {label}
             </button>
           ))}
+
+          {/* Tombol Pemicu: Belum Sesuai / Ganti Jurnal */}
+          <button
+            type="button"
+            onClick={() => setIsFeedbackOpen(open => !open)}
+            aria-expanded={isFeedbackOpen}
+            className={`flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-semibold leading-5 transition-all ${
+              isFeedbackOpen
+                ? "bg-sky-50 text-sky-800 outline outline-1 outline-sky-300 ring-2 ring-sky-400/20 shadow-xs"
+                : "bg-white text-slate-700 outline outline-1 outline-offset-[-1px] outline-slate-200 hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
+            }`}
+          >
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 16 16"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.7"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className={`transition-transform duration-300 ${isFeedbackOpen ? "rotate-180" : ""}`}
+              aria-hidden="true"
+            >
+              <path d="M2.5 8a5.5 5.5 0 0 1 9.39-3.89L13.5 5.5M13.5 2v3.5H10" />
+              <path d="M13.5 8a5.5 5.5 0 0 1-9.39 3.89L2.5 10.5M2.5 14v-3.5H6" />
+            </svg>
+            Belum Sesuai
+            <svg
+              width="10"
+              height="10"
+              viewBox="0 0 12 12"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className={`ml-0.5 transition-transform duration-200 ${isFeedbackOpen ? "rotate-180" : ""}`}
+              aria-hidden="true"
+            >
+              <path d="M2.5 4.5l3.5 3.5 3.5-3.5" />
+            </svg>
+          </button>
+
           <button
             type="button"
             onClick={journal ? onToggleSave : undefined}
             aria-pressed={saved}
-            className={`ml-auto flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-semibold leading-5 outline outline-1 outline-offset-[-1px] transition-colors ${
+            className={`flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-semibold leading-5 outline outline-1 outline-offset-[-1px] transition-colors ${
               saved ? "bg-sky-50 text-sky-700 outline-sky-200" : "bg-white text-slate-700 outline-slate-200"
             }`}
           >
@@ -2088,6 +2562,121 @@ function DesktopJournalResultCard({
             {saved ? "Tersimpan" : "Simpan"}
           </button>
         </div>
+
+        {/* Panel Dropdown / Inline Expansion Kebawah */}
+        {isFeedbackOpen && (
+          <div className="mt-4 rounded-xl border border-slate-200/90 bg-gradient-to-b from-slate-50/90 via-slate-50/50 to-blue-50/30 p-4.5 transition-all duration-300 md:p-5">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <h4 className="font-['Plus_Jakarta_Sans:Bold'] text-base font-bold text-slate-800">
+                  Mengapa jurnal ini belum sesuai?
+                </h4>
+                <p className="mt-1 text-sm text-slate-500">
+                  Pilih minimal 1 alasan agar Alerin dapat menyesuaikan algoritma dan mengganti kartu ini dengan rekomendasi yang lebih pas:
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsFeedbackOpen(false);
+                  setSelectedReasons([]);
+                  setOtherReasonText("");
+                }}
+                className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-semibold text-slate-400 hover:bg-slate-200/60 hover:text-slate-600 transition-colors"
+                aria-label="Batal dan tutup"
+              >
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+                  <path d="M4 4l8 8M12 4l-8 8" />
+                </svg>
+                <span className="hidden sm:inline">Batal</span>
+              </button>
+            </div>
+
+            {/* Pilihan Alasan (Multi-select Chips / Checkbox Grid) */}
+            <div className="mt-3.5 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+              {JOURNAL_FEEDBACK_REASONS.map(reason => {
+                const isChecked = selectedReasons.includes(reason.id);
+                return (
+                  <button
+                    key={reason.id}
+                    type="button"
+                    onClick={() => toggleReason(reason.id)}
+                    className={`flex items-center gap-2.5 rounded-xl border px-3 py-2.5 text-left text-sm transition-all ${
+                      isChecked
+                        ? "border-[#0284c7] bg-sky-50/90 font-semibold text-sky-950 shadow-xs ring-1 ring-[#0284c7]/30"
+                        : "border-slate-200 bg-white font-medium text-slate-700 hover:border-slate-300 hover:bg-slate-50/80"
+                    }`}
+                  >
+                    <span
+                      className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-colors ${
+                        isChecked
+                          ? "border-[#0284c7] bg-[#0284c7] text-white"
+                          : "border-slate-300 bg-white"
+                      }`}
+                    >
+                      {isChecked && (
+                        <svg width="10" height="8" viewBox="0 0 10 8" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M1.5 4l2.5 2.5 4.5-5" />
+                        </svg>
+                      )}
+                    </span>
+                    <span className="truncate">{reason.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Field input tambahan jika memilih 'Lainnya' */}
+            {selectedReasons.includes("lainnya") && (
+              <div className="mt-2.5">
+                <input
+                  type="text"
+                  value={otherReasonText}
+                  onChange={e => setOtherReasonText(e.target.value)}
+                  placeholder="Tuliskan kendala spesifik jurnal ini (opsional)..."
+                  className="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs text-slate-800 outline-none placeholder:text-slate-400 focus:border-sky-500 focus:ring-1 focus:ring-sky-500/20"
+                />
+              </div>
+            )}
+
+            {/* Tombol Aksi di Pojok Bawah */}
+            <div className="mt-4 flex items-center justify-between border-t border-slate-200/70 pt-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsFeedbackOpen(false);
+                  setSelectedReasons([]);
+                  setOtherReasonText("");
+                }}
+                className="text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors"
+              >
+                Batal
+              </button>
+
+              <button
+                type="button"
+                disabled={!isSubmitEnabled || isRefreshing}
+                onClick={handleProcessReplacement}
+                className={`flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold transition-all ${
+                  isSubmitEnabled && !isRefreshing
+                    ? "bg-[#0369a1] text-white shadow-sm hover:bg-[#025684] active:scale-[0.98] cursor-pointer"
+                    : "cursor-not-allowed bg-slate-200 text-slate-400"
+                }`}
+              >
+                <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M2.5 8a5.5 5.5 0 0 1 9.39-3.89L13.5 5.5M13.5 2v3.5H10" />
+                  <path d="M13.5 8a5.5 5.5 0 0 1-9.39 3.89L2.5 10.5M2.5 14v-3.5H6" />
+                </svg>
+                Proses Penggantian Jurnal
+                {selectedReasons.length > 0 && (
+                  <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-white/30 px-1 text-[10px] font-bold text-white">
+                    {selectedReasons.length}
+                  </span>
+                )}
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </article>
   );
@@ -2794,6 +3383,7 @@ function DesktopSearchResults({
   onOpenTabel,
   onOpenSitasi,
   onOpenAbstrak,
+  onShowToast,
   analysis = false,
   fileName = "",
 }: {
@@ -2805,11 +3395,59 @@ function DesktopSearchResults({
   onOpenTabel: () => void;
   onOpenSitasi: () => void;
   onOpenAbstrak: () => void;
+  onShowToast?: (message: string) => void;
   analysis?: boolean;
   fileName?: string;
 }) {
   const [temuanNav, setTemuanNav] = useState(0);
   const temuan = temuanAnalisis[temuanNav % temuanAnalisis.length];
+  const [journalSlideIndex, setJournalSlideIndex] = useState(0);
+
+  const [journals, setJournals] = useState<(typeof desktopResultJournals)[number][]>(desktopResultJournals);
+  const [detailsMap, setDetailsMap] = useState<Record<string, ResultDetail>>(() => {
+    const map: Record<string, ResultDetail> = {};
+    desktopResultDetails.forEach(d => {
+      map[d.id] = d;
+    });
+    return map;
+  });
+
+  const handleReplaceJournal = (journalId: string, reasons: string[]) => {
+    console.log("Proses Penggantian Jurnal:", { journalId, reasons });
+
+    setJournals(prev => {
+      const idx = prev.findIndex(j => j.id === journalId);
+      if (idx === -1) return prev;
+      const currentIds = prev.map(j => j.id);
+      const replacement = alternativeJournalsPool.find(j => !currentIds.includes(j.id)) ?? alternativeJournalsPool[idx % alternativeJournalsPool.length];
+
+      const newId = `${replacement.id}-${Date.now()}`;
+      const newRank = `Rekomendasi ${idx + 1}`;
+      const updatedJournal = {
+        id: newId,
+        title: replacement.title,
+        authors: replacement.authors,
+        description: replacement.description,
+        year: replacement.year,
+        relevancy: replacement.relevancy,
+      };
+
+      setDetailsMap(dMap => ({
+        ...dMap,
+        [newId]: {
+          ...replacement.detail,
+          id: newId,
+          rank: newRank,
+        },
+      }));
+
+      const nextJournals = [...prev];
+      nextJournals[idx] = updatedJournal;
+      return nextJournals;
+    });
+
+    onShowToast?.("Jurnal berhasil diganti dengan rekomendasi baru!");
+  };
 
   const renderKutipan = (text: string) => {
     const parts = text.split(/(keputusan pembelian|seluruh kelompok usia)/g);
@@ -2956,33 +3594,99 @@ function DesktopSearchResults({
             </div>
           )}
 
-          <DesktopJournalResultCard
-            relevancy="97%"
-            onAnalisis={onOpenRingkasan}
-            onSitasi={onOpenSitasi}
-            onAbstrak={onOpenAbstrak}
-            journal={desktopResultJournals[0]}
-            saved={savedIds.includes(desktopResultJournals[0].id)}
-            onToggleSave={() => onToggleSave(desktopResultJournals[0])}
-          />
-          <DesktopJournalResultCard
-            relevancy="92%"
-            onAnalisis={onOpenRingkasan}
-            onSitasi={onOpenSitasi}
-            onAbstrak={onOpenAbstrak}
-            journal={desktopResultJournals[1]}
-            saved={savedIds.includes(desktopResultJournals[1].id)}
-            onToggleSave={() => onToggleSave(desktopResultJournals[1])}
-          />
-          <DesktopJournalResultCard
-            relevancy="89%"
-            onAnalisis={onOpenRingkasan}
-            onSitasi={onOpenSitasi}
-            onAbstrak={onOpenAbstrak}
-            journal={desktopResultJournals[2]}
-            saved={savedIds.includes(desktopResultJournals[2].id)}
-            onToggleSave={() => onToggleSave(desktopResultJournals[2])}
-          />
+          {analysis ? (
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center justify-between rounded-xl bg-white px-5 py-3 outline outline-1 outline-offset-[-1px] outline-slate-200/90">
+                <div className="flex items-center gap-3">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-sky-100 text-sky-700">
+                    <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <rect x="2.5" y="2" width="11" height="12" rx="1.5" />
+                      <path d="M5 5h6M5 8h6M5 11h4" />
+                    </svg>
+                  </span>
+                  <div>
+                    <h3 className="font-['Inter:Bold'] text-base font-bold text-slate-900">
+                      Rekomendasi Jurnal Pengganti
+                    </h3>
+                    <p className="text-xs text-slate-500">
+                      Slide {journalSlideIndex + 1} dari {journals.length} rekomendasi
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="mr-2 flex items-center gap-1.5">
+                    {journals.map((_, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        aria-label={`Lihat rekomendasi slide ${idx + 1}`}
+                        onClick={() => setJournalSlideIndex(idx)}
+                        className={`h-2 rounded-full transition-all ${
+                          journalSlideIndex === idx ? "w-6 bg-sky-700" : "w-2 bg-slate-300 hover:bg-slate-400"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                  <button
+                    type="button"
+                    aria-label="Rekomendasi sebelumnya"
+                    disabled={journalSlideIndex === 0}
+                    onClick={() => setJournalSlideIndex(curr => Math.max(0, curr - 1))}
+                    className="flex h-8 w-8 items-center justify-center rounded-lg bg-white outline outline-1 outline-offset-[-1px] outline-slate-200 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#475569" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M8.5 3L5 7l3.5 4" />
+                    </svg>
+                  </button>
+                  <button
+                    type="button"
+                    aria-label="Rekomendasi berikutnya"
+                    disabled={journalSlideIndex === journals.length - 1}
+                    onClick={() => setJournalSlideIndex(curr => Math.min(journals.length - 1, curr + 1))}
+                    className="flex h-8 w-8 items-center justify-center rounded-lg bg-white outline outline-1 outline-offset-[-1px] outline-slate-200 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#475569" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M5.5 3L9 7l-3.5 4" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              {(() => {
+                const currentJournal = journals[journalSlideIndex] ?? journals[0];
+                if (!currentJournal) return null;
+                return (
+                  <DesktopJournalResultCard
+                    key={currentJournal.id}
+                    relevancy={currentJournal.relevancy}
+                    onAnalisis={onOpenRingkasan}
+                    onSitasi={onOpenSitasi}
+                    onAbstrak={onOpenAbstrak}
+                    journal={currentJournal}
+                    detailOverride={detailsMap[currentJournal.id]}
+                    saved={savedIds.includes(currentJournal.id)}
+                    onToggleSave={() => onToggleSave(currentJournal)}
+                    onReplaceJournal={handleReplaceJournal}
+                  />
+                );
+              })()}
+            </div>
+          ) : (
+            journals.map(journalItem => (
+              <DesktopJournalResultCard
+                key={journalItem.id}
+                relevancy={journalItem.relevancy}
+                onAnalisis={onOpenRingkasan}
+                onSitasi={onOpenSitasi}
+                onAbstrak={onOpenAbstrak}
+                journal={journalItem}
+                detailOverride={detailsMap[journalItem.id]}
+                saved={savedIds.includes(journalItem.id)}
+                onToggleSave={() => onToggleSave(journalItem)}
+                onReplaceJournal={handleReplaceJournal}
+              />
+            ))
+          )}
         </div>
 
         <aside className="sticky top-2 w-64 shrink-0 self-start space-y-4">
@@ -2993,21 +3697,21 @@ function DesktopSearchResults({
           </p>
           <div className="flex flex-col items-start gap-2 pt-4">
             <span className="rounded-md bg-slate-100 px-2.5 py-1 text-xs font-semibold leading-4 text-slate-700">
-              Kata kunci: {query.trim() || "interaksi parasosial"}
+              Hasil Pencarian Dari: {query.trim() || "interaksi parasosial"}
             </span>
-            <span className="rounded-md bg-slate-100 px-2.5 py-1 text-xs font-semibold leading-4 text-slate-700">Tahun 2024–2026</span>
+            <span className="rounded-md bg-slate-100 px-2.5 py-1 text-xs font-semibold leading-4 text-slate-700">Tahun: 2024–2026</span>
           </div>
           <div className="mt-5 border-t border-slate-200/70 pt-5 text-center">
             <p className="text-3xl font-extrabold leading-10 text-slate-900">4,2 juta</p>
-            <p className="text-sm font-medium leading-5 text-slate-500">Jurnal tersedia</p>
+            <p className="text-sm font-medium leading-5 text-slate-500">Jurnal Tersedia</p>
           </div>
           <div className="mt-5 border-t border-slate-200/70 pt-5 text-center">
             <p className="text-3xl font-extrabold leading-10 text-slate-900">50</p>
-            <p className="text-sm font-medium leading-5 text-slate-500">sesuai filter dan kriteria</p>
+            <p className="text-sm font-medium leading-5 text-slate-500">Sesuai Filter</p>
           </div>
           <div className="mt-5 border-t border-slate-200/70 pt-5 text-center">
             <p className="text-3xl font-extrabold leading-8 text-sky-600">20</p>
-            <p className="text-sm font-medium leading-4 text-slate-500">paling relevan untuk ditelaah</p>
+            <p className="text-sm font-medium leading-4 text-slate-500">Paling Relevan</p>
           </div>
           <button
             type="button"
@@ -3520,7 +4224,7 @@ function DesktopLiteratureReview({
           </label>
         </div>
 
-        <div className="mt-4 max-h-[460px] overflow-auto">
+        <div className="mt-4 max-h-[460px] overflow-auto [scrollbar-color:#94a3b8_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-400 [&::-webkit-scrollbar-track]:bg-transparent">
           <table className="w-full min-w-[760px] border-collapse text-left">
             <thead className="sticky top-0 z-10 bg-slate-50">
               <tr className="bg-slate-50/60">
@@ -3602,7 +4306,7 @@ function DesktopLiteratureReview({
           </label>
         </div>
 
-        <div className="max-h-[640px] overflow-auto">
+        <div className="max-h-[640px] overflow-auto [scrollbar-color:#94a3b8_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-button]:hidden [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-400 [&::-webkit-scrollbar-track]:bg-transparent">
           <table className="w-full min-w-[1180px] border-collapse text-left">
             <thead>
               <tr className="bg-slate-50/60">
@@ -3657,16 +4361,36 @@ function DesktopLiteratureReview({
           <span className="h-8 w-1.5 shrink-0 rounded-full bg-[#0369a1]" />
           <h2 className="text-2xl font-extrabold leading-8 text-slate-900">Literature Review Siap Digunakan</h2>
         </div>
-        <button
-          type="button"
-          onClick={() => window.alert("Dokumen berhasil diekspor ke PDF.")}
-          className="flex shrink-0 items-center justify-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 outline outline-1 outline-slate-200 transition-colors hover:bg-slate-50"
-        >
-          <svg width="15" height="15" viewBox="0 0 14 14" fill="none" stroke="#dc2626" strokeWidth="1.5" strokeLinejoin="round" aria-hidden="true">
-            <path d="M2.5 1.5h6l3 3v8h-9zM8.5 1.5v3h3" />
-          </svg>
-          Ekspor ke PDF
-        </button>
+        <details className="group relative shrink-0 [&_summary::-webkit-details-marker]:hidden">
+          <summary className="flex cursor-pointer list-none items-center justify-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 outline outline-1 outline-slate-200 transition-colors hover:bg-slate-50">
+            Eksport File
+            <svg width="12" height="7" viewBox="0 0 12 7" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true" className="transition-transform group-open:rotate-180">
+              <path d="M1 1l5 5 5-5" />
+            </svg>
+          </summary>
+          <div className="absolute right-0 top-full z-20 mt-2 w-36 overflow-hidden rounded-xl border border-slate-100 bg-white p-1.5 shadow-xl">
+            <button
+              type="button"
+              onClick={event => {
+                window.alert("Dokumen berhasil diekspor ke PDF.");
+                event.currentTarget.closest("details")?.removeAttribute("open");
+              }}
+              className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+            >
+              <span className="font-bold text-red-600">PDF</span>
+            </button>
+            <button
+              type="button"
+              onClick={event => {
+                window.alert("Dokumen berhasil diekspor ke DOCX.");
+                event.currentTarget.closest("details")?.removeAttribute("open");
+              }}
+              className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+            >
+              <span className="font-bold text-blue-600">DOCX</span>
+            </button>
+          </div>
+        </details>
       </div>
 
       <section className="rounded-2xl bg-white p-5 shadow-sm">
@@ -4759,25 +5483,82 @@ function DesktopResearchMap({
                 <div
                   role="dialog"
                   aria-label="Cara membaca peta"
-                  className="absolute right-0 top-full z-30 mt-2 max-h-[70vh] w-[min(340px,calc(100vw-2.5rem))] overflow-y-auto rounded-xl border border-slate-200 bg-white p-4 shadow-[0_16px_40px_rgba(15,23,42,0.16)]"
+                  className="absolute right-0 top-full z-30 mt-2 max-h-[85vh] w-[min(440px,calc(100vw-2.5rem))] overflow-y-auto rounded-2xl border border-slate-200/90 bg-white p-5 shadow-[0_20px_50px_rgba(15,23,42,0.18)]"
                 >
                   <div className="flex items-start justify-between gap-3">
-                    <p className="text-sm font-bold leading-5 text-slate-900">Cara Membaca Peta</p>
+                    <h3 className="font-['Plus_Jakarta_Sans:Bold'] text-base font-bold leading-6 text-[#0f172a]">Cara Membaca Peta</h3>
                     <button
                       type="button"
                       aria-label="Tutup"
                       onClick={() => setHelpOpen(false)}
-                      className="-mr-1 -mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-50"
+                      className="-mr-1 -mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
                     >
-                      <svg width="11" height="11" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+                      <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
                         <path d="M2.5 2.5l9 9M11.5 2.5l-9 9" />
                       </svg>
                     </button>
                   </div>
                   {mode === "jaringan" && (
-                    <p className="mt-2 text-xs leading-5 text-slate-600">
-                      Lingkaran menunjukkan kata kunci penelitian. Semakin besar lingkaran, semakin sering kata kunci tersebut muncul. Garis menunjukkan keterkaitan antar topik, sedangkan warna menunjukkan kelompok penelitian dengan tema yang berhubungan.
-                    </p>
+                    <div className="mt-3 flex flex-col gap-3.5">
+                      <p className="text-xs leading-relaxed text-slate-600">
+                        Peta Jaringan menunjukkan keterkaitan antar topik dalam kumpulan artikel berdasarkan kemunculan bersama.
+                      </p>
+
+                      <div className="flex flex-col gap-3 rounded-2xl bg-[#f8fafc] p-4 text-xs leading-relaxed">
+                        <div className="flex items-start gap-3.5">
+                          <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center">
+                            <span className="h-4 w-4 rounded-full bg-[#3b82f6]" />
+                          </span>
+                          <div>
+                            <strong className="block text-xs font-bold text-slate-900">Lingkaran:</strong>
+                            <span className="text-slate-600">menunjukkan topik atau kata kunci yang dianalisis.</span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-start gap-3.5">
+                          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-100">
+                            <span className="h-4 w-4 rounded-full bg-[#2563eb]" />
+                          </span>
+                          <div>
+                            <strong className="block text-xs font-bold text-slate-900">Ukuran lingkaran:</strong>
+                            <span className="text-slate-600">
+                              semakin besar lingkaran, semakin sering topik tersebut muncul dalam artikel yang dianalisis.
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-start gap-3.5">
+                          <span className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center">
+                            <span className="h-1.5 w-6 rounded-full bg-[#94a3b8]" />
+                          </span>
+                          <div>
+                            <strong className="block text-xs font-bold text-slate-900">Garis:</strong>
+                            <span className="text-slate-600">
+                              menunjukkan hubungan antar topik yang sering muncul bersama.
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-start gap-3.5">
+                          <div className="mt-0.5 grid h-6 w-6 shrink-0 grid-cols-2 place-items-center gap-1">
+                            <span className="h-2 w-2 rounded-[3px] bg-[#dc2626]" />
+                            <span className="h-2 w-2 rounded-[3px] bg-[#eab308]" />
+                            <span className="h-2 w-2 rounded-[3px] bg-[#22c55e]" />
+                            <span className="h-2 w-2 rounded-[3px] bg-[#2563eb]" />
+                          </div>
+                          <div>
+                            <strong className="block text-xs font-bold text-slate-900">Warna:</strong>
+                            <span className="text-slate-600">
+                              menunjukkan kelompok topik dengan tema yang saling berhubungan.
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <p className="text-[11px] leading-relaxed text-slate-500">
+                        Topik yang saling terhubung tidak selalu menunjukkan hubungan sebab-akibat. Peta ini membantu membaca pola keterkaitan topik, bukan menilai kualitas penelitian secara langsung.
+                      </p>
+                    </div>
                   )}
 
                   {mode === "kepadatan" && (
@@ -5484,11 +6265,13 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
   const [mobileSearchStage, setMobileSearchStage] = useState<"home" | "loading" | "results">("home");
   const [desktopStage, setDesktopStage] = useState<"home" | "loading" | "results">("home");
   const [searchType, setSearchType] = useState<"journal" | "review" | "map">("journal");
+  const [activeRiwayatKey, setActiveRiwayatKey] = useState<string | null>(null);
   const [reviewTopic, setReviewTopic] = useState("");
   const [reviewYearFrom, setReviewYearFrom] = useState("2020");
   const [reviewYearTo, setReviewYearTo] = useState("2026");
   const [reviewCount, setReviewCount] = useState("100");
   const [resultMode, setResultMode] = useState<"search" | "analysis">("search");
+  const [mobileJournalSlideIndex, setMobileJournalSlideIndex] = useState(0);
   const [temuanIndex, setTemuanIndex] = useState(1);
   const [mobileNavHidden, setMobileNavHidden] = useState(false);
   const lastMobileScrollY = useRef(0);
@@ -5499,6 +6282,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
   const [savedJournals, setSavedJournals] = useState<SavedJournal[]>(initialSavedJournals);
   const [activeFolderId, setActiveFolderId] = useState("all");
   const [collectionTab, setCollectionTab] = useState<"journal" | "review" | "map">("journal");
+  const [mobileCollectionMenuOpen, setMobileCollectionMenuOpen] = useState(false);
   const [literatureFolders, setLiteratureFolders] = useState<CollectionFolder[]>(defaultLiteratureFolders);
   const [savedLiterature, setSavedLiterature] = useState<SavedLiterature[]>(initialSavedLiterature);
   const [activeLiteratureFolderId, setActiveLiteratureFolderId] = useState("all");
@@ -5691,18 +6475,42 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
 
   const deleteSelectedFolders = () => {
     if (selectedFolderIds.length === 0) return;
+    const count = selectedFolderIds.length;
+    if (collectionTab === "review") {
+      setSavedLiterature(list => list.map(item => (selectedFolderIds.includes(item.folderId) ? { ...item, folderId: "ungrouped" } : item)));
+      setLiteratureFolders(list => list.filter(folder => !selectedFolderIds.includes(folder.id)));
+      if (selectedFolderIds.includes(activeLiteratureFolderId)) setActiveLiteratureFolderId("all");
+      exitFolderSelect();
+      showToast(`${count} folder dihapus, literatur dipindahkan ke Belum dikelompokkan`);
+      return;
+    }
+    if (collectionTab === "map") {
+      setSavedMaps(list => list.map(item => (selectedFolderIds.includes(item.folderId) ? { ...item, folderId: "ungrouped" } : item)));
+      setMapFolders(list => list.filter(folder => !selectedFolderIds.includes(folder.id)));
+      if (selectedFolderIds.includes(activeMapFolderId)) setActiveMapFolderId("all");
+      exitFolderSelect();
+      showToast(`${count} folder dihapus, peta dipindahkan ke Belum dikelompokkan`);
+      return;
+    }
     setSavedJournals(list => list.map(item => (selectedFolderIds.includes(item.folderId) ? { ...item, folderId: "ungrouped" } : item)));
     setFolders(list => list.filter(folder => !selectedFolderIds.includes(folder.id)));
     if (selectedFolderIds.includes(activeFolderId)) setActiveFolderId("all");
-    const count = selectedFolderIds.length;
     exitFolderSelect();
     showToast(`${count} folder dihapus, jurnal dipindahkan ke Belum dikelompokkan`);
   };
 
   const createFolder = (name: string) => {
     const id = `folder-${Date.now()}`;
-    setFolders(list => [...list, { id, name }]);
-    setActiveFolderId(id);
+    if (collectionTab === "review") {
+      setLiteratureFolders(list => [...list, { id, name }]);
+      setActiveLiteratureFolderId(id);
+    } else if (collectionTab === "map") {
+      setMapFolders(list => [...list, { id, name }]);
+      setActiveMapFolderId(id);
+    } else {
+      setFolders(list => [...list, { id, name }]);
+      setActiveFolderId(id);
+    }
     setDesktopStage("home");
     setMobileSearchStage("home");
     setView("collection");
@@ -5765,12 +6573,19 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
   };
 
   useEffect(() => {
+    if (view !== "home" || (desktopStage === "home" && mobileSearchStage === "home")) {
+      setActiveRiwayatKey(null);
+    }
+  }, [view, desktopStage, mobileSearchStage]);
+
+  useEffect(() => {
     if (desktopStage !== "loading" && mobileSearchStage !== "loading") return;
     const topic =
       searchType === "journal"
         ? query.trim() || (fileName ? `Analisis file ${fileName}` : paragraph.trim().slice(0, 60))
         : reviewTopic.trim() || query.trim();
     if (topic.trim().length < 3) return;
+    setActiveRiwayatKey(`${searchType}:${topic.trim().toLowerCase()}`);
     addRiwayat({ label: topic.trim(), query: topic.trim(), type: searchType });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [desktopStage, mobileSearchStage]);
@@ -5808,12 +6623,12 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
   const guideContent: { title: string; intro: string; steps: { title?: string; description: string }[] } | null =
     searchType === "review"
       ? {
-          title: "Cara Buat literature review",
-          intro: "Tentukan topik penelitian sesuai fokus yang ingin kamu teliti.",
+          title: "Cara Kerja Literature Review",
+          intro: "Tentukan topik penelitian sesuai fokus yang ingin Anda teliti.",
           steps: [
             {
               title: "Masukkan topik penelitian",
-              description: "Tuliskan topik penelitian atau pilih rekomendasi dari Alerin sesuai kebutuhanmu.",
+              description: "Tuliskan topik penelitian atau pilih rekomendasi dari Alerin sesuai kebutuhan Anda.",
             },
             {
               title: "Tentukan periode publikasi",
@@ -5827,12 +6642,12 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
         }
       : searchType === "map"
         ? {
-            title: "Cara Lihat Peta Penelitian",
-            intro: "Tentukan topik penelitian sesuai fokus yang ingin kamu cari.",
+            title: "Cara Kerja Peta Penelitian",
+            intro: "Tentukan topik penelitian sesuai fokus yang ingin Anda cari.",
             steps: [
               {
                 title: "Masukkan topik penelitian",
-                description: "Tuliskan topik penelitian atau pilih rekomendasi dari Alerin sesuai kebutuhanmu.",
+                description: "Tuliskan topik penelitian atau pilih rekomendasi dari Alerin sesuai kebutuhan Anda.",
               },
               {
                 title: "Tentukan periode publikasi",
@@ -5852,6 +6667,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
     setSearchType(item.type);
     if (item.type !== "journal") setReviewTopic(item.query);
     setResultMode("search");
+    setActiveRiwayatKey(`${item.type}:${item.query.trim().toLowerCase()}`);
     if (window.matchMedia("(min-width: 768px)").matches) setDesktopStage("loading");
     else setMobileSearchStage("loading");
   };
@@ -5893,6 +6709,8 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
         riwayatItems={riwayatItems}
         onRenameRiwayat={(index, label) => setRiwayatItems(list => list.map((item, i) => (i === index ? { ...item, label } : item)))}
         onDeleteRiwayat={index => setRiwayatItems(list => list.filter((_, i) => i !== index))}
+        activeRiwayatKey={activeRiwayatKey}
+        onSelectRiwayatKey={setActiveRiwayatKey}
       />
 
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
@@ -5928,14 +6746,22 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
             <div className="fixed inset-x-0 bottom-[68px] top-[65px] z-[305] flex flex-col items-center justify-center overflow-hidden bg-[#f4f7fb] px-6 md:hidden">
               <SearchLoader />
               <h1 className="text-center font-['Plus_Jakarta_Sans:ExtraBold'] text-[21px] font-extrabold tracking-[-0.5px] text-[#313131]">
-                {searchType === "review" ? "Menyusun Tinjauan Literatur" : resultMode === "analysis" ? "Menganalisis Naskahmu" : "Menulusuri Jurnal Untukmu"}
+                {searchType === "review"
+                  ? "Menyusun Literatur Review untuk Anda"
+                  : searchType === "map"
+                    ? "Menyusun Peta Penelitian untuk Anda"
+                    : resultMode === "analysis"
+                      ? "Menganalisis Naskahmu"
+                      : "Menelusuri Jurnal Untuk Anda"}
               </h1>
               <p className="mt-2 max-w-[290px] animate-pulse text-center text-xs leading-5 text-[#71717a]">
                 {searchType === "review"
-                  ? "Alerin sedang menggabungkan, memeringkat, dan merapikan artikel untuk tinjauan literaturmu."
-                  : resultMode === "analysis"
-                    ? "Alerin sedang membaca dokumenmu dan menyiapkan temuan serta rekomendasi sitasi."
-                    : "Alerin sedang mencari jurnal berdasarkan informasi yang kamu berikan."}
+                  ? "Alerin sedang menyusun tinjauan literatur berdasarkan topik dan kriteria yang kamu isi."
+                  : searchType === "map"
+                    ? "Alerin sedang mengolah dan menyusun peta penelitian beserta analisisnya."
+                    : resultMode === "analysis"
+                      ? "Alerin sedang membaca dokumenmu dan menyiapkan temuan serta rekomendasi sitasi."
+                      : "Alerin sedang mencari jurnal berdasarkan informasi yang Anda berikan."}
               </p>
             </div>
           )}
@@ -6107,7 +6933,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                         <circle cx="7" cy="7" r="4.5" />
                         <path d="M10.4 10.4L14 14" />
                       </svg>
-                      Kata kunci: {query.trim() || "interaksi parasosial"}
+                      Hasil Pencarian Dari: {query.trim() || "interaksi parasosial"}
                     </span>
                     <span className="flex h-9 w-fit items-center gap-2 rounded-xl bg-slate-100 px-4 text-sm font-medium text-slate-900">
                       <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#0369a1" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -6118,7 +6944,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                     </span>
                   </div>
                   <div className="mt-4 grid grid-cols-3 gap-2 rounded-2xl bg-slate-100 px-1.5 py-4 text-center">
-                    {[["4,2 jt", "jurnal tersedia"], ["50", "sesuai kriteria"], ["20", "sangat relevan"]].map(([value, label]) => (
+                    {[["4,2 jt", "Jurnal Tersedia"], ["50", "Sesuai Filter"], ["20", "Paling Relevan"]].map(([value, label]) => (
                       <div key={value}>
                         <p className="text-2xl font-bold text-sky-700">{value}</p>
                         <p className="mt-0.5 text-[10px] font-semibold leading-4 text-slate-500">{label}</p>
@@ -6150,7 +6976,38 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                 </div>
 
                 <div className="mt-2 space-y-3">
-                  {mobileResultJournals.map((result, index) => (
+                  {resultMode === "analysis" && (
+                    <div className="flex items-center justify-between rounded-xl bg-white px-3 py-2 shadow-sm">
+                      <span className="text-xs font-bold text-slate-700">
+                        Slide {mobileJournalSlideIndex + 1} dari {mobileResultJournals.length}
+                      </span>
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          type="button"
+                          aria-label="Slide rekomendasi sebelumnya"
+                          disabled={mobileJournalSlideIndex === 0}
+                          onClick={() => setMobileJournalSlideIndex(idx => Math.max(0, idx - 1))}
+                          className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-100 text-xs font-bold text-slate-700 disabled:opacity-40"
+                        >
+                          ‹
+                        </button>
+                        <button
+                          type="button"
+                          aria-label="Slide rekomendasi berikutnya"
+                          disabled={mobileJournalSlideIndex === mobileResultJournals.length - 1}
+                          onClick={() => setMobileJournalSlideIndex(idx => Math.min(mobileResultJournals.length - 1, idx + 1))}
+                          className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-100 text-xs font-bold text-slate-700 disabled:opacity-40"
+                        >
+                          ›
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {(resultMode === "analysis"
+                    ? [mobileResultJournals[mobileJournalSlideIndex] ?? mobileResultJournals[0]]
+                    : mobileResultJournals
+                  ).map((result, index) => (
                     <article key={result.rank} className="rounded-2xl bg-white p-4 shadow-sm">
                       <p className="text-[11px] font-medium text-slate-400">OpenAlex &amp; Crossref</p>
                       <div className="mt-2 flex flex-wrap gap-1.5 text-[10px] font-semibold">
@@ -6190,7 +7047,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                         {[
                           ["Sumber", "OpenAlex dan Crossref"],
                           ["Penerbit", "Pusat Studi Bisnis Digital Nusantara"],
-                          ["DOI terverifikasi", "DOI: 10.20886/jpkf.2022.6.1.16-28"],
+                          ["DOI terverifikasi", "https://doi.org/10.21776/ub.jpt.2026.011.2"],
                           ["Jumlah sitasi", "Artikel ini dikutip dalam 45 karya ilmiah lainnya."],
                         ].map(([judul, detail]) => (
                           <div key={judul} className="mt-3 flex items-start gap-2.5">
@@ -6276,14 +7133,22 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
             <div className="hidden min-h-[70vh] flex-col items-center justify-center md:flex">
               <SearchLoader />
               <h1 className="mt-5 text-center text-2xl font-extrabold tracking-[-0.5px] text-slate-800">
-                {searchType === "review" ? "Menyusun Tinjauan Literatur" : resultMode === "analysis" ? "Menganalisis Naskahmu" : "Menelusuri Jurnal Untukmu"}
+                {searchType === "review"
+                  ? "Menyusun Literatur Review untuk Anda"
+                  : searchType === "map"
+                    ? "Menyusun Peta Penelitian untuk Anda"
+                    : resultMode === "analysis"
+                      ? "Menganalisis Naskahmu"
+                      : "Menelusuri Jurnal Untuk Anda"}
               </h1>
               <p className="mt-2 max-w-sm animate-pulse text-center text-sm leading-6 text-slate-500">
                 {searchType === "review"
-                  ? "Alerin sedang menggabungkan, memeringkat, dan merapikan artikel untuk tinjauan literaturmu."
-                  : resultMode === "analysis"
-                    ? "Alerin sedang membaca dokumenmu dan menyiapkan temuan serta rekomendasi sitasi."
-                    : "Alerin sedang mencari jurnal berdasarkan informasi yang kamu berikan."}
+                  ? "Alerin sedang menyusun tinjauan literatur berdasarkan topik dan kriteria yang kamu isi."
+                  : searchType === "map"
+                    ? "Alerin sedang mengolah dan menyusun peta penelitian beserta analisisnya."
+                    : resultMode === "analysis"
+                      ? "Alerin sedang membaca dokumenmu dan menyiapkan temuan serta rekomendasi sitasi."
+                      : "Alerin sedang mencari jurnal berdasarkan informasi yang Anda berikan."}
               </p>
             </div>
           )}
@@ -6314,13 +7179,14 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                 onOpenTabel={() => setTabelOpen(true)}
                 onOpenSitasi={() => setSitasiOpen(true)}
                 onOpenAbstrak={() => setAbstrakOpen(true)}
+                onShowToast={showToast}
                 analysis={resultMode === "analysis"}
                 fileName={fileName}
               />
             ))}
 
           {desktopStage !== "home" ? null : view === "home" ? (
-            <div className="mx-auto grid max-w-[1160px] gap-5 lg:grid-cols-[minmax(0,1fr)_280px]">
+            <div className="mx-auto grid w-full min-w-0 max-w-[1160px] grid-cols-[minmax(0,1fr)] gap-5 lg:grid-cols-[minmax(0,1fr)_280px]">
               <div>
                 <h1 className="text-center font-['Plus_Jakarta_Sans:ExtraBold'] text-2xl font-extrabold leading-[33px] tracking-[-0.6px] text-[#0f172a] md:text-left md:text-[26px] md:leading-9 md:tracking-normal md:text-[#003859]">
                   {searchType === "review" ? (
@@ -6392,7 +7258,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                 </div>
 
                 {searchType === "review" || searchType === "map" ? (
-                  <section className="mt-4 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm md:mt-5 md:p-6">
+                  <section className="mt-4 w-full min-w-0 max-w-full rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm md:mt-5 md:p-6">
                     <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-[17px] font-bold md:text-base">Topik penelitian</h2>
                     <label className="mt-3 flex min-w-0 items-center gap-2 rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-3 md:bg-white md:px-4">
                       <svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="#94a3b8" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="shrink-0">
@@ -6405,7 +7271,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                         onKeyDown={event => {
                           if (event.key === "Enter") startStructuredSearch(searchType);
                         }}
-                        placeholder="Ketik topik penelitianmu"
+                        placeholder="Ketik Topik Penelitan Anda"
                         className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-slate-400"
                       />
                       {reviewTopic && (
@@ -6421,14 +7287,37 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                       <span>{searchType === "review" ? "Tinjau literatur tentang literasi keuangan mahasiswa." : "Artificial Intelligence dan motivasi belajar mahasiswa."}</span>
                     </div>
 
-                    <div className="mt-4 grid gap-3 md:grid-cols-2">
-                      <label className="block">
+                    <div className="mt-4 grid min-w-0 grid-cols-[minmax(0,1fr)] gap-3 md:grid-cols-2">
+                      <label className="block min-w-0">
                         <span className="font-['Plus_Jakarta_Sans:SemiBold'] text-xs font-semibold text-slate-700">Periode publikasi</span>
                         <span className="mt-1.5 flex items-center gap-2">
                           <input
                             value={reviewYearFrom}
-                            onChange={event => setReviewYearFrom(event.target.value.replace(/[^0-9]/g, "").slice(0, 4))}
+                            onChange={event => {
+                              const digits = event.target.value.replace(/\D/g, "").slice(0, 4);
+                              if (digits.length === 4 && Number(digits) > 2026) {
+                                setReviewYearFrom("2026");
+                                return;
+                              }
+                              setReviewYearFrom(digits);
+                            }}
+                            onKeyDown={event => {
+                              if (
+                                !/^[0-9]$/.test(event.key) &&
+                                !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab", "Enter"].includes(event.key) &&
+                                !event.ctrlKey &&
+                                !event.metaKey
+                              ) {
+                                event.preventDefault();
+                              }
+                            }}
+                            onBlur={() => {
+                              if (reviewYearFrom && (reviewYearFrom.length < 4 || Number(reviewYearFrom) > 2026)) {
+                                setReviewYearFrom(Number(reviewYearFrom) > 2026 ? "2026" : "2020");
+                              }
+                            }}
                             inputMode="numeric"
+                            pattern="[0-9]*"
                             maxLength={4}
                             aria-label="Tahun awal publikasi"
                             placeholder="2020"
@@ -6437,23 +7326,64 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                           <span className="text-sm text-slate-400">–</span>
                           <input
                             value={reviewYearTo}
-                            onChange={event => setReviewYearTo(event.target.value.replace(/[^0-9]/g, "").slice(0, 4))}
+                            onChange={event => {
+                              const digits = event.target.value.replace(/\D/g, "").slice(0, 4);
+                              if (digits.length === 4 && Number(digits) > 2026) {
+                                setReviewYearTo("2026");
+                                return;
+                              }
+                              setReviewYearTo(digits);
+                            }}
+                            onKeyDown={event => {
+                              if (
+                                !/^[0-9]$/.test(event.key) &&
+                                !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab", "Enter"].includes(event.key) &&
+                                !event.ctrlKey &&
+                                !event.metaKey
+                              ) {
+                                event.preventDefault();
+                                return;
+                              }
+                              if (/^[0-9]$/.test(event.key)) {
+                                const currentVal = event.currentTarget.value || "";
+                                const start = event.currentTarget.selectionStart ?? currentVal.length;
+                                const end = event.currentTarget.selectionEnd ?? currentVal.length;
+                                const nextVal = (currentVal.slice(0, start) + event.key + currentVal.slice(end)).replace(/\D/g, "");
+                                if (nextVal.length === 4 && Number(nextVal) > 2026) {
+                                  event.preventDefault();
+                                  setReviewYearTo("2026");
+                                }
+                              }
+                            }}
+                            onBlur={() => {
+                              if (reviewYearTo && (reviewYearTo.length < 4 || Number(reviewYearTo) > 2026)) {
+                                setReviewYearTo("2026");
+                              }
+                            }}
                             inputMode="numeric"
+                            pattern="[0-9]*"
                             maxLength={4}
+                            max={2026}
                             aria-label="Tahun akhir publikasi"
                             placeholder="2026"
                             className="min-w-0 flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-center text-sm text-slate-800 outline-none placeholder:text-slate-400 focus:border-sky-400"
                           />
                         </span>
                       </label>
-                      <label className="block">
+                      <label className="block min-w-0">
                         <span className="font-['Plus_Jakarta_Sans:SemiBold'] text-xs font-semibold text-slate-700">Jumlah jurnal</span>
                         <span className="relative mt-1.5 block">
                           <input
                             value={reviewCount}
-                            onChange={event => setReviewCount(event.target.value.replace(/[^0-9]/g, "").slice(0, 4))}
+                            onChange={event => {
+                              const raw = event.target.value.replace(/[^0-9]/g, "").slice(0, 3);
+                              const num = Number.parseInt(raw, 10);
+                              if (raw === "" || Number.isNaN(num)) setReviewCount(raw);
+                              else if (num > 100) setReviewCount("100");
+                              else setReviewCount(String(num));
+                            }}
                             inputMode="numeric"
-                            maxLength={4}
+                            maxLength={3}
                             aria-label="Jumlah jurnal"
                             placeholder="100"
                             className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 pr-16 text-sm text-slate-800 outline-none placeholder:text-slate-400 focus:border-sky-400"
@@ -6561,15 +7491,28 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                       )}
                     </button>
                   </div>
+                  {referenceActive && (
+                    <p role="status" className="mt-3 rounded-xl border border-sky-200 bg-sky-50 px-3 py-2 text-xs leading-5 text-sky-800">
+                      Pencarian cepat dinonaktifkan karena kolom pencian melalui paragraf atau unggah file sudah terisi.
+                    </p>
+                  )}
                 </section>
 
                 <section className="mt-4 rounded-2xl border border-slate-200/80 bg-white px-4 py-[22px] shadow-sm md:p-6">
                   <h2 className="text-center font-['Plus_Jakarta_Sans:Bold'] text-[17px] font-bold md:text-left md:text-base">Cari rujukan dari tulisanmu</h2>
                   <p className="mx-auto mt-2 max-w-lg text-center font-['Plus_Jakarta_Sans:Regular'] text-xs leading-[19.5px] text-[#232323] md:mx-0 md:mt-1 md:max-w-none md:text-left md:text-base md:leading-6 md:text-[#475569]">Tempel kalimat atau paragraf yang ingin kamu perkuat dengan sitasi. Alerin akan membantu mencari artikel jurnal yang relevan untuk mendukung tulisanmu.</p>
                   <div className="mt-5 grid min-w-0 gap-3 md:grid-cols-[1.35fr_0.95fr]">
+                    {quickActive && (
+                      <p role="status" className="rounded-xl border border-sky-200 bg-sky-50 px-3 py-2 text-xs leading-5 text-sky-800 md:col-span-2">
+                        Pencarian jurnal melalui paragraf dan unggah file dinonaktifkan karena kolom pencarian cepat sudah terisi.
+                      </p>
+                    )}
                     <label className="grid gap-1.5">
                       <span className="font-['Plus_Jakarta_Sans:SemiBold'] text-[14px] font-semibold text-[#334155] md:hidden">Draf / Paragraf Teks</span>
-                      <textarea value={paragraph} onChange={event => setParagraph(event.target.value)} disabled={quickActive} placeholder="Masukkan kalimat atau paragraf yang membutuhkan sitasi." className="min-h-[123px] resize-none rounded-xl border border-slate-200 bg-[rgba(200,226,251,0.24)] p-3 text-[13px] outline-none focus:border-sky-400 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400 md:min-h-44 md:bg-white md:p-4 md:text-sm md:disabled:bg-slate-100" />
+                      <span className="relative grid">
+                        <textarea maxLength={1000} value={paragraph} onChange={event => setParagraph(event.target.value)} disabled={quickActive} placeholder="Masukkan kalimat atau paragraf yang membutuhkan sitasi." className="min-h-[123px] resize-none rounded-xl border border-slate-200 bg-[rgba(200,226,251,0.24)] p-3 pb-8 text-[13px] outline-none focus:border-sky-400 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400 md:min-h-44 md:bg-white md:p-4 md:pb-8 md:text-sm md:disabled:bg-slate-100" />
+                        <span className="pointer-events-none absolute bottom-2.5 right-3 text-[11px] text-slate-400">{paragraph.length}/1000 karakter</span>
+                      </span>
                     </label>
                     {fileName ? (
                       <div className="flex min-h-[108px] w-full min-w-0 flex-col items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-sky-200 bg-white p-5 text-center md:min-h-44 md:p-4">
@@ -6616,8 +7559,9 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                           <img src={`${mobileAssets}/36094.svg`} alt="" className="md:hidden" />
                           <img src={`${searchAssets}/f5e87.svg`} alt="" className="hidden md:block" />
                         </span>
-                        <span className="mt-3 text-[13px] font-semibold md:text-sm md:font-bold md:text-slate-800">Unggah artikel atau catatan</span>
-                        <span className="mt-1 text-[12px] text-[#94a3b8] md:text-sm md:text-slate-500">PDF, DOCX, atau TXT hingga 20 MB</span>
+                        <span className="mt-3 text-[13px] font-semibold md:text-sm md:font-bold md:text-slate-800">Unggah file di sini</span>
+                        <span className="mt-1 text-[12px] text-[#94a3b8] md:text-sm md:text-slate-500">TXT, DOCX, atau PDF</span>
+                        <span className="mt-2 rounded-full bg-slate-100 px-3 py-1 text-[11px] font-medium text-slate-500 md:text-xs">Maks. 20 MB</span>
                         <input type="file" accept=".pdf,.doc,.docx,.txt" className="sr-only" disabled={quickActive} onChange={handleFileChange} />
                       </label>
                     )}
@@ -6701,7 +7645,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                 </button>
                 <div className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm md:p-6">
                   <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-base font-bold md:text-base">{guideContent?.title ?? "Cara menemukan jurnal"}</h2>
-                  <p className="mt-2 text-sm leading-5 text-[#64748b] md:font-['Plus_Jakarta_Sans:Regular'] md:text-xs">{guideContent?.intro ?? "Pilih cara pencarian sesuai informasi yang sudah kamu miliki."}</p>
+                  <p className="mt-2 text-sm leading-5 text-[#64748b] md:font-['Plus_Jakarta_Sans:Regular'] md:text-xs">{guideContent?.intro ?? "Pilih cara pencarian sesuai informasi yang sudah Anda miliki."}</p>
                   {guideContent ? (
                     <ol className="mt-4 space-y-2 md:mt-6 md:space-y-4">
                       {guideContent.steps.map((step, index) => (
@@ -6827,27 +7771,91 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
           ) : (
             <>
             <div className="-mt-4 md:hidden">
-              <div className="flex items-center justify-between px-1">
-                <h1 className="font-['Plus_Jakarta_Sans:Bold'] text-lg font-bold tracking-[-0.27px] text-[#0f172a]">Folder Riset</h1>
-                <button
-                  type="button"
-                  aria-label="Tambah folder"
-                  onClick={() => setNewFolderOpen(true)}
-                  className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#0369a1]"
-                >
-                  <img src="/assets/jurnal-design/collection-mobile/ce139.svg" alt="" className="h-[18px] w-[18px]" />
-                </button>
+              <div className="px-1 py-[9px]">
+                <div className="flex items-center justify-between">
+                  <h1 className="font-['Plus_Jakarta_Sans:Bold'] text-lg font-bold tracking-[-0.27px] text-[#0f172a]">Folder Riset</h1>
+                  <div className="relative flex items-center gap-2">
+                    <button
+                      type="button"
+                      aria-haspopup="menu"
+                      aria-expanded={mobileCollectionMenuOpen}
+                      onClick={() => setMobileCollectionMenuOpen(open => !open)}
+                      className="flex h-7 items-center gap-1.5 rounded-lg bg-white px-2.5 text-sm font-bold text-[#0369a1] outline outline-1 outline-sky-200"
+                    >
+                      {collectionTab === "journal" ? "Koleksi Jurnal" : collectionTab === "review" ? "Literatur Review" : "Peta Penelitian"}
+                      <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" aria-hidden="true">
+                        <path d="M1 1l4 4 4-4" />
+                      </svg>
+                    </button>
+                    {collectionTab === "journal" && (
+                      <button
+                        type="button"
+                        aria-label="Tambah folder"
+                        onClick={() => setNewFolderOpen(true)}
+                        className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#0369a1]"
+                      >
+                        <img src="/assets/jurnal-design/collection-mobile/ce139.svg" alt="" className="h-[18px] w-[18px]" />
+                      </button>
+                    )}
+                    {mobileCollectionMenuOpen && (
+                      <div role="menu" className="absolute right-0 top-full z-20 mt-2 w-44 overflow-hidden rounded-xl bg-white p-1.5 shadow-xl outline outline-1 outline-slate-200">
+                        {(
+                          [
+                            ["journal", "Koleksi Jurnal"],
+                            ["review", "Literatur Review"],
+                            ["map", "Peta Penelitian"],
+                          ] as const
+                        ).map(([type, label]) => (
+                          <button
+                            key={type}
+                            type="button"
+                            role="menuitem"
+                            onClick={() => {
+                              setCollectionTab(type);
+                              setMobileCollectionMenuOpen(false);
+                              exitFolderSelect();
+                            }}
+                            className={`w-full rounded-lg px-3 py-2 text-left text-xs font-semibold ${
+                              collectionTab === type ? "bg-sky-50 text-[#0369a1]" : "text-slate-600"
+                            }`}
+                          >
+                            {label}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
 
               <div className="-mx-4 mt-2 flex gap-2 overflow-x-auto px-4 pb-2 [scrollbar-width:none]">
-                {[{ id: "all", name: "Semua" }, ...folders].map((folder, chipIndex) => {
-                  const active = activeFolderId === folder.id;
-                  const count = folderCounts[folder.id] ?? 0;
+                {[
+                  { id: "all", name: "Semua" },
+                  ...(collectionTab === "journal" ? folders : collectionTab === "review" ? literatureFolders : mapFolders),
+                ].map((folder, chipIndex) => {
+                  const active =
+                    collectionTab === "journal"
+                      ? activeFolderId === folder.id
+                      : collectionTab === "review"
+                        ? activeLiteratureFolderId === folder.id
+                        : activeMapFolderId === folder.id;
+                  const count =
+                    collectionTab === "journal"
+                      ? (folderCounts[folder.id] ?? 0)
+                      : collectionTab === "review"
+                        ? (literatureCounts[folder.id] ?? 0)
+                        : (mapCounts[folder.id] ?? 0);
                   return (
                     <button
                       key={folder.id}
                       type="button"
-                      onClick={() => setActiveFolderId(folder.id)}
+                      onClick={() =>
+                        collectionTab === "journal"
+                          ? setActiveFolderId(folder.id)
+                          : collectionTab === "review"
+                            ? setActiveLiteratureFolderId(folder.id)
+                            : setActiveMapFolderId(folder.id)
+                      }
                       className={`flex shrink-0 items-center gap-2 rounded-full px-3 py-2 text-xs shadow-sm ${
                         active ? "bg-[#00629b] text-white" : "bg-white text-[#64748b]"
                       }`}
@@ -6864,7 +7872,8 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                 })}
               </div>
 
-              {collectionJournals.length === 0 ? (
+              {collectionTab === "journal" ? (
+                collectionJournals.length === 0 ? (
                 <div className="mt-6 flex flex-col items-center rounded-2xl bg-white px-6 py-12 text-center shadow-sm">
                   <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" />
@@ -6969,6 +7978,53 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                   </article>
                 ))}
               </div>
+              )
+              ) : collectionTab === "review" ? (
+                collectionLiterature.length === 0 ? (
+                  <div className="mt-6 rounded-2xl bg-white px-6 py-12 text-center text-xs text-[#64748b] shadow-sm">
+                    Belum ada literature review di folder ini.
+                  </div>
+                ) : (
+                  <div className="mt-2 space-y-3">
+                    {collectionLiterature.map(item => (
+                      <article key={item.id} className="rounded-xl bg-white p-4 shadow-sm">
+                        <span className="rounded-full bg-sky-50 px-2 py-1 text-[10px] font-semibold text-[#00629b]">Literature Review</span>
+                        <h2 className="mt-3 font-['Plus_Jakarta_Sans:Bold'] text-base font-bold leading-6 text-slate-900">{item.title}</h2>
+                        <p className="mt-1 text-xs leading-5 text-slate-500">{item.topic}</p>
+                        <p className="mt-3 text-xs text-slate-500">{item.sources} · {item.period} · {item.date}</p>
+                        <div className="mt-4 flex gap-2">
+                          <button type="button" onClick={() => openSavedLiterature(item)} className="flex-1 rounded-lg bg-[#00629b] px-3 py-2.5 text-xs font-semibold text-white">Buka</button>
+                          <select value={item.folderId} onChange={event => moveLiterature(item.id, event.target.value)} aria-label="Pilih folder literature review" className="min-w-0 flex-1 rounded-lg bg-slate-100 px-2 text-xs font-semibold outline-none">
+                            {literatureFolders.map(folder => <option key={folder.id} value={folder.id}>{folder.name}</option>)}
+                          </select>
+                          <button type="button" aria-label="Hapus literature review" onClick={() => removeLiterature(item.id)} className="rounded-lg px-3 text-xs font-semibold text-red-600 outline outline-1 outline-rose-200">Hapus</button>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                )
+              ) : collectionMaps.length === 0 ? (
+                <div className="mt-6 rounded-2xl bg-white px-6 py-12 text-center text-xs text-[#64748b] shadow-sm">
+                  Belum ada peta penelitian di folder ini.
+                </div>
+              ) : (
+                <div className="mt-2 space-y-3">
+                  {collectionMaps.map(item => (
+                    <article key={item.id} className="rounded-xl bg-white p-4 shadow-sm">
+                      <span className="rounded-full bg-indigo-50 px-2 py-1 text-[10px] font-semibold text-indigo-700">Peta Penelitian</span>
+                      <h2 className="mt-3 font-['Plus_Jakarta_Sans:Bold'] text-base font-bold leading-6 text-slate-900">{item.title}</h2>
+                      <p className="mt-1 text-xs leading-5 text-slate-500">{item.topic}</p>
+                      <p className="mt-3 text-xs text-slate-500">{item.sources} · {item.clusters} · {item.date}</p>
+                      <div className="mt-4 flex gap-2">
+                        <button type="button" onClick={() => openSavedMap(item)} className="flex-1 rounded-lg bg-[#00629b] px-3 py-2.5 text-xs font-semibold text-white">Buka</button>
+                        <select value={item.folderId} onChange={event => moveMap(item.id, event.target.value)} aria-label="Pilih folder peta penelitian" className="min-w-0 flex-1 rounded-lg bg-slate-100 px-2 text-xs font-semibold outline-none">
+                          {mapFolders.map(folder => <option key={folder.id} value={folder.id}>{folder.name}</option>)}
+                        </select>
+                        <button type="button" aria-label="Hapus peta penelitian" onClick={() => removeMap(item.id)} className="rounded-lg px-3 text-xs font-semibold text-red-600 outline outline-1 outline-rose-200">Hapus</button>
+                      </div>
+                    </article>
+                  ))}
+                </div>
               )}
             </div>
 
@@ -6977,14 +8033,14 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <h1 className="font-['Plus_Jakarta_Sans:ExtraBold'] text-[28px] font-extrabold tracking-[-0.69px] text-[#003859]">
-                      {collectionTab === "journal" ? "Koleksi jurnal" : collectionTab === "review" ? "Koleksi literatur review" : "Koleksi peta penelitian"}
+                      {collectionTab === "journal" ? "Koleksi jurnal" : collectionTab === "review" ? "Koleksi Literature Review" : "Koleksi Peta Penelitian"}
                     </h1>
                     <p className="mt-1.5 text-sm leading-6 text-[#64748b]">
                       {collectionTab === "journal"
-                        ? "Simpan jurnal penting agar mudah ditemukan kembali saat menulis."
+                        ? "Simpan jurnal yang relevan agar mudah diakses saat kamu membutuhkannya."
                         : collectionTab === "review"
-                          ? "Simpan hasil literature review agar mudah dibuka kembali saat menulis."
-                          : "Simpan peta penelitian agar mudah dibuka kembali saat menyusun karya."}
+                          ? "Simpan hasil literature review agar mudah diakses kembali saat kamu membutuhkannya."
+                          : "Simpan hasil peta penelitian agar mudah diakses kembali saat kamu membutuhkannya."}
                     </p>
                   </div>
                   <button
@@ -7030,7 +8086,10 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                         type="button"
                         role="tab"
                         aria-selected={active}
-                        onClick={() => setCollectionTab(type)}
+                        onClick={() => {
+                          setCollectionTab(type);
+                          exitFolderSelect();
+                        }}
                         className={`flex flex-1 items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-xs font-semibold transition-colors md:text-sm ${
                           active ? "bg-[#00629b] text-white shadow-sm md:bg-sky-700" : "text-slate-600 hover:bg-slate-50"
                         }`}
@@ -7093,61 +8152,128 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                       </button>
                     </div>
                   ) : (
-                    <div className="mt-5 space-y-4">
-                      {collectionLiterature.map(item => (
-                        <article key={item.id} className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold text-slate-600">{item.period}</span>
-                            <span className="rounded-full bg-sky-50 px-2.5 py-1 text-[11px] font-semibold text-[#00629b]">{item.sources}</span>
+                    <div className="mt-6 space-y-4">
+                      {collectionLiterature.slice(0, 1).map(item => (
+                        <section key={item.id} className="rounded-[24px] border border-slate-200/90 bg-white p-7 shadow-[0_1px_2px_rgba(0,0,0,0.05)]">
+                          <div className="rounded-2xl border border-sky-100/80 bg-gradient-to-br from-sky-50 via-blue-50/50 to-indigo-50/40 px-4 py-3.5">
+                            <p className="font-['Plus_Jakarta_Sans:SemiBold'] text-xs font-semibold text-slate-400">Topik yang dianalisis</p>
+                            <p className="mt-1 font-['Plus_Jakarta_Sans:Bold'] text-sm font-bold leading-5 text-[#075985]">{item.topic}</p>
                           </div>
-                          <h3 className="mt-3 text-lg font-bold leading-6 text-slate-900">{item.title}</h3>
-                          <p className="mt-1 text-sm leading-6 text-slate-500">{item.topic}</p>
-                          <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-3">
-                            <span className="text-xs text-slate-400">
-                              {item.date} · {literatureFolders.find(folder => folder.id === item.folderId)?.name ?? "Belum dikelompokkan"}
+
+                          <div className="mt-4 grid grid-cols-4 gap-4">
+                            {[
+                              ["Total hasil ditemukan", "126", "text-[#0369a1]"],
+                              ["Duplikasi dihapus", "34", "text-[#f43f5e]"],
+                              ["Artikel tersisa untuk sintesis", "92", "text-[#0d9488]"],
+                              ["Artikel prioritas tinggi", "24", "text-[#9333ea]"],
+                            ].map(([label, value, tone]) => (
+                              <div key={label} className="rounded-2xl border border-slate-200/80 px-4 py-3.5">
+                                <p className="min-h-8 font-['Plus_Jakarta_Sans:Medium'] text-xs font-medium leading-4 text-slate-400">{label}</p>
+                                <p className="flex items-baseline gap-1.5"><span className={`font-['Plus_Jakarta_Sans:ExtraBold'] text-2xl font-extrabold ${tone}`}>{value}</span><span className="text-xs text-slate-500">artikel</span></p>
+                              </div>
+                            ))}
+                          </div>
+
+                          <div className="mt-4 grid grid-cols-[minmax(0,7fr)_minmax(250px,5fr)] gap-4">
+                            <div className="min-w-0 rounded-2xl border border-slate-200/80 p-5">
+                              <div className="flex items-center gap-3">
+                                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-sky-50 text-[#0369a1]">
+                                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                    <rect x="2" y="2" width="12" height="12" rx="2" />
+                                    <path d="M2 6h12M6 2v12" />
+                                  </svg>
+                                </span>
+                                <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-base font-bold text-slate-900">Matriks Literatur</h2>
+                              </div>
+                              <p className="mt-1 text-xs leading-5 text-slate-500">Daftar studi yang dianalisis beserta fokus, teori, metode, temuan utama, dan kontribusi penelitian.</p>
+                              <div className="relative mt-3">
+                                <div
+                                  className="max-h-[330px] overflow-auto [scrollbar-color:transparent_transparent] [scrollbar-width:thin] [&.is-scrolling]:[scrollbar-color:#3b82f6_transparent] [&.is-scrolling::-webkit-scrollbar-thumb]:bg-blue-500 [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-transparent [&::-webkit-scrollbar-track]:bg-transparent"
+                                  onScroll={event => {
+                                    const scroller = event.currentTarget;
+                                    scroller.classList.add("is-scrolling");
+                                    window.clearTimeout(Number(scroller.dataset.scrollbarTimeout));
+                                    scroller.dataset.scrollbarTimeout = String(window.setTimeout(() => {
+                                      scroller.classList.remove("is-scrolling");
+                                    }, 700));
+                                  }}
+                                >
+                                  <table className="w-full min-w-[560px] table-fixed text-left text-xs">
+                                    <thead className="border-b border-slate-200 text-slate-400"><tr>{["Penelitian", "Fokus", "Teori", "Metode", "Temuan Utama", "Kontribusi"].map(label => <th key={label} className="px-2 py-2 font-semibold">{label} ⇅</th>)}</tr></thead>
+                                    <tbody>{matrixRows.slice(0, 3).map((row, index) => <tr key={`${row.name}-${index}`} className="border-b border-slate-100 align-top last:border-0"><td className="px-2 py-3"><span className="font-bold text-[#0369a1]">{row.name}</span><span className="mt-0.5 block text-[11px] leading-4 text-slate-400">{row.journal}</span></td>{row.cells.map(cell => <td key={cell} className="px-2 py-3 leading-4 text-slate-600">{cell}</td>)}</tr>)}</tbody>
+                                  </table>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="min-w-0 rounded-2xl border border-slate-200/80 p-5">
+                              <div className="flex items-center gap-3">
+                                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-sky-50 text-[#0369a1]">
+                                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                    <path d="M2.5 3.5h4.2c.7 0 1.3.6 1.3 1.3v8.7c0-.7-.6-1.3-1.3-1.3H2.5z" />
+                                    <path d="M13.5 3.5H9.3c-.7 0-1.3.6-1.3 1.3v8.7c0-.7.6-1.3 1.3-1.3h4.2z" />
+                                  </svg>
+                                </span>
+                                <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-base font-bold text-slate-900">Jurnal yang Digunakan</h2>
+                              </div>
+                              <p className="mt-1 text-xs leading-5 text-slate-500">Daftar jurnal yang menjadi sumber penyusunan literature review.</p>
+                              <table className="mt-3 w-full text-left text-xs">
+                                <thead className="border-b border-slate-200 text-slate-400"><tr><th className="py-2">Penulis ⇅</th><th className="py-2 text-center">Tahun ⇅</th><th className="py-2 text-right">Sumber</th></tr></thead>
+                                <tbody>{priorityRows.slice(0, 5).map(row => <tr key={row.title} className="border-b border-slate-100 last:border-0"><td className="max-w-[135px] py-3 pr-2 font-medium text-slate-800">{row.authors}</td><td className="py-3 text-center text-slate-500">{row.year}</td><td className="py-3 text-right"><span className="inline-flex items-center gap-1.5 text-slate-700"><img src={sourceLogos[row.source] ?? "/assets/source-logos/openalex.svg"} alt="" className="h-3.5 w-3.5 object-contain" />{row.source}</span></td></tr>)}</tbody>
+                              </table>
+                            </div>
+                          </div>
+
+                          <div className="mt-4 flex items-center gap-2">
+                            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-sky-50 text-[#0369a1]">
+                              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true">
+                                <path d="M2.5 4h11M2.5 8h11M2.5 12h7" />
+                              </svg>
                             </span>
-                            <div className="flex flex-wrap items-center justify-end gap-2">
-                              <button
-                                type="button"
-                                onClick={() => removeLiterature(item.id)}
-                                className="flex items-center gap-1.5 rounded-xl border border-rose-200 px-3.5 py-2 text-xs font-semibold text-rose-600 transition-colors hover:bg-rose-50"
-                              >
-                                <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-base font-bold text-slate-900">Struktur Dokumen (12 Bagian)</h2>
+                          </div>
+                          <div className="mt-2 flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                            {["Ringkasan Utama", "Pendahuluan", "Metodologi dan Cakupan", "Matriks Literatur", "Perbandingan Studi", "Pengelompokan Tema"].map((name, index) => <span key={name} className={`flex shrink-0 items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-medium ${index === 0 ? "bg-[#0369a1] text-white" : "bg-slate-100 text-slate-600"}`}><span className={`flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-bold ${index === 0 ? "bg-white/20" : "bg-slate-300 text-slate-700"}`}>{index + 1}</span>{name}</span>)}
+                          </div>
+
+                          <div className="mt-3 rounded-2xl border border-slate-200/80 bg-slate-50/70 p-5">
+                            <div className="flex gap-4">
+                              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-[#0369a1]">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                  <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" />
+                                </svg>
+                              </span>
+                              <div>
+                                <h3 className="font-['Plus_Jakarta_Sans:Bold'] text-sm font-bold text-slate-900">Ringkasan Utama</h3>
+                                <p className="mt-1 text-sm leading-5 text-slate-600">Tinjauan literatur ini mengkaji 126 artikel yang tersaring menjadi 92 studi relevan tentang {item.topic.toLowerCase()}. Temuan menunjukkan pentingnya dukungan sosial, akses sumber daya, dan faktor individual.</p>
+                              </div>
+                            </div>
+                            <div className="mt-4 flex justify-end gap-2.5 border-t border-slate-200/60 pt-3">
+                              <button type="button" onClick={() => removeLiterature(item.id)} className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-rose-50 transition-colors">
+                                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                                   <path d="M2.5 4.5h11M6 4.5V3h4v1.5M4 4.5l.7 9h6.6l.7-9" />
                                 </svg>
                                 Hapus
                               </button>
                               <label className="relative">
-                                <select
-                                  aria-label="Pilih folder literatur"
-                                  value={item.folderId}
-                                  onChange={event => moveLiterature(item.id, event.target.value)}
-                                  className="appearance-none rounded-xl border border-slate-200 bg-white py-2 pl-3 pr-8 text-xs font-semibold text-slate-700 outline-none"
-                                >
-                                  {literatureFolders.map(folder => (
-                                    <option key={folder.id} value={folder.id}>
-                                      {folder.name}
-                                    </option>
-                                  ))}
+                                <select aria-label="Pilih folder literatur" value={item.folderId} onChange={event => moveLiterature(item.id, event.target.value)} className="appearance-none rounded-xl border border-slate-200 bg-white py-1.5 pl-8 pr-7 text-xs font-semibold text-slate-700">
+                                  {literatureFolders.map(folder => <option key={folder.id} value={folder.id}>{folder.name}</option>)}
                                 </select>
-                                <svg width="10" height="7" viewBox="0 0 12 8" fill="none" stroke="#64748b" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2">
-                                  <path d="M1 1.5L6 6.5l5-5" />
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2">
+                                  <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" />
                                 </svg>
                               </label>
-                              <button
-                                type="button"
-                                onClick={() => openSavedLiterature(item)}
-                                className="flex items-center gap-1.5 rounded-xl bg-[#0066a1] px-4 py-2 text-xs font-semibold text-white"
-                              >
-                                <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                                  <path d="M1.5 8s2.5-4.5 6.5-4.5S14.5 8 14.5 8 12 12.5 8 12.5 1.5 8 1.5 8z" />
-                                  <circle cx="8" cy="8" r="1.8" />
+                              <button type="button" onClick={() => openSavedLiterature(item)} className="flex items-center gap-1.5 rounded-xl bg-[#0369a1] px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-[#025684] transition-colors">
+                                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                  <path d="M1 8s3-5 7-5 7 5 7 5-3 5-7 5-7-5-7-5z" />
+                                  <circle cx="8" cy="8" r="2" />
                                 </svg>
                                 Lihat Detail
                               </button>
                             </div>
                           </div>
-                        </article>
+                        </section>
                       ))}
                     </div>
                   )
@@ -7160,60 +8286,177 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                   </div>
                 ) : (
                   <div className="mt-5 space-y-4">
-                    {collectionMaps.map(item => (
-                      <article key={item.id} className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold text-slate-600">{item.sources}</span>
-                          <span className="rounded-full bg-sky-50 px-2.5 py-1 text-[11px] font-semibold text-[#00629b]">{item.clusters}</span>
+                    {collectionMaps.slice(0, 1).map(item => (
+                      <section key={item.id} className="space-y-4">
+                        <div className="grid grid-cols-12 gap-3 rounded-2xl border border-slate-200/90 bg-white p-4">
+                          <label className="col-span-5">
+                            <span className="text-[11px] text-slate-500">Topik penelitian ⓘ</span>
+                            <span className="mt-1 flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2 text-xs font-bold text-slate-800">
+                              <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#0070ba" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="shrink-0">
+                                <circle cx="7" cy="7" r="4.5" />
+                                <path d="M10.5 10.5L14 14" />
+                              </svg>
+                              {item.topic}
+                            </span>
+                          </label>
+                          <label className="col-span-3">
+                            <span className="text-[11px] text-slate-500">Sumber jurnal ⓘ</span>
+                            <span className="mt-1 block rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2 text-xs font-bold text-slate-800">{item.sources}</span>
+                          </label>
+                          <label className="col-span-4">
+                            <span className="text-[11px] text-slate-500">Periode publikasi ⓘ</span>
+                            <span className="mt-1 flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2 text-xs font-bold text-slate-800">
+                              <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#0070ba" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="shrink-0">
+                                <rect x="2" y="3" width="12" height="11" rx="2" />
+                                <path d="M2 7h12M5 1.5v3M11 1.5v3" />
+                              </svg>
+                              2020 - 2026
+                            </span>
+                          </label>
                         </div>
-                        <h3 className="mt-3 text-lg font-bold leading-6 text-slate-900">{item.title}</h3>
-                        <p className="mt-1 text-sm leading-6 text-slate-500">{item.topic}</p>
-                        <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-3">
-                          <span className="text-xs text-slate-400">
-                            {item.date} · {mapFolders.find(folder => folder.id === item.folderId)?.name ?? "Belum dikelompokkan"}
-                          </span>
-                          <div className="flex flex-wrap items-center justify-end gap-2">
-                            <button
-                              type="button"
-                              onClick={() => removeMap(item.id)}
-                              className="flex items-center gap-1.5 rounded-xl border border-rose-200 px-3.5 py-2 text-xs font-semibold text-rose-600 transition-colors hover:bg-rose-50"
-                            >
-                              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+
+                        <div className="grid grid-cols-3 gap-4">
+                          <article className="rounded-2xl border border-slate-200/90 bg-white p-4">
+                            <div className="flex items-center justify-between">
+                              <span className="flex items-center gap-2.5">
+                                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-[#0070ba]">
+                                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                    <circle cx="4" cy="4" r="2" />
+                                    <circle cx="12" cy="5" r="2" />
+                                    <circle cx="8" cy="12" r="2" />
+                                    <path d="M5.5 5l5 6M10.5 6L8.5 10.5M5.5 4.5h5" />
+                                  </svg>
+                                </span>
+                                <strong className="text-xs text-slate-900">Peta Jaringan</strong>
+                              </span>
+                              <span className="flex h-6 w-6 items-center justify-center rounded-lg text-slate-400">
+                                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                  <circle cx="8" cy="8" r="6" />
+                                  <path d="M8 5v6M5 8h6" />
+                                </svg>
+                              </span>
+                            </div>
+                            <p className="mt-1.5 text-center text-xs leading-4 text-slate-600">Menampilkan hubungan antar topik berdasarkan kemunculan bersama.</p>
+                            <div className="relative mt-4 flex h-56 items-center justify-center overflow-hidden rounded-xl border border-slate-100 bg-white">
+                              <svg width="130" height="82" viewBox="0 0 130 82" fill="none" stroke="#cbd5e1" strokeWidth="1.5" aria-hidden="true">
+                                <line x1="32" y1="26" x2="65" y2="41" />
+                                <line x1="98" y1="28" x2="65" y2="41" />
+                                <line x1="38" y1="60" x2="65" y2="41" />
+                                <line x1="96" y1="58" x2="65" y2="41" />
+                                <line x1="32" y1="26" x2="98" y2="28" />
+                                <line x1="38" y1="60" x2="96" y2="58" />
+                              </svg>
+                              <span className="absolute left-1/2 top-1/2 flex h-9 w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-[#0070ba] text-[6px] font-bold text-white shadow-sm">AI literacy</span>
+                              <span className="absolute left-[24%] top-[30%] h-3 w-3 rounded-full bg-blue-400" /><span className="absolute right-[22%] top-[32%] h-3 w-3 rounded-full bg-emerald-400" /><span className="absolute bottom-[27%] left-[27%] h-3 w-3 rounded-full bg-amber-400" /><span className="absolute bottom-[24%] right-[25%] h-3 w-3 rounded-full bg-cyan-400" />
+                            </div>
+                          </article>
+
+                          <article className="rounded-2xl border border-slate-200/90 bg-white p-4">
+                            <div className="flex items-center justify-between">
+                              <span className="flex items-center gap-2.5">
+                                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-[#0070ba]">
+                                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                    <circle cx="8" cy="8" r="6" />
+                                    <circle cx="8" cy="8" r="3" fill="#0070ba" fillOpacity="0.3" />
+                                    <circle cx="8" cy="8" r="1" fill="#0070ba" />
+                                  </svg>
+                                </span>
+                                <strong className="text-xs text-slate-900">Peta Kepadatan</strong>
+                              </span>
+                              <span className="flex h-6 w-6 items-center justify-center rounded-lg text-slate-400">
+                                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                  <circle cx="8" cy="8" r="6" />
+                                  <path d="M8 5v6M5 8h6" />
+                                </svg>
+                              </span>
+                            </div>
+                            <p className="mt-1.5 text-center text-xs leading-4 text-slate-600">Menampilkan tingkat konsentrasi topik dalam penelitian.</p>
+                            <div className="relative mt-4 h-56 overflow-hidden rounded-xl border border-slate-700 bg-[#072448] text-[9px] font-bold text-white">
+                              <span className="absolute left-1/2 top-1/2 h-24 w-36 -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-400/70 blur-2xl" /><span className="absolute left-[30%] top-[30%] h-16 w-24 rounded-full bg-cyan-400/60 blur-2xl" /><span className="absolute right-[18%] top-[20%] h-16 w-24 rounded-full bg-emerald-400/50 blur-2xl" />
+                              <span className="absolute left-6 top-6">generative AI</span><span className="absolute right-5 top-5">student engagement</span><span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[11px]">AI literacy</span><span className="absolute bottom-5 left-8">AI anxiety</span><span className="absolute bottom-5 right-5">academic performance</span>
+                            </div>
+                            <div className="mt-2 flex items-center gap-2 text-[10px] text-slate-400"><span>Rendah</span><span className="h-2 flex-1 rounded-full bg-gradient-to-r from-blue-600 via-cyan-400 to-red-500" /><span>Tinggi</span></div>
+                          </article>
+
+                          <article className="rounded-2xl border border-slate-200/90 bg-white p-4">
+                            <div className="flex items-center justify-between">
+                              <span className="flex items-center gap-2.5">
+                                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 text-[#0070ba]">
+                                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                    <path d="M2 13l3.5-4 3 2.5 5.5-7" />
+                                    <path d="M10.5 4.5H14V8" />
+                                  </svg>
+                                </span>
+                                <strong className="text-xs text-slate-900">Peta Perkembangan</strong>
+                              </span>
+                              <span className="flex h-6 w-6 items-center justify-center rounded-lg text-slate-400">
+                                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                  <circle cx="8" cy="8" r="6" />
+                                  <path d="M8 5v6M5 8h6" />
+                                </svg>
+                              </span>
+                            </div>
+                            <p className="mt-1.5 text-center text-xs leading-4 text-slate-600">Menampilkan rata-rata tahun publikasi setiap topik.</p>
+                            <div className="relative mt-4 flex h-56 items-center justify-center overflow-hidden rounded-xl border border-slate-100 bg-white">
+                              <svg width="134" height="81" viewBox="0 0 134 81" fill="none" stroke="#cbd5e1" strokeWidth="1.5" aria-hidden="true">
+                                <line x1="34" y1="26" x2="67" y2="40" />
+                                <line x1="100" y1="27" x2="67" y2="40" />
+                                <line x1="39" y1="58" x2="67" y2="40" />
+                                <line x1="98" y1="57" x2="67" y2="40" />
+                                <path d="M25 60 Q 67 15, 110 55" stroke="#10b981" strokeWidth="1.5" strokeDasharray="3 3" />
+                              </svg>
+                              <span className="absolute left-1/2 top-1/2 flex h-9 w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-emerald-500 text-[6px] font-bold text-white shadow-sm">AI literacy</span><span className="absolute left-[25%] top-[30%] h-3 w-3 rounded-full bg-blue-500" /><span className="absolute right-[23%] top-[31%] h-3 w-3 rounded-full bg-amber-400" /><span className="absolute bottom-[25%] left-[28%] h-3 w-3 rounded-full bg-cyan-400" /><span className="absolute bottom-[24%] right-[26%] h-3 w-3 rounded-full bg-emerald-400" />
+                            </div>
+                            <div className="mt-2 h-1.5 rounded-full bg-gradient-to-r from-blue-600 via-emerald-400 to-amber-500" /><div className="mt-1 flex justify-between text-[9px] text-slate-400">{[2020, 2021, 2022, 2023, 2024, 2025, 2026].map(year => <span key={year}>{year}</span>)}</div>
+                          </article>
+                        </div>
+
+                        <section className="overflow-hidden rounded-2xl border border-slate-200/90 bg-white">
+                          <div className="flex items-center justify-between border-b border-slate-100 p-5">
+                            <div className="flex items-center gap-3">
+                              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-[#0070ba]">
+                                <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                  <path d="M2.5 3.5h4.2c.7 0 1.3.6 1.3 1.3v8.7c0-.7-.6-1.3-1.3-1.3H2.5z" />
+                                  <path d="M13.5 3.5H9.3c-.7 0-1.3.6-1.3 1.3v8.7c0-.7.6-1.3 1.3-1.3h4.2z" />
+                                </svg>
+                              </span>
+                              <div>
+                                <h3 className="text-sm font-bold text-slate-900">Jurnal yang Digunakan</h3>
+                                <p className="text-xs leading-4 text-slate-500">Daftar jurnal yang menjadi dasar pembuatan peta penelitian.</p>
+                              </div>
+                            </div>
+                            <span className="rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-2 text-xs text-slate-400">Cari judul, penulis, atau kata kunci...</span>
+                          </div>
+                          <div className="overflow-x-auto"><table className="w-full min-w-[700px] text-left text-xs"><thead className="bg-slate-50/70 text-slate-500"><tr><th className="px-5 py-3">Penulis</th><th className="px-5 py-3">Judul</th><th className="px-5 py-3">Tahun ⇅</th><th className="px-5 py-3">Sumber</th></tr></thead><tbody>{priorityRows.slice(0, 5).map(row => <tr key={row.title} className="border-t border-slate-100"><td className="px-5 py-4 text-slate-800">{row.authors}</td><td className="px-5 py-4 text-slate-600">{row.title}</td><td className="px-5 py-4 text-slate-600">{row.year}</td><td className="px-5 py-4"><span className="flex items-center gap-2 text-slate-700"><img src={sourceLogos[row.source] ?? "/assets/source-logos/openalex.svg"} alt="" className="h-4 w-4 object-contain" />{row.source}</span></td></tr>)}</tbody></table></div>
+                        </section>
+
+                        <div className="flex items-center justify-between rounded-2xl bg-white px-5 py-4">
+                          <span className="text-xs text-slate-400">{item.date} · {mapFolders.find(folder => folder.id === item.folderId)?.name ?? "Belum dikelompokkan"}</span>
+                          <div className="flex gap-2">
+                            <button type="button" onClick={() => removeMap(item.id)} className="flex items-center gap-1.5 rounded-xl border border-rose-200 px-4 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 transition-colors">
+                              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                                 <path d="M2.5 4.5h11M6 4.5V3h4v1.5M4 4.5l.7 9h6.6l.7-9" />
                               </svg>
                               Hapus
                             </button>
                             <label className="relative">
-                              <select
-                                aria-label="Pilih folder peta"
-                                value={item.folderId}
-                                onChange={event => moveMap(item.id, event.target.value)}
-                                className="appearance-none rounded-xl border border-slate-200 bg-white py-2 pl-3 pr-8 text-xs font-semibold text-slate-700 outline-none"
-                              >
-                                {mapFolders.map(folder => (
-                                  <option key={folder.id} value={folder.id}>
-                                    {folder.name}
-                                  </option>
-                                ))}
+                              <select aria-label="Pilih folder peta" value={item.folderId} onChange={event => moveMap(item.id, event.target.value)} className="appearance-none rounded-xl border border-slate-200 py-2 pl-9 pr-8 text-xs font-bold text-slate-700">
+                                {mapFolders.map(folder => <option key={folder.id} value={folder.id}>{folder.name}</option>)}
                               </select>
-                              <svg width="10" height="7" viewBox="0 0 12 8" fill="none" stroke="#64748b" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2">
-                                <path d="M1 1.5L6 6.5l5-5" />
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2">
+                                <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" />
                               </svg>
                             </label>
-                            <button
-                              type="button"
-                              onClick={() => openSavedMap(item)}
-                              className="flex items-center gap-1.5 rounded-xl bg-[#0066a1] px-4 py-2 text-xs font-semibold text-white"
-                            >
-                              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                                <path d="M1.5 8s2.5-4.5 6.5-4.5S14.5 8 14.5 8 12 12.5 8 12.5 1.5 8 1.5 8z" />
-                                <circle cx="8" cy="8" r="1.8" />
+                            <button type="button" onClick={() => openSavedMap(item)} className="flex items-center gap-1.5 rounded-xl bg-[#0070ba] px-4 py-2 text-xs font-bold text-white hover:bg-[#005c99] transition-colors">
+                              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                <path d="M1 8s3-5 7-5 7 5 7 5-3 5-7 5-7-5-7-5z" />
+                                <circle cx="8" cy="8" r="2" />
                               </svg>
                               Lihat Detail
                             </button>
                           </div>
                         </div>
-                      </article>
+                      </section>
                     ))}
                   </div>
                 )}
@@ -7238,7 +8481,6 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                     <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-base font-bold text-[#1e293b]">
                       {collectionTab === "journal" ? "Folder Jurnal" : collectionTab === "review" ? "Folder Literatur" : "Folder Peta"}
                     </h2>
-                    {collectionTab === "journal" && (
                     <div className="flex items-center gap-1.5">
                       <button
                         type="button"
@@ -7257,16 +8499,17 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                           type="button"
                           aria-label="Buat folder baru"
                           onClick={() => setNewFolderOpen(true)}
-                          className="flex h-6 w-6 items-center justify-center rounded-md border border-slate-200"
+                          className="flex h-6 w-6 items-center justify-center rounded-md border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors"
                         >
-                          <img src={`${collectionAssets}/b2242.svg`} alt="" />
+                          <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+                            <path d="M8 3v10M3 8h10" />
+                          </svg>
                         </button>
                       )}
                     </div>
-                    )}
                   </div>
 
-                  {collectionTab === "journal" && folderSelectMode && (
+                  {folderSelectMode && (
                     <div className="mb-2 flex items-center justify-between gap-2 rounded-xl bg-slate-50 px-3 py-2">
                       <span className="text-xs text-[#64748b]">{selectedFolderIds.length} folder dipilih</span>
                       <button
@@ -7274,7 +8517,7 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                         disabled={selectedFolderIds.length === 0}
                         onClick={deleteSelectedFolders}
                         className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold text-white transition-colors ${
-                          selectedFolderIds.length === 0 ? "cursor-not-allowed bg-slate-300" : "bg-[#bd3434]"
+                          selectedFolderIds.length === 0 ? "cursor-not-allowed bg-slate-300" : "bg-[#bd3434] hover:bg-[#a52a2a]"
                         }`}
                       >
                         <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -7285,100 +8528,83 @@ export default function CariJurnalFigmaPanel({ onBack }: { onBack: () => void })
                     </div>
                   )}
 
-                  <div className="space-y-1">
-                    {collectionTab === "journal" ? (
-                    <>
-                    <button
-                      type="button"
-                      onClick={() => (folderSelectMode ? undefined : setActiveFolderId("all"))}
-                      aria-disabled={folderSelectMode}
-                      className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-colors ${
-                        folderSelectMode
-                          ? "text-slate-400"
-                          : activeFolderId === "all"
-                            ? "bg-sky-100 text-[#0066a1]"
-                            : "text-[#475569]"
-                      }`}
-                    >
-                      <img src={`${collectionAssets}/8b8d1.svg`} alt="" className={folderSelectMode ? "opacity-40" : ""} />
-                      <span className="flex-1">Semua</span>
-                      <span>{folderCounts.all ?? 0}</span>
-                    </button>
-                    {folders.map(folder => {
-                      const selected = selectedFolderIds.includes(folder.id);
-                      return (
+                  {(() => {
+                    const currentFolders = collectionTab === "journal" ? folders : collectionTab === "review" ? literatureFolders : mapFolders;
+                    const currentActiveId = collectionTab === "journal" ? activeFolderId : collectionTab === "review" ? activeLiteratureFolderId : activeMapFolderId;
+                    const currentCounts = collectionTab === "journal" ? folderCounts : collectionTab === "review" ? literatureCounts : mapCounts;
+                    const handleSelectAll = () => {
+                      if (folderSelectMode) return;
+                      if (collectionTab === "journal") setActiveFolderId("all");
+                      else if (collectionTab === "review") setActiveLiteratureFolderId("all");
+                      else setActiveMapFolderId("all");
+                    };
+                    const handleSelectFolder = (id: string) => {
+                      if (folderSelectMode) {
+                        toggleFolderSelection(id);
+                      } else {
+                        if (collectionTab === "journal") setActiveFolderId(id);
+                        else if (collectionTab === "review") setActiveLiteratureFolderId(id);
+                        else setActiveMapFolderId(id);
+                      }
+                    };
+
+                    return (
+                      <div className="space-y-1">
                         <button
-                          key={folder.id}
                           type="button"
-                          onClick={() => (folderSelectMode ? toggleFolderSelection(folder.id) : setActiveFolderId(folder.id))}
-                          aria-pressed={folderSelectMode ? selected : undefined}
+                          onClick={handleSelectAll}
+                          aria-disabled={folderSelectMode}
                           className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-colors ${
-                            folderSelectMode && selected
-                              ? "bg-rose-50 text-[#bd3434]"
-                              : activeFolderId === folder.id && !folderSelectMode
+                            folderSelectMode
+                              ? "text-slate-400"
+                              : currentActiveId === "all"
                                 ? "bg-sky-100 text-[#0066a1]"
-                                : "text-[#475569] hover:bg-slate-50"
+                                : "text-[#475569]"
                           }`}
                         >
-                          {folderSelectMode ? (
-                            <span
-                              className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border ${
-                                selected ? "border-[#bd3434] bg-[#bd3434]" : "border-slate-300 bg-white"
-                              }`}
-                            >
-                              {selected && (
-                                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                                  <path d="M1.5 5.2l2.3 2.3 4.7-5" />
-                                </svg>
-                              )}
-                            </span>
-                          ) : (
-                            <img src={`${collectionAssets}/e1558.svg`} alt="" />
-                          )}
-                          <span className="flex-1">{folder.name}</span>
-                          <span>{folderCounts[folder.id] ?? 0}</span>
-                        </button>
-                      );
-                    })}
-                    </>
-                    ) : (
-                      <>
-                        <button
-                          type="button"
-                          onClick={() => (collectionTab === "review" ? setActiveLiteratureFolderId("all") : setActiveMapFolderId("all"))}
-                          className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-colors ${
-                            (collectionTab === "review" ? activeLiteratureFolderId : activeMapFolderId) === "all"
-                              ? "bg-sky-100 text-[#0066a1]"
-                              : "text-[#475569]"
-                          }`}
-                        >
-                          <img src={`${collectionAssets}/8b8d1.svg`} alt="" />
+                          <img src={`${collectionAssets}/8b8d1.svg`} alt="" className={folderSelectMode ? "opacity-40" : ""} />
                           <span className="flex-1">Semua</span>
-                          <span>{collectionTab === "review" ? (literatureCounts.all ?? 0) : (mapCounts.all ?? 0)}</span>
+                          <span>{currentCounts.all ?? 0}</span>
                         </button>
-                        {(collectionTab === "review" ? literatureFolders : mapFolders).map(folder => {
-                          const activeId = collectionTab === "review" ? activeLiteratureFolderId : activeMapFolderId;
-                          const counts = collectionTab === "review" ? literatureCounts : mapCounts;
+                        {currentFolders.map(folder => {
+                          const selected = selectedFolderIds.includes(folder.id);
                           return (
                             <button
                               key={folder.id}
                               type="button"
-                              onClick={() =>
-                                collectionTab === "review" ? setActiveLiteratureFolderId(folder.id) : setActiveMapFolderId(folder.id)
-                              }
+                              onClick={() => handleSelectFolder(folder.id)}
+                              aria-pressed={folderSelectMode ? selected : undefined}
                               className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-colors ${
-                                activeId === folder.id ? "bg-sky-100 text-[#0066a1]" : "text-[#475569] hover:bg-slate-50"
+                                folderSelectMode && selected
+                                  ? "bg-rose-50 text-[#bd3434]"
+                                  : currentActiveId === folder.id && !folderSelectMode
+                                    ? "bg-sky-100 text-[#0066a1]"
+                                    : "text-[#475569] hover:bg-slate-50"
                               }`}
                             >
-                              <img src={`${collectionAssets}/e1558.svg`} alt="" />
+                              {folderSelectMode ? (
+                                <span
+                                  className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border ${
+                                    selected ? "border-[#bd3434] bg-[#bd3434]" : "border-slate-300 bg-white"
+                                  }`}
+                                >
+                                  {selected && (
+                                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                      <path d="M1.5 5.2l2.3 2.3 4.7-5" />
+                                    </svg>
+                                  )}
+                                </span>
+                              ) : (
+                                <img src={`${collectionAssets}/e1558.svg`} alt="" />
+                              )}
                               <span className="flex-1">{folder.name}</span>
-                              <span>{counts[folder.id] ?? 0}</span>
+                              <span>{currentCounts[folder.id] ?? 0}</span>
                             </button>
                           );
                         })}
-                      </>
-                    )}
-                  </div>
+                      </div>
+                    );
+                  })()}
                 </div>
               </aside>
             </div>
