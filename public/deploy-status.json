@@ -1,0 +1,8 @@
+{
+  "url": "https://alerin-ai.vercel.app",
+  "state": "error",
+  "reason": "perubahan tertunda",
+  "startedAt": "2026-10-28T03:28:25.778Z",
+  "updatedAt": "2026-10-28T03:28:51.660Z",
+  "message": "} ✗ Resource is limited - try again in 24 hours (more than 100, code: \"api-deployments-free-per-day\").   Check the billing or feature requirement reported above with a team owner. Retry after that requirement is resolved."
+}

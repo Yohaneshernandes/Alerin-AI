@@ -3094,11 +3094,29 @@ function ShortcutModal({ type, onClose, onSubmit }: { type: ShortcutType; onClos
 }
 
 // ─── TAB: Percakapan (Chat) ───────────────────────────────────────────────────
-function PercakapanTab({ onFeatureClick, onTab, onFeatureRec, initialMsgs, pendingPrompt, onPendingPromptConsumed }: { onFeatureClick: (f: string) => void; onTab: (t: NavTab) => void; onFeatureRec?: (rec: FeatureRec) => void; initialMsgs?: ChatMsg[]; pendingPrompt?: string; onPendingPromptConsumed?: () => void }) {
+function PercakapanTab({
+  onFeatureClick,
+  onTab,
+  onFeatureRec,
+  initialMsgs,
+  pendingPrompt,
+  pendingDraft,
+  onPendingPromptConsumed,
+  onPendingDraftConsumed,
+}: {
+  onFeatureClick: (f: string) => void;
+  onTab: (t: NavTab) => void;
+  onFeatureRec?: (rec: FeatureRec) => void;
+  initialMsgs?: ChatMsg[];
+  pendingPrompt?: string;
+  pendingDraft?: string;
+  onPendingPromptConsumed?: () => void;
+  onPendingDraftConsumed?: () => void;
+}) {
   const [msgs, setMsgs] = useState<ChatMsg[]>(initialMsgs ?? []);
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState(pendingDraft ?? "");
   const [typing, setTyping] = useState(false);
-  const [chatMode, setChatMode] = useState((initialMsgs ?? []).length > 0);
+  const [chatMode, setChatMode] = useState((initialMsgs ?? []).length > 0 || Boolean(pendingDraft));
   const [activeCategory, setActiveCategory] = useState<CategoryKey | null>(null);
   const [shortcutModal, setShortcutModal] = useState<ShortcutType | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -3111,7 +3129,15 @@ function PercakapanTab({ onFeatureClick, onTab, onFeatureRec, initialMsgs, pendi
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [msgs, typing]);
 
   useEffect(() => {
-    if (pendingPrompt) { send(pendingPrompt); onPendingPromptConsumed?.(); }
+    if (pendingPrompt) {
+      send(pendingPrompt);
+      onPendingPromptConsumed?.();
+    }
+    if (pendingDraft) {
+      setInput(pendingDraft);
+      setChatMode(true);
+      onPendingDraftConsumed?.();
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -6018,7 +6044,7 @@ function PlagiasPanel({ onBack }: { onBack: () => void }) {
   );
 }
 
-function FiturTab({ onChat, openFeatureKey, onFeatureOpened }: { onChat: (prompt?: string) => void; openFeatureKey?: FeatureKey; onFeatureOpened?: () => void }) {
+function FiturTab({ onChat, openFeatureKey, onFeatureOpened }: { onChat: (prompt?: string, draft?: string) => void; openFeatureKey?: FeatureKey; onFeatureOpened?: () => void }) {
   const [showParafrase, setShowParafrase] = useState(openFeatureKey === "parafrase");
   const [showGrammar, setShowGrammar] = useState(openFeatureKey === "grammar");
   const [showPlagiasi, setShowPlagiasi] = useState(openFeatureKey === "plagiasi");
@@ -6041,7 +6067,17 @@ function FiturTab({ onChat, openFeatureKey, onFeatureOpened }: { onChat: (prompt
   if (showParafrase) return <ParafraseFigmaPanel onBack={() => setShowParafrase(false)} />;
   if (showGrammar) return <GrammarPanel onBack={() => setShowGrammar(false)} />;
   if (showPlagiasi) return <PlagiasPanel onBack={() => setShowPlagiasi(false)} />;
-  if (showJurnal) return <CariJurnalFigmaPanel onBack={() => setShowJurnal(false)} />;
+  if (showJurnal) {
+    return (
+      <CariJurnalFigmaPanel
+        onBack={() => setShowJurnal(false)}
+        onDiskusikan={(draft) => {
+          setShowJurnal(false);
+          onChat(undefined, draft);
+        }}
+      />
+    );
+  }
   if (showCariJudul) return <CariJudulPanel onBack={() => setShowCariJudul(false)} />;
 
   return (
@@ -10826,6 +10862,7 @@ export default function AlerinPage() {
   const [historyMsgs, setHistoryMsgs] = useState<ChatMsg[] | undefined>(undefined);
   const [historyKey, setHistoryKey] = useState(0);
   const [pendingPrompt, setPendingPrompt] = useState<string | undefined>(undefined);
+  const [pendingDraft, setPendingDraft] = useState<string | undefined>(undefined);
   const [pendingFeature, setPendingFeature] = useState<FeatureKey | undefined>(undefined);
   const [registerOpen, setRegisterOpen] = useState(false);
 
@@ -10835,8 +10872,9 @@ export default function AlerinPage() {
     setTab("percakapan");
   };
 
-  const goToChat = (prompt?: string) => {
+  const goToChat = (prompt?: string, draft?: string) => {
     setPendingPrompt(prompt);
+    setPendingDraft(draft);
     setHistoryMsgs(undefined);
     setHistoryKey(k => k + 1);
     setTab("percakapan");
@@ -10849,7 +10887,19 @@ export default function AlerinPage() {
 
   return (
     <Shell activeTab={tab} onTab={(t) => { setTab(t); if (t === "percakapan") { setHistoryMsgs(undefined); setHistoryKey(k => k + 1); } if (t !== "fitur") setPendingFeature(undefined); }} onOpenHistory={openHistory} onNewChat={() => { setHistoryMsgs(undefined); setHistoryKey(k => k + 1); setTab("percakapan"); }}>
-      {tab === "percakapan" && <PercakapanTab key={historyKey} onFeatureClick={() => setTab("fitur")} onTab={setTab} onFeatureRec={goToFeature} initialMsgs={historyMsgs} pendingPrompt={pendingPrompt} onPendingPromptConsumed={() => setPendingPrompt(undefined)} />}
+      {tab === "percakapan" && (
+        <PercakapanTab
+          key={historyKey}
+          onFeatureClick={() => setTab("fitur")}
+          onTab={setTab}
+          onFeatureRec={goToFeature}
+          initialMsgs={historyMsgs}
+          pendingPrompt={pendingPrompt}
+          pendingDraft={pendingDraft}
+          onPendingPromptConsumed={() => setPendingPrompt(undefined)}
+          onPendingDraftConsumed={() => setPendingDraft(undefined)}
+        />
+      )}
       {tab === "fitur" && <FiturTab onChat={goToChat} openFeatureKey={pendingFeature} onFeatureOpened={() => setPendingFeature(undefined)} />}
       {tab === "proyek" && <ProyekTab onTab={setTab} onOpenHistory={openHistory} />}
       {tab === "progress" && <ProgressTab />}

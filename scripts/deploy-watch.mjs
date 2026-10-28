@@ -8,15 +8,16 @@ const scope = "hernandesyohanes-8759";
 const statusRel = "public/deploy-status.json";
 const statusPath = resolve(root, statusRel);
 const logPath = resolve(root, ".deploy-watch.log");
-const debounceMs = 5000;
+const debounceMs = 25000;
 
 const watchDirs = ["src", "public"];
 const watchRootFiles = ["index.html", "package.json", "vite.config.ts"];
-const ignorePatterns = [/deploy-status\.json$/, /\.DS_Store$/, /\.deploy-watch\.log$/];
+const ignorePatterns = [/deploy-status\.json$/, /\.DS_Store$/, /\.deploy-watch\.log$/, /dist\//];
 
 let timer = null;
 let deploying = false;
 let queued = false;
+let rateLimitedUntil = 0;
 
 const started = new Date().toISOString();
 
@@ -41,6 +42,11 @@ function writeStatus(payload) {
 }
 
 function runDeploy(reason) {
+  if (Date.now() < rateLimitedUntil) {
+    const sisaMenit = Math.ceil((rateLimitedUntil - Date.now()) / 60000);
+    log(`deploy dilewati: rate limit Vercel (tunggu ~${sisaMenit} menit)`);
+    return;
+  }
   if (deploying) {
     queued = true;
     return;
@@ -64,17 +70,26 @@ function runDeploy(reason) {
 
   child.on("close", code => {
     const finishedAt = new Date().toISOString();
-    const ready = code === 0 && output.includes('"readyState": "READY"');
+    const isRateLimit = output.includes("api-deployments-free-per-day");
+    if (isRateLimit) {
+      rateLimitedUntil = Date.now() + 30 * 60 * 1000; // 30 menit cooldown
+      queued = false;
+    }
+    const ready = code === 0 && !isRateLimit;
     log(`deploy ${ready ? "ready" : "failed"} (exit ${code})`);
     writeStatus({
       state: ready ? "ready" : "error",
       reason,
       startedAt,
       updatedAt: finishedAt,
-      message: ready ? "Deployment production siap." : output.trim().split("\n").slice(-3).join(" "),
+      message: ready
+        ? "Deployment production siap."
+        : isRateLimit
+          ? "Limit harian Vercel (100 deploy/hari) tercapai. Silakan coba kembali beberapa saat lagi."
+          : output.trim().split("\n").slice(-3).join(" "),
     });
     deploying = false;
-    if (queued) {
+    if (queued && !isRateLimit) {
       queued = false;
       runDeploy("perubahan tertunda");
     }

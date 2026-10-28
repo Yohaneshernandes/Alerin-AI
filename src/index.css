@@ -68,33 +68,53 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-.profile-dark .bg-white {
+.profile-dark .bg-white,
+.alerin-dark-theme .bg-white,
+.alerin-dark-theme .bg-white\/80,
+.alerin-dark-theme .bg-white\/85,
+.alerin-dark-theme .bg-white\/90,
+.alerin-dark-theme .bg-white\/95 {
   background-color: #1e293b !important;
 }
 
-.profile-dark .bg-slate-50 {
+.profile-dark .bg-slate-50,
+.alerin-dark-theme .bg-slate-50 {
   background-color: #0f172a !important;
 }
 
 .profile-dark .bg-slate-100,
-.profile-dark .bg-slate-200 {
+.profile-dark .bg-slate-200,
+.alerin-dark-theme .bg-slate-100,
+.alerin-dark-theme .bg-slate-200 {
   background-color: #1e293b !important;
 }
 
 .profile-dark .bg-slate-300,
-.profile-dark .bg-slate-400 {
+.profile-dark .bg-slate-400,
+.alerin-dark-theme .bg-slate-300,
+.alerin-dark-theme .bg-slate-400 {
   background-color: #475569 !important;
 }
 
-.profile-dark .bg-blue-50 {
+.profile-dark .bg-blue-50,
+.alerin-dark-theme .bg-blue-50 {
   background-color: #172554 !important;
 }
 
-.profile-dark .bg-emerald-50 {
+.alerin-dark-theme .bg-sky-50,
+.alerin-dark-theme .bg-sky-100,
+.alerin-dark-theme .bg-sky-100\/80 {
+  background-color: rgba(14, 116, 144, 0.25) !important;
+  color: #38bdf8 !important;
+}
+
+.profile-dark .bg-emerald-50,
+.alerin-dark-theme .bg-emerald-50 {
   background-color: #052e2b !important;
 }
 
-.profile-dark .bg-red-50 {
+.profile-dark .bg-red-50,
+.alerin-dark-theme .bg-red-50 {
   background-color: #450a0a !important;
 }
 
@@ -107,7 +127,17 @@ body {
 .profile-dark .text-\[\#3e3f40\],
 .profile-dark .text-\[\#343941\],
 .profile-dark .text-\[\#414243\],
-.profile-dark .text-\[\#4f4f51\] {
+.profile-dark .text-\[\#4f4f51\],
+.alerin-dark-theme .text-slate-900,
+.alerin-dark-theme .text-slate-800,
+.alerin-dark-theme .text-slate-700,
+.alerin-dark-theme .text-black,
+.alerin-dark-theme .text-\[\#232323\],
+.alerin-dark-theme .text-\[\#0f172a\],
+.alerin-dark-theme .text-\[\#1e293b\],
+.alerin-dark-theme .text-\[\#1D293D\],
+.alerin-dark-theme .text-\[\#313131\],
+.alerin-dark-theme .text-\[\#334155\] {
   color: #f8fafc !important;
 }
 
@@ -117,37 +147,62 @@ body {
 .profile-dark .text-slate-500,
 .profile-dark .text-slate-400,
 .profile-dark .text-slate-300,
-.profile-dark .text-profile-motto-ink {
+.profile-dark .text-profile-motto-ink,
+.alerin-dark-theme .text-slate-600,
+.alerin-dark-theme .text-slate-500,
+.alerin-dark-theme .text-slate-400,
+.alerin-dark-theme .text-\[\#475569\],
+.alerin-dark-theme .text-\[\#64748b\],
+.alerin-dark-theme .text-\[\#71717a\] {
   color: #cbd5e1 !important;
 }
 
 .profile-dark .border-slate-100,
 .profile-dark .border-slate-200,
-.profile-dark .border-slate-300 {
+.profile-dark .border-slate-300,
+.alerin-dark-theme .border-slate-100,
+.alerin-dark-theme .border-slate-200,
+.alerin-dark-theme .border-slate-300,
+.alerin-dark-theme .border-slate-200\/80,
+.alerin-dark-theme .border-slate-200\/70,
+.alerin-dark-theme .border-slate-200\/60,
+.alerin-dark-theme .border-slate-200\/50,
+.alerin-dark-theme .border-slate-200\/40,
+.alerin-dark-theme .border-slate-200\/30,
+.alerin-dark-theme .border-slate-200\/90 {
   border-color: #334155 !important;
 }
 
 .profile-dark .border-blue-100,
-.profile-dark .border-blue-200 {
+.profile-dark .border-blue-200,
+.alerin-dark-theme .border-blue-100,
+.alerin-dark-theme .border-blue-200 {
   border-color: #1e40af !important;
 }
 
-.profile-dark .border-emerald-200 {
+.profile-dark .border-emerald-200,
+.alerin-dark-theme .border-emerald-200 {
   border-color: #047857 !important;
 }
 
 .profile-dark .border-red-100,
-.profile-dark .border-red-200 {
+.profile-dark .border-red-200,
+.alerin-dark-theme .border-red-100,
+.alerin-dark-theme .border-red-200 {
   border-color: #991b1b !important;
 }
 
-.profile-dark .hover\:bg-slate-50:hover {
+.profile-dark .hover\:bg-slate-50:hover,
+.alerin-dark-theme .hover\:bg-slate-50:hover {
   background-color: #334155 !important;
 }
 
 .profile-dark input,
 .profile-dark select,
-.profile-dark textarea {
+.profile-dark textarea,
+.alerin-dark-theme input,
+.alerin-dark-theme select,
+.alerin-dark-theme textarea {
   border-color: #475569 !important;
   background-color: #0f172a !important;
   color: #f8fafc !important;
@@ -155,8 +210,42 @@ body {
 }
 
 .profile-dark input::placeholder,
-.profile-dark textarea::placeholder {
+.profile-dark textarea::placeholder,
+.alerin-dark-theme input::placeholder,
+.alerin-dark-theme textarea::placeholder {
   color: #94a3b8 !important;
+}
+
+.alerin-dark-theme aside {
+  background-color: #0f172a !important;
+  border-color: #1e293b !important;
+}
+
+.alerin-dark-theme header {
+  background-color: #0f172a !important;
+  border-color: #1e293b !important;
+}
+
+.alerin-dark-theme .bg-\[\#f4f7fb\],
+.alerin-dark-theme .bg-\[\#f3f6f9\],
+.alerin-dark-theme .bg-\[\#f1f5f9\],
+.alerin-dark-theme .bg-\[\#f8fafc\] {
+  background-color: #0b0f19 !important;
+}
+
+.alerin-dark-theme .bg-\[\#eaf6ff\] {
+  background-color: #172554 !important;
+}
+
+.alerin-dark-theme .bg-\[rgba\(200\,226\,251\,0\.24\)\] {
+  background-color: #1e293b !important;
+}
+
+.alerin-dark-theme .shadow-sm,
+.alerin-dark-theme .shadow-md,
+.alerin-dark-theme .shadow-lg,
+.alerin-dark-theme .shadow-2xl {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.4) !important;
 }
 
 .profile-dark input:disabled,
@@ -334,5 +423,25 @@ body {
   }
   to {
     transform: translateX(-480px);
+  }
+}
+
+/* Alerin Jurnal Loader: Kartu dokumen mengalir turun ke bawah */
+@keyframes alerin-cards-scroll-down {
+  0% {
+    transform: translateY(-50%);
+  }
+  100% {
+    transform: translateY(0%);
+  }
+}
+
+/* Alerin Jurnal Loader: Kaca pembesar bergerak melingkar (posisi & orientasi tetap, bukan muter jarum jam) */
+@keyframes alerin-magnifier-circular {
+  0% {
+    transform: rotate(0deg) translateX(11px) rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg) translateX(11px) rotate(-360deg);
   }
 }
