@@ -5409,13 +5409,13 @@ const literatureDocSections = [
   {
     key: "4",
     title: "Matriks Literatur",
-    desc: "Fokus, teori, metode, temuan utama, dan kontribusi khas tiap studi",
+    desc: "Fokus, teori, metode, temuan utama, dan kontribusi penelitian tiap studi",
     section: 4,
     content: [
-      "Matriks merangkum fokus, teori, metode, temuan utama, dan kontribusi khas dari studi unggulan agar perbandingan lintas penelitian dapat dilakukan secara cepat.",
+      "Matriks merangkum fokus, teori, metode, temuan utama, dan kontribusi penelitian dari studi unggulan agar perbandingan lintas penelitian dapat dilakukan secara cepat.",
       "Setiap baris memuat sitasi lengkap dan basis sumber agar klaim dalam sintesis ini dapat diverifikasi kembali.",
-      "Matriks menyusun setiap studi pada lima dimensi—fokus, teori, metode, temuan utama, dan kontribusi khas—sehingga pola kemiripan dan perbedaan antarkajian terlihat langsung tanpa harus membaca seluruh artikel.",
-      "Kolom kontribusi khas menandai kebaruan tiap studi, sementara kolom celah memperlihatkan wilayah yang belum tergarap dan menjadi bahan penting bagi penyusunan sintesis pada bagian berikutnya.",
+      "Matriks menyusun setiap studi pada lima dimensi—fokus, teori, metode, temuan utama, dan kontribusi penelitian—sehingga pola kemiripan dan perbedaan antarkajian terlihat langsung tanpa harus membaca seluruh artikel.",
+      "Kolom kontribusi penelitian menandai kebaruan tiap studi, sementara kolom celah memperlihatkan wilayah yang belum tergarap dan menjadi bahan penting bagi penyusunan sintesis pada bagian berikutnya.",
     ],
   },
   {
@@ -5521,62 +5521,169 @@ function FrameScrollIndicator({
   className?: string;
 }) {
   const [isScrolling, setIsScrolling] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [thumbRatio, setThumbRatio] = useState(0.2);
   const timeoutRef = useRef<number | undefined>(undefined);
+  const trackRef = useRef<HTMLDivElement | null>(null);
+  const isDraggingRef = useRef(false);
+  const dragStartY = useRef(0);
+  const dragStartScrollTop = useRef(0);
+
+  const getScrollEl = useCallback(() => {
+    const el = document.getElementById(containerId) || document.querySelector("main");
+    if (el && el.scrollHeight > el.clientHeight + 2) return el;
+    if (document.documentElement && document.documentElement.scrollHeight > document.documentElement.clientHeight + 2) {
+      return document.documentElement;
+    }
+    return el || document.documentElement || document.body;
+  }, [containerId]);
+
+  const updateMetrics = useCallback((triggerShow = true) => {
+    const scrollEl = getScrollEl();
+    if (!scrollEl) return;
+    const { scrollTop, scrollHeight, clientHeight } = scrollEl;
+    const maxScroll = scrollHeight - clientHeight;
+    if (maxScroll <= 0) {
+      setIsScrolling(false);
+      return;
+    }
+    const progress = Math.min(1, Math.max(0, scrollTop / maxScroll));
+    const ratio = Math.max(0.1, Math.min(0.4, clientHeight / scrollHeight));
+    setThumbRatio(ratio);
+    setScrollProgress(progress);
+
+    if (triggerShow) {
+      setIsScrolling(true);
+      if (timeoutRef.current) window.clearTimeout(timeoutRef.current);
+      if (!isDraggingRef.current) {
+        timeoutRef.current = window.setTimeout(() => {
+          setIsScrolling(false);
+        }, 1000);
+      }
+    }
+  }, [getScrollEl]);
 
   useEffect(() => {
-    const scrollEl = document.getElementById(containerId) || document.querySelector("main");
+    const scrollEl = getScrollEl();
     if (!scrollEl) return;
 
-    const handleScroll = () => {
-      const { scrollTop, scrollHeight, clientHeight } = scrollEl;
-      const maxScroll = scrollHeight - clientHeight;
-      if (maxScroll <= 0) {
-        setIsScrolling(false);
-        return;
-      }
-      const progress = Math.min(1, Math.max(0, scrollTop / maxScroll));
-      const ratio = Math.max(0.12, Math.min(0.5, clientHeight / scrollHeight));
-      setThumbRatio(ratio);
-      setScrollProgress(progress);
-      setIsScrolling(true);
-
-      if (timeoutRef.current) window.clearTimeout(timeoutRef.current);
-      timeoutRef.current = window.setTimeout(() => {
-        setIsScrolling(false);
-      }, 1100);
-    };
+    const handleScroll = () => updateMetrics(true);
 
     scrollEl.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", handleScroll, { passive: true });
 
-    // Petunjuk awal saat halaman dibuka
-    setIsScrolling(true);
-    timeoutRef.current = window.setTimeout(() => {
-      setIsScrolling(false);
-    }, 1500);
+    // Inisialisasi metrics tanpa memicu scrollbar muncul saat halaman pertama kali dibuka
+    updateMetrics(false);
 
     return () => {
       scrollEl.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
       if (timeoutRef.current) window.clearTimeout(timeoutRef.current);
     };
-  }, [containerId]);
+  }, [getScrollEl, updateMetrics]);
+
+  const handlePointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const scrollEl = getScrollEl();
+    const track = trackRef.current;
+    if (!scrollEl || !track) return;
+
+    const rect = track.getBoundingClientRect();
+    const maxScroll = scrollEl.scrollHeight - scrollEl.clientHeight;
+    if (maxScroll <= 0) return;
+
+    const trackHeight = rect.height;
+    const thumbHeight = trackHeight * thumbRatio;
+    const availableTrack = trackHeight - thumbHeight;
+    if (availableTrack <= 0) return;
+
+    const clickY = e.clientY - rect.top;
+    const currentThumbTop = scrollProgress * availableTrack;
+
+    // Cek apakah klik berada di dalam area thumb atau di luar
+    const isNearThumb = clickY >= currentThumbTop - 3 && clickY <= currentThumbTop + thumbHeight + 3;
+
+    if (!isNearThumb) {
+      // Langsung loncat ke posisi yang diklik
+      const targetThumbTop = clickY - thumbHeight / 2;
+      const targetProgress = Math.min(1, Math.max(0, targetThumbTop / availableTrack));
+      const nextScrollTop = targetProgress * maxScroll;
+      scrollEl.scrollTop = nextScrollTop;
+      setScrollProgress(targetProgress);
+      dragStartScrollTop.current = nextScrollTop;
+    } else {
+      dragStartScrollTop.current = scrollEl.scrollTop;
+    }
+
+    isDraggingRef.current = true;
+    setIsDragging(true);
+    setIsScrolling(true);
+    dragStartY.current = e.clientY;
+
+    const onPointerMove = (moveEvent: PointerEvent) => {
+      if (!isDraggingRef.current) return;
+      moveEvent.preventDefault();
+      const deltaY = moveEvent.clientY - dragStartY.current;
+      const deltaScroll = (deltaY / availableTrack) * maxScroll;
+      const nextScrollTop = Math.min(maxScroll, Math.max(0, dragStartScrollTop.current + deltaScroll));
+      scrollEl.scrollTop = nextScrollTop;
+      setScrollProgress(nextScrollTop / maxScroll);
+    };
+
+    const onPointerUp = () => {
+      isDraggingRef.current = false;
+      setIsDragging(false);
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerup", onPointerUp);
+      window.removeEventListener("pointercancel", onPointerUp);
+      document.body.style.removeProperty("user-select");
+      document.body.style.removeProperty("cursor");
+      if (timeoutRef.current) window.clearTimeout(timeoutRef.current);
+      timeoutRef.current = window.setTimeout(() => {
+        setIsScrolling(false);
+      }, 1000);
+    };
+
+    document.body.style.userSelect = "none";
+    document.body.style.cursor = "grabbing";
+
+    window.addEventListener("pointermove", onPointerMove);
+    window.addEventListener("pointerup", onPointerUp);
+    window.addEventListener("pointercancel", onPointerUp);
+  };
 
   return (
     <div
-      className={`pointer-events-none absolute -right-3.5 lg:-right-5 top-2 bottom-8 w-2 hidden md:block z-30 transition-opacity duration-300 ease-out ${
-        isScrolling ? "opacity-100" : "opacity-0"
+      className={`absolute -right-3 lg:-right-4.5 top-2 bottom-8 w-3 hidden md:block z-30 transition-opacity duration-300 ease-out select-none ${
+        isScrolling || isDragging || isHovered ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
       } ${className}`}
-      aria-hidden="true"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      aria-label="Petunjuk garis scroll navigasi frame"
     >
       <div className="sticky top-6 flex h-[calc(100vh-140px)] w-full flex-col items-center py-1">
-        <div className="relative h-full w-1.5 rounded-full bg-slate-300/40 backdrop-blur-[1px]">
+        <div
+          ref={trackRef}
+          onPointerDown={handlePointerDown}
+          className="group/track relative flex h-full w-full cursor-pointer items-center justify-center select-none"
+          title="Klik atau geser untuk menggulir halaman"
+        >
+          {/* Garis lintasan visual abu-abu ramping */}
+          <div className="h-full w-1 rounded-full bg-slate-200/80 transition-colors group-hover/track:bg-slate-300/80" />
+
+          {/* Thumb scrollbar abu-abu yang bisa digeser */}
           <div
             style={{
               height: `${Math.round(thumbRatio * 100)}%`,
               top: `${scrollProgress * (100 - thumbRatio * 100)}%`,
             }}
-            className="absolute w-full rounded-full bg-[#00629b] shadow-[0_1px_3px_rgba(0,98,155,0.4)] transition-[top] duration-75 ease-out"
+            className={`absolute w-1.5 rounded-full bg-slate-400 hover:bg-slate-500 active:bg-slate-600 cursor-grab active:cursor-grabbing shadow-2xs ${
+              isDragging ? "" : "transition-[top] duration-75 ease-out"
+            }`}
           />
         </div>
       </div>
@@ -5619,7 +5726,7 @@ function DesktopLiteratureReview({
     { key: "empiris", label: "Empiris (46)" },
   ];
 
-  const matrixHeaders = ["Penelitian", "Fokus", "Teori", "Metode", "Temuan Utama", "Kontribusi Khas"];
+  const matrixHeaders = ["Penelitian", "Fokus", "Teori", "Metode", "Temuan Utama", "Kontribusi Penelitian"];
 
   const [savedJournalTitles, setSavedJournalTitles] = useState<string[]>([]);
   const toggleSaveJournal = (title: string) => {
@@ -6041,20 +6148,62 @@ function DesktopLiteratureReview({
             </table>
           </div>
 
-          {/* Garis Penanda Scroll di Pinggir Frame - Muncul Saat Scroll, Menghilang Saat Diam */}
+          {/* Garis Penanda Scroll di Pinggir Frame - Bisa Diklik dan Digeser */}
           <div
-            className={`pointer-events-none absolute right-1.5 top-2 bottom-2 w-1.5 z-20 transition-opacity duration-300 ease-out ${
-              isPriorityScrolling ? "opacity-100" : "opacity-0"
+            className={`pointer-events-auto absolute right-1 top-2 bottom-2 w-3 z-20 flex items-center justify-center cursor-pointer transition-opacity duration-300 ease-out select-none ${
+              isPriorityScrolling ? "opacity-100" : "opacity-40 hover:opacity-100"
             }`}
-            aria-hidden="true"
+            onPointerDown={e => {
+              e.preventDefault();
+              const scrollEl = priorityTableRef.current;
+              const track = e.currentTarget;
+              if (!scrollEl || !track) return;
+              const rect = track.getBoundingClientRect();
+              const maxScroll = scrollEl.scrollHeight - scrollEl.clientHeight;
+              if (maxScroll <= 0) return;
+              const trackHeight = rect.height;
+              const thumbHeight = trackHeight * priorityThumbRatio;
+              const availableTrack = trackHeight - thumbHeight;
+              if (availableTrack <= 0) return;
+              const clickY = e.clientY - rect.top;
+              const currentThumbTop = priorityScrollProgress * availableTrack;
+              if (clickY < currentThumbTop - 3 || clickY > currentThumbTop + thumbHeight + 3) {
+                const targetThumbTop = clickY - thumbHeight / 2;
+                const nextProgress = Math.min(1, Math.max(0, targetThumbTop / availableTrack));
+                scrollEl.scrollTop = nextProgress * maxScroll;
+                setPriorityScrollProgress(nextProgress);
+              }
+              setIsPriorityScrolling(true);
+              const startY = e.clientY;
+              const startScroll = scrollEl.scrollTop;
+              const onMove = (me: PointerEvent) => {
+                me.preventDefault();
+                const deltaY = me.clientY - startY;
+                scrollEl.scrollTop = Math.min(maxScroll, Math.max(0, startScroll + (deltaY / availableTrack) * maxScroll));
+              };
+              const onUp = () => {
+                window.removeEventListener("pointermove", onMove);
+                window.removeEventListener("pointerup", onUp);
+                window.removeEventListener("pointercancel", onUp);
+                document.body.style.removeProperty("user-select");
+                document.body.style.removeProperty("cursor");
+                window.setTimeout(() => setIsPriorityScrolling(false), 1000);
+              };
+              document.body.style.userSelect = "none";
+              document.body.style.cursor = "grabbing";
+              window.addEventListener("pointermove", onMove);
+              window.addEventListener("pointerup", onUp);
+              window.addEventListener("pointercancel", onUp);
+            }}
+            title="Klik atau geser untuk menggulir"
           >
-            <div className="relative h-full w-full rounded-full bg-slate-200/50">
+            <div className="relative h-full w-1.5 rounded-full bg-slate-200/60">
               <div
                 style={{
                   height: `${priorityThumbRatio * 100}%`,
                   top: `${priorityScrollProgress * (1 - priorityThumbRatio) * 100}%`,
                 }}
-                className="absolute w-full rounded-full bg-[#00629b] shadow-xs transition-all duration-75"
+                className="absolute w-full rounded-full bg-[#00629b] shadow-xs cursor-grab active:cursor-grabbing hover:bg-[#004f80]"
               />
             </div>
           </div>
@@ -6074,7 +6223,7 @@ function DesktopLiteratureReview({
           <div>
             <h2 className="text-lg font-bold leading-7 text-slate-900">Matriks Literatur</h2>
             <p className="mt-0.5 text-sm leading-5 text-slate-500">
-              Analisis perbandingan penelitian untuk membantu penyusunan literature review
+              Daftar studi yang dianalisis beserta fokus, teori, metode, temuan utama, dan kontribusi penelitian.
             </p>
           </div>
           <label className="flex h-10 w-full shrink-0 items-center gap-2.5 rounded-xl border border-slate-300 bg-slate-50/90 px-3.5 shadow-sm transition-colors hover:border-slate-400 hover:bg-white focus-within:border-sky-600 focus-within:bg-white focus-within:ring-2 focus-within:ring-sky-100 md:w-80">
@@ -6145,20 +6294,62 @@ function DesktopLiteratureReview({
             </table>
           </div>
 
-          {/* Garis Penanda Scroll di Pinggir Frame Matriks */}
+          {/* Garis Penanda Scroll di Pinggir Frame Matriks - Bisa Diklik dan Digeser */}
           <div
-            className={`pointer-events-none absolute right-1.5 top-2 bottom-2 w-1.5 z-20 transition-opacity duration-300 ease-out ${
-              isMatrixScrolling ? "opacity-100" : "opacity-0"
+            className={`pointer-events-auto absolute right-1 top-2 bottom-2 w-3 z-20 flex items-center justify-center cursor-pointer transition-opacity duration-300 ease-out select-none ${
+              isMatrixScrolling ? "opacity-100" : "opacity-40 hover:opacity-100"
             }`}
-            aria-hidden="true"
+            onPointerDown={e => {
+              e.preventDefault();
+              const scrollEl = matrixTableRef.current;
+              const track = e.currentTarget;
+              if (!scrollEl || !track) return;
+              const rect = track.getBoundingClientRect();
+              const maxScroll = scrollEl.scrollHeight - scrollEl.clientHeight;
+              if (maxScroll <= 0) return;
+              const trackHeight = rect.height;
+              const thumbHeight = trackHeight * matrixThumbRatio;
+              const availableTrack = trackHeight - thumbHeight;
+              if (availableTrack <= 0) return;
+              const clickY = e.clientY - rect.top;
+              const currentThumbTop = matrixScrollProgress * availableTrack;
+              if (clickY < currentThumbTop - 3 || clickY > currentThumbTop + thumbHeight + 3) {
+                const targetThumbTop = clickY - thumbHeight / 2;
+                const nextProgress = Math.min(1, Math.max(0, targetThumbTop / availableTrack));
+                scrollEl.scrollTop = nextProgress * maxScroll;
+                setMatrixScrollProgress(nextProgress);
+              }
+              setIsMatrixScrolling(true);
+              const startY = e.clientY;
+              const startScroll = scrollEl.scrollTop;
+              const onMove = (me: PointerEvent) => {
+                me.preventDefault();
+                const deltaY = me.clientY - startY;
+                scrollEl.scrollTop = Math.min(maxScroll, Math.max(0, startScroll + (deltaY / availableTrack) * maxScroll));
+              };
+              const onUp = () => {
+                window.removeEventListener("pointermove", onMove);
+                window.removeEventListener("pointerup", onUp);
+                window.removeEventListener("pointercancel", onUp);
+                document.body.style.removeProperty("user-select");
+                document.body.style.removeProperty("cursor");
+                window.setTimeout(() => setIsMatrixScrolling(false), 1000);
+              };
+              document.body.style.userSelect = "none";
+              document.body.style.cursor = "grabbing";
+              window.addEventListener("pointermove", onMove);
+              window.addEventListener("pointerup", onUp);
+              window.addEventListener("pointercancel", onUp);
+            }}
+            title="Klik atau geser untuk menggulir"
           >
-            <div className="relative h-full w-full rounded-full bg-slate-200/50">
+            <div className="relative h-full w-1.5 rounded-full bg-slate-200/60">
               <div
                 style={{
                   height: `${matrixThumbRatio * 100}%`,
                   top: `${matrixScrollProgress * (1 - matrixThumbRatio) * 100}%`,
                 }}
-                className="absolute w-full rounded-full bg-[#00629b] shadow-xs transition-all duration-75"
+                className="absolute w-full rounded-full bg-[#00629b] shadow-xs cursor-grab active:cursor-grabbing hover:bg-[#004f80]"
               />
             </div>
           </div>
@@ -6481,7 +6672,7 @@ function MobileLiteratureReview({
   const sectionDescs: Record<number, string> = {
     2: "Latar belakang, dinamika gender, dan konteks kebencanaan",
     3: "Strategi pencarian, kriteria inklusi, dan seleksi 126 artikel",
-    4: "Fokus, metode, temuan utama, dan kontribusi khas tiap studi",
+    4: "Fokus, metode, temuan utama, dan kontribusi penelitian tiap studi",
   };
   const sectionPreview: Record<number, string[]> = {
     1: [
@@ -6498,7 +6689,7 @@ function MobileLiteratureReview({
       "Kriteria inklusi mencakup publikasi 2020–2026, bahasa Indonesia dan Inggris, serta metode penelitian empiris maupun tinjauan sistematis.",
     ],
     4: [
-      "Matriks merangkum fokus, metode, temuan utama, dan kontribusi khas dari studi unggulan agar perbandingan lintas penelitian dapat dilakukan secara cepat.",
+      "Matriks merangkum fokus, metode, temuan utama, dan kontribusi penelitian dari studi unggulan agar perbandingan lintas penelitian dapat dilakukan secara cepat.",
       "Setiap baris memuat sitasi lengkap dan basis sumber agar klaim dalam sintesis ini dapat diverifikasi kembali.",
     ],
   };
@@ -6727,7 +6918,7 @@ function MobileLiteratureReview({
                   <p className="mt-0.5 text-sm leading-5 text-slate-700">{row.cells[3]}</p>
                 </div>
                 <div>
-                  <p className="text-xs font-semibold text-sky-700">Kontribusi Khas:</p>
+                  <p className="text-xs font-semibold text-sky-700">Kontribusi Penelitian:</p>
                   <p className="mt-0.5 text-sm leading-5 text-slate-700">{row.cells[4]}</p>
                 </div>
               </div>
@@ -7059,7 +7250,6 @@ function DesktopResearchMap({
   const [progress, setProgress] = useState(1);
   const [isPlaying, setIsPlaying] = useState(false);
   const [nodeOffsets, setNodeOffsets] = useState<Record<string, { x: number; y: number }>>({});
-  const [clusterFilter, setClusterFilter] = useState<number | null>(null);
   const [selectedNodeForDetail, setSelectedNodeForDetail] = useState<string | null>(null);
   const [showNodeArticles, setShowNodeArticles] = useState(false);
   const activePointersRef = useRef<Map<number, { x: number; y: number }>>(new Map());
@@ -7179,8 +7369,16 @@ function DesktopResearchMap({
     return () => clearInterval(timer);
   }, [isPlaying]);
 
-  const zoomAt = (nextZoom: number, clientX?: number, clientY?: number) => {
+  const zoomRef = useRef(zoom);
+  zoomRef.current = zoom;
+  const panRef = useRef(pan);
+  panRef.current = pan;
+  const panRafRef = useRef<number | null>(null);
+
+  const zoomAt = useCallback((nextZoom: number, clientX?: number, clientY?: number) => {
     const target = Math.max(50, Math.min(250, nextZoom));
+    const currentZ = zoomRef.current;
+    if (target === currentZ) return;
     const rect = graphRef.current?.getBoundingClientRect();
     if (!rect) {
       setZoom(target);
@@ -7188,12 +7386,14 @@ function DesktopResearchMap({
     }
     const centerX = (clientX ?? rect.left + rect.width / 2) - rect.left;
     const centerY = (clientY ?? rect.top + rect.height / 2) - rect.top;
-    setPan(current => {
-      const ratio = target / zoom;
-      return { x: centerX - (centerX - current.x) * ratio, y: centerY - (centerY - current.y) * ratio };
+    const currentP = panRef.current;
+    const ratio = target / currentZ;
+    setPan({
+      x: centerX - (centerX - currentP.x) * ratio,
+      y: centerY - (centerY - currentP.y) * ratio,
     });
     setZoom(target);
-  };
+  }, []);
 
   const handleMapPointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
     if (event.pointerType === "mouse" && event.button !== 0) return;
@@ -7235,7 +7435,12 @@ function DesktopResearchMap({
     } else if (activePointersRef.current.size === 1) {
       const drag = dragRef.current;
       if (!drag || drag.pointerId !== event.pointerId) return;
-      setPan({ x: drag.originX + event.clientX - drag.startX, y: drag.originY + event.clientY - drag.startY });
+      const nextX = drag.originX + event.clientX - drag.startX;
+      const nextY = drag.originY + event.clientY - drag.startY;
+      if (panRafRef.current) cancelAnimationFrame(panRafRef.current);
+      panRafRef.current = requestAnimationFrame(() => {
+        setPan({ x: nextX, y: nextY });
+      });
     }
   };
 
@@ -7267,13 +7472,23 @@ function DesktopResearchMap({
   useEffect(() => {
     const element = graphRef.current;
     if (!element) return;
+    let wheelRaf: number | null = null;
     const handleWheel = (event: globalThis.WheelEvent) => {
       event.preventDefault();
-      zoomAt(zoom + (event.deltaY > 0 ? -10 : 10), event.clientX, event.clientY);
+      if (wheelRaf) cancelAnimationFrame(wheelRaf);
+      const delta = event.deltaY > 0 ? -15 : 15;
+      const clientX = event.clientX;
+      const clientY = event.clientY;
+      wheelRaf = requestAnimationFrame(() => {
+        zoomAt(zoomRef.current + delta, clientX, clientY);
+      });
     };
     element.addEventListener("wheel", handleWheel, { passive: false });
-    return () => element.removeEventListener("wheel", handleWheel);
-  }, [zoom]);
+    return () => {
+      element.removeEventListener("wheel", handleWheel);
+      if (wheelRaf) cancelAnimationFrame(wheelRaf);
+    };
+  }, [zoomAt]);
 
   useEffect(() => {
     if (!fullscreen) return;
@@ -7418,7 +7633,7 @@ function DesktopResearchMap({
     return [];
   }, [selectedNodeForDetail]);
 
-  const visibleRows = (() => {
+  const visibleRows = useMemo(() => {
     let rows = priorityRows.map((row, index) => ({ row, node: mapMainNodes[index % mapMainNodes.length].name }));
     if (nodeFilter) rows = rows.filter(item => item.node === nodeFilter);
     rows = rows.filter(item => {
@@ -7434,7 +7649,7 @@ function DesktopResearchMap({
     if (yearSort) rows = [...rows].sort((a, b) => (yearSort === "desc" ? b.row.year - a.row.year : a.row.year - b.row.year));
     else if (relevanSort) rows = [...rows].sort((a, b) => (relevanSort === "desc" ? b.row.relevan - a.row.relevan : a.row.relevan - b.row.relevan));
     return rows;
-  })();
+  }, [nodeFilter, chip, mapSearch, yearSort, relevanSort]);
 
   const modeIcon =
     mode === "perkembangan" ? (
@@ -7457,7 +7672,7 @@ function DesktopResearchMap({
       </svg>
     );
 
-  const heatSpots = mapMainNodes.map(node => ({ ...node, size: node.r * 5.6 }));
+  const heatSpots = useMemo(() => mapMainNodes.map(node => ({ ...node, size: node.r * 5.6 })), []);
 
   const analysisRows =
     mode === "kepadatan"
@@ -7613,7 +7828,7 @@ function DesktopResearchMap({
                     setAnalysisOpen(null);
                     resetMapView();
                   }}
-                  className={`flex-1 sm:flex-initial rounded-lg px-3 py-2 text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+                  className={`flex-1 sm:flex-initial rounded-lg px-3 py-2 text-xs sm:text-sm font-semibold transition-all duration-75 active:scale-95 cursor-pointer ${
                     mode === tab.key ? "bg-white text-sky-700 shadow-xs" : "text-slate-500 hover:text-slate-700"
                   }`}
                 >
@@ -7629,7 +7844,7 @@ function DesktopResearchMap({
                   type="button"
                   onClick={() => setShowLines(value => !value)}
                   aria-pressed={showLines}
-                  className="flex items-center gap-2 rounded-lg bg-white px-3 py-1.5 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] cursor-pointer"
+                  className="flex items-center gap-2 rounded-lg bg-white px-3 py-1.5 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] cursor-pointer transition-transform duration-75 active:scale-95"
                 >
                   <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#64748b" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true">
                     <path d="M5.6 8.4l2.8-2.8M4.4 6.4L2.9 7.9a2.47 2.47 0 103.5 3.5l1.5-1.5M9.6 7.6l1.5-1.5a2.47 2.47 0 10-3.5-3.5L6.1 4.1" />
@@ -7643,8 +7858,8 @@ function DesktopResearchMap({
                 <button
                   type="button"
                   aria-label="Perkecil peta"
-                  onClick={() => zoomAt(zoom - 10)}
-                  className="flex h-6 w-6 items-center justify-center rounded-sm text-sm font-bold text-slate-500 transition-colors hover:bg-slate-50 cursor-pointer"
+                  onClick={() => zoomAt(zoom - 18)}
+                  className="flex h-6 w-6 items-center justify-center rounded-sm text-sm font-bold text-slate-500 transition-transform duration-75 hover:bg-slate-50 active:scale-90 cursor-pointer"
                 >
                   &minus;
                 </button>
@@ -7652,15 +7867,15 @@ function DesktopResearchMap({
                   type="button"
                   onClick={resetMapView}
                   title="Reset tampilan peta"
-                  className="w-9 rounded-sm text-center text-xs font-semibold leading-4 text-slate-900 transition-colors hover:bg-slate-50 cursor-pointer"
+                  className="w-9 rounded-sm text-center text-xs font-semibold leading-4 text-slate-900 transition-transform duration-75 hover:bg-slate-50 active:scale-95 cursor-pointer"
                 >
                   {zoom}%
                 </button>
                 <button
                   type="button"
                   aria-label="Perbesar peta"
-                  onClick={() => zoomAt(zoom + 10)}
-                  className="flex h-6 w-6 items-center justify-center rounded-sm text-sm font-bold text-slate-500 transition-colors hover:bg-slate-50 cursor-pointer"
+                  onClick={() => zoomAt(zoom + 18)}
+                  className="flex h-6 w-6 items-center justify-center rounded-sm text-sm font-bold text-slate-500 transition-transform duration-75 hover:bg-slate-50 active:scale-90 cursor-pointer"
                 >
                   +
                 </button>
@@ -7671,7 +7886,7 @@ function DesktopResearchMap({
                   type="button"
                   onClick={() => setNodeOffsets({})}
                   title="Kembalikan semua topik ke posisi awal"
-                  className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-xs transition-colors hover:bg-slate-50 cursor-pointer"
+                  className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-xs transition-transform duration-75 hover:bg-slate-50 active:scale-95 cursor-pointer"
                 >
                   <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <path d="M2.5 8a5.5 5.5 0 0 1 9.39-3.89L13.5 5.5M13.5 2v3.5H10" />
@@ -7686,7 +7901,7 @@ function DesktopResearchMap({
                 onClick={handleDownloadImage}
                 disabled={isDownloadingImage}
                 title="Unduh visualisasi peta sebagai gambar"
-                className={`group flex items-center gap-2 rounded-xl px-3.5 py-1.5 text-sm font-semibold leading-5 transition-all duration-150 cursor-pointer select-none ${
+                className={`group flex items-center gap-2 rounded-xl px-3.5 py-1.5 text-sm font-semibold leading-5 transition-all duration-75 active:scale-95 cursor-pointer select-none ${
                   isDownloadingImage
                     ? "border border-[#0070ba] bg-[#0070ba] text-white shadow-sm"
                     : "border border-slate-300 bg-white text-slate-700 shadow-xs hover:border-[#0070ba] hover:bg-[#eaf6ff] hover:text-[#00629b]"
@@ -7711,7 +7926,7 @@ function DesktopResearchMap({
                   onClick={() => setHelpOpen(value => !value)}
                   aria-expanded={helpOpen}
                   title="Lihat panduan cara membaca peta"
-                  className={`group flex items-center gap-2 rounded-xl px-3.5 py-1.5 text-sm font-semibold leading-5 transition-all duration-150 cursor-pointer select-none ${
+                  className={`group flex items-center gap-2 rounded-xl px-3.5 py-1.5 text-sm font-semibold leading-5 transition-all duration-75 active:scale-95 cursor-pointer select-none ${
                     helpOpen
                       ? "border border-[#0070ba] bg-[#0070ba] text-white shadow-sm"
                       : "border border-slate-300 bg-white text-slate-700 shadow-xs hover:border-[#0070ba] hover:bg-[#eaf6ff] hover:text-[#00629b]"
@@ -7873,37 +8088,6 @@ function DesktopResearchMap({
               </div>
             </div>
           </div>
-
-          {/* Cluster Chips Legend & Filter (Desktop only, hidden on mobile per user request) */}
-          <div className="hidden md:flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
-            <button
-              type="button"
-              onClick={() => setClusterFilter(null)}
-              className={`flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] sm:text-[12px] font-semibold transition-all cursor-pointer ${
-                clusterFilter === null
-                  ? "bg-slate-900 text-white shadow-xs"
-                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-              }`}
-            >
-              Semua Klaster ({mapMainNodes.length})
-            </button>
-            {mapClusters.map((cluster, idx) => (
-              <button
-                key={cluster.label}
-                type="button"
-                onClick={() => setClusterFilter(clusterFilter === idx ? null : idx)}
-                className={`flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] sm:text-[12px] font-semibold transition-all cursor-pointer ${
-                  clusterFilter === idx
-                    ? "bg-sky-50 text-sky-800 ring-2 ring-sky-500 shadow-xs"
-                    : "bg-slate-100 text-slate-700 hover:bg-slate-200"
-                }`}
-              >
-                <span className="h-2.5 w-2.5 rounded-full shrink-0 shadow-2xs" style={{ backgroundColor: cluster.color }} />
-                <span>{cluster.label}</span>
-                <span className="text-[10px] text-slate-500 font-normal">({cluster.items})</span>
-              </button>
-            ))}
-          </div>
         </div>
 
         <div
@@ -7990,7 +8174,15 @@ function DesktopResearchMap({
 
                 if (mode === "kepadatan") {
                   return (
-                    <div className="absolute inset-0" style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom / 100})`, transformOrigin: "0 0" }}>
+                    <div
+                      className="absolute inset-0"
+                      style={{
+                        transform: `translate3d(${pan.x}px, ${pan.y}px, 0) scale(${zoom / 100})`,
+                        transformOrigin: "0 0",
+                        transition: dragging ? "none" : "transform 260ms cubic-bezier(0.2, 0.9, 0.3, 1)",
+                        willChange: "transform",
+                      }}
+                    >
                       {[
                         { x: 8, y: 10, w: 30, h: 34 },
                         { x: 34, y: 62, w: 34, h: 38 },
@@ -7999,13 +8191,14 @@ function DesktopResearchMap({
                       ].map((blob, index) => (
                         <span
                           key={`ambient-${index}`}
-                          className="map-ambient-breathe pointer-events-none absolute rounded-full blur-[42px]"
+                          className="map-ambient-breathe pointer-events-none absolute rounded-full"
                           style={{
                             left: `${blob.x}%`,
                             top: `${blob.y}%`,
                             width: `${blob.w}%`,
                             height: `${blob.h}%`,
-                            background: "rgba(56,189,248,0.35)",
+                            background: "radial-gradient(circle, rgba(56,189,248,0.35) 0%, rgba(56,189,248,0) 70%)",
+                            filter: "blur(12px)",
                             animationDelay: `${index * 2.5}s`,
                           }}
                         />
@@ -8087,23 +8280,32 @@ function DesktopResearchMap({
                 }
 
                 return (
-                  <div className="absolute inset-0" style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom / 100})`, transformOrigin: "0 0" }}>
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      transform: `translate3d(${pan.x}px, ${pan.y}px, 0) scale(${zoom / 100})`,
+                      transformOrigin: "0 0",
+                      transition: dragging ? "none" : "transform 260ms cubic-bezier(0.2, 0.9, 0.3, 1)",
+                      willChange: "transform",
+                    }}
+                  >
                     {[
-                      { x: 12, y: 12, size: 340, color: "rgba(59,130,246,0.18)" },
-                      { x: 46, y: 6, size: 320, color: "rgba(52,211,153,0.18)" },
-                      { x: 68, y: 24, size: 360, color: "rgba(168,85,247,0.16)" },
-                      { x: 6, y: 56, size: 300, color: "rgba(251,191,36,0.18)" },
-                      { x: 76, y: 62, size: 260, color: "rgba(156,163,175,0.18)" },
+                      { x: 12, y: 12, size: 340, color: "rgba(59,130,246,0.22)" },
+                      { x: 46, y: 6, size: 320, color: "rgba(52,211,153,0.22)" },
+                      { x: 68, y: 24, size: 360, color: "rgba(168,85,247,0.2)" },
+                      { x: 6, y: 56, size: 300, color: "rgba(251,191,36,0.22)" },
+                      { x: 76, y: 62, size: 260, color: "rgba(156,163,175,0.2)" },
                     ].map((blob, index) => (
                       <span
                         key={`glow-${index}`}
-                        className="map-ambient-breathe pointer-events-none absolute rounded-full blur-[70px] transition-opacity duration-300"
+                        className="map-ambient-breathe pointer-events-none absolute rounded-full transition-opacity duration-300"
                         style={{
                           left: `${blob.x}%`,
                           top: `${blob.y}%`,
                           width: blob.size,
                           height: blob.size,
-                          background: blob.color,
+                          background: `radial-gradient(circle, ${blob.color} 0%, rgba(255,255,255,0) 70%)`,
+                          filter: "blur(14px)",
                           opacity: mode === "perkembangan" ? 0.7 : 1,
                           animationDelay: `${index * 3.2}s`,
                         }}
@@ -8224,10 +8426,10 @@ function DesktopResearchMap({
                               }}
                             >
                               <span
-                                className={`inline-block rounded px-1.5 py-0.5 text-[9px] sm:text-[10px] md:text-[10.5px] font-semibold leading-tight tracking-tight transition-all ${
+                                className={`inline-block rounded px-1.5 py-0.5 text-[9px] sm:text-[10px] md:text-[10.5px] font-semibold leading-tight tracking-tight ${
                                   mode === "kepadatan"
-                                    ? "text-white [text-shadow:0_1px_3px_rgba(0,0,0,0.9)] bg-black/40 backdrop-blur-[1px]"
-                                    : "text-slate-800 [text-shadow:0_0_3px_rgba(255,255,255,0.95),0_0_5px_rgba(255,255,255,0.9)] bg-white/80 backdrop-blur-[1.5px] border border-slate-200/60 shadow-2xs"
+                                    ? "text-white [text-shadow:0_1px_3px_rgba(0,0,0,0.9)] bg-black/70"
+                                    : "text-slate-800 [text-shadow:0_0_3px_rgba(255,255,255,0.95)] bg-white/95 border border-slate-200/80 shadow-2xs"
                                 } ${isInteractive ? "font-bold text-sky-800 bg-sky-50/95 ring-1 ring-sky-300 scale-105" : ""}`}
                               >
                                 {node.name}
@@ -8403,86 +8605,9 @@ function DesktopResearchMap({
                 );
               })()}
 
-              {/* Floating Action Controls on Canvas (Requirement 2) */}
-              <div className="absolute bottom-3 right-3 z-30 flex flex-col gap-1.5">
-                <button
-                  type="button"
-                  aria-label="Perbesar peta"
-                  onClick={() => zoomAt(zoom + 15)}
-                  className="flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200/90 bg-white/90 text-xl font-bold text-slate-700 shadow-md backdrop-blur-md transition-all hover:bg-white active:scale-95 cursor-pointer"
-                >
-                  +
-                </button>
-                <button
-                  type="button"
-                  onClick={resetMapView}
-                  aria-label="Reset zoom"
-                  title="Klik untuk reset zoom 100%"
-                  className="flex h-8 w-11 items-center justify-center rounded-lg border border-slate-200/70 bg-white/90 text-[11px] font-bold text-slate-700 shadow-xs backdrop-blur-md hover:bg-white cursor-pointer"
-                >
-                  {zoom}%
-                </button>
-                <button
-                  type="button"
-                  aria-label="Perkecil peta"
-                  onClick={() => zoomAt(zoom - 15)}
-                  className="flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200/90 bg-white/90 text-xl font-bold text-slate-700 shadow-md backdrop-blur-md transition-all hover:bg-white active:scale-95 cursor-pointer"
-                >
-                  &minus;
-                </button>
-                <button
-                  type="button"
-                  aria-label="Pusatkan peta kembali"
-                  onClick={resetMapView}
-                  title="Pusatkan kembali tampilan peta"
-                  className="flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200/90 bg-white/90 text-slate-700 shadow-md backdrop-blur-md transition-all hover:bg-white active:scale-95 cursor-pointer"
-                >
-                  <svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <circle cx="8" cy="8" r="6" />
-                    <circle cx="8" cy="8" r="2" fill="currentColor" />
-                    <path d="M8 1v2M8 13v2M1 8h2M13 8h2" />
-                  </svg>
-                </button>
-                {mode !== "kepadatan" && (
-                  <button
-                    type="button"
-                    aria-label="Tampilkan atau sembunyikan garis relasi"
-                    onClick={() => setShowLines(v => !v)}
-                    title={showLines ? "Sembunyikan garis relasi" : "Tampilkan garis relasi"}
-                    className={`flex h-11 w-11 items-center justify-center rounded-xl border shadow-md backdrop-blur-md transition-all active:scale-95 cursor-pointer ${
-                      showLines
-                        ? "border-sky-300 bg-sky-50/95 text-sky-700 ring-2 ring-sky-300/30"
-                        : "border-slate-200/90 bg-white/90 text-slate-400"
-                    }`}
-                  >
-                    <svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
-                      <circle cx="4" cy="4" r="2" />
-                      <circle cx="12" cy="12" r="2" />
-                      <path d="M5.5 5.5l5 5" />
-                    </svg>
-                  </button>
-                )}
-                <button
-                  type="button"
-                  aria-label={fullscreen ? "Keluar dari layar penuh" : "Layar penuh"}
-                  onClick={() => setFullscreen(v => !v)}
-                  className="flex sm:hidden h-11 w-11 items-center justify-center rounded-xl border border-slate-200/90 bg-white/90 text-slate-700 shadow-md backdrop-blur-md transition-all hover:bg-white active:scale-95 cursor-pointer"
-                >
-                  {fullscreen ? (
-                    <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                      <path d="M6 2v4H2M10 2v4h4M6 14v-4H2M10 14v-4h4" />
-                    </svg>
-                  ) : (
-                    <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                      <path d="M2 6V2h4M14 6V2h-4M2 10v4h4M14 10v4h-4" />
-                    </svg>
-                  )}
-                </button>
-              </div>
-
               <span
-                className={`pointer-events-none absolute bottom-3 left-3 z-20 max-w-[calc(100%-72px)] rounded-lg px-2.5 py-1.5 text-[10px] font-medium leading-4 shadow-sm backdrop-blur-md ${
-                  mode === "kepadatan" ? "bg-[#072a8c]/80 text-white/90" : "bg-white/90 text-slate-600 border border-slate-200/60"
+                className={`pointer-events-none absolute bottom-3 left-3 z-20 max-w-[calc(100%-24px)] rounded-lg px-2.5 py-1.5 text-[10px] font-medium leading-4 shadow-sm ${
+                  mode === "kepadatan" ? "bg-[#072a8c]/90 text-white/95" : "bg-white/95 text-slate-600 border border-slate-200/80"
                 }`}
               >
                 💡 Geser kanvas · Cubit untuk zoom · Tap node untuk detail
@@ -8799,19 +8924,64 @@ function DesktopResearchMap({
             ))}
           </div>
 
-          {/* Dynamic Scroll Indicator on the right edge */}
+          {/* Dynamic Scroll Indicator on the right edge - Bisa Diklik dan Digeser */}
           <div
-            className={`pointer-events-none absolute right-1 top-2 bottom-2 w-1 transition-opacity duration-300 ${
-              isJournalScrolling ? "opacity-100" : "opacity-0"
+            className={`pointer-events-auto absolute right-0.5 top-2 bottom-2 w-3 z-20 flex items-center justify-center cursor-pointer transition-opacity duration-300 select-none ${
+              isJournalScrolling ? "opacity-100" : "opacity-40 hover:opacity-100"
             }`}
+            onPointerDown={e => {
+              e.preventDefault();
+              const scrollEl = mobileJournalListRef.current;
+              const track = e.currentTarget;
+              if (!scrollEl || !track) return;
+              const rect = track.getBoundingClientRect();
+              const maxScroll = scrollEl.scrollHeight - scrollEl.clientHeight;
+              if (maxScroll <= 0) return;
+              const trackHeight = rect.height;
+              const thumbHeight = trackHeight * journalThumbRatio;
+              const availableTrack = trackHeight - thumbHeight;
+              if (availableTrack <= 0) return;
+              const clickY = e.clientY - rect.top;
+              const currentThumbTop = journalScrollProgress * availableTrack;
+              if (clickY < currentThumbTop - 3 || clickY > currentThumbTop + thumbHeight + 3) {
+                const targetThumbTop = clickY - thumbHeight / 2;
+                const nextProgress = Math.min(1, Math.max(0, targetThumbTop / availableTrack));
+                scrollEl.scrollTop = nextProgress * maxScroll;
+                setJournalScrollProgress(nextProgress);
+              }
+              setIsJournalScrolling(true);
+              const startY = e.clientY;
+              const startScroll = scrollEl.scrollTop;
+              const onMove = (me: PointerEvent) => {
+                me.preventDefault();
+                const deltaY = me.clientY - startY;
+                scrollEl.scrollTop = Math.min(maxScroll, Math.max(0, startScroll + (deltaY / availableTrack) * maxScroll));
+              };
+              const onUp = () => {
+                window.removeEventListener("pointermove", onMove);
+                window.removeEventListener("pointerup", onUp);
+                window.removeEventListener("pointercancel", onUp);
+                document.body.style.removeProperty("user-select");
+                document.body.style.removeProperty("cursor");
+                window.setTimeout(() => setIsJournalScrolling(false), 1000);
+              };
+              document.body.style.userSelect = "none";
+              document.body.style.cursor = "grabbing";
+              window.addEventListener("pointermove", onMove);
+              window.addEventListener("pointerup", onUp);
+              window.addEventListener("pointercancel", onUp);
+            }}
+            title="Klik atau geser untuk menggulir"
           >
-            <div
-              className="w-1 rounded-full bg-sky-500/80 shadow-xs"
-              style={{
-                height: `${journalThumbRatio * 100}%`,
-                transform: `translateY(${journalScrollProgress * (1 - journalThumbRatio) * 100}%)`,
-              }}
-            />
+            <div className="relative h-full w-1 rounded-full bg-slate-200/60">
+              <div
+                className="w-1 rounded-full bg-sky-500/90 shadow-xs cursor-grab active:cursor-grabbing hover:bg-sky-600"
+                style={{
+                  height: `${journalThumbRatio * 100}%`,
+                  transform: `translateY(${journalScrollProgress * (1 - journalThumbRatio) * 100}%)`,
+                }}
+              />
+            </div>
           </div>
 
           {visibleRows.length > 5 && (
