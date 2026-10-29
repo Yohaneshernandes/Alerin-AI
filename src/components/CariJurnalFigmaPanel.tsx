@@ -5469,6 +5469,10 @@ function FrameScrollIndicator({
   const dragStartScrollTop = useRef(0);
 
   const getScrollEl = useCallback(() => {
+    const mobileResultsEl = document.getElementById("mobile-results-scroll-container");
+    if (mobileResultsEl && mobileResultsEl.scrollHeight > mobileResultsEl.clientHeight + 2) {
+      return mobileResultsEl;
+    }
     const el = document.getElementById(containerId) || document.querySelector("main");
     if (el && el.scrollHeight > el.clientHeight + 2) return el;
     if (document.documentElement && document.documentElement.scrollHeight > document.documentElement.clientHeight + 2) {
@@ -5595,18 +5599,18 @@ function FrameScrollIndicator({
 
   return (
     <div
-      className={`absolute -right-3 lg:-right-4.5 top-2 bottom-8 w-3 hidden md:block z-30 transition-opacity duration-300 ease-out select-none ${
+      className={`fixed right-0 top-[68px] bottom-[72px] md:top-2 md:bottom-2 w-2.5 z-40 transition-opacity duration-300 ease-out select-none ${
         isScrolling || isDragging || isHovered ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
       } ${className}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       aria-label="Petunjuk garis scroll navigasi frame"
     >
-      <div className="sticky top-6 flex h-[calc(100vh-140px)] w-full flex-col items-center py-1">
+      <div className="flex h-full w-full flex-col items-end pr-0.5 py-1">
         <div
           ref={trackRef}
           onPointerDown={handlePointerDown}
-          className="group/track relative flex h-full w-full cursor-pointer items-center justify-center select-none"
+          className="group/track relative flex h-full w-full cursor-pointer items-center justify-end pr-0.5 select-none"
           title="Klik atau geser untuk menggulir halaman"
         >
           {/* Garis lintasan visual abu-abu ramping */}
@@ -6653,6 +6657,8 @@ function MobileLiteratureReview({
 
   return (
     <div className="flex flex-col gap-5 pb-8">
+      {/* Indikator Garis Penanda Scroll di Pinggir Kanan Layar */}
+      <FrameScrollIndicator />
       {/* Mobile Top Navigation Bar: Simpan ke Koleksi & Kembali */}
       <div className="flex items-center gap-2">
         {onSave && (
@@ -11735,7 +11741,7 @@ export default function CariJurnalFigmaPanel({
           )}
 
           {mobileSearchStage === "results" && view === "home" && (
-            <div onScroll={handleMobileScroll} className={`fixed inset-x-0 top-[65px] z-[305] overflow-y-auto overflow-x-hidden bg-[#f4f7fb] px-4 pt-4 transition-[bottom] duration-300 ease-out md:hidden ${mobileNavHidden ? "bottom-0 pb-16" : "bottom-[68px] pb-6"}`}>
+            <div id="mobile-results-scroll-container" onScroll={handleMobileScroll} className={`fixed inset-x-0 top-[65px] z-[305] overflow-y-auto overflow-x-hidden bg-[#f4f7fb] px-4 pt-4 transition-[bottom] duration-300 ease-out md:hidden ${mobileNavHidden ? "bottom-0 pb-16" : "bottom-[68px] pb-6"}`}>
               <div className="mx-auto max-w-md">
                 {searchType === "journal" && (
                   <div className="space-y-3">
