@@ -6147,7 +6147,7 @@ function DesktopLiteratureReview({
                       <td className="px-5 py-4 text-sm font-medium text-slate-600 align-top">{row.year}</td>
                       <td className="px-5 py-4 align-top">
                         <span
-                          className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${
+                          className={`inline-flex items-center justify-center rounded-full px-2.5 py-1 text-xs font-semibold ${
                             row.tag === "Sangat relevan"
                               ? "bg-emerald-50 text-emerald-700"
                               : row.tag === "Cukup relevan"
@@ -6155,11 +6155,6 @@ function DesktopLiteratureReview({
                                 : "bg-amber-50 text-amber-700"
                           }`}
                         >
-                          <span
-                            className={`h-1.5 w-1.5 rounded-full ${
-                              row.tag === "Sangat relevan" ? "bg-emerald-500" : row.tag === "Cukup relevan" ? "bg-blue-500" : "bg-amber-500"
-                            }`}
-                          />
                           {row.tag || "Sangat relevan"}
                         </span>
                       </td>
@@ -6882,7 +6877,7 @@ function MobileLiteratureReview({
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
                   <span
-                    className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold ${
+                    className={`inline-flex items-center justify-center rounded-full px-2.5 py-1 text-[11px] font-semibold ${
                       row.tag === "Sangat relevan"
                         ? "bg-emerald-50 text-emerald-700 border border-emerald-200/60"
                         : row.tag === "Cukup relevan"
@@ -6890,11 +6885,6 @@ function MobileLiteratureReview({
                           : "bg-amber-50 text-amber-700 border border-amber-200/60"
                     }`}
                   >
-                    <span
-                      className={`h-1.5 w-1.5 rounded-full ${
-                        row.tag === "Sangat relevan" ? "bg-emerald-500" : row.tag === "Cukup relevan" ? "bg-blue-500" : "bg-amber-500"
-                      }`}
-                    />
                     {row.tag || "Sangat relevan"}
                   </span>
                   <span className="rounded-lg bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 border border-slate-200 shadow-2xs">
@@ -8929,7 +8919,7 @@ function DesktopResearchMap({
                   <td className="px-5 py-4 align-top text-sm font-medium text-slate-600">{row.year}</td>
                   <td className="px-5 py-4 align-top">
                     <span
-                      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${
+                      className={`inline-flex items-center justify-center rounded-full px-2.5 py-1 text-xs font-semibold ${
                         row.tag === "Sangat relevan"
                           ? "bg-emerald-50 text-emerald-700"
                           : row.tag === "Cukup relevan"
@@ -8937,12 +8927,7 @@ function DesktopResearchMap({
                             : "bg-amber-50 text-amber-700"
                       }`}
                     >
-                      <span
-                        className={`h-1.5 w-1.5 rounded-full ${
-                          row.tag === "Sangat relevan" ? "bg-emerald-500" : row.tag === "Cukup relevan" ? "bg-blue-500" : "bg-amber-500"
-                        }`}
-                      />
-                      {row.tag}
+                      {row.tag || "Sangat relevan"}
                     </span>
                   </td>
                   <td className="px-5 py-4 align-top">
@@ -8978,7 +8963,7 @@ function DesktopResearchMap({
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
                   <span
-                    className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold ${
+                    className={`inline-flex items-center justify-center rounded-full px-2.5 py-1 text-[11px] font-semibold ${
                       row.tag === "Sangat relevan"
                         ? "bg-emerald-50 text-emerald-700"
                         : row.tag === "Cukup relevan"
@@ -8986,11 +8971,6 @@ function DesktopResearchMap({
                           : "bg-amber-50 text-amber-700"
                     }`}
                   >
-                    <span
-                      className={`h-1.5 w-1.5 rounded-full ${
-                        row.tag === "Sangat relevan" ? "bg-emerald-500" : row.tag === "Cukup relevan" ? "bg-blue-500" : "bg-amber-500"
-                      }`}
-                    />
                     {row.tag || "Sangat relevan"}
                   </span>
                   <span className="rounded-md bg-white px-2 py-0.5 text-xs font-medium text-slate-600 outline outline-1 outline-slate-200">{row.year}</span>
