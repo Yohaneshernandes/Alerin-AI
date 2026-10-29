@@ -1794,9 +1794,9 @@ function FilterSection({
 
 function FilterPanel({ open, onClose, onApply, onReset }: { open: boolean; onClose: () => void; onApply: () => void; onReset: () => void }) {
   const [urutkan, setUrutkan] = useState("Paling Relevan");
-  const [tahun, setTahun] = useState("2 tahun terakhir");
-  const [tahunAwal, setTahunAwal] = useState(rentangTahun["2 tahun terakhir"][0]);
-  const [tahunAkhir, setTahunAkhir] = useState(rentangTahun["2 tahun terakhir"][1]);
+  const [tahun, setTahun] = useState("Semua");
+  const [tahunAwal, setTahunAwal] = useState(rentangTahun["Semua"][0]);
+  const [tahunAkhir, setTahunAkhir] = useState(rentangTahun["Semua"][1]);
   const [aksesTerbuka, setAksesTerbuka] = useState(true);
   const [metode, setMetode] = useState<Record<string, string[]>>({ Eksperimental: [...metodeGroups[0].items] });
   const [bidang, setBidang] = useState<Record<string, boolean>>({});
