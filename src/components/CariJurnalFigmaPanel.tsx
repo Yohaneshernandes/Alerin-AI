@@ -1798,7 +1798,7 @@ function FilterPanel({ open, onClose, onApply, onReset }: { open: boolean; onClo
   const [tahunAwal, setTahunAwal] = useState(rentangTahun["Semua"][0]);
   const [tahunAkhir, setTahunAkhir] = useState(rentangTahun["Semua"][1]);
   const [aksesTerbuka, setAksesTerbuka] = useState(true);
-  const [metode, setMetode] = useState<Record<string, string[]>>({ Eksperimental: [...metodeGroups[0].items] });
+  const [metode, setMetode] = useState<Record<string, string[]>>({});
   const [bidang, setBidang] = useState<Record<string, boolean>>({});
   const [negara, setNegara] = useState<Record<string, boolean>>({});
   const [sections, setSections] = useState<Record<string, boolean>>({ umum: true, metodologi: false, bidang: false, negara: false });
