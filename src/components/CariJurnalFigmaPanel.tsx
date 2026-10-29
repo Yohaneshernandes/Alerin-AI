@@ -12360,7 +12360,7 @@ export default function CariJurnalFigmaPanel({
 
                 {searchType === "review" || searchType === "map" ? (
                   <section className="mt-4 w-full min-w-0 max-w-full rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm md:mt-5 md:p-6">
-                    <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-[17px] font-bold md:text-base">Topik penelitian</h2>
+                    <h2 className="text-center font-['Plus_Jakarta_Sans:Bold'] text-[17px] font-bold text-slate-900 md:text-left md:text-base">Topik penelitian</h2>
                     <label className="mt-3 flex min-w-0 items-center gap-2 rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-3 md:bg-white md:px-4">
                       <svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="#94a3b8" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="shrink-0">
                         <circle cx="7" cy="7" r="4.5" />
