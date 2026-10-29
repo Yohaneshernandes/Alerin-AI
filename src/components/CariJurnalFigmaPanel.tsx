@@ -11873,22 +11873,7 @@ export default function CariJurnalFigmaPanel({
                     />
                   </div>
                 ) : (searchSubmittedQuery || query).trim() === "12345" ? (
-                  <div className="space-y-4 pb-8">
-                    {/* Mobile Top Action Bar: Kembali ke Pencarian */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setMobileSearchStage("home");
-                        setSearchType("journal");
-                      }}
-                      className="flex min-h-[44px] w-full items-center justify-center gap-2 rounded-xl bg-sky-700 px-4 py-2.5 text-xs font-bold text-white shadow-xs transition-all active:scale-[0.98]"
-                    >
-                      <svg width="14" height="12" viewBox="0 0 14 12" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                        <path d="M12 6H2M5.5 2.5L2 6l3.5 3.5" />
-                      </svg>
-                      Kembali ke Pencarian
-                    </button>
-
+                  <div className="pb-8">
                     {/* Mobile Empty Card */}
                     <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-sm text-center">
                       <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-sky-50 text-[#00629b] ring-6 ring-sky-50/60 shadow-xs">
