@@ -613,7 +613,7 @@ function HapusJurnalModal({
         className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl"
         onClick={event => event.stopPropagation()}
       >
-        <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#ffdad6] text-[#93000a]">
+        <div className="mx-auto sm:mx-0 flex h-11 w-11 items-center justify-center rounded-full bg-[#ffdad6] text-[#93000a]">
           <svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M2.5 4.5h11M6 4.5V3h4v1.5M4 4.5l.7 9h6.6l.7-9" />
             <path d="M6.5 7v4M9.5 7v4" />
@@ -670,7 +670,7 @@ function HapusRiwayatModal({
         className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl"
         onClick={event => event.stopPropagation()}
       >
-        <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#ffdad6] text-[#93000a]">
+        <div className="mx-auto sm:mx-0 flex h-11 w-11 items-center justify-center rounded-full bg-[#ffdad6] text-[#93000a]">
           <svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M2.5 4.5h11M6 4.5V3h4v1.5M4 4.5l.7 9h6.6l.7-9" />
             <path d="M6.5 7v4M9.5 7v4" />
@@ -727,7 +727,7 @@ function HapusLiteratureModal({
         className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl"
         onClick={event => event.stopPropagation()}
       >
-        <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#ffdad6] text-[#93000a]">
+        <div className="mx-auto sm:mx-0 flex h-11 w-11 items-center justify-center rounded-full bg-[#ffdad6] text-[#93000a]">
           <svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M2.5 4.5h11M6 4.5V3h4v1.5M4 4.5l.7 9h6.6l.7-9" />
             <path d="M6.5 7v4M9.5 7v4" />
@@ -784,7 +784,7 @@ function HapusMapModal({
         className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl"
         onClick={event => event.stopPropagation()}
       >
-        <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#ffdad6] text-[#93000a]">
+        <div className="mx-auto sm:mx-0 flex h-11 w-11 items-center justify-center rounded-full bg-[#ffdad6] text-[#93000a]">
           <svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M2.5 4.5h11M6 4.5V3h4v1.5M4 4.5l.7 9h6.6l.7-9" />
             <path d="M6.5 7v4M9.5 7v4" />
@@ -841,7 +841,7 @@ function HapusFolderModal({
         className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl"
         onClick={event => event.stopPropagation()}
       >
-        <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#ffdad6] text-[#93000a]">
+        <div className="mx-auto sm:mx-0 flex h-11 w-11 items-center justify-center rounded-full bg-[#ffdad6] text-[#93000a]">
           <svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M2.5 4.5h11M6 4.5V3h4v1.5M4 4.5l.7 9h6.6l.7-9" />
             <path d="M6.5 7v4M9.5 7v4" />
@@ -900,7 +900,7 @@ function HapusFileModal({
         className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl animate-in fade-in-0 zoom-in-95 duration-150"
         onClick={event => event.stopPropagation()}
       >
-        <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#ffdad6] text-[#93000a]">
+        <div className="mx-auto sm:mx-0 flex h-11 w-11 items-center justify-center rounded-full bg-[#ffdad6] text-[#93000a]">
           <svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M2.5 4.5h11M6 4.5V3h4v1.5M4 4.5l.7 9h6.6l.7-9" />
             <path d="M6.5 7v4M9.5 7v4" />
