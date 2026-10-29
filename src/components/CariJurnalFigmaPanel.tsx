@@ -9558,7 +9558,7 @@ function MobileJournalResultCard({
         <button
           type="button"
           onClick={() => window.open("https://doi.org/10.20886/jpkf.2022.6.1.16-28", "_blank", "noopener,noreferrer")}
-          className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl bg-slate-100 px-3 py-2.5 text-xs sm:text-sm font-semibold text-sky-700 transition-colors hover:bg-slate-200 active:scale-95"
+          className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl bg-slate-100 px-3 py-2.5 text-xs sm:text-sm font-semibold text-slate-800 transition-colors hover:bg-slate-200 active:scale-95"
         >
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" aria-hidden="true">
             <path d="M3 1.5h6l3 3v9H3zM8.5 1.5v3h3" />
@@ -9874,7 +9874,7 @@ function MobileJournalCollectionCard({
         <button
           type="button"
           onClick={() => window.alert("PDF dibuka.")}
-          className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs sm:text-sm font-semibold text-sky-700 shadow-xs transition-colors hover:bg-slate-50 active:scale-[0.98]"
+          className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs sm:text-sm font-semibold text-slate-700 shadow-xs transition-colors hover:bg-slate-50 active:scale-[0.98]"
         >
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" aria-hidden="true">
             <path d="M3 1.5h6l3 3v9H3zM8.5 1.5v3h3" />
