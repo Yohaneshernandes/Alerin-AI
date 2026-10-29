@@ -6085,26 +6085,13 @@ function DesktopLiteratureReview({
                       <SortArrow dir={yearSort} />
                     </button>
                   </th>
-                  <th className="px-5 py-3 w-40">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setYearSort(null);
-                        setRelevanSort(relevanSort === "desc" ? "asc" : "desc");
-                      }}
-                      className={`flex items-center gap-1.5 text-xs font-semibold ${relevanSort ? "text-[#0369a1]" : "text-slate-500 hover:text-slate-700"}`}
-                    >
-                      Relevansi
-                      <SortArrow dir={relevanSort} />
-                    </button>
-                  </th>
                   <th className="px-5 py-3 text-xs font-semibold text-slate-500 w-44">Sumber</th>
                 </tr>
               </thead>
               <tbody>
                 {visiblePriority.length === 0 && (
                   <tr>
-                    <td colSpan={4} className="px-5 py-8 text-center text-sm text-slate-400">
+                    <td colSpan={3} className="px-5 py-8 text-center text-sm text-slate-400">
                       Tidak ada artikel yang cocok dengan pencarianmu.
                     </td>
                   </tr>
@@ -6147,19 +6134,6 @@ function DesktopLiteratureReview({
                         </div>
                       </td>
                       <td className="px-5 py-4 text-sm font-medium text-slate-600 align-top">{row.year}</td>
-                      <td className="px-5 py-4 align-top">
-                        <span
-                          className={`inline-flex items-center justify-center rounded-full px-2.5 py-1 text-xs font-semibold ${
-                            row.tag === "Sangat relevan"
-                              ? "bg-emerald-50 text-emerald-700"
-                              : row.tag === "Cukup relevan"
-                                ? "bg-blue-50 text-blue-700"
-                                : "bg-amber-50 text-amber-700"
-                          }`}
-                        >
-                          {row.tag || "Sangat relevan"}
-                        </span>
-                      </td>
                       <td className="px-5 py-4 align-top">
                         <span className="flex items-center gap-2">
                           <img
@@ -6880,17 +6854,6 @@ function MobileLiteratureReview({
                   <p className="mt-1 text-xs text-slate-500 font-normal">{row.authors} · <span className="font-medium text-slate-600">{row.source}</span></p>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <span
-                    className={`inline-flex items-center justify-center rounded-full px-2.5 py-1 text-[11px] font-semibold ${
-                      row.tag === "Sangat relevan"
-                        ? "bg-emerald-50 text-emerald-700 border border-emerald-200/60"
-                        : row.tag === "Cukup relevan"
-                          ? "bg-blue-50 text-blue-700 border border-blue-200/60"
-                          : "bg-amber-50 text-amber-700 border border-amber-200/60"
-                    }`}
-                  >
-                    {row.tag || "Sangat relevan"}
-                  </span>
                   <span className="rounded-lg bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 border border-slate-200 shadow-2xs">
                     {row.year}
                   </span>
@@ -8862,26 +8825,13 @@ function DesktopResearchMap({
                     <SortArrow dir={yearSort} />
                   </button>
                 </th>
-                <th className="w-40 px-5 py-3">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setYearSort(null);
-                      setRelevanSort(relevanSort === "desc" ? "asc" : "desc");
-                    }}
-                    className={`flex items-center gap-1.5 text-xs font-semibold cursor-pointer ${relevanSort ? "text-[#0369a1]" : "text-slate-500 hover:text-slate-700"}`}
-                  >
-                    Relevansi
-                    <SortArrow dir={relevanSort} />
-                  </button>
-                </th>
                 <th className="w-44 px-5 py-3 text-xs font-semibold text-slate-500">Sumber</th>
               </tr>
             </thead>
             <tbody>
               {visibleRows.length === 0 && (
                 <tr>
-                  <td colSpan={4} className="px-5 py-8 text-center text-sm text-slate-400">
+                  <td colSpan={3} className="px-5 py-8 text-center text-sm text-slate-400">
                     Tidak ada artikel yang cocok dengan pencarianmu.
                   </td>
                 </tr>
@@ -8924,19 +8874,6 @@ function DesktopResearchMap({
                   </td>
                   <td className="px-5 py-4 align-top text-sm font-medium text-slate-600">{row.year}</td>
                   <td className="px-5 py-4 align-top">
-                    <span
-                      className={`inline-flex items-center justify-center rounded-full px-2.5 py-1 text-xs font-semibold ${
-                        row.tag === "Sangat relevan"
-                          ? "bg-emerald-50 text-emerald-700"
-                          : row.tag === "Cukup relevan"
-                            ? "bg-blue-50 text-blue-700"
-                            : "bg-amber-50 text-amber-700"
-                      }`}
-                    >
-                      {row.tag || "Sangat relevan"}
-                    </span>
-                  </td>
-                  <td className="px-5 py-4 align-top">
                     <span className="flex items-center gap-2">
                       <img
                         src={sourceLogos[row.source] ?? "/assets/source-logos/openalex.svg"}
@@ -8968,17 +8905,6 @@ function DesktopResearchMap({
                   <p className="mt-1 text-xs font-normal text-slate-500">{row.authors} · {row.source}</p>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <span
-                    className={`inline-flex items-center justify-center rounded-full px-2.5 py-1 text-[11px] font-semibold ${
-                      row.tag === "Sangat relevan"
-                        ? "bg-emerald-50 text-emerald-700"
-                        : row.tag === "Cukup relevan"
-                          ? "bg-blue-50 text-blue-700"
-                          : "bg-amber-50 text-amber-700"
-                    }`}
-                  >
-                    {row.tag || "Sangat relevan"}
-                  </span>
                   <span className="rounded-md bg-white px-2 py-0.5 text-xs font-medium text-slate-600 outline outline-1 outline-slate-200">{row.year}</span>
                   <span className="flex items-center gap-1.5 rounded-md bg-white px-2 py-0.5 text-xs font-medium text-slate-600 outline outline-1 outline-slate-200">
                     <img
