@@ -2439,9 +2439,9 @@ const journalPlanFeatures: JournalPlanFeature[] = [
     ),
     label: "Pencarian Jurnal",
     desc: {
-      gratis: "Pencarian jurnal hingga 4 kali per hari.",
-      plus: "Pencarian jurnal hingga 10 kali per hari.",
-      pro: "Pencarian jurnal hingga 15 kali per hari.",
+      gratis: "Akses pencarian jurnal untuk memulai riset",
+      plus: "Kuota pencarian jurnal lebih besar",
+      pro: "Kuota pencarian jurnal tertinggi",
     },
     values: {
       gratis: "4 kali / hari",
@@ -2457,9 +2457,9 @@ const journalPlanFeatures: JournalPlanFeature[] = [
     ),
     label: "Pencarian Berdasarkan Paragraf",
     desc: {
-      gratis: "Pencarian jurnal dengan input paragraf hingga 500 karakter.",
-      plus: "Pencarian jurnal dengan input paragraf hingga 1.500 karakter.",
-      pro: "Pencarian jurnal dengan input paragraf hingga 2.500 karakter.",
+      gratis: "Temukan jurnal relevan berdasarkan paragraf",
+      plus: "Pencarian berbasis paragraf dengan input lebih panjang",
+      pro: "Pencarian berbasis paragraf dengan kapasitas input terbesar",
     },
     values: {
       gratis: "500 karakter",
@@ -2476,9 +2476,9 @@ const journalPlanFeatures: JournalPlanFeature[] = [
     ),
     label: "Pencarian melalui Unggah File",
     desc: {
-      gratis: "Pencarian jurnal melalui unggahan file hingga 5 MB.",
-      plus: "Pencarian jurnal melalui unggahan file hingga 20 MB.",
-      pro: "Pencarian jurnal melalui unggahan file hingga 30 MB.",
+      gratis: "Pencarian jurnal melalui unggahan file hingga 5 MB",
+      plus: "Pencarian jurnal melalui unggahan file hingga 20 MB",
+      pro: "Pencarian jurnal melalui unggahan file hingga 30 MB",
     },
     values: {
       gratis: "5 MB",
@@ -2494,9 +2494,9 @@ const journalPlanFeatures: JournalPlanFeature[] = [
     ),
     label: "Koleksi Jurnal",
     desc: {
-      gratis: "Simpan hingga 2 jurnal dalam koleksi pribadi.",
-      plus: "Simpan hingga 20 jurnal dalam koleksi pribadi.",
-      pro: "Simpan hingga 50 jurnal dalam koleksi pribadi.",
+      gratis: "Simpan jurnal pilihan dalam koleksi pribadi",
+      plus: "Kapasitas koleksi jurnal lebih besar",
+      pro: "Kapasitas koleksi pribadi terbesar",
     },
     values: {
       gratis: "2 jurnal",
@@ -2512,9 +2512,9 @@ const journalPlanFeatures: JournalPlanFeature[] = [
     ),
     label: "Rekomendasi Jurnal",
     desc: {
-      gratis: "Dapatkan hingga 3 rekomendasi jurnal yang relevan.",
-      plus: "Dapatkan hingga 5 rekomendasi jurnal yang relevan.",
-      pro: "Dapatkan hingga 10 rekomendasi jurnal yang relevan.",
+      gratis: "Dapatkan rekomendasi jurnal sesuai topik riset",
+      plus: "Lebih banyak rekomendasi jurnal sesuai topik riset",
+      pro: "Pilihan rekomendasi jurnal paling banyak",
     },
     values: {
       gratis: "3 rekomendasi",
@@ -2531,9 +2531,9 @@ const journalPlanFeatures: JournalPlanFeature[] = [
     ),
     label: "Refresh Rekomendasi Jurnal",
     desc: {
-      gratis: "Perbarui rekomendasi jurnal hingga 5 kali per hari.",
-      plus: "Perbarui rekomendasi jurnal hingga 12 kali per hari.",
-      pro: "Perbarui rekomendasi jurnal hingga 17 kali per hari.",
+      gratis: "Perbarui rekomendasi untuk menjelajahi referensi lainnya",
+      plus: "Pembaruan rekomendasi lebih sering",
+      pro: "Kuota pembaruan rekomendasi tertinggi",
     },
     values: {
       gratis: "5 kali / hari",
@@ -2550,9 +2550,9 @@ const journalPlanFeatures: JournalPlanFeature[] = [
     ),
     label: "Tabel Penelitian Terdahulu",
     desc: {
-      gratis: "Susun tabel perbandingan hingga 3 jurnal penelitian.",
-      plus: "Susun tabel perbandingan hingga 5 jurnal penelitian.",
-      pro: "Susun tabel perbandingan hingga 10 jurnal penelitian.",
+      gratis: "Bandingkan jurnal dalam tabel penelitian terdahulu",
+      plus: "Bandingkan lebih banyak jurnal dalam tabel penelitian",
+      pro: "Kapasitas perbandingan jurnal terbesar dalam tabel penelitian",
     },
     values: {
       gratis: "3 jurnal",
@@ -2569,14 +2569,14 @@ const journalPlanFeatures: JournalPlanFeature[] = [
     ),
     label: "Literature Review",
     desc: {
-      gratis: "Analisis literatur hingga 100 jurnal.",
-      plus: "Analisis literatur hingga 500 jurnal.",
-      pro: "Analisis literatur hingga 1.000 jurnal.",
+      gratis: "Literature Review dengan cakupan hingga 100 jurnal",
+      plus: "Literature Review dengan cakupan hingga 500 jurnal",
+      pro: "Literature Review dengan analisis jurnal paling maksimal",
     },
     values: {
       gratis: "100 jurnal",
       plus: "500 jurnal",
-      pro: "1.000 jurnal",
+      pro: "Maksimal",
     },
   },
   {
@@ -2590,14 +2590,14 @@ const journalPlanFeatures: JournalPlanFeature[] = [
     ),
     label: "Peta Penelitian",
     desc: {
-      gratis: "Pemetaan penelitian hingga 100 jurnal.",
-      plus: "Pemetaan penelitian hingga 500 jurnal.",
-      pro: "Pemetaan penelitian hingga 1.000 jurnal.",
+      gratis: "Peta Penelitian dengan cakupan hingga 100 jurnal",
+      plus: "Peta Penelitian dengan cakupan hingga 500 jurnal",
+      pro: "Peta Penelitian dengan pemetaan jurnal tanpa batas",
     },
     values: {
       gratis: "100 jurnal",
       plus: "500 jurnal",
-      pro: "1.000 jurnal",
+      pro: "Tanpa batas",
     },
   },
 ];
@@ -2609,14 +2609,14 @@ function UpgradePremiumModal({ open, onClose }: { open: boolean; onClose: () => 
   if (!open) return null;
 
   const plans: { key: PlanKey; title: string; subtitle: string }[] = [
-    { key: "gratis", title: "Gratis", subtitle: "Mulai riset tanpa biaya" },
-    { key: "plus", title: "Plus", subtitle: "Riset dengan limit lebih fleksibel" },
-    { key: "pro", title: "Pro", subtitle: "Riset dengan kapasitas lebih besar" },
+    { key: "gratis", title: "Gratis", subtitle: "Mulai perjalanan riset lebih dalam" },
+    { key: "plus", title: "Plus", subtitle: "Kembangkan riset dengan akses lebih luas" },
+    { key: "pro", title: "Pro", subtitle: "Akses terluas untuk kedalaman riset tingkat lanjut" },
   ];
 
   return (
     <div
-      className="fixed inset-0 z-[360] flex items-center justify-center bg-black/40 p-4 backdrop-blur-[2px] transition-opacity duration-200"
+      className="fixed inset-0 z-[360] flex items-center justify-center bg-black/50 p-3 sm:p-4 backdrop-blur-[2px] transition-opacity duration-200"
       onClick={onClose}
       role="presentation"
     >
@@ -2625,18 +2625,18 @@ function UpgradePremiumModal({ open, onClose }: { open: boolean; onClose: () => 
         aria-modal="true"
         aria-label="Pilih Paket"
         onClick={event => event.stopPropagation()}
-        className="relative flex max-h-[92dvh] w-full max-w-[590px] flex-col overflow-hidden rounded-[28px] bg-white p-6 shadow-2xl transition-all md:p-8"
+        className="relative flex max-h-[88dvh] sm:max-h-[92dvh] w-full max-w-[580px] flex-col overflow-hidden rounded-2xl sm:rounded-[28px] bg-white p-4.5 sm:p-6 md:p-8 shadow-2xl transition-all"
       >
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <h2 className="font-['Plus_Jakarta_Sans:Bold',sans-serif] text-2xl font-extrabold tracking-tight text-slate-900 md:text-[26px]">
+        <div className="flex items-center justify-between pb-1">
+          <h2 className="font-['Plus_Jakarta_Sans:Bold',sans-serif] text-xl font-extrabold tracking-tight text-slate-900 sm:text-2xl md:text-[26px]">
             Pilih Paket
           </h2>
           <button
             type="button"
             aria-label="Tutup"
             onClick={onClose}
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition-colors hover:bg-slate-200 hover:text-slate-700"
+            className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition-colors hover:bg-slate-200 hover:text-slate-700 cursor-pointer"
           >
             <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
               <path d="M4 4l8 8M12 4l-8 8" />
@@ -2645,7 +2645,7 @@ function UpgradePremiumModal({ open, onClose }: { open: boolean; onClose: () => 
         </div>
 
         {/* 3 Kartu Paket */}
-        <div className="mt-5 grid grid-cols-3 gap-2.5">
+        <div className="mt-3.5 sm:mt-5 grid grid-cols-3 gap-2 sm:gap-2.5">
           {plans.map(plan => {
             const isSelected = selectedPlan === plan.key;
             const isCurrentActive = plan.key === activePlanKey;
@@ -2654,20 +2654,20 @@ function UpgradePremiumModal({ open, onClose }: { open: boolean; onClose: () => 
                 key={plan.key}
                 type="button"
                 onClick={() => setSelectedPlan(plan.key)}
-                className={`relative flex flex-col justify-between rounded-2xl p-3.5 text-left transition-all cursor-pointer ${
+                className={`relative flex flex-col justify-between rounded-xl sm:rounded-2xl p-2.5 sm:p-3.5 text-left transition-all cursor-pointer ${
                   isSelected
                     ? "bg-[#111827] text-white shadow-sm ring-1 ring-slate-900"
                     : "border border-slate-200/90 bg-white text-slate-900 hover:border-slate-300 hover:bg-slate-50/60"
                 }`}
               >
                 <div>
-                  <div className="flex items-center justify-between gap-1">
-                    <h3 className={`text-base font-bold ${isSelected ? "text-white" : "text-slate-900"}`}>
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+                    <h3 className={`text-[13px] sm:text-base font-bold leading-tight ${isSelected ? "text-white" : "text-slate-900"}`}>
                       {plan.title}
                     </h3>
                     {isCurrentActive && (
                       <span
-                        className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold tracking-wide ${
+                        className={`inline-flex items-center gap-1 self-start sm:self-auto rounded-full px-1.5 py-0.5 text-[9px] sm:text-[10px] font-semibold tracking-wide ${
                           isSelected
                             ? "bg-white/20 text-slate-100"
                             : "border border-slate-200 bg-slate-100 text-slate-700"
@@ -2678,7 +2678,7 @@ function UpgradePremiumModal({ open, onClose }: { open: boolean; onClose: () => 
                       </span>
                     )}
                   </div>
-                  <p className={`mt-1 text-xs leading-4 ${isSelected ? "text-slate-300" : "text-slate-500"}`}>
+                  <p className={`mt-1 text-[10.5px] sm:text-xs leading-[14px] sm:leading-4 ${isSelected ? "text-slate-300" : "text-slate-500"}`}>
                     {plan.subtitle}
                   </p>
                 </div>
@@ -2687,24 +2687,24 @@ function UpgradePremiumModal({ open, onClose }: { open: boolean; onClose: () => 
           })}
         </div>
 
-        {/* List Fitur / Baris Spesifikasi */}
-        <div className="mt-5 min-h-0 flex-1 overflow-y-auto pr-1">
+        {/* List Fitur / Baris Spesifikasi (Scrollable dengan padding bawah yang cukup) */}
+        <div className="mt-3.5 sm:mt-5 min-h-0 flex-1 overflow-y-auto pr-1 pb-4 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
           <div className="divide-y divide-slate-100">
             {journalPlanFeatures.map(feat => {
               const value = feat.values[selectedPlan];
               const desc = feat.desc[selectedPlan];
               return (
-                <div key={feat.label} className="flex items-start justify-between gap-3 py-3.5 first:pt-1">
-                  <div className="flex items-start gap-3 min-w-0">
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-slate-200/80 bg-white text-slate-700 shadow-2xs mt-0.5">
+                <div key={feat.label} className="flex items-start justify-between gap-2.5 py-3 first:pt-1 sm:gap-3 sm:py-3.5">
+                  <div className="flex items-start gap-2.5 sm:gap-3 min-w-0 flex-1">
+                    <span className="flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-lg sm:rounded-xl border border-slate-200/80 bg-white text-slate-700 shadow-2xs mt-0.5">
                       {feat.icon}
                     </span>
-                    <div className="min-w-0">
-                      <p className="text-sm font-bold text-slate-900">{feat.label}</p>
-                      <p className="mt-0.5 text-xs text-slate-500 leading-relaxed">{desc}</p>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[13px] sm:text-sm font-bold text-slate-900 leading-snug">{feat.label}</p>
+                      <p className="mt-0.5 text-[11px] sm:text-xs text-slate-500 leading-relaxed">{desc}</p>
                     </div>
                   </div>
-                  <span className="shrink-0 rounded-xl border border-slate-200/90 bg-white px-3.5 py-1.5 text-xs font-bold text-slate-800 shadow-2xs whitespace-nowrap">
+                  <span className="shrink-0 self-start mt-0.5 rounded-lg sm:rounded-xl border border-slate-200/90 bg-slate-50/80 sm:bg-white px-2.5 py-1 sm:px-3.5 sm:py-1.5 text-[11px] sm:text-xs font-bold text-slate-800 shadow-2xs whitespace-nowrap">
                     {value}
                   </span>
                 </div>
@@ -2713,13 +2713,13 @@ function UpgradePremiumModal({ open, onClose }: { open: boolean; onClose: () => 
           </div>
         </div>
 
-        {/* Footer Tombol Aksi */}
-        <div className="mt-5 flex items-center justify-end border-t border-slate-100 pt-4">
+        {/* Footer Tombol Aksi (Full width di mobile, rapi dan mudah ditekan) */}
+        <div className="mt-3 sm:mt-5 flex items-center justify-end border-t border-slate-100 pt-3 sm:pt-4">
           {selectedPlan === activePlanKey ? (
             <button
               type="button"
               disabled
-              className="flex items-center gap-2 rounded-xl bg-slate-100 px-6 py-3 text-sm font-bold text-slate-500 cursor-default"
+              className="flex w-full sm:w-auto min-h-[44px] items-center justify-center gap-2 rounded-xl bg-slate-100 px-6 py-2.5 text-xs sm:text-sm font-bold text-slate-500 cursor-default"
             >
               <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M3.5 8.5l3 3 6-6" />
@@ -2733,7 +2733,7 @@ function UpgradePremiumModal({ open, onClose }: { open: boolean; onClose: () => 
                 window.alert("Upgrade ke Paket Pro Alerin Jurnal diproses.");
                 onClose();
               }}
-              className="flex items-center gap-2 rounded-xl bg-black px-6 py-3 text-sm font-bold text-white shadow-md transition-all hover:bg-neutral-800 active:scale-98"
+              className="flex w-full sm:w-auto min-h-[44px] items-center justify-center gap-2 rounded-xl bg-black px-6 py-2.5 text-xs sm:text-sm font-bold text-white shadow-md transition-all hover:bg-neutral-800 active:scale-98 cursor-pointer"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                 <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z" />
@@ -2747,7 +2747,7 @@ function UpgradePremiumModal({ open, onClose }: { open: boolean; onClose: () => 
                 window.alert("Pilihan paket Gratis disimpan.");
                 onClose();
               }}
-              className="flex items-center gap-2 rounded-xl bg-black px-6 py-3 text-sm font-bold text-white shadow-md transition-all hover:bg-neutral-800 active:scale-98"
+              className="flex w-full sm:w-auto min-h-[44px] items-center justify-center gap-2 rounded-xl bg-black px-6 py-2.5 text-xs sm:text-sm font-bold text-white shadow-md transition-all hover:bg-neutral-800 active:scale-98 cursor-pointer"
             >
               Pilih Paket
             </button>
@@ -5713,7 +5713,7 @@ function DesktopLiteratureReview({
 
   const stats = [
     { label: "Total hasil ditemukan", value: "126", tone: "text-[#0369a1]" },
-    { label: "Duplikasi dihapus", value: "34", tone: "text-red-600" },
+    { label: "Duplikasi dihapus", value: "34", tone: "text-[#0369a1]" },
     { label: "Artikel tersisa untuk sintesis", value: "92", tone: "text-[#0369a1]" },
     { label: "Artikel prioritas tinggi", value: "24", tone: "text-[#0369a1]" },
   ];
@@ -6643,10 +6643,10 @@ function MobileLiteratureReview({
   const [activeSection, setActiveSection] = useState(1);
 
   const stats = [
-    { label: "Total ditemukan", value: "126", accent: "text-slate-900", sub: "text-slate-500", highlight: false },
-    { label: "Duplikasi dihapus", value: "34", accent: "text-rose-600", sub: "text-rose-500", highlight: false },
-    { label: "Siap sintesis", value: "92", accent: "text-slate-900", sub: "text-slate-500", highlight: true },
-    { label: "Prioritas tinggi", value: "24", accent: "text-slate-900", sub: "text-slate-500", highlight: false },
+    { label: "Total ditemukan", value: "126", accent: "text-[#00629b]", sub: "text-slate-500", highlight: false },
+    { label: "Duplikasi dihapus", value: "34", accent: "text-[#00629b]", sub: "text-slate-500", highlight: false },
+    { label: "Siap sintesis", value: "92", accent: "text-[#00629b]", sub: "text-slate-500", highlight: false },
+    { label: "Prioritas tinggi", value: "24", accent: "text-[#00629b]", sub: "text-slate-500", highlight: false },
   ];
 
   const filterChips = [
@@ -6663,12 +6663,10 @@ function MobileLiteratureReview({
     "Cukup relevan": { box: "bg-sky-50 text-sky-700 outline-sky-200/80", dot: "bg-sky-500" },
   };
 
-  const structureSections = [
-    { n: 1, label: "Ringkasan Utama" },
-    { n: 2, label: "Pendahuluan" },
-    { n: 3, label: "Metodologi" },
-    { n: 4, label: "Matriks Literatur" },
-  ];
+  const structureSections = literatureDocSections.map(item => ({
+    n: item.section,
+    label: item.title,
+  }));
   const sectionDescs: Record<number, string> = {
     2: "Latar belakang, dinamika gender, dan konteks kebencanaan",
     3: "Strategi pencarian, kriteria inklusi, dan seleksi 126 artikel",
@@ -6711,6 +6709,10 @@ function MobileLiteratureReview({
 
   const activeLabel = structureSections.find(item => item.n === activeSection)?.label ?? "Ringkasan Utama";
   const nextSection = structureSections.find(item => item.n === activeSection + 1);
+  const activeParagraphs =
+    sectionPreview[activeSection] && sectionPreview[activeSection].length > 0
+      ? sectionPreview[activeSection]
+      : literatureDocSections.find(item => item.section === activeSection)?.content ?? [];
 
   return (
     <div className="flex flex-col gap-5 pb-8">
@@ -6766,13 +6768,25 @@ function MobileLiteratureReview({
         </div>
       </div>
 
-      <section className="rounded-2xl bg-white p-4 shadow-sm outline outline-1 outline-slate-200/80">
-        <div className="flex items-center justify-between gap-3">
-          <h3 className="text-[11px] font-bold uppercase leading-4 tracking-wide text-slate-700">Jurnal yang Digunakan</h3>
-          <span className="shrink-0 text-[11px] font-medium text-slate-400">Total {visiblePriority.length} artikel</span>
+      <section className="rounded-2xl bg-white p-4 sm:p-5 shadow-sm border border-slate-200/80 space-y-3.5">
+        {/* Header Jurnal yang Digunakan (Paritas Penuh dengan Desktop) */}
+        <div>
+          <div className="flex items-center justify-between gap-2">
+            <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-base sm:text-lg font-bold text-slate-900">
+              Jurnal yang Digunakan
+            </h2>
+            <span className="shrink-0 rounded-full bg-sky-50 px-2.5 py-0.5 text-[11px] font-bold text-[#00629b] border border-sky-200/60">
+              Total {visiblePriority.length} artikel
+            </span>
+          </div>
+          <p className="mt-1 text-xs sm:text-sm leading-5 text-slate-500">
+            Daftar jurnal yang menjadi sumber penyusunan literature review.
+          </p>
         </div>
-        <label className="mt-3 flex items-center gap-2 rounded-xl bg-slate-50 px-3 py-2.5 outline outline-1 outline-slate-200">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#94a3b8" strokeWidth="1.6" strokeLinecap="round" aria-hidden="true">
+
+        {/* Input Pencarian Jurnal */}
+        <label className="flex items-center gap-2.5 rounded-xl border border-slate-200/90 bg-slate-50/90 px-3.5 py-2.5 shadow-2xs transition-colors hover:border-slate-300 hover:bg-white focus-within:border-[#00629b] focus-within:bg-white focus-within:ring-2 focus-within:ring-sky-100">
+          <svg width="15" height="15" viewBox="0 0 14 14" fill="none" stroke="#64748b" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true" className="shrink-0">
             <circle cx="6" cy="6" r="4.5" />
             <path d="M9.5 9.5L13 13" />
           </svg>
@@ -6782,27 +6796,64 @@ function MobileLiteratureReview({
               setPrioritySearch(capitalizeFirstLetter(event.target.value));
               setPriorityLimit(6);
             }}
-            placeholder="Cari judul, penulis, kata kunci..."
-            className="min-w-0 flex-1 bg-transparent text-[13px] outline-none placeholder:text-slate-400"
+            placeholder="Cari judul, penulis, atau kata kunci..."
+            className="min-w-0 flex-1 bg-transparent text-xs sm:text-sm font-medium text-slate-800 outline-none placeholder:text-slate-400"
           />
+          {prioritySearch.length > 0 && (
+            <button
+              type="button"
+              onClick={() => setPrioritySearch("")}
+              className="shrink-0 rounded-full p-1 text-slate-400 hover:bg-slate-200/60 hover:text-slate-600"
+              aria-label="Hapus pencarian"
+            >
+              <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <path d="M3 3l8 8M11 3l-8 8" />
+              </svg>
+            </button>
+          )}
         </label>
 
-        <div className="mt-3 space-y-3">
+        {/* Filter Chips Kategori Seperti Tampilan Desktop */}
+        <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 pt-0.5 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+          {filterChips.map(item => {
+            const active = chip === item.key;
+            return (
+              <button
+                key={item.key}
+                type="button"
+                onClick={() => {
+                  setChip(item.key);
+                  setPriorityLimit(6);
+                }}
+                className={`shrink-0 rounded-xl px-3 py-1.5 text-xs font-semibold transition-all cursor-pointer active:scale-95 ${
+                  active
+                    ? "bg-[#00629b] text-white shadow-xs ring-1 ring-[#00629b]"
+                    : "bg-slate-100/90 text-slate-600 hover:bg-slate-200/70 border border-slate-200/60"
+                }`}
+              >
+                {item.label}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* List Card Jurnal yang Digunakan */}
+        <div className="space-y-3 pt-1">
           {visiblePriority.slice(0, priorityLimit).map((row, index) => {
             return (
-              <article key={`${row.title}-${index}`} className="rounded-xl bg-slate-50/70 p-4 outline outline-1 outline-slate-200/90 space-y-2.5">
+              <article key={`${row.title}-${index}`} className="rounded-xl bg-slate-50/70 p-4 border border-slate-200/90 shadow-2xs space-y-3 hover:border-sky-300 transition-colors">
                 <div>
-                  <h4 className="font-['Plus_Jakarta_Sans:Bold'] text-sm font-bold leading-5 text-slate-900">{row.title}</h4>
-                  <p className="mt-1 text-xs text-slate-500 font-normal">{row.authors} · {row.source}</p>
+                  <h4 className="font-['Plus_Jakarta_Sans:Bold'] text-sm sm:text-[14.5px] font-bold leading-snug text-slate-900">{row.title}</h4>
+                  <p className="mt-1 text-xs text-slate-500 font-normal">{row.authors} · <span className="font-medium text-slate-600">{row.source}</span></p>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
                   <span
                     className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold ${
                       row.tag === "Sangat relevan"
-                        ? "bg-emerald-50 text-emerald-700"
+                        ? "bg-emerald-50 text-emerald-700 border border-emerald-200/60"
                         : row.tag === "Cukup relevan"
-                          ? "bg-blue-50 text-blue-700"
-                          : "bg-amber-50 text-amber-700"
+                          ? "bg-blue-50 text-blue-700 border border-blue-200/60"
+                          : "bg-amber-50 text-amber-700 border border-amber-200/60"
                     }`}
                   >
                     <span
@@ -6812,40 +6863,42 @@ function MobileLiteratureReview({
                     />
                     {row.tag || "Sangat relevan"}
                   </span>
-                  <span className="rounded-md bg-white px-2 py-0.5 text-xs font-medium text-slate-600 outline outline-1 outline-slate-200">{row.year}</span>
-                  <span className="flex items-center gap-1.5 rounded-md bg-white px-2 py-0.5 text-xs font-medium text-slate-600 outline outline-1 outline-slate-200">
+                  <span className="rounded-lg bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 border border-slate-200 shadow-2xs">
+                    {row.year}
+                  </span>
+                  <span className="flex items-center gap-1.5 rounded-lg bg-white px-2.5 py-1 text-xs font-medium text-slate-700 border border-slate-200 shadow-2xs">
                     <img
                       src={sourceLogos[row.source] ?? "/assets/source-logos/openalex.svg"}
                       alt=""
                       className="h-3.5 w-3.5 shrink-0 object-contain"
                     />
-                    {row.source}
+                    <span>{row.source}</span>
                   </span>
                 </div>
-                <div className="flex flex-wrap items-center gap-2 pt-2.5 border-t border-slate-200/70">
+                <div className="grid grid-cols-3 gap-2 pt-2.5 border-t border-slate-200/70">
                   <button
                     type="button"
                     onClick={onOpenRingkasan ?? (() => window.alert(`Membuka ringkasan: ${row.title}`))}
-                    className="flex-1 sm:flex-none flex min-h-[44px] items-center justify-center rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-2xs hover:bg-slate-50 active:scale-95"
+                    className="flex min-h-[42px] items-center justify-center rounded-xl border border-slate-200 bg-white px-2 py-2 text-xs font-bold text-slate-700 shadow-2xs hover:bg-slate-50 active:scale-95 cursor-pointer"
                   >
                     Ringkasan
                   </button>
                   <button
                     type="button"
                     onClick={onOpenSitasi ?? (() => window.alert(`Sitasi untuk: ${row.authors} (${row.year}). ${row.title}.`))}
-                    className="flex-1 sm:flex-none flex min-h-[44px] items-center justify-center rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-2xs hover:bg-slate-50 active:scale-95"
+                    className="flex min-h-[42px] items-center justify-center rounded-xl border border-slate-200 bg-white px-2 py-2 text-xs font-bold text-slate-700 shadow-2xs hover:bg-slate-50 active:scale-95 cursor-pointer"
                   >
                     Sitasi
                   </button>
                   <button
                     type="button"
                     onClick={() => window.open("https://doi.org", "_blank", "noopener,noreferrer")}
-                    className="flex-1 sm:flex-none flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-sky-700 shadow-2xs hover:bg-slate-50 active:scale-95"
+                    className="flex min-h-[42px] items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-2 py-2 text-xs font-bold text-sky-700 shadow-2xs hover:bg-sky-50 active:scale-95 cursor-pointer"
                   >
-                    <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="text-sky-600">
+                    <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-sky-600">
                       <path d="M12 9v4H3V4h4M9 2h5v5M6.5 9.5L14 2" />
                     </svg>
-                    Buka
+                    <span>Buka</span>
                   </button>
                 </div>
               </article>
@@ -6859,7 +6912,7 @@ function MobileLiteratureReview({
           <button
             type="button"
             onClick={() => setPriorityLimit(limit => limit + 6)}
-            className="mt-3 w-full rounded-xl bg-slate-100 py-2.5 text-xs font-semibold text-slate-600"
+            className="mt-3.5 flex w-full min-h-[44px] items-center justify-center rounded-xl bg-slate-100 hover:bg-slate-200/80 py-2.5 text-xs font-bold text-slate-700 transition-colors cursor-pointer"
           >
             Muat lebih banyak ({Math.min(6, visiblePriority.length - priorityLimit)} lagi)
           </button>
@@ -6991,46 +7044,68 @@ function MobileLiteratureReview({
         </div>
 
         {/* Struktur Dokumen Navigator */}
-        <div className="pt-3.5">
+        <div className="pt-4 space-y-3">
           <div className="flex items-center justify-between gap-2">
-            <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500">Struktur dokumen (12 bagian)</p>
-            <p className="shrink-0 text-xs font-bold text-[#0369a1]">Bagian {activeSection} dari 12</p>
+            <div className="flex items-center gap-1.5">
+              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-sky-100 text-[#00629b]">
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+                  <path d="M2.5 4h11M2.5 8h11M2.5 12h7" />
+                </svg>
+              </span>
+              <p className="font-['Plus_Jakarta_Sans:Bold'] text-xs sm:text-[13px] font-bold text-slate-800">
+                Struktur Dokumen (12 Bagian)
+              </p>
+            </div>
+            <span className="shrink-0 whitespace-nowrap inline-flex items-center rounded-full bg-sky-50 px-2.5 py-0.5 text-[11px] font-bold text-[#00629b] border border-sky-200/60">
+              Bagian {activeSection} dari 12
+            </span>
           </div>
-          <div className="mt-2.5 flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+
+          {/* Chips Bar with proper bottom padding and modern rounded-xl styling */}
+          <div className="-mx-4 flex gap-2.5 overflow-x-auto px-4 pb-2.5 pt-0.5 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             {structureSections.map(item => (
               <button
                 key={item.n}
                 type="button"
-                onClick={() => setActiveSection(item.n)}
-                className={`flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors active:scale-95 ${
-                  activeSection === item.n ? "bg-[#0369a1] text-white shadow-xs" : "bg-slate-50 text-slate-600 outline outline-1 outline-slate-200"
+                onClick={e => {
+                  setActiveSection(item.n);
+                  e.currentTarget.scrollIntoView({
+                    behavior: "smooth",
+                    block: "nearest",
+                    inline: "center",
+                  });
+                }}
+                className={`flex shrink-0 items-center gap-2 whitespace-nowrap rounded-xl px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer active:scale-95 ${
+                  activeSection === item.n
+                    ? "bg-[#00629b] text-white shadow-xs ring-1 ring-[#00629b]"
+                    : "bg-slate-100/90 text-slate-700 hover:bg-slate-200/80 border border-slate-200/70"
                 }`}
               >
                 <span
-                  className={`flex h-5 w-5 items-center justify-center rounded-full text-[11px] font-bold ${
-                    activeSection === item.n ? "bg-white/20 text-white" : "bg-slate-200/80 text-slate-600"
+                  className={`flex h-4.5 w-4.5 items-center justify-center rounded-full text-[10px] font-bold ${
+                    activeSection === item.n ? "bg-white/20 text-white font-extrabold" : "bg-slate-200/90 text-slate-600"
                   }`}
                 >
                   {item.n}
                 </span>
-                {item.label}
+                <span>{item.label}</span>
               </button>
             ))}
           </div>
         </div>
 
         {/* Isi Dokumen Review Sesuai Bagian Aktif */}
-        <div className="mt-4 border-t border-slate-100 pt-3.5">
-          <div className="flex items-center justify-between gap-3 border-b border-slate-100 pb-2.5">
-            <p className="text-sm font-bold text-slate-900">
+        <div className="mt-4 border-t border-slate-100/90 pt-4">
+          <div className="flex items-center justify-between gap-3 border-b border-slate-100/80 pb-3">
+            <p className="text-[15px] font-bold text-slate-900">
               {activeSection}. {activeLabel}
             </p>
-            <p className="shrink-0 text-xs font-medium text-slate-400">Halaman {activeSection} dari 18</p>
+            <span className="shrink-0 text-xs font-medium text-slate-400">Halaman {activeSection} dari 18</span>
           </div>
 
           <div className="mt-3.5 space-y-3.5">
-            {sectionPreview[activeSection]?.map(paragraph => (
-              <p key={paragraph} className="text-sm leading-7 text-slate-600">
+            {activeParagraphs.map((paragraph, pIdx) => (
+              <p key={pIdx} className="text-[13.5px] sm:text-sm leading-relaxed sm:leading-7 text-slate-600">
                 {paragraph}
               </p>
             ))}
@@ -9824,8 +9899,8 @@ function MobileJournalCollectionCard({
         />
       </label>
 
-      {/* Grid Tombol Aksi (Paritas Lengkap Desktop: Detail, Sitasi, Abstrak, DOI, Buka PDF, Diskusikan) */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 pt-1">
+      {/* Grid Tombol Aksi (Detail, Sitasi, Abstrak, DOI, Buka PDF & Hapus bersanding, Diskusikan) */}
+      <div className="grid grid-cols-2 gap-2.5 pt-1">
         <button
           type="button"
           onClick={onDetail}
@@ -9837,7 +9912,7 @@ function MobileJournalCollectionCard({
         <button
           type="button"
           onClick={onSitasi}
-          className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl bg-sky-50 px-3 py-2.5 text-xs sm:text-sm font-semibold text-[#00629b] outline outline-1 outline-sky-200 shadow-xs transition-colors hover:bg-sky-100 active:scale-[0.98]"
+          className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs sm:text-sm font-semibold text-slate-700 shadow-xs transition-colors hover:bg-slate-50 active:scale-[0.98]"
         >
           Buat sitasi
         </button>
@@ -9858,15 +9933,27 @@ function MobileJournalCollectionCard({
           Buka DOI
         </button>
 
+        {/* Buka PDF bersanding dengan Hapus */}
         <button
           type="button"
           onClick={() => window.alert("PDF dibuka.")}
-          className="col-span-2 sm:col-span-1 flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs sm:text-sm font-semibold text-sky-700 shadow-xs transition-colors hover:bg-slate-50 active:scale-[0.98]"
+          className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs sm:text-sm font-semibold text-sky-700 shadow-xs transition-colors hover:bg-slate-50 active:scale-[0.98]"
         >
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" aria-hidden="true">
             <path d="M3 1.5h6l3 3v9H3zM8.5 1.5v3h3" />
           </svg>
           Buka PDF
+        </button>
+
+        <button
+          type="button"
+          onClick={onRemove}
+          className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-rose-200 bg-white px-3 py-2.5 text-xs sm:text-sm font-semibold text-rose-600 shadow-xs transition-colors hover:bg-rose-50 active:scale-[0.98]"
+        >
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M2.5 4.5h11M6 4.5V3h4v1.5M4 4.5l.7 9h6.6l.7-9" />
+          </svg>
+          Hapus
         </button>
 
         <button
@@ -9887,7 +9974,7 @@ Mohon bantu saya untuk:
 3. Mengidentifikasi research gap atau ide pengembangan yang relevan.`;
             onDiskusikan?.(template);
           }}
-          className="col-span-2 sm:col-span-1 flex min-h-[44px] items-center justify-center gap-2 rounded-xl bg-white px-3 py-2.5 text-xs sm:text-sm font-semibold text-slate-700 outline outline-1 outline-offset-[-1px] outline-slate-200 transition-colors hover:bg-slate-50 hover:text-slate-900 active:scale-[0.99]"
+          className="col-span-2 flex min-h-[44px] items-center justify-center gap-2 rounded-xl bg-white px-3 py-2.5 text-xs sm:text-sm font-semibold text-slate-700 outline outline-1 outline-offset-[-1px] outline-slate-200 shadow-xs transition-colors hover:bg-slate-50 hover:text-slate-900 active:scale-[0.99]"
         >
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M2.5 13.5V4a1.5 1.5 0 0 1 1.5-1.5h8A1.5 1.5 0 0 1 13.5 4v6a1.5 1.5 0 0 1-1.5 1.5H5.5L2.5 13.5z" />
@@ -9897,22 +9984,19 @@ Mohon bantu saya untuk:
         </button>
       </div>
 
-      {/* Pindah Folder & Tombol Hapus */}
-      <div className="flex flex-col sm:flex-row items-stretch gap-2.5 border-t border-slate-100 pt-3">
-        <label className="relative min-w-0 flex-1">
-          <span className="pointer-events-none absolute left-3.5 top-1/2 flex -translate-y-1/2 items-center gap-2 text-xs sm:text-sm font-semibold text-slate-700">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#00629b" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      {/* Pindah Folder (Teks bersih & tajam, tidak ada tumpukan font) */}
+      <div className="border-t border-slate-100 pt-3">
+        <div className="relative w-full">
+          <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 flex items-center text-[#00629b]">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" />
             </svg>
-            <span className="truncate max-w-[170px] sm:max-w-[200px]">
-              {activeFolder?.name ?? "Belum dikelompokkan"}
-            </span>
           </span>
           <select
             aria-label="Pilih folder jurnal"
             value={journal.folderId}
             onChange={event => onMove(event.target.value)}
-            className="min-h-[44px] w-full appearance-none rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-9 text-xs sm:text-sm font-semibold text-slate-700 outline-none transition-colors focus:border-sky-400 focus:bg-white"
+            className="min-h-[44px] w-full cursor-pointer appearance-none rounded-xl border border-slate-200 bg-slate-50/80 py-2.5 pl-10 pr-9 text-xs sm:text-sm font-semibold text-slate-700 outline-none transition-colors hover:bg-slate-100/70 focus:border-sky-400 focus:bg-white"
           >
             {folders.map(folder => (
               <option key={folder.id} value={folder.id}>
@@ -9920,21 +10004,12 @@ Mohon bantu saya untuk:
               </option>
             ))}
           </select>
-          <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400" aria-hidden="true">
-            <path d="M1 1l4 4 4-4" />
-          </svg>
-        </label>
-
-        <button
-          type="button"
-          onClick={onRemove}
-          className="flex min-h-[44px] shrink-0 items-center justify-center gap-2 rounded-xl border border-rose-200 bg-white px-4 py-2.5 text-xs sm:text-sm font-semibold text-rose-600 transition-colors hover:bg-rose-50 active:scale-[0.98]"
-        >
-          <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M2.5 4.5h11M6 4.5V3h4v1.5M4 4.5l.7 9h6.6l.7-9" />
-          </svg>
-          Hapus
-        </button>
+          <span className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400">
+            <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M1 1l4 4 4-4" />
+            </svg>
+          </span>
+        </div>
       </div>
     </article>
   );
@@ -10063,10 +10138,10 @@ function DesktopLiteratureCollectionCard({
 
       <div className="mt-4 grid grid-cols-4 gap-4">
         {[
-          ["Total hasil ditemukan", "126", "text-[#0369a1]"],
-          ["Duplikasi dihapus", "34", "text-[#f43f5e]"],
-          ["Artikel tersisa untuk sintesis", "92", "text-[#0d9488]"],
-          ["Artikel prioritas tinggi", "24", "text-[#9333ea]"],
+          ["Total hasil ditemukan", "126", "text-[#00629b]"],
+          ["Duplikasi dihapus", "34", "text-[#00629b]"],
+          ["Artikel tersisa untuk sintesis", "92", "text-[#00629b]"],
+          ["Artikel prioritas tinggi", "24", "text-[#00629b]"],
         ].map(([label, value, tone]) => (
           <div key={label} className="rounded-2xl border border-slate-200/80 px-4 py-3.5">
             <p className="min-h-8 font-['Plus_Jakarta_Sans:Medium'] text-xs font-medium leading-4 text-slate-400">{label}</p>
@@ -10322,6 +10397,7 @@ function MobileLiteratureCollectionCard({
 }) {
   const [showMatrix, setShowMatrix] = useState(false);
   const [activeDocSection, setActiveDocSection] = useState(1);
+  const chipsScrollRef = useRef<HTMLDivElement | null>(null);
 
   const currentSection =
     literatureDocSections.find(s => s.section === activeDocSection) ?? literatureDocSections[0];
@@ -10331,68 +10407,87 @@ function MobileLiteratureCollectionCard({
       {/* Banner Topik yang Dianalisis */}
       <div className="rounded-xl border border-sky-100 bg-gradient-to-br from-sky-50 via-blue-50/50 to-indigo-50/40 p-3.5">
         <div className="flex items-center justify-between gap-2">
-          <span className="rounded-full bg-white/80 px-2.5 py-0.5 text-[10px] font-bold text-[#0284c7] shadow-xs">
+          <span className="rounded-full bg-white/80 px-2.5 py-0.5 text-[11px] font-bold text-[#0284c7] shadow-xs">
             Literature Review
           </span>
-          <span className="text-[11px] text-slate-500">{item.date}</span>
+          <span className="text-xs text-slate-500">{item.date}</span>
         </div>
-        <p className="mt-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">Topik yang dianalisis</p>
-        <h3 className="mt-0.5 font-['Plus_Jakarta_Sans:Bold'] text-sm font-bold leading-5 text-[#075985]">
+        <p className="mt-2 text-[11px] font-bold uppercase tracking-wider text-slate-400">Topik yang dianalisis</p>
+        <h3 className="mt-0.5 font-['Plus_Jakarta_Sans:Bold'] text-[15px] font-bold leading-snug text-[#075985]">
           {item.topic}
         </h3>
       </div>
 
       {/* Grid 4 Statistik (2x2) */}
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-2 gap-2.5">
         {[
-          ["Total hasil ditemukan", "126", "text-[#0369a1]"],
-          ["Duplikasi dihapus", "34", "text-[#f43f5e]"],
-          ["Tersisa untuk sintesis", "92", "text-[#0d9488]"],
-          ["Prioritas tinggi", "24", "text-[#9333ea]"],
+          ["Total hasil ditemukan", "126", "text-[#00629b]"],
+          ["Duplikasi dihapus", "34", "text-[#00629b]"],
+          ["Tersisa untuk sintesis", "92", "text-[#00629b]"],
+          ["Prioritas tinggi", "24", "text-[#00629b]"],
         ].map(([label, value, tone]) => (
-          <div key={label} className="rounded-xl border border-slate-100 bg-slate-50/70 p-2.5">
-            <p className="text-[10px] font-medium leading-3 text-slate-500">{label}</p>
-            <p className="mt-1 flex items-baseline gap-1">
-              <span className={`font-['Plus_Jakarta_Sans:ExtraBold'] text-lg font-extrabold ${tone}`}>{value}</span>
-              <span className="text-[10px] text-slate-400">artikel</span>
+          <div key={label} className="rounded-xl border border-slate-200/70 bg-slate-50/80 p-3 shadow-2xs">
+            <p className="text-[12px] sm:text-[12.5px] font-semibold leading-snug text-slate-600">{label}</p>
+            <p className="mt-1.5 flex items-baseline gap-1.5">
+              <span className={`font-['Plus_Jakarta_Sans:ExtraBold'] text-[22px] sm:text-[23px] font-extrabold tracking-tight ${tone}`}>{value}</span>
+              <span className="text-xs font-medium text-slate-500">artikel</span>
             </p>
           </div>
         ))}
       </div>
 
       {/* Struktur Dokumen (12 Bagian) Horizontal Chips */}
-      <div>
-        <div className="flex items-center justify-between gap-1.5">
-          <div className="flex items-center gap-1.5">
-            <span className="flex h-5 w-5 items-center justify-center rounded-md bg-sky-50 text-[#0369a1]">
-              <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
+      <div className="border-t border-slate-100/90 pt-3.5">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex min-w-0 items-center gap-2">
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-sky-100 text-[#00629b]">
+              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
                 <path d="M2.5 4h11M2.5 8h11M2.5 12h7" />
               </svg>
             </span>
-            <h4 className="font-['Plus_Jakarta_Sans:Bold'] text-xs font-bold text-slate-800">Struktur Dokumen (12 Bagian)</h4>
+            <h4 className="font-['Plus_Jakarta_Sans:Bold'] text-[13px] sm:text-[13.5px] font-bold text-slate-800 whitespace-nowrap">
+              Struktur Dokumen
+            </h4>
           </div>
-          <span className="text-[11px] font-semibold text-[#0369a1]">Bagian {activeDocSection} dari 12</span>
+          <span className="shrink-0 whitespace-nowrap inline-flex items-center rounded-full bg-sky-50 px-2.5 py-0.5 text-[11px] font-bold text-[#00629b] border border-sky-200/60">
+            Bagian {activeDocSection} dari 12
+          </span>
         </div>
-        <div className="-mx-4 mt-2 flex gap-1.5 overflow-x-auto px-4 pb-1 [scrollbar-width:none]">
+
+        <div
+          ref={chipsScrollRef}
+          className="-mx-4 mt-3 flex gap-2.5 overflow-x-auto px-4 pb-2.5 pt-0.5 no-scrollbar scroll-smooth [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+        >
           {literatureDocSections.map((sec, index) => {
             const isActive = activeDocSection === index + 1;
             return (
               <button
                 key={sec.key}
                 type="button"
-                onClick={() => setActiveDocSection(index + 1)}
-                className={`flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1 text-[11px] font-semibold transition-all ${
-                  isActive ? "bg-[#0369a1] text-white shadow-xs" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                onClick={e => {
+                  setActiveDocSection(index + 1);
+                  e.currentTarget.scrollIntoView({
+                    behavior: "smooth",
+                    block: "nearest",
+                    inline: "center",
+                  });
+                }}
+                className={`flex shrink-0 items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all cursor-pointer select-none active:scale-95 ${
+                  isActive
+                    ? "bg-[#00629b] text-white shadow-xs ring-1 ring-[#00629b]"
+                    : "bg-slate-100/90 text-slate-700 hover:bg-slate-200/80 hover:text-slate-900 border border-slate-200/70"
                 }`}
               >
                 <span
-                  className={`flex h-3.5 w-3.5 items-center justify-center rounded-full text-[9px] font-bold ${
-                    isActive ? "bg-white/20 text-white" : "bg-slate-300 text-slate-700"
+                  className={`flex h-4.5 w-4.5 items-center justify-center rounded-full text-[10px] font-bold ${
+                    isActive
+                      ? "bg-white/20 text-white font-extrabold"
+                      : "bg-slate-200/90 text-slate-600"
                   }`}
                 >
                   {index + 1}
                 </span>
-                {sec.title}
+                <span className="whitespace-nowrap">{sec.title}</span>
               </button>
             );
           })}
@@ -10400,24 +10495,24 @@ function MobileLiteratureCollectionCard({
       </div>
 
       {/* Konten Bagian Dokumen yang Terpilih (Berubah dinamis saat tab diklik) */}
-      <div className="rounded-xl border border-slate-200/80 bg-slate-50/60 p-3 space-y-2 transition-all">
-        <div className="flex items-start gap-2">
-          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-sky-100 text-[#0369a1]">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <div className="mt-1 rounded-xl border border-slate-200/80 bg-slate-50/60 p-3.5 space-y-2.5 transition-all">
+        <div className="flex items-start gap-2.5">
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-sky-100 text-[#0369a1]">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
               <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" />
             </svg>
           </span>
           <div className="min-w-0 flex-1">
-            <h4 className="font-['Plus_Jakarta_Sans:Bold'] text-xs font-bold text-slate-800">
+            <h4 className="font-['Plus_Jakarta_Sans:Bold'] text-sm font-bold text-slate-800">
               {currentSection.key}. {currentSection.title}
             </h4>
-            <p className="text-[10px] text-slate-500 font-medium truncate">{currentSection.desc}</p>
+            <p className="text-xs text-slate-500 font-medium">{currentSection.desc}</p>
           </div>
         </div>
-        <div className="border-t border-slate-200/60 pt-2 space-y-1.5">
+        <div className="border-t border-slate-200/60 pt-2.5 space-y-2">
           {currentSection.content.map((p, idx) => (
-            <p key={idx} className="text-xs leading-5 text-slate-600">
+            <p key={idx} className="text-[14px] leading-6 text-slate-700">
               {p}
             </p>
           ))}
@@ -10429,55 +10524,64 @@ function MobileLiteratureCollectionCard({
         <button
           type="button"
           onClick={() => setShowMatrix(v => !v)}
-          className="flex w-full items-center justify-between px-3.5 py-2.5 text-left text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors"
+          className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-bold text-slate-800 hover:bg-slate-50 transition-colors cursor-pointer"
         >
           <span className="flex items-center gap-2">
-            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-[#0369a1]">
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-[#0369a1]" aria-hidden="true">
               <rect x="2" y="2" width="12" height="12" rx="2" />
               <path d="M2 6h12M6 2v12" />
             </svg>
             Matriks Literatur &amp; Jurnal Sumber
           </span>
           <svg
-            width="12"
-            height="12"
+            width="14"
+            height="14"
             viewBox="0 0 16 16"
             fill="none"
             stroke="currentColor"
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            className={`transition-transform duration-200 ${showMatrix ? "rotate-180" : ""}`}
+            className={`transition-transform duration-200 text-slate-500 ${showMatrix ? "rotate-180" : ""}`}
+            aria-hidden="true"
           >
             <path d="M4 6l4 4 4-4" />
           </svg>
         </button>
 
         {showMatrix && (
-          <div className="border-t border-slate-100 p-3 space-y-3 bg-slate-50/40">
-            {/* Matriks Literatur Mini Table */}
+          <div className="border-t border-slate-100 p-3.5 space-y-4 bg-slate-50/40">
+            {/* Matriks Literatur Table (Font Lebih Besar & Lebih Lega) */}
             <div>
-              <p className="text-[11px] font-bold text-slate-700">Preview Matriks Literatur</p>
-              <div className="mt-1.5 overflow-x-auto rounded-lg border border-slate-200 bg-white">
-                <table className="w-full min-w-[480px] text-left text-[11px]">
-                  <thead className="border-b border-slate-100 bg-slate-50 text-slate-500">
+              <div className="flex items-center justify-between pb-1.5">
+                <p className="text-sm font-bold text-slate-800">Preview Matriks Literatur</p>
+                <span className="inline-flex items-center gap-1 rounded-full bg-sky-50 px-2 py-0.5 text-[11px] font-semibold text-[#00629b] border border-sky-100">
+                  <span>Geser tabel</span>
+                  <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M6 3l5 5-5 5" />
+                  </svg>
+                </span>
+              </div>
+              <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-2xs">
+                <table className="w-full min-w-[620px] text-left text-xs">
+                  <thead className="border-b border-slate-200 bg-slate-100/90 text-slate-700">
                     <tr>
-                      <th className="px-2.5 py-1.5 font-semibold">Penelitian</th>
-                      <th className="px-2.5 py-1.5 font-semibold">Fokus</th>
-                      <th className="px-2.5 py-1.5 font-semibold">Teori</th>
-                      <th className="px-2.5 py-1.5 font-semibold">Temuan Utama</th>
+                      <th className="px-3.5 py-2.5 font-bold uppercase tracking-wider text-[11px] w-[180px]">Penelitian</th>
+                      <th className="px-3.5 py-2.5 font-bold uppercase tracking-wider text-[11px] w-[150px]">Fokus</th>
+                      <th className="px-3.5 py-2.5 font-bold uppercase tracking-wider text-[11px] w-[150px]">Teori</th>
+                      <th className="px-3.5 py-2.5 font-bold uppercase tracking-wider text-[11px] w-[200px]">Temuan Utama</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    {matrixRows.slice(0, 3).map(row => (
-                      <tr key={row.name} className="border-b border-slate-100 last:border-0 align-top">
-                        <td className="px-2.5 py-2">
-                          <span className="font-bold text-[#0369a1]">{row.name}</span>
-                          <span className="block text-[10px] text-slate-400">{row.journal}</span>
+                  <tbody className="divide-y divide-slate-100">
+                    {matrixRows.slice(0, 8).map((row, idx) => (
+                      <tr key={`${row.name}-${idx}`} className="align-top hover:bg-slate-50/60 transition-colors">
+                        <td className="px-3.5 py-3">
+                          <span className="font-bold text-[#00629b] text-[13px] block leading-snug">{row.name}</span>
+                          <span className="block text-xs text-slate-500 font-medium mt-0.5">{row.journal}</span>
                         </td>
-                        <td className="px-2.5 py-2 leading-4 text-slate-600">{row.cells[0]}</td>
-                        <td className="px-2.5 py-2 leading-4 text-slate-600">{row.cells[1]}</td>
-                        <td className="px-2.5 py-2 leading-4 text-slate-600">{row.cells[3]}</td>
+                        <td className="px-3.5 py-3 text-xs leading-relaxed text-slate-700 font-normal">{row.cells[0]}</td>
+                        <td className="px-3.5 py-3 text-xs leading-relaxed text-slate-700 font-normal">{row.cells[1]}</td>
+                        <td className="px-3.5 py-3 text-xs leading-relaxed text-slate-700 font-normal">{row.cells[3]}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -10485,71 +10589,97 @@ function MobileLiteratureCollectionCard({
               </div>
             </div>
 
-            {/* Jurnal yang Digunakan Mini List */}
+            {/* Jurnal yang Digunakan (Banyak & Bisa Di-Scroll) */}
             <div>
-              <p className="text-[11px] font-bold text-slate-700">Jurnal Sumber yang Digunakan</p>
-              <div className="mt-1.5 space-y-1.5">
-                {priorityRows.slice(0, 3).map(row => (
-                  <div key={row.title} className="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-[11px]">
-                    <div className="min-w-0 flex-1 pr-2">
-                      <p className="font-semibold text-slate-800 truncate">{row.authors}</p>
-                      <p className="text-[10px] text-slate-500">{row.year}</p>
+              <div className="flex items-center justify-between pb-1.5">
+                <p className="text-sm font-bold text-slate-800">Jurnal Sumber yang Digunakan</p>
+                <span className="rounded-full bg-sky-50 px-2.5 py-0.5 text-[11px] font-bold text-[#00629b] border border-sky-200/60">
+                  {priorityRows.length} Jurnal
+                </span>
+              </div>
+
+              {/* Scrollable List Jurnal Sumber */}
+              <div className="max-h-72 overflow-y-auto space-y-2 pr-1 rounded-xl border border-slate-200/80 bg-slate-50/60 p-2 scroll-smooth">
+                {priorityRows.map((row, idx) => (
+                  <div
+                    key={`${row.title}-${idx}`}
+                    className="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-3 text-xs shadow-2xs transition-colors hover:border-sky-300"
+                  >
+                    <div className="min-w-0 flex-1 pr-3">
+                      <p className="font-bold text-slate-800 text-[13px] leading-snug truncate">{row.authors}</p>
+                      <p className="text-xs text-slate-500 font-medium mt-0.5">
+                        {row.year} {row.title ? `· ${row.title}` : ""}
+                      </p>
                     </div>
-                    <span className="flex shrink-0 items-center gap-1 text-[10px] font-medium text-slate-600">
-                      <img src={sourceLogos[row.source] ?? "/assets/source-logos/openalex.svg"} alt="" className="h-3 w-3 object-contain" />
-                      {row.source}
+                    <span className="flex shrink-0 items-center gap-1.5 rounded-lg bg-slate-50 border border-slate-200/80 px-2 py-1 text-xs font-semibold text-slate-700">
+                      <img src={sourceLogos[row.source] ?? "/assets/source-logos/openalex.svg"} alt="" className="h-3.5 w-3.5 object-contain" />
+                      <span>{row.source}</span>
                     </span>
                   </div>
                 ))}
               </div>
+              <p className="mt-1 text-[11px] text-slate-400 text-center">
+                Gulir ke bawah untuk melihat seluruh {priorityRows.length} jurnal sumber ↓
+              </p>
             </div>
           </div>
         )}
       </div>
 
       {/* Baris Tombol Aksi Bawah */}
-      <div className="flex items-center gap-2 border-t border-slate-100 pt-3">
+      <div className="space-y-2 border-t border-slate-100 pt-3">
+        {/* Tombol Utama: Lihat Detail Review */}
         <button
           type="button"
           onClick={onOpen}
-          className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-[#0369a1] px-3.5 py-2.5 text-xs font-bold text-white shadow-xs transition-colors hover:bg-[#025684] active:scale-95"
+          className="flex min-h-[44px] w-full items-center justify-center gap-2 rounded-xl bg-[#00629b] px-4 text-xs sm:text-sm font-bold text-white shadow-xs transition-colors hover:bg-[#004f80] active:scale-[0.98] cursor-pointer"
         >
-          <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M1 8s3-5 7-5 7 5 7 5-3 5-7 5-7-5-7-5z" />
             <circle cx="8" cy="8" r="2" />
           </svg>
-          Lihat Detail
+          <span>Lihat Detail Review</span>
         </button>
 
-        <label className="relative">
-          <select
-            value={item.folderId}
-            onChange={e => onMove(e.target.value)}
-            aria-label="Pilih folder literature review"
-            className="h-10 appearance-none rounded-xl border border-slate-200 bg-slate-50 py-2 pl-7 pr-6 text-xs font-semibold text-slate-700 outline-none"
+        {/* Baris Pindah Folder & Hapus */}
+        <div className="flex items-center gap-2">
+          <div className="relative min-w-0 flex-1">
+            <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 flex items-center text-[#00629b]">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" />
+              </svg>
+            </span>
+            <select
+              value={item.folderId}
+              onChange={e => onMove(e.target.value)}
+              aria-label="Pilih folder literature review"
+              className="min-h-[42px] w-full cursor-pointer appearance-none rounded-xl border border-slate-200 bg-slate-50/80 py-2 pl-9 pr-8 text-xs font-semibold text-slate-700 outline-none transition-colors hover:bg-slate-100/70 focus:border-sky-400 focus:bg-white truncate"
+            >
+              {folders.map(folder => (
+                <option key={folder.id} value={folder.id}>
+                  {folder.name}
+                </option>
+              ))}
+            </select>
+            <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
+              <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M1 1l4 4 4-4" />
+              </svg>
+            </span>
+          </div>
+
+          <button
+            type="button"
+            onClick={onRemove}
+            className="flex min-h-[42px] shrink-0 items-center justify-center gap-1.5 rounded-xl border border-rose-200 bg-rose-50/40 px-3.5 text-xs font-semibold text-rose-600 shadow-2xs transition-colors hover:bg-rose-100/60 active:scale-95 cursor-pointer"
+            aria-label="Hapus literature review"
           >
-            {folders.map(folder => (
-              <option key={folder.id} value={folder.id}>
-                {folder.name}
-              </option>
-            ))}
-          </select>
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2">
-            <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" />
-          </svg>
-        </label>
-
-        <button
-          type="button"
-          onClick={onRemove}
-          className="flex h-10 items-center justify-center gap-1 rounded-xl border border-rose-200 px-3 text-xs font-semibold text-rose-600 transition-colors hover:bg-rose-50 active:scale-95"
-          aria-label="Hapus literature review"
-        >
-          <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M2.5 4.5h11M6 4.5V3h4v1.5M4 4.5l.7 9h6.6l.7-9" />
-          </svg>
-          Hapus
-        </button>
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M2.5 4.5h11M6 4.5V3h4v1.5M4 4.5l.7 9h6.6l.7-9" />
+            </svg>
+            <span>Hapus</span>
+          </button>
+        </div>
       </div>
     </article>
   );
@@ -10573,18 +10703,18 @@ function MobileResearchMapCollectionCard({
   return (
     <article className="overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-4 shadow-xs space-y-3.5">
       {/* Header Meta Riset */}
-      <div className="rounded-xl border border-slate-200/90 bg-slate-50/70 p-3 space-y-2">
-        <div className="flex items-center justify-between">
-          <span className="rounded-full bg-indigo-50 px-2.5 py-0.5 text-[10px] font-bold text-indigo-700">
+      <div className="rounded-xl border border-indigo-100/80 bg-gradient-to-br from-indigo-50/50 via-sky-50/40 to-slate-50/80 p-3.5 space-y-2.5">
+        <div className="flex items-center justify-between gap-2">
+          <span className="rounded-full bg-white px-2.5 py-0.5 text-[11px] font-bold text-indigo-700 shadow-2xs border border-indigo-100/90">
             Peta Penelitian
           </span>
-          <span className="text-[11px] text-slate-500">{item.date}</span>
+          <span className="text-xs font-medium text-slate-500">{item.date}</span>
         </div>
 
         <div>
-          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Topik Penelitian</span>
-          <p className="mt-0.5 flex items-center gap-1.5 font-['Plus_Jakarta_Sans:Bold'] text-sm font-bold text-slate-900">
-            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="#0070ba" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">Topik Penelitian</span>
+          <p className="mt-0.5 flex items-center gap-1.5 font-['Plus_Jakarta_Sans:Bold'] text-[15px] sm:text-base font-bold text-slate-900">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="#00629b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 text-[#00629b]">
               <circle cx="7" cy="7" r="4.5" />
               <path d="M10.5 10.5L14 14" />
             </svg>
@@ -10592,14 +10722,14 @@ function MobileResearchMapCollectionCard({
           </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-2 pt-1 border-t border-slate-200/60 text-xs">
+        <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-200/70">
           <div>
-            <span className="text-[10px] text-slate-400 block">Sumber Jurnal</span>
-            <span className="font-bold text-slate-800 text-[11px]">{item.sources}</span>
+            <span className="text-[11px] text-slate-500 font-medium block">Sumber Jurnal</span>
+            <span className="font-bold text-slate-800 text-xs sm:text-[13px]">{item.sources}</span>
           </div>
           <div>
-            <span className="text-[10px] text-slate-400 block">Periode</span>
-            <span className="font-bold text-slate-800 text-[11px]">2020 - 2026</span>
+            <span className="text-[11px] text-slate-500 font-medium block">Periode</span>
+            <span className="font-bold text-slate-800 text-xs sm:text-[13px]">2020 - 2026</span>
           </div>
         </div>
       </div>
@@ -10610,8 +10740,8 @@ function MobileResearchMapCollectionCard({
           <button
             type="button"
             onClick={() => setActiveMapTab("network")}
-            className={`rounded-lg py-1.5 text-[11px] font-bold transition-all ${
-              activeMapTab === "network" ? "bg-white text-[#0070ba] shadow-xs" : "text-slate-600"
+            className={`rounded-lg py-2 text-xs sm:text-[12.5px] font-bold transition-all cursor-pointer ${
+              activeMapTab === "network" ? "bg-white text-[#00629b] shadow-xs ring-1 ring-slate-200/60" : "text-slate-600 hover:text-slate-900"
             }`}
           >
             Peta Jaringan
@@ -10619,8 +10749,8 @@ function MobileResearchMapCollectionCard({
           <button
             type="button"
             onClick={() => setActiveMapTab("density")}
-            className={`rounded-lg py-1.5 text-[11px] font-bold transition-all ${
-              activeMapTab === "density" ? "bg-white text-[#0070ba] shadow-xs" : "text-slate-600"
+            className={`rounded-lg py-2 text-xs sm:text-[12.5px] font-bold transition-all cursor-pointer ${
+              activeMapTab === "density" ? "bg-white text-[#00629b] shadow-xs ring-1 ring-slate-200/60" : "text-slate-600 hover:text-slate-900"
             }`}
           >
             Peta Kepadatan
@@ -10628,8 +10758,8 @@ function MobileResearchMapCollectionCard({
           <button
             type="button"
             onClick={() => setActiveMapTab("trend")}
-            className={`rounded-lg py-1.5 text-[11px] font-bold transition-all ${
-              activeMapTab === "trend" ? "bg-white text-[#0070ba] shadow-xs" : "text-slate-600"
+            className={`rounded-lg py-2 text-xs sm:text-[12.5px] font-bold transition-all cursor-pointer ${
+              activeMapTab === "trend" ? "bg-white text-[#00629b] shadow-xs ring-1 ring-slate-200/60" : "text-slate-600 hover:text-slate-900"
             }`}
           >
             Perkembangan
@@ -10639,9 +10769,9 @@ function MobileResearchMapCollectionCard({
         {/* Tab Content Peta */}
         <div className="mt-2.5">
           {activeMapTab === "network" && (
-            <div className="rounded-xl border border-slate-200/90 bg-white p-3">
-              <p className="text-[11px] font-semibold text-slate-600 text-center">Hubungan antar topik berdasarkan kemunculan bersama</p>
-              <div className="relative mt-2 flex h-48 items-center justify-center overflow-hidden rounded-lg border border-slate-100 bg-slate-50/40">
+            <div className="rounded-xl border border-slate-200/90 bg-white p-3.5">
+              <p className="text-xs sm:text-[12.5px] font-semibold text-slate-700 text-center">Hubungan antar topik berdasarkan kemunculan bersama</p>
+              <div className="relative mt-2.5 flex h-48 items-center justify-center overflow-hidden rounded-lg border border-slate-100 bg-slate-50/40">
                 <svg width="130" height="82" viewBox="0 0 130 82" fill="none" stroke="#93c5fd" strokeWidth="1.5" strokeDasharray="3 3" className="map-edge-flow" aria-hidden="true">
                   <line x1="32" y1="26" x2="65" y2="41" />
                   <line x1="98" y1="28" x2="65" y2="41" />
@@ -10652,7 +10782,7 @@ function MobileResearchMapCollectionCard({
                 </svg>
                 <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
                   <span className="pointer-events-none absolute -inset-1.5 rounded-full border border-sky-400/50 animate-ping opacity-40" />
-                  <span className="relative flex h-8 w-8 items-center justify-center rounded-full bg-[#0070ba] text-[6px] font-bold text-white shadow-xs">
+                  <span className="relative flex h-9 w-9 items-center justify-center rounded-full bg-[#00629b] text-[8px] font-bold text-white shadow-xs">
                     AI literacy
                   </span>
                 </div>
@@ -10665,20 +10795,20 @@ function MobileResearchMapCollectionCard({
           )}
 
           {activeMapTab === "density" && (
-            <div className="rounded-xl border border-slate-200/90 bg-white p-3">
-              <p className="text-[11px] font-semibold text-slate-600 text-center">Tingkat konsentrasi topik dalam penelitian</p>
-              <div className="relative mt-2 h-48 overflow-hidden rounded-lg border border-slate-700 bg-[#072448] text-[8px] font-bold text-white">
+            <div className="rounded-xl border border-slate-200/90 bg-white p-3.5">
+              <p className="text-xs sm:text-[12.5px] font-semibold text-slate-700 text-center">Tingkat konsentrasi topik dalam penelitian</p>
+              <div className="relative mt-2.5 h-48 overflow-hidden rounded-lg border border-slate-700 bg-[#072448] text-[9.5px] font-bold text-white">
                 <span className="map-thermal-breathe absolute left-1/2 top-1/2 h-20 w-28 -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-400/70 blur-xl" />
                 <span className="map-thermal-breathe-alt absolute left-[28%] top-[28%] h-12 w-20 rounded-full bg-cyan-400/60 blur-xl" />
                 <span className="map-thermal-breathe absolute right-[16%] top-[18%] h-12 w-20 rounded-full bg-emerald-400/50 blur-xl" />
                 <span className="absolute left-1/2 top-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-300 animate-ping opacity-75" />
                 <span className="absolute left-4 top-4">generative AI</span>
                 <span className="absolute right-4 top-4">student engagement</span>
-                <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[10px] drop-shadow-md">AI literacy</span>
+                <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[11px] drop-shadow-md">AI literacy</span>
                 <span className="absolute bottom-4 left-6">AI anxiety</span>
                 <span className="absolute bottom-4 right-4">academic performance</span>
               </div>
-              <div className="mt-2 flex items-center gap-2 text-[9px] text-slate-400">
+              <div className="mt-2 flex items-center gap-2 text-[10px] text-slate-500 font-medium">
                 <span>Rendah</span>
                 <span className="h-1.5 flex-1 rounded-full bg-gradient-to-r from-blue-600 via-cyan-400 to-red-500" />
                 <span>Tinggi</span>
@@ -10687,9 +10817,9 @@ function MobileResearchMapCollectionCard({
           )}
 
           {activeMapTab === "trend" && (
-            <div className="rounded-xl border border-slate-200/90 bg-white p-3">
-              <p className="text-[11px] font-semibold text-slate-600 text-center">Rata-rata tahun publikasi setiap topik</p>
-              <div className="relative mt-2 flex h-48 items-center justify-center overflow-hidden rounded-lg border border-slate-100 bg-slate-50/40">
+            <div className="rounded-xl border border-slate-200/90 bg-white p-3.5">
+              <p className="text-xs sm:text-[12.5px] font-semibold text-slate-700 text-center">Rata-rata tahun publikasi setiap topik</p>
+              <div className="relative mt-2.5 flex h-48 items-center justify-center overflow-hidden rounded-lg border border-slate-100 bg-slate-50/40">
                 <svg width="134" height="81" viewBox="0 0 134 81" fill="none" stroke="#cbd5e1" strokeWidth="1.5" aria-hidden="true">
                   <line x1="34" y1="26" x2="67" y2="40" />
                   <line x1="100" y1="27" x2="67" y2="40" />
@@ -10699,7 +10829,7 @@ function MobileResearchMapCollectionCard({
                 </svg>
                 <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
                   <span className="pointer-events-none absolute -inset-1.5 rounded-full border border-emerald-400/50 animate-ping opacity-40" />
-                  <span className="relative flex h-8 w-8 items-center justify-center rounded-full bg-emerald-500 text-[6px] font-bold text-white shadow-xs">
+                  <span className="relative flex h-9 w-9 items-center justify-center rounded-full bg-emerald-500 text-[8px] font-bold text-white shadow-xs">
                     AI literacy
                   </span>
                 </div>
@@ -10709,7 +10839,7 @@ function MobileResearchMapCollectionCard({
                 <span className="map-float-1 absolute bottom-[24%] right-[26%] h-2.5 w-2.5 rounded-full bg-emerald-400 shadow-xs" />
               </div>
               <div className="mt-2 h-1.5 rounded-full bg-gradient-to-r from-blue-600 via-emerald-400 to-amber-500" />
-              <div className="mt-1 flex justify-between text-[8px] text-slate-400">
+              <div className="mt-1 flex justify-between text-[9.5px] sm:text-[10px] font-medium text-slate-500">
                 {[2020, 2021, 2022, 2023, 2024, 2025, 2026].map(year => (
                   <span key={year}>{year}</span>
                 ))}
@@ -10720,25 +10850,25 @@ function MobileResearchMapCollectionCard({
       </div>
 
       {/* Jurnal yang Digunakan Preview */}
-      <div className="rounded-xl border border-slate-200/90 bg-white p-3 space-y-2">
+      <div className="rounded-xl border border-slate-200/90 bg-white p-3.5 space-y-2.5">
         <div className="flex items-center gap-2">
-          <span className="flex h-5 w-5 items-center justify-center rounded-md bg-blue-50 text-[#0070ba]">
-            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-sky-100 text-[#00629b]">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
               <path d="M2.5 3.5h4.2c.7 0 1.3.6 1.3 1.3v8.7c0-.7-.6-1.3-1.3-1.3H2.5z" />
               <path d="M13.5 3.5H9.3c-.7 0-1.3.6-1.3 1.3v8.7c0-.7.6-1.3 1.3-1.3h4.2z" />
             </svg>
           </span>
-          <h4 className="font-['Plus_Jakarta_Sans:Bold'] text-xs font-bold text-slate-800">Jurnal Sumber yang Digunakan</h4>
+          <h4 className="font-['Plus_Jakarta_Sans:Bold'] text-[13px] font-bold text-slate-800">Jurnal Sumber yang Digunakan</h4>
         </div>
-        <div className="space-y-1.5">
+        <div className="space-y-2">
           {priorityRows.slice(0, 3).map(row => (
-            <div key={row.title} className="flex items-center justify-between rounded-lg border border-slate-100 bg-slate-50/70 px-2.5 py-1.5 text-[11px]">
+            <div key={row.title} className="flex items-center justify-between rounded-lg border border-slate-200/60 bg-slate-50/70 px-3 py-2 text-xs">
               <div className="min-w-0 flex-1 pr-2">
-                <p className="font-semibold text-slate-800 truncate">{row.authors}</p>
-                <p className="text-[10px] text-slate-500 truncate">{row.title}</p>
+                <p className="font-bold text-slate-800 truncate text-[12px] sm:text-xs">{row.authors}</p>
+                <p className="text-[11px] text-slate-500 truncate mt-0.5">{row.title}</p>
               </div>
-              <span className="flex shrink-0 items-center gap-1 text-[10px] font-medium text-slate-600">
-                <img src={sourceLogos[row.source] ?? "/assets/source-logos/openalex.svg"} alt="" className="h-3 w-3 object-contain" />
+              <span className="flex shrink-0 items-center gap-1.5 text-[11px] font-medium text-slate-600 bg-white px-2 py-1 rounded-md border border-slate-200/60 shadow-2xs">
+                <img src={sourceLogos[row.source] ?? "/assets/source-logos/openalex.svg"} alt="" className="h-3.5 w-3.5 object-contain" />
                 {row.source}
               </span>
             </div>
@@ -10747,48 +10877,59 @@ function MobileResearchMapCollectionCard({
       </div>
 
       {/* Baris Tombol Aksi Bawah */}
-      <div className="flex items-center gap-2 border-t border-slate-100 pt-3">
+      <div className="space-y-2.5 border-t border-slate-100 pt-3.5">
+        {/* Tombol Utama: Lihat Detail Peta */}
         <button
           type="button"
           onClick={onOpen}
-          className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-[#0070ba] px-3.5 py-2.5 text-xs font-bold text-white shadow-xs transition-colors hover:bg-[#005c99] active:scale-95"
+          className="flex min-h-[44px] w-full items-center justify-center gap-2 rounded-xl bg-[#00629b] px-4 text-xs sm:text-sm font-bold text-white shadow-xs transition-colors hover:bg-[#004f80] active:scale-[0.98] cursor-pointer"
         >
-          <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M1 8s3-5 7-5 7 5 7 5-3 5-7 5-7-5-7-5z" />
             <circle cx="8" cy="8" r="2" />
           </svg>
-          Lihat Detail
+          <span>Lihat Detail Peta</span>
         </button>
 
-        <label className="relative">
-          <select
-            value={item.folderId}
-            onChange={e => onMove(e.target.value)}
-            aria-label="Pilih folder peta penelitian"
-            className="h-10 appearance-none rounded-xl border border-slate-200 bg-slate-50 py-2 pl-7 pr-6 text-xs font-semibold text-slate-700 outline-none"
+        {/* Baris Pindah Folder & Hapus */}
+        <div className="flex items-center gap-2">
+          <div className="relative min-w-0 flex-1">
+            <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 flex items-center text-[#00629b]">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" />
+              </svg>
+            </span>
+            <select
+              value={item.folderId}
+              onChange={e => onMove(e.target.value)}
+              aria-label="Pilih folder peta penelitian"
+              className="min-h-[44px] w-full cursor-pointer appearance-none rounded-xl border border-slate-200 bg-slate-50/80 py-2 pl-9 pr-8 text-xs font-semibold text-slate-700 outline-none transition-colors hover:bg-slate-100/70 focus:border-sky-400 focus:bg-white truncate"
+            >
+              {folders.map(folder => (
+                <option key={folder.id} value={folder.id}>
+                  {folder.name}
+                </option>
+              ))}
+            </select>
+            <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
+              <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M1 1l4 4 4-4" />
+              </svg>
+            </span>
+          </div>
+
+          <button
+            type="button"
+            onClick={onRemove}
+            className="flex min-h-[44px] shrink-0 items-center justify-center gap-1.5 rounded-xl border border-rose-200 bg-rose-50/40 px-3.5 text-xs font-semibold text-rose-600 shadow-2xs transition-colors hover:bg-rose-100/60 active:scale-95 cursor-pointer"
+            aria-label="Hapus peta penelitian"
           >
-            {folders.map(folder => (
-              <option key={folder.id} value={folder.id}>
-                {folder.name}
-              </option>
-            ))}
-          </select>
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2">
-            <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" />
-          </svg>
-        </label>
-
-        <button
-          type="button"
-          onClick={onRemove}
-          className="flex h-10 items-center justify-center gap-1 rounded-xl border border-rose-200 px-3 text-xs font-semibold text-rose-600 transition-colors hover:bg-rose-50 active:scale-95"
-          aria-label="Hapus peta penelitian"
-        >
-          <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M2.5 4.5h11M6 4.5V3h4v1.5M4 4.5l.7 9h6.6l.7-9" />
-          </svg>
-          Hapus
-        </button>
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M2.5 4.5h11M6 4.5V3h4v1.5M4 4.5l.7 9h6.6l.7-9" />
+            </svg>
+            <span>Hapus</span>
+          </button>
+        </div>
       </div>
     </article>
   );
@@ -11369,11 +11510,16 @@ export default function CariJurnalFigmaPanel({
 
   const topicSuggestions = searchType === "map" ? mapTopicSuggestions : reviewTopicSuggestions;
 
-  const guideContent: { title: string; intro: string; steps: { title?: string; description: string }[] } | null =
+  const guideContent: { title: string; intro: React.ReactNode; steps: { title?: string; description: string }[] } | null =
     searchType === "review"
       ? {
           title: "Cara Kerja Literature Review",
-          intro: "Tentukan topik penelitian sesuai fokus yang ingin Anda teliti.",
+          intro: (
+            <>
+              Tentukan topik penelitian sesuai fokus{" "}
+              <span className="block md:inline">yang ingin Anda teliti.</span>
+            </>
+          ),
           steps: [
             {
               title: "Masukkan topik penelitian",
@@ -11392,7 +11538,12 @@ export default function CariJurnalFigmaPanel({
       : searchType === "map"
         ? {
             title: "Cara Kerja Peta Penelitian",
-            intro: "Tentukan topik penelitian sesuai fokus yang ingin Anda cari.",
+            intro: (
+              <>
+                Tentukan topik penelitian sesuai fokus{" "}
+                <span className="block md:inline">yang ingin Anda cari.</span>
+              </>
+            ),
             steps: [
               {
                 title: "Masukkan topik penelitian",
@@ -11427,20 +11578,64 @@ export default function CariJurnalFigmaPanel({
     else setMobileSearchStage("loading");
   };
 
-  const getLoadingTitle = () => {
+  const getLoadingTitle = (isMobile = false): React.ReactNode => {
     if (loadingSource === "history") {
-      if (searchType === "review") return "Membuka Literatur Review untuk Anda";
-      if (searchType === "map") return "Membuka Peta Penelitian untuk Anda";
-      return "Membuka Jurnal untuk Anda";
+      if (searchType === "review") {
+        return isMobile ? (
+          <>
+            Membuka Literatur Review <span className="block">untuk Anda</span>
+          </>
+        ) : (
+          "Membuka Literatur Review untuk Anda"
+        );
+      }
+      if (searchType === "map") {
+        return isMobile ? (
+          <>
+            Membuka Peta Penelitian <span className="block">untuk Anda</span>
+          </>
+        ) : (
+          "Membuka Peta Penelitian untuk Anda"
+        );
+      }
+      return isMobile ? (
+        <>
+          Membuka Jurnal <span className="block">untuk Anda</span>
+        </>
+      ) : (
+        "Membuka Jurnal untuk Anda"
+      );
     }
     if (loadingSource === "collection") {
       if (searchType === "review") return "Membuka Literatur Review";
       if (searchType === "map") return "Membuka Peta Penelitian";
     }
-    if (searchType === "review") return "Menyusun Literatur Review untuk Anda";
-    if (searchType === "map") return "Menyusun Peta Penelitian untuk Anda";
+    if (searchType === "review") {
+      return isMobile ? (
+        <>
+          Menyusun Literatur Review <span className="block">untuk Anda</span>
+        </>
+      ) : (
+        "Menyusun Literatur Review untuk Anda"
+      );
+    }
+    if (searchType === "map") {
+      return isMobile ? (
+        <>
+          Menyusun Peta Penelitian <span className="block">untuk Anda</span>
+        </>
+      ) : (
+        "Menyusun Peta Penelitian untuk Anda"
+      );
+    }
     if (resultMode === "analysis") return "Menganalisis Naskahmu";
-    return "Menelusuri Jurnal untuk Anda";
+    return isMobile ? (
+      <>
+        Menelusuri Jurnal <span className="block">untuk Anda</span>
+      </>
+    ) : (
+      "Menelusuri Jurnal untuk Anda"
+    );
   };
 
   const getLoadingSubtitle = () => {
@@ -11594,7 +11789,7 @@ export default function CariJurnalFigmaPanel({
             <div className="fixed inset-x-0 bottom-[68px] top-[65px] z-[305] flex flex-col items-center justify-center overflow-hidden bg-[#f4f7fb] px-6 md:hidden">
               <SearchLoader />
               <h1 className="text-center font-['Plus_Jakarta_Sans:ExtraBold'] text-[21px] font-extrabold tracking-[-0.5px] text-[#313131]">
-                {getLoadingTitle()}
+                {getLoadingTitle(true)}
               </h1>
               <p className="mt-2 max-w-[290px] animate-pulse text-center text-xs leading-5 text-[#71717a]">
                 {getLoadingSubtitle()}
@@ -11636,27 +11831,6 @@ export default function CariJurnalFigmaPanel({
                           <path d="M12 6H2M5.5 2.5L2 6l3.5 3.5" />
                         </svg>
                         Kembali ke Pencarian
-                      </button>
-                    </div>
-
-                    {/* Sub Header: Judul Rekomendasi & Filter */}
-                    <div className="flex items-center justify-between gap-2 pt-0.5">
-                      <h1 className="truncate font-['Plus_Jakarta_Sans:Bold'] text-base font-bold tracking-[-0.4px] text-slate-900">
-                        Rekomendasi yang paling relevan
-                      </h1>
-                      <button
-                        type="button"
-                        onClick={() => setFilterOpen(true)}
-                        className="flex min-h-[40px] shrink-0 items-center gap-1.5 rounded-xl border border-slate-200/80 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-xs hover:bg-slate-50 active:scale-95"
-                        aria-label="Buka Filter dan Urutkan"
-                      >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-sky-700">
-                          <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
-                        </svg>
-                        <span>Filter &amp; Urutkan</span>
-                        {filterApplied && (
-                          <span className="flex h-2 w-2 rounded-full bg-sky-600 ring-2 ring-white" />
-                        )}
                       </button>
                     </div>
                   </div>
@@ -11851,20 +12025,26 @@ export default function CariJurnalFigmaPanel({
                   </div>
                 </section>
 
-                <div className="mt-4 flex items-center justify-between px-0.5">
+                <div className="mt-6 flex items-center justify-between px-1">
                   <div className="flex items-center gap-2">
-                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="#0369a1" strokeWidth="1.6" strokeLinecap="round" aria-hidden="true">
-                      <path d="M5.5 4h8.5M5.5 8h8.5M5.5 12h8.5" />
-                      <circle cx="2.5" cy="4" r="1" fill="#0369a1" stroke="none" />
-                      <circle cx="2.5" cy="8" r="1" fill="#0369a1" stroke="none" />
-                      <circle cx="2.5" cy="12" r="1" fill="#0369a1" stroke="none" />
-                    </svg>
-                    <p className="text-[11px] font-bold uppercase tracking-wide text-slate-500">Daftar rekomendasi</p>
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-sky-100 text-[#00629b]">
+                      <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+                        <path d="M5.5 4h8.5M5.5 8h8.5M5.5 12h8.5" />
+                        <circle cx="2.5" cy="4" r="1" fill="currentColor" stroke="none" />
+                        <circle cx="2.5" cy="8" r="1" fill="currentColor" stroke="none" />
+                        <circle cx="2.5" cy="12" r="1" fill="currentColor" stroke="none" />
+                      </svg>
+                    </span>
+                    <h3 className="font-['Plus_Jakarta_Sans:Bold'] text-xs sm:text-[13px] font-bold uppercase tracking-wide text-slate-700">
+                      Daftar Rekomendasi
+                    </h3>
                   </div>
-                  <p className="text-xs font-medium text-slate-500">3 dari 20 telaah</p>
+                  <span className="shrink-0 whitespace-nowrap inline-flex items-center rounded-full bg-sky-50 px-2.5 py-0.5 text-[11px] font-bold text-[#00629b] border border-sky-200/60">
+                    3 dari 20 telaah
+                  </span>
                 </div>
 
-                <div className="mt-2 space-y-3">
+                <div className="mt-3.5 space-y-3.5">
                   {resultMode === "analysis" && (
                     <div className="flex items-center justify-between rounded-xl bg-white px-3 py-2 shadow-sm">
                       <span className="text-xs font-bold text-slate-700">
@@ -12000,7 +12180,9 @@ export default function CariJurnalFigmaPanel({
                   {searchType === "review" ? (
                     "Buat literatur review dari jurnal yang paling relevan"
                   ) : searchType === "map" ? (
-                    "Buat peta penelitian sesuai yang Anda butuhkan"
+                    <>
+                      Buat peta penelitian sesuai <br className="md:hidden" />yang Anda butuhkan
+                    </>
                   ) : (
                     <>
                       Temukan jurnal yang tepat <br className="md:hidden" />sesuai kebutuhanmu
@@ -12027,7 +12209,7 @@ export default function CariJurnalFigmaPanel({
                   {(
                     [
                       ["journal", "Cari Jurnal"],
-                      ["review", "Literatur Review"],
+                      ["review", "Literatur"],
                       ["map", "Peta Penelitian"],
                     ] as const
                   ).map(([type, label]) => {
@@ -12104,10 +12286,32 @@ export default function CariJurnalFigmaPanel({
                         </button>
                       )}
                     </label>
-                    <div className="mt-3 flex gap-1.5 rounded-xl bg-sky-50 px-3 py-2.5 text-[12px] leading-5 text-sky-800 md:text-xs">
-                      <span className="font-bold">Contoh:</span>
-                      <span>{searchType === "review" ? "Tinjau literatur tentang literasi keuangan mahasiswa." : "Artificial Intelligence dan motivasi belajar mahasiswa."}</span>
-                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (searchType === "map") {
+                          setMapTopic("Artificial Intelligence dan motivasi belajar mahasiswa");
+                        } else {
+                          setLiteratureTopic("Tinjau literatur tentang literasi keuangan mahasiswa");
+                        }
+                      }}
+                      className="mt-3 flex w-full flex-col items-start gap-0.5 rounded-xl border border-sky-200/70 bg-sky-50/80 px-3 py-2.5 text-left transition-all hover:bg-sky-100/70 active:scale-[0.99] cursor-pointer"
+                    >
+                      <span className="font-['Plus_Jakarta_Sans:Bold'] text-xs font-bold text-[#00629b]">Contoh:</span>
+                      <span className="text-[12px] sm:text-[12.5px] leading-5 tracking-[-0.1px] text-slate-700">
+                        {searchType === "review" ? (
+                          <>
+                            Tinjau literatur tentang literasi{" "}
+                            <span className="whitespace-nowrap">keuangan mahasiswa.</span>
+                          </>
+                        ) : (
+                          <>
+                            Artificial Intelligence dan motivasi{" "}
+                            <span className="whitespace-nowrap">belajar mahasiswa.</span>
+                          </>
+                        )}
+                      </span>
+                    </button>
 
                     <div className="mt-4 grid min-w-0 grid-cols-[minmax(0,1fr)] gap-3 md:grid-cols-2">
                       <label className="block min-w-0">
@@ -12289,7 +12493,7 @@ export default function CariJurnalFigmaPanel({
                       </div>
                     </div>
 
-                    <div className="mt-5 flex flex-col gap-3 border-t border-slate-100 pt-4 md:flex-row md:items-center md:justify-end">
+                    <div className="mt-4 flex flex-col gap-3 pt-0 md:mt-5 md:border-t md:border-slate-100 md:pt-4 md:flex-row md:items-center md:justify-end">
                       <button
                         type="button"
                         disabled={(searchType === "map" ? mapTopic : literatureTopic).trim().length < 3}
@@ -12320,9 +12524,29 @@ export default function CariJurnalFigmaPanel({
                 ) : (
                   <>
                 <section className="mt-4 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm md:mt-5 md:p-6">
-                  <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-[17px] font-bold md:text-base">Pencarian cepat</h2>
+                  <div className="flex items-center justify-between gap-3">
+                    <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-[17px] font-bold md:text-base">Pencarian cepat</h2>
+                    <button
+                      type="button"
+                      onClick={() => setFilterOpen(true)}
+                      aria-expanded={filterOpen}
+                      className="flex md:hidden h-[34px] shrink-0 items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-700 shadow-2xs active:bg-slate-50 transition-colors cursor-pointer"
+                    >
+                      <span className="relative h-[19.689px] w-[17.143px] shrink-0 overflow-hidden">
+                        <img src="/assets/jurnal-design/quick-search/8e43d.svg" alt="" className="absolute left-[-19.689px] top-[-18.447px] max-w-none origin-top-left scale-[0.6667]" />
+                      </span>
+                      Filter
+                      {filterApplied && (
+                        <span className="flex h-4.5 w-4.5 items-center justify-center rounded-md bg-sky-100">
+                          <svg width="12" height="9" viewBox="0 0 14 11" fill="none" stroke="#0070ba" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <path d="M1.5 5.8l3.8 3.8L12.5 1.5" />
+                          </svg>
+                        </span>
+                      )}
+                    </button>
+                  </div>
 
-                  <div className="mt-4 flex min-w-0 items-stretch gap-2 md:gap-3">
+                  <div className="mt-3.5 flex min-w-0 items-stretch gap-2 md:mt-4 md:gap-3">
                     <label className="flex min-h-[44px] min-w-0 flex-1 items-center gap-2 rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2.5 md:bg-white md:px-4">
                         <img src="/assets/jurnal-design/quick-search/f5f78.svg" alt="" className="max-w-none origin-center scale-[0.6667]" />
                         <input
@@ -12361,7 +12585,7 @@ export default function CariJurnalFigmaPanel({
                       type="button"
                       onClick={() => setFilterOpen(true)}
                       aria-expanded={filterOpen}
-                      className="flex min-h-[44px] shrink-0 items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 text-xs font-semibold text-slate-700 md:gap-2 md:px-4 md:text-sm"
+                      className="hidden md:flex min-h-[44px] shrink-0 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 hover:border-slate-300 transition-colors cursor-pointer"
                     >
                       <span className="relative h-[19.689px] w-[17.143px] shrink-0 overflow-hidden">
                         <img src="/assets/jurnal-design/quick-search/8e43d.svg" alt="" className="absolute left-[-19.689px] top-[-18.447px] max-w-none origin-top-left scale-[0.6667]" />
@@ -12392,17 +12616,15 @@ export default function CariJurnalFigmaPanel({
                         Pencarian jurnal melalui paragraf dan unggah file dinonaktifkan karena kolom pencarian cepat sudah terisi.
                       </p>
                     )}
-                    <label className="grid gap-1.5">
-                      <span className="font-['Plus_Jakarta_Sans:SemiBold'] text-[14px] font-semibold text-[#334155] md:hidden">Draf / Paragraf Teks</span>
-                      <span className="relative grid">
-                        <textarea
-                          maxLength={1000}
-                          value={paragraph}
-                          onChange={event => setParagraph(capitalizeFirstLetter(event.target.value))}
-                          disabled={quickActive || Boolean(fileName)}
-                          placeholder={Boolean(fileName) ? "Hapus file terlebih dahulu untuk mengetik teks." : "Masukkan kalimat atau paragraf yang membutuhkan sitasi."}
-                          className="min-h-44 resize-none rounded-xl border border-slate-200 bg-[rgba(200,226,251,0.24)] p-3 pb-8 text-sm outline-none focus:border-sky-400 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400 md:min-h-44 md:p-4 md:pb-8 md:text-sm md:bg-white md:disabled:bg-slate-100 transition-colors"
-                        />
+                    <label className="relative grid">
+                      <textarea
+                        maxLength={1000}
+                        value={paragraph}
+                        onChange={event => setParagraph(capitalizeFirstLetter(event.target.value))}
+                        disabled={quickActive || Boolean(fileName)}
+                        placeholder={Boolean(fileName) ? "Hapus file terlebih dahulu untuk mengetik teks." : "Masukkan kalimat atau paragraf yang membutuhkan sitasi."}
+                        className="min-h-44 resize-none rounded-xl border border-slate-200 bg-[rgba(200,226,251,0.24)] p-3 pb-8 text-sm outline-none focus:border-sky-400 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400 md:min-h-44 md:p-4 md:pb-8 md:text-sm md:bg-white md:disabled:bg-slate-100 transition-colors"
+                      />
                         {paragraph.trim().length > 0 && !Boolean(fileName) && !quickActive && (
                           <button
                             type="button"
@@ -12422,7 +12644,6 @@ export default function CariJurnalFigmaPanel({
                           <span className={paragraph.length >= 1000 ? "font-semibold text-rose-500" : ""}>1000</span>
                           <span> karakter</span>
                         </span>
-                      </span>
                     </label>
                     {fileName ? (
                       <div className="flex min-h-44 w-full min-w-0 flex-col items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-sky-200 bg-white p-5 text-center md:min-h-44 md:p-4">
@@ -12573,7 +12794,16 @@ export default function CariJurnalFigmaPanel({
                 </button>
                 <div className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm md:p-6">
                   <h2 className="text-center font-['Plus_Jakarta_Sans:Bold'] text-base font-bold md:text-left md:text-base">{guideContent?.title ?? "Cara menemukan jurnal"}</h2>
-                  <p className="mt-2 text-center text-sm leading-5 text-[#64748b] md:text-left md:font-['Plus_Jakarta_Sans:Regular'] md:text-xs">{guideContent?.intro ?? "Pilih cara pencarian sesuai informasi yang sudah Anda miliki."}</p>
+                  <p className="mt-2 text-center text-sm leading-5 text-[#64748b] md:text-left md:font-['Plus_Jakarta_Sans:Regular'] md:text-xs">
+                    {guideContent ? (
+                      guideContent.intro
+                    ) : (
+                      <>
+                        Pilih cara pencarian sesuai informasi yang{" "}
+                        <span className="block md:inline">sudah Anda miliki.</span>
+                      </>
+                    )}
+                  </p>
                   {guideContent ? (
                     <ol className="mt-4 space-y-2 md:mt-6 md:space-y-4">
                       {guideContent.steps.map((step, index) => (
@@ -12716,27 +12946,25 @@ export default function CariJurnalFigmaPanel({
                       onClick={() => setMobileCollectionMenuOpen(open => !open)}
                       className="flex h-7 items-center gap-1.5 rounded-lg bg-white px-2.5 text-sm font-bold text-[#0369a1] outline outline-1 outline-sky-200"
                     >
-                      {collectionTab === "journal" ? "Koleksi Jurnal" : collectionTab === "review" ? "Literatur Review" : "Peta Penelitian"}
+                      {collectionTab === "journal" ? "Koleksi Jurnal" : collectionTab === "review" ? "Literatur" : "Peta Penelitian"}
                       <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" aria-hidden="true">
                         <path d="M1 1l4 4 4-4" />
                       </svg>
                     </button>
-                    {collectionTab === "journal" && (
-                      <button
-                        type="button"
-                        aria-label="Tambah folder"
-                        onClick={() => setNewFolderOpen(true)}
-                        className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#0369a1]"
-                      >
-                        <img src="/assets/jurnal-design/collection-mobile/ce139.svg" alt="" className="h-[18px] w-[18px]" />
-                      </button>
-                    )}
+                    <button
+                      type="button"
+                      aria-label="Tambah folder"
+                      onClick={() => setNewFolderOpen(true)}
+                      className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#0369a1] active:scale-95 transition-transform"
+                    >
+                      <img src="/assets/jurnal-design/collection-mobile/ce139.svg" alt="" className="h-[18px] w-[18px]" />
+                    </button>
                     {mobileCollectionMenuOpen && (
                       <div role="menu" className="absolute right-0 top-full z-20 mt-2 w-44 overflow-hidden rounded-xl bg-white p-1.5 shadow-xl outline outline-1 outline-slate-200">
                         {(
                           [
                             ["journal", "Koleksi Jurnal"],
-                            ["review", "Literatur Review"],
+                            ["review", "Literatur"],
                             ["map", "Peta Penelitian"],
                           ] as const
                         ).map(([type, label]) => (
@@ -12941,7 +13169,7 @@ export default function CariJurnalFigmaPanel({
                   {(
                     [
                       ["journal", "Koleksi Jurnal"],
-                      ["review", "Literatur Review"],
+                      ["review", "Literatur"],
                       ["map", "Peta Penelitian"],
                     ] as const
                   ).map(([type, label]) => {
