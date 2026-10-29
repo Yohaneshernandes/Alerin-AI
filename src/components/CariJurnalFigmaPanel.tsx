@@ -9473,7 +9473,7 @@ function MobileJournalResultCard({
         </div>
       </div>
 
-      <div className="mt-4 rounded-2xl bg-slate-100 p-4">
+      <div className="mt-4 rounded-2xl bg-white p-4 outline outline-1 outline-slate-200 shadow-2xs">
         <p className="text-[13px] font-bold uppercase tracking-wide text-slate-900">Kredibilitas</p>
         {[
           ["Sumber", "OpenAlex dan Crossref"],
