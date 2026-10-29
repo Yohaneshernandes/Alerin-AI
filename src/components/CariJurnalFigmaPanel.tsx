@@ -4861,62 +4861,68 @@ function DesktopSearchResults({
           </button>
         </div>
 
-        <div className="mt-8 rounded-3xl border border-slate-200/90 bg-white p-10 md:p-14 shadow-sm text-center max-w-[800px] mx-auto">
-          <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-sky-50 text-[#00629b] ring-8 ring-sky-50/60 shadow-xs">
-            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <circle cx="11" cy="11" r="8" />
-              <path d="M21 21l-4.35-4.35" />
-              <path d="M8.5 8.5l5 5" />
-              <path d="M13.5 8.5l-5 5" />
-            </svg>
-          </div>
+        <div className="mt-8 rounded-3xl border border-slate-200/90 bg-white p-7 md:p-10 shadow-sm max-w-[1040px] mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_1.15fr] gap-8 md:gap-10 items-center">
+            {/* Kolom Kiri: Ikon, Judul, Keterangan, dan Tombol Kembali */}
+            <div className="flex flex-col items-center md:items-start text-center md:text-left">
+              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-sky-50 text-[#00629b] ring-8 ring-sky-50/60 shadow-xs">
+                <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="M21 21l-4.35-4.35" />
+                  <path d="M8.5 8.5l5 5" />
+                  <path d="M13.5 8.5l-5 5" />
+                </svg>
+              </div>
 
-          <h2 className="mt-6 font-['Plus_Jakarta_Sans:Bold'] text-2xl font-extrabold tracking-[-0.4px] text-slate-900">
-            Tidak ada jurnal yang ditemukan
-          </h2>
-          <p className="mx-auto mt-2.5 max-w-lg text-sm leading-relaxed text-slate-500">
-            Alerin tidak menemukan artikel atau referensi yang cocok dengan kata kunci{" "}
-            <span className="font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded-md">&quot;12345&quot;</span>.
-            Coba periksa kembali ejaan atau gunakan topik penelitian yang lebih spesifik.
-          </p>
+              <h2 className="mt-5 font-['Plus_Jakarta_Sans:Bold'] text-2xl font-extrabold tracking-[-0.4px] text-slate-900">
+                Tidak ada jurnal yang ditemukan
+              </h2>
+              <p className="mt-2.5 text-sm leading-relaxed text-slate-500">
+                Alerin tidak menemukan artikel atau referensi yang cocok dengan kata kunci{" "}
+                <span className="font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded-md">&quot;12345&quot;</span>.
+                Coba periksa kembali ejaan atau gunakan topik penelitian yang lebih spesifik.
+              </p>
 
-          <div className="mt-8 rounded-2xl bg-slate-50/90 border border-slate-200/80 p-6 text-left">
-            <div className="flex items-center gap-2 mb-3">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0284c7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-7 7c0 2.5 1.5 4.5 3 6h8c1.5-1.5 3-3.5 3-6a7 7 0 0 0-7-7z" />
-              </svg>
-              <h3 className="text-sm font-bold text-slate-900">Saran untuk menemukan jurnal:</h3>
+              <button
+                type="button"
+                onClick={onBack}
+                className="mt-6 inline-flex min-h-[46px] items-center justify-center gap-2 rounded-xl bg-sky-700 px-7 py-3 text-sm font-bold text-white shadow-xs transition-all hover:bg-sky-800 active:scale-[0.98] cursor-pointer"
+              >
+                <svg width="14" height="12" viewBox="0 0 14 12" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M12 6H2M5.5 2.5L2 6l3.5 3.5" />
+                </svg>
+                Kembali ke Pencarian
+              </button>
             </div>
-            <ul className="space-y-2.5 text-xs sm:text-sm text-slate-600">
-              <li className="flex items-start gap-2.5">
-                <span className="text-sky-600 font-bold">•</span>
-                <span>Gunakan kata kunci berupa topik riset, judul, atau nama penulis (contoh: <em>keputusan pembelian</em>, <em>digital marketing</em>, <em>artificial intelligence</em>).</span>
-              </li>
-              <li className="flex items-start gap-2.5">
-                <span className="text-sky-600 font-bold">•</span>
-                <span>Gunakan istilah dalam bahasa Indonesia maupun bahasa Inggris.</span>
-              </li>
-              <li className="flex items-start gap-2.5">
-                <span className="text-sky-600 font-bold">•</span>
-                <span>Hindari memasukkan kombinasi angka acak, kode serial, atau simbol khusus.</span>
-              </li>
-              <li className="flex items-start gap-2.5">
-                <span className="text-sky-600 font-bold">•</span>
-                <span>Gunakan fitur <strong>pencarian paragraf</strong> atau <strong>unggah dokumen</strong> di Beranda untuk pemeriksaan sitasi otomatis.</span>
-              </li>
-            </ul>
-          </div>
 
-          <button
-            type="button"
-            onClick={onBack}
-            className="mt-8 inline-flex min-h-[46px] items-center justify-center gap-2 rounded-xl bg-sky-700 px-7 py-3 text-sm font-bold text-white shadow-xs transition-all hover:bg-sky-800 active:scale-[0.98] cursor-pointer"
-          >
-            <svg width="14" height="12" viewBox="0 0 14 12" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M12 6H2M5.5 2.5L2 6l3.5 3.5" />
-            </svg>
-            Kembali ke Pencarian
-          </button>
+            {/* Kolom Kanan: Kotak Saran Pencarian */}
+            <div className="rounded-2xl bg-slate-50/90 border border-slate-200/80 p-6 md:p-7 text-left h-full flex flex-col justify-center">
+              <div className="flex items-center gap-2 mb-3">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0284c7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-7 7c0 2.5 1.5 4.5 3 6h8c1.5-1.5 3-3.5 3-6a7 7 0 0 0-7-7z" />
+                </svg>
+                <h3 className="text-sm font-bold text-slate-900">Saran untuk menemukan jurnal:</h3>
+              </div>
+              <ul className="space-y-3 text-xs sm:text-[13px] leading-relaxed text-slate-600">
+                <li className="flex items-start gap-2.5">
+                  <span className="text-sky-600 font-bold shrink-0 mt-0.5">•</span>
+                  <span>Gunakan kata kunci berupa topik riset, judul, atau nama penulis (contoh: <em>keputusan pembelian</em>, <em>digital marketing</em>, <em>artificial intelligence</em>).</span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="text-sky-600 font-bold shrink-0 mt-0.5">•</span>
+                  <span>Gunakan istilah dalam bahasa Indonesia maupun bahasa Inggris.</span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="text-sky-600 font-bold shrink-0 mt-0.5">•</span>
+                  <span>Hindari memasukkan kombinasi angka acak, kode serial, atau simbol khusus.</span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="text-sky-600 font-bold shrink-0 mt-0.5">•</span>
+                  <span>Gunakan fitur <strong>pencarian paragraf</strong> atau <strong>unggah dokumen</strong> di Beranda untuk pemeriksaan sitasi otomatis.</span>
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     );
