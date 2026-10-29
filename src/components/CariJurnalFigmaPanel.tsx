@@ -12908,9 +12908,9 @@ export default function CariJurnalFigmaPanel({
                   </span>
                   <span className="font-['Inter:Semi_Bold'] text-sm font-semibold text-slate-800">Kembali ke Beranda Alerin</span>
                 </button>
-                <div className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm md:p-6">
+                <div className="rounded-2xl border border-slate-200/80 bg-white px-5 py-6 shadow-sm sm:p-6 md:p-6">
                   <h2 className="text-center font-['Plus_Jakarta_Sans:Bold'] text-[18px] font-extrabold leading-6 text-slate-900 md:text-base md:font-bold md:text-left">{guideContent?.title ?? "Cara menemukan jurnal"}</h2>
-                  <p className="mt-2 text-center text-sm leading-relaxed text-[#64748b] md:text-left md:font-['Plus_Jakarta_Sans:Regular'] md:text-xs">
+                  <p className="mt-3 text-center text-sm leading-relaxed text-[#64748b] md:mt-2 md:text-left md:font-['Plus_Jakarta_Sans:Regular'] md:text-xs">
                     {guideContent ? (
                       guideContent.intro
                     ) : (
@@ -12921,7 +12921,7 @@ export default function CariJurnalFigmaPanel({
                     )}
                   </p>
                   {guideContent ? (
-                    <ol className="mt-4 space-y-2 md:mt-6 md:space-y-4">
+                    <ol className="mt-6 space-y-2.5 md:mt-6 md:space-y-4">
                       {guideContent.steps.map((step, index) => (
                         <li key={step.description} className="flex gap-3 rounded-xl border border-slate-100/80 bg-slate-50 p-3 md:rounded-none md:border-0 md:bg-transparent md:p-0">
                           <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-sky-100 text-sm font-bold text-[#0070ba] md:h-8 md:w-8 md:rounded-xl md:text-sky-600">{index + 1}</span>
@@ -12933,7 +12933,7 @@ export default function CariJurnalFigmaPanel({
                       ))}
                     </ol>
                   ) : (
-                    <ol className="mt-4 space-y-2 md:mt-6 md:space-y-6">
+                    <ol className="mt-6 space-y-2.5 md:mt-6 md:space-y-6">
                       {[
                         ["1", "Ketik kata kunci", "Gunakan topik, variabel, nama penulis, atau informasi lain untuk menemukan jurnal yang relevan.", "Gunakan topik, variabel, nama penulis, atau informasi lain untuk menemukan jurnal yang relevan."],
                         ["2", "Tempel tulisan", "Tempel paragraf atau bagian tulisanmu. Alerin akan memahami konteksnya dan mencarikan jurnal yang dapat mendukung isi tulisan tersebut.", "Tempel paragraf atau bagian tulisanmu. Alerin akan memahami konteksnya dan mencarikan jurnal yang dapat mendukung isi tulisan tersebut."],
