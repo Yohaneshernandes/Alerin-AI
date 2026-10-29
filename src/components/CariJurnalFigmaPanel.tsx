@@ -7829,7 +7829,7 @@ function DesktopResearchMap({
           {/* Mobile Title & Subtitle inside the white shape card */}
           <div className="md:hidden">
             <h1 className="text-lg font-bold leading-6 text-slate-900">Peta Penelitian</h1>
-            <p className="mt-1 text-xs leading-5 text-slate-500">
+            <p className="mt-1.5 text-sm leading-relaxed text-slate-500">
               Jelajahi peta topik dari {priorityRows.length} publikasi, lalu geser slider untuk melihat jaringan, kepadatan sitasi, dan perkembangan tahun terbitnya.
             </p>
           </div>
