@@ -9451,9 +9451,9 @@ function MobileJournalResultCard({
           <h2 className="mt-1 text-[18px] sm:text-[20px] font-bold leading-[1.35] text-slate-900">{result.title}</h2>
           <p className="mt-1.5 text-xs font-medium leading-5 text-slate-600">{result.authors}</p>
         </div>
-        <div className="flex h-20 w-20 shrink-0 flex-col items-center justify-center rounded-full bg-sky-50 shadow-inner">
-          <strong className="text-2xl font-extrabold text-sky-700">{result.score}%</strong>
-          <span className="text-[8px] font-semibold uppercase tracking-wide text-slate-500">relevansi</span>
+        <div className="flex shrink-0 flex-col items-center">
+          <RelevancyRing value={result.relevancy || `${result.score}%`} />
+          <span className="pt-1 text-xs font-semibold leading-4 text-slate-500">Relevansi</span>
         </div>
       </div>
 
