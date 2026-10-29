@@ -12324,7 +12324,7 @@ export default function CariJurnalFigmaPanel({
                         role="tab"
                         aria-selected={active}
                         onClick={() => setSearchType(type)}
-                        className={`flex min-h-[44px] h-full w-full items-center justify-center gap-1 min-[370px]:gap-1.5 rounded-xl px-1 min-[360px]:px-1.5 py-2.5 text-[12px] min-[390px]:text-[12.5px] font-semibold tracking-[-0.2px] transition-all sm:gap-2 sm:px-2 sm:text-xs md:min-h-0 md:px-4 md:py-2.5 md:text-sm md:tracking-normal ${
+                        className={`flex min-h-[44px] h-full w-full items-center justify-center gap-1 min-[370px]:gap-1.5 rounded-xl px-1 min-[360px]:px-1.5 py-2.5 text-[11.5px] font-semibold tracking-[-0.1px] transition-all sm:gap-2 sm:px-2 sm:text-xs md:min-h-0 md:px-4 md:py-2.5 md:text-sm md:tracking-normal ${
                           active
                             ? "bg-[#00629b] text-white shadow-sm md:bg-sky-700"
                             : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
