@@ -9505,12 +9505,6 @@ function MobileJournalResultCard({
       <div className="mt-4 rounded-2xl bg-sky-50 p-4">
         <p className="text-xs font-bold uppercase tracking-wide text-sky-700 md:text-sm">Ringkasan utama</p>
         <p className="mt-1.5 font-['Plus_Jakarta_Sans:Regular'] text-[13px] sm:text-[14px] leading-[1.5] text-slate-700 md:text-sm md:font-medium md:leading-5">{result.summary}</p>
-        <div className="mt-3 flex flex-wrap gap-1.5 text-xs">
-          <span className="rounded-lg bg-white px-2.5 py-1.5 text-slate-900">2 kutipan pendukung</span>
-          <span className="rounded-lg bg-white px-2.5 py-1.5 text-slate-900">Metode SEM-PLS</span>
-          <span className="rounded-lg bg-white px-2.5 py-1.5 text-slate-900">Studi cross-sectional</span>
-          <span className="rounded-lg bg-white px-2.5 py-1.5 text-sky-700">Ringkasan Bahasa Indonesia</span>
-        </div>
       </div>
 
       {/* Grid Tombol Aksi Mobile (6 Tombol + 1 Full Width Diskusikan) */}
