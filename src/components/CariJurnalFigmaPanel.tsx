@@ -12322,7 +12322,7 @@ export default function CariJurnalFigmaPanel({
                 <div
                   role="tablist"
                   aria-label="Jenis pencarian"
-                  className="mt-5 grid grid-cols-3 items-stretch gap-1 rounded-2xl bg-white p-1 outline outline-1 outline-slate-200/90 shadow-2xs md:mt-6"
+                  className="mt-5 grid grid-cols-3 items-stretch gap-1 rounded-2xl bg-white p-1 sm:p-1.5 outline outline-1 outline-slate-200/90 shadow-2xs md:mt-6"
                 >
                   {(
                     [
@@ -12339,29 +12339,29 @@ export default function CariJurnalFigmaPanel({
                         role="tab"
                         aria-selected={active}
                         onClick={() => setSearchType(type)}
-                        className={`flex h-full w-full items-center justify-center gap-1.5 rounded-xl px-2 py-2.5 text-[11px] font-semibold transition-all sm:gap-2 sm:text-xs md:px-4 md:text-sm ${
+                        className={`flex min-h-[44px] h-full w-full items-center justify-center gap-1 min-[370px]:gap-1.5 rounded-xl px-1 min-[360px]:px-1.5 py-2.5 text-[12px] min-[390px]:text-[12.5px] font-semibold tracking-[-0.2px] transition-all sm:gap-2 sm:px-2 sm:text-xs md:min-h-0 md:px-4 md:py-2.5 md:text-sm md:tracking-normal ${
                           active
                             ? "bg-[#00629b] text-white shadow-sm md:bg-sky-700"
                             : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                         }`}
                       >
                         {type === "journal" ? (
-                          <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="shrink-0 md:h-4 md:w-4">
+                          <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="shrink-0 h-[15px] w-[15px] md:h-4 md:w-4">
                             <circle cx="7" cy="7" r="4.5" />
                             <path d="M10.5 10.5L14 14" />
                           </svg>
                         ) : type === "review" ? (
-                          <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="shrink-0 md:h-4 md:w-4">
+                          <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="shrink-0 h-[15px] w-[15px] md:h-4 md:w-4">
                             <path d="M2.5 3.5h4.2c.7 0 1.3.6 1.3 1.3v8.7c0-.7-.6-1.3-1.3-1.3H2.5z" />
                             <path d="M13.5 3.5H9.3c-.7 0-1.3.6-1.3 1.3v8.7c0-.7.6-1.3 1.3-1.3h4.2z" />
                           </svg>
                         ) : (
-                          <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="shrink-0 md:h-4 md:w-4">
+                          <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="shrink-0 h-[15px] w-[15px] md:h-4 md:w-4">
                             <path d="M1.5 3.5l4-1.5 5 1.5 4-1.5v10l-4 1.5-5-1.5-4 1.5z" />
                             <path d="M5.5 2v10M10.5 3.5v10" />
                           </svg>
                         )}
-                        <span className="text-center leading-tight">{label}</span>
+                        <span className="text-center leading-tight whitespace-nowrap">{label}</span>
                       </button>
                     );
                   })}
