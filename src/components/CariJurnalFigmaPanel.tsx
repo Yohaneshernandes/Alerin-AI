@@ -4839,6 +4839,89 @@ function DesktopSearchResults({
     );
   };
 
+  if (query.trim() === "12345") {
+    return (
+      <div className="mx-auto hidden max-w-[1160px] md:block pb-12">
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <h1 className="font-['Inter:Bold'] text-2xl font-extrabold leading-8 text-slate-900">Hasil Pencarian Jurnal</h1>
+            <p className="pt-1 text-xs leading-4 text-slate-500">
+              Menampilkan hasil pencarian untuk kata kunci: &quot;12345&quot;
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onBack}
+            className="flex shrink-0 items-center gap-2 rounded-xl bg-sky-700 px-6 py-2.5 text-sm font-bold leading-4 text-white shadow-xs transition-colors hover:bg-sky-800 cursor-pointer"
+          >
+            <svg width="14" height="12" viewBox="0 0 14 12" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M12 6H2M5.5 2.5L2 6l3.5 3.5" />
+            </svg>
+            Kembali ke Pencarian
+          </button>
+        </div>
+
+        <div className="mt-8 rounded-3xl border border-slate-200/90 bg-white p-10 md:p-14 shadow-sm text-center max-w-[800px] mx-auto">
+          <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-sky-50 text-[#00629b] ring-8 ring-sky-50/60 shadow-xs">
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="8" />
+              <path d="M21 21l-4.35-4.35" />
+              <path d="M8.5 8.5l5 5" />
+              <path d="M13.5 8.5l-5 5" />
+            </svg>
+          </div>
+
+          <h2 className="mt-6 font-['Plus_Jakarta_Sans:Bold'] text-2xl font-extrabold tracking-[-0.4px] text-slate-900">
+            Tidak ada jurnal yang ditemukan
+          </h2>
+          <p className="mx-auto mt-2.5 max-w-lg text-sm leading-relaxed text-slate-500">
+            Alerin tidak menemukan artikel atau referensi yang cocok dengan kata kunci{" "}
+            <span className="font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded-md">&quot;12345&quot;</span>.
+            Coba periksa kembali ejaan atau gunakan topik penelitian yang lebih spesifik.
+          </p>
+
+          <div className="mt-8 rounded-2xl bg-slate-50/90 border border-slate-200/80 p-6 text-left">
+            <div className="flex items-center gap-2 mb-3">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0284c7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-7 7c0 2.5 1.5 4.5 3 6h8c1.5-1.5 3-3.5 3-6a7 7 0 0 0-7-7z" />
+              </svg>
+              <h3 className="text-sm font-bold text-slate-900">Saran untuk menemukan jurnal:</h3>
+            </div>
+            <ul className="space-y-2.5 text-xs sm:text-sm text-slate-600">
+              <li className="flex items-start gap-2.5">
+                <span className="text-sky-600 font-bold">•</span>
+                <span>Gunakan kata kunci berupa topik riset, judul, atau nama penulis (contoh: <em>keputusan pembelian</em>, <em>digital marketing</em>, <em>artificial intelligence</em>).</span>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <span className="text-sky-600 font-bold">•</span>
+                <span>Gunakan istilah dalam bahasa Indonesia maupun bahasa Inggris.</span>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <span className="text-sky-600 font-bold">•</span>
+                <span>Hindari memasukkan kombinasi angka acak, kode serial, atau simbol khusus.</span>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <span className="text-sky-600 font-bold">•</span>
+                <span>Gunakan fitur <strong>pencarian paragraf</strong> atau <strong>unggah dokumen</strong> di Beranda untuk pemeriksaan sitasi otomatis.</span>
+              </li>
+            </ul>
+          </div>
+
+          <button
+            type="button"
+            onClick={onBack}
+            className="mt-8 inline-flex min-h-[46px] items-center justify-center gap-2 rounded-xl bg-sky-700 px-7 py-3 text-sm font-bold text-white shadow-xs transition-all hover:bg-sky-800 active:scale-[0.98] cursor-pointer"
+          >
+            <svg width="14" height="12" viewBox="0 0 14 12" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M12 6H2M5.5 2.5L2 6l3.5 3.5" />
+            </svg>
+            Kembali ke Pencarian
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="mx-auto hidden max-w-[1160px] md:block">
       <div className="flex items-center justify-between gap-4">
@@ -11752,42 +11835,6 @@ export default function CariJurnalFigmaPanel({
           {mobileSearchStage === "results" && view === "home" && (
             <div id="mobile-results-scroll-container" onScroll={handleMobileScroll} className={`fixed inset-x-0 top-[65px] z-[305] overflow-y-auto overflow-x-hidden bg-[#f4f7fb] px-4 pt-4 transition-[bottom] duration-300 ease-out md:hidden ${mobileNavHidden ? "bottom-0 pb-16" : "bottom-[68px] pb-6"}`}>
               <div className="mx-auto max-w-md">
-                {searchType === "journal" && (
-                  <div className="space-y-3">
-                    {/* Mobile Top Action Bar: Simpan ke Koleksi & Kembali ke Pencarian */}
-                    <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={toggleSaveAllMobileJournals}
-                        className={`flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-xl px-3.5 py-2.5 text-xs font-bold shadow-xs outline outline-1 transition-all active:scale-[0.98] cursor-pointer ${
-                          allMobileJournalsSaved ? "bg-sky-50 text-sky-700 outline-sky-200 hover:bg-sky-100" : "bg-white text-slate-700 outline-slate-200 hover:bg-slate-50"
-                        }`}
-                      >
-                        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                          <path d="M4 2.5h8a1 1 0 0 1 1 1v10l-5-3-5 3v-10a1 1 0 0 1 1-1z" />
-                        </svg>
-                        {allMobileJournalsSaved ? "Tersimpan" : "Simpan ke Koleksi"}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setMobileSearchStage("home");
-                          setSearchType("journal");
-                          if (query.trim() && paragraph.trim() && query.trim() === paragraph.trim()) {
-                            setQuery("");
-                          }
-                        }}
-                        className="flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-xl bg-sky-700 px-3.5 py-2.5 text-xs font-bold text-white shadow-xs transition-all active:scale-[0.98]"
-                      >
-                        <svg width="14" height="12" viewBox="0 0 14 12" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                          <path d="M12 6H2M5.5 2.5L2 6l3.5 3.5" />
-                        </svg>
-                        Kembali ke Pencarian
-                      </button>
-                    </div>
-                  </div>
-                )}
-
                 {searchType === "map" ? (
                   <div className="mt-1">
                     <DesktopResearchMap
@@ -11817,8 +11864,119 @@ export default function CariJurnalFigmaPanel({
                       onShowToast={showToast}
                     />
                   </div>
+                ) : (searchSubmittedQuery || query).trim() === "12345" ? (
+                  <div className="space-y-4 pb-8">
+                    {/* Mobile Top Action Bar: Kembali ke Pencarian */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMobileSearchStage("home");
+                        setSearchType("journal");
+                      }}
+                      className="flex min-h-[44px] w-full items-center justify-center gap-2 rounded-xl bg-sky-700 px-4 py-2.5 text-xs font-bold text-white shadow-xs transition-all active:scale-[0.98]"
+                    >
+                      <svg width="14" height="12" viewBox="0 0 14 12" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <path d="M12 6H2M5.5 2.5L2 6l3.5 3.5" />
+                      </svg>
+                      Kembali ke Pencarian
+                    </button>
+
+                    {/* Mobile Empty Card */}
+                    <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-sm text-center">
+                      <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-sky-50 text-[#00629b] ring-6 ring-sky-50/60 shadow-xs">
+                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                          <circle cx="11" cy="11" r="8" />
+                          <path d="M21 21l-4.35-4.35" />
+                          <path d="M8.5 8.5l5 5" />
+                          <path d="M13.5 8.5l-5 5" />
+                        </svg>
+                      </div>
+
+                      <h2 className="mt-4 font-['Plus_Jakarta_Sans:Bold'] text-lg font-bold tracking-tight text-slate-900">
+                        Tidak ada jurnal yang ditemukan
+                      </h2>
+                      <p className="mt-1.5 text-xs leading-relaxed text-slate-500">
+                        Alerin tidak menemukan jurnal yang cocok dengan kata kunci{" "}
+                        <span className="font-bold text-slate-800 bg-slate-100 px-1.5 py-0.5 rounded">&quot;12345&quot;</span>. Coba periksa kembali ejaan atau gunakan topik penelitian yang lebih spesifik.
+                      </p>
+
+                      <div className="mt-4 rounded-xl bg-slate-50 border border-slate-200/80 p-4 text-left">
+                        <div className="flex items-center gap-1.5 mb-2.5">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0284c7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-7 7c0 2.5 1.5 4.5 3 6h8c1.5-1.5 3-3.5 3-6a7 7 0 0 0-7-7z" />
+                          </svg>
+                          <h3 className="text-xs font-bold text-slate-900">Saran pencarian:</h3>
+                        </div>
+                        <ul className="space-y-2 text-xs text-slate-600">
+                          <li className="flex items-start gap-2">
+                            <span className="text-sky-600 font-bold">•</span>
+                            <span>Gunakan kata kunci topik, judul, atau penulis (contoh: <em>keputusan pembelian</em>).</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-sky-600 font-bold">•</span>
+                            <span>Gunakan istilah bahasa Indonesia atau bahasa Inggris.</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-sky-600 font-bold">•</span>
+                            <span>Hindari angka acak atau simbol khusus.</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-sky-600 font-bold">•</span>
+                            <span>Gunakan pencarian paragraf untuk pencarian berbasis konteks teks.</span>
+                          </li>
+                        </ul>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setMobileSearchStage("home");
+                          setSearchType("journal");
+                        }}
+                        className="mt-5 flex min-h-[44px] w-full items-center justify-center gap-2 rounded-xl bg-sky-700 px-4 py-2.5 text-xs font-bold text-white shadow-xs transition-all active:scale-[0.98]"
+                      >
+                        <svg width="14" height="12" viewBox="0 0 14 12" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                          <path d="M12 6H2M5.5 2.5L2 6l3.5 3.5" />
+                        </svg>
+                        Coba Cari Ulang
+                      </button>
+                    </div>
+                  </div>
                 ) : (
                   <>
+                    <div className="space-y-3">
+                      {/* Mobile Top Action Bar: Simpan ke Koleksi & Kembali ke Pencarian */}
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={toggleSaveAllMobileJournals}
+                          className={`flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-xl px-3.5 py-2.5 text-xs font-bold shadow-xs outline outline-1 transition-all active:scale-[0.98] cursor-pointer ${
+                            allMobileJournalsSaved ? "bg-sky-50 text-sky-700 outline-sky-200 hover:bg-sky-100" : "bg-white text-slate-700 outline-slate-200 hover:bg-slate-50"
+                          }`}
+                        >
+                          <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <path d="M4 2.5h8a1 1 0 0 1 1 1v10l-5-3-5 3v-10a1 1 0 0 1 1-1z" />
+                          </svg>
+                          {allMobileJournalsSaved ? "Tersimpan" : "Simpan ke Koleksi"}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setMobileSearchStage("home");
+                            setSearchType("journal");
+                            if (query.trim() && paragraph.trim() && query.trim() === paragraph.trim()) {
+                              setQuery("");
+                            }
+                          }}
+                          className="flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-xl bg-sky-700 px-3.5 py-2.5 text-xs font-bold text-white shadow-xs transition-all active:scale-[0.98]"
+                        >
+                          <svg width="14" height="12" viewBox="0 0 14 12" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <path d="M12 6H2M5.5 2.5L2 6l3.5 3.5" />
+                          </svg>
+                          Kembali ke Pencarian
+                        </button>
+                      </div>
+                    </div>
                 {resultMode === "analysis" && (
                   <>
                     <section className="mt-4 rounded-2xl bg-white p-4 shadow-sm">
