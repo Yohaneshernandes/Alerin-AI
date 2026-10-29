@@ -2424,9 +2424,7 @@ type PlanKey = "gratis" | "plus" | "pro";
 
 interface JournalPlanFeature {
   icon: ReactNode;
-  label: string;
   desc: Record<PlanKey, string>;
-  values: Record<PlanKey, string>;
 }
 
 const journalPlanFeatures: JournalPlanFeature[] = [
@@ -2437,16 +2435,10 @@ const journalPlanFeatures: JournalPlanFeature[] = [
         <path d="M10.5 10.5L14 14" />
       </svg>
     ),
-    label: "Pencarian Jurnal",
     desc: {
       gratis: "Akses pencarian jurnal untuk memulai riset",
       plus: "Kuota pencarian jurnal lebih besar",
       pro: "Kuota pencarian jurnal tertinggi",
-    },
-    values: {
-      gratis: "4 kali / hari",
-      plus: "10 kali / hari",
-      pro: "15 kali / hari",
     },
   },
   {
@@ -2455,16 +2447,10 @@ const journalPlanFeatures: JournalPlanFeature[] = [
         <path d="M2.5 4h11M2.5 7.5h11M2.5 11h7" />
       </svg>
     ),
-    label: "Pencarian Berdasarkan Paragraf",
     desc: {
       gratis: "Temukan jurnal relevan berdasarkan paragraf",
       plus: "Pencarian berbasis paragraf dengan input lebih panjang",
       pro: "Pencarian berbasis paragraf dengan kapasitas input terbesar",
-    },
-    values: {
-      gratis: "500 karakter",
-      plus: "1.500 karakter",
-      pro: "2.500 karakter",
     },
   },
   {
@@ -2474,16 +2460,10 @@ const journalPlanFeatures: JournalPlanFeature[] = [
         <path d="M8 2.5v7M5 5.5l3-3 3 3" />
       </svg>
     ),
-    label: "Pencarian melalui Unggah File",
     desc: {
       gratis: "Pencarian jurnal melalui unggahan file hingga 5 MB",
       plus: "Pencarian jurnal melalui unggahan file hingga 20 MB",
       pro: "Pencarian jurnal melalui unggahan file hingga 30 MB",
-    },
-    values: {
-      gratis: "5 MB",
-      plus: "20 MB",
-      pro: "30 MB",
     },
   },
   {
@@ -2492,16 +2472,10 @@ const journalPlanFeatures: JournalPlanFeature[] = [
         <path d="M3 2.5h10v11l-5-2.5-5 2.5v-11z" />
       </svg>
     ),
-    label: "Koleksi Jurnal",
     desc: {
       gratis: "Simpan jurnal pilihan dalam koleksi pribadi",
       plus: "Kapasitas koleksi jurnal lebih besar",
       pro: "Kapasitas koleksi pribadi terbesar",
-    },
-    values: {
-      gratis: "2 jurnal",
-      plus: "20 jurnal",
-      pro: "50 jurnal",
     },
   },
   {
@@ -2510,16 +2484,10 @@ const journalPlanFeatures: JournalPlanFeature[] = [
         <path d="M8 1.5l1.8 3.8 4.2.6-3 3 .7 4.1L8 11l-3.7 2 .7-4.1-3-3 4.2-.6z" />
       </svg>
     ),
-    label: "Rekomendasi Jurnal",
     desc: {
       gratis: "Dapatkan rekomendasi jurnal sesuai topik riset",
       plus: "Lebih banyak rekomendasi jurnal sesuai topik riset",
       pro: "Pilihan rekomendasi jurnal paling banyak",
-    },
-    values: {
-      gratis: "3 rekomendasi",
-      plus: "5 rekomendasi",
-      pro: "10 rekomendasi",
     },
   },
   {
@@ -2529,16 +2497,10 @@ const journalPlanFeatures: JournalPlanFeature[] = [
         <path d="M13.5 8a5.5 5.5 0 0 1-9.39 3.89L2.5 10.5M2.5 14v-3.5H6" />
       </svg>
     ),
-    label: "Refresh Rekomendasi Jurnal",
     desc: {
       gratis: "Perbarui rekomendasi untuk menjelajahi referensi lainnya",
       plus: "Pembaruan rekomendasi lebih sering",
       pro: "Kuota pembaruan rekomendasi tertinggi",
-    },
-    values: {
-      gratis: "5 kali / hari",
-      plus: "12 kali / hari",
-      pro: "17 kali / hari",
     },
   },
   {
@@ -2548,16 +2510,10 @@ const journalPlanFeatures: JournalPlanFeature[] = [
         <path d="M2.5 6.5h11M7 6.5v7" />
       </svg>
     ),
-    label: "Tabel Penelitian Terdahulu",
     desc: {
       gratis: "Bandingkan jurnal dalam tabel penelitian terdahulu",
       plus: "Bandingkan lebih banyak jurnal dalam tabel penelitian",
       pro: "Kapasitas perbandingan jurnal terbesar dalam tabel penelitian",
-    },
-    values: {
-      gratis: "3 jurnal",
-      plus: "5 jurnal",
-      pro: "10 jurnal",
     },
   },
   {
@@ -2567,16 +2523,10 @@ const journalPlanFeatures: JournalPlanFeature[] = [
         <path d="M13.5 3.5H9.3c-.7 0-1.3.6-1.3 1.3v8.7c0-.7.6-1.3 1.3-1.3h4.2z" />
       </svg>
     ),
-    label: "Literature Review",
     desc: {
       gratis: "Literature Review dengan cakupan hingga 100 jurnal",
       plus: "Literature Review dengan cakupan hingga 500 jurnal",
       pro: "Literature Review dengan analisis jurnal paling maksimal",
-    },
-    values: {
-      gratis: "100 jurnal",
-      plus: "500 jurnal",
-      pro: "Maksimal",
     },
   },
   {
@@ -2588,16 +2538,10 @@ const journalPlanFeatures: JournalPlanFeature[] = [
         <path d="M5.8 5.8l4.5 4M10.8 5.2l-2 4.5" />
       </svg>
     ),
-    label: "Peta Penelitian",
     desc: {
       gratis: "Peta Penelitian dengan cakupan hingga 100 jurnal",
       plus: "Peta Penelitian dengan cakupan hingga 500 jurnal",
       pro: "Peta Penelitian dengan pemetaan jurnal tanpa batas",
-    },
-    values: {
-      gratis: "100 jurnal",
-      plus: "500 jurnal",
-      pro: "Tanpa batas",
     },
   },
 ];
@@ -2690,23 +2634,16 @@ function UpgradePremiumModal({ open, onClose }: { open: boolean; onClose: () => 
         {/* List Fitur / Baris Spesifikasi (Scrollable dengan padding bawah yang cukup) */}
         <div className="mt-3.5 sm:mt-5 min-h-0 flex-1 overflow-y-auto pr-1 pb-4 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
           <div className="divide-y divide-slate-100">
-            {journalPlanFeatures.map(feat => {
-              const value = feat.values[selectedPlan];
-              const desc = feat.desc[selectedPlan];
+            {journalPlanFeatures.map((feat, index) => {
+              const text = feat.desc[selectedPlan];
               return (
-                <div key={feat.label} className="flex items-start justify-between gap-2.5 py-3 first:pt-1 sm:gap-3 sm:py-3.5">
-                  <div className="flex items-start gap-2.5 sm:gap-3 min-w-0 flex-1">
-                    <span className="flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-lg sm:rounded-xl border border-slate-200/80 bg-white text-slate-700 shadow-2xs mt-0.5">
-                      {feat.icon}
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-[13px] sm:text-sm font-bold text-slate-900 leading-snug">{feat.label}</p>
-                      <p className="mt-0.5 text-[11px] sm:text-xs text-slate-500 leading-relaxed">{desc}</p>
-                    </div>
-                  </div>
-                  <span className="shrink-0 self-start mt-0.5 rounded-lg sm:rounded-xl border border-slate-200/90 bg-slate-50/80 sm:bg-white px-2.5 py-1 sm:px-3.5 sm:py-1.5 text-[11px] sm:text-xs font-bold text-slate-800 shadow-2xs whitespace-nowrap">
-                    {value}
+                <div key={index} className="flex items-center gap-3 py-2.5 first:pt-1 sm:gap-3.5 sm:py-3">
+                  <span className="flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-lg sm:rounded-xl border border-slate-200/80 bg-white text-slate-700 shadow-2xs">
+                    {feat.icon}
                   </span>
+                  <p className="min-w-0 flex-1 text-[13px] sm:text-sm font-semibold text-slate-800 leading-snug">
+                    {text}
+                  </p>
                 </div>
               );
             })}
