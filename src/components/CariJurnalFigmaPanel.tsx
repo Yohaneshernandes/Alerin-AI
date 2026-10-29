@@ -2631,8 +2631,8 @@ function UpgradePremiumModal({ open, onClose }: { open: boolean; onClose: () => 
           })}
         </div>
 
-        {/* List Fitur / Baris Spesifikasi (Scrollable dengan padding bawah yang cukup) */}
-        <div className="mt-3.5 sm:mt-5 min-h-0 flex-1 overflow-y-auto pr-1 pb-4 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+        {/* List Fitur / Baris Spesifikasi (Scrollable dengan scrollbar samping yang terlihat jelas) */}
+        <div className="modal-custom-scrollbar mt-3.5 sm:mt-5 min-h-0 flex-1 overflow-y-auto pr-2 sm:pr-2.5 pb-4">
           <div className="divide-y divide-slate-100">
             {journalPlanFeatures.map((feat, index) => {
               const text = feat.desc[selectedPlan];

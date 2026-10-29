@@ -275,6 +275,32 @@ body {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: transparent; }
 
+/* Custom visible scrollbar for modals / scrollable panels */
+.modal-custom-scrollbar {
+  scrollbar-width: thin !important;
+  scrollbar-color: #94a3b8 #f1f5f9 !important;
+}
+
+.modal-custom-scrollbar::-webkit-scrollbar {
+  width: 6px !important;
+  height: 6px !important;
+  display: block !important;
+}
+
+.modal-custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f5f9 !important;
+  border-radius: 9999px !important;
+}
+
+.modal-custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #94a3b8 !important;
+  border-radius: 9999px !important;
+}
+
+.modal-custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #64748b !important;
+}
+
 /* Gradient text */
 .grad-text {
   background: linear-gradient(135deg, #1d4ed8, #3b82f6);
