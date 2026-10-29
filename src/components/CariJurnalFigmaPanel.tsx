@@ -5728,6 +5728,7 @@ function DesktopLiteratureReview({
   onBack,
   onOpenSitasi,
   onOpenRingkasan,
+  onOpenAbstrak,
   onSave,
   saved,
   onShowToast,
@@ -5736,6 +5737,7 @@ function DesktopLiteratureReview({
   onBack: () => void;
   onOpenSitasi: () => void;
   onOpenRingkasan?: () => void;
+  onOpenAbstrak?: () => void;
   onSave: () => void;
   saved: boolean;
   onShowToast?: (msg: string) => void;
@@ -6120,10 +6122,10 @@ function DesktopLiteratureReview({
                         <div className="mt-2.5 flex items-center gap-2">
                           <button
                             type="button"
-                            onClick={() => (onOpenRingkasan ? onOpenRingkasan() : undefined)}
+                            onClick={() => (onOpenAbstrak ? onOpenAbstrak() : (onOpenRingkasan ? onOpenRingkasan() : undefined))}
                             className="inline-flex items-center rounded-lg border border-slate-200/90 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 shadow-2xs transition-colors hover:bg-slate-50 active:scale-95"
                           >
-                            Ringkasan
+                            Abstrak
                           </button>
                           <button
                             type="button"
@@ -6649,6 +6651,7 @@ function MobileLiteratureReview({
   query = "",
   onBack,
   onOpenRingkasan,
+  onOpenAbstrak,
   onOpenSitasi,
   onSave,
   saved = false,
@@ -6657,6 +6660,7 @@ function MobileLiteratureReview({
   query?: string;
   onBack?: () => void;
   onOpenRingkasan?: () => void;
+  onOpenAbstrak?: () => void;
   onOpenSitasi?: () => void;
   onSave?: () => void;
   saved?: boolean;
@@ -6902,10 +6906,10 @@ function MobileLiteratureReview({
                 <div className="grid grid-cols-3 gap-2 pt-2.5 border-t border-slate-200/70">
                   <button
                     type="button"
-                    onClick={onOpenRingkasan ?? (() => window.alert(`Membuka ringkasan: ${row.title}`))}
+                    onClick={onOpenAbstrak ?? onOpenRingkasan ?? (() => window.alert(`Membuka abstrak: ${row.title}`))}
                     className="flex min-h-[42px] items-center justify-center rounded-xl border border-slate-200 bg-white px-2 py-2 text-xs font-bold text-slate-700 shadow-2xs hover:bg-slate-50 active:scale-95 cursor-pointer"
                   >
-                    Ringkasan
+                    Abstrak
                   </button>
                   <button
                     type="button"
@@ -7327,6 +7331,7 @@ function DesktopResearchMap({
   onSave,
   saved,
   onOpenRingkasan,
+  onOpenAbstrak,
   onOpenSitasi,
 }: {
   query: string;
@@ -7334,6 +7339,7 @@ function DesktopResearchMap({
   onSave: () => void;
   saved: boolean;
   onOpenRingkasan?: () => void;
+  onOpenAbstrak?: () => void;
   onOpenSitasi?: () => void;
 }) {
   const [mode, setMode] = useState("jaringan");
@@ -8892,10 +8898,10 @@ function DesktopResearchMap({
                     <div className="mt-2.5 flex items-center gap-2">
                       <button
                         type="button"
-                        onClick={() => (onOpenRingkasan ? onOpenRingkasan() : window.alert(`Membuka ringkasan: ${row.title}`))}
+                        onClick={() => (onOpenAbstrak ? onOpenAbstrak() : (onOpenRingkasan ? onOpenRingkasan() : window.alert(`Membuka abstrak: ${row.title}`)))}
                         className="inline-flex cursor-pointer items-center rounded-lg border border-slate-200/90 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 shadow-2xs transition-colors hover:bg-slate-50 active:scale-95"
                       >
-                        Ringkasan
+                        Abstrak
                       </button>
                       <button
                         type="button"
@@ -8986,10 +8992,10 @@ function DesktopResearchMap({
                 <div className="flex flex-wrap items-center gap-2 pt-2.5 border-t border-slate-200/70">
                   <button
                     type="button"
-                    onClick={onOpenRingkasan ?? (() => window.alert(`Membuka ringkasan: ${row.title}`))}
+                    onClick={onOpenAbstrak ?? onOpenRingkasan ?? (() => window.alert(`Membuka abstrak: ${row.title}`))}
                     className="flex-1 sm:flex-none flex min-h-[40px] items-center justify-center rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-2xs hover:bg-slate-50 active:scale-95 cursor-pointer"
                   >
-                    Ringkasan
+                    Abstrak
                   </button>
                   <button
                     type="button"
@@ -11834,6 +11840,7 @@ export default function CariJurnalFigmaPanel({
                       onSave={saveResearchMap}
                       saved={savedMaps.some(item => item.topic.toLowerCase() === (query.trim() || mapTopic.trim()).toLowerCase())}
                       onOpenRingkasan={() => setRingkasanOpen(true)}
+                      onOpenAbstrak={() => setAbstrakOpen(true)}
                       onOpenSitasi={() => setSitasiOpen(true)}
                     />
                   </div>
@@ -11846,6 +11853,7 @@ export default function CariJurnalFigmaPanel({
                         setSearchType("journal");
                       }}
                       onOpenRingkasan={() => setRingkasanOpen(true)}
+                      onOpenAbstrak={() => setAbstrakOpen(true)}
                       onOpenSitasi={() => setSitasiOpen(true)}
                       onSave={saveLiteratureReview}
                       saved={savedLiterature.some(item => item.topic.toLowerCase() === (query.trim() || literatureTopic.trim()).toLowerCase())}
@@ -12227,6 +12235,7 @@ export default function CariJurnalFigmaPanel({
                 onBack={() => setDesktopStage("home")}
                 onOpenSitasi={() => setSitasiOpen(true)}
                 onOpenRingkasan={() => setRingkasanOpen(true)}
+                onOpenAbstrak={() => setAbstrakOpen(true)}
                 onSave={saveLiteratureReview}
                 saved={savedLiterature.some(item => item.topic.toLowerCase() === (query.trim() || literatureTopic.trim()).toLowerCase())}
                 onShowToast={showToast}
@@ -12238,6 +12247,7 @@ export default function CariJurnalFigmaPanel({
                 onSave={saveResearchMap}
                 saved={savedMaps.some(item => item.topic.toLowerCase() === (query.trim() || mapTopic.trim()).toLowerCase())}
                 onOpenRingkasan={() => setRingkasanOpen(true)}
+                onOpenAbstrak={() => setAbstrakOpen(true)}
                 onOpenSitasi={() => setSitasiOpen(true)}
               />
             ) : (
