@@ -11841,8 +11841,8 @@ export default function CariJurnalFigmaPanel({
           )}
 
           {mobileSearchStage === "results" && view === "home" && (
-            <div id="mobile-results-scroll-container" onScroll={handleMobileScroll} className={`fixed inset-x-0 top-[65px] z-[305] overflow-y-auto overflow-x-hidden bg-[#f4f7fb] px-4 pt-4 transition-[bottom] duration-300 ease-out md:hidden ${mobileNavHidden ? "bottom-0 pb-16" : "bottom-[68px] pb-6"}`}>
-              <div className="mx-auto max-w-md">
+            <div id="mobile-results-scroll-container" onScroll={handleMobileScroll} className={`fixed inset-x-0 top-[65px] z-[305] overflow-y-auto overflow-x-hidden bg-[#f4f7fb] px-4 pt-4 transition-[bottom] duration-300 ease-out md:hidden ${mobileNavHidden ? "bottom-0 pb-16" : "bottom-[68px] pb-6"} ${searchType !== "map" && searchType !== "review" && (searchSubmittedQuery || query).trim() === "12345" ? "flex flex-col" : ""}`}>
+              <div className={`mx-auto w-full max-w-md ${searchType !== "map" && searchType !== "review" && (searchSubmittedQuery || query).trim() === "12345" ? "my-auto py-2" : ""}`}>
                 {searchType === "map" ? (
                   <div className="mt-1">
                     <DesktopResearchMap
@@ -11873,7 +11873,7 @@ export default function CariJurnalFigmaPanel({
                     />
                   </div>
                 ) : (searchSubmittedQuery || query).trim() === "12345" ? (
-                  <div className="pb-8">
+                  <div className="w-full">
                     {/* Mobile Empty Card */}
                     <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-sm text-center">
                       <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-sky-50 text-[#00629b] ring-6 ring-sky-50/60 shadow-xs">
