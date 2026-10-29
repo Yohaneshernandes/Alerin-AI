@@ -12232,21 +12232,28 @@ export default function CariJurnalFigmaPanel({
                           setLiteratureTopic("Tinjau literatur tentang literasi keuangan mahasiswa");
                         }
                       }}
-                      className="mt-3 flex w-full flex-col items-start gap-0.5 rounded-xl border border-sky-200/70 bg-sky-50/80 px-3 py-2.5 text-left transition-all hover:bg-sky-100/70 active:scale-[0.99] cursor-pointer"
+                      className="mt-3 flex w-full flex-col items-start gap-0.5 rounded-xl border border-sky-200/70 bg-sky-50/80 px-3 py-2.5 text-left transition-all hover:bg-sky-100/70 active:scale-[0.99] cursor-pointer md:flex-row md:items-center md:gap-1.5 md:border-transparent md:bg-sky-50 md:text-xs md:leading-5"
                     >
-                      <span className="font-['Plus_Jakarta_Sans:Bold'] text-xs font-bold text-[#00629b]">Contoh:</span>
-                      <span className="text-[12px] sm:text-[12.5px] leading-5 tracking-[-0.1px] text-slate-700">
-                        {searchType === "review" ? (
-                          <>
-                            Tinjau literatur tentang literasi{" "}
-                            <span className="whitespace-nowrap">keuangan mahasiswa.</span>
-                          </>
-                        ) : (
-                          <>
-                            Artificial Intelligence dan motivasi{" "}
-                            <span className="whitespace-nowrap">belajar mahasiswa.</span>
-                          </>
-                        )}
+                      <span className="font-['Plus_Jakarta_Sans:Bold'] text-xs font-bold text-[#00629b] md:text-sky-800">Contoh:</span>
+                      <span className="text-[12px] leading-5 tracking-[-0.1px] text-slate-700 md:text-xs md:tracking-normal md:text-sky-800">
+                        <span className="inline md:hidden">
+                          {searchType === "review" ? (
+                            <>
+                              Tinjau literatur tentang literasi{" "}
+                              <span className="whitespace-nowrap">keuangan mahasiswa.</span>
+                            </>
+                          ) : (
+                            <>
+                              Artificial Intelligence dan motivasi{" "}
+                              <span className="whitespace-nowrap">belajar mahasiswa.</span>
+                            </>
+                          )}
+                        </span>
+                        <span className="hidden md:inline">
+                          {searchType === "review"
+                            ? "Tinjau literatur tentang literasi keuangan mahasiswa."
+                            : "Artificial Intelligence dan motivasi belajar mahasiswa."}
+                        </span>
                       </span>
                     </button>
 
