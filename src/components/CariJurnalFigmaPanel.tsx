@@ -12910,7 +12910,7 @@ export default function CariJurnalFigmaPanel({
                 </button>
                 <div className="rounded-2xl border border-slate-200/80 bg-white px-5 py-6 shadow-sm sm:p-6 md:p-6">
                   <h2 className="text-center font-['Plus_Jakarta_Sans:Bold'] text-[18px] font-extrabold leading-6 text-slate-900 md:text-base md:font-bold md:text-left">{guideContent?.title ?? "Cara menemukan jurnal"}</h2>
-                  <p className="mt-3 text-center text-sm leading-relaxed text-[#64748b] md:mt-2 md:text-left md:font-['Plus_Jakarta_Sans:Regular'] md:text-xs">
+                  <p className="mt-1.5 text-center text-sm leading-relaxed text-[#64748b] md:mt-2 md:text-left md:font-['Plus_Jakarta_Sans:Regular'] md:text-xs">
                     {guideContent ? (
                       guideContent.intro
                     ) : (
