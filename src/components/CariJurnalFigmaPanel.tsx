@@ -9445,7 +9445,11 @@ function MobileJournalResultCard({
           ["Jumlah sitasi", "Artikel ini dikutip dalam 45 karya ilmiah lainnya."],
         ].map(([judul, detail]) => (
           <div key={judul} className="mt-3 flex items-start gap-2.5">
-            <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-sky-100 text-[9px] font-bold text-sky-600">✓</span>
+            <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[#00629b] text-white shadow-2xs">
+              <svg width="9" height="9" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M2.5 6.2l2.3 2.3 4.7-5" />
+              </svg>
+            </span>
             <span className="min-w-0">
               <span className="block text-sm font-medium text-slate-900">{judul}</span>
               {judul === "DOI terverifikasi" ? (
@@ -9453,12 +9457,12 @@ function MobileJournalResultCard({
                   href="https://doi.org/10.20886/jpkf.2022.6.1.16-28"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-block break-all text-[12.5px] sm:text-[13px] leading-5 text-sky-600 underline underline-offset-2 decoration-sky-300 transition-colors duration-150 hover:text-black hover:decoration-black"
+                  className="inline-block break-all text-[12.5px] sm:text-[13px] leading-5 text-[#00629b] font-medium underline underline-offset-2 decoration-slate-400 transition-colors duration-150 hover:text-black hover:decoration-black"
                 >
                   {detail}
                 </a>
               ) : (
-                <span className="block text-[12.5px] sm:text-[13px] leading-5 text-slate-500">{detail}</span>
+                <span className="block text-[12.5px] sm:text-[13px] leading-5 text-slate-800">{detail}</span>
               )}
             </span>
           </div>
