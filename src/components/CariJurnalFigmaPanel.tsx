@@ -6715,10 +6715,12 @@ function MobileLiteratureReview({
 
   const activeLabel = structureSections.find(item => item.n === activeSection)?.label ?? "Ringkasan Utama";
   const nextSection = structureSections.find(item => item.n === activeSection + 1);
+  const currentDocSection = literatureDocSections.find(item => item.section === activeSection);
+  const currentDocDesc = currentDocSection?.desc || sectionDescs[activeSection] || "Inti temuan, faktor utama, dan arah sintesis";
   const activeParagraphs =
     sectionPreview[activeSection] && sectionPreview[activeSection].length > 0
       ? sectionPreview[activeSection]
-      : literatureDocSections.find(item => item.section === activeSection)?.content ?? [];
+      : currentDocSection?.content ?? [];
 
   return (
     <div className="flex flex-col gap-5 pb-8">
@@ -7051,18 +7053,25 @@ function MobileLiteratureReview({
           </div>
         </div>
 
-        {/* Isi Dokumen Review Sesuai Bagian Aktif */}
-        <div className="mt-5 border-t border-slate-100/90 pt-4.5">
-          <div className="flex items-center justify-between gap-3 border-b border-slate-100/80 pb-3">
-            <p className="text-[15px] font-bold text-slate-900">
-              {activeSection}. {activeLabel}
-            </p>
-            <span className="shrink-0 text-xs font-medium text-slate-400">Halaman {activeSection} dari 18</span>
+        {/* Konten Bagian Dokumen yang Terpilih (Paritas Tampilan Koleksi Literature Review) */}
+        <div className="mt-1 rounded-xl border border-slate-200/80 bg-slate-50/60 p-3.5 space-y-2.5 transition-all">
+          <div className="flex items-start gap-2.5">
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-sky-100 text-[#00629b]">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" />
+              </svg>
+            </span>
+            <div className="min-w-0 flex-1">
+              <h4 className="font-['Plus_Jakarta_Sans:Bold'] text-sm font-bold text-slate-800">
+                {activeSection}. {activeLabel}
+              </h4>
+              <p className="text-xs text-slate-500 font-medium">{currentDocDesc}</p>
+            </div>
           </div>
-
-          <div className="mt-3.5 space-y-3.5">
+          <div className="border-t border-slate-200/60 pt-2.5 space-y-2">
             {activeParagraphs.map((paragraph, pIdx) => (
-              <p key={pIdx} className="text-[13.5px] sm:text-sm leading-relaxed sm:leading-7 text-slate-600">
+              <p key={pIdx} className="text-[14px] leading-6 text-slate-700">
                 {paragraph}
               </p>
             ))}
