@@ -7941,28 +7941,70 @@ function DesktopResearchMap({
       )}
 
       {mode === "perkembangan" && (
-        <>
-          <p className="mt-2 text-xs leading-5 text-slate-600">
+        <div className="mt-3 flex flex-col gap-3.5">
+          <p className="text-xs leading-relaxed text-slate-600">
             Peta Perkembangan membantu kamu melihat perbedaan periode publikasi pada setiap topik penelitian.
           </p>
-          <ul className="mt-3 space-y-2 text-xs leading-5 text-slate-600">
-            <li>
-              <span className="font-semibold text-slate-800">Warna:</span> menggambarkan rata-rata tahun publikasi artikel yang berkaitan dengan suatu topik, sesuai legenda waktu pada peta.
-            </li>
-            <li>
-              <span className="font-semibold text-slate-800">Lingkaran:</span> menunjukkan topik yang dianalisis.
-            </li>
-            <li>
-              <span className="font-semibold text-slate-800">Garis:</span> menunjukkan hubungan antar topik berdasarkan metode jaringan yang digunakan.
-            </li>
-            <li>
-              <span className="font-semibold text-slate-800">Angka tahun:</span> menunjukkan rata-rata tahun publikasi, bukan tahun pertama kali topik tersebut diteliti.
-            </li>
-          </ul>
-          <p className="mt-3 text-xs leading-5 text-slate-600">
+
+          <div className="flex flex-col gap-3 rounded-2xl bg-[#f8fafc] p-4 text-xs leading-relaxed">
+            <div className="flex items-start gap-3.5">
+              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center">
+                <div className="grid grid-cols-2 place-items-center gap-1">
+                  <span className="h-2 w-2 rounded-full bg-[#2563eb]" />
+                  <span className="h-2 w-2 rounded-full bg-[#2dd4bf]" />
+                  <span className="h-2 w-2 rounded-full bg-[#facc15]" />
+                  <span className="h-2 w-2 rounded-full bg-[#ef4444]" />
+                </div>
+              </span>
+              <div>
+                <strong className="block text-xs font-bold text-slate-900">Warna:</strong>
+                <span className="text-slate-600">
+                  menggambarkan rata-rata tahun publikasi artikel yang berkaitan dengan suatu topik, sesuai legenda waktu pada peta.
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3.5">
+              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center">
+                <span className="h-4 w-4 rounded-full bg-[#3b82f6]" />
+              </span>
+              <div>
+                <strong className="block text-xs font-bold text-slate-900">Lingkaran:</strong>
+                <span className="text-slate-600">menunjukkan topik yang dianalisis.</span>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3.5">
+              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center">
+                <span className="h-1.5 w-6 rounded-full bg-[#94a3b8]" />
+              </span>
+              <div>
+                <strong className="block text-xs font-bold text-slate-900">Garis:</strong>
+                <span className="text-slate-600">
+                  menunjukkan hubungan antar topik berdasarkan metode jaringan yang digunakan.
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3.5">
+              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-sky-100 text-[9.5px] font-extrabold text-[#00629b] border border-sky-200/60">
+                  ’24
+                </span>
+              </span>
+              <div>
+                <strong className="block text-xs font-bold text-slate-900">Angka tahun:</strong>
+                <span className="text-slate-600">
+                  menunjukkan rata-rata tahun publikasi, bukan tahun pertama kali topik tersebut diteliti.
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <p className="text-[11px] leading-relaxed text-slate-500">
             Topik dengan rata-rata tahun lebih baru tidak otomatis sedang mengalami peningkatan popularitas. Untuk mengetahui tren pertumbuhan, diperlukan data jumlah publikasi per tahun.
           </p>
-        </>
+        </div>
       )}
     </div>
   );
