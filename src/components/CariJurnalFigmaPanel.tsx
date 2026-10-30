@@ -7288,6 +7288,7 @@ function DesktopResearchMap({
   const [nodeFilter, setNodeFilter] = useState<string | null>(null);
   const [mapSearch, setMapSearch] = useState("");
   const [chip, setChip] = useState("semua");
+  const [mobileJournalLimit, setMobileJournalLimit] = useState(6);
   const [yearSort, setYearSort] = useState<"asc" | "desc" | null>(null);
   const [relevanSort, setRelevanSort] = useState<"asc" | "desc" | null>(null);
   const [progress, setProgress] = useState(1);
@@ -8780,23 +8781,78 @@ function DesktopResearchMap({
         </div>
       </section>
 
-      <section className="rounded-2xl bg-white outline outline-1 outline-offset-[-1px] outline-slate-200/90">
-        <div className="flex flex-col gap-3 border-b border-slate-200/70 p-4 md:flex-row md:items-start md:justify-between md:gap-4 md:p-7">
-          <div className="grid grid-cols-[auto_1fr] items-center gap-x-2 md:gap-x-3">
-            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-sky-700 md:mt-1 md:h-6 md:w-6 md:self-start">
-              <svg width="10" height="11" viewBox="0 0 12 13" fill="none" aria-hidden="true" className="md:h-[13px] md:w-[12px]">
+      <section className="rounded-2xl bg-white p-4 sm:p-5 shadow-sm border border-slate-200/80 md:border-0 md:p-0 md:outline md:outline-1 md:outline-offset-[-1px] md:outline-slate-200/90">
+        {/* Mobile Header (Sama persis dengan Literatur Review) */}
+        <div className="md:hidden">
+          <div className="flex items-center justify-between gap-2.5">
+            <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-[17px] sm:text-lg font-bold text-slate-900 tracking-[-0.2px]">
+              Jurnal yang Digunakan
+            </h2>
+            <span className="shrink-0 whitespace-nowrap inline-flex items-center rounded-full bg-sky-50 px-2.5 py-0.5 text-[11px] font-bold text-[#00629b] border border-sky-200/60">
+              Total {visibleRows.length} artikel
+            </span>
+          </div>
+          <p className="mt-1.5 text-[13.5px] sm:text-sm leading-5 text-slate-500">
+            Daftar jurnal yang menjadi dasar pembuatan peta penelitian.
+          </p>
+
+          {/* Filter Chips Kategori Seperti Tampilan Literatur Review */}
+          <div className="-mx-4 mt-3.5 flex gap-2 overflow-x-auto px-4 pb-1 pt-0.5 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+            {filterChips.map(item => {
+              const active = chip === item.key;
+              return (
+                <button
+                  key={item.key}
+                  type="button"
+                  onClick={() => {
+                    setChip(item.key);
+                    setMobileJournalLimit(6);
+                  }}
+                  className={`shrink-0 whitespace-nowrap rounded-xl px-3.5 py-1.5 text-xs font-semibold transition-all cursor-pointer active:scale-95 ${
+                    active
+                      ? "bg-[#00629b] text-white shadow-xs ring-1 ring-[#00629b]"
+                      : "bg-slate-100/90 text-slate-700 hover:bg-slate-200/80 border border-slate-200/70"
+                  }`}
+                >
+                  {item.label}
+                </button>
+              );
+            })}
+          </div>
+
+          {nodeFilter && (
+            <div className="mt-2.5 flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setNodeFilter(null)}
+                className="flex items-center gap-1.5 rounded-full bg-sky-50 px-3 py-1 text-xs font-medium text-sky-700 outline outline-1 outline-sky-200"
+              >
+                Klaster: {nodeFilter}
+                <svg width="9" height="9" viewBox="0 0 9 9" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" aria-hidden="true">
+                  <path d="M1.5 1.5l6 6M7.5 1.5l-6 6" />
+                </svg>
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Desktop Header */}
+        <div className="hidden md:flex md:items-start md:justify-between md:gap-4 md:border-b md:border-slate-200/70 md:p-7">
+          <div className="grid grid-cols-[auto_1fr] items-center gap-x-3">
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded bg-sky-700 self-start mt-1">
+              <svg width="12" height="13" viewBox="0 0 12 13" fill="none" aria-hidden="true">
                 <rect x="1" y="1" width="7" height="7" rx="1.5" fill="white" />
                 <rect x="4.5" y="5" width="6.5" height="6.5" rx="1.5" fill="#bae6fd" />
               </svg>
             </span>
-            <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-base font-bold leading-6 text-slate-900 md:text-lg md:font-semibold md:leading-7">
+            <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-lg font-semibold leading-7 text-slate-900">
               Jurnal yang Digunakan
             </h2>
-            <p className="col-span-2 mt-1 text-xs leading-5 text-slate-500 md:col-start-2 md:col-span-1 md:mt-0.5 md:text-sm">
+            <p className="col-start-2 mt-0.5 text-sm leading-5 text-slate-500">
               Daftar jurnal yang menjadi dasar pembuatan peta penelitian.
             </p>
           </div>
-          <label className="flex h-10 w-full shrink-0 items-center gap-2.5 rounded-xl border border-slate-300 bg-slate-50/90 px-3.5 shadow-sm transition-colors hover:border-slate-400 hover:bg-white focus-within:border-sky-600 focus-within:bg-white focus-within:ring-2 focus-within:ring-sky-100 md:w-80">
+          <label className="flex h-10 w-80 shrink-0 items-center gap-2.5 rounded-xl border border-slate-300 bg-slate-50/90 px-3.5 shadow-sm transition-colors hover:border-slate-400 hover:bg-white focus-within:border-sky-600 focus-within:bg-white focus-within:ring-2 focus-within:ring-sky-100">
             <svg width="15" height="15" viewBox="0 0 14 14" fill="none" stroke="#475569" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true" className="shrink-0">
               <circle cx="6" cy="6" r="4.5" />
               <path d="M9.5 9.5L13 13" />
@@ -8810,8 +8866,9 @@ function DesktopResearchMap({
           </label>
         </div>
 
+        {/* Desktop Node filter */}
         {nodeFilter && (
-          <div className="flex flex-wrap items-center gap-2 border-b border-slate-200/70 px-4 py-3 md:px-7 md:py-3.5">
+          <div className="hidden md:flex flex-wrap items-center gap-2 border-b border-slate-200/70 px-7 py-3.5">
             <button
               type="button"
               onClick={() => setNodeFilter(null)}
@@ -8825,6 +8882,7 @@ function DesktopResearchMap({
           </div>
         )}
 
+        {/* Desktop Table View */}
         <div className="hidden max-h-[480px] overflow-auto md:block">
           <table className="w-full min-w-[760px] border-collapse text-left">
             <thead className="sticky top-0 z-10 bg-slate-50">
@@ -8907,129 +8965,67 @@ function DesktopResearchMap({
           </table>
         </div>
 
-        <div className="relative md:hidden">
-          <div
-            ref={mobileJournalListRef}
-            onScroll={handleMobileJournalScroll}
-            className="max-h-[460px] overflow-y-auto space-y-3 p-3.5"
-          >
-            {visibleRows.length === 0 && (
-              <p className="px-4 py-8 text-center text-sm text-slate-400">Tidak ada artikel yang cocok dengan pencarianmu.</p>
-            )}
-            {visibleRows.map(({ row }, index) => (
-              <article key={`${row.title}-${index}`} className="rounded-xl bg-slate-50/70 p-4 outline outline-1 outline-slate-200/90 space-y-2.5">
-                <div>
-                  <h4 className="font-['Plus_Jakarta_Sans:Bold'] text-sm font-bold leading-5 text-slate-900">{row.title}</h4>
-                  <p className="mt-1 text-xs font-normal text-slate-500">{row.authors} · {row.source}</p>
-                </div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="rounded-md bg-white px-2 py-0.5 text-xs font-medium text-slate-600 outline outline-1 outline-slate-200">{row.year}</span>
-                  <span className="flex items-center gap-1.5 rounded-md bg-white px-2 py-0.5 text-xs font-medium text-slate-600 outline outline-1 outline-slate-200">
-                    <img
-                      src={sourceLogos[row.source] ?? "/assets/source-logos/openalex.svg"}
-                      alt=""
-                      className="h-3.5 w-3.5 shrink-0 object-contain"
-                    />
-                    {row.source}
-                  </span>
-                </div>
-                <div className="flex flex-wrap items-center gap-2 pt-2.5 border-t border-slate-200/70">
-                  <button
-                    type="button"
-                    onClick={onOpenAbstrak ?? onOpenRingkasan ?? (() => window.alert(`Membuka abstrak: ${row.title}`))}
-                    className="flex-1 sm:flex-none flex min-h-[40px] items-center justify-center rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-2xs hover:bg-slate-50 active:scale-95 cursor-pointer"
-                  >
-                    Abstrak
-                  </button>
-                  <button
-                    type="button"
-                    onClick={onOpenSitasi ?? (() => window.alert(`Sitasi untuk: ${row.authors} (${row.year}). ${row.title}.`))}
-                    className="flex-1 sm:flex-none flex min-h-[40px] items-center justify-center rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-2xs hover:bg-slate-50 active:scale-95 cursor-pointer"
-                  >
-                    Sitasi
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => window.open("https://doi.org", "_blank", "noopener,noreferrer")}
-                    className="flex-1 sm:flex-none flex min-h-[40px] items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-sky-700 shadow-2xs hover:bg-slate-50 active:scale-95 cursor-pointer"
-                  >
-                    <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="text-sky-600">
-                      <path d="M12 9v4H3V4h4M9 2h5v5M6.5 9.5L14 2" />
-                    </svg>
-                    Buka
-                  </button>
-                </div>
-              </article>
-            ))}
-          </div>
+        {/* Mobile Cards List (Sama persis dengan susunan Literatur Review) */}
+        <div className="md:hidden mt-3.5 space-y-3">
+          {visibleRows.slice(0, mobileJournalLimit).map(({ row }, index) => (
+            <article key={`${row.title}-${index}`} className="rounded-xl bg-slate-50/70 p-4 border border-slate-200/90 shadow-2xs space-y-3 hover:border-sky-300 transition-colors">
+              <div>
+                <h4 className="font-['Plus_Jakarta_Sans:Bold'] text-sm sm:text-[14.5px] font-bold leading-snug text-slate-900">{row.title}</h4>
+                <p className="mt-1 text-xs text-slate-500 font-normal">{row.authors} · <span className="font-medium text-slate-600">{row.source}</span></p>
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="rounded-lg bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 border border-slate-200 shadow-2xs">
+                  {row.year}
+                </span>
+                <span className="flex items-center gap-1.5 rounded-lg bg-white px-2.5 py-1 text-xs font-medium text-slate-700 border border-slate-200 shadow-2xs">
+                  <img
+                    src={sourceLogos[row.source] ?? "/assets/source-logos/openalex.svg"}
+                    alt=""
+                    className="h-3.5 w-3.5 shrink-0 object-contain"
+                  />
+                  <span>{row.source}</span>
+                </span>
+              </div>
+              <div className="grid grid-cols-3 gap-2 pt-2.5 border-t border-slate-200/70">
+                <button
+                  type="button"
+                  onClick={onOpenAbstrak ?? onOpenRingkasan ?? (() => window.alert(`Membuka abstrak: ${row.title}`))}
+                  className="flex min-h-[42px] items-center justify-center rounded-xl border border-slate-200 bg-white px-2 py-2 text-xs font-bold text-slate-700 shadow-2xs hover:bg-slate-50 active:scale-95 cursor-pointer"
+                >
+                  Abstrak
+                </button>
+                <button
+                  type="button"
+                  onClick={onOpenSitasi ?? (() => window.alert(`Sitasi untuk: ${row.authors} (${row.year}). ${row.title}.`))}
+                  className="flex min-h-[42px] items-center justify-center rounded-xl border border-slate-200 bg-white px-2 py-2 text-xs font-bold text-slate-700 shadow-2xs hover:bg-slate-50 active:scale-95 cursor-pointer"
+                >
+                  Sitasi
+                </button>
+                <button
+                  type="button"
+                  onClick={() => window.open("https://doi.org", "_blank", "noopener,noreferrer")}
+                  className="flex min-h-[42px] items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-2 py-2 text-xs font-bold text-sky-700 shadow-2xs hover:bg-sky-50 active:scale-95 cursor-pointer"
+                >
+                  <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-sky-600">
+                    <path d="M12 9v4H3V4h4M9 2h5v5M6.5 9.5L14 2" />
+                  </svg>
+                  <span>Buka</span>
+                </button>
+              </div>
+            </article>
+          ))}
+          {visibleRows.length === 0 && (
+            <p className="py-6 text-center text-xs text-slate-400">Tidak ada jurnal yang cocok dengan pencarianmu.</p>
+          )}
 
-          {/* Dynamic Scroll Indicator on the right edge - Bisa Diklik dan Digeser */}
-          <div
-            className={`pointer-events-auto absolute right-0.5 top-2 bottom-2 w-3 z-20 flex items-center justify-center cursor-pointer transition-opacity duration-300 select-none ${
-              isJournalScrolling ? "opacity-100" : "opacity-40 hover:opacity-100"
-            }`}
-            onPointerDown={e => {
-              e.preventDefault();
-              const scrollEl = mobileJournalListRef.current;
-              const track = e.currentTarget;
-              if (!scrollEl || !track) return;
-              const rect = track.getBoundingClientRect();
-              const maxScroll = scrollEl.scrollHeight - scrollEl.clientHeight;
-              if (maxScroll <= 0) return;
-              const trackHeight = rect.height;
-              const thumbHeight = trackHeight * journalThumbRatio;
-              const availableTrack = trackHeight - thumbHeight;
-              if (availableTrack <= 0) return;
-              const clickY = e.clientY - rect.top;
-              const currentThumbTop = journalScrollProgress * availableTrack;
-              if (clickY < currentThumbTop - 3 || clickY > currentThumbTop + thumbHeight + 3) {
-                const targetThumbTop = clickY - thumbHeight / 2;
-                const nextProgress = Math.min(1, Math.max(0, targetThumbTop / availableTrack));
-                scrollEl.scrollTop = nextProgress * maxScroll;
-                setJournalScrollProgress(nextProgress);
-              }
-              setIsJournalScrolling(true);
-              const startY = e.clientY;
-              const startScroll = scrollEl.scrollTop;
-              const onMove = (me: PointerEvent) => {
-                me.preventDefault();
-                const deltaY = me.clientY - startY;
-                scrollEl.scrollTop = Math.min(maxScroll, Math.max(0, startScroll + (deltaY / availableTrack) * maxScroll));
-              };
-              const onUp = () => {
-                window.removeEventListener("pointermove", onMove);
-                window.removeEventListener("pointerup", onUp);
-                window.removeEventListener("pointercancel", onUp);
-                document.body.style.removeProperty("user-select");
-                document.body.style.removeProperty("cursor");
-                window.setTimeout(() => setIsJournalScrolling(false), 1000);
-              };
-              document.body.style.userSelect = "none";
-              document.body.style.cursor = "grabbing";
-              window.addEventListener("pointermove", onMove);
-              window.addEventListener("pointerup", onUp);
-              window.addEventListener("pointercancel", onUp);
-            }}
-            title="Klik atau geser untuk menggulir"
-          >
-            <div className="relative h-full w-1 rounded-full bg-slate-200/60">
-              <div
-                className="w-1 rounded-full bg-sky-500/90 shadow-xs cursor-grab active:cursor-grabbing hover:bg-sky-600"
-                style={{
-                  height: `${journalThumbRatio * 100}%`,
-                  transform: `translateY(${journalScrollProgress * (1 - journalThumbRatio) * 100}%)`,
-                }}
-              />
-            </div>
-          </div>
-
-          {visibleRows.length > 5 && (
-            <div className="flex items-center justify-center gap-1.5 border-t border-slate-100 bg-slate-50/70 py-2 text-center text-[11px] font-medium text-slate-500">
-              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-sky-600">
-                <path d="M8 3v10M4 9l4 4 4-4" />
-              </svg>
-              <span>Menampilkan 5 dari {visibleRows.length} jurnal · Gulir untuk melihat lainnya</span>
-            </div>
+          {visibleRows.length > mobileJournalLimit && (
+            <button
+              type="button"
+              onClick={() => setMobileJournalLimit(limit => limit + 6)}
+              className="mt-3.5 flex w-full min-h-[44px] items-center justify-center rounded-xl bg-slate-100 hover:bg-slate-200/80 py-2.5 text-xs font-bold text-slate-700 transition-colors cursor-pointer"
+            >
+              Muat lebih banyak ({Math.min(6, visibleRows.length - mobileJournalLimit)} lagi)
+            </button>
           )}
         </div>
       </section>
