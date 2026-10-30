@@ -2795,7 +2795,7 @@ Mohon bantu saya untuk:
         </button>
         <button
           type="button"
-          onClick={onAbstrak}
+          onClick={onDetail ?? onAbstrak}
           className="flex items-center gap-1.5 rounded-lg bg-white px-4 py-2 text-sm font-semibold leading-5 text-slate-700 outline outline-1 outline-offset-[-1px] outline-slate-200 transition-all duration-150 hover:bg-sky-50 hover:text-sky-700 hover:outline-sky-300 hover:shadow-xs active:scale-[0.98]"
         >
           Ringkasan Jurnal
@@ -3233,7 +3233,7 @@ function DesktopJournalResultCard({
                 label === "Buat sitasi"
                   ? onSitasi
                   : (label === "Abstrak" || label === "Ringkasan Jurnal")
-                    ? onAbstrak
+                    ? (onAnalisis ?? onAbstrak)
                     : label === "DOI"
                       ? () => window.open(detail.doiUrl, "_blank", "noopener,noreferrer")
                       : () => window.alert(detail.pdfNote)
@@ -3652,7 +3652,7 @@ function RingkasanJurnalModal({
           <button
             type="button"
             onClick={copySummary}
-            className={`flex h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-white px-5 text-sm font-semibold leading-5 shadow-[0px_2px_8px_rgba(0,0,0,0.08)] transition-all hover:bg-slate-50 hover:shadow-[0px_3px_10px_rgba(0,0,0,0.12)] active:scale-[0.98] md:h-10 md:w-44 md:flex-none ${
+            className={`flex h-12 flex-1 items-center justify-center gap-2 rounded-xl border border-slate-200/90 bg-white px-5 text-sm font-semibold leading-5 shadow-xs transition-all hover:bg-slate-50 hover:shadow-sm active:scale-[0.98] md:h-10 md:w-44 md:flex-none ${
               isCopied ? "text-emerald-600" : "text-slate-800"
             }`}
           >
@@ -3676,7 +3676,7 @@ function RingkasanJurnalModal({
           <button
             type="button"
             onClick={onClose}
-            className="h-12 flex-1 rounded-xl bg-sky-700 text-sm font-bold leading-5 text-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] transition-colors hover:bg-sky-800 active:scale-[0.98] md:h-10 md:w-auto md:flex-none md:px-6 md:py-2.5 md:font-semibold"
+            className="h-12 flex-1 rounded-xl bg-[#00629b] text-sm font-bold leading-5 text-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] transition-colors hover:bg-[#005282] active:scale-[0.98] md:h-10 md:w-auto md:flex-none md:px-6 md:py-2.5 md:font-semibold cursor-pointer"
           >
             Selesai
           </button>
@@ -6119,8 +6119,8 @@ function DesktopLiteratureReview({
                         <div className="mt-2.5 flex items-center gap-2">
                           <button
                             type="button"
-                            onClick={() => (onOpenAbstrak ? onOpenAbstrak() : (onOpenRingkasan ? onOpenRingkasan() : undefined))}
-                            className="inline-flex items-center rounded-lg border border-slate-200/90 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 shadow-2xs transition-colors hover:bg-slate-50 active:scale-95"
+                            onClick={() => (onOpenRingkasan ? onOpenRingkasan() : (onOpenAbstrak ? onOpenAbstrak() : undefined))}
+                            className="inline-flex items-center rounded-lg border border-slate-200/90 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 shadow-2xs transition-colors hover:bg-slate-50 active:scale-95 cursor-pointer"
                           >
                             Ringkasan Jurnal
                           </button>
@@ -6873,7 +6873,7 @@ function MobileLiteratureReview({
                 <div className="grid grid-cols-3 gap-2 pt-2.5 border-t border-slate-200/70">
                   <button
                     type="button"
-                    onClick={onOpenAbstrak ?? onOpenRingkasan ?? (() => window.alert(`Membuka ringkasan jurnal: ${row.title}`))}
+                    onClick={onOpenRingkasan ?? onOpenAbstrak ?? (() => window.alert(`Membuka ringkasan jurnal: ${row.title}`))}
                     className="flex min-h-[42px] items-center justify-center rounded-xl border border-slate-200 bg-white px-1.5 py-2 text-center text-xs font-bold leading-tight text-slate-700 shadow-2xs hover:bg-slate-50 active:scale-95 cursor-pointer"
                   >
                     Ringkasan Jurnal
@@ -9022,7 +9022,7 @@ function DesktopResearchMap({
                     <div className="mt-2.5 flex items-center gap-2">
                       <button
                         type="button"
-                        onClick={() => (onOpenAbstrak ? onOpenAbstrak() : (onOpenRingkasan ? onOpenRingkasan() : window.alert(`Membuka ringkasan jurnal: ${row.title}`)))}
+                        onClick={() => (onOpenRingkasan ? onOpenRingkasan() : (onOpenAbstrak ? onOpenAbstrak() : window.alert(`Membuka ringkasan jurnal: ${row.title}`)))}
                         className="inline-flex cursor-pointer items-center rounded-lg border border-slate-200/90 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 shadow-2xs transition-colors hover:bg-slate-50 active:scale-95"
                       >
                         Ringkasan Jurnal
@@ -9100,7 +9100,7 @@ function DesktopResearchMap({
               <div className="grid grid-cols-3 gap-2 pt-2.5 border-t border-slate-200/70">
                 <button
                   type="button"
-                  onClick={onOpenAbstrak ?? onOpenRingkasan ?? (() => window.alert(`Membuka ringkasan jurnal: ${row.title}`))}
+                  onClick={onOpenRingkasan ?? onOpenAbstrak ?? (() => window.alert(`Membuka ringkasan jurnal: ${row.title}`))}
                   className="flex min-h-[42px] items-center justify-center rounded-xl border border-slate-200 bg-white px-1.5 py-2 text-center text-xs font-bold leading-tight text-slate-700 shadow-2xs hover:bg-slate-50 active:scale-95 cursor-pointer"
                 >
                   Ringkasan Jurnal
@@ -9678,7 +9678,7 @@ function MobileJournalResultCard({
 
         <button
           type="button"
-          onClick={onAbstrak}
+          onClick={onAnalisis ?? onAbstrak}
           className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl bg-slate-100 px-3 py-2.5 text-xs sm:text-sm font-semibold text-slate-800 transition-colors hover:bg-slate-200 active:scale-95"
         >
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" aria-hidden="true">
@@ -9988,7 +9988,7 @@ function MobileJournalCollectionCard({
 
         <button
           type="button"
-          onClick={onAbstrak}
+          onClick={onDetail ?? onAbstrak}
           className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs sm:text-sm font-semibold text-slate-700 shadow-xs transition-colors hover:bg-slate-50 active:scale-[0.98]"
         >
           Ringkasan Jurnal
@@ -11897,7 +11897,7 @@ export default function CariJurnalFigmaPanel({
                       onSave={saveResearchMap}
                       saved={savedMaps.some(item => item.topic.toLowerCase() === (query.trim() || mapTopic.trim()).toLowerCase())}
                       onOpenRingkasan={() => setRingkasanOpen(true)}
-                      onOpenAbstrak={() => setAbstrakOpen(true)}
+                      onOpenAbstrak={() => setRingkasanOpen(true)}
                       onOpenSitasi={() => setSitasiOpen(true)}
                     />
                   </div>
@@ -11910,7 +11910,7 @@ export default function CariJurnalFigmaPanel({
                         setSearchType("journal");
                       }}
                       onOpenRingkasan={() => setRingkasanOpen(true)}
-                      onOpenAbstrak={() => setAbstrakOpen(true)}
+                      onOpenAbstrak={() => setRingkasanOpen(true)}
                       onOpenSitasi={() => setSitasiOpen(true)}
                       onSave={saveLiteratureReview}
                       saved={savedLiterature.some(item => item.topic.toLowerCase() === (query.trim() || literatureTopic.trim()).toLowerCase())}
@@ -12260,7 +12260,7 @@ export default function CariJurnalFigmaPanel({
                         onToggleSave={() => toggleSaveJournal(result)}
                         onAnalisis={() => setRingkasanOpen(true)}
                         onSitasi={() => setSitasiOpen(true)}
-                        onAbstrak={() => setAbstrakOpen(true)}
+                        onAbstrak={() => setRingkasanOpen(true)}
                         onDiskusikan={onDiskusikan}
                         onReplaceJournal={handleMobileReplaceJournal}
                       />
@@ -12292,7 +12292,7 @@ export default function CariJurnalFigmaPanel({
                 onBack={() => setDesktopStage("home")}
                 onOpenSitasi={() => setSitasiOpen(true)}
                 onOpenRingkasan={() => setRingkasanOpen(true)}
-                onOpenAbstrak={() => setAbstrakOpen(true)}
+                onOpenAbstrak={() => setRingkasanOpen(true)}
                 onSave={saveLiteratureReview}
                 saved={savedLiterature.some(item => item.topic.toLowerCase() === (query.trim() || literatureTopic.trim()).toLowerCase())}
                 onShowToast={showToast}
@@ -12304,7 +12304,7 @@ export default function CariJurnalFigmaPanel({
                 onSave={saveResearchMap}
                 saved={savedMaps.some(item => item.topic.toLowerCase() === (query.trim() || mapTopic.trim()).toLowerCase())}
                 onOpenRingkasan={() => setRingkasanOpen(true)}
-                onOpenAbstrak={() => setAbstrakOpen(true)}
+                onOpenAbstrak={() => setRingkasanOpen(true)}
                 onOpenSitasi={() => setSitasiOpen(true)}
               />
             ) : (
@@ -12321,7 +12321,7 @@ export default function CariJurnalFigmaPanel({
                 onOpenRingkasan={() => setRingkasanOpen(true)}
                 onOpenTabel={() => setTabelOpen(true)}
                 onOpenSitasi={() => setSitasiOpen(true)}
-                onOpenAbstrak={() => setAbstrakOpen(true)}
+                onOpenAbstrak={() => setRingkasanOpen(true)}
                 onDiskusikan={onDiskusikan}
                 onShowToast={showToast}
                 analysis={resultMode === "analysis"}
@@ -13230,7 +13230,7 @@ export default function CariJurnalFigmaPanel({
                     onRemove={() => setHapusJournalId(journal.id)}
                     onSitasi={() => setSitasiOpen(true)}
                     onDetail={() => setRingkasanOpen(true)}
-                    onAbstrak={() => setAbstrakOpen(true)}
+                    onAbstrak={() => setRingkasanOpen(true)}
                     onDiskusikan={onDiskusikan}
                   />
                 ))}
@@ -13407,7 +13407,7 @@ export default function CariJurnalFigmaPanel({
                         onRemove={() => setHapusJournalId(journal.id)}
                         onSitasi={() => setSitasiOpen(true)}
                         onDetail={() => setRingkasanOpen(true)}
-                        onAbstrak={() => setAbstrakOpen(true)}
+                        onAbstrak={() => setRingkasanOpen(true)}
                         onDiskusikan={onDiskusikan}
                       />
                     ))}
