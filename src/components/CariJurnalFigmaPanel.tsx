@@ -1406,13 +1406,10 @@ function Sidebar({
               </span>
 
               {/* Sisi Kanan: Kategori dan Titik Tiga bersih tanpa border/background kotak hitam */}
-              <div
-                className="flex shrink-0 items-center gap-1.5"
-                onClick={e => e.stopPropagation()}
-              >
+              <div className="flex shrink-0 items-center gap-1.5">
                 {/* Tulisan Kategori */}
                 <span
-                  className={`inline-flex shrink-0 rounded-full px-2.5 py-0.5 text-[9px] font-bold leading-3 transition-colors ${
+                  className={`inline-flex shrink-0 rounded-full px-2.5 py-0.5 text-[9px] font-bold leading-3 transition-colors cursor-pointer hover:opacity-90 active:scale-95 ${
                     isItemActive
                       ? "bg-[#00629b] text-white shadow-2xs"
                       : "bg-sky-50 text-sky-700"
@@ -12952,9 +12949,12 @@ export default function CariJurnalFigmaPanel({
                 <div className="mt-4 space-y-3">
                   {riwayatItems.map((item, index) => (
                     <article key={`${item.type}-${item.query}-${index}`} className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm">
-                      <div className="flex items-start justify-between gap-3">
+                      <div
+                        onClick={() => openRiwayatPencarian(item)}
+                        className="flex items-start justify-between gap-3 cursor-pointer select-none"
+                      >
                         <div className="min-w-0">
-                          <p className="flex items-center gap-1.5 truncate font-['Plus_Jakarta_Sans:SemiBold'] text-sm font-semibold text-[#0f172a]">
+                          <p className="flex items-center gap-1.5 truncate font-['Plus_Jakarta_Sans:SemiBold'] text-sm font-semibold text-[#0f172a] hover:text-[#00629b] transition-colors">
                             {item.pinned && (
                               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0070ba" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-label="Disematkan" className="shrink-0 text-[#0070ba]">
                                 <line x1="12" y1="17" x2="12" y2="22" />
@@ -12968,7 +12968,13 @@ export default function CariJurnalFigmaPanel({
                             {item.waktu} · {item.type === "review" ? "Literature Review" : item.type === "map" ? "Peta Penelitian" : "Cari Jurnal"}
                           </p>
                         </div>
-                        <span className="shrink-0 rounded-full bg-sky-50 px-2.5 py-1 text-[10px] font-semibold text-[#0066a1]">
+                        <span
+                          onClick={e => {
+                            e.stopPropagation();
+                            openRiwayatPencarian(item);
+                          }}
+                          className="shrink-0 rounded-full bg-sky-50 px-2.5 py-1 text-[10px] font-semibold text-[#0066a1] cursor-pointer hover:bg-sky-100 active:scale-95 transition-all"
+                        >
                           {item.type === "review" ? "Literature Review" : item.type === "map" ? "Peta Penelitian" : "Jurnal"}
                         </span>
                       </div>
