@@ -5754,7 +5754,7 @@ function DesktopLiteratureReview({
 
   const filterChips = [
     { key: "semua", label: "Semua (92)" },
-    { key: "relevan", label: "Sangat relevan (24)" },
+    { key: "relevan", label: "Prioritas tinggi (24)" },
     { key: "tinjau", label: "Perlu ditinjau (38)" },
     { key: "teori", label: "Ulasan teori (12)" },
     { key: "empiris", label: "Empiris (46)" },
@@ -6085,13 +6085,26 @@ function DesktopLiteratureReview({
                       <SortArrow dir={yearSort} />
                     </button>
                   </th>
+                  <th className="px-5 py-3 w-40">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setYearSort(null);
+                        setRelevanSort(relevanSort === "desc" ? "asc" : "desc");
+                      }}
+                      className={`flex items-center gap-1.5 text-xs font-semibold cursor-pointer ${relevanSort ? "text-[#0369a1]" : "text-slate-500 hover:text-slate-700"}`}
+                    >
+                      Relevansi
+                      <SortArrow dir={relevanSort} />
+                    </button>
+                  </th>
                   <th className="px-5 py-3 text-xs font-semibold text-slate-500 w-44">Sumber</th>
                 </tr>
               </thead>
               <tbody>
                 {visiblePriority.length === 0 && (
                   <tr>
-                    <td colSpan={3} className="px-5 py-8 text-center text-sm text-slate-400">
+                    <td colSpan={4} className="px-5 py-8 text-center text-sm text-slate-400">
                       Tidak ada artikel yang cocok dengan pencarianmu.
                     </td>
                   </tr>
@@ -6134,6 +6147,19 @@ function DesktopLiteratureReview({
                         </div>
                       </td>
                       <td className="px-5 py-4 text-sm font-medium text-slate-600 align-top">{row.year}</td>
+                      <td className="px-5 py-4 align-top">
+                        <span
+                          className={`inline-flex items-center justify-center rounded-full px-2.5 py-1 text-xs font-semibold ${
+                            row.tag === "Sangat relevan"
+                              ? "bg-emerald-50 text-emerald-700 border border-emerald-200/60"
+                              : row.tag === "Cukup relevan"
+                                ? "bg-blue-50 text-blue-700 border border-blue-200/60"
+                                : "bg-amber-50 text-amber-700 border border-amber-200/60"
+                          }`}
+                        >
+                          {row.tag === "Sangat relevan" ? "Prioritas tinggi" : (row.tag || "Prioritas tinggi")}
+                        </span>
+                      </td>
                       <td className="px-5 py-4 align-top">
                         <span className="flex items-center gap-2">
                           <img
@@ -6657,7 +6683,7 @@ function MobileLiteratureReview({
 
   const filterChips = [
     { key: "semua", label: "Semua (92)" },
-    { key: "relevan", label: "Sangat relevan (24)" },
+    { key: "relevan", label: "Prioritas tinggi (24)" },
     { key: "tinjau", label: "Perlu ditinjau (38)" },
     { key: "teori", label: "Ulasan teori (12)" },
     { key: "empiris", label: "Empiris (46)" },
@@ -7611,7 +7637,7 @@ function DesktopResearchMap({
 
   const filterChips = [
     { key: "semua", label: "Semua (92)" },
-    { key: "relevan", label: "Sangat relevan (24)" },
+    { key: "relevan", label: "Prioritas tinggi (24)" },
     { key: "tinjau", label: "Perlu ditinjau (38)" },
     { key: "teori", label: "Ulasan teori (12)" },
     { key: "empiris", label: "Empiris (46)" },
@@ -8901,13 +8927,26 @@ function DesktopResearchMap({
                     <SortArrow dir={yearSort} />
                   </button>
                 </th>
+                <th className="w-40 px-5 py-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setYearSort(null);
+                      setRelevanSort(relevanSort === "desc" ? "asc" : "desc");
+                    }}
+                    className={`flex items-center gap-1.5 text-xs font-semibold cursor-pointer ${relevanSort ? "text-[#0369a1]" : "text-slate-500 hover:text-slate-700"}`}
+                  >
+                    Relevansi
+                    <SortArrow dir={relevanSort} />
+                  </button>
+                </th>
                 <th className="w-44 px-5 py-3 text-xs font-semibold text-slate-500">Sumber</th>
               </tr>
             </thead>
             <tbody>
               {visibleRows.length === 0 && (
                 <tr>
-                  <td colSpan={3} className="px-5 py-8 text-center text-sm text-slate-400">
+                  <td colSpan={4} className="px-5 py-8 text-center text-sm text-slate-400">
                     Tidak ada artikel yang cocok dengan pencarianmu.
                   </td>
                 </tr>
@@ -8949,6 +8988,19 @@ function DesktopResearchMap({
                     </div>
                   </td>
                   <td className="px-5 py-4 align-top text-sm font-medium text-slate-600">{row.year}</td>
+                  <td className="px-5 py-4 align-top">
+                    <span
+                      className={`inline-flex items-center justify-center rounded-full px-2.5 py-1 text-xs font-semibold ${
+                        row.tag === "Sangat relevan"
+                          ? "bg-emerald-50 text-emerald-700 border border-emerald-200/60"
+                          : row.tag === "Cukup relevan"
+                            ? "bg-blue-50 text-blue-700 border border-blue-200/60"
+                            : "bg-amber-50 text-amber-700 border border-amber-200/60"
+                      }`}
+                    >
+                      {row.tag === "Sangat relevan" ? "Prioritas tinggi" : (row.tag || "Prioritas tinggi")}
+                    </span>
+                  </td>
                   <td className="px-5 py-4 align-top">
                     <span className="flex items-center gap-2">
                       <img
