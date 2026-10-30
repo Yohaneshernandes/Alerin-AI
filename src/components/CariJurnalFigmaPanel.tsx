@@ -6779,59 +6779,20 @@ function MobileLiteratureReview({
         {/* Header Jurnal yang Digunakan (Paritas Penuh dengan Desktop) */}
         <div>
           <div className="flex items-center justify-between gap-2.5">
-            <div className="flex items-center gap-2 min-w-0">
-              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-sky-100 text-[#00629b]">
-                <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d="M2.5 3.5h4.2c.7 0 1.3.6 1.3 1.3v8.7c0-.7-.6-1.3-1.3-1.3H2.5z" />
-                  <path d="M13.5 3.5H9.3c-.7 0-1.3.6-1.3 1.3v8.7c0-.7.6-1.3 1.3-1.3h4.2z" />
-                </svg>
-              </span>
-              <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-[15px] sm:text-base font-bold text-slate-900 tracking-[-0.2px] truncate">
-                Jurnal yang Digunakan
-              </h2>
-            </div>
+            <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-[17px] sm:text-lg font-bold text-slate-900 tracking-[-0.2px]">
+              Jurnal yang Digunakan
+            </h2>
             <span className="shrink-0 whitespace-nowrap inline-flex items-center rounded-full bg-sky-50 px-2.5 py-0.5 text-[11px] font-bold text-[#00629b] border border-sky-200/60">
               Total {visiblePriority.length} artikel
             </span>
           </div>
-          <p className="mt-1.5 text-xs sm:text-[13px] leading-5 text-slate-500">
+          <p className="mt-1.5 text-[13.5px] sm:text-sm leading-5 text-slate-500">
             Daftar jurnal yang menjadi sumber penyusunan literature review.
           </p>
         </div>
 
-        {/* Input Pencarian Jurnal */}
-        <div className="mt-3.5">
-          <label className="flex h-[42px] items-center gap-2.5 rounded-xl border border-slate-200/90 bg-slate-50/70 px-3.5 shadow-2xs transition-all hover:border-slate-300 hover:bg-white focus-within:border-[#00629b] focus-within:bg-white focus-within:ring-2 focus-within:ring-sky-100">
-            <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#64748b" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="shrink-0">
-              <circle cx="7" cy="7" r="4.5" />
-              <path d="M10.5 10.5L14 14" />
-            </svg>
-            <input
-              value={prioritySearch}
-              onChange={event => {
-                setPrioritySearch(capitalizeFirstLetter(event.target.value));
-                setPriorityLimit(6);
-              }}
-              placeholder="Cari judul, penulis, atau kata kunci..."
-              className="min-w-0 flex-1 bg-transparent text-xs sm:text-sm font-medium text-slate-800 outline-none placeholder:text-slate-400"
-            />
-            {prioritySearch.length > 0 && (
-              <button
-                type="button"
-                onClick={() => setPrioritySearch("")}
-                className="shrink-0 rounded-full p-1 text-slate-400 hover:bg-slate-200/60 hover:text-slate-600 transition-colors cursor-pointer"
-                aria-label="Hapus pencarian"
-              >
-                <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                  <path d="M3 3l8 8M11 3l-8 8" />
-                </svg>
-              </button>
-            )}
-          </label>
-        </div>
-
         {/* Filter Chips Kategori Seperti Tampilan Desktop */}
-        <div className="-mx-4 mt-3 flex gap-2 overflow-x-auto px-4 pb-2 pt-0.5 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+        <div className="-mx-4 mt-3.5 flex gap-2 overflow-x-auto px-4 pb-1 pt-0.5 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
           {filterChips.map(item => {
             const active = chip === item.key;
             return (
@@ -6855,7 +6816,7 @@ function MobileLiteratureReview({
         </div>
 
         {/* List Card Jurnal yang Digunakan */}
-        <div className="mt-3.5 border-t border-slate-100/90 pt-3.5 space-y-3">
+        <div className="mt-3.5 space-y-3">
           {visiblePriority.slice(0, priorityLimit).map((row, index) => {
             return (
               <article key={`${row.title}-${index}`} className="rounded-xl bg-slate-50/70 p-4 border border-slate-200/90 shadow-2xs space-y-3 hover:border-sky-300 transition-colors">
