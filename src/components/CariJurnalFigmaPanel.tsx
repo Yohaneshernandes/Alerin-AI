@@ -11024,6 +11024,8 @@ export default function CariJurnalFigmaPanel({
   const [hapusMapId, setHapusMapId] = useState<string | null>(null);
   const [hapusFolderModalOpen, setHapusFolderModalOpen] = useState(false);
   const [hapusFileModalOpen, setHapusFileModalOpen] = useState(false);
+  const [mobileHapusTarget, setMobileHapusTarget] = useState<{ type: "riwayat" | "extra"; index: number; label: string } | null>(null);
+  const [extraRiwayatList, setExtraRiwayatList] = useState(riwayatPencarian);
   const toastTimer = useRef<number | undefined>(undefined);
 
   const confirmHapusFile = () => {
@@ -12901,25 +12903,25 @@ export default function CariJurnalFigmaPanel({
                         </span>
                       </div>
 
-                      <div className="mt-3 flex gap-2 border-t border-slate-100 pt-3">
+                      <div className="mt-3 flex gap-2 border-t border-slate-300 pt-3">
                         <button
                           type="button"
                           onClick={() => openRiwayatPencarian(item)}
-                          className="flex-1 rounded-xl bg-[#00629b] px-4 py-2.5 text-xs font-semibold text-white"
+                          className="flex-1 rounded-xl bg-[#00629b] px-4 py-2.5 text-xs font-semibold text-white active:scale-95 transition-transform"
                         >
                           Cari lagi
                         </button>
                         <button
                           type="button"
-                          onClick={() => setRiwayatItems(list => list.filter((_, i) => i !== index))}
-                          className="rounded-xl border border-slate-200 px-4 py-2.5 text-xs font-semibold text-[#64748b]"
+                          onClick={() => setMobileHapusTarget({ type: "riwayat", index, label: item.label })}
+                          className="rounded-xl border border-slate-200 px-4 py-2.5 text-xs font-semibold text-[#64748b] hover:bg-slate-50 active:scale-95 transition-all"
                         >
                           Hapus
                         </button>
                       </div>
                     </article>
                   ))}
-                  {riwayatPencarian.map(item => (
+                  {extraRiwayatList.map((item, index) => (
                     <article key={item.query} className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm">
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
@@ -12932,7 +12934,7 @@ export default function CariJurnalFigmaPanel({
                         <span className="shrink-0 rounded-full bg-sky-50 px-2.5 py-1 text-[10px] font-semibold text-[#0066a1]">{item.daftar.length} jurnal</span>
                       </div>
 
-                      <ul className="mt-3 space-y-2 border-t border-slate-100 pt-3">
+                      <ul className="mt-3 space-y-2 border-t border-slate-300 pt-3">
                         {item.daftar.map(judul => (
                           <li key={judul} className="flex items-start gap-2 text-xs leading-5 text-[#475569]">
                             <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-sky-300" />
@@ -12941,20 +12943,20 @@ export default function CariJurnalFigmaPanel({
                         ))}
                       </ul>
 
-                      <div className="mt-3 flex gap-2">
+                      <div className="mt-3 flex gap-2 border-t border-slate-300 pt-3">
                         <button
                           type="button"
                           onClick={() => {
                             openRiwayatPencarian({ label: item.query, query: item.query, type: "journal", waktu: item.waktu });
                           }}
-                          className="flex-1 rounded-xl bg-[#00629b] px-4 py-2.5 text-xs font-semibold text-white"
+                          className="flex-1 rounded-xl bg-[#00629b] px-4 py-2.5 text-xs font-semibold text-white active:scale-95 transition-transform"
                         >
                           Cari lagi
                         </button>
                         <button
                           type="button"
-                          onClick={() => window.alert("Riwayat pencarian dihapus.")}
-                          className="rounded-xl border border-slate-200 px-4 py-2.5 text-xs font-semibold text-[#64748b]"
+                          onClick={() => setMobileHapusTarget({ type: "extra", index, label: item.query })}
+                          className="rounded-xl border border-slate-200 px-4 py-2.5 text-xs font-semibold text-[#64748b] hover:bg-slate-50 active:scale-95 transition-all"
                         >
                           Hapus
                         </button>
@@ -13761,6 +13763,29 @@ export default function CariJurnalFigmaPanel({
         fileName={fileName}
         onClose={() => setHapusFileModalOpen(false)}
         onConfirm={confirmHapusFile}
+      />
+      <HapusRiwayatModal
+        open={mobileHapusTarget !== null}
+        title={mobileHapusTarget?.label}
+        onClose={() => setMobileHapusTarget(null)}
+        onConfirm={() => {
+          if (mobileHapusTarget) {
+            if (mobileHapusTarget.type === "riwayat") {
+              const itemToDelete = riwayatItems[mobileHapusTarget.index];
+              if (itemToDelete) {
+                const deletedKey = `${itemToDelete.type}:${itemToDelete.query.trim().toLowerCase()}`;
+                if (activeRiwayatKey === deletedKey) {
+                  setActiveRiwayatKey(null);
+                }
+              }
+              setRiwayatItems(list => list.filter((_, i) => i !== mobileHapusTarget.index));
+            } else {
+              setExtraRiwayatList(list => list.filter((_, i) => i !== mobileHapusTarget.index));
+            }
+            showToast("Riwayat pencarian dihapus");
+            setMobileHapusTarget(null);
+          }
+        }}
       />
       <Toast message={toast} />
     </div>
