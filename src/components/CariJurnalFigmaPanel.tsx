@@ -7037,14 +7037,14 @@ function MobileLiteratureReview({
         {/* Struktur Dokumen Navigator */}
         <div className="pt-4 space-y-3">
           <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 min-w-0">
               <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-sky-100 text-[#00629b]">
                 <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
                   <path d="M2.5 4h11M2.5 8h11M2.5 12h7" />
                 </svg>
               </span>
-              <p className="font-['Plus_Jakarta_Sans:Bold'] text-xs sm:text-[13px] font-bold text-slate-800">
-                Struktur Dokumen (12 Bagian)
+              <p className="font-['Plus_Jakarta_Sans:Bold'] text-[14px] sm:text-[15px] font-bold text-slate-900 whitespace-nowrap">
+                Struktur Dokumen
               </p>
             </div>
             <span className="shrink-0 whitespace-nowrap inline-flex items-center rounded-full bg-sky-50 px-2.5 py-0.5 text-[11px] font-bold text-[#00629b] border border-sky-200/60">
