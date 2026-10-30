@@ -2605,13 +2605,13 @@ function UpgradePremiumModal({ open, onClose }: { open: boolean; onClose: () => 
                 }`}
               >
                 <div>
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+                  <div className="flex items-center justify-between gap-1">
                     <h3 className={`text-[13px] sm:text-base font-bold leading-tight ${isSelected ? "text-white" : "text-slate-900"}`}>
                       {plan.title}
                     </h3>
                     {isCurrentActive && (
                       <span
-                        className={`inline-flex items-center gap-1 self-start sm:self-auto rounded-full px-1.5 py-0.5 text-[9px] sm:text-[10px] font-semibold tracking-wide ${
+                        className={`inline-flex shrink-0 items-center gap-1 rounded-full px-1.5 py-0.5 text-[9px] sm:text-[10px] font-semibold tracking-wide ${
                           isSelected
                             ? "bg-white/20 text-slate-100"
                             : "border border-slate-200 bg-slate-100 text-slate-700"
