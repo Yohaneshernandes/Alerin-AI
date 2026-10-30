@@ -12446,7 +12446,7 @@ export default function CariJurnalFigmaPanel({
                       type="button"
                       onClick={() => {
                         if (searchType === "map") {
-                          setMapTopic("Artificial Intelligence dan motivasi belajar mahasiswa");
+                          setMapTopic("Petakan penelitian tentang Artificial Intelligence dan motivasi belajar mahasiswa");
                         } else {
                           setLiteratureTopic("Tinjau literatur tentang literasi keuangan mahasiswa");
                         }
@@ -12463,7 +12463,7 @@ export default function CariJurnalFigmaPanel({
                             </>
                           ) : (
                             <>
-                              Artificial Intelligence dan motivasi{" "}
+                              Petakan penelitian tentang Artificial Intelligence dan motivasi{" "}
                               <span className="whitespace-nowrap">belajar mahasiswa.</span>
                             </>
                           )}
@@ -12471,7 +12471,7 @@ export default function CariJurnalFigmaPanel({
                         <span className="hidden md:inline">
                           {searchType === "review"
                             ? "Tinjau literatur tentang literasi keuangan mahasiswa."
-                            : "Artificial Intelligence dan motivasi belajar mahasiswa."}
+                            : "Petakan penelitian tentang Artificial Intelligence dan motivasi belajar mahasiswa."}
                         </span>
                       </span>
                     </button>
