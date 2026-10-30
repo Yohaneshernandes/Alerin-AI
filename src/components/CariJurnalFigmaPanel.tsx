@@ -6926,35 +6926,55 @@ function MobileLiteratureReview({
           <h3 className="text-base font-bold text-slate-800">Matriks Literatur</h3>
           <p className="mt-0.5 text-sm text-slate-500">Analisis perbandingan penelitian untuk membantu penyusunan literature review</p>
         </div>
-        <div className="mt-4 space-y-3">
+        <div className="mt-4 space-y-3.5">
           {visibleMatrix.slice(0, matrixLimit).map(row => (
-            <article key={row.name} className="rounded-xl bg-slate-50/60 p-4 outline outline-1 outline-slate-200">
-              <div className="flex items-baseline justify-between gap-3 border-b border-slate-200/60 pb-2.5">
-                <span className="text-sm font-bold text-sky-700">{row.name}</span>
-                <span className="min-w-0 shrink text-right text-xs font-medium leading-4 text-slate-500">{row.journal}</span>
+            <article key={row.name} className="rounded-2xl bg-slate-50/70 p-4 sm:p-5 border border-slate-200/90 shadow-2xs space-y-3 transition-colors hover:border-sky-300">
+              {/* Header: Nama Penelitian & Nama Jurnal */}
+              <div className="flex items-start justify-between gap-2.5 border-b border-slate-200/70 pb-2.5">
+                <span className="font-['Plus_Jakarta_Sans:Bold'] text-sm sm:text-[14.5px] font-bold text-[#00629b] leading-snug shrink-0">
+                  {row.name}
+                </span>
+                <span className="min-w-0 text-right text-xs font-medium leading-tight text-slate-500">
+                  {row.journal}
+                </span>
               </div>
-              <div className="mt-3 grid grid-cols-2 gap-3">
-                <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Fokus</p>
-                  <p className="mt-1 text-sm leading-5 text-slate-700">{row.cells[0]}</p>
+
+              {/* Fokus, Teori, dan Metode (Tata letak rapi, simetris, dan mudah dibaca) */}
+              <div className="grid grid-cols-2 gap-2.5">
+                <div className="rounded-xl bg-white p-3 border border-slate-200/70 shadow-2xs">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Fokus</span>
+                  <p className="mt-1 text-xs sm:text-[12.5px] font-medium leading-relaxed text-slate-800">{row.cells[0]}</p>
                 </div>
-                <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Teori</p>
-                  <p className="mt-1 text-sm leading-5 text-slate-700">{row.cells[1]}</p>
+                <div className="rounded-xl bg-white p-3 border border-slate-200/70 shadow-2xs">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Teori</span>
+                  <p className="mt-1 text-xs sm:text-[12.5px] font-medium leading-relaxed text-slate-800">{row.cells[1]}</p>
                 </div>
-                <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Metode</p>
-                  <p className="mt-1 text-sm leading-5 text-slate-700">{row.cells[2]}</p>
+                <div className="col-span-2 rounded-xl bg-white px-3 py-2.5 border border-slate-200/70 shadow-2xs flex items-center gap-2">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 shrink-0">Metode:</span>
+                  <span className="text-xs sm:text-[12.5px] font-semibold text-slate-800 leading-snug">{row.cells[2]}</span>
                 </div>
               </div>
-              <div className="mt-3 space-y-1.5 border-t border-slate-200/50 pt-1.5">
-                <div>
-                  <p className="text-xs font-semibold text-slate-500">Temuan Utama:</p>
-                  <p className="mt-0.5 text-sm leading-5 text-slate-700">{row.cells[3]}</p>
+
+              {/* Temuan Utama & Kontribusi Penelitian */}
+              <div className="space-y-2.5 border-t border-slate-200/70 pt-2.5">
+                <div className="rounded-xl bg-white p-3 border border-slate-200/70 shadow-2xs space-y-1">
+                  <div className="flex items-center gap-1.5">
+                    <span className="h-1.5 w-1.5 rounded-full bg-slate-400 shrink-0" />
+                    <p className="text-xs font-bold text-slate-800">Temuan Utama</p>
+                  </div>
+                  <p className="text-xs sm:text-[12.5px] font-normal leading-relaxed text-slate-600 pl-3">
+                    {row.cells[3]}
+                  </p>
                 </div>
-                <div>
-                  <p className="text-xs font-semibold text-sky-700">Kontribusi Penelitian:</p>
-                  <p className="mt-0.5 text-sm leading-5 text-slate-700">{row.cells[4]}</p>
+
+                <div className="rounded-xl bg-sky-50/70 p-3 border border-sky-200/60 shadow-2xs space-y-1">
+                  <div className="flex items-center gap-1.5">
+                    <span className="h-1.5 w-1.5 rounded-full bg-[#00629b] shrink-0" />
+                    <p className="text-xs font-bold text-[#00629b]">Kontribusi Penelitian</p>
+                  </div>
+                  <p className="text-xs sm:text-[12.5px] font-medium leading-relaxed text-slate-700 pl-3">
+                    {row.cells[4]}
+                  </p>
                 </div>
               </div>
             </article>
