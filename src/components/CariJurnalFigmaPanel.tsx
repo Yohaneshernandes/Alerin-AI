@@ -2798,7 +2798,7 @@ Mohon bantu saya untuk:
           onClick={onAbstrak}
           className="flex items-center gap-1.5 rounded-lg bg-white px-4 py-2 text-sm font-semibold leading-5 text-slate-700 outline outline-1 outline-offset-[-1px] outline-slate-200 transition-all duration-150 hover:bg-sky-50 hover:text-sky-700 hover:outline-sky-300 hover:shadow-xs active:scale-[0.98]"
         >
-          Abstrak
+          Ringkasan Jurnal
         </button>
         <button
           type="button"
@@ -2869,7 +2869,7 @@ function ActionResultIcon({ label }: { label: string }) {
     );
   }
 
-  if (label === "Abstrak") {
+  if (label === "Abstrak" || label === "Ringkasan Jurnal") {
     return (
       <svg {...shared}>
         <rect x="2.5" y="1.5" width="8" height="10" rx="1.6" />
@@ -3083,7 +3083,7 @@ function DesktopJournalResultCard({
     return <JournalCardSkeleton rank={detail.rank} />;
   }
 
-  const actionButtons = ["Buat sitasi", "Abstrak", "Buka PDF"];
+  const actionButtons = ["Buat sitasi", "Ringkasan Jurnal", "Buka PDF"];
 
   return (
     <article className={`overflow-hidden rounded-2xl bg-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] outline transition-shadow hover:shadow-md ${
@@ -3232,7 +3232,7 @@ function DesktopJournalResultCard({
               onClick={
                 label === "Buat sitasi"
                   ? onSitasi
-                  : label === "Abstrak"
+                  : (label === "Abstrak" || label === "Ringkasan Jurnal")
                     ? onAbstrak
                     : label === "DOI"
                       ? () => window.open(detail.doiUrl, "_blank", "noopener,noreferrer")
@@ -4277,7 +4277,7 @@ function AbstrakJurnalModal({ open, onClose }: { open: boolean; onClose: () => v
       <div
         role="dialog"
         aria-modal="true"
-        aria-label="Abstrak jurnal"
+        aria-label="Ringkasan Jurnal"
         onClick={event => event.stopPropagation()}
         className="flex max-h-[92dvh] w-full flex-col overflow-hidden rounded-t-[28px] bg-white pb-[env(safe-area-inset-bottom)] shadow-[0px_26.75px_53.5px_-12.84px_rgba(0,0,0,0.25)] md:max-h-[calc(100vh-32px)] md:w-[749px] md:max-w-full md:rounded-3xl md:pb-0 md:outline md:outline-1 md:outline-offset-[-1px] md:outline-slate-100"
       >
@@ -4287,10 +4287,10 @@ function AbstrakJurnalModal({ open, onClose }: { open: boolean; onClose: () => v
 
         <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-6 pb-4 pt-2 md:px-9 md:pb-9 md:pt-7">
           <div className="flex items-start justify-between gap-3">
-            <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-xl font-bold leading-7 text-slate-900 md:text-2xl md:leading-9">Abstrak jurnal</h2>
+            <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-xl font-bold leading-7 text-slate-900 md:text-2xl md:leading-9">Ringkasan Jurnal</h2>
             <button
               type="button"
-              aria-label="Tutup abstrak"
+              aria-label="Tutup ringkasan jurnal"
               onClick={onClose}
               className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-slate-100 p-2.5 outline outline-1 outline-offset-[-1px] outline-slate-200 transition-colors hover:bg-slate-200 md:h-8 md:w-8 md:rounded-xl md:bg-white md:hover:bg-slate-50"
             >
@@ -6122,7 +6122,7 @@ function DesktopLiteratureReview({
                             onClick={() => (onOpenAbstrak ? onOpenAbstrak() : (onOpenRingkasan ? onOpenRingkasan() : undefined))}
                             className="inline-flex items-center rounded-lg border border-slate-200/90 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 shadow-2xs transition-colors hover:bg-slate-50 active:scale-95"
                           >
-                            Abstrak
+                            Ringkasan Jurnal
                           </button>
                           <button
                             type="button"
@@ -6873,10 +6873,10 @@ function MobileLiteratureReview({
                 <div className="grid grid-cols-3 gap-2 pt-2.5 border-t border-slate-200/70">
                   <button
                     type="button"
-                    onClick={onOpenAbstrak ?? onOpenRingkasan ?? (() => window.alert(`Membuka abstrak: ${row.title}`))}
-                    className="flex min-h-[42px] items-center justify-center rounded-xl border border-slate-200 bg-white px-2 py-2 text-xs font-bold text-slate-700 shadow-2xs hover:bg-slate-50 active:scale-95 cursor-pointer"
+                    onClick={onOpenAbstrak ?? onOpenRingkasan ?? (() => window.alert(`Membuka ringkasan jurnal: ${row.title}`))}
+                    className="flex min-h-[42px] items-center justify-center rounded-xl border border-slate-200 bg-white px-1.5 py-2 text-center text-xs font-bold leading-tight text-slate-700 shadow-2xs hover:bg-slate-50 active:scale-95 cursor-pointer"
                   >
-                    Abstrak
+                    Ringkasan Jurnal
                   </button>
                   <button
                     type="button"
@@ -9022,10 +9022,10 @@ function DesktopResearchMap({
                     <div className="mt-2.5 flex items-center gap-2">
                       <button
                         type="button"
-                        onClick={() => (onOpenAbstrak ? onOpenAbstrak() : (onOpenRingkasan ? onOpenRingkasan() : window.alert(`Membuka abstrak: ${row.title}`)))}
+                        onClick={() => (onOpenAbstrak ? onOpenAbstrak() : (onOpenRingkasan ? onOpenRingkasan() : window.alert(`Membuka ringkasan jurnal: ${row.title}`)))}
                         className="inline-flex cursor-pointer items-center rounded-lg border border-slate-200/90 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 shadow-2xs transition-colors hover:bg-slate-50 active:scale-95"
                       >
-                        Abstrak
+                        Ringkasan Jurnal
                       </button>
                       <button
                         type="button"
@@ -9100,10 +9100,10 @@ function DesktopResearchMap({
               <div className="grid grid-cols-3 gap-2 pt-2.5 border-t border-slate-200/70">
                 <button
                   type="button"
-                  onClick={onOpenAbstrak ?? onOpenRingkasan ?? (() => window.alert(`Membuka abstrak: ${row.title}`))}
-                  className="flex min-h-[42px] items-center justify-center rounded-xl border border-slate-200 bg-white px-2 py-2 text-xs font-bold text-slate-700 shadow-2xs hover:bg-slate-50 active:scale-95 cursor-pointer"
+                  onClick={onOpenAbstrak ?? onOpenRingkasan ?? (() => window.alert(`Membuka ringkasan jurnal: ${row.title}`))}
+                  className="flex min-h-[42px] items-center justify-center rounded-xl border border-slate-200 bg-white px-1.5 py-2 text-center text-xs font-bold leading-tight text-slate-700 shadow-2xs hover:bg-slate-50 active:scale-95 cursor-pointer"
                 >
-                  Abstrak
+                  Ringkasan Jurnal
                 </button>
                 <button
                   type="button"
@@ -9684,7 +9684,7 @@ function MobileJournalResultCard({
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" aria-hidden="true">
             <path d="M3 1.5h6l3 3v9H3zM6 7h4M6 10h4" />
           </svg>
-          Abstrak
+          Ringkasan Jurnal
         </button>
 
         <button
@@ -9991,7 +9991,7 @@ function MobileJournalCollectionCard({
           onClick={onAbstrak}
           className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs sm:text-sm font-semibold text-slate-700 shadow-xs transition-colors hover:bg-slate-50 active:scale-[0.98]"
         >
-          Abstrak
+          Ringkasan Jurnal
         </button>
 
         <button
