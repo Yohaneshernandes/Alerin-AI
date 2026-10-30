@@ -13486,12 +13486,6 @@ export default function CariJurnalFigmaPanel({
                                   </span>
                                   <strong className="text-xs text-slate-900">Peta Jaringan</strong>
                                 </span>
-                                <span className="flex h-6 w-6 items-center justify-center rounded-lg text-slate-400">
-                                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                                    <circle cx="8" cy="8" r="6" />
-                                    <path d="M8 5v6M5 8h6" />
-                                  </svg>
-                                </span>
                               </div>
                               <p className="mt-1.5 text-center text-xs leading-4 text-slate-600">Menampilkan hubungan antar topik berdasarkan kemunculan bersama.</p>
                               <div className="relative mt-4 flex h-56 items-center justify-center overflow-hidden rounded-xl border border-slate-100 bg-slate-50/40">
@@ -13526,12 +13520,6 @@ export default function CariJurnalFigmaPanel({
                                   </span>
                                   <strong className="text-xs text-slate-900">Peta Kepadatan</strong>
                                 </span>
-                                <span className="flex h-6 w-6 items-center justify-center rounded-lg text-slate-400">
-                                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                                    <circle cx="8" cy="8" r="6" />
-                                    <path d="M8 5v6M5 8h6" />
-                                  </svg>
-                                </span>
                               </div>
                               <p className="mt-1.5 text-center text-xs leading-4 text-slate-600">Menampilkan tingkat konsentrasi topik dalam penelitian.</p>
                               <div className="relative mt-4 h-56 overflow-hidden rounded-xl border border-slate-700 bg-[#072448] text-[9px] font-bold text-white">
@@ -13554,12 +13542,6 @@ export default function CariJurnalFigmaPanel({
                                     </svg>
                                   </span>
                                   <strong className="text-xs text-slate-900">Peta Perkembangan</strong>
-                                </span>
-                                <span className="flex h-6 w-6 items-center justify-center rounded-lg text-slate-400">
-                                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                                    <circle cx="8" cy="8" r="6" />
-                                    <path d="M8 5v6M5 8h6" />
-                                  </svg>
                                 </span>
                               </div>
                               <p className="mt-1.5 text-center text-xs leading-4 text-slate-600">Menampilkan rata-rata tahun publikasi setiap topik.</p>
