@@ -6646,12 +6646,13 @@ function MobileLiteratureReview({
   const [matrixSearch, setMatrixSearch] = useState("");
   const [matrixLimit, setMatrixLimit] = useState(4);
   const [activeSection, setActiveSection] = useState(1);
+  const activeTopic = (query.trim() || "Resiliensi perempuan dalam menghadapi bencana dan krisis").replace(/\s+/g, " ");
 
-  const stats = [
-    { label: "Total ditemukan", value: "126", accent: "text-[#00629b]", sub: "text-slate-500", highlight: false },
-    { label: "Duplikasi dihapus", value: "34", accent: "text-[#00629b]", sub: "text-slate-500", highlight: false },
-    { label: "Siap sintesis", value: "92", accent: "text-[#00629b]", sub: "text-slate-500", highlight: false },
-    { label: "Prioritas tinggi", value: "24", accent: "text-[#00629b]", sub: "text-slate-500", highlight: false },
+  const statsList = [
+    { label: "Total hasil ditemukan", value: "126", tone: "text-[#00629b]" },
+    { label: "Duplikasi dihapus", value: "34", tone: "text-[#00629b]" },
+    { label: "Tersisa untuk sintesis", value: "92", tone: "text-[#00629b]" },
+    { label: "Prioritas tinggi", value: "24", tone: "text-[#00629b]" },
   ];
 
   const filterChips = [
@@ -6753,22 +6754,29 @@ function MobileLiteratureReview({
         )}
       </div>
 
-      <div className="rounded-2xl bg-white p-5 text-center shadow-sm outline outline-1 outline-offset-[-1px] outline-slate-200/80">
-        <h2 className="font-['Inter:Bold'] text-[22px] font-bold leading-7 text-slate-900">Hasil Literature Review</h2>
-        <p className="mx-auto mt-2 max-w-[300px] text-sm leading-6 text-slate-500">
-          Alerin telah menemukan jurnal yang relevan untuk membantu Anda menyusun literature review berdasarkan topik penelitian yang dipilih.
-        </p>
+      <div className="rounded-2xl bg-white p-4 shadow-sm border border-slate-200/90 space-y-3.5">
+        {/* Banner Topik yang Dianalisis (Paritas Koleksi) */}
+        <div className="rounded-xl border border-sky-100 bg-gradient-to-br from-sky-50 via-blue-50/50 to-indigo-50/40 p-3.5 text-left">
+          <div className="flex items-center justify-between gap-2">
+            <span className="rounded-full bg-white/80 px-2.5 py-0.5 text-[11px] font-bold text-[#0284c7] shadow-xs">
+              Literature Review
+            </span>
+            <span className="text-xs text-slate-500">Hari ini</span>
+          </div>
+          <p className="mt-2 text-[11px] font-bold uppercase tracking-wider text-slate-400">Topik yang dianalisis</p>
+          <h3 className="mt-0.5 font-['Plus_Jakarta_Sans:Bold'] text-[15px] sm:text-base font-bold leading-snug text-[#075985]">
+            {activeTopic}
+          </h3>
+        </div>
 
-        <div className="mt-5 grid grid-cols-2 gap-3 text-left">
-          {stats.map(stat => (
-            <div
-              key={stat.label}
-              className={`rounded-xl p-4 ${stat.highlight ? "bg-sky-50/70 outline outline-1 outline-sky-100" : "bg-slate-50/70 outline outline-1 outline-slate-200/70"}`}
-            >
-              <p className={`text-xs text-slate-500 ${stat.highlight ? "font-semibold" : "font-medium"}`}>{stat.label}</p>
-              <p className="mt-2 flex items-baseline gap-1.5">
-                <span className={`text-2xl font-bold leading-8 ${stat.accent}`}>{stat.value}</span>
-                <span className={`text-sm ${stat.sub} ${stat.highlight ? "font-semibold" : "font-medium"}`}>artikel</span>
+        {/* Grid 4 Statistik (2x2) */}
+        <div className="grid grid-cols-2 gap-2.5 text-left">
+          {statsList.map(item => (
+            <div key={item.label} className="rounded-xl border border-slate-200/70 bg-slate-50/80 p-3 shadow-2xs">
+              <p className="text-[12px] sm:text-[12.5px] font-semibold leading-snug text-slate-600">{item.label}</p>
+              <p className="mt-1.5 flex items-baseline gap-1.5">
+                <span className={`font-['Plus_Jakarta_Sans:ExtraBold'] text-[22px] sm:text-[23px] font-extrabold tracking-tight ${item.tone}`}>{item.value}</span>
+                <span className="text-xs font-medium text-slate-500">artikel</span>
               </p>
             </div>
           ))}
