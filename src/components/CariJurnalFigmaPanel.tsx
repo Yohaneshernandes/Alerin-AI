@@ -7035,7 +7035,7 @@ function MobileLiteratureReview({
         </div>
 
         {/* Struktur Dokumen Navigator */}
-        <div className="pt-4 space-y-3">
+        <div className="pt-4.5">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-1.5 min-w-0">
               <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-sky-100 text-[#00629b]">
@@ -7053,7 +7053,7 @@ function MobileLiteratureReview({
           </div>
 
           {/* Chips Bar with proper bottom padding and modern rounded-xl styling */}
-          <div className="-mx-4 flex gap-2.5 overflow-x-auto px-4 pb-2.5 pt-0.5 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+          <div className="-mx-4 mt-3.5 flex gap-2.5 overflow-x-auto px-4 pb-3 pt-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             {structureSections.map(item => (
               <button
                 key={item.n}
@@ -7086,7 +7086,7 @@ function MobileLiteratureReview({
         </div>
 
         {/* Isi Dokumen Review Sesuai Bagian Aktif */}
-        <div className="mt-4 border-t border-slate-100/90 pt-4">
+        <div className="mt-5 border-t border-slate-100/90 pt-4.5">
           <div className="flex items-center justify-between gap-3 border-b border-slate-100/80 pb-3">
             <p className="text-[15px] font-bold text-slate-900">
               {activeSection}. {activeLabel}
