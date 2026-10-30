@@ -6893,21 +6893,6 @@ function MobileLiteratureReview({
           <h3 className="text-base font-bold text-slate-800">Matriks Literatur</h3>
           <p className="mt-0.5 text-sm text-slate-500">Analisis perbandingan penelitian untuk membantu penyusunan literature review</p>
         </div>
-        <label className="mt-4 flex items-center gap-2.5 rounded-xl border border-slate-300 bg-slate-50/90 px-3.5 py-2.5 shadow-sm transition-colors hover:border-slate-400 hover:bg-white focus-within:border-sky-600 focus-within:bg-white focus-within:ring-2 focus-within:ring-sky-100">
-          <svg width="15" height="15" viewBox="0 0 14 14" fill="none" stroke="#475569" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true" className="shrink-0">
-            <circle cx="6" cy="6" r="4.5" />
-            <path d="M9.5 9.5L13 13" />
-          </svg>
-          <input
-            value={matrixSearch}
-            onChange={event => {
-              setMatrixSearch(capitalizeFirstLetter(event.target.value));
-              setMatrixLimit(4);
-            }}
-            placeholder="Cari dalam matriks..."
-            className="min-w-0 flex-1 bg-transparent text-[13px] font-medium text-slate-800 outline-none placeholder:text-slate-400"
-          />
-        </label>
         <div className="mt-4 space-y-3">
           {visibleMatrix.slice(0, matrixLimit).map(row => (
             <article key={row.name} className="rounded-xl bg-slate-50/60 p-4 outline outline-1 outline-slate-200">
