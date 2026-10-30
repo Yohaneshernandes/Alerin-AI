@@ -11083,6 +11083,7 @@ export default function CariJurnalFigmaPanel({
   const [showReviewLimitNotice, setShowReviewLimitNotice] = useState(false);
   const [resultMode, setResultMode] = useState<"search" | "analysis">("search");
   const [loadingSource, setLoadingSource] = useState<"search" | "collection" | "history">("search");
+  const [isLongLoading, setIsLongLoading] = useState(false);
   const [mobileJournalSlideIndex, setMobileJournalSlideIndex] = useState(0);
   const [mobileJournals, setMobileJournals] = useState(mobileResultJournals);
   const [isMobileListRefreshing, setIsMobileListRefreshing] = useState(false);
@@ -11487,12 +11488,33 @@ export default function CariJurnalFigmaPanel({
   };
 
   useEffect(() => {
-    if (mobileSearchStage !== "loading") return;
-    const isSpecialLong = (searchSubmittedQuery || query).trim() === "12345" && searchType === "journal";
-    const duration = isSpecialLong ? 10000 : 2400;
-    const timer = window.setTimeout(() => setMobileSearchStage("results"), duration);
-    return () => window.clearTimeout(timer);
-  }, [mobileSearchStage, searchSubmittedQuery, query, searchType]);
+    if (mobileSearchStage !== "loading") {
+      setIsLongLoading(false);
+      return;
+    }
+    const isSlow = (searchSubmittedQuery || query).trim() === "12345" && searchType === "journal";
+    const duration = isSlow ? 15000 : 2400;
+
+    let subtextTimer: number | undefined;
+    if (isSlow) {
+      setIsLongLoading(false);
+      subtextTimer = window.setTimeout(() => {
+        setIsLongLoading(true);
+      }, 3500);
+    } else {
+      setIsLongLoading(false);
+    }
+
+    const timer = window.setTimeout(() => {
+      setMobileSearchStage("results");
+      setIsLongLoading(false);
+    }, duration);
+
+    return () => {
+      window.clearTimeout(timer);
+      if (subtextTimer) window.clearTimeout(subtextTimer);
+    };
+  }, [mobileSearchStage]);
 
   useEffect(() => {
     setMobileNavHidden(false);
@@ -11509,12 +11531,33 @@ export default function CariJurnalFigmaPanel({
   };
 
   useEffect(() => {
-    if (desktopStage !== "loading") return;
-    const isSpecialLong = (searchSubmittedQuery || query).trim() === "12345" && searchType === "journal";
-    const duration = isSpecialLong ? 10000 : 2400;
-    const timer = window.setTimeout(() => setDesktopStage("results"), duration);
-    return () => window.clearTimeout(timer);
-  }, [desktopStage, searchSubmittedQuery, query, searchType]);
+    if (desktopStage !== "loading") {
+      setIsLongLoading(false);
+      return;
+    }
+    const isSlow = (searchSubmittedQuery || query).trim() === "12345" && searchType === "journal";
+    const duration = isSlow ? 15000 : 2400;
+
+    let subtextTimer: number | undefined;
+    if (isSlow) {
+      setIsLongLoading(false);
+      subtextTimer = window.setTimeout(() => {
+        setIsLongLoading(true);
+      }, 3500);
+    } else {
+      setIsLongLoading(false);
+    }
+
+    const timer = window.setTimeout(() => {
+      setDesktopStage("results");
+      setIsLongLoading(false);
+    }, duration);
+
+    return () => {
+      window.clearTimeout(timer);
+      if (subtextTimer) window.clearTimeout(subtextTimer);
+    };
+  }, [desktopStage]);
 
   useEffect(() => {
     try {
@@ -11729,7 +11772,8 @@ export default function CariJurnalFigmaPanel({
   };
 
   const getLoadingSubtitle = () => {
-    if ((searchSubmittedQuery || query).trim() === "12345" && searchType === "journal") {
+    const isSlow = (searchSubmittedQuery || query).trim() === "12345" && searchType === "journal";
+    if (isSlow && isLongLoading) {
       return "Proses pencarian membutuhkan waktu lebih lama. Tunggu hingga proses selesai.";
     }
     if (loadingSource === "history") {
@@ -11884,7 +11928,7 @@ export default function CariJurnalFigmaPanel({
               <h1 className="text-center font-['Plus_Jakarta_Sans:ExtraBold'] text-[21px] font-extrabold tracking-[-0.5px] text-[#313131]">
                 {getLoadingTitle(true)}
               </h1>
-              <p className="mt-2 max-w-[320px] animate-pulse text-center text-xs leading-5 text-[#71717a]">
+              <p className="mt-2 max-w-[310px] animate-pulse text-center text-xs leading-5 text-[#71717a] transition-all duration-300">
                 {getLoadingSubtitle()}
               </p>
             </div>
@@ -12286,7 +12330,7 @@ export default function CariJurnalFigmaPanel({
               <h1 className="mt-5 text-center text-2xl font-extrabold tracking-[-0.5px] text-slate-800">
                 {getLoadingTitle()}
               </h1>
-              <p className="mt-2 max-w-md animate-pulse text-center text-sm leading-6 text-slate-500">
+              <p className="mt-2 max-w-md animate-pulse text-center text-sm leading-6 text-slate-500 transition-all duration-300">
                 {getLoadingSubtitle()}
               </p>
             </div>
