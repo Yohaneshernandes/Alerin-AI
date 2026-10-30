@@ -5741,6 +5741,7 @@ function DesktopLiteratureReview({
 }) {
   const docNavRows = literatureDocSections;
   const sectionNames = literatureDocSections.map(s => s.title);
+  const is12345 = (query || "").trim() === "12345";
 
   const stats = [
     { label: "Total hasil ditemukan", value: "126", tone: "text-[#0369a1]" },
@@ -6038,6 +6039,30 @@ function DesktopLiteratureReview({
           ))}
         </div>
       </div>
+
+      {is12345 && (
+        <div className="flex items-center gap-3 rounded-2xl border border-sky-200/90 bg-sky-50/90 px-5 py-3.5 shadow-2xs">
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#00629b"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="shrink-0 text-[#00629b]"
+            aria-hidden="true"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+          <p className="min-w-0 flex-1 text-sm font-medium leading-relaxed text-[#003859]">
+            Pencarian menghasilkan 500 artikel relevan dari target 1.000 artikel. Jumlah ini disesuaikan dengan ketersediaan literatur yang relevan dengan topik Anda.
+          </p>
+        </div>
+      )}
 
       <section className="rounded-2xl bg-white shadow-sm">
         <div className="flex items-start justify-between gap-4 p-5">
@@ -6670,6 +6695,7 @@ function MobileLiteratureReview({
   const [matrixLimit, setMatrixLimit] = useState(4);
   const [activeSection, setActiveSection] = useState(1);
   const activeTopic = (query.trim() || "Resiliensi perempuan dalam menghadapi bencana dan krisis").replace(/\s+/g, " ");
+  const is12345 = (query || "").trim() === "12345";
 
   const statsList = [
     { label: "Total hasil ditemukan", value: "126", tone: "text-[#00629b]" },
@@ -6807,6 +6833,30 @@ function MobileLiteratureReview({
           ))}
         </div>
       </div>
+
+      {is12345 && (
+        <div className="flex items-start gap-2.5 rounded-xl border border-sky-200/90 bg-sky-50/90 p-3.5 text-left shadow-2xs">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#00629b"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="mt-0.5 shrink-0 text-[#00629b]"
+            aria-hidden="true"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+          <p className="min-w-0 flex-1 text-xs font-medium leading-relaxed text-[#003859]">
+            Pencarian menghasilkan 500 artikel relevan dari target 1.000 artikel. Jumlah ini disesuaikan dengan ketersediaan literatur yang relevan dengan topik Anda.
+          </p>
+        </div>
+      )}
 
       <section className="rounded-2xl bg-white p-4 sm:p-5 shadow-sm border border-slate-200/80">
         {/* Header Jurnal yang Digunakan (Paritas Penuh dengan Desktop) */}
@@ -11955,7 +12005,7 @@ export default function CariJurnalFigmaPanel({
                 ) : searchType === "review" ? (
                   <div className="mt-2">
                     <MobileLiteratureReview
-                      query={query}
+                      query={query || literatureTopic}
                       onBack={() => {
                         setMobileSearchStage("home");
                         setSearchType("journal");
@@ -12339,7 +12389,7 @@ export default function CariJurnalFigmaPanel({
           {desktopStage === "results" &&
             (searchType === "review" ? (
               <DesktopLiteratureReview
-                query={query}
+                query={query || literatureTopic}
                 onBack={() => setDesktopStage("home")}
                 onOpenSitasi={() => setSitasiOpen(true)}
                 onOpenRingkasan={() => setRingkasanOpen(true)}
