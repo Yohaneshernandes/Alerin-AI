@@ -10661,9 +10661,9 @@ function MobileResearchMapCollectionCard({
   return (
     <article className="overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-4 shadow-xs space-y-3.5">
       {/* Header Meta Riset */}
-      <div className="rounded-xl border border-indigo-100/80 bg-gradient-to-br from-indigo-50/50 via-sky-50/40 to-slate-50/80 p-3.5 space-y-2.5">
+      <div className="rounded-xl border border-sky-100 bg-gradient-to-br from-sky-50/60 via-blue-50/40 to-slate-50/80 p-3.5 space-y-2.5">
         <div className="flex items-center justify-between gap-2">
-          <span className="rounded-full bg-white px-2.5 py-0.5 text-[11px] font-bold text-indigo-700 shadow-2xs border border-indigo-100/90">
+          <span className="rounded-full bg-sky-50 px-2.5 py-0.5 text-[11px] font-bold text-[#00629b] shadow-2xs border border-sky-200/80">
             Peta Penelitian
           </span>
           <span className="text-xs font-medium text-slate-500">{item.date}</span>
