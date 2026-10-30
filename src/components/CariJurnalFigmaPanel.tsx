@@ -9493,12 +9493,12 @@ function MobileJournalResultCard({
                   href="https://doi.org/10.20886/jpkf.2022.6.1.16-28"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-block break-all text-[11px] sm:text-[12px] leading-5 text-sky-600 underline underline-offset-2 decoration-sky-300 transition-colors duration-150 hover:text-black hover:decoration-black"
+                  className="inline-block break-all text-[12.5px] sm:text-[13px] leading-5 text-sky-600 underline underline-offset-2 decoration-sky-300 transition-colors duration-150 hover:text-black hover:decoration-black"
                 >
                   {detail}
                 </a>
               ) : (
-                <span className="block text-[11px] sm:text-[12px] leading-5 text-slate-500">{detail}</span>
+                <span className="block text-[12.5px] sm:text-[13px] leading-5 text-slate-500">{detail}</span>
               )}
             </span>
           </div>
