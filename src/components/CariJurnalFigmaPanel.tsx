@@ -619,8 +619,8 @@ function HapusJurnalModal({
             <path d="M6.5 7v4M9.5 7v4" />
           </svg>
         </div>
-        <h2 className="mt-4 font-['Plus_Jakarta_Sans:Bold'] text-lg font-bold text-[#0f172a]">Kamu yakin ingin menghapus jurnal ini?</h2>
-        <p className="mt-1.5 text-sm leading-6 text-[#64748b]">
+        <h2 className="mt-4 font-['Plus_Jakarta_Sans:Bold'] text-lg font-bold text-[#0f172a] text-center sm:text-left">Kamu yakin ingin menghapus jurnal ini?</h2>
+        <p className="mt-1.5 text-sm leading-6 text-[#64748b] text-center sm:text-left">
           Jurnal ini akan dihapus dari Koleksi. Tindakan ini tidak bisa dibatalkan.
         </p>
         <div className="mt-5 flex flex-col-reverse sm:flex-row justify-end gap-2.5">
@@ -676,8 +676,8 @@ function HapusRiwayatModal({
             <path d="M6.5 7v4M9.5 7v4" />
           </svg>
         </div>
-        <h2 className="mt-4 font-['Plus_Jakarta_Sans:Bold'] text-lg font-bold text-[#0f172a]">Kamu yakin ingin menghapus riwayat ini?</h2>
-        <p className="mt-1.5 text-sm leading-6 text-[#64748b]">
+        <h2 className="mt-4 font-['Plus_Jakarta_Sans:Bold'] text-lg font-bold text-[#0f172a] text-center sm:text-left">Kamu yakin ingin menghapus riwayat ini?</h2>
+        <p className="mt-1.5 text-sm leading-6 text-[#64748b] text-center sm:text-left">
           Riwayat pencarian ini akan dihapus. Tindakan ini tidak bisa dibatalkan.
         </p>
         <div className="mt-5 flex flex-col-reverse sm:flex-row justify-end gap-2.5">
@@ -733,8 +733,8 @@ function HapusLiteratureModal({
             <path d="M6.5 7v4M9.5 7v4" />
           </svg>
         </div>
-        <h2 className="mt-4 font-['Plus_Jakarta_Sans:Bold'] text-lg font-bold text-[#0f172a]">Kamu yakin ingin menghapus literature review ini?</h2>
-        <p className="mt-1.5 text-sm leading-6 text-[#64748b]">
+        <h2 className="mt-4 font-['Plus_Jakarta_Sans:Bold'] text-lg font-bold text-[#0f172a] text-center sm:text-left">Kamu yakin ingin menghapus literature review ini?</h2>
+        <p className="mt-1.5 text-sm leading-6 text-[#64748b] text-center sm:text-left">
           Literature review ini akan dihapus dari Koleksi. Tindakan ini tidak bisa dibatalkan.
         </p>
         <div className="mt-5 flex flex-col-reverse sm:flex-row justify-end gap-2.5">
@@ -790,8 +790,8 @@ function HapusMapModal({
             <path d="M6.5 7v4M9.5 7v4" />
           </svg>
         </div>
-        <h2 className="mt-4 font-['Plus_Jakarta_Sans:Bold'] text-lg font-bold text-[#0f172a]">Kamu yakin ingin menghapus peta penelitian ini?</h2>
-        <p className="mt-1.5 text-sm leading-6 text-[#64748b]">
+        <h2 className="mt-4 font-['Plus_Jakarta_Sans:Bold'] text-lg font-bold text-[#0f172a] text-center sm:text-left">Kamu yakin ingin menghapus peta penelitian ini?</h2>
+        <p className="mt-1.5 text-sm leading-6 text-[#64748b] text-center sm:text-left">
           Peta penelitian ini akan dihapus dari Koleksi. Tindakan ini tidak bisa dibatalkan.
         </p>
         <div className="mt-5 flex flex-col-reverse sm:flex-row justify-end gap-2.5">
@@ -847,10 +847,10 @@ function HapusFolderModal({
             <path d="M6.5 7v4M9.5 7v4" />
           </svg>
         </div>
-        <h2 className="mt-4 font-['Plus_Jakarta_Sans:Bold'] text-lg font-bold text-[#0f172a]">
+        <h2 className="mt-4 font-['Plus_Jakarta_Sans:Bold'] text-lg font-bold text-[#0f172a] text-center sm:text-left">
           {count > 1 ? `Kamu yakin ingin menghapus ${count} folder ini?` : "Kamu yakin ingin menghapus folder ini?"}
         </h2>
-        <p className="mt-1.5 text-sm leading-6 text-[#64748b]">
+        <p className="mt-1.5 text-sm leading-6 text-[#64748b] text-center sm:text-left">
           Folder ini akan dihapus dari Koleksi dan item di dalamnya akan dipindahkan ke "Belum dikelompokkan". Tindakan ini tidak bisa dibatalkan.
         </p>
         <div className="mt-5 flex flex-col-reverse sm:flex-row justify-end gap-2.5">
@@ -906,10 +906,10 @@ function HapusFileModal({
             <path d="M6.5 7v4M9.5 7v4" />
           </svg>
         </div>
-        <h2 className="mt-4 font-['Plus_Jakarta_Sans:Bold'] text-lg font-bold text-[#0f172a]">
+        <h2 className="mt-4 font-['Plus_Jakarta_Sans:Bold'] text-lg font-bold text-[#0f172a] text-center sm:text-left">
           Apakah kamu yakin menghapus file ini?
         </h2>
-        <p className="mt-1.5 text-sm leading-6 text-[#64748b]">
+        <p className="mt-1.5 text-sm leading-6 text-[#64748b] text-center sm:text-left">
           {fileName ? (
             <>
               File <span className="font-semibold text-slate-800">"{fileName}"</span> akan dihapus dari pencarian. Kamu dapat mengunggah dokumen baru kapan saja.
