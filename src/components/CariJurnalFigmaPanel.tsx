@@ -11488,9 +11488,11 @@ export default function CariJurnalFigmaPanel({
 
   useEffect(() => {
     if (mobileSearchStage !== "loading") return;
-    const timer = window.setTimeout(() => setMobileSearchStage("results"), 2400);
+    const isSpecialLong = (searchSubmittedQuery || query).trim() === "12345" && searchType === "journal";
+    const duration = isSpecialLong ? 10000 : 2400;
+    const timer = window.setTimeout(() => setMobileSearchStage("results"), duration);
     return () => window.clearTimeout(timer);
-  }, [mobileSearchStage]);
+  }, [mobileSearchStage, searchSubmittedQuery, query, searchType]);
 
   useEffect(() => {
     setMobileNavHidden(false);
@@ -11508,9 +11510,11 @@ export default function CariJurnalFigmaPanel({
 
   useEffect(() => {
     if (desktopStage !== "loading") return;
-    const timer = window.setTimeout(() => setDesktopStage("results"), 2400);
+    const isSpecialLong = (searchSubmittedQuery || query).trim() === "12345" && searchType === "journal";
+    const duration = isSpecialLong ? 10000 : 2400;
+    const timer = window.setTimeout(() => setDesktopStage("results"), duration);
     return () => window.clearTimeout(timer);
-  }, [desktopStage]);
+  }, [desktopStage, searchSubmittedQuery, query, searchType]);
 
   useEffect(() => {
     try {
@@ -11725,6 +11729,9 @@ export default function CariJurnalFigmaPanel({
   };
 
   const getLoadingSubtitle = () => {
+    if ((searchSubmittedQuery || query).trim() === "12345" && searchType === "journal") {
+      return "Proses pencarian membutuhkan waktu lebih lama. Tunggu hingga proses selesai.";
+    }
     if (loadingSource === "history") {
       if (searchType === "review") return "Alerin sedang membuka literatur review berdasarkan riwayat yang Anda pilih.";
       if (searchType === "map") return "Alerin sedang membuka Peta Penelitian berdasarkan riwayat yang Anda pilih.";
@@ -11877,7 +11884,7 @@ export default function CariJurnalFigmaPanel({
               <h1 className="text-center font-['Plus_Jakarta_Sans:ExtraBold'] text-[21px] font-extrabold tracking-[-0.5px] text-[#313131]">
                 {getLoadingTitle(true)}
               </h1>
-              <p className="mt-2 max-w-[290px] animate-pulse text-center text-xs leading-5 text-[#71717a]">
+              <p className="mt-2 max-w-[320px] animate-pulse text-center text-xs leading-5 text-[#71717a]">
                 {getLoadingSubtitle()}
               </p>
             </div>
@@ -12279,7 +12286,7 @@ export default function CariJurnalFigmaPanel({
               <h1 className="mt-5 text-center text-2xl font-extrabold tracking-[-0.5px] text-slate-800">
                 {getLoadingTitle()}
               </h1>
-              <p className="mt-2 max-w-sm animate-pulse text-center text-sm leading-6 text-slate-500">
+              <p className="mt-2 max-w-md animate-pulse text-center text-sm leading-6 text-slate-500">
                 {getLoadingSubtitle()}
               </p>
             </div>
