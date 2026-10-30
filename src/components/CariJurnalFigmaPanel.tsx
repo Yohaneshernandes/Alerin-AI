@@ -13055,7 +13055,7 @@ export default function CariJurnalFigmaPanel({
                       }`}
                     >
                       <img
-                        src={`/assets/jurnal-design/collection-mobile/${["55585.svg", "22763.svg", "d2faf.svg"][chipIndex % 3]}`}
+                        src="/assets/jurnal-design/collection-mobile/22763.svg"
                         alt=""
                         className={`h-[18px] w-[18px] shrink-0 ${active ? "brightness-0 invert" : ""}`}
                       />
