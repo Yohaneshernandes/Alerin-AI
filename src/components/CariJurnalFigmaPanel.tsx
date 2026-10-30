@@ -12470,7 +12470,7 @@ export default function CariJurnalFigmaPanel({
 
                     {showReviewLimitNotice && (
                       <div className="mt-3 flex items-start gap-2 rounded-xl border border-sky-200 bg-sky-50/90 p-3 text-xs text-sky-900 shadow-2xs">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mt-0.5 shrink-0 text-[#00629b]">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mt-0.5 hidden shrink-0 text-[#00629b] md:block">
                           <circle cx="12" cy="12" r="10" />
                           <line x1="12" y1="8" x2="12" y2="12" />
                           <line x1="12" y1="16" x2="12.01" y2="16" />
