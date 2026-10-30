@@ -6920,8 +6920,10 @@ function MobileLiteratureReview({
         )}
       </section>
 
-      <div className="border-t border-slate-200 px-3 pt-6 text-center">
-        <h2 className="text-xl font-bold leading-7 text-slate-900">Hasil Analisis Literature Review</h2>
+      <div className="px-3 pt-3 pb-1 text-center">
+        <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-xl sm:text-2xl font-extrabold leading-7 tracking-[-0.3px] text-slate-900">
+          Hasil Analisis Literature Review
+        </h2>
         <p className="mx-auto mt-1 max-w-[300px] text-sm font-medium leading-5 text-sky-700">Resiliensi perempuan dalam menghadapi bencana dan krisis</p>
       </div>
 
