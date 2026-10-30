@@ -3188,7 +3188,7 @@ function DesktopJournalResultCard({
           <div className="flex items-center justify-between gap-4">
             <div className="min-w-0 flex-1">
               <p className="text-xs font-bold leading-4 tracking-wide text-sky-600 md:text-sm md:leading-5">RINGKASAN UTAMA</p>
-              <p className="pt-1.5 font-['Plus_Jakarta_Sans:Regular'] text-[13px] leading-6 text-slate-700 md:text-sm md:font-medium md:leading-5">
+              <p className="pt-1.5 font-['Inter:Medium'] font-medium text-[13px] leading-6 text-slate-700 md:text-sm md:leading-5">
                 {detail.summaryMore ? (
                   summaryExpanded ? (
                     `${detail.summary.replace(/\.\.\.$/, "")}. ${detail.summaryMore}`
@@ -3586,7 +3586,7 @@ function RingkasanJurnalModal({
         <div className="min-h-0 flex-1 overflow-y-auto px-6 py-6 md:max-h-[70vh] md:p-7">
           <div className="flex flex-col gap-2 rounded-2xl border-l-4 border-sky-600 bg-sky-50/70 px-5 py-5 md:gap-1.5 md:rounded-xl md:bg-blue-50 md:pl-5 md:pr-6">
             <p className="font-['Plus_Jakarta_Sans:Bold'] text-sm font-bold leading-5 text-slate-900 md:text-sm md:font-extrabold md:leading-5">Ringkasan utama</p>
-            <p className="font-['Plus_Jakarta_Sans:Regular'] text-[13px] leading-6 text-slate-700 md:text-sm md:font-medium md:leading-5">{mainSummary}</p>
+            <p className="font-['Inter:Medium'] font-medium text-[13px] leading-6 text-slate-700 md:text-sm md:leading-5">{mainSummary}</p>
           </div>
 
           <div className="mt-5 flex flex-col gap-3 md:mt-4 md:grid md:grid-cols-2 md:gap-3">
@@ -3634,7 +3634,7 @@ function RingkasanJurnalModal({
                     </span>
                   </button>
                   <div className={`px-4 pb-4 pl-[60px] pr-4 md:block md:px-0 md:pb-0 md:pl-7 ${isOpen ? "block" : "hidden"}`}>
-                    <p className="font-['Plus_Jakarta_Sans:Regular'] text-[13px] leading-6 text-slate-600 md:text-xs md:font-medium md:leading-5">{point.desc}</p>
+                    <p className="font-['Inter:Medium'] font-medium text-[13px] leading-6 text-slate-600 md:text-xs md:leading-5">{point.desc}</p>
                   </div>
                 </div>
               );
@@ -9636,7 +9636,7 @@ function MobileJournalResultCard({
 
       <div className="mt-4 rounded-2xl bg-sky-50 p-4">
         <p className="text-xs font-bold uppercase tracking-wide text-sky-700 md:text-sm">Ringkasan utama</p>
-        <p className="mt-1.5 font-['Plus_Jakarta_Sans:Regular'] text-[13px] sm:text-[14px] leading-[1.5] text-slate-700 md:text-sm md:font-medium md:leading-5">{result.summary}</p>
+        <p className="mt-1.5 font-['Inter:Medium'] font-medium text-[13px] sm:text-[14px] leading-[1.5] text-slate-700 md:text-sm md:leading-5">{result.summary}</p>
       </div>
 
       {/* Grid Tombol Aksi Mobile (6 Tombol + 1 Full Width Diskusikan) */}
