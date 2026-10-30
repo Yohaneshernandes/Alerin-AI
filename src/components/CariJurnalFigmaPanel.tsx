@@ -7785,6 +7785,144 @@ function DesktopResearchMap({
     ["Generative AI", "2024,8"],
   ];
 
+  const guideDialogContent = (
+    <div
+      role="dialog"
+      aria-label="Cara membaca peta"
+      className="fixed inset-x-3.5 top-16 z-50 max-h-[82vh] overflow-y-auto rounded-2xl border border-slate-200/90 bg-white p-4.5 sm:p-5 shadow-[0_20px_50px_rgba(15,23,42,0.22)] sm:absolute sm:right-0 sm:top-full sm:inset-x-auto sm:z-30 sm:mt-2 sm:max-h-[85vh] sm:w-[min(440px,calc(100vw-2.5rem))]"
+    >
+      <div className="flex items-start justify-between gap-3">
+        <h3 className="font-['Plus_Jakarta_Sans:Bold'] text-base font-bold leading-6 text-[#0f172a]">Cara Membaca Peta</h3>
+        <button
+          type="button"
+          aria-label="Tutup"
+          onClick={() => setHelpOpen(false)}
+          className="-mr-1 -mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 cursor-pointer"
+        >
+          <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+            <path d="M2.5 2.5l9 9M11.5 2.5l-9 9" />
+          </svg>
+        </button>
+      </div>
+      {mode === "jaringan" && (
+        <div className="mt-3 flex flex-col gap-3.5">
+          <p className="text-xs leading-relaxed text-slate-600">
+            Peta Jaringan menunjukkan keterkaitan antar topik dalam kumpulan artikel.
+          </p>
+
+          <div className="flex flex-col gap-3 rounded-2xl bg-[#f8fafc] p-4 text-xs leading-relaxed">
+            <div className="flex items-start gap-3.5">
+              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center">
+                <span className="h-4 w-4 rounded-full bg-[#3b82f6]" />
+              </span>
+              <div>
+                <strong className="block text-xs font-bold text-slate-900">Lingkaran:</strong>
+                <span className="text-slate-600">Menunjukkan topik atau kata kunci yang dianalisis.</span>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3.5">
+              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-100">
+                  <span className="h-3.5 w-3.5 rounded-full bg-[#2563eb]" />
+                </span>
+              </span>
+              <div>
+                <strong className="block text-xs font-bold text-slate-900">Ukuran lingkaran:</strong>
+                <span className="text-slate-600">
+                  Semakin besar lingkaran, semakin sering topik tersebut muncul dalam artikel yang dianalisis.
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3.5">
+              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center">
+                <span className="h-1.5 w-6 rounded-full bg-[#94a3b8]" />
+              </span>
+              <div>
+                <strong className="block text-xs font-bold text-slate-900">Garis:</strong>
+                <span className="text-slate-600">
+                  Menunjukkan hubungan antar topik yang sering muncul.
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3.5">
+              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center">
+                <div className="grid grid-cols-2 place-items-center gap-1">
+                  <span className="h-2 w-2 rounded-[3px] bg-[#dc2626]" />
+                  <span className="h-2 w-2 rounded-[3px] bg-[#eab308]" />
+                  <span className="h-2 w-2 rounded-[3px] bg-[#22c55e]" />
+                  <span className="h-2 w-2 rounded-[3px] bg-[#2563eb]" />
+                </div>
+              </span>
+              <div>
+                <strong className="block text-xs font-bold text-slate-900">Warna:</strong>
+                <span className="text-slate-600">
+                  Menunjukkan kelompok topik dengan tema yang saling berhubungan.
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <p className="text-[11px] leading-relaxed text-slate-500">
+            Topik yang saling terhubung tidak selalu menunjukkan hubungan sebab-akibat. Peta ini membantu membaca pola keterkaitan topik, bukan menilai kualitas penelitian secara langsung.
+          </p>
+        </div>
+      )}
+
+      {mode === "kepadatan" && (
+        <>
+          <p className="mt-2 text-xs leading-5 text-slate-600">
+            Peta Kepadatan menunjukkan konsentrasi topik dalam kumpulan artikel yang dianalisis melalui perbedaan warna.
+          </p>
+          <div className="mt-3 space-y-2 rounded-lg bg-slate-50 p-3">
+            {[
+              ["#dc2626", "Merah", "Kepadatan sangat tinggi"],
+              ["#eab308", "Kuning", "Kepadatan tinggi"],
+              ["#22c55e", "Hijau", "Kepadatan sedang"],
+              ["#2563eb", "Biru", "Kepadatan rendah"],
+            ].map(([color, name, label]) => (
+              <div key={name} className="flex items-center gap-2.5 text-xs leading-5">
+                <span className="h-4 w-4 shrink-0 rounded-[4px]" style={{ background: color }} />
+                <span className="w-14 shrink-0 font-semibold text-slate-800">{name}</span>
+                <span className="text-slate-600">{label}</span>
+              </div>
+            ))}
+          </div>
+          <p className="mt-3 text-xs leading-5 text-slate-600">
+            Semakin hangat warna pada suatu area, semakin tinggi konsentrasi item berbobot di sekitarnya. Warna tidak menunjukkan kualitas penelitian ataupun secara langsung membuktikan adanya research gap.
+          </p>
+        </>
+      )}
+
+      {mode === "perkembangan" && (
+        <>
+          <p className="mt-2 text-xs leading-5 text-slate-600">
+            Peta Perkembangan membantu kamu melihat perbedaan periode publikasi pada setiap topik penelitian.
+          </p>
+          <ul className="mt-3 space-y-2 text-xs leading-5 text-slate-600">
+            <li>
+              <span className="font-semibold text-slate-800">Warna:</span> menggambarkan rata-rata tahun publikasi artikel yang berkaitan dengan suatu topik, sesuai legenda waktu pada peta.
+            </li>
+            <li>
+              <span className="font-semibold text-slate-800">Lingkaran:</span> menunjukkan topik yang dianalisis.
+            </li>
+            <li>
+              <span className="font-semibold text-slate-800">Garis:</span> menunjukkan hubungan antar topik berdasarkan metode jaringan yang digunakan.
+            </li>
+            <li>
+              <span className="font-semibold text-slate-800">Angka tahun:</span> menunjukkan rata-rata tahun publikasi, bukan tahun pertama kali topik tersebut diteliti.
+            </li>
+          </ul>
+          <p className="mt-3 text-xs leading-5 text-slate-600">
+            Topik dengan rata-rata tahun lebih baru tidak otomatis sedang mengalami peningkatan popularitas. Untuk mengetahui tren pertumbuhan, diperlukan data jumlah publikasi per tahun.
+          </p>
+        </>
+      )}
+    </div>
+  );
+
   return (
     <div className="relative mx-auto flex w-full max-w-[1160px] flex-col gap-4 pb-10 md:gap-5 md:pb-8">
       {/* Indikator Garis Penanda Scroll di Pinggir Kanan Frame */}
@@ -7849,12 +7987,47 @@ function DesktopResearchMap({
         </div>
       </div>
 
-      <section className="rounded-2xl bg-white p-3.5 sm:p-4 shadow-sm md:p-6">
-        <div className="flex flex-col gap-3">
-          {/* Mobile Title & Subtitle inside the white shape card */}
-          <div className="md:hidden">
-            <h1 className="text-lg font-bold leading-6 text-slate-900">Peta Penelitian</h1>
-            <p className="mt-1.5 text-sm leading-relaxed text-slate-500">
+      <section className="rounded-2xl bg-white p-5 shadow-sm md:p-6">
+        <div className="flex flex-col gap-3.5 sm:gap-4">
+          {/* Mobile Title, Subtitle, & Panduan Peta inside the white shape card */}
+          <div className="md:hidden pb-1">
+            <div className="flex items-center justify-between gap-2.5">
+              <h1 className="text-lg sm:text-xl font-bold leading-snug text-slate-900">Peta Penelitian</h1>
+              <div className="relative shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setHelpOpen(value => !value)}
+                  aria-expanded={helpOpen}
+                  title="Lihat panduan cara membaca peta"
+                  className={`group flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-xs font-semibold leading-5 transition-all duration-75 active:scale-95 cursor-pointer select-none ${
+                    helpOpen
+                      ? "border border-[#0070ba] bg-[#0070ba] text-white shadow-xs"
+                      : "border border-slate-300/90 bg-white text-slate-700 shadow-2xs hover:border-[#0070ba] hover:bg-[#eaf6ff] hover:text-[#00629b]"
+                  }`}
+                >
+                  <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <circle cx="8" cy="8" r="6.5" />
+                    <path d="M8 7.2v4" />
+                    <circle cx="8" cy="4.9" r="0.9" fill="currentColor" stroke="none" />
+                  </svg>
+                  <span>Panduan Peta</span>
+                </button>
+                {helpOpen && (
+                  <>
+                    <button
+                      type="button"
+                      aria-label="Tutup panduan peta"
+                      onClick={() => setHelpOpen(false)}
+                      className="fixed inset-0 z-40 bg-black/25 backdrop-blur-[1px] sm:hidden"
+                    />
+                    <div className="sm:hidden">
+                      {guideDialogContent}
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+            <p className="mt-2 text-xs sm:text-[13.5px] leading-relaxed text-slate-500">
               Jelajahi peta topik dari {priorityRows.length} publikasi, lalu geser slider untuk melihat jaringan, kepadatan sitasi, dan perkembangan tahun terbitnya.
             </p>
           </div>
@@ -7991,140 +8164,8 @@ function DesktopResearchMap({
                       onClick={() => setHelpOpen(false)}
                       className="fixed inset-0 z-20 cursor-default"
                     />
-                    <div
-                      role="dialog"
-                      aria-label="Cara membaca peta"
-                      className="absolute right-0 top-full z-30 mt-2 max-h-[85vh] w-[min(440px,calc(100vw-2.5rem))] overflow-y-auto rounded-2xl border border-slate-200/90 bg-white p-5 shadow-[0_20px_50px_rgba(15,23,42,0.18)]"
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <h3 className="font-['Plus_Jakarta_Sans:Bold'] text-base font-bold leading-6 text-[#0f172a]">Cara Membaca Peta</h3>
-                        <button
-                          type="button"
-                          aria-label="Tutup"
-                          onClick={() => setHelpOpen(false)}
-                          className="-mr-1 -mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
-                        >
-                          <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
-                            <path d="M2.5 2.5l9 9M11.5 2.5l-9 9" />
-                          </svg>
-                        </button>
-                      </div>
-                      {mode === "jaringan" && (
-                        <div className="mt-3 flex flex-col gap-3.5">
-                          <p className="text-xs leading-relaxed text-slate-600">
-                            Peta Jaringan menunjukkan keterkaitan antar topik dalam kumpulan artikel.
-                          </p>
-
-                          <div className="flex flex-col gap-3 rounded-2xl bg-[#f8fafc] p-4 text-xs leading-relaxed">
-                            <div className="flex items-start gap-3.5">
-                              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center">
-                                <span className="h-4 w-4 rounded-full bg-[#3b82f6]" />
-                              </span>
-                              <div>
-                                <strong className="block text-xs font-bold text-slate-900">Lingkaran:</strong>
-                                <span className="text-slate-600">Menunjukkan topik atau kata kunci yang dianalisis.</span>
-                              </div>
-                            </div>
-
-                            <div className="flex items-start gap-3.5">
-                              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center">
-                                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-100">
-                                  <span className="h-3.5 w-3.5 rounded-full bg-[#2563eb]" />
-                                </span>
-                              </span>
-                              <div>
-                                <strong className="block text-xs font-bold text-slate-900">Ukuran lingkaran:</strong>
-                                <span className="text-slate-600">
-                                  Semakin besar lingkaran, semakin sering topik tersebut muncul dalam artikel yang dianalisis.
-                                </span>
-                              </div>
-                            </div>
-
-                            <div className="flex items-start gap-3.5">
-                              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center">
-                                <span className="h-1.5 w-6 rounded-full bg-[#94a3b8]" />
-                              </span>
-                              <div>
-                                <strong className="block text-xs font-bold text-slate-900">Garis:</strong>
-                                <span className="text-slate-600">
-                                  Menunjukkan hubungan antar topik yang sering muncul.
-                                </span>
-                              </div>
-                            </div>
-
-                            <div className="flex items-start gap-3.5">
-                              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center">
-                                <div className="grid grid-cols-2 place-items-center gap-1">
-                                  <span className="h-2 w-2 rounded-[3px] bg-[#dc2626]" />
-                                  <span className="h-2 w-2 rounded-[3px] bg-[#eab308]" />
-                                  <span className="h-2 w-2 rounded-[3px] bg-[#22c55e]" />
-                                  <span className="h-2 w-2 rounded-[3px] bg-[#2563eb]" />
-                                </div>
-                              </span>
-                              <div>
-                                <strong className="block text-xs font-bold text-slate-900">Warna:</strong>
-                                <span className="text-slate-600">
-                                  Menunjukkan kelompok topik dengan tema yang saling berhubungan.
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-
-                          <p className="text-[11px] leading-relaxed text-slate-500">
-                            Topik yang saling terhubung tidak selalu menunjukkan hubungan sebab-akibat. Peta ini membantu membaca pola keterkaitan topik, bukan menilai kualitas penelitian secara langsung.
-                          </p>
-                        </div>
-                      )}
-
-                      {mode === "kepadatan" && (
-                        <>
-                          <p className="mt-2 text-xs leading-5 text-slate-600">
-                            Peta Kepadatan menunjukkan konsentrasi topik dalam kumpulan artikel yang dianalisis melalui perbedaan warna.
-                          </p>
-                          <div className="mt-3 space-y-2 rounded-lg bg-slate-50 p-3">
-                            {[
-                              ["#dc2626", "Merah", "Kepadatan sangat tinggi"],
-                              ["#eab308", "Kuning", "Kepadatan tinggi"],
-                              ["#22c55e", "Hijau", "Kepadatan sedang"],
-                              ["#2563eb", "Biru", "Kepadatan rendah"],
-                            ].map(([color, name, label]) => (
-                              <div key={name} className="flex items-center gap-2.5 text-xs leading-5">
-                                <span className="h-4 w-4 shrink-0 rounded-[4px]" style={{ background: color }} />
-                                <span className="w-14 shrink-0 font-semibold text-slate-800">{name}</span>
-                                <span className="text-slate-600">{label}</span>
-                              </div>
-                            ))}
-                          </div>
-                          <p className="mt-3 text-xs leading-5 text-slate-600">
-                            Semakin hangat warna pada suatu area, semakin tinggi konsentrasi item berbobot di sekitarnya. Warna tidak menunjukkan kualitas penelitian ataupun secara langsung membuktikan adanya research gap.
-                          </p>
-                        </>
-                      )}
-
-                      {mode === "perkembangan" && (
-                        <>
-                          <p className="mt-2 text-xs leading-5 text-slate-600">
-                            Peta Perkembangan membantu kamu melihat perbedaan periode publikasi pada setiap topik penelitian.
-                          </p>
-                          <ul className="mt-3 space-y-2 text-xs leading-5 text-slate-600">
-                            <li>
-                              <span className="font-semibold text-slate-800">Warna:</span> menggambarkan rata-rata tahun publikasi artikel yang berkaitan dengan suatu topik, sesuai legenda waktu pada peta.
-                            </li>
-                            <li>
-                              <span className="font-semibold text-slate-800">Lingkaran:</span> menunjukkan topik yang dianalisis.
-                            </li>
-                            <li>
-                              <span className="font-semibold text-slate-800">Garis:</span> menunjukkan hubungan antar topik berdasarkan metode jaringan yang digunakan.
-                            </li>
-                            <li>
-                              <span className="font-semibold text-slate-800">Angka tahun:</span> menunjukkan rata-rata tahun publikasi, bukan tahun pertama kali topik tersebut diteliti.
-                            </li>
-                          </ul>
-                          <p className="mt-3 text-xs leading-5 text-slate-600">
-                            Topik dengan rata-rata tahun lebih baru tidak otomatis sedang mengalami peningkatan popularitas. Untuk mengetahui tren pertumbuhan, diperlukan data jumlah publikasi per tahun.
-                          </p>
-                        </>
-                      )}
+                    <div className="hidden sm:block">
+                      {guideDialogContent}
                     </div>
                   </>
                 )}
