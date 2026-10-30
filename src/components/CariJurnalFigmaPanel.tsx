@@ -8778,17 +8778,19 @@ function DesktopResearchMap({
 
       <section className="rounded-2xl bg-white outline outline-1 outline-offset-[-1px] outline-slate-200/90">
         <div className="flex flex-col gap-3 border-b border-slate-200/70 p-4 md:flex-row md:items-start md:justify-between md:gap-4 md:p-7">
-          <div className="flex items-start gap-3">
-            <span className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded bg-sky-700">
-              <svg width="12" height="13" viewBox="0 0 12 13" fill="none" aria-hidden="true">
+          <div className="grid grid-cols-[auto_1fr] items-center gap-x-2 md:gap-x-3">
+            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-sky-700 md:mt-1 md:h-6 md:w-6 md:self-start">
+              <svg width="10" height="11" viewBox="0 0 12 13" fill="none" aria-hidden="true" className="md:h-[13px] md:w-[12px]">
                 <rect x="1" y="1" width="7" height="7" rx="1.5" fill="white" />
                 <rect x="4.5" y="5" width="6.5" height="6.5" rx="1.5" fill="#bae6fd" />
               </svg>
             </span>
-            <div>
-              <h2 className="text-lg font-semibold leading-7 text-slate-900">Jurnal yang Digunakan</h2>
-              <p className="mt-0.5 text-sm leading-5 text-slate-500">Daftar jurnal yang menjadi dasar pembuatan peta penelitian.</p>
-            </div>
+            <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-base font-bold leading-6 text-slate-900 md:text-lg md:font-semibold md:leading-7">
+              Jurnal yang Digunakan
+            </h2>
+            <p className="col-span-2 mt-1 text-xs leading-5 text-slate-500 md:col-start-2 md:col-span-1 md:mt-0.5 md:text-sm">
+              Daftar jurnal yang menjadi dasar pembuatan peta penelitian.
+            </p>
           </div>
           <label className="flex h-10 w-full shrink-0 items-center gap-2.5 rounded-xl border border-slate-300 bg-slate-50/90 px-3.5 shadow-sm transition-colors hover:border-slate-400 hover:bg-white focus-within:border-sky-600 focus-within:bg-white focus-within:ring-2 focus-within:ring-sky-100 md:w-80">
             <svg width="15" height="15" viewBox="0 0 14 14" fill="none" stroke="#475569" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true" className="shrink-0">
