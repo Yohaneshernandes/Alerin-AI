@@ -12086,7 +12086,7 @@ export default function CariJurnalFigmaPanel({
                         <path d="M10.4 10.4L14 14" />
                       </svg>
                       <p className="min-w-0 flex-1 break-words">
-                        <span className="font-medium text-slate-500">Hasil Pencarian Dari: </span>
+                        <span className="font-medium text-slate-900">Hasil Pencarian Dari: </span>
                         <span className="font-semibold text-slate-900">{searchSubmittedQuery || query.trim() || paragraph.trim() || "interaksi parasosial"}</span>
                       </p>
                     </div>
@@ -12096,7 +12096,7 @@ export default function CariJurnalFigmaPanel({
                         <path d="M2 6.5h12M5.5 1.5v3M10.5 1.5v3" />
                       </svg>
                       <span>
-                        <span className="font-medium text-slate-500">Tahun: </span>
+                        <span className="font-medium text-slate-900">Tahun: </span>
                         <span className="font-semibold text-slate-900">2024–2026</span>
                       </span>
                     </div>
