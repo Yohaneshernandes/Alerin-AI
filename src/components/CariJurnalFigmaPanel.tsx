@@ -9058,7 +9058,7 @@ function DesktopResearchMap({
                   className="flex w-full items-center gap-4 px-5 py-4 text-left transition-colors cursor-pointer"
                 >
                   <span
-                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-sm font-bold transition-all duration-200 ${
+                    className={`hidden md:flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-sm font-bold transition-all duration-200 ${
                       isOpen
                         ? "bg-sky-600 text-white shadow-xs"
                         : "bg-white text-sky-700 border border-slate-200 group-hover:border-sky-300 group-hover:bg-sky-100/70 group-hover:text-sky-800"
