@@ -12396,14 +12396,18 @@ export default function CariJurnalFigmaPanel({
                     </>
                   )}
                 </h1>
-                <p className="mt-2 text-center font-['Plus_Jakarta_Sans:Regular'] text-xs leading-[19.5px] text-[#232323] md:text-left md:text-base md:leading-6 md:text-[#475569]">
+                <p className="mt-2 text-center font-['Plus_Jakarta_Sans:Regular'] text-sm leading-[21px] text-[#232323] md:text-left md:text-base md:leading-6 md:text-[#475569]">
                   {searchType === "review" ? (
-                    "Alerin membantu mencari jurnal relevan untuk memproses literature review."
+                    <>
+                      Alerin membantu mencari jurnal relevan <br className="md:hidden" />untuk memproses literature review.
+                    </>
                   ) : searchType === "map" ? (
-                    "Kenali topik yang saling berkaitan, banyak diteliti, serta perkembangannya."
+                    <>
+                      Kenali topik yang saling berkaitan, <br className="md:hidden" />banyak diteliti, serta perkembangannya.
+                    </>
                   ) : (
                     <>
-                      Cari dengan kata kunci atau biarkan Alerin memahami <br className="md:hidden" />paragraf dan dokumen.
+                      Cari dengan kata kunci atau biarkan <br className="md:hidden" />Alerin memahami paragraf dan dokumen.
                     </>
                   )}
                 </p>
