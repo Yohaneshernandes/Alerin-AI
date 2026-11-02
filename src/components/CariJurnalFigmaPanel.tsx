@@ -13637,7 +13637,9 @@ export default function CariJurnalFigmaPanel({
             <div className="-mt-4 md:hidden">
               <div className="px-1 py-[9px]">
                 <div className="flex items-center justify-between">
-                  <h1 className="font-['Plus_Jakarta_Sans:Bold'] text-lg font-bold tracking-[-0.27px] text-[#0f172a]">Folder Riset</h1>
+                  <h1 className="font-['Plus_Jakarta_Sans:Bold'] text-lg font-bold tracking-[-0.27px] text-[#0f172a]">
+                    {collectionTab === "journal" ? "Folder Jurnal" : collectionTab === "review" ? "Folder Literatur" : "Folder Peta"}
+                  </h1>
                   <div className="relative flex items-center gap-2">
                     <button
                       type="button"
