@@ -3600,7 +3600,7 @@ function RingkasanJurnalModal({
         <div className="min-h-0 flex-1 overflow-y-auto px-6 py-6 md:max-h-[70vh] md:p-7">
           <div className="flex flex-col gap-2 rounded-2xl border-l-4 border-sky-600 bg-sky-50/70 px-5 py-5 md:gap-1.5 md:rounded-xl md:bg-blue-50 md:pl-5 md:pr-6">
             <p className="font-['Plus_Jakarta_Sans:Bold'] text-sm font-bold leading-5 text-slate-900 md:text-sm md:font-extrabold md:leading-5">Ringkasan utama</p>
-            <p className="font-['Inter:Regular'] font-normal text-[13px] leading-6 text-slate-800 md:text-sm md:leading-5">{mainSummary}</p>
+            <p className="font-['Inter:Medium',sans-serif] font-medium text-[13px] leading-6 text-slate-800 md:text-sm md:leading-5">{mainSummary}</p>
           </div>
 
           <div className="mt-5 flex flex-col gap-3 md:mt-4 md:grid md:grid-cols-2 md:gap-3">
@@ -3648,7 +3648,7 @@ function RingkasanJurnalModal({
                     </span>
                   </button>
                   <div className={`px-4 pb-4 pl-[60px] pr-4 md:block md:px-0 md:pb-0 md:pl-7 ${isOpen ? "block" : "hidden"}`}>
-                    <p className="font-['Inter:Regular'] font-normal text-[13px] leading-6 text-slate-700 md:text-xs md:leading-5">{point.desc}</p>
+                    <p className="font-['Inter:Medium',sans-serif] font-medium text-[13px] leading-6 text-slate-800 md:text-xs md:leading-5">{point.desc}</p>
                   </div>
                 </div>
               );
