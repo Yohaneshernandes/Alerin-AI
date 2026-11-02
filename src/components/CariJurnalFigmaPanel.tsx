@@ -6862,8 +6862,20 @@ function MobileLiteratureReview({
     <div className="flex flex-col gap-5 pb-8">
       {/* Indikator Garis Penanda Scroll di Pinggir Kanan Layar */}
       <FrameScrollIndicator />
-      {/* Mobile Top Navigation Bar: Simpan ke Koleksi & Kembali */}
+      {/* Mobile Top Navigation Bar: Kembali & Simpan ke Koleksi */}
       <div className="flex items-center gap-2">
+        {onBack && (
+          <button
+            type="button"
+            onClick={onBack}
+            className="flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-xl bg-sky-700 px-3.5 py-2.5 text-xs font-bold text-white shadow-xs transition-all active:scale-[0.98]"
+          >
+            <svg width="14" height="12" viewBox="0 0 14 12" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M12 6H2M5.5 2.5L2 6l3.5 3.5" />
+            </svg>
+            Kembali
+          </button>
+        )}
         {onSave && (
           <button
             type="button"
@@ -6876,18 +6888,6 @@ function MobileLiteratureReview({
               <path d="M4 2.5h8a1 1 0 0 1 1 1v10l-5-3-5 3v-10a1 1 0 0 1 1-1z" />
             </svg>
             {saved ? "Tersimpan" : "Simpan ke Koleksi"}
-          </button>
-        )}
-        {onBack && (
-          <button
-            type="button"
-            onClick={onBack}
-            className="flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-xl bg-sky-700 px-3.5 py-2.5 text-xs font-bold text-white shadow-xs transition-all active:scale-[0.98]"
-          >
-            <svg width="14" height="12" viewBox="0 0 14 12" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M12 6H2M5.5 2.5L2 6l3.5 3.5" />
-            </svg>
-            Kembali
           </button>
         )}
       </div>
@@ -8422,8 +8422,18 @@ function DesktopResearchMap({
     <div className="relative mx-auto flex w-full max-w-[1160px] flex-col gap-4 pb-10 md:gap-5 md:pb-8">
       {/* Indikator Garis Penanda Scroll di Pinggir Kanan Frame */}
       <FrameScrollIndicator />
-      {/* Mobile Top Action Bar: Simpan ke Koleksi & Kembali ke Pencarian */}
+      {/* Mobile Top Action Bar: Kembali ke Pencarian & Simpan ke Koleksi */}
       <div className="flex items-center gap-2 md:hidden">
+        <button
+          type="button"
+          onClick={onBack}
+          className="flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-xl bg-sky-700 px-3.5 py-2.5 text-xs font-bold text-white shadow-xs transition-all active:scale-[0.98]"
+        >
+          <svg width="14" height="12" viewBox="0 0 14 12" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M12 6H2M5.5 2.5L2 6l3.5 3.5" />
+          </svg>
+          Kembali
+        </button>
         <button
           type="button"
           onClick={onSave}
@@ -8435,16 +8445,6 @@ function DesktopResearchMap({
             <path d="M4 2.5h8a1 1 0 0 1 1 1v10l-5-3-5 3v-10a1 1 0 0 1 1-1z" />
           </svg>
           {saved ? "Tersimpan" : "Simpan ke Koleksi"}
-        </button>
-        <button
-          type="button"
-          onClick={onBack}
-          className="flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-xl bg-sky-700 px-3.5 py-2.5 text-xs font-bold text-white shadow-xs transition-all active:scale-[0.98]"
-        >
-          <svg width="14" height="12" viewBox="0 0 14 12" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M12 6H2M5.5 2.5L2 6l3.5 3.5" />
-          </svg>
-          Kembali
         </button>
       </div>
 
