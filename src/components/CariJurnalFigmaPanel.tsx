@@ -13629,7 +13629,7 @@ export default function CariJurnalFigmaPanel({
                       onClick={() => setMobileCollectionMenuOpen(open => !open)}
                       className="flex h-7 items-center gap-1.5 rounded-lg bg-white px-2.5 text-sm font-bold text-[#0369a1] outline outline-1 outline-sky-200"
                     >
-                      {collectionTab === "journal" ? "Jurnal" : collectionTab === "review" ? "Literatur" : "Peta Penelitian"}
+                      {collectionTab === "journal" ? "Jurnal" : collectionTab === "review" ? "Literatur Review" : "Peta Penelitian"}
                       <svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" aria-hidden="true">
                         <path d="M1 1l4 4 4-4" />
                       </svg>
@@ -13647,7 +13647,7 @@ export default function CariJurnalFigmaPanel({
                         {(
                           [
                             ["journal", "Jurnal"],
-                            ["review", "Literatur"],
+                            ["review", "Literatur Review"],
                             ["map", "Peta Penelitian"],
                           ] as const
                         ).map(([type, label]) => (
