@@ -10378,18 +10378,14 @@ function MobileJournalCollectionCard({
           <span className="font-['Plus_Jakarta_Sans:Bold'] text-sm font-bold text-[#1e293b]">
             Catatan Pribadi
           </span>
-          <span className="text-xs text-slate-500 font-medium flex items-center gap-1">
-            {isSavedNotice ? (
-              <span className="text-emerald-600 font-semibold flex items-center gap-1">
-                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M3 8.5l3.5 3.5 6.5-7" />
-                </svg>
-                Tersimpan
-              </span>
-            ) : (
-              "Otomatis tersimpan"
-            )}
-          </span>
+          {isSavedNotice && (
+            <span className="text-xs text-emerald-600 font-semibold flex items-center gap-1">
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 8.5l3.5 3.5 6.5-7" />
+              </svg>
+              Tersimpan
+            </span>
+          )}
         </div>
         <textarea
           value={note}
