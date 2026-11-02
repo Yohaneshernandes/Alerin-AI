@@ -12493,40 +12493,7 @@ export default function CariJurnalFigmaPanel({
                   </div>
                 ) : (
                   <>
-                    <div className="space-y-3">
-                      {/* Mobile Top Action Bar: Simpan ke Koleksi & Kembali ke Pencarian */}
-                      <div className="flex items-center gap-2">
-                        <button
-                          type="button"
-                          onClick={toggleSaveAllMobileJournals}
-                          className={`flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-xl px-3.5 py-2.5 text-xs font-bold shadow-xs outline outline-1 transition-all active:scale-[0.98] cursor-pointer ${
-                            allMobileJournalsSaved ? "bg-sky-50 text-sky-700 outline-sky-200 hover:bg-sky-100" : "bg-white text-slate-700 outline-slate-200 hover:bg-slate-50"
-                          }`}
-                        >
-                          <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                            <path d="M4 2.5h8a1 1 0 0 1 1 1v10l-5-3-5 3v-10a1 1 0 0 1 1-1z" />
-                          </svg>
-                          {allMobileJournalsSaved ? "Tersimpan" : "Simpan ke Koleksi"}
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setMobileSearchStage("home");
-                            setSearchType("journal");
-                            if (query.trim() && paragraph.trim() && query.trim() === paragraph.trim()) {
-                              setQuery("");
-                            }
-                          }}
-                          className="flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-xl bg-sky-700 px-3.5 py-2.5 text-xs font-bold text-white shadow-xs transition-all active:scale-[0.98]"
-                        >
-                          <svg width="14" height="12" viewBox="0 0 14 12" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                            <path d="M12 6H2M5.5 2.5L2 6l3.5 3.5" />
-                          </svg>
-                          Kembali
-                        </button>
-                      </div>
-                    </div>
-                {resultMode === "analysis" && (
+                    {resultMode === "analysis" && (
                   <>
                     <section className="mt-4 rounded-2xl bg-white p-4 shadow-sm">
                       <div className="flex items-center justify-between gap-3">
