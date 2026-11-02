@@ -6195,13 +6195,13 @@ function DesktopLiteratureReview({
                             onClick={() => handleOpenJournalClick(row.title)}
                             className={`inline-flex items-center gap-1 rounded-lg border px-2.5 py-1 text-xs font-medium shadow-2xs transition-all active:scale-95 cursor-pointer ${
                               isLocked
-                                ? "border-amber-200/90 bg-amber-50/70 text-amber-900 hover:bg-amber-100/80"
+                                ? "border-sky-300 bg-sky-50/85 text-[#00629b] hover:bg-sky-100/90"
                                 : "border-slate-200/90 bg-white text-slate-700 hover:bg-slate-50"
                             }`}
                             title={isLocked ? "Terkunci - Batas 3 jurnal akun gratis tercapai" : "Buka jurnal"}
                           >
                             {isLocked ? (
-                              <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-amber-600">
+                              <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-[#00629b]">
                                 <rect x="3" y="7" width="10" height="7" rx="1.5" />
                                 <path d="M5.5 7V4.5a2.5 2.5 0 0 1 5 0V7" />
                                 <circle cx="8" cy="10.5" r="0.8" fill="currentColor" />
@@ -7021,13 +7021,13 @@ function MobileLiteratureReview({
                     onClick={() => handleOpenJournalClick(row.title)}
                     className={`flex min-h-[42px] items-center justify-center gap-1.5 rounded-xl border px-2 py-2 text-xs font-bold shadow-2xs transition-all active:scale-95 cursor-pointer ${
                       isLocked
-                        ? "border-amber-200/90 bg-amber-50/70 text-amber-900 hover:bg-amber-100/80"
+                        ? "border-sky-300 bg-sky-50/85 text-[#00629b] hover:bg-sky-100/90"
                         : "border-slate-200 bg-white text-sky-700 hover:bg-sky-50"
                     }`}
                     title={isLocked ? "Terkunci - Batas 3 jurnal akun gratis tercapai" : "Buka jurnal"}
                   >
                     {isLocked ? (
-                      <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-amber-600">
+                      <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-[#00629b]">
                         <rect x="3" y="7" width="10" height="7" rx="1.5" />
                         <path d="M5.5 7V4.5a2.5 2.5 0 0 1 5 0V7" />
                         <circle cx="8" cy="10.5" r="0.8" fill="currentColor" />
@@ -9220,13 +9220,13 @@ function DesktopResearchMap({
                         onClick={() => handleOpenJournalClick(row.title)}
                         className={`inline-flex cursor-pointer items-center gap-1.5 rounded-lg border px-2.5 py-1 text-xs font-medium shadow-2xs transition-all active:scale-95 ${
                           isLocked
-                            ? "border-amber-200/90 bg-amber-50/70 text-amber-900 hover:bg-amber-100/80"
+                            ? "border-sky-300 bg-sky-50/85 text-[#00629b] hover:bg-sky-100/90"
                             : "border-slate-200/90 bg-white text-slate-700 hover:bg-slate-50"
                         }`}
                         title={isLocked ? "Terkunci - Batas 3 jurnal akun gratis tercapai" : "Buka jurnal"}
                       >
                         {isLocked ? (
-                          <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-amber-600">
+                          <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-[#00629b]">
                             <rect x="3" y="7" width="10" height="7" rx="1.5" />
                             <path d="M5.5 7V4.5a2.5 2.5 0 0 1 5 0V7" />
                             <circle cx="8" cy="10.5" r="0.8" fill="currentColor" />
@@ -9314,13 +9314,13 @@ function DesktopResearchMap({
                   onClick={() => handleOpenJournalClick(row.title)}
                   className={`flex min-h-[42px] items-center justify-center gap-1.5 rounded-xl border px-2 py-2 text-xs font-bold shadow-2xs transition-all active:scale-95 cursor-pointer ${
                     isLocked
-                      ? "border-amber-200/90 bg-amber-50/70 text-amber-900 hover:bg-amber-100/80"
+                      ? "border-sky-300 bg-sky-50/85 text-[#00629b] hover:bg-sky-100/90"
                       : "border-slate-200 bg-white text-sky-700 hover:bg-sky-50"
                   }`}
                   title={isLocked ? "Terkunci - Batas 3 jurnal akun gratis tercapai" : "Buka jurnal"}
                 >
                   {isLocked ? (
-                    <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-amber-600">
+                    <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-[#00629b]">
                       <rect x="3" y="7" width="10" height="7" rx="1.5" />
                       <path d="M5.5 7V4.5a2.5 2.5 0 0 1 5 0V7" />
                       <circle cx="8" cy="10.5" r="0.8" fill="currentColor" />
