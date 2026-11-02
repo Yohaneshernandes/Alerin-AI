@@ -2447,9 +2447,50 @@ const journalPlanFeatures: JournalPlanFeature[] = [
       </svg>
     ),
     desc: {
-      gratis: "Akses pencarian jurnal untuk memulai riset",
-      plus: "Kuota pencarian jurnal lebih besar",
-      pro: "Kuota pencarian jurnal tertinggi",
+      gratis: "Cari Jurnal, Literature Review dan Peta Penelitian untuk mulai riset",
+      plus: "Kuota Cari Jurnal, Literature Review dan Peta Penelitian lebih besar",
+      pro: "Akses Cari Jurnal, Literature Review dan Peta Penelitian paling tinggi",
+    },
+  },
+  {
+    icon: (
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M2.5 3.5h4.2c.7 0 1.3.6 1.3 1.3v8.7c0-.7-.6-1.3-1.3-1.3H2.5z" />
+        <path d="M13.5 3.5H9.3c-.7 0-1.3.6-1.3 1.3v8.7c0-.7.6-1.3 1.3-1.3h4.2z" />
+      </svg>
+    ),
+    desc: {
+      gratis: "Literature Review dengan cakupan hingga 100 jurnal",
+      plus: "Literature Review dengan cakupan hingga 500 jurnal",
+      pro: "Literature Review dengan analisis jurnal paling maksimal",
+    },
+  },
+  {
+    icon: (
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <circle cx="4" cy="5" r="2" />
+        <circle cx="12" cy="4" r="1.5" />
+        <circle cx="9" cy="11.5" r="2.5" />
+        <path d="M5.8 5.8l4.5 4M10.8 5.2l-2 4.5" />
+      </svg>
+    ),
+    desc: {
+      gratis: "Analisis Peta Penelitian hingga 100 jurnal",
+      plus: "Analisis Peta Penelitian hingga 500 jurnal",
+      pro: "Analisis Peta Penelitian dengan pemetaan jurnal tanpa batas",
+    },
+  },
+  {
+    icon: (
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <rect x="2.5" y="2.5" width="11" height="11" rx="2" />
+        <path d="M2.5 6.5h11M7 6.5v7" />
+      </svg>
+    ),
+    desc: {
+      gratis: "Bandingkan jurnal dalam tabel penelitian terdahulu",
+      plus: "Bandingkan lebih banyak jurnal dalam tabel penelitian",
+      pro: "Kapasitas perbandingan jurnal terbesar dalam tabel penelitian",
     },
   },
   {
@@ -2512,47 +2553,6 @@ const journalPlanFeatures: JournalPlanFeature[] = [
       gratis: "Perbarui rekomendasi untuk menjelajahi referensi lainnya",
       plus: "Pembaruan rekomendasi lebih sering",
       pro: "Kuota pembaruan rekomendasi tertinggi",
-    },
-  },
-  {
-    icon: (
-      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <rect x="2.5" y="2.5" width="11" height="11" rx="2" />
-        <path d="M2.5 6.5h11M7 6.5v7" />
-      </svg>
-    ),
-    desc: {
-      gratis: "Bandingkan jurnal dalam tabel penelitian terdahulu",
-      plus: "Bandingkan lebih banyak jurnal dalam tabel penelitian",
-      pro: "Kapasitas perbandingan jurnal terbesar dalam tabel penelitian",
-    },
-  },
-  {
-    icon: (
-      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <path d="M2.5 3.5h4.2c.7 0 1.3.6 1.3 1.3v8.7c0-.7-.6-1.3-1.3-1.3H2.5z" />
-        <path d="M13.5 3.5H9.3c-.7 0-1.3.6-1.3 1.3v8.7c0-.7.6-1.3 1.3-1.3h4.2z" />
-      </svg>
-    ),
-    desc: {
-      gratis: "Literature Review dengan cakupan hingga 100 jurnal",
-      plus: "Literature Review dengan cakupan hingga 500 jurnal",
-      pro: "Literature Review dengan analisis jurnal paling maksimal",
-    },
-  },
-  {
-    icon: (
-      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <circle cx="4" cy="5" r="2" />
-        <circle cx="12" cy="4" r="1.5" />
-        <circle cx="9" cy="11.5" r="2.5" />
-        <path d="M5.8 5.8l4.5 4M10.8 5.2l-2 4.5" />
-      </svg>
-    ),
-    desc: {
-      gratis: "Peta Penelitian dengan cakupan hingga 100 jurnal",
-      plus: "Peta Penelitian dengan cakupan hingga 500 jurnal",
-      pro: "Peta Penelitian dengan pemetaan jurnal tanpa batas",
     },
   },
 ];
