@@ -12641,16 +12641,16 @@ export default function CariJurnalFigmaPanel({
                   </div>
                 </section>
 
-                <div className="mt-6 flex items-center gap-2 px-1">
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-sky-100 text-[#00629b]">
-                    <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+                <div className="mt-6 flex items-center gap-2.5 px-1">
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-sky-100 text-[#00629b]">
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
                       <path d="M5.5 4h8.5M5.5 8h8.5M5.5 12h8.5" />
                       <circle cx="2.5" cy="4" r="1" fill="currentColor" stroke="none" />
                       <circle cx="2.5" cy="8" r="1" fill="currentColor" stroke="none" />
                       <circle cx="2.5" cy="12" r="1" fill="currentColor" stroke="none" />
                     </svg>
                   </span>
-                  <h3 className="font-['Plus_Jakarta_Sans:Bold'] text-xs sm:text-[13px] font-bold text-slate-700">
+                  <h3 className="font-['Plus_Jakarta_Sans:Bold'] text-[15px] sm:text-base font-bold text-slate-900 leading-snug tracking-[-0.2px]">
                     Rekomendasi yang paling relevan
                   </h3>
                 </div>
