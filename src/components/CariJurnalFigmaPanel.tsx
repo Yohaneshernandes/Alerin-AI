@@ -5729,6 +5729,9 @@ function DesktopLiteratureReview({
   onSave,
   saved,
   onShowToast,
+  onUpgrade,
+  openedJournals: propOpenedJournals,
+  onOpenJournal: propOnOpenJournal,
 }: {
   query: string;
   onBack: () => void;
@@ -5738,10 +5741,39 @@ function DesktopLiteratureReview({
   onSave: () => void;
   saved: boolean;
   onShowToast?: (msg: string) => void;
+  onUpgrade?: () => void;
+  openedJournals?: string[];
+  onOpenJournal?: (title: string) => void;
 }) {
   const docNavRows = literatureDocSections;
   const sectionNames = literatureDocSections.map(s => s.title);
   const is12345 = (query || "").trim() === "12345";
+  const [localOpenedJournals, setLocalOpenedJournals] = useState<string[]>([]);
+  const openedJournals = propOpenedJournals ?? localOpenedJournals;
+
+  const handleOpenJournalClick = (title: string) => {
+    if (propOnOpenJournal) {
+      propOnOpenJournal(title);
+      return;
+    }
+    if (openedJournals.includes(title)) {
+      window.open("https://doi.org", "_blank", "noopener,noreferrer");
+      return;
+    }
+    if (openedJournals.length < 3) {
+      const next = [...openedJournals, title];
+      setLocalOpenedJournals(next);
+      window.open("https://doi.org", "_blank", "noopener,noreferrer");
+      if (next.length === 3) {
+        onShowToast?.("Batas 3 jurnal gratis tercapai. Jurnal lainnya kini terkunci.");
+      } else {
+        onShowToast?.(`Jurnal dibuka (${next.length}/3 kuota gratis)`);
+      }
+    } else {
+      onShowToast?.("Batas 3 jurnal telah tercapai. Upgrade ke Alerin Pro untuk membuka semua jurnal.");
+      onUpgrade?.();
+    }
+  };
 
   const stats = [
     { label: "Total hasil ditemukan", value: "126", tone: "text-[#0369a1]" },
@@ -6132,6 +6164,8 @@ function DesktopLiteratureReview({
                   </tr>
                 )}
                 {visiblePriority.map(row => {
+                  const isOpened = openedJournals.includes(row.title);
+                  const isLocked = !isOpened && openedJournals.length >= 3;
                   return (
                     <tr key={row.title} className="border-t border-slate-100 transition-colors hover:bg-slate-50/50">
                       <td className="max-w-[460px] px-5 py-4">
@@ -6158,12 +6192,25 @@ function DesktopLiteratureReview({
                           </button>
                           <button
                             type="button"
-                            onClick={() => window.open("https://doi.org", "_blank", "noopener,noreferrer")}
-                            className="inline-flex items-center gap-1 rounded-lg border border-slate-200/90 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 shadow-2xs transition-colors hover:bg-slate-50 active:scale-95"
+                            onClick={() => handleOpenJournalClick(row.title)}
+                            className={`inline-flex items-center gap-1 rounded-lg border px-2.5 py-1 text-xs font-medium shadow-2xs transition-all active:scale-95 cursor-pointer ${
+                              isLocked
+                                ? "border-amber-200/90 bg-amber-50/70 text-amber-900 hover:bg-amber-100/80"
+                                : "border-slate-200/90 bg-white text-slate-700 hover:bg-slate-50"
+                            }`}
+                            title={isLocked ? "Terkunci - Batas 3 jurnal akun gratis tercapai" : "Buka jurnal"}
                           >
-                            <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400">
-                              <path d="M12 9v4H3V4h4M9 2h5v5M6.5 9.5L14 2" />
-                            </svg>
+                            {isLocked ? (
+                              <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-amber-600">
+                                <rect x="3" y="7" width="10" height="7" rx="1.5" />
+                                <path d="M5.5 7V4.5a2.5 2.5 0 0 1 5 0V7" />
+                                <circle cx="8" cy="10.5" r="0.8" fill="currentColor" />
+                              </svg>
+                            ) : (
+                              <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400">
+                                <path d="M12 9v4H3V4h4M9 2h5v5M6.5 9.5L14 2" />
+                              </svg>
+                            )}
                             Buka
                           </button>
                         </div>
@@ -6678,6 +6725,9 @@ function MobileLiteratureReview({
   onSave,
   saved = false,
   onShowToast,
+  onUpgrade,
+  openedJournals: propOpenedJournals,
+  onOpenJournal: propOnOpenJournal,
 }: {
   query?: string;
   onBack?: () => void;
@@ -6687,6 +6737,9 @@ function MobileLiteratureReview({
   onSave?: () => void;
   saved?: boolean;
   onShowToast?: (msg: string) => void;
+  onUpgrade?: () => void;
+  openedJournals?: string[];
+  onOpenJournal?: (title: string) => void;
 } = {}) {
   const [chip, setChip] = useState("semua");
   const [prioritySearch, setPrioritySearch] = useState("");
@@ -6696,6 +6749,32 @@ function MobileLiteratureReview({
   const [activeSection, setActiveSection] = useState(1);
   const activeTopic = (query.trim() || "Resiliensi perempuan dalam menghadapi bencana dan krisis").replace(/\s+/g, " ");
   const is12345 = (query || "").trim() === "12345";
+  const [localOpenedJournals, setLocalOpenedJournals] = useState<string[]>([]);
+  const openedJournals = propOpenedJournals ?? localOpenedJournals;
+
+  const handleOpenJournalClick = (title: string) => {
+    if (propOnOpenJournal) {
+      propOnOpenJournal(title);
+      return;
+    }
+    if (openedJournals.includes(title)) {
+      window.open("https://doi.org", "_blank", "noopener,noreferrer");
+      return;
+    }
+    if (openedJournals.length < 3) {
+      const next = [...openedJournals, title];
+      setLocalOpenedJournals(next);
+      window.open("https://doi.org", "_blank", "noopener,noreferrer");
+      if (next.length === 3) {
+        onShowToast?.("Batas 3 jurnal gratis tercapai. Jurnal lainnya kini terkunci.");
+      } else {
+        onShowToast?.(`Jurnal dibuka (${next.length}/3 kuota gratis)`);
+      }
+    } else {
+      onShowToast?.("Batas 3 jurnal telah tercapai. Upgrade ke Alerin Pro untuk membuka semua jurnal.");
+      onUpgrade?.();
+    }
+  };
 
   const statsList = [
     { label: "Total hasil ditemukan", value: "126", tone: "text-[#00629b]" },
@@ -6901,6 +6980,8 @@ function MobileLiteratureReview({
         {/* List Card Jurnal yang Digunakan */}
         <div className="mt-3.5 space-y-3">
           {visiblePriority.slice(0, priorityLimit).map((row, index) => {
+            const isOpened = openedJournals.includes(row.title);
+            const isLocked = !isOpened && openedJournals.length >= 3;
             return (
               <article key={`${row.title}-${index}`} className="rounded-xl bg-slate-50/70 p-4 border border-slate-200/90 shadow-2xs space-y-3 hover:border-sky-300 transition-colors">
                 <div>
@@ -6937,12 +7018,25 @@ function MobileLiteratureReview({
                   </button>
                   <button
                     type="button"
-                    onClick={() => window.open("https://doi.org", "_blank", "noopener,noreferrer")}
-                    className="flex min-h-[42px] items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-2 py-2 text-xs font-bold text-sky-700 shadow-2xs hover:bg-sky-50 active:scale-95 cursor-pointer"
+                    onClick={() => handleOpenJournalClick(row.title)}
+                    className={`flex min-h-[42px] items-center justify-center gap-1.5 rounded-xl border px-2 py-2 text-xs font-bold shadow-2xs transition-all active:scale-95 cursor-pointer ${
+                      isLocked
+                        ? "border-amber-200/90 bg-amber-50/70 text-amber-900 hover:bg-amber-100/80"
+                        : "border-slate-200 bg-white text-sky-700 hover:bg-sky-50"
+                    }`}
+                    title={isLocked ? "Terkunci - Batas 3 jurnal akun gratis tercapai" : "Buka jurnal"}
                   >
-                    <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-sky-600">
-                      <path d="M12 9v4H3V4h4M9 2h5v5M6.5 9.5L14 2" />
-                    </svg>
+                    {isLocked ? (
+                      <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-amber-600">
+                        <rect x="3" y="7" width="10" height="7" rx="1.5" />
+                        <path d="M5.5 7V4.5a2.5 2.5 0 0 1 5 0V7" />
+                        <circle cx="8" cy="10.5" r="0.8" fill="currentColor" />
+                      </svg>
+                    ) : (
+                      <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-sky-600">
+                        <path d="M12 9v4H3V4h4M9 2h5v5M6.5 9.5L14 2" />
+                      </svg>
+                    )}
                     <span>Buka</span>
                   </button>
                 </div>
@@ -7364,6 +7458,10 @@ function DesktopResearchMap({
   onOpenRingkasan,
   onOpenAbstrak,
   onOpenSitasi,
+  onShowToast,
+  onUpgrade,
+  openedJournals: propOpenedJournals,
+  onOpenJournal: propOnOpenJournal,
 }: {
   query: string;
   onBack: () => void;
@@ -7372,7 +7470,37 @@ function DesktopResearchMap({
   onOpenRingkasan?: () => void;
   onOpenAbstrak?: () => void;
   onOpenSitasi?: () => void;
+  onShowToast?: (msg: string) => void;
+  onUpgrade?: () => void;
+  openedJournals?: string[];
+  onOpenJournal?: (title: string) => void;
 }) {
+  const [localOpenedJournals, setLocalOpenedJournals] = useState<string[]>([]);
+  const openedJournals = propOpenedJournals ?? localOpenedJournals;
+
+  const handleOpenJournalClick = (title: string) => {
+    if (propOnOpenJournal) {
+      propOnOpenJournal(title);
+      return;
+    }
+    if (openedJournals.includes(title)) {
+      window.open("https://doi.org", "_blank", "noopener,noreferrer");
+      return;
+    }
+    if (openedJournals.length < 3) {
+      const next = [...openedJournals, title];
+      setLocalOpenedJournals(next);
+      window.open("https://doi.org", "_blank", "noopener,noreferrer");
+      if (next.length === 3) {
+        onShowToast?.("Batas 3 jurnal gratis tercapai. Jurnal lainnya kini terkunci.");
+      } else {
+        onShowToast?.(`Jurnal dibuka (${next.length}/3 kuota gratis)`);
+      }
+    } else {
+      onShowToast?.("Batas 3 jurnal telah tercapai. Upgrade ke Alerin Pro untuk membuka semua jurnal.");
+      onUpgrade?.();
+    }
+  };
   const [mode, setMode] = useState("jaringan");
   const [showLines, setShowLines] = useState(true);
   const [zoom, setZoom] = useState(100);
@@ -9060,7 +9188,10 @@ function DesktopResearchMap({
                   </td>
                 </tr>
               )}
-              {visibleRows.map(({ row }) => (
+              {visibleRows.map(({ row }) => {
+                const isOpened = openedJournals.includes(row.title);
+                const isLocked = !isOpened && openedJournals.length >= 3;
+                return (
                 <tr key={row.title} className="border-t border-slate-100 transition-colors hover:bg-slate-50/50">
                   <td className="max-w-[460px] px-5 py-4">
                     <p className="font-['Plus_Jakarta_Sans:Bold'] text-sm font-bold leading-snug text-slate-900">
@@ -9086,12 +9217,25 @@ function DesktopResearchMap({
                       </button>
                       <button
                         type="button"
-                        onClick={() => window.open("https://doi.org", "_blank", "noopener,noreferrer")}
-                        className="inline-flex cursor-pointer items-center gap-1 rounded-lg border border-slate-200/90 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 shadow-2xs transition-colors hover:bg-slate-50 active:scale-95"
+                        onClick={() => handleOpenJournalClick(row.title)}
+                        className={`inline-flex cursor-pointer items-center gap-1.5 rounded-lg border px-2.5 py-1 text-xs font-medium shadow-2xs transition-all active:scale-95 ${
+                          isLocked
+                            ? "border-amber-200/90 bg-amber-50/70 text-amber-900 hover:bg-amber-100/80"
+                            : "border-slate-200/90 bg-white text-slate-700 hover:bg-slate-50"
+                        }`}
+                        title={isLocked ? "Terkunci - Batas 3 jurnal akun gratis tercapai" : "Buka jurnal"}
                       >
-                        <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400">
-                          <path d="M12 9v4H3V4h4M9 2h5v5M6.5 9.5L14 2" />
-                        </svg>
+                        {isLocked ? (
+                          <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-amber-600">
+                            <rect x="3" y="7" width="10" height="7" rx="1.5" />
+                            <path d="M5.5 7V4.5a2.5 2.5 0 0 1 5 0V7" />
+                            <circle cx="8" cy="10.5" r="0.8" fill="currentColor" />
+                          </svg>
+                        ) : (
+                          <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400">
+                            <path d="M12 9v4H3V4h4M9 2h5v5M6.5 9.5L14 2" />
+                          </svg>
+                        )}
                         Buka
                       </button>
                     </div>
@@ -9121,14 +9265,17 @@ function DesktopResearchMap({
                     </span>
                   </td>
                 </tr>
-              ))}
+              ); })}
             </tbody>
           </table>
         </div>
 
         {/* Mobile Cards List (Sama persis dengan susunan Literatur Review) */}
         <div className="md:hidden mt-3.5 space-y-3">
-          {visibleRows.slice(0, mobileJournalLimit).map(({ row }, index) => (
+          {visibleRows.slice(0, mobileJournalLimit).map(({ row }, index) => {
+            const isOpened = openedJournals.includes(row.title);
+            const isLocked = !isOpened && openedJournals.length >= 3;
+            return (
             <article key={`${row.title}-${index}`} className="rounded-xl bg-slate-50/70 p-4 border border-slate-200/90 shadow-2xs space-y-3 hover:border-sky-300 transition-colors">
               <div>
                 <h4 className="font-['Plus_Jakarta_Sans:Bold'] text-sm sm:text-[14.5px] font-bold leading-snug text-slate-900">{row.title}</h4>
@@ -9164,17 +9311,30 @@ function DesktopResearchMap({
                 </button>
                 <button
                   type="button"
-                  onClick={() => window.open("https://doi.org", "_blank", "noopener,noreferrer")}
-                  className="flex min-h-[42px] items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-2 py-2 text-xs font-bold text-sky-700 shadow-2xs hover:bg-sky-50 active:scale-95 cursor-pointer"
+                  onClick={() => handleOpenJournalClick(row.title)}
+                  className={`flex min-h-[42px] items-center justify-center gap-1.5 rounded-xl border px-2 py-2 text-xs font-bold shadow-2xs transition-all active:scale-95 cursor-pointer ${
+                    isLocked
+                      ? "border-amber-200/90 bg-amber-50/70 text-amber-900 hover:bg-amber-100/80"
+                      : "border-slate-200 bg-white text-sky-700 hover:bg-sky-50"
+                  }`}
+                  title={isLocked ? "Terkunci - Batas 3 jurnal akun gratis tercapai" : "Buka jurnal"}
                 >
-                  <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-sky-600">
-                    <path d="M12 9v4H3V4h4M9 2h5v5M6.5 9.5L14 2" />
-                  </svg>
+                  {isLocked ? (
+                    <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-amber-600">
+                      <rect x="3" y="7" width="10" height="7" rx="1.5" />
+                      <path d="M5.5 7V4.5a2.5 2.5 0 0 1 5 0V7" />
+                      <circle cx="8" cy="10.5" r="0.8" fill="currentColor" />
+                    </svg>
+                  ) : (
+                    <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-sky-600">
+                      <path d="M12 9v4H3V4h4M9 2h5v5M6.5 9.5L14 2" />
+                    </svg>
+                  )}
                   <span>Buka</span>
                 </button>
               </div>
             </article>
-          ))}
+          ); })}
           {visibleRows.length === 0 && (
             <p className="py-6 text-center text-xs text-slate-400">Tidak ada jurnal yang cocok dengan pencarianmu.</p>
           )}
@@ -11207,6 +11367,27 @@ export default function CariJurnalFigmaPanel({
   const [mobileHapusTarget, setMobileHapusTarget] = useState<{ type: "riwayat" | "extra"; index: number; label: string } | null>(null);
   const [extraRiwayatList, setExtraRiwayatList] = useState(riwayatPencarian);
   const toastTimer = useRef<number | undefined>(undefined);
+  const [openedLiteratureJournals, setOpenedLiteratureJournals] = useState<string[]>([]);
+
+  const handleOpenLiteratureJournal = (title: string) => {
+    if (openedLiteratureJournals.includes(title)) {
+      window.open("https://doi.org", "_blank", "noopener,noreferrer");
+      return;
+    }
+    if (openedLiteratureJournals.length < 3) {
+      const next = [...openedLiteratureJournals, title];
+      setOpenedLiteratureJournals(next);
+      window.open("https://doi.org", "_blank", "noopener,noreferrer");
+      if (next.length === 3) {
+        showToast("Batas 3 jurnal gratis tercapai. Jurnal lainnya kini terkunci.");
+      } else {
+        showToast(`Jurnal dibuka (${next.length}/3 kuota gratis)`);
+      }
+    } else {
+      showToast("Batas 3 jurnal telah tercapai. Upgrade ke Alerin Pro untuk membuka semua jurnal.");
+      setUpgradeOpen(true);
+    }
+  };
 
   const confirmHapusFile = () => {
     if (fileUrl) {
@@ -12000,6 +12181,10 @@ export default function CariJurnalFigmaPanel({
                       onOpenRingkasan={() => setRingkasanOpen(true)}
                       onOpenAbstrak={() => setRingkasanOpen(true)}
                       onOpenSitasi={() => setSitasiOpen(true)}
+                      onShowToast={showToast}
+                      onUpgrade={() => setUpgradeOpen(true)}
+                      openedJournals={openedLiteratureJournals}
+                      onOpenJournal={handleOpenLiteratureJournal}
                     />
                   </div>
                 ) : searchType === "review" ? (
@@ -12016,6 +12201,9 @@ export default function CariJurnalFigmaPanel({
                       onSave={saveLiteratureReview}
                       saved={savedLiterature.some(item => item.topic.toLowerCase() === (query.trim() || literatureTopic.trim()).toLowerCase())}
                       onShowToast={showToast}
+                      onUpgrade={() => setUpgradeOpen(true)}
+                      openedJournals={openedLiteratureJournals}
+                      onOpenJournal={handleOpenLiteratureJournal}
                     />
                   </div>
                 ) : (searchSubmittedQuery || query).trim() === "12345" ? (
@@ -12397,6 +12585,9 @@ export default function CariJurnalFigmaPanel({
                 onSave={saveLiteratureReview}
                 saved={savedLiterature.some(item => item.topic.toLowerCase() === (query.trim() || literatureTopic.trim()).toLowerCase())}
                 onShowToast={showToast}
+                onUpgrade={() => setUpgradeOpen(true)}
+                openedJournals={openedLiteratureJournals}
+                onOpenJournal={handleOpenLiteratureJournal}
               />
             ) : searchType === "map" ? (
               <DesktopResearchMap
@@ -12407,6 +12598,10 @@ export default function CariJurnalFigmaPanel({
                 onOpenRingkasan={() => setRingkasanOpen(true)}
                 onOpenAbstrak={() => setRingkasanOpen(true)}
                 onOpenSitasi={() => setSitasiOpen(true)}
+                onShowToast={showToast}
+                onUpgrade={() => setUpgradeOpen(true)}
+                openedJournals={openedLiteratureJournals}
+                onOpenJournal={handleOpenLiteratureJournal}
               />
             ) : (
               <DesktopSearchResults
