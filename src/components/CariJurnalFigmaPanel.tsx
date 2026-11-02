@@ -3972,9 +3972,9 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
                       <span className="block text-[10px] font-bold uppercase tracking-wide text-slate-400">Hasil Temuan</span>
                       <p className="mt-0.5 leading-5 text-slate-700">{row.hasil}</p>
                     </div>
-                    <div className="rounded-xl border border-amber-200/90 bg-amber-50/70 p-3">
-                      <span className="block text-[10px] font-bold uppercase tracking-wide text-amber-900">Persamaan dan Perbedaan (Kebaruan)</span>
-                      <p className="mt-1 leading-5 font-medium text-amber-950">{row.perbedaan}</p>
+                    <div className="rounded-xl border border-sky-200/90 bg-sky-50/70 p-3">
+                      <span className="block text-[10px] font-bold uppercase tracking-wide text-sky-900">Persamaan dan Perbedaan (Kebaruan)</span>
+                      <p className="mt-1 leading-5 font-medium text-sky-950">{row.perbedaan}</p>
                     </div>
                   </div>
                 </article>
@@ -3991,7 +3991,7 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
                     <th
                       key={header}
                       className={`${columnWidths[index]} border-b border-slate-200/90 bg-slate-50/90 px-2 py-3 text-[12px] font-bold leading-5 text-slate-600 md:px-3 md:text-xs md:leading-5 ${
-                        header === "Persamaan dan perbedaan" ? "bg-amber-50/40 text-amber-900" : ""
+                        header === "Persamaan dan perbedaan" ? "bg-sky-50/60 text-sky-900 md:bg-amber-50/40 md:text-amber-900" : ""
                       }`}
                     >
                       {header}
@@ -4011,7 +4011,7 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
                     <td className="px-2 py-3 align-top text-[12px] font-normal leading-5 text-slate-700 md:px-3 md:text-xs md:leading-5">{row.teori}</td>
                     <td className="px-2 py-3 align-top text-[12px] font-normal leading-5 text-slate-700 md:px-3 md:text-xs md:leading-5">{row.metode}</td>
                     <td className="px-2 py-3 align-top text-[12px] font-normal leading-5 text-slate-700 md:px-3 md:text-xs md:leading-5">{row.hasil}</td>
-                    <td className="bg-amber-50/40 px-2 py-3 align-top text-[12px] font-normal leading-5 text-slate-700 md:px-3 md:text-xs md:leading-5">{row.perbedaan}</td>
+                    <td className="bg-sky-50/40 md:bg-amber-50/40 px-2 py-3 align-top text-[12px] font-normal leading-5 text-slate-700 md:px-3 md:text-xs md:leading-5">{row.perbedaan}</td>
                   </tr>
                 ))}
               </tbody>
