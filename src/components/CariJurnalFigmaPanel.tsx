@@ -12699,7 +12699,15 @@ export default function CariJurnalFigmaPanel({
                             <path d="M5.5 2v10M10.5 3.5v10" />
                           </svg>
                         )}
-                        <span className="text-center leading-tight whitespace-nowrap">{label}</span>
+                        <span className="text-center leading-tight whitespace-nowrap">
+                          {type === "review" ? (
+                            <>
+                              Literatur<span className="hidden md:inline"> Review</span>
+                            </>
+                          ) : (
+                            label
+                          )}
+                        </span>
                       </button>
                     );
                   })}
@@ -13678,7 +13686,15 @@ export default function CariJurnalFigmaPanel({
                             <path d="M6 2v11M10 3v11" />
                           </svg>
                         )}
-                        <span className="text-center leading-tight">{label}</span>
+                        <span className="text-center leading-tight">
+                          {type === "review" ? (
+                            <>
+                              Literatur<span className="hidden md:inline"> Review</span>
+                            </>
+                          ) : (
+                            label
+                          )}
+                        </span>
                       </button>
                     );
                   })}
