@@ -14293,10 +14293,10 @@ export default function CariJurnalFigmaPanel({
           <button type="button" onClick={onBack} className="relative flex flex-col items-center gap-1 pb-1 text-[10px] font-bold text-[#004f80]">
             <span className="-mt-7 flex h-[46px] w-[46px] items-center justify-center rounded-full border border-white bg-[rgba(123,123,123,0.05)] shadow-lg">
               <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white">
-                <img src={`${mobileAssets}/73c1a.png`} alt="Alerin AI" className="h-8 w-8 rounded-full object-cover" />
+                <img src={`${mobileAssets}/73c1a.png`} alt="Alerin" className="h-8 w-8 rounded-full object-cover" />
               </span>
             </span>
-            ALERIN AI
+            Alerin
           </button>
           <button
             type="button"
