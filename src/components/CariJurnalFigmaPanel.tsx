@@ -12786,10 +12786,9 @@ export default function CariJurnalFigmaPanel({
                     {topicError && (
                       <div
                         role="alert"
-                        className="mt-2.5 flex items-center gap-2 rounded-xl border border-red-200/90 bg-red-50/80 px-3.5 py-2.5 text-xs font-medium text-red-600 shadow-2xs transition-all animate-in fade-in duration-200"
+                        className="mt-2.5 rounded-xl border border-red-200/90 bg-red-50/80 px-3.5 py-2.5 text-xs font-medium text-red-600 shadow-2xs transition-all animate-in fade-in duration-200"
                       >
-                        <span className="shrink-0 text-sm leading-none" aria-hidden="true">⚠️</span>
-                        <span className="leading-snug">{topicError}</span>
+                        {topicError}
                       </div>
                     )}
 
@@ -13127,10 +13126,9 @@ export default function CariJurnalFigmaPanel({
                   {queryError && (
                     <div
                       role="alert"
-                      className="mt-2.5 flex items-center gap-2 rounded-xl border border-red-200/90 bg-red-50/80 px-3.5 py-2.5 text-xs font-medium text-red-600 shadow-2xs transition-all animate-in fade-in duration-200"
+                      className="mt-2.5 rounded-xl border border-red-200/90 bg-red-50/80 px-3.5 py-2.5 text-xs font-medium text-red-600 shadow-2xs transition-all animate-in fade-in duration-200"
                     >
-                      <span className="shrink-0 text-sm leading-none" aria-hidden="true">⚠️</span>
-                      <span className="leading-snug">{queryError}</span>
+                      {queryError}
                     </div>
                   )}
 
