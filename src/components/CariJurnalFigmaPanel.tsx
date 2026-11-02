@@ -6973,6 +6973,17 @@ function MobileLiteratureReview({
                   <p className="mt-1 text-xs text-slate-500 font-normal">{row.authors} · <span className="font-medium text-slate-600">{row.source}</span></p>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
+                  <span
+                    className={`inline-flex items-center justify-center rounded-full px-2.5 py-1 text-xs font-semibold ${
+                      row.tag === "Sangat relevan" || row.tag === "Prioritas tinggi" || !row.tag
+                        ? "bg-emerald-50 text-emerald-700 border border-emerald-200/60"
+                        : row.tag === "Cukup relevan"
+                          ? "bg-blue-50 text-blue-700 border border-blue-200/60"
+                          : "bg-amber-50 text-amber-700 border border-amber-200/60"
+                    }`}
+                  >
+                    {row.tag === "Sangat relevan" ? "Prioritas tinggi" : (row.tag || "Prioritas tinggi")}
+                  </span>
                   <span className="rounded-lg bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 border border-slate-200 shadow-2xs">
                     {row.year}
                   </span>
@@ -9465,6 +9476,17 @@ function DesktopResearchMap({
                 <p className="mt-1 text-xs text-slate-500 font-normal">{row.authors} · <span className="font-medium text-slate-600">{row.source}</span></p>
               </div>
               <div className="flex flex-wrap items-center gap-2">
+                <span
+                  className={`inline-flex items-center justify-center rounded-full px-2.5 py-1 text-xs font-semibold ${
+                    row.tag === "Sangat relevan" || row.tag === "Prioritas tinggi" || !row.tag
+                      ? "bg-emerald-50 text-emerald-700 border border-emerald-200/60"
+                      : row.tag === "Cukup relevan"
+                        ? "bg-blue-50 text-blue-700 border border-blue-200/60"
+                        : "bg-amber-50 text-amber-700 border border-amber-200/60"
+                  }`}
+                >
+                  {row.tag === "Sangat relevan" ? "Prioritas tinggi" : (row.tag || "Prioritas tinggi")}
+                </span>
                 <span className="rounded-lg bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 border border-slate-200 shadow-2xs">
                   {row.year}
                 </span>
