@@ -12654,23 +12654,18 @@ export default function CariJurnalFigmaPanel({
                   </div>
                 </section>
 
-                <div className="mt-6 flex items-center justify-between px-1">
-                  <div className="flex items-center gap-2">
-                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-sky-100 text-[#00629b]">
-                      <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
-                        <path d="M5.5 4h8.5M5.5 8h8.5M5.5 12h8.5" />
-                        <circle cx="2.5" cy="4" r="1" fill="currentColor" stroke="none" />
-                        <circle cx="2.5" cy="8" r="1" fill="currentColor" stroke="none" />
-                        <circle cx="2.5" cy="12" r="1" fill="currentColor" stroke="none" />
-                      </svg>
-                    </span>
-                    <h3 className="font-['Plus_Jakarta_Sans:Bold'] text-xs sm:text-[13px] font-bold uppercase tracking-wide text-slate-700">
-                      Daftar Rekomendasi
-                    </h3>
-                  </div>
-                  <span className="shrink-0 whitespace-nowrap inline-flex items-center rounded-full bg-sky-50 px-2.5 py-0.5 text-[11px] font-bold text-[#00629b] border border-sky-200/60">
-                    3 dari 20 telaah
+                <div className="mt-6 flex items-center gap-2 px-1">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-sky-100 text-[#00629b]">
+                    <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+                      <path d="M5.5 4h8.5M5.5 8h8.5M5.5 12h8.5" />
+                      <circle cx="2.5" cy="4" r="1" fill="currentColor" stroke="none" />
+                      <circle cx="2.5" cy="8" r="1" fill="currentColor" stroke="none" />
+                      <circle cx="2.5" cy="12" r="1" fill="currentColor" stroke="none" />
+                    </svg>
                   </span>
+                  <h3 className="font-['Plus_Jakarta_Sans:Bold'] text-xs sm:text-[13px] font-bold text-slate-700">
+                    Rekomendasi yang paling relevan
+                  </h3>
                 </div>
 
                 <div className="mt-3.5 space-y-3.5">
