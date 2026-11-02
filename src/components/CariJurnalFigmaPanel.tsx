@@ -1804,7 +1804,6 @@ function FilterSection({
 }
 
 function FilterPanel({ open, onClose, onApply, onReset }: { open: boolean; onClose: () => void; onApply: () => void; onReset: () => void }) {
-  const [urutkan, setUrutkan] = useState("Paling Relevan");
   const [tahun, setTahun] = useState("Semua");
   const [tahunAwal, setTahunAwal] = useState(rentangTahun["Semua"][0]);
   const [tahunAkhir, setTahunAkhir] = useState(rentangTahun["Semua"][1]);
@@ -1963,26 +1962,6 @@ function FilterPanel({ open, onClose, onApply, onReset }: { open: boolean; onClo
         <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">
           <FilterSection title="Umum" open={sections.umum} onToggle={() => toggleSection("umum")}>
             <div className="space-y-4">
-              <div>
-                <p className="text-sm font-medium leading-5 text-slate-700">Urutkan berdasarkan</p>
-                <div className="mt-2.5 flex flex-wrap gap-2">
-                  {["Paling Relevan", "Tahun Terbaru", "Sitasi Terbanyak"].map(opsi => (
-                    <button
-                      key={opsi}
-                      type="button"
-                      onClick={() => setUrutkan(opsi)}
-                      className={`min-h-[40px] rounded-full px-3.5 py-1.5 text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
-                        urutkan === opsi
-                          ? "border-2 border-[#0369a1] bg-[#0369a1] text-white shadow-sm"
-                          : "border-[1.5px] border-slate-300 bg-white text-slate-700 hover:border-sky-500 hover:bg-sky-50 hover:text-sky-700"
-                      }`}
-                    >
-                      {opsi}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
               <div>
                 <p className="text-sm font-medium leading-5 text-slate-700">Tahun terbit</p>
               <div className="mt-3 flex flex-wrap gap-2">
