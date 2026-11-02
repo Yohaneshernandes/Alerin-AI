@@ -11414,19 +11414,16 @@ const validateSearchInput = (val: string): string | null => {
   const trimmed = val.trim();
   if (!trimmed) return null;
 
-  const isOverLimit = val.length > 50;
+  if (val.length > 50) {
+    return "Maksimal 50 karakter.";
+  }
+
   // Format salah jika terdapat angka (0-9) atau karakter khusus (selain huruf dan spasi)
   const hasInvalidFormat = /[0-9]/.test(val) || /[^\p{L}\s]/u.test(val);
-
-  if (hasInvalidFormat && isOverLimit) {
-    return "Masukkan hanya huruf (maksimal 50 karakter).";
-  }
   if (hasInvalidFormat) {
     return "Format tidak valid. Gunakan huruf saja tanpa angka atau simbol khusus.";
   }
-  if (isOverLimit) {
-    return "Pencarian melebihi batas. Maksimum 50 karakter.";
-  }
+
   return null;
 };
 
