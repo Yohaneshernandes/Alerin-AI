@@ -3990,9 +3990,7 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
                   {headers.map((header, index) => (
                     <th
                       key={header}
-                      className={`${columnWidths[index]} border-b border-slate-200/90 bg-slate-50/90 px-2 py-3 text-[12px] font-bold leading-5 text-slate-600 md:px-3 md:text-xs md:leading-5 ${
-                        header === "Persamaan dan perbedaan" ? "bg-sky-50/60 text-sky-900 md:bg-amber-50/40 md:text-amber-900" : ""
-                      }`}
+                      className={`${columnWidths[index]} border-b border-slate-200/90 bg-slate-50/90 px-2 py-3 text-[12px] font-bold leading-5 text-slate-600 md:px-3 md:text-xs md:leading-5`}
                     >
                       {header}
                     </th>
@@ -4011,7 +4009,7 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
                     <td className="px-2 py-3 align-top text-[12px] font-normal leading-5 text-slate-700 md:px-3 md:text-xs md:leading-5">{row.teori}</td>
                     <td className="px-2 py-3 align-top text-[12px] font-normal leading-5 text-slate-700 md:px-3 md:text-xs md:leading-5">{row.metode}</td>
                     <td className="px-2 py-3 align-top text-[12px] font-normal leading-5 text-slate-700 md:px-3 md:text-xs md:leading-5">{row.hasil}</td>
-                    <td className="bg-sky-50/40 md:bg-amber-50/40 px-2 py-3 align-top text-[12px] font-normal leading-5 text-slate-700 md:px-3 md:text-xs md:leading-5">{row.perbedaan}</td>
+                    <td className="px-2 py-3 align-top text-[12px] font-normal leading-5 text-slate-700 md:px-3 md:text-xs md:leading-5">{row.perbedaan}</td>
                   </tr>
                 ))}
               </tbody>
