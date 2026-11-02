@@ -6961,32 +6961,8 @@ function MobileLiteratureReview({
           </p>
         </div>
 
-        {/* Filter Chips Kategori Seperti Tampilan Desktop */}
-        <div className="-mx-4 mt-3.5 flex gap-2 overflow-x-auto px-4 pb-1 pt-0.5 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-          {filterChips.map(item => {
-            const active = chip === item.key;
-            return (
-              <button
-                key={item.key}
-                type="button"
-                onClick={() => {
-                  setChip(item.key);
-                  setPriorityLimit(6);
-                }}
-                className={`shrink-0 whitespace-nowrap rounded-xl px-3.5 py-1.5 text-xs font-semibold transition-all cursor-pointer active:scale-95 ${
-                  active
-                    ? "bg-[#00629b] text-white shadow-xs ring-1 ring-[#00629b]"
-                    : "bg-slate-100/90 text-slate-700 hover:bg-slate-200/80 border border-slate-200/70"
-                }`}
-              >
-                {item.label}
-              </button>
-            );
-          })}
-        </div>
-
         {/* List Card Jurnal yang Digunakan */}
-        <div className="mt-3.5 space-y-3">
+        <div className="mt-4 space-y-3">
           {visiblePriority.slice(0, priorityLimit).map((row, index) => {
             const isOpened = openedJournals.includes(row.title);
             const isLocked = !isOpened && openedJournals.length >= 3;
@@ -9289,30 +9265,6 @@ function DesktopResearchMap({
           <p className="mt-1.5 text-[13.5px] sm:text-sm leading-5 text-slate-500">
             Daftar jurnal yang menjadi dasar pembuatan peta penelitian.
           </p>
-
-          {/* Filter Chips Kategori Seperti Tampilan Literatur Review */}
-          <div className="-mx-4 mt-3.5 flex gap-2 overflow-x-auto px-4 pb-1 pt-0.5 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-            {filterChips.map(item => {
-              const active = chip === item.key;
-              return (
-                <button
-                  key={item.key}
-                  type="button"
-                  onClick={() => {
-                    setChip(item.key);
-                    setMobileJournalLimit(6);
-                  }}
-                  className={`shrink-0 whitespace-nowrap rounded-xl px-3.5 py-1.5 text-xs font-semibold transition-all cursor-pointer active:scale-95 ${
-                    active
-                      ? "bg-[#00629b] text-white shadow-xs ring-1 ring-[#00629b]"
-                      : "bg-slate-100/90 text-slate-700 hover:bg-slate-200/80 border border-slate-200/70"
-                  }`}
-                >
-                  {item.label}
-                </button>
-              );
-            })}
-          </div>
 
           {nodeFilter && (
             <div className="mt-2.5 flex items-center gap-2">
