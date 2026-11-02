@@ -12313,16 +12313,15 @@ export default function CariJurnalFigmaPanel({
               <img src={`${mobileAssets}/90eed.svg`} alt="" className="max-w-none origin-center scale-[0.6667]" />
             </span>
             <div className="min-w-0">
-              <div className="flex items-center gap-1">
-                <p className="truncate font-['Plus_Jakarta_Sans:Bold'] text-base font-bold leading-5">Alerin Jurnal</p>
-                <span className="inline-flex items-center gap-0.5 rounded-full bg-[#1e264b] px-1.5 py-0.5 font-['Inter:Bold'] text-[7px] font-bold text-white">
+              <p className="truncate font-['Plus_Jakarta_Sans:Bold'] text-base font-bold leading-5 text-slate-900">Alerin Jurnal</p>
+              <div className="mt-0.5 flex items-center">
+                <span className="inline-flex items-center gap-0.5 rounded-full bg-[#1e264b] px-1.5 py-0.5 font-['Inter:Bold'] text-[7.5px] font-bold text-white leading-none">
                   Plus
                   <span className="relative h-2.5 w-2.5 overflow-hidden">
                     <img src={`${mobileAssets}/8923b.png`} alt="" className="absolute -left-1.5 -top-0.5 h-8 max-w-none" />
                   </span>
                 </span>
               </div>
-              <p className="font-['Plus_Jakarta_Sans:Medium'] text-[11px] leading-3 text-[#64748b]">Pendamping Akademik</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
