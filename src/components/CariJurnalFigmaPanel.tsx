@@ -478,6 +478,7 @@ type MobileResultJournal = {
   summary: string;
   title: string;
   authors: string;
+  journal?: string;
   description: string;
   year: string;
   relevancy: string;
@@ -490,6 +491,7 @@ const mobileResultJournals: MobileResultJournal[] = [
     rank: "Rekomendasi 1",
     score: 97,
     citation: "2023 • Jurnal Kajian Pemasaran Digital",
+    journal: "Jurnal Kajian Pemasaran Digital",
     summary:
       "Penelitian ini menunjukkan bahwa interaksi parasosial antara host dan penonton dapat membangun kepercayaan. Ketika interaksi tersebut disertai pesan kelangkaan berupa batas waktu atau stok, niat beli konsumen pada live streaming commerce meningkat...",
     title: "Live Streaming Commerce and Mimic Purchase Intention: The Role of Parasocial Interaction and Scarcity Nudges",
@@ -504,6 +506,7 @@ const mobileResultJournals: MobileResultJournal[] = [
     rank: "Rekomendasi #2",
     score: 89,
     citation: "2023 • Jurnal Kajian Pemasaran Digital",
+    journal: "Jurnal Kajian Pemasaran Digital",
     summary: "Studi ini memperkuat hubungan antara interaksi parasosial, dorongan kelangkaan, dan perilaku pembelian digital.",
     title: "Pengaruh Interaksi Parasosial dan Dorongan Kelangkaan terhadap Niat Beli di Live Streaming Commerce",
     authors: "Pratama, R. & Lestari, S.",
@@ -9971,6 +9974,7 @@ function MobileJournalResultCard({
         </div>
         <div className="mt-3.5 h-6 w-5/6 animate-pulse rounded bg-slate-200" />
         <div className="mt-2 h-4 w-1/2 animate-pulse rounded bg-slate-100" />
+        <div className="mt-1.5 h-3.5 w-1/3 animate-pulse rounded bg-slate-100" />
         <div className="mt-5 flex items-center justify-center gap-2.5 rounded-xl bg-sky-50 py-4 text-xs font-semibold text-sky-700">
           <svg className="h-4 w-4 animate-spin text-sky-600" fill="none" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
@@ -10010,6 +10014,9 @@ function MobileJournalResultCard({
         <div className="min-w-0 flex-1">
           <h2 className="text-[18px] sm:text-[20px] font-bold leading-[1.35] text-slate-900">{result.title}</h2>
           <p className="mt-1.5 text-xs font-medium leading-5 text-slate-600">{result.authors}</p>
+          <p className="text-xs font-normal leading-5 text-slate-500">
+            {result.journal || (result.citation?.includes("•") ? result.citation.split("•")[1]?.trim() : "") || "Jurnal Kajian Pemasaran Digital"}
+          </p>
         </div>
         <div className="flex shrink-0 flex-col items-center">
           <RelevancyRing value={result.relevancy || `${result.score}%`} />
@@ -11501,6 +11508,7 @@ export default function CariJurnalFigmaPanel({
       if (idx === -1) return prev;
       const currentIds = prev.map(j => j.id);
       const replacement = alternativeJournalsPool.find(j => !currentIds.includes(j.id)) ?? alternativeJournalsPool[idx % alternativeJournalsPool.length];
+      const replacementJournal = replacement.detail?.source || "Jurnal Kajian Pemasaran Digital";
       const newId = `${replacement.id}-${Date.now()}`;
       const parseScore = (r: string) => parseInt(r.replace(/\D/g, ""), 10) || 90;
       const nextList = [...prev];
@@ -11508,7 +11516,8 @@ export default function CariJurnalFigmaPanel({
         id: newId,
         rank: `Rekomendasi ${idx + 1}`,
         score: parseScore(replacement.relevancy),
-        citation: `${replacement.year} • Jurnal Kajian Pemasaran Digital`,
+        citation: `${replacement.year} • ${replacementJournal}`,
+        journal: replacementJournal,
         summary: replacement.description,
         title: replacement.title,
         authors: replacement.authors,
@@ -12687,6 +12696,7 @@ export default function CariJurnalFigmaPanel({
                           </div>
                           <div className="mt-3.5 h-6 w-5/6 rounded bg-slate-200" />
                           <div className="mt-2 h-4 w-1/2 rounded bg-slate-100" />
+                          <div className="mt-1.5 h-3.5 w-1/3 rounded bg-slate-100" />
                         </article>
                       ))}
                     </div>
