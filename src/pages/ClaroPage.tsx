@@ -3402,7 +3402,7 @@ function PercakapanTab({
                                   className="text-xs font-medium text-blue-600 hover:underline leading-snug line-clamp-2">
                                   {src.title}
                                 </a>
-      ) : step === 1 || showEmailVerify ? null : (
+                              ) : (
                                 <p className="text-xs font-medium text-slate-700 leading-snug line-clamp-2">{src.title}</p>
                               )}
                               <p className="text-[10px] text-slate-400 mt-0.5">{src.author} · {src.year}</p>
@@ -6677,7 +6677,7 @@ function QuizlabTab({ onTab }: { onTab: (t: NavTab) => void }) {
 
 // ─── TAB: Profil ─────────────────────────────────────────────────────────────
 // ─── Register / Onboarding Modal (Pintarly-inspired full-screen) ─────────────
-type FinishDest = { prompt?: string; tab?: NavTab; featureKey?: FeatureKey };
+type FinishDest = { prompt?: string; tab?: NavTab; featureKey?: FeatureKey | string };
 
 const PintarlyMascotBubble = React.memo(function PintarlyMascotBubble({ pre, bold, sub }: { pre?: string; bold: string; sub?: string }) {
   return (
@@ -10328,12 +10328,14 @@ function ProfilTab({ onTab, onRegister }: { onTab: (t: NavTab) => void; onRegist
                       <button type="button" onClick={openAccountSecurity} className="text-sm font-semibold text-blue-600 transition-colors hover:text-blue-700">Edit</button>
                     </div>
                     <div className="divide-y divide-slate-100">
-                      {[
-                        { label: "Email", value: accountEmail },
-                        { label: "Nomor Handphone", value: whatsapp },
-                        { label: "Kata Sandi", value: "Ubah kata sandi" },
-                        { label: "Lupa Kata Sandi", value: "Pulihkan akun" },
-                      ].map(row => (
+                      {(
+                        [
+                          { label: "Email", value: accountEmail },
+                          { label: "Nomor Handphone", value: whatsapp },
+                          { label: "Kata Sandi", value: "Ubah kata sandi" },
+                          { label: "Lupa Kata Sandi", value: "Pulihkan akun" },
+                        ] as { label: string; value: string; action?: string }[]
+                      ).map(row => (
                         <div key={row.label} className="flex min-h-11 items-center justify-between gap-4 py-2.5">
                           <span className="text-[13px] font-semibold text-slate-600">{row.label}</span>
                           <span className="flex items-center gap-2 text-right">
@@ -10912,7 +10914,7 @@ export default function AlerinPage() {
           onFinish={(dest) => {
             setRegisterOpen(false);
             if (dest.featureKey) {
-              setPendingFeature(dest.featureKey);
+              setPendingFeature(dest.featureKey as FeatureKey);
               setTab(dest.tab ?? "fitur");
             } else if (dest.tab && dest.tab !== "percakapan") {
               setTab(dest.tab);

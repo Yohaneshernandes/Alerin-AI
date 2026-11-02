@@ -3085,7 +3085,7 @@ function PercakapanTab({ onFeatureClick, onTab, onFeatureRec, initialMsgs, pendi
                                   className="text-xs font-medium text-blue-600 hover:underline leading-snug line-clamp-2">
                                   {src.title}
                                 </a>
-      ) : step === 1 || showEmailVerify ? null : (
+                              ) : (
                                 <p className="text-xs font-medium text-slate-700 leading-snug line-clamp-2">{src.title}</p>
                               )}
                               <p className="text-[10px] text-slate-400 mt-0.5">{src.author} · {src.year}</p>
@@ -5773,7 +5773,7 @@ function FiturTab({ onChat, openFeatureKey, onFeatureOpened }: { onChat: (prompt
             <h2 className="font-display font-800 text-2xl text-slate-900 mb-1">Pilih cara Alerin membantumu</h2>
             <p className="text-slate-500 text-sm leading-relaxed max-w-lg">Setiap fitur memberi formulir dan hasil berbeda agar mahasiswa tidak memulai dari ruang chat kosong.</p>
           </div>
-          <button onClick={onChat}
+          <button onClick={() => onChat?.()}
             className="flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-200 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition-colors shrink-0">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
             Chat
@@ -6480,7 +6480,7 @@ function QuizlabTab({ onTab }: { onTab: (t: NavTab) => void }) {
 
 // ─── TAB: Profil ─────────────────────────────────────────────────────────────
 // ─── Register / Onboarding Modal (Pintarly-inspired full-screen) ─────────────
-type FinishDest = { prompt?: string; tab?: NavTab; featureKey?: FeatureKey };
+type FinishDest = { prompt?: string; tab?: NavTab; featureKey?: FeatureKey | string };
 
 const PintarlyMascotBubble = React.memo(function PintarlyMascotBubble({ pre, bold, sub }: { pre: string; bold: string; sub?: string }) {
   return (
@@ -7080,7 +7080,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
   );
 
   // Pintarly-style radio card
-  const RadioCard = ({ selected, onClick, icon, label, sublabel, badge, badgeColor }: { selected: boolean; onClick: () => void; icon: React.ReactNode; label: string; sublabel: string; badge?: string; badgeColor?: string }) => (
+  const RadioCard = ({ selected, onClick, icon, label, sublabel, badge, badgeColor }: { selected: boolean; onClick: () => void; icon: React.ReactNode; label: string; sublabel: string; badge?: string | null; badgeColor?: string | null }) => (
     <button onClick={onClick}
       className="w-full bg-white relative rounded-[12px] sm:rounded-[16px] transition-all active:scale-[0.98] drop-shadow-[0px_1px_1px_rgba(0,0,0,0.05)] group reg-card"
       style={selected ? { border: "2px solid #2563eb", background: "#eff6ff" } : { border: "1px solid #e5e7eb" }}>
@@ -7936,7 +7936,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
 
           {/* Step 9: Target */}
           {step === 9 && (() => {
-            const cfgByBantu: Record<string, { pre: string; bold: string; sub: string; opts: { id: string; icon: React.ReactNode; label: string; sublabel: string; badge?: string; badgeColor?: string }[] }> = {
+            const cfgByBantu: Record<string, { pre: string; bold: string; sub: string; opts: { id: string; icon: React.ReactNode; label: string; sublabel: string; badge?: string | null; badgeColor?: string | null }[] }> = {
               matakuliah: {
                 pre: "Apa", bold: "Tujuanmu?", sub: "Pilih satu yang paling sesuai tujuanmu sekarang.",
                 opts: [
@@ -8458,7 +8458,7 @@ export default function AlerinPage() {
           onFinish={(dest) => {
             setRegisterOpen(false);
             if (dest.featureKey) {
-              setPendingFeature(dest.featureKey);
+              setPendingFeature(dest.featureKey as FeatureKey);
               setTab(dest.tab ?? "fitur");
             } else if (dest.tab && dest.tab !== "percakapan") {
               setTab(dest.tab);

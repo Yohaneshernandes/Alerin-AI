@@ -470,7 +470,21 @@ const alternativeJournalsPool = [
   },
 ];
 
-const mobileResultJournals = [
+type MobileResultJournal = {
+  id: string;
+  rank: string;
+  score: number;
+  citation: string;
+  summary: string;
+  title: string;
+  authors: string;
+  description: string;
+  year: string;
+  relevancy: string;
+  isReplaced?: boolean;
+};
+
+const mobileResultJournals: MobileResultJournal[] = [
   {
     id: "mres-1",
     rank: "Rekomendasi 1",
@@ -1862,7 +1876,7 @@ function FilterPanel({ open, onClose, onApply, onReset }: { open: boolean; onClo
     if (item === "Semua Negara") {
       setNegara(current => {
         if (current["Semua Negara"]) {
-          return {};
+          return {} as Record<string, boolean>;
         }
         return { "Semua Negara": true };
       });
@@ -3250,8 +3264,8 @@ function DesktopJournalResultCard({
             onClick={() => {
               const template = `Halo Alerin, saya ingin mendiskusikan artikel jurnal ini untuk bahan penelitian saya:
 
-Judul: "${detail.title}"
-Penulis: ${detail.authors} (${detail.year})
+Judul: "${journal?.title || ""}"
+Penulis: ${journal?.authors || "-"} (${journal?.year || "-"})
 DOI: ${detail.doiUrl || "-"}
 
 Ringkasan:
