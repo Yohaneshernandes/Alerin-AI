@@ -5785,7 +5785,7 @@ function DesktopLiteratureReview({
 
   const stats = [
     { label: "Total hasil ditemukan", value: "126", tone: "text-[#0369a1]" },
-    { label: "Duplikasi dihapus", value: "34", tone: "text-[#0369a1]" },
+    { label: "Duplikasi dihapus", value: "34", tone: "text-red-700" },
     { label: "Artikel tersisa untuk sintesis", value: "92", tone: "text-[#0369a1]" },
     { label: "Artikel prioritas tinggi", value: "24", tone: "text-[#0369a1]" },
   ];
@@ -6786,7 +6786,7 @@ function MobileLiteratureReview({
 
   const statsList = [
     { label: "Total hasil ditemukan", value: "126", tone: "text-[#00629b]" },
-    { label: "Duplikasi dihapus", value: "34", tone: "text-[#00629b]" },
+    { label: "Duplikasi dihapus", value: "34", tone: "text-red-700" },
     { label: "Tersisa untuk sintesis", value: "92", tone: "text-[#00629b]" },
     { label: "Prioritas tinggi", value: "24", tone: "text-[#00629b]" },
   ];
@@ -6914,7 +6914,7 @@ function MobileLiteratureReview({
               <p className="text-[12px] sm:text-[12.5px] font-semibold leading-snug text-slate-600">{item.label}</p>
               <p className="mt-1.5 flex items-baseline gap-1.5">
                 <span className={`font-['Plus_Jakarta_Sans:ExtraBold'] text-[22px] sm:text-[23px] font-extrabold tracking-tight ${item.tone}`}>{item.value}</span>
-                <span className="text-xs font-medium text-slate-500">artikel</span>
+                <span className={`text-xs font-medium ${item.label === "Duplikasi dihapus" ? "text-red-700/80" : "text-slate-500"}`}>artikel</span>
               </p>
             </div>
           ))}
@@ -10622,7 +10622,7 @@ function DesktopLiteratureCollectionCard({
       <div className="mt-4 grid grid-cols-4 gap-4">
         {[
           ["Total hasil ditemukan", "126", "text-[#00629b]"],
-          ["Duplikasi dihapus", "34", "text-[#00629b]"],
+          ["Duplikasi dihapus", "34", "text-red-700"],
           ["Artikel tersisa untuk sintesis", "92", "text-[#00629b]"],
           ["Artikel prioritas tinggi", "24", "text-[#00629b]"],
         ].map(([label, value, tone]) => (
@@ -10630,7 +10630,7 @@ function DesktopLiteratureCollectionCard({
             <p className="min-h-8 font-['Plus_Jakarta_Sans:Medium'] text-xs font-medium leading-4 text-slate-400">{label}</p>
             <p className="flex items-baseline gap-1.5">
               <span className={`font-['Plus_Jakarta_Sans:ExtraBold'] text-2xl font-extrabold ${tone}`}>{value}</span>
-              <span className="text-xs text-slate-500">artikel</span>
+              <span className={`text-xs ${label === "Duplikasi dihapus" ? "text-red-700/80" : "text-slate-500"}`}>artikel</span>
             </p>
           </div>
         ))}
@@ -10905,7 +10905,7 @@ function MobileLiteratureCollectionCard({
       <div className="grid grid-cols-2 gap-2.5">
         {[
           ["Total hasil ditemukan", "126", "text-[#00629b]"],
-          ["Duplikasi dihapus", "34", "text-[#00629b]"],
+          ["Duplikasi dihapus", "34", "text-red-700"],
           ["Tersisa untuk sintesis", "92", "text-[#00629b]"],
           ["Prioritas tinggi", "24", "text-[#00629b]"],
         ].map(([label, value, tone]) => (
@@ -10913,7 +10913,7 @@ function MobileLiteratureCollectionCard({
             <p className="text-[12px] sm:text-[12.5px] font-semibold leading-snug text-slate-600">{label}</p>
             <p className="mt-1.5 flex items-baseline gap-1.5">
               <span className={`font-['Plus_Jakarta_Sans:ExtraBold'] text-[22px] sm:text-[23px] font-extrabold tracking-tight ${tone}`}>{value}</span>
-              <span className="text-xs font-medium text-slate-500">artikel</span>
+              <span className={`text-xs font-medium ${label === "Duplikasi dihapus" ? "text-red-700/80" : "text-slate-500"}`}>artikel</span>
             </p>
           </div>
         ))}
