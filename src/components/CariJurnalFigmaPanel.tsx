@@ -13510,7 +13510,10 @@ export default function CariJurnalFigmaPanel({
           ) : view === "riwayat" ? (
             <div className="mx-auto max-w-[1160px]">
               <div className="-mt-1 md:max-w-2xl">
-                <h1 className="font-['Plus_Jakarta_Sans:Bold'] text-lg font-bold tracking-[-0.27px] text-[#0f172a]">Riwayat cari jurnal</h1>
+                <h1 className="font-['Plus_Jakarta_Sans:Bold'] text-lg font-bold tracking-[-0.27px] text-[#0f172a]">
+                  <span className="md:hidden">Riwayat</span>
+                  <span className="hidden md:inline">Riwayat cari jurnal</span>
+                </h1>
                 <p className="mt-1 text-xs leading-5 text-[#64748b] md:text-sm">Pencarian yang pernah kamu lakukan di Alerin Jurnal.</p>
 
                 <div className="mt-4 space-y-3">
