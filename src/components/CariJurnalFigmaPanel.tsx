@@ -5291,10 +5291,34 @@ const sourceLogos: Record<string, string> = {
 
 const matrixRows = (() => {
   const curated = [
-    { name: "Sari et al. (2022)", journal: "Jurnal Ketahanan Nasional", cells: ["Dukungan sosial perempuan pasca bencana", "Teori modal sosial dan resiliensi komunitas", "Kualitatif (wawancara mendalam)", "Jaringan sosial mempercepat pemulihan psikologis dan ekonomi.", "Menunjukkan peran sentral komunitas perempuan."] },
-    { name: "Ahmed & Rahman (2021)", journal: "International Journal of Disaster Risk Reduction", cells: ["Akses sumber daya pada tahap respon bencana", "Teori akses sumber daya dan kerentanan gender", "Mixed methods", "Keterbatasan akses informasi menghambat keterlibatan perempuan dalam pengambilan keputusan.", "Mengidentifikasi kesenjangan akses berbasis gender."] },
-    { name: "Putri (2023)", journal: "Jurnal Ilmu Sosial dan Humaniora", cells: ["Strategi coping perempuan korban bencana", "Teori coping religius dan dukungan sosial", "Kualitatif (studi kasus)", "Strategi coping berbasis agama dan dukungan keluarga meningkatkan resiliensi.", "Memberikan perspektif lokal dalam konteks Indonesia."] },
-    { name: "Nguyen et al. (2020)", journal: "Global Environmental Change", cells: ["Peran perempuan dalam manajemen risiko bencana", "Teori kesiapsiagaan berbasis komunitas dan gender", "Kuantitatif (survei)", "Perempuan lebih aktif dalam kesiapsiagaan komunitas dibanding laki-laki.", "Data komparatif gender lintas negara Asia Tenggara."] },
+    {
+      title: "Dukungan Sosial dan Modal Komunitas Perempuan Pasca Bencana",
+      authors: "Sari, N., Rahmawati, D. & Lestari, A.",
+      name: "Sari et al. (2022)",
+      journal: "Jurnal Ketahanan Nasional",
+      cells: ["Dukungan sosial perempuan pasca bencana", "Teori modal sosial dan resiliensi komunitas", "Kualitatif (wawancara mendalam)", "Jaringan sosial mempercepat pemulihan psikologis dan ekonomi.", "Menunjukkan peran sentral komunitas perempuan."]
+    },
+    {
+      title: "Gender and Resource Access in Disaster Response and Preparedness",
+      authors: "Ahmed, K. & Rahman, M.",
+      name: "Ahmed & Rahman (2021)",
+      journal: "International Journal of Disaster Risk Reduction",
+      cells: ["Akses sumber daya pada tahap respon bencana", "Teori akses sumber daya dan kerentanan gender", "Mixed methods", "Keterbatasan akses informasi menghambat keterlibatan perempuan dalam pengambilan keputusan.", "Mengidentifikasi kesenjangan akses berbasis gender."]
+    },
+    {
+      title: "Strategi Coping Religius dan Resiliensi Perempuan Korban Bencana",
+      authors: "Putri, E. & Kusuma, W.",
+      name: "Putri (2023)",
+      journal: "Jurnal Ilmu Sosial dan Humaniora",
+      cells: ["Strategi coping perempuan korban bencana", "Teori coping religius dan dukungan sosial", "Kualitatif (studi kasus)", "Strategi coping berbasis agama dan dukungan keluarga meningkatkan resiliensi.", "Memberikan perspektif lokal dalam konteks Indonesia."]
+    },
+    {
+      title: "Women's Roles in Community-Based Disaster Risk Management in Southeast Asia",
+      authors: "Nguyen, T., Tanaka, H. & Lim, C.",
+      name: "Nguyen et al. (2020)",
+      journal: "Global Environmental Change",
+      cells: ["Peran perempuan dalam manajemen risiko bencana", "Teori kesiapsiagaan berbasis komunitas dan gender", "Kuantitatif (survei)", "Perempuan lebih aktif dalam kesiapsiagaan komunitas dibanding laki-laki.", "Data komparatif gender lintas negara Asia Tenggara."]
+    },
   ];
   const authors = [
     "Pratama & Lestari",
@@ -5373,6 +5397,8 @@ const matrixRows = (() => {
   const generated = priorityRows.slice(4).map((row, index) => {
     const i = index + 4;
     return {
+      title: row.title,
+      authors: row.authors,
       name: `${authors[i % authors.length]} (${row.year})`,
       journal: journals[i % journals.length],
       cells: [fokus[i % fokus.length], teori[i % teori.length], metode[i % metode.length], temuan[i % temuan.length], kontribusi[i % kontribusi.length]],
@@ -5777,7 +5803,7 @@ function DesktopLiteratureReview({
     { key: "empiris", label: "Empiris (46)" },
   ];
 
-  const matrixHeaders = ["Penelitian", "Fokus", "Teori", "Metode", "Temuan Utama", "Kontribusi Penelitian"];
+  const matrixHeaders = ["Judul & Penulis", "Fokus", "Teori", "Metode", "Temuan Utama", "Kontribusi Penelitian"];
 
   const [savedJournalTitles, setSavedJournalTitles] = useState<string[]>([]);
   const toggleSaveJournal = (title: string) => {
@@ -5996,13 +6022,19 @@ function DesktopLiteratureReview({
   const visibleMatrix = (() => {
     const q = matrixSearch.trim().toLowerCase();
     let rows = matrixRows.filter(
-      row => !q || row.name.toLowerCase().includes(q) || row.journal.toLowerCase().includes(q) || row.cells.some(cell => cell.toLowerCase().includes(q)),
+      row =>
+        !q ||
+        (row.title && row.title.toLowerCase().includes(q)) ||
+        (row.authors && row.authors.toLowerCase().includes(q)) ||
+        row.name.toLowerCase().includes(q) ||
+        row.journal.toLowerCase().includes(q) ||
+        row.cells.some(cell => cell.toLowerCase().includes(q)),
     );
     if (matrixSort) {
       const { index, dir } = matrixSort;
       rows = [...rows].sort((a, b) => {
-        const left = index === 0 ? a.name.toLowerCase() : a.cells[index - 1].toLowerCase();
-        const right = index === 0 ? b.name.toLowerCase() : b.cells[index - 1].toLowerCase();
+        const left = index === 0 ? (a.title || a.name).toLowerCase() : a.cells[index - 1].toLowerCase();
+        const right = index === 0 ? (b.title || b.name).toLowerCase() : b.cells[index - 1].toLowerCase();
         return dir === "asc" ? left.localeCompare(right) : right.localeCompare(left);
       });
     }
@@ -6363,10 +6395,10 @@ function DesktopLiteratureReview({
                   </tr>
                 )}
                 {visibleMatrix.map((row, rowIndex) => (
-                  <tr key={`${row.name}-${rowIndex}`} className="border-t border-slate-100 align-top">
-                    <td className="w-56 px-5 py-4">
-                      <span className="block text-sm font-semibold leading-5 text-[#0369a1]">{row.name}</span>
-                      <span className="mt-0.5 block text-xs leading-4 text-slate-400">{row.journal}</span>
+                  <tr key={`${row.title || row.name}-${rowIndex}`} className="border-t border-slate-100 align-top">
+                    <td className="w-80 min-w-[280px] px-5 py-4">
+                      <span className="block font-['Plus_Jakarta_Sans:Bold'] text-sm font-bold leading-snug text-slate-900">{row.title || row.name}</span>
+                      <span className="mt-1 block text-xs font-normal leading-4 text-slate-500">{row.authors || row.journal}</span>
                     </td>
                     {row.cells.map((cell, index) => (
                       <td key={index} className="px-5 py-4 text-sm leading-5 text-slate-600">
@@ -6825,7 +6857,14 @@ function MobileLiteratureReview({
 
   const visibleMatrix = matrixRows.filter(row => {
     const q = matrixSearch.trim().toLowerCase();
-    return !q || row.name.toLowerCase().includes(q) || row.journal.toLowerCase().includes(q) || row.cells.some(cell => cell.toLowerCase().includes(q));
+    return (
+      !q ||
+      (row.title && row.title.toLowerCase().includes(q)) ||
+      (row.authors && row.authors.toLowerCase().includes(q)) ||
+      row.name.toLowerCase().includes(q) ||
+      row.journal.toLowerCase().includes(q) ||
+      row.cells.some(cell => cell.toLowerCase().includes(q))
+    );
   });
 
   const activeLabel = structureSections.find(item => item.n === activeSection)?.label ?? "Ringkasan Utama";
@@ -7046,15 +7085,15 @@ function MobileLiteratureReview({
         </div>
         <div className="mt-4 space-y-3.5">
           {visibleMatrix.slice(0, matrixLimit).map(row => (
-            <article key={row.name} className="rounded-2xl bg-slate-50/70 p-4 sm:p-5 border border-slate-200/90 shadow-2xs space-y-3 transition-colors hover:border-sky-300">
-              {/* Header: Nama Penelitian & Nama Jurnal */}
-              <div className="flex items-start justify-between gap-2.5 border-b border-slate-200/70 pb-2.5">
-                <span className="font-['Plus_Jakarta_Sans:Bold'] text-sm sm:text-[14.5px] font-bold text-[#00629b] leading-snug shrink-0">
-                  {row.name}
-                </span>
-                <span className="min-w-0 text-right text-xs font-medium leading-tight text-slate-500">
-                  {row.journal}
-                </span>
+            <article key={row.title || row.name} className="rounded-2xl bg-slate-50/70 p-4 sm:p-5 border border-slate-200/90 shadow-2xs space-y-3 transition-colors hover:border-sky-300">
+              {/* Header: Judul Jurnal & Penulis */}
+              <div className="border-b border-slate-200/70 pb-2.5 space-y-1">
+                <h4 className="font-['Plus_Jakarta_Sans:Bold'] text-sm sm:text-[14.5px] font-bold text-slate-900 leading-snug">
+                  {row.title || row.name}
+                </h4>
+                <p className="text-xs font-normal text-slate-500">
+                  {row.authors || row.journal}
+                </p>
               </div>
 
               {/* Fokus, Teori, dan Metode (Tata letak rapi, simetris, dan mudah dibaca) */}
@@ -10642,17 +10681,17 @@ function DesktopLiteratureCollectionCard({
               <table className="w-full min-w-[560px] table-fixed text-left text-xs">
                 <thead className="border-b border-slate-200 text-slate-400">
                   <tr>
-                    {["Penelitian", "Fokus", "Teori", "Metode", "Temuan Utama", "Kontribusi"].map(label => (
+                    {["Judul & Penulis", "Fokus", "Teori", "Metode", "Temuan Utama", "Kontribusi"].map(label => (
                       <th key={label} className="px-2 py-2 font-semibold">{label} ⇅</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {matrixRows.slice(0, 3).map((row, index) => (
-                    <tr key={`${row.name}-${index}`} className="border-b border-slate-100 align-top last:border-0">
+                    <tr key={`${row.title || row.name}-${index}`} className="border-b border-slate-100 align-top last:border-0">
                       <td className="px-2 py-3">
-                        <span className="font-bold text-[#0369a1]">{row.name}</span>
-                        <span className="mt-0.5 block text-[11px] leading-4 text-slate-400">{row.journal}</span>
+                        <span className="font-bold text-slate-900 block">{row.title || row.name}</span>
+                        <span className="mt-0.5 block text-[11px] leading-4 text-slate-500">{row.authors || row.journal}</span>
                       </td>
                       {row.cells.map(cell => (
                         <td key={cell} className="px-2 py-3 leading-4 text-slate-600">{cell}</td>
@@ -11028,7 +11067,7 @@ function MobileLiteratureCollectionCard({
                 <table className="w-full min-w-[620px] text-left text-xs">
                   <thead className="border-b border-slate-200 bg-slate-100/90 text-slate-700">
                     <tr>
-                      <th className="px-3.5 py-2.5 font-bold uppercase tracking-wider text-[11px] w-[180px]">Penelitian</th>
+                      <th className="px-3.5 py-2.5 font-bold uppercase tracking-wider text-[11px] w-[240px]">Judul & Penulis</th>
                       <th className="px-3.5 py-2.5 font-bold uppercase tracking-wider text-[11px] w-[150px]">Fokus</th>
                       <th className="px-3.5 py-2.5 font-bold uppercase tracking-wider text-[11px] w-[150px]">Teori</th>
                       <th className="px-3.5 py-2.5 font-bold uppercase tracking-wider text-[11px] w-[200px]">Temuan Utama</th>
@@ -11036,10 +11075,10 @@ function MobileLiteratureCollectionCard({
                   </thead>
                   <tbody className="divide-y divide-slate-100">
                     {matrixRows.slice(0, 8).map((row, idx) => (
-                      <tr key={`${row.name}-${idx}`} className="align-top hover:bg-slate-50/60 transition-colors">
+                      <tr key={`${row.title || row.name}-${idx}`} className="align-top hover:bg-slate-50/60 transition-colors">
                         <td className="px-3.5 py-3">
-                          <span className="font-bold text-[#00629b] text-[13px] block leading-snug">{row.name}</span>
-                          <span className="block text-xs text-slate-500 font-medium mt-0.5">{row.journal}</span>
+                          <span className="font-bold text-slate-900 text-[13px] block leading-snug">{row.title || row.name}</span>
+                          <span className="block text-xs text-slate-500 font-medium mt-0.5">{row.authors || row.journal}</span>
                         </td>
                         <td className="px-3.5 py-3 text-xs leading-relaxed text-slate-700 font-normal">{row.cells[0]}</td>
                         <td className="px-3.5 py-3 text-xs leading-relaxed text-slate-700 font-normal">{row.cells[1]}</td>
