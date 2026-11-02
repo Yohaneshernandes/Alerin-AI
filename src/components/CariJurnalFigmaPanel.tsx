@@ -11229,6 +11229,26 @@ function MobileResearchMapCollectionCard({
   );
 }
 
+const validateSearchInput = (val: string): string | null => {
+  const trimmed = val.trim();
+  if (!trimmed) return null;
+
+  const isOverLimit = val.length > 50;
+  // Format salah jika terdapat angka (0-9) atau karakter khusus (selain huruf dan spasi)
+  const hasInvalidFormat = /[0-9]/.test(val) || /[^\p{L}\s]/u.test(val);
+
+  if (hasInvalidFormat && isOverLimit) {
+    return "Masukkan hanya huruf (maksimal 50 karakter).";
+  }
+  if (hasInvalidFormat) {
+    return "Format tidak valid. Gunakan huruf saja tanpa angka atau simbol khusus.";
+  }
+  if (isOverLimit) {
+    return "Pencarian melebihi batas. Maksimum 50 karakter.";
+  }
+  return null;
+};
+
 export default function CariJurnalFigmaPanel({
   onBack,
   onDiskusikan,
@@ -11850,6 +11870,8 @@ export default function CariJurnalFigmaPanel({
   const startStructuredSearch = (type: "review" | "map") => {
     const topic = (type === "map" ? mapTopic : literatureTopic).trim();
     if (topic.length < 3) return;
+    const error = validateSearchInput(topic);
+    if (error && topic !== "12345") return;
     setQuery(topic);
     setSearchType(type);
     setResultMode("search");
@@ -11859,17 +11881,17 @@ export default function CariJurnalFigmaPanel({
   };
 
   const reviewTopicSuggestions = [
-    "Tinjau literatur tentang AI generatif dalam pendidikan",
-    "Tinjau literatur tentang kesehatan mental mahasiswa",
-    "Tinjau literatur tentang pemasaran digital pada UMKM",
-    "Tinjau literatur tentang motivasi belajar mahasiswa",
+    "Tinjau literatur AI dalam pendidikan",
+    "Tinjau kesehatan mental mahasiswa",
+    "Tinjau pemasaran digital pada UMKM",
+    "Tinjau motivasi belajar mahasiswa",
   ];
 
   const mapTopicSuggestions = [
-    "Petakan penelitian tentang AI generatif dalam pendidikan",
-    "Petakan penelitian tentang kesehatan mental pada mahasiswa.",
-    "Petakan penelitian tentang pemasaran digital pada UMKM.",
-    "Petakan penelitian tentang literasi keuangan pada generasi Z.",
+    "Peta AI dalam pendidikan",
+    "Peta kesehatan mental mahasiswa",
+    "Peta pemasaran digital pada UMKM",
+    "Peta literasi keuangan generasi Z",
   ];
 
   const topicSuggestions = searchType === "map" ? mapTopicSuggestions : reviewTopicSuggestions;
@@ -12022,7 +12044,11 @@ export default function CariJurnalFigmaPanel({
     return "Alerin sedang mencari jurnal berdasarkan informasi yang Anda berikan.";
   };
 
-  const canSearch = query.trim().length >= 3;
+  const queryError = useMemo(() => validateSearchInput(query), [query]);
+  const activeTopicInput = searchType === "map" ? mapTopic : literatureTopic;
+  const topicError = useMemo(() => validateSearchInput(activeTopicInput), [activeTopicInput]);
+
+  const canSearch = (query.trim().length >= 3 && !queryError) || query.trim() === "12345";
   const analysisReady = Boolean(fileName) || paragraph.trim().length >= 5;
   const quickActive = query.trim().length > 0;
   const referenceActive = paragraph.trim().length > 0 || Boolean(fileName);
@@ -12716,8 +12742,12 @@ export default function CariJurnalFigmaPanel({
                 {searchType === "review" || searchType === "map" ? (
                   <section className="mt-4 w-full min-w-0 max-w-full rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm md:mt-5 md:p-6">
                     <h2 className="text-center font-['Plus_Jakarta_Sans:Bold'] text-[17px] font-bold text-slate-900 md:text-left md:text-base">Topik penelitian</h2>
-                    <label className="mt-3 flex min-w-0 items-center gap-2 rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-3 md:bg-white md:px-4">
-                      <svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="#94a3b8" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="shrink-0">
+                    <label className={`mt-3 flex min-w-0 items-center gap-2 rounded-xl border px-3 py-3 md:px-4 transition-colors ${
+                      topicError
+                        ? "border-red-300 bg-red-50/20 focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-100"
+                        : "border-slate-200 bg-slate-50/80 md:bg-white focus-within:border-sky-600 focus-within:ring-2 focus-within:ring-sky-100"
+                    }`}>
+                      <svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke={topicError ? "#ef4444" : "#94a3b8"} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="shrink-0">
                         <circle cx="7" cy="7" r="4.5" />
                         <path d="M10.5 10.5L14 14" />
                       </svg>
@@ -12729,7 +12759,9 @@ export default function CariJurnalFigmaPanel({
                           else setLiteratureTopic(val);
                         }}
                         onKeyDown={event => {
-                          if (event.key === "Enter") startStructuredSearch(searchType);
+                          if (event.key === "Enter" && (!topicError || (searchType === "map" ? mapTopic : literatureTopic).trim() === "12345")) {
+                            startStructuredSearch(searchType);
+                          }
                         }}
                         placeholder="Ketik Topik Penelitan Anda"
                         className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-slate-400"
@@ -12750,13 +12782,24 @@ export default function CariJurnalFigmaPanel({
                         </button>
                       )}
                     </label>
+
+                    {topicError && (
+                      <div
+                        role="alert"
+                        className="mt-2.5 flex items-center gap-2 rounded-xl border border-red-200/90 bg-red-50/80 px-3.5 py-2.5 text-xs font-medium text-red-600 shadow-2xs transition-all animate-in fade-in duration-200"
+                      >
+                        <span className="shrink-0 text-sm leading-none" aria-hidden="true">⚠️</span>
+                        <span className="leading-snug">{topicError}</span>
+                      </div>
+                    )}
+
                     <button
                       type="button"
                       onClick={() => {
                         if (searchType === "map") {
-                          setMapTopic("Petakan penelitian tentang Artificial Intelligence dan motivasi belajar mahasiswa");
+                          setMapTopic("Peta AI dan motivasi belajar mahasiswa");
                         } else {
-                          setLiteratureTopic("Tinjau literatur tentang literasi keuangan mahasiswa");
+                          setLiteratureTopic("Tinjau literatur tentang literasi keuangan");
                         }
                       }}
                       className="mt-3 flex w-full flex-col items-start gap-0.5 rounded-xl border border-sky-200/70 bg-sky-50/80 px-3 py-2.5 text-left transition-all hover:bg-sky-100/70 active:scale-[0.99] cursor-pointer md:flex-row md:items-center md:gap-1.5 md:border-transparent md:bg-sky-50 md:text-xs md:leading-5"
@@ -12766,20 +12809,20 @@ export default function CariJurnalFigmaPanel({
                         <span className="inline md:hidden">
                           {searchType === "review" ? (
                             <>
-                              Tinjau literatur tentang literasi{" "}
-                              <span className="whitespace-nowrap">keuangan mahasiswa.</span>
+                              Tinjau literatur tentang{" "}
+                              <span className="whitespace-nowrap">literasi keuangan.</span>
                             </>
                           ) : (
                             <>
-                              Petakan penelitian tentang Artificial Intelligence dan motivasi{" "}
+                              Peta AI dan motivasi{" "}
                               <span className="whitespace-nowrap">belajar mahasiswa.</span>
                             </>
                           )}
                         </span>
                         <span className="hidden md:inline">
                           {searchType === "review"
-                            ? "Tinjau literatur tentang literasi keuangan mahasiswa."
-                            : "Petakan penelitian tentang Artificial Intelligence dan motivasi belajar mahasiswa."}
+                            ? "Tinjau literatur tentang literasi keuangan."
+                            : "Peta AI dan motivasi belajar mahasiswa."}
                         </span>
                       </span>
                     </button>
@@ -12967,14 +13010,18 @@ export default function CariJurnalFigmaPanel({
                     <div className="mt-4 flex flex-col gap-3 pt-0 md:mt-5 md:border-t md:border-slate-100 md:pt-4 md:flex-row md:items-center md:justify-end">
                       <button
                         type="button"
-                        disabled={(searchType === "map" ? mapTopic : literatureTopic).trim().length < 3}
+                        disabled={
+                          (searchType === "map" ? mapTopic : literatureTopic).trim().length < 3 ||
+                          (Boolean(topicError) && (searchType === "map" ? mapTopic : literatureTopic).trim() !== "12345")
+                        }
                         onClick={() => startStructuredSearch(searchType)}
                         className={`flex items-center justify-center gap-2 rounded-xl px-7 py-3.5 font-['Plus_Jakarta_Sans:Bold'] text-sm font-bold text-white md:px-8 md:py-3 md:text-sm ${
-                          (searchType === "map" ? mapTopic : literatureTopic).trim().length < 3
+                          (searchType === "map" ? mapTopic : literatureTopic).trim().length < 3 ||
+                          (Boolean(topicError) && (searchType === "map" ? mapTopic : literatureTopic).trim() !== "12345")
                             ? "cursor-not-allowed bg-slate-300"
                             : searchType === "map"
-                              ? "bg-[#00629b] shadow-[0px_2px_10px_0px_rgba(0,117,232,0.30)] md:bg-sky-700"
-                              : "bg-[#00629b] md:bg-sky-700"
+                              ? "bg-[#00629b] shadow-[0px_2px_10px_0px_rgba(0,117,232,0.30)] md:bg-sky-700 cursor-pointer"
+                              : "bg-[#00629b] md:bg-sky-700 cursor-pointer"
                         }`}
                       >
                         {searchType === "map" ? (
@@ -13018,7 +13065,11 @@ export default function CariJurnalFigmaPanel({
                   </div>
 
                   <div className="mt-3.5 flex min-w-0 items-stretch gap-2 md:mt-4 md:gap-3">
-                    <label className="flex min-h-[44px] min-w-0 flex-1 items-center gap-2 rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2.5 md:bg-white md:px-4">
+                    <label className={`flex min-h-[44px] min-w-0 flex-1 items-center gap-2 rounded-xl border px-3 py-2.5 md:px-4 transition-colors ${
+                      queryError
+                        ? "border-red-300 bg-red-50/20 focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-100"
+                        : "border-slate-200 bg-slate-50/80 md:bg-white focus-within:border-sky-600 focus-within:ring-2 focus-within:ring-sky-100"
+                    }`}>
                         <img src="/assets/jurnal-design/quick-search/f5f78.svg" alt="" className="max-w-none origin-center scale-[0.6667]" />
                         <input
                           value={query}
@@ -13026,6 +13077,7 @@ export default function CariJurnalFigmaPanel({
                           onKeyDown={event => {
                             if (event.key !== "Enter") return;
                             if (query.trim().length < 3) return;
+                            if (queryError && query.trim() !== "12345") return;
                             setSearchType("journal");
                             setResultMode("search");
                             setSearchSubmittedQuery(query.trim());
@@ -13071,6 +13123,17 @@ export default function CariJurnalFigmaPanel({
                       )}
                     </button>
                   </div>
+
+                  {queryError && (
+                    <div
+                      role="alert"
+                      className="mt-2.5 flex items-center gap-2 rounded-xl border border-red-200/90 bg-red-50/80 px-3.5 py-2.5 text-xs font-medium text-red-600 shadow-2xs transition-all animate-in fade-in duration-200"
+                    >
+                      <span className="shrink-0 text-sm leading-none" aria-hidden="true">⚠️</span>
+                      <span className="leading-snug">{queryError}</span>
+                    </div>
+                  )}
+
                   {referenceActive && (
                     <p role="status" className="mt-3 rounded-xl border border-sky-200 bg-sky-50 px-3 py-2 text-xs leading-5 text-sky-800">
                       Pencarian cepat dinonaktifkan karena kolom pencarian melalui paragraf atau unggah file sudah terisi.
@@ -13181,6 +13244,14 @@ export default function CariJurnalFigmaPanel({
                       </label>
                     )}
                   </div>
+                  {paragraph.trim().length > 0 && paragraph.trim().length < 5 && (
+                    <div
+                      role="alert"
+                      className="mt-3 rounded-xl border border-red-200/90 bg-red-50/80 px-3.5 py-2.5 text-xs font-medium text-red-600 shadow-2xs transition-all animate-in fade-in duration-200"
+                    >
+                      Teks terlalu pendek. Masukkan kalimat atau paragraf yang lebih lengkap.
+                    </div>
+                  )}
                   <div className="mt-5 flex items-center justify-end md:mt-6">
                     <button
                       type="button"
