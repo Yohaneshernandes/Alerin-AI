@@ -3654,12 +3654,6 @@ function RingkasanJurnalModal({
               );
             })}
           </div>
-
-          <div className="mt-5 rounded-2xl bg-slate-100/90 px-5 py-4 md:hidden">
-            <p className="text-center text-xs font-semibold leading-5 text-slate-500">
-              <span className="text-slate-700">Catatan:</span> Ringkasan Alerin membantu memahami isi secara cepat, namun tetap disarankan memverifikasi kutipan langsung dari manuskrip asli.
-            </p>
-          </div>
         </div>
 
         <div className="flex shrink-0 items-center gap-3 border-t border-slate-200 bg-white px-6 pb-6 pt-4 md:justify-end md:px-7 md:py-4">
