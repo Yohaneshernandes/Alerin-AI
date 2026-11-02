@@ -7449,6 +7449,229 @@ function mapCurve(from: { x: number; y: number }, to: { x: number; y: number }, 
   return `M${from.x} ${from.y} Q${midX} ${midY} ${to.x} ${to.y}`;
 }
 
+function CollectionMapPreview({
+  mode,
+  className,
+}: {
+  mode: "jaringan" | "kepadatan" | "perkembangan";
+  className?: string;
+}) {
+  if (mode === "kepadatan") {
+    const heatSpots = [
+      { name: "AI literacy", x: 44, y: 46, outer: 130, mid: 84, inner: 42 },
+      { name: "learning motivation", x: 65, y: 35, outer: 105, mid: 66, inner: 32 },
+      { name: "generative AI", x: 31, y: 22, outer: 85, mid: 54, inner: 24 },
+      { name: "student engagement", x: 53, y: 16, outer: 75, mid: 48, inner: 20 },
+      { name: "digital literacy", x: 28, y: 80, outer: 85, mid: 52, inner: 24 },
+      { name: "critical thinking", x: 48, y: 77, outer: 76, mid: 46, inner: 18 },
+      { name: "higher education", x: 22, y: 57, outer: 68, mid: 38, inner: 16 },
+    ];
+
+    return (
+      <div
+        className={`relative h-56 w-full overflow-hidden rounded-xl border border-slate-700 bg-[radial-gradient(circle_at_48%_45%,#1d4ed8_0%,#0b3bb8_55%,#072a8c_100%)] select-none ${
+          className ?? ""
+        }`}
+      >
+        {/* Ambient Blue Blobs */}
+        <span className="pointer-events-none absolute left-[6%] top-[8%] h-24 w-32 rounded-full bg-cyan-400/20 blur-xl" />
+        <span className="pointer-events-none absolute right-[8%] bottom-[10%] h-24 w-32 rounded-full bg-sky-400/20 blur-xl" />
+
+        {/* Thermal Heatmap Spots */}
+        {heatSpots.map((spot, idx) => (
+          <div
+            key={spot.name}
+            className={`pointer-events-none absolute -translate-x-1/2 -translate-y-1/2 flex items-center justify-center ${
+              idx % 2 === 0 ? "map-thermal-breathe" : "map-thermal-breathe-alt"
+            }`}
+            style={{ left: `${spot.x}%`, top: `${spot.y}%`, animationDelay: `${idx * 0.6}s` }}
+          >
+            <span
+              className="absolute rounded-full"
+              style={{
+                width: `${spot.outer}px`,
+                height: `${spot.outer * 0.8}px`,
+                background: "radial-gradient(circle, rgba(74,222,128,0.95) 0%, rgba(34,197,94,0.5) 40%, rgba(29,78,216,0) 74%)",
+                filter: "blur(13px)",
+              }}
+            />
+            <span
+              className="absolute rounded-full"
+              style={{
+                width: `${spot.mid}px`,
+                height: `${spot.mid * 0.8}px`,
+                background: "radial-gradient(circle, rgba(250,204,21,0.95) 0%, rgba(250,204,21,0.55) 48%, rgba(250,204,21,0) 78%)",
+                filter: "blur(9px)",
+              }}
+            />
+            <span
+              className="absolute rounded-full"
+              style={{
+                width: `${spot.inner}px`,
+                height: `${spot.inner * 0.8}px`,
+                background: "radial-gradient(circle, rgba(239,68,68,0.98) 0%, rgba(239,68,68,0.7) 52%, rgba(239,68,68,0) 82%)",
+                filter: "blur(6px)",
+              }}
+            />
+          </div>
+        ))}
+
+        {/* Nodes with glowing dots and white labels */}
+        {mapMainNodes.map((node, idx) => {
+          const isCenter = node.name === "AI literacy";
+          return (
+            <div
+              key={node.name}
+              className="pointer-events-none absolute -translate-x-1/2 -translate-y-1/2 flex items-center gap-1.5 z-10"
+              style={{ left: `${node.x}%`, top: `${node.y}%` }}
+            >
+              <span className="relative flex h-2.5 w-2.5 shrink-0 items-center justify-center">
+                <span
+                  className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-70"
+                  style={{ animationDuration: `${2.2 + (idx % 3) * 0.5}s` }}
+                />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,1)]" />
+              </span>
+              <span
+                className={`whitespace-nowrap font-extrabold leading-none text-white [text-shadow:0_1px_8px_rgba(2,20,80,0.95)] ${
+                  isCenter ? "text-[10px] tracking-tight" : "text-[8px] sm:text-[8.5px]"
+                }`}
+              >
+                {node.name}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
+
+  const isEvolution = mode === "perkembangan";
+
+  return (
+    <div
+      className={`relative h-56 w-full overflow-hidden rounded-xl border border-slate-200/90 bg-[radial-gradient(circle_at_50%_35%,#f8fbff_0%,#ffffff_65%)] select-none ${
+        className ?? ""
+      }`}
+    >
+      {/* Ambient background glows */}
+      <span className="pointer-events-none absolute -left-4 -top-4 h-36 w-36 rounded-full bg-blue-400/15 blur-2xl" />
+      <span className="pointer-events-none absolute -right-4 -top-4 h-36 w-36 rounded-full bg-emerald-400/15 blur-2xl" />
+      <span className="pointer-events-none absolute -bottom-4 -left-4 h-36 w-36 rounded-full bg-amber-400/15 blur-2xl" />
+      <span className="pointer-events-none absolute -bottom-4 -right-4 h-36 w-36 rounded-full bg-purple-400/15 blur-2xl" />
+
+      {/* SVG Connecting Curved Lines */}
+      <svg className="pointer-events-none absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+        {mapMainEdges.map(([fromIdx, toIdx], i) => {
+          const from = mapMainNodes[fromIdx];
+          const to = mapMainNodes[toIdx];
+          const bend = i % 2 === 0 ? 0.05 : -0.05;
+          const color = isEvolution
+            ? mapYearColor((from.year + to.year) / 2)
+            : mapClusters[from.cluster]?.color ?? "#93c5fd";
+          return (
+            <path
+              key={`edge-${i}`}
+              d={mapCurve({ x: from.x, y: from.y }, { x: to.x, y: to.y }, bend)}
+              fill="none"
+              stroke={color}
+              strokeWidth="1.2"
+              strokeLinecap="round"
+              className="map-edge-flow"
+              style={{ opacity: 0.45 }}
+            />
+          );
+        })}
+      </svg>
+
+      {/* Small background nodes */}
+      {mapSmallNodes.slice(0, 24).map((node, i) => {
+        const anchor = mapMainNodes[node.cluster % mapMainNodes.length];
+        const color = isEvolution
+          ? mapYearColor(anchor.year)
+          : mapClusters[node.cluster]?.color ?? "#3b82f6";
+        return (
+          <span
+            key={`s-${i}`}
+            className="pointer-events-none absolute rounded-full"
+            style={{
+              left: `${node.x}%`,
+              top: `${node.y}%`,
+              width: `${Math.max(4, node.r)}px`,
+              height: `${Math.max(4, node.r)}px`,
+              transform: "translate(-50%, -50%)",
+              backgroundColor: color,
+              opacity: 0.85,
+              boxShadow: `0 0 4px ${color}66`,
+            }}
+          />
+        );
+      })}
+
+      {/* Central Node AI literacy */}
+      <div className="pointer-events-none absolute left-[43%] top-[46%] -translate-x-1/2 -translate-y-1/2 z-20 flex items-center justify-center">
+        <span
+          className="pointer-events-none absolute -inset-2 rounded-full border animate-ping opacity-40"
+          style={{ borderColor: isEvolution ? mapYearColor(2024.2) : "#38bdf8" }}
+        />
+        <span
+          className="relative flex h-11 w-11 items-center justify-center rounded-full text-center text-[7.5px] font-extrabold text-white shadow-md ring-2 ring-white/90"
+          style={{ backgroundColor: isEvolution ? mapYearColor(2024.2) : "#0070ba" }}
+        >
+          AI literacy
+        </span>
+      </div>
+
+      {/* Other Main Nodes */}
+      {mapMainNodes
+        .filter(n => n.name !== "AI literacy")
+        .map((node, i) => {
+          const color = isEvolution
+            ? mapYearColor(node.year)
+            : mapClusters[node.cluster]?.color ?? "#3b82f6";
+          const labelPos = node.labelPos;
+          return (
+            <div
+              key={node.name}
+              className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-1/2 flex items-center"
+              style={{ left: `${node.x}%`, top: `${node.y}%` }}
+            >
+              <div
+                className={`relative flex items-center ${
+                  labelPos === "top"
+                    ? "flex-col-reverse -translate-y-2"
+                    : labelPos === "bottom"
+                      ? "flex-col translate-y-2"
+                      : labelPos === "left"
+                        ? "flex-row-reverse -translate-x-2"
+                        : "flex-row translate-x-2"
+                }`}
+              >
+                <span
+                  className="h-2.5 w-2.5 shrink-0 rounded-full ring-2 ring-white shadow-xs"
+                  style={{ backgroundColor: color }}
+                />
+                <span
+                  className={`whitespace-nowrap rounded px-1 py-0.5 text-[7px] sm:text-[7.5px] font-bold leading-none shadow-2xs ${
+                    labelPos === "top"
+                      ? "mb-1"
+                      : labelPos === "bottom"
+                        ? "mt-1"
+                        : labelPos === "left"
+                          ? "mr-1"
+                          : "ml-1"
+                  } bg-white/95 text-slate-800 border border-slate-200/80`}
+                >
+                  {node.name}
+                </span>
+              </div>
+            </div>
+          );
+        })}
+    </div>
+  );
+}
+
 const mapNodeDetails: Record<string, { clusterName: string; count: number; relations: number; desc: string }> = {
   "AI literacy": { clusterName: "Literasi & Adopsi AI", count: 28, relations: 8, desc: "Fokus sentral pada pemahaman dasar, etika, dan penggunaan AI dalam pembelajaran." },
   "generative AI": { clusterName: "Literasi & Adopsi AI", count: 21, relations: 6, desc: "Pemanfaatan model generatif seperti LLM untuk asisten penulisan & analisis riset." },
@@ -11064,25 +11287,8 @@ function MobileResearchMapCollectionCard({
           {activeMapTab === "network" && (
             <div className="rounded-xl border border-slate-200/90 bg-white p-3.5">
               <p className="text-xs sm:text-[12.5px] font-semibold text-slate-700 text-center">Hubungan antar topik berdasarkan kemunculan bersama</p>
-              <div className="relative mt-2.5 flex h-48 items-center justify-center overflow-hidden rounded-lg border border-slate-100 bg-slate-50/40">
-                <svg width="130" height="82" viewBox="0 0 130 82" fill="none" stroke="#93c5fd" strokeWidth="1.5" strokeDasharray="3 3" className="map-edge-flow" aria-hidden="true">
-                  <line x1="32" y1="26" x2="65" y2="41" />
-                  <line x1="98" y1="28" x2="65" y2="41" />
-                  <line x1="38" y1="60" x2="65" y2="41" />
-                  <line x1="96" y1="58" x2="65" y2="41" />
-                  <line x1="32" y1="26" x2="98" y2="28" stroke="#cbd5e1" strokeDasharray="none" />
-                  <line x1="38" y1="60" x2="96" y2="58" stroke="#cbd5e1" strokeDasharray="none" />
-                </svg>
-                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-                  <span className="pointer-events-none absolute -inset-1.5 rounded-full border border-sky-400/50 animate-ping opacity-40" />
-                  <span className="relative flex h-9 w-9 items-center justify-center rounded-full bg-[#00629b] text-[8px] font-bold text-white shadow-xs">
-                    AI literacy
-                  </span>
-                </div>
-                <span className="map-float-1 absolute left-[24%] top-[30%] h-2.5 w-2.5 rounded-full bg-blue-400 shadow-xs" />
-                <span className="map-float-2 absolute right-[22%] top-[32%] h-2.5 w-2.5 rounded-full bg-emerald-400 shadow-xs" />
-                <span className="map-float-3 absolute bottom-[27%] left-[27%] h-2.5 w-2.5 rounded-full bg-amber-400 shadow-xs" />
-                <span className="map-float-1 absolute bottom-[24%] right-[25%] h-2.5 w-2.5 rounded-full bg-cyan-400 shadow-xs" />
+              <div className="mt-2.5">
+                <CollectionMapPreview mode="jaringan" className="h-48" />
               </div>
             </div>
           )}
@@ -11090,16 +11296,8 @@ function MobileResearchMapCollectionCard({
           {activeMapTab === "density" && (
             <div className="rounded-xl border border-slate-200/90 bg-white p-3.5">
               <p className="text-xs sm:text-[12.5px] font-semibold text-slate-700 text-center">Tingkat konsentrasi topik dalam penelitian</p>
-              <div className="relative mt-2.5 h-48 overflow-hidden rounded-lg border border-slate-700 bg-[#072448] text-[9.5px] font-bold text-white">
-                <span className="map-thermal-breathe absolute left-1/2 top-1/2 h-20 w-28 -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-400/70 blur-xl" />
-                <span className="map-thermal-breathe-alt absolute left-[28%] top-[28%] h-12 w-20 rounded-full bg-cyan-400/60 blur-xl" />
-                <span className="map-thermal-breathe absolute right-[16%] top-[18%] h-12 w-20 rounded-full bg-emerald-400/50 blur-xl" />
-                <span className="absolute left-1/2 top-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-300 animate-ping opacity-75" />
-                <span className="absolute left-4 top-4">generative AI</span>
-                <span className="absolute right-4 top-4">student engagement</span>
-                <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[11px] drop-shadow-md">AI literacy</span>
-                <span className="absolute bottom-4 left-6">AI anxiety</span>
-                <span className="absolute bottom-4 right-4">academic performance</span>
+              <div className="mt-2.5">
+                <CollectionMapPreview mode="kepadatan" className="h-48" />
               </div>
               <div className="mt-2 flex items-center gap-2 text-[10px] text-slate-500 font-medium">
                 <span>Rendah</span>
@@ -11112,24 +11310,8 @@ function MobileResearchMapCollectionCard({
           {activeMapTab === "trend" && (
             <div className="rounded-xl border border-slate-200/90 bg-white p-3.5">
               <p className="text-xs sm:text-[12.5px] font-semibold text-slate-700 text-center">Rata-rata tahun publikasi setiap topik</p>
-              <div className="relative mt-2.5 flex h-48 items-center justify-center overflow-hidden rounded-lg border border-slate-100 bg-slate-50/40">
-                <svg width="134" height="81" viewBox="0 0 134 81" fill="none" stroke="#cbd5e1" strokeWidth="1.5" aria-hidden="true">
-                  <line x1="34" y1="26" x2="67" y2="40" />
-                  <line x1="100" y1="27" x2="67" y2="40" />
-                  <line x1="39" y1="58" x2="67" y2="40" />
-                  <line x1="98" y1="57" x2="67" y2="40" />
-                  <path d="M25 60 Q 67 15, 110 55" stroke="#10b981" strokeWidth="1.5" strokeDasharray="3 3" className="map-edge-flow" />
-                </svg>
-                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-                  <span className="pointer-events-none absolute -inset-1.5 rounded-full border border-emerald-400/50 animate-ping opacity-40" />
-                  <span className="relative flex h-9 w-9 items-center justify-center rounded-full bg-emerald-500 text-[8px] font-bold text-white shadow-xs">
-                    AI literacy
-                  </span>
-                </div>
-                <span className="map-float-1 absolute left-[25%] top-[30%] h-2.5 w-2.5 rounded-full bg-blue-500 shadow-xs" />
-                <span className="map-float-2 absolute right-[23%] top-[31%] h-2.5 w-2.5 rounded-full bg-amber-400 shadow-xs" />
-                <span className="map-float-3 absolute bottom-[25%] left-[28%] h-2.5 w-2.5 rounded-full bg-cyan-400 shadow-xs" />
-                <span className="map-float-1 absolute bottom-[24%] right-[26%] h-2.5 w-2.5 rounded-full bg-emerald-400 shadow-xs" />
+              <div className="mt-2.5">
+                <CollectionMapPreview mode="perkembangan" className="h-48" />
               </div>
               <div className="mt-2 h-1.5 rounded-full bg-gradient-to-r from-blue-600 via-emerald-400 to-amber-500" />
               <div className="mt-1 flex justify-between text-[9.5px] sm:text-[10px] font-medium text-slate-500">
@@ -13887,23 +14069,8 @@ export default function CariJurnalFigmaPanel({
                                 </span>
                               </div>
                               <p className="mt-1.5 text-center text-xs leading-4 text-slate-600">Menampilkan hubungan antar topik berdasarkan kemunculan bersama.</p>
-                              <div className="relative mt-4 flex h-56 items-center justify-center overflow-hidden rounded-xl border border-slate-100 bg-slate-50/40">
-                                <svg width="130" height="82" viewBox="0 0 130 82" fill="none" stroke="#93c5fd" strokeWidth="1.5" strokeDasharray="3 3" className="map-edge-flow" aria-hidden="true">
-                                  <line x1="32" y1="26" x2="65" y2="41" />
-                                  <line x1="98" y1="28" x2="65" y2="41" />
-                                  <line x1="38" y1="60" x2="65" y2="41" />
-                                  <line x1="96" y1="58" x2="65" y2="41" />
-                                  <line x1="32" y1="26" x2="98" y2="28" stroke="#cbd5e1" strokeDasharray="none" />
-                                  <line x1="38" y1="60" x2="96" y2="58" stroke="#cbd5e1" strokeDasharray="none" />
-                                </svg>
-                                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-                                  <span className="pointer-events-none absolute -inset-2 rounded-full border border-sky-400/50 animate-ping opacity-40" />
-                                  <span className="relative flex h-9 w-9 items-center justify-center rounded-full bg-[#0070ba] text-[6px] font-bold text-white shadow-sm">AI literacy</span>
-                                </div>
-                                <span className="map-float-1 absolute left-[24%] top-[30%] h-3 w-3 rounded-full bg-blue-400 shadow-xs" />
-                                <span className="map-float-2 absolute right-[22%] top-[32%] h-3 w-3 rounded-full bg-emerald-400 shadow-xs" />
-                                <span className="map-float-3 absolute bottom-[27%] left-[27%] h-3 w-3 rounded-full bg-amber-400 shadow-xs" />
-                                <span className="map-float-1 absolute bottom-[24%] right-[25%] h-3 w-3 rounded-full bg-cyan-400 shadow-xs" />
+                              <div className="mt-4">
+                                <CollectionMapPreview mode="jaringan" />
                               </div>
                             </article>
 
@@ -13921,14 +14088,10 @@ export default function CariJurnalFigmaPanel({
                                 </span>
                               </div>
                               <p className="mt-1.5 text-center text-xs leading-4 text-slate-600">Menampilkan tingkat konsentrasi topik dalam penelitian.</p>
-                              <div className="relative mt-4 h-56 overflow-hidden rounded-xl border border-slate-700 bg-[#072448] text-[9px] font-bold text-white">
-                                <span className="map-thermal-breathe absolute left-1/2 top-1/2 h-24 w-36 -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-400/70 blur-2xl" />
-                                <span className="map-thermal-breathe-alt absolute left-[30%] top-[30%] h-16 w-24 rounded-full bg-cyan-400/60 blur-2xl" />
-                                <span className="map-thermal-breathe absolute right-[18%] top-[20%] h-16 w-24 rounded-full bg-emerald-400/50 blur-2xl" />
-                                <span className="absolute left-1/2 top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-300 animate-ping opacity-75" />
-                                <span className="absolute left-6 top-6">generative AI</span><span className="absolute right-5 top-5">student engagement</span><span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[11px] drop-shadow-md">AI literacy</span><span className="absolute bottom-5 left-8">AI anxiety</span><span className="absolute bottom-5 right-5">academic performance</span>
+                              <div className="mt-4">
+                                <CollectionMapPreview mode="kepadatan" />
                               </div>
-                              <div className="mt-2 flex items-center gap-2 text-[10px] text-slate-400"><span>Rendah</span><span className="h-2 flex-1 rounded-full bg-gradient-to-r from-blue-600 via-cyan-400 to-red-500" /><span>Tinggi</span></div>
+                              <div className="mt-2 flex items-center gap-2 text-[10px] text-slate-400"><span>Rendah</span><span className="h-2 flex-1 rounded-full bg-gradient-to-r from-blue-600 via-cyan-400 via-emerald-400 via-yellow-400 to-red-500" /><span>Tinggi</span></div>
                             </article>
 
                             <article className="rounded-2xl border border-slate-200/80 bg-slate-50/40 p-4 transition-all hover:bg-slate-50/70">
@@ -13944,24 +14107,10 @@ export default function CariJurnalFigmaPanel({
                                 </span>
                               </div>
                               <p className="mt-1.5 text-center text-xs leading-4 text-slate-600">Menampilkan rata-rata tahun publikasi setiap topik.</p>
-                              <div className="relative mt-4 flex h-56 items-center justify-center overflow-hidden rounded-xl border border-slate-100 bg-slate-50/40">
-                                <svg width="134" height="81" viewBox="0 0 134 81" fill="none" stroke="#cbd5e1" strokeWidth="1.5" aria-hidden="true">
-                                  <line x1="34" y1="26" x2="67" y2="40" />
-                                  <line x1="100" y1="27" x2="67" y2="40" />
-                                  <line x1="39" y1="58" x2="67" y2="40" />
-                                  <line x1="98" y1="57" x2="67" y2="40" />
-                                  <path d="M25 60 Q 67 15, 110 55" stroke="#10b981" strokeWidth="1.5" strokeDasharray="3 3" className="map-edge-flow" />
-                                </svg>
-                                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-                                  <span className="pointer-events-none absolute -inset-2 rounded-full border border-emerald-400/50 animate-ping opacity-40" />
-                                  <span className="relative flex h-9 w-9 items-center justify-center rounded-full bg-emerald-500 text-[6px] font-bold text-white shadow-sm">AI literacy</span>
-                                </div>
-                                <span className="map-float-1 absolute left-[25%] top-[30%] h-3 w-3 rounded-full bg-blue-500 shadow-xs" />
-                                <span className="map-float-2 absolute right-[23%] top-[31%] h-3 w-3 rounded-full bg-amber-400 shadow-xs" />
-                                <span className="map-float-3 absolute bottom-[25%] left-[28%] h-3 w-3 rounded-full bg-cyan-400 shadow-xs" />
-                                <span className="map-float-1 absolute bottom-[24%] right-[26%] h-3 w-3 rounded-full bg-emerald-400 shadow-xs" />
+                              <div className="mt-4">
+                                <CollectionMapPreview mode="perkembangan" />
                               </div>
-                              <div className="mt-2 h-1.5 rounded-full bg-gradient-to-r from-blue-600 via-emerald-400 to-amber-500" /><div className="mt-1 flex justify-between text-[9px] text-slate-400">{[2020, 2021, 2022, 2023, 2024, 2025, 2026].map(year => <span key={year}>{year}</span>)}</div>
+                              <div className="mt-2 h-1.5 rounded-full bg-gradient-to-r from-[#2563eb] via-[#0ea5e9] via-[#2dd4bf] via-[#4ade80] via-[#facc15] via-[#fb923c] to-[#ef4444]" /><div className="mt-1 flex justify-between text-[9px] text-slate-400">{[2020, 2021, 2022, 2023, 2024, 2025, 2026].map(year => <span key={year}>{year}</span>)}</div>
                             </article>
                           </div>
 
