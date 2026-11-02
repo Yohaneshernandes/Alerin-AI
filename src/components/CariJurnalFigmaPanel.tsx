@@ -12572,15 +12572,8 @@ export default function CariJurnalFigmaPanel({
                         <p className="text-sm font-bold text-sky-900">✦ Saran perbaikan Alerin:</p>
                         <div className="mt-2 rounded-2xl bg-sky-50/60 p-4 outline outline-1 outline-sky-200/80">
                           <p className="text-sm leading-6 text-sky-950">{temuanAnalisis[temuanIndex - 1].saran}</p>
-                          <div className="mt-3 flex items-center justify-between gap-2 border-t border-sky-100 pt-2.5">
+                          <div className="mt-3 flex items-center gap-2 border-t border-sky-100 pt-2.5">
                             <span className="text-xs font-semibold text-sky-700">OpenAlex +4 verifikasi</span>
-                            <button
-                              type="button"
-                              onClick={() => window.alert("Saran perbaikan Alerin diterapkan ke naskahmu.")}
-                              className="shrink-0 text-xs font-bold text-sky-700 underline"
-                            >
-                              Terapkan ke naskah
-                            </button>
                           </div>
                         </div>
                       </div>
