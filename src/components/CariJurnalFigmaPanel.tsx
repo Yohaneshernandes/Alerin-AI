@@ -3097,7 +3097,7 @@ function DesktopJournalResultCard({
     return <JournalCardSkeleton rank={detail.rank} />;
   }
 
-  const actionButtons = ["Buat sitasi", "Ringkasan Jurnal", "Buka PDF"];
+  const actionButtons = ["Buat sitasi", "Abstrak", "Buka PDF"];
 
   return (
     <article className={`overflow-hidden rounded-2xl bg-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] outline transition-shadow hover:shadow-md ${
@@ -3246,11 +3246,13 @@ function DesktopJournalResultCard({
               onClick={
                 label === "Buat sitasi"
                   ? onSitasi
-                  : (label === "Abstrak" || label === "Ringkasan Jurnal")
-                    ? (onAnalisis ?? onAbstrak)
-                    : label === "DOI"
-                      ? () => window.open(detail.doiUrl, "_blank", "noopener,noreferrer")
-                      : () => window.alert(detail.pdfNote)
+                  : label === "Abstrak"
+                    ? (onAbstrak ?? onAnalisis)
+                    : label === "Ringkasan Jurnal"
+                      ? (onAnalisis ?? onAbstrak)
+                      : label === "DOI"
+                        ? () => window.open(detail.doiUrl, "_blank", "noopener,noreferrer")
+                        : () => window.alert(detail.pdfNote)
               }
               className="flex items-center gap-1.5 rounded-lg bg-white px-4 py-2 text-sm font-semibold leading-5 text-slate-700 outline outline-1 outline-offset-[-1px] outline-slate-200 transition-all duration-150 hover:bg-sky-50 hover:text-sky-700 hover:outline-sky-300 hover:shadow-xs active:scale-[0.98]"
             >
@@ -4283,7 +4285,7 @@ function AbstrakJurnalModal({ open, onClose }: { open: boolean; onClose: () => v
       <div
         role="dialog"
         aria-modal="true"
-        aria-label="Ringkasan Jurnal"
+        aria-label="Abstrak Jurnal"
         onClick={event => event.stopPropagation()}
         className="flex max-h-[92dvh] w-full flex-col overflow-hidden rounded-t-[28px] bg-white pb-[env(safe-area-inset-bottom)] shadow-[0px_26.75px_53.5px_-12.84px_rgba(0,0,0,0.25)] md:max-h-[calc(100vh-32px)] md:w-[749px] md:max-w-full md:rounded-3xl md:pb-0 md:outline md:outline-1 md:outline-offset-[-1px] md:outline-slate-100"
       >
@@ -4293,10 +4295,10 @@ function AbstrakJurnalModal({ open, onClose }: { open: boolean; onClose: () => v
 
         <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-6 pb-4 pt-2 md:px-9 md:pb-9 md:pt-7">
           <div className="flex items-start justify-between gap-3">
-            <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-xl font-bold leading-7 text-slate-900 md:text-2xl md:leading-9">Ringkasan Jurnal</h2>
+            <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-xl font-bold leading-7 text-slate-900 md:text-2xl md:leading-9">Abstrak Jurnal</h2>
             <button
               type="button"
-              aria-label="Tutup ringkasan jurnal"
+              aria-label="Tutup abstrak jurnal"
               onClick={onClose}
               className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-slate-100 p-2.5 outline outline-1 outline-offset-[-1px] outline-slate-200 transition-colors hover:bg-slate-200 md:h-8 md:w-8 md:rounded-xl md:bg-white md:hover:bg-slate-50"
             >
@@ -10116,13 +10118,13 @@ function MobileJournalResultCard({
 
         <button
           type="button"
-          onClick={onAnalisis ?? onAbstrak}
+          onClick={onAbstrak ?? onAnalisis}
           className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl bg-slate-100 px-3 py-2.5 text-xs sm:text-sm font-semibold text-slate-800 transition-colors hover:bg-slate-200 active:scale-95"
         >
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" aria-hidden="true">
             <path d="M3 1.5h6l3 3v9H3zM6 7h4M6 10h4" />
           </svg>
-          Ringkasan Jurnal
+          Abstrak
         </button>
 
         <button
@@ -12392,7 +12394,7 @@ export default function CariJurnalFigmaPanel({
                       onSave={saveResearchMap}
                       saved={savedMaps.some(item => item.topic.toLowerCase() === (query.trim() || mapTopic.trim()).toLowerCase())}
                       onOpenRingkasan={() => setRingkasanOpen(true)}
-                      onOpenAbstrak={() => setRingkasanOpen(true)}
+                      onOpenAbstrak={() => setAbstrakOpen(true)}
                       onOpenSitasi={() => setSitasiOpen(true)}
                       onShowToast={showToast}
                       onUpgrade={() => setUpgradeOpen(true)}
@@ -12409,7 +12411,7 @@ export default function CariJurnalFigmaPanel({
                         setSearchType("journal");
                       }}
                       onOpenRingkasan={() => setRingkasanOpen(true)}
-                      onOpenAbstrak={() => setRingkasanOpen(true)}
+                      onOpenAbstrak={() => setAbstrakOpen(true)}
                       onOpenSitasi={() => setSitasiOpen(true)}
                       onSave={saveLiteratureReview}
                       saved={savedLiterature.some(item => item.topic.toLowerCase() === (query.trim() || literatureTopic.trim()).toLowerCase())}
@@ -12724,7 +12726,7 @@ export default function CariJurnalFigmaPanel({
                         onToggleSave={() => toggleSaveJournal(result)}
                         onAnalisis={() => setRingkasanOpen(true)}
                         onSitasi={() => setSitasiOpen(true)}
-                        onAbstrak={() => setRingkasanOpen(true)}
+                        onAbstrak={() => setAbstrakOpen(true)}
                         onDiskusikan={onDiskusikan}
                         onReplaceJournal={handleMobileReplaceJournal}
                       />
@@ -12756,7 +12758,7 @@ export default function CariJurnalFigmaPanel({
                 onBack={() => setDesktopStage("home")}
                 onOpenSitasi={() => setSitasiOpen(true)}
                 onOpenRingkasan={() => setRingkasanOpen(true)}
-                onOpenAbstrak={() => setRingkasanOpen(true)}
+                onOpenAbstrak={() => setAbstrakOpen(true)}
                 onSave={saveLiteratureReview}
                 saved={savedLiterature.some(item => item.topic.toLowerCase() === (query.trim() || literatureTopic.trim()).toLowerCase())}
                 onShowToast={showToast}
@@ -12771,7 +12773,7 @@ export default function CariJurnalFigmaPanel({
                 onSave={saveResearchMap}
                 saved={savedMaps.some(item => item.topic.toLowerCase() === (query.trim() || mapTopic.trim()).toLowerCase())}
                 onOpenRingkasan={() => setRingkasanOpen(true)}
-                onOpenAbstrak={() => setRingkasanOpen(true)}
+                onOpenAbstrak={() => setAbstrakOpen(true)}
                 onOpenSitasi={() => setSitasiOpen(true)}
                 onShowToast={showToast}
                 onUpgrade={() => setUpgradeOpen(true)}
@@ -12792,7 +12794,7 @@ export default function CariJurnalFigmaPanel({
                 onOpenRingkasan={() => setRingkasanOpen(true)}
                 onOpenTabel={() => setTabelOpen(true)}
                 onOpenSitasi={() => setSitasiOpen(true)}
-                onOpenAbstrak={() => setRingkasanOpen(true)}
+                onOpenAbstrak={() => setAbstrakOpen(true)}
                 onDiskusikan={onDiskusikan}
                 onShowToast={showToast}
                 analysis={resultMode === "analysis"}
@@ -13756,7 +13758,7 @@ export default function CariJurnalFigmaPanel({
                     onRemove={() => setHapusJournalId(journal.id)}
                     onSitasi={() => setSitasiOpen(true)}
                     onDetail={() => setRingkasanOpen(true)}
-                    onAbstrak={() => setRingkasanOpen(true)}
+                    onAbstrak={() => setAbstrakOpen(true)}
                     onDiskusikan={onDiskusikan}
                   />
                 ))}
@@ -13941,7 +13943,7 @@ export default function CariJurnalFigmaPanel({
                         onRemove={() => setHapusJournalId(journal.id)}
                         onSitasi={() => setSitasiOpen(true)}
                         onDetail={() => setRingkasanOpen(true)}
-                        onAbstrak={() => setRingkasanOpen(true)}
+                        onAbstrak={() => setAbstrakOpen(true)}
                         onDiskusikan={onDiskusikan}
                       />
                     ))}
