@@ -970,6 +970,66 @@ function HapusFileModal({
   );
 }
 
+function UpgradeLockedConfirmModal({
+  open,
+  onClose,
+  onConfirm,
+}: {
+  open: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+}) {
+  if (!open) return null;
+
+  return (
+    <div
+      className="fixed inset-0 z-[500] flex items-center justify-center bg-black/35 px-4 backdrop-blur-[2.5px] transition-opacity"
+      onClick={onClose}
+      role="presentation"
+    >
+      <div
+        role="alertdialog"
+        aria-modal="true"
+        aria-label="Upgrade Paket Alerin"
+        className="w-full max-w-sm sm:max-w-md rounded-2xl sm:rounded-3xl bg-white p-6 sm:p-7 shadow-2xl animate-in fade-in-0 zoom-in-95 duration-150"
+        onClick={event => event.stopPropagation()}
+      >
+        <div className="mx-auto sm:mx-0 flex h-12 w-12 items-center justify-center rounded-2xl bg-sky-50 text-[#00629b] border border-sky-100 shadow-2xs">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+          </svg>
+        </div>
+
+        <h3 className="mt-4 font-['Plus_Jakarta_Sans:Bold',sans-serif] text-lg sm:text-[19px] font-bold leading-snug text-slate-900 text-center sm:text-left">
+          Upgrade Paket Alerin untuk membuka jurnal ini
+        </h3>
+
+        <p className="mt-2 text-sm leading-relaxed text-slate-600 text-center sm:text-left">
+          Akses jurnal ini terkunci karena batas kuota 3 jurnal gratis telah tercapai. Apakah Anda ingin meng-upgrade paket Alerin sekarang?
+        </p>
+
+        <div className="mt-6 flex flex-col-reverse sm:flex-row justify-end gap-2.5">
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex min-h-[42px] items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-800 active:scale-95 cursor-pointer"
+          >
+            Tidak
+          </button>
+          <button
+            type="button"
+            onClick={onConfirm}
+            className="flex min-h-[42px] items-center justify-center rounded-xl bg-[#00629b] px-6 py-2.5 text-sm font-semibold text-white shadow-xs transition-colors hover:bg-[#005282] active:scale-95 cursor-pointer"
+          >
+            Ya
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const temuanAnalisis = [
   {
     halaman: 18,
@@ -5882,6 +5942,7 @@ function DesktopLiteratureReview({
   const sectionNames = literatureDocSections.map(s => s.title);
   const is12345 = (query || "").trim() === "12345";
   const [localOpenedJournals, setLocalOpenedJournals] = useState<string[]>([]);
+  const [localUpgradeConfirmOpen, setLocalUpgradeConfirmOpen] = useState(false);
   const openedJournals = propOpenedJournals ?? localOpenedJournals;
 
   const handleOpenJournalClick = (title: string) => {
@@ -5903,8 +5964,7 @@ function DesktopLiteratureReview({
         onShowToast?.(`Jurnal dibuka (${next.length}/3 kuota gratis)`);
       }
     } else {
-      onShowToast?.("Batas 3 jurnal telah tercapai. Upgrade ke Alerin Pro untuk membuka semua jurnal.");
-      onUpgrade?.();
+      setLocalUpgradeConfirmOpen(true);
     }
   };
 
@@ -6767,6 +6827,15 @@ function DesktopLiteratureReview({
           ))}
         </div>
       </section>
+
+      <UpgradeLockedConfirmModal
+        open={localUpgradeConfirmOpen}
+        onClose={() => setLocalUpgradeConfirmOpen(false)}
+        onConfirm={() => {
+          setLocalUpgradeConfirmOpen(false);
+          onUpgrade?.();
+        }}
+      />
     </div>
   );
 }
@@ -6889,6 +6958,7 @@ function MobileLiteratureReview({
   const activeTopic = (query.trim() || "Resiliensi perempuan dalam menghadapi bencana dan krisis").replace(/\s+/g, " ");
   const is12345 = (query || "").trim() === "12345";
   const [localOpenedJournals, setLocalOpenedJournals] = useState<string[]>([]);
+  const [localUpgradeConfirmOpen, setLocalUpgradeConfirmOpen] = useState(false);
   const openedJournals = propOpenedJournals ?? localOpenedJournals;
 
   const handleOpenJournalClick = (title: string) => {
@@ -6910,8 +6980,7 @@ function MobileLiteratureReview({
         onShowToast?.(`Jurnal dibuka (${next.length}/3 kuota gratis)`);
       }
     } else {
-      onShowToast?.("Batas 3 jurnal telah tercapai. Upgrade ke Alerin Pro untuk membuka semua jurnal.");
-      onUpgrade?.();
+      setLocalUpgradeConfirmOpen(true);
     }
   };
 
@@ -7398,6 +7467,15 @@ function MobileLiteratureReview({
           </div>
         </div>
       </section>
+
+      <UpgradeLockedConfirmModal
+        open={localUpgradeConfirmOpen}
+        onClose={() => setLocalUpgradeConfirmOpen(false)}
+        onConfirm={() => {
+          setLocalUpgradeConfirmOpen(false);
+          onUpgrade?.();
+        }}
+      />
     </div>
   );
 }
@@ -7832,6 +7910,7 @@ function DesktopResearchMap({
   onOpenJournal?: (title: string) => void;
 }) {
   const [localOpenedJournals, setLocalOpenedJournals] = useState<string[]>([]);
+  const [localUpgradeConfirmOpen, setLocalUpgradeConfirmOpen] = useState(false);
   const openedJournals = propOpenedJournals ?? localOpenedJournals;
 
   const handleOpenJournalClick = (title: string) => {
@@ -7853,8 +7932,7 @@ function DesktopResearchMap({
         onShowToast?.(`Jurnal dibuka (${next.length}/3 kuota gratis)`);
       }
     } else {
-      onShowToast?.("Batas 3 jurnal telah tercapai. Upgrade ke Alerin Pro untuk membuka semua jurnal.");
-      onUpgrade?.();
+      setLocalUpgradeConfirmOpen(true);
     }
   };
   const [mode, setMode] = useState("jaringan");
@@ -10014,6 +10092,15 @@ function DesktopResearchMap({
           </div>
         </div>
       )}
+
+      <UpgradeLockedConfirmModal
+        open={localUpgradeConfirmOpen}
+        onClose={() => setLocalUpgradeConfirmOpen(false)}
+        onConfirm={() => {
+          setLocalUpgradeConfirmOpen(false);
+          onUpgrade?.();
+        }}
+      />
     </div>
   );
 }
@@ -11697,6 +11784,7 @@ export default function CariJurnalFigmaPanel({
   const [extraRiwayatList, setExtraRiwayatList] = useState(riwayatPencarian);
   const toastTimer = useRef<number | undefined>(undefined);
   const [openedLiteratureJournals, setOpenedLiteratureJournals] = useState<string[]>([]);
+  const [upgradeLockedConfirmOpen, setUpgradeLockedConfirmOpen] = useState(false);
 
   const handleOpenLiteratureJournal = (title: string) => {
     if (openedLiteratureJournals.includes(title)) {
@@ -11713,8 +11801,7 @@ export default function CariJurnalFigmaPanel({
         showToast(`Jurnal dibuka (${next.length}/3 kuota gratis)`);
       }
     } else {
-      showToast("Batas 3 jurnal telah tercapai. Upgrade ke Alerin Pro untuk membuka semua jurnal.");
-      setUpgradeOpen(true);
+      setUpgradeLockedConfirmOpen(true);
     }
   };
 
@@ -14427,6 +14514,14 @@ export default function CariJurnalFigmaPanel({
       />
       <UpgradePremiumModal open={upgradeOpen} onClose={() => setUpgradeOpen(false)} />
       <UpgradePremiumSheet open={upgradeOpen} onClose={() => setUpgradeOpen(false)} />
+      <UpgradeLockedConfirmModal
+        open={upgradeLockedConfirmOpen}
+        onClose={() => setUpgradeLockedConfirmOpen(false)}
+        onConfirm={() => {
+          setUpgradeLockedConfirmOpen(false);
+          setUpgradeOpen(true);
+        }}
+      />
       <NewFolderModal open={newFolderOpen} onClose={() => setNewFolderOpen(false)} onCreate={createFolder} />
       <RingkasanJurnalModal open={ringkasanOpen} onClose={() => setRingkasanOpen(false)} onDiskusikan={onDiskusikan} />
       <TabelPenelitianModal open={tabelOpen} onClose={() => setTabelOpen(false)} />
