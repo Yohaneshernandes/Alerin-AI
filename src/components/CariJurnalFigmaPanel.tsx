@@ -3857,7 +3857,6 @@ function RingkasanJurnalModal({
 
 function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [fullTable, setFullTable] = useState(false);
-  const [mobileView, setMobileView] = useState<"card" | "table">("card");
   const [isCopied, setIsCopied] = useState(false);
   if (!open) return null;
 
@@ -4038,107 +4037,28 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
             </p>
           </div>
 
-          <div className="flex flex-col gap-2.5 md:hidden">
-            <div className="flex items-center justify-between gap-3">
-              <span className="text-xs font-semibold text-slate-500">{tableRows.length} Jurnal Penelitian</span>
-              {mobileView === "table" && (
-                <button
-                  type="button"
-                  onClick={() => setFullTable(value => !value)}
-                  aria-pressed={fullTable}
-                  className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-600 transition-colors hover:bg-slate-50"
-                >
-                  {fullTable ? (
-                    <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                      <path d="M6 2v4H2M10 2v4h4M6 14v-4H2M10 14v-4h4" />
-                    </svg>
-                  ) : (
-                    <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                      <path d="M2 6V2h4M14 6V2h-4M2 10v4h4M14 10v4h-4" />
-                    </svg>
-                  )}
-                  {fullTable ? "Perkecil" : "Layar penuh"}
-                </button>
+          <div className="flex items-center justify-between gap-3 md:hidden">
+            <span className="text-xs font-semibold text-slate-500">{tableRows.length} Jurnal Penelitian</span>
+            <button
+              type="button"
+              onClick={() => setFullTable(value => !value)}
+              aria-pressed={fullTable}
+              className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-600 transition-colors hover:bg-slate-50 cursor-pointer"
+            >
+              {fullTable ? (
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M6 2v4H2M10 2v4h4M6 14v-4H2M10 14v-4h4" />
+                </svg>
+              ) : (
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M2 6V2h4M14 6V2h-4M2 10v4h4M14 10v4h-4" />
+                </svg>
               )}
-            </div>
-
-            <div className="grid grid-cols-2 gap-1 rounded-xl bg-slate-100 p-1">
-              <button
-                type="button"
-                onClick={() => setMobileView("card")}
-                className={`flex items-center justify-center gap-1.5 rounded-lg py-2 text-xs font-bold transition-all ${
-                  mobileView === "card"
-                    ? "bg-white text-sky-700 shadow-xs"
-                    : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="2" y="2" width="12" height="5" rx="1.5" />
-                  <rect x="2" y="9" width="12" height="5" rx="1.5" />
-                </svg>
-                Tampilan Kartu
-              </button>
-              <button
-                type="button"
-                onClick={() => setMobileView("table")}
-                className={`flex items-center justify-center gap-1.5 rounded-lg py-2 text-xs font-bold transition-all ${
-                  mobileView === "table"
-                    ? "bg-white text-sky-700 shadow-xs"
-                    : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M2 3h12v10H2zM2 7h12M6 3v10" />
-                </svg>
-                Tabel Matriks
-              </button>
-            </div>
+              {fullTable ? "Perkecil" : "Layar penuh"}
+            </button>
           </div>
 
-          {/* Mobile Card View */}
-          {mobileView === "card" && (
-            <div className="flex flex-col gap-3.5 md:hidden">
-              {tableRows.map((row, index) => (
-                <article key={row.study} className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-xs">
-                  <div className="flex items-start gap-2.5 border-b border-slate-100 pb-3">
-                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-sky-100 text-xs font-extrabold text-sky-700">
-                      {index + 1}
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <h3 className="font-['Plus_Jakarta_Sans:Bold'] text-sm font-bold text-slate-900">{row.study}</h3>
-                      <p className="mt-1 text-xs font-medium leading-5 text-slate-600">{row.subtitle}</p>
-                    </div>
-                  </div>
-
-                  <div className="mt-3 space-y-2.5 text-xs">
-                    <div>
-                      <span className="block text-[10px] font-bold uppercase tracking-wide text-slate-400">Variabel Penelitian</span>
-                      <p className="mt-0.5 leading-5 text-slate-700">{row.variabel}</p>
-                    </div>
-                    <div>
-                      <span className="block text-[10px] font-bold uppercase tracking-wide text-slate-400">Teori</span>
-                      <p className="mt-0.5 leading-5 text-slate-700">{row.teori}</p>
-                    </div>
-                    <div>
-                      <span className="block text-[10px] font-bold uppercase tracking-wide text-slate-400">Metode</span>
-                      <p className="mt-0.5 leading-5 text-slate-700">{row.metode}</p>
-                    </div>
-                    <div>
-                      <span className="block text-[10px] font-bold uppercase tracking-wide text-slate-400">Hasil Temuan</span>
-                      <p className="mt-0.5 leading-5 text-slate-700">{row.hasil}</p>
-                    </div>
-                    <div className="rounded-xl border border-sky-200/90 bg-sky-50/70 p-3">
-                      <span className="block text-[10px] font-bold uppercase tracking-wide text-sky-900">Persamaan dan Perbedaan (Kebaruan)</span>
-                      <p className="mt-1 leading-5 font-medium text-sky-950">{row.perbedaan}</p>
-                    </div>
-                  </div>
-                </article>
-              ))}
-            </div>
-          )}
-
-          {/* Table View (selalu tampil di desktop, kondisional di mobile saat mobileView === 'table') */}
-          <div className={`${mobileView === "table" ? "block" : "hidden"} overflow-x-auto rounded-3xl outline outline-1 outline-offset-[-1px] outline-slate-200/80 md:block md:rounded-2xl`}>
+          <div className="overflow-x-auto rounded-3xl outline outline-1 outline-offset-[-1px] outline-slate-200/80 md:rounded-2xl">
             <table className="w-[900px] table-fixed border-collapse text-left md:w-full">
               <thead>
                 <tr className="bg-slate-50/90">
