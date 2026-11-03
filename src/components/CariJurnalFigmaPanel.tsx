@@ -12640,11 +12640,11 @@ export default function CariJurnalFigmaPanel({
                       </span>
                     </div>
                   </div>
-                  <div className="mt-4 grid grid-cols-3 gap-2 rounded-2xl bg-slate-100 px-1.5 py-4 text-center">
+                  <div className="mt-4 grid grid-cols-3 gap-1 sm:gap-2.5 rounded-2xl bg-slate-100 px-2 py-4 text-center">
                     {[["4,2 jt", "Jurnal Tersedia"], ["50", "Sesuai Filter"], ["20", "Paling Relevan"]].map(([value, label]) => (
-                      <div key={value}>
+                      <div key={value} className="min-w-0 px-0.5">
                         <p className="text-2xl font-bold text-sky-700">{value}</p>
-                        <p className="mt-0.5 text-[10px] font-semibold leading-4 text-slate-500">{label}</p>
+                        <p className="mt-1 text-[11.5px] min-[360px]:text-xs sm:text-[13px] font-semibold leading-tight text-slate-600 whitespace-nowrap">{label}</p>
                       </div>
                     ))}
                   </div>
