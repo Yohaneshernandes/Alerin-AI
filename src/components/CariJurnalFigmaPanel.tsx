@@ -3493,47 +3493,76 @@ function RingkasanJurnalModal({
   onDiskusikan?: (template: string) => void;
 }) {
   const [expanded, setExpanded] = useState<number[]>([0, 1]);
+  const [expandedDesktopPoints, setExpandedDesktopPoints] = useState<number[]>([]);
+  const [isMainExpanded, setIsMainExpanded] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   if (!open) return null;
 
-  const mainSummary =
-    "Penelitian ini menunjukkan bahwa interaksi parasosial antara host dan penonton dapat membangun kepercayaan. Ketika interaksi tersebut disertai pesan kelangkaan berupa batas waktu atau stok, niat beli konsumen pada live streaming commerce meningkat.";
+  const mainSummaryShort =
+    "Penelitian ini menunjukkan bahwa interaksi parasosial antara host dan penonton dapat membangun kepercayaan konsumen secara signifikan. Ketika interaksi tersebut disertai pesan kelangkaan (scarcity nudges) berupa batas waktu penawaran atau keterbatasan kuota stok, niat beli konsumen (purchase intention) pada siaran live streaming commerce mengalami peningkatan yang substansial.";
+
+  const mainSummaryExtended =
+    "Temuan ini menegaskan bahwa keintiman emosional dan rasa keterhubungan yang dirasakan penonton terhadap figur presenter bertindak sebagai pemicu psikologis utama yang mengurangi keraguan dalam bertransaksi. Ditambah dengan dorongan kelangkaan yang menciptakan urgensi waktu (perceived urgency), konsumen terdorong mengambil keputusan pembelian secara spontan tanpa penundaan panjang. Oleh karena itu, strategi pemasaran digital terpadu perlu menyeimbangkan keaslian interaksi presenter dengan transparansi informasi produk agar loyalitas dan retensi konsumen tetap terjaga dalam jangka panjang.";
 
   const points = [
     {
       title: "Tujuan penelitian",
       hint: "Fokus dan sasaran penelitian",
       desc: "Menguji pengaruh interaksi parasosial dan dorongan kelangkaan terhadap niat pembelian konsumen dalam konteks live streaming commerce.",
+      extendedDesc:
+        "Secara komprehensif, studi ini menganalisis bagaimana dimensi keterikatan emosional dan interaksi dua arah antara host dan audiens memediasi terbentuknya rasa percaya (perceived trust). Penelitian juga menguji peran moderasi dari kelangkaan kuantitas dan batasan waktu terhadap percepatan konversi transaksi belanja langsung.",
     },
     {
       title: "Metode penelitian",
       hint: "Kuantitatif survei & analisis SEM-PLS",
       desc: "Pendekatan kuantitatif menggunakan survei cross-sectional. Hubungan antarvariabel dianalisis menggunakan metode SEM-PLS.",
+      extendedDesc:
+        "Data dikumpulkan melalui kuesioner terstruktur berskala Likert 1–5 dari 312 responden aktif yang rutin berbelanja di platform live commerce. Analisis inferensial menggunakan Structural Equation Modeling berbasis Partial Least Squares (SEM-PLS) untuk memvalidasi reliabilitas komposit, validitas diskriminan, dan koefisien jalur struktural.",
     },
     {
       title: "Temuan utama",
       hint: "Hasil utama penelitian",
       desc: "Interaksi parasosial meningkatkan kepercayaan kepada host, sedangkan kelangkaan memperkuat urgensi yang mendorong keputusan pembelian.",
+      extendedDesc:
+        "Hasil estimasi empiris menunjukkan interaksi parasosial berkontribusi langsung sebesar 42% terhadap persepsi kepercayaan konsumen. Pesan kelangkaan (scarcity cues) terbukti memperkuat efek tersebut dengan memicu dorongan psikologis takut kehilangan penawaran (FOMO), yang secara signifikan melipatgandakan niat beli spontan.",
     },
     {
       title: "Relevansi untuk penelitianmu",
       hint: "Landasan hipotesis & teori variabel",
       desc: "Dapat digunakan untuk landasan teori, penyusunan hipotesis, pemilihan variabel, serta pembanding penelitian perilaku konsumen digital.",
+      extendedDesc:
+        "Sangat relevan untuk memperkuat Bab II (Tinjauan Pustaka) terkait Parasocial Interaction Theory dan Commodity Theory. Indikator variabelnya dapat langsung diadaptasi menjadi instrumen kuesioner pada Bab III, serta dijadikan rujukan komparatif ketika membahas temuan empiris pada Bab IV skripsi atau tesis.",
     },
     {
       title: "Keterbatasan penelitian",
       hint: "Data satu periode survei",
       desc: "Data dikumpulkan pada satu periode sehingga belum menjelaskan perubahan perilaku konsumen dalam jangka panjang.",
+      extendedDesc:
+        "Desain cross-sectional hanya mencerminkan respons konsumen pada satu titik waktu tertentu, sehingga belum mengeksplorasi retensi jangka panjang atau niat pembelian berulang (repurchase intention). Selain itu, sampel terfokus pada produk ritel fesyen dan kosmetik, sehingga perlu kehati-hatian dalam generalisasi ke produk bernilai tinggi.",
     },
     {
       title: "Saran penggunaan",
       hint: "Cek metode & verifikasi sumber asli",
       desc: "Baca bagian metode dan hasil asli sebelum mengutip. Sesuaikan penerapan temuan dengan konteks objek dan wilayah penelitianmu.",
+      extendedDesc:
+        "Disarankan untuk menelaah naskah lengkap melalui tautan DOI resmi, terutama tabel hasil outer loading dan koefisien jalur. Saat mengadopsi variabel penelitian, sesuaikan redaksi indikator agar selaras dengan karakteristik demografi sampel dan platform digital yang menjadi fokus studi mandirimu.",
     },
   ];
 
+  const toggleDesktopPoint = (index: number) => {
+    setExpandedDesktopPoints(current =>
+      current.includes(index) ? current.filter(item => item !== index) : [...current, index]
+    );
+  };
+
   const copySummary = async () => {
-    const text = [`Ringkasan utama\n${mainSummary}`, ...points.map((point, index) => `${index + 1}. ${point.title}\n${point.desc}`)].join("\n\n");
+    const fullMain = `${mainSummaryShort}\n\n${mainSummaryExtended}`;
+    const text = [
+      `Ringkasan utama\n${fullMain}`,
+      ...points.map(
+        (point, index) => `${index + 1}. ${point.title}\n${point.desc}\n${point.extendedDesc}`
+      ),
+    ].join("\n\n");
     try {
       if (navigator?.clipboard?.writeText) {
         await navigator.clipboard.writeText(text);
@@ -3596,57 +3625,131 @@ function RingkasanJurnalModal({
         </div>
 
         <div className="min-h-0 flex-1 overflow-y-auto px-6 py-6 md:max-h-[70vh] md:p-7">
-          <div className="flex flex-col gap-2 rounded-2xl border-l-4 border-sky-600 bg-sky-50/70 px-5 py-5 md:gap-1.5 md:rounded-xl md:bg-blue-50 md:pl-5 md:pr-6">
-            <p className="font-['Plus_Jakarta_Sans:Bold'] text-sm font-bold leading-5 text-slate-900 md:text-sm md:font-extrabold md:leading-5">Ringkasan utama</p>
-            <p className="font-['Inter:Medium',sans-serif] font-medium text-[13px] leading-6 text-slate-800 md:text-sm md:leading-5">{mainSummary}</p>
+          <div className="flex flex-col gap-2 rounded-2xl border-l-4 border-sky-600 bg-sky-50/70 px-5 py-5 md:gap-2 md:rounded-xl md:bg-blue-50 md:pl-5 md:pr-6">
+            <div className="flex items-center justify-between gap-3">
+              <p className="font-['Plus_Jakarta_Sans:Bold'] text-sm font-bold leading-5 text-slate-900 md:text-sm md:font-extrabold md:leading-5">Ringkasan utama</p>
+              <button
+                type="button"
+                onClick={() => setIsMainExpanded(v => !v)}
+                className="inline-flex items-center gap-1 text-xs font-semibold text-[#00629b] hover:text-sky-800 hover:underline cursor-pointer transition-colors"
+              >
+                <span>{isMainExpanded ? "Lihat Lebih Sedikit" : "Lihat Selengkapnya"}</span>
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className={`transition-transform duration-200 ${isMainExpanded ? "rotate-180" : ""}`}
+                >
+                  <path d="M4 6l4 4 4-4" />
+                </svg>
+              </button>
+            </div>
+            <p className="font-['Inter:Medium',sans-serif] font-medium text-[13px] leading-6 text-slate-800 md:text-sm md:leading-6">
+              {mainSummaryShort}
+            </p>
+            {isMainExpanded && (
+              <p className="font-['Inter:Medium',sans-serif] font-medium text-[13px] leading-6 text-slate-700 md:text-sm md:leading-6 pt-1">
+                {mainSummaryExtended}
+              </p>
+            )}
           </div>
 
           <div className="mt-5 flex flex-col gap-3 md:mt-4 md:grid md:grid-cols-2 md:gap-3">
             {points.map((point, index) => {
               const isOpen = expanded.includes(index);
+              const isDesktopExpanded = expandedDesktopPoints.includes(index);
               return (
                 <div
                   key={point.title}
-                  className="overflow-hidden rounded-2xl border border-slate-300 bg-white transition-colors md:flex md:flex-col md:gap-2 md:rounded-xl md:p-4 md:shadow-[0px_1px_2px_0px_rgba(0,0,0,0.02)]"
+                  className="overflow-hidden rounded-2xl border border-slate-300 bg-white transition-colors md:flex md:flex-col md:justify-between md:rounded-xl md:p-4 md:shadow-[0px_1px_2px_0px_rgba(0,0,0,0.02)]"
                 >
-                  <button
-                    type="button"
-                    onClick={() => togglePoint(index)}
-                    aria-expanded={isOpen}
-                    className="flex w-full items-center justify-between gap-3 p-4 text-left md:pointer-events-none md:p-0"
-                  >
-                    <span className="flex min-w-0 items-center gap-3.5 md:gap-2">
-                      <span
-                        className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full md:h-5 md:w-5 ${
-                          isOpen ? "bg-sky-600 text-white md:bg-sky-100 md:text-sky-700" : "bg-sky-100 text-sky-700"
-                        }`}
-                      >
-                        <span className="font-['Plus_Jakarta_Sans:Bold'] text-sm font-bold leading-5 md:text-xs md:leading-4">{index + 1}</span>
+                  <div>
+                    {/* Header Mobile Accordion */}
+                    <button
+                      type="button"
+                      onClick={() => togglePoint(index)}
+                      aria-expanded={isOpen}
+                      className="flex w-full items-center justify-between gap-3 p-4 text-left md:hidden"
+                    >
+                      <span className="flex min-w-0 items-center gap-3.5">
+                        <span
+                          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
+                            isOpen ? "bg-sky-600 text-white" : "bg-sky-100 text-sky-700"
+                          }`}
+                        >
+                          <span className="font-['Plus_Jakarta_Sans:Bold'] text-sm font-bold leading-5">{index + 1}</span>
+                        </span>
+                        <span className="min-w-0">
+                          <span className="block font-['Plus_Jakarta_Sans:Bold'] text-[15px] font-bold leading-5 text-slate-900">{point.title}</span>
+                          {!isOpen && <span className="mt-0.5 block truncate text-xs leading-4 text-slate-400">{point.hint}</span>}
+                        </span>
                       </span>
-                      <span className="min-w-0">
-                        <span className="block font-['Plus_Jakarta_Sans:Bold'] text-[15px] font-bold leading-5 text-slate-900 md:text-sm md:leading-5">{point.title}</span>
-                        {!isOpen && <span className="mt-0.5 block truncate text-xs leading-4 text-slate-400 md:hidden">{point.hint}</span>}
+                      <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${isOpen ? "bg-sky-50" : ""}`}>
+                        <svg
+                          width="14"
+                          height="14"
+                          viewBox="0 0 14 14"
+                          fill="none"
+                          stroke={isOpen ? "#0284c7" : "#94a3b8"}
+                          strokeWidth="1.8"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          aria-hidden="true"
+                          className={isOpen ? "" : "-rotate-90"}
+                        >
+                          <path d="M3 5.5l4 4 4-4" />
+                        </svg>
                       </span>
-                    </span>
-                    <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full md:hidden ${isOpen ? "bg-sky-50" : ""}`}>
+                    </button>
+
+                    {/* Header Desktop */}
+                    <div className="hidden md:flex md:items-center md:gap-2">
+                      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-sky-100 text-sky-700">
+                        <span className="font-['Plus_Jakarta_Sans:Bold'] text-xs font-bold leading-4">{index + 1}</span>
+                      </span>
+                      <span className="font-['Plus_Jakarta_Sans:Bold'] text-sm font-bold leading-5 text-slate-900">{point.title}</span>
+                    </div>
+
+                    {/* Content */}
+                    <div className={`px-4 pb-4 pl-[60px] pr-4 md:px-0 md:pb-0 md:pt-2 md:pl-7 ${isOpen ? "block" : "hidden md:block"}`}>
+                      <p className="font-['Inter:Medium',sans-serif] font-medium text-[13px] leading-6 text-slate-800 md:text-xs md:leading-5">
+                        {point.desc}
+                      </p>
+                      {isDesktopExpanded && (
+                        <p className="mt-2 pt-2 border-t border-slate-100 font-['Inter:Regular',sans-serif] text-[13px] leading-6 text-slate-600 md:text-xs md:leading-5">
+                          {point.extendedDesc}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Desktop Toggle Button */}
+                  <div className="hidden md:flex md:items-center md:justify-end md:pl-7 md:pt-2.5">
+                    <button
+                      type="button"
+                      onClick={() => toggleDesktopPoint(index)}
+                      className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#00629b] hover:text-sky-800 hover:underline cursor-pointer transition-colors"
+                    >
+                      <span>{isDesktopExpanded ? "Lihat Lebih Sedikit" : "Lihat Selengkapnya"}</span>
                       <svg
-                        width="14"
-                        height="14"
-                        viewBox="0 0 14 14"
+                        width="10"
+                        height="10"
+                        viewBox="0 0 16 16"
                         fill="none"
-                        stroke={isOpen ? "#0284c7" : "#94a3b8"}
-                        strokeWidth="1.8"
+                        stroke="currentColor"
+                        strokeWidth="2.2"
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        aria-hidden="true"
-                        className={isOpen ? "" : "-rotate-90"}
+                        className={`transition-transform duration-200 ${isDesktopExpanded ? "rotate-180" : ""}`}
                       >
-                        <path d="M3 5.5l4 4 4-4" />
+                        <path d="M4 6l4 4 4-4" />
                       </svg>
-                    </span>
-                  </button>
-                  <div className={`px-4 pb-4 pl-[60px] pr-4 md:block md:px-0 md:pb-0 md:pl-7 ${isOpen ? "block" : "hidden"}`}>
-                    <p className="font-['Inter:Medium',sans-serif] font-medium text-[13px] leading-6 text-slate-800 md:text-xs md:leading-5">{point.desc}</p>
+                    </button>
                   </div>
                 </div>
               );
