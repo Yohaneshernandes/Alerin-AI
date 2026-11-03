@@ -6297,16 +6297,40 @@ function DesktopLiteratureReview({
                         <div className="mt-2.5 flex items-center gap-2">
                           <button
                             type="button"
-                            onClick={() => (onOpenRingkasan ? onOpenRingkasan() : (onOpenAbstrak ? onOpenAbstrak() : undefined))}
-                            className="inline-flex items-center rounded-lg border border-slate-200/90 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 shadow-2xs transition-colors hover:bg-slate-50 active:scale-95 cursor-pointer"
+                            onClick={isLocked ? () => handleOpenJournalClick(row.title) : (() => (onOpenRingkasan ? onOpenRingkasan() : (onOpenAbstrak ? onOpenAbstrak() : undefined)))}
+                            className={`inline-flex items-center gap-1 rounded-lg border px-2.5 py-1 text-xs font-medium shadow-2xs transition-all active:scale-95 cursor-pointer ${
+                              isLocked
+                                ? "border-sky-300 bg-sky-50/85 text-[#00629b] hover:bg-sky-100/90"
+                                : "border-slate-200/90 bg-white text-slate-700 hover:bg-slate-50"
+                            }`}
+                            title={isLocked ? "Terkunci - Batas 3 jurnal akun gratis tercapai" : "Ringkasan Jurnal"}
                           >
+                            {isLocked && (
+                              <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-[#00629b]">
+                                <rect x="3" y="7" width="10" height="7" rx="1.5" />
+                                <path d="M5.5 7V4.5a2.5 2.5 0 0 1 5 0V7" />
+                                <circle cx="8" cy="10.5" r="0.8" fill="currentColor" />
+                              </svg>
+                            )}
                             Ringkasan Jurnal
                           </button>
                           <button
                             type="button"
-                            onClick={() => onOpenSitasi()}
-                            className="inline-flex items-center rounded-lg border border-slate-200/90 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 shadow-2xs transition-colors hover:bg-slate-50 active:scale-95"
+                            onClick={isLocked ? () => handleOpenJournalClick(row.title) : (() => onOpenSitasi())}
+                            className={`inline-flex items-center gap-1 rounded-lg border px-2.5 py-1 text-xs font-medium shadow-2xs transition-all active:scale-95 cursor-pointer ${
+                              isLocked
+                                ? "border-sky-300 bg-sky-50/85 text-[#00629b] hover:bg-sky-100/90"
+                                : "border-slate-200/90 bg-white text-slate-700 hover:bg-slate-50"
+                            }`}
+                            title={isLocked ? "Terkunci - Batas 3 jurnal akun gratis tercapai" : "Sitasi"}
                           >
+                            {isLocked && (
+                              <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-[#00629b]">
+                                <rect x="3" y="7" width="10" height="7" rx="1.5" />
+                                <path d="M5.5 7V4.5a2.5 2.5 0 0 1 5 0V7" />
+                                <circle cx="8" cy="10.5" r="0.8" fill="currentColor" />
+                              </svg>
+                            )}
                             Sitasi
                           </button>
                           <button
@@ -7126,17 +7150,41 @@ function MobileLiteratureReview({
                 <div className="grid grid-cols-3 gap-2 pt-2.5 border-t border-slate-200/70">
                   <button
                     type="button"
-                    onClick={onOpenRingkasan ?? onOpenAbstrak ?? (() => window.alert(`Membuka ringkasan jurnal: ${row.title}`))}
-                    className="flex min-h-[42px] items-center justify-center rounded-xl border border-slate-200 bg-white px-1.5 py-2 text-center text-xs font-bold leading-tight text-slate-700 shadow-2xs hover:bg-slate-50 active:scale-95 cursor-pointer"
+                    onClick={isLocked ? () => handleOpenJournalClick(row.title) : (onOpenRingkasan ?? onOpenAbstrak ?? (() => window.alert(`Membuka ringkasan jurnal: ${row.title}`)))}
+                    className={`flex min-h-[42px] items-center justify-center gap-1.5 rounded-xl border px-1.5 py-2 text-center text-xs font-bold leading-tight shadow-2xs transition-all active:scale-95 cursor-pointer ${
+                      isLocked
+                        ? "border-sky-300 bg-sky-50/85 text-[#00629b] hover:bg-sky-100/90"
+                        : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                    }`}
+                    title={isLocked ? "Terkunci - Batas 3 jurnal akun gratis tercapai" : "Ringkasan Jurnal"}
                   >
-                    Ringkasan Jurnal
+                    {isLocked && (
+                      <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-[#00629b] shrink-0">
+                        <rect x="3" y="7" width="10" height="7" rx="1.5" />
+                        <path d="M5.5 7V4.5a2.5 2.5 0 0 1 5 0V7" />
+                        <circle cx="8" cy="10.5" r="0.8" fill="currentColor" />
+                      </svg>
+                    )}
+                    <span>Ringkasan Jurnal</span>
                   </button>
                   <button
                     type="button"
-                    onClick={onOpenSitasi ?? (() => window.alert(`Sitasi untuk: ${row.authors} (${row.year}). ${row.title}.`))}
-                    className="flex min-h-[42px] items-center justify-center rounded-xl border border-slate-200 bg-white px-2 py-2 text-xs font-bold text-slate-700 shadow-2xs hover:bg-slate-50 active:scale-95 cursor-pointer"
+                    onClick={isLocked ? () => handleOpenJournalClick(row.title) : (onOpenSitasi ?? (() => window.alert(`Sitasi untuk: ${row.authors} (${row.year}). ${row.title}.`)))}
+                    className={`flex min-h-[42px] items-center justify-center gap-1.5 rounded-xl border px-2 py-2 text-xs font-bold shadow-2xs transition-all active:scale-95 cursor-pointer ${
+                      isLocked
+                        ? "border-sky-300 bg-sky-50/85 text-[#00629b] hover:bg-sky-100/90"
+                        : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                    }`}
+                    title={isLocked ? "Terkunci - Batas 3 jurnal akun gratis tercapai" : "Sitasi"}
                   >
-                    Sitasi
+                    {isLocked && (
+                      <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-[#00629b] shrink-0">
+                        <rect x="3" y="7" width="10" height="7" rx="1.5" />
+                        <path d="M5.5 7V4.5a2.5 2.5 0 0 1 5 0V7" />
+                        <circle cx="8" cy="10.5" r="0.8" fill="currentColor" />
+                      </svg>
+                    )}
+                    <span>Sitasi</span>
                   </button>
                   <button
                     type="button"
@@ -9680,16 +9728,40 @@ function DesktopResearchMap({
                     <div className="mt-2.5 flex items-center gap-2">
                       <button
                         type="button"
-                        onClick={() => (onOpenRingkasan ? onOpenRingkasan() : (onOpenAbstrak ? onOpenAbstrak() : window.alert(`Membuka ringkasan jurnal: ${row.title}`)))}
-                        className="inline-flex cursor-pointer items-center rounded-lg border border-slate-200/90 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 shadow-2xs transition-colors hover:bg-slate-50 active:scale-95"
+                        onClick={isLocked ? () => handleOpenJournalClick(row.title) : (() => (onOpenRingkasan ? onOpenRingkasan() : (onOpenAbstrak ? onOpenAbstrak() : window.alert(`Membuka ringkasan jurnal: ${row.title}`))))}
+                        className={`inline-flex cursor-pointer items-center gap-1 rounded-lg border px-2.5 py-1 text-xs font-medium shadow-2xs transition-all active:scale-95 ${
+                          isLocked
+                            ? "border-sky-300 bg-sky-50/85 text-[#00629b] hover:bg-sky-100/90"
+                            : "border-slate-200/90 bg-white text-slate-700 hover:bg-slate-50"
+                        }`}
+                        title={isLocked ? "Terkunci - Batas 3 jurnal akun gratis tercapai" : "Ringkasan Jurnal"}
                       >
+                        {isLocked && (
+                          <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-[#00629b]">
+                            <rect x="3" y="7" width="10" height="7" rx="1.5" />
+                            <path d="M5.5 7V4.5a2.5 2.5 0 0 1 5 0V7" />
+                            <circle cx="8" cy="10.5" r="0.8" fill="currentColor" />
+                          </svg>
+                        )}
                         Ringkasan Jurnal
                       </button>
                       <button
                         type="button"
-                        onClick={() => (onOpenSitasi ? onOpenSitasi() : window.alert(`Sitasi untuk: ${row.authors} (${row.year}). ${row.title}.`))}
-                        className="inline-flex cursor-pointer items-center rounded-lg border border-slate-200/90 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 shadow-2xs transition-colors hover:bg-slate-50 active:scale-95"
+                        onClick={isLocked ? () => handleOpenJournalClick(row.title) : (() => (onOpenSitasi ? onOpenSitasi() : window.alert(`Sitasi untuk: ${row.authors} (${row.year}). ${row.title}.`)))}
+                        className={`inline-flex cursor-pointer items-center gap-1 rounded-lg border px-2.5 py-1 text-xs font-medium shadow-2xs transition-all active:scale-95 ${
+                          isLocked
+                            ? "border-sky-300 bg-sky-50/85 text-[#00629b] hover:bg-sky-100/90"
+                            : "border-slate-200/90 bg-white text-slate-700 hover:bg-slate-50"
+                        }`}
+                        title={isLocked ? "Terkunci - Batas 3 jurnal akun gratis tercapai" : "Sitasi"}
                       >
+                        {isLocked && (
+                          <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-[#00629b]">
+                            <rect x="3" y="7" width="10" height="7" rx="1.5" />
+                            <path d="M5.5 7V4.5a2.5 2.5 0 0 1 5 0V7" />
+                            <circle cx="8" cy="10.5" r="0.8" fill="currentColor" />
+                          </svg>
+                        )}
                         Sitasi
                       </button>
                       <button
@@ -9785,17 +9857,41 @@ function DesktopResearchMap({
               <div className="grid grid-cols-3 gap-2 pt-2.5 border-t border-slate-200/70">
                 <button
                   type="button"
-                  onClick={onOpenRingkasan ?? onOpenAbstrak ?? (() => window.alert(`Membuka ringkasan jurnal: ${row.title}`))}
-                  className="flex min-h-[42px] items-center justify-center rounded-xl border border-slate-200 bg-white px-1.5 py-2 text-center text-xs font-bold leading-tight text-slate-700 shadow-2xs hover:bg-slate-50 active:scale-95 cursor-pointer"
+                  onClick={isLocked ? () => handleOpenJournalClick(row.title) : (onOpenRingkasan ?? onOpenAbstrak ?? (() => window.alert(`Membuka ringkasan jurnal: ${row.title}`)))}
+                  className={`flex min-h-[42px] items-center justify-center gap-1.5 rounded-xl border px-1.5 py-2 text-center text-xs font-bold leading-tight shadow-2xs transition-all active:scale-95 cursor-pointer ${
+                    isLocked
+                      ? "border-sky-300 bg-sky-50/85 text-[#00629b] hover:bg-sky-100/90"
+                      : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                  }`}
+                  title={isLocked ? "Terkunci - Batas 3 jurnal akun gratis tercapai" : "Ringkasan Jurnal"}
                 >
-                  Ringkasan Jurnal
+                  {isLocked && (
+                    <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-[#00629b] shrink-0">
+                      <rect x="3" y="7" width="10" height="7" rx="1.5" />
+                      <path d="M5.5 7V4.5a2.5 2.5 0 0 1 5 0V7" />
+                      <circle cx="8" cy="10.5" r="0.8" fill="currentColor" />
+                    </svg>
+                  )}
+                  <span>Ringkasan Jurnal</span>
                 </button>
                 <button
                   type="button"
-                  onClick={onOpenSitasi ?? (() => window.alert(`Sitasi untuk: ${row.authors} (${row.year}). ${row.title}.`))}
-                  className="flex min-h-[42px] items-center justify-center rounded-xl border border-slate-200 bg-white px-2 py-2 text-xs font-bold text-slate-700 shadow-2xs hover:bg-slate-50 active:scale-95 cursor-pointer"
+                  onClick={isLocked ? () => handleOpenJournalClick(row.title) : (onOpenSitasi ?? (() => window.alert(`Sitasi untuk: ${row.authors} (${row.year}). ${row.title}.`)))}
+                  className={`flex min-h-[42px] items-center justify-center gap-1.5 rounded-xl border px-2 py-2 text-xs font-bold shadow-2xs transition-all active:scale-95 cursor-pointer ${
+                    isLocked
+                      ? "border-sky-300 bg-sky-50/85 text-[#00629b] hover:bg-sky-100/90"
+                      : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                  }`}
+                  title={isLocked ? "Terkunci - Batas 3 jurnal akun gratis tercapai" : "Sitasi"}
                 >
-                  Sitasi
+                  {isLocked && (
+                    <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-[#00629b] shrink-0">
+                      <rect x="3" y="7" width="10" height="7" rx="1.5" />
+                      <path d="M5.5 7V4.5a2.5 2.5 0 0 1 5 0V7" />
+                      <circle cx="8" cy="10.5" r="0.8" fill="currentColor" />
+                    </svg>
+                  )}
+                  <span>Sitasi</span>
                 </button>
                 <button
                   type="button"
