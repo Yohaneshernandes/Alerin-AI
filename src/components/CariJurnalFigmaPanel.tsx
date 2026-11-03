@@ -503,7 +503,7 @@ const mobileResultJournals: MobileResultJournal[] = [
   },
   {
     id: "mres-2",
-    rank: "Rekomendasi #2",
+    rank: "Rekomendasi 2",
     score: 89,
     citation: "2023 • Jurnal Kajian Pemasaran Digital",
     journal: "Jurnal Kajian Pemasaran Digital",
@@ -513,6 +513,20 @@ const mobileResultJournals: MobileResultJournal[] = [
     description: "Studi ini memperkuat hubungan antara interaksi parasosial, dorongan kelangkaan, dan perilaku pembelian digital.",
     year: "2023",
     relevancy: "89%",
+  },
+  {
+    id: "mres-3",
+    rank: "Rekomendasi 3",
+    score: 85,
+    citation: "2024 • Jurnal Kajian Pemasaran Digital",
+    journal: "Jurnal Kajian Pemasaran Digital",
+    summary:
+      "Survei 312 responden pengguna live commerce di Indonesia menemukan kepercayaan dan ulasan konsumen memediasi pengaruh interaksi parasosial terhadap minat beli, terutama pada kategori produk fesyen dan perawatan diri.",
+    title: "Strategi Peningkatan Minat Beli pada Live Commerce: Peran Kepercayaan dan Ulasan Konsumen",
+    authors: "Hidayat, M. & Nugroho, A.",
+    description: "Survei 312 responden pengguna live commerce di Indonesia menemukan kepercayaan dan ulasan konsumen memediasi minat beli.",
+    year: "2024",
+    relevancy: "85%",
   },
 ];
 
@@ -9923,6 +9937,7 @@ function MobileJournalResultCard({
   onReplaceJournal?: (journalId: string, reasons: string[]) => Promise<void> | void;
 }) {
   const isReplaced = Boolean(result.isReplaced);
+  const cleanRank = (result.rank || "").replace(/#\s*/g, "");
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const [selectedReasons, setSelectedReasons] = useState<string[]>([]);
   const [otherReasonText, setOtherReasonText] = useState("");
@@ -9980,7 +9995,7 @@ function MobileJournalResultCard({
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
           </svg>
-          <span>Sedang mencari rekomendasi pengganti untuk {result.rank}...</span>
+          <span>Sedang mencari rekomendasi pengganti untuk {cleanRank}...</span>
         </div>
       </article>
     );
@@ -9992,7 +10007,7 @@ function MobileJournalResultCard({
     }`}>
       <div className="flex items-center justify-between gap-1.5 text-[10px] font-semibold">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs font-bold text-sky-700">{result.rank}</span>
+          <span className="rounded-md bg-sky-700 px-2 py-1 text-xs font-bold text-white">{cleanRank}</span>
           <span className="rounded-md bg-slate-200 px-2 py-1 text-slate-700">{result.year}</span>
           <span className="rounded-md bg-sky-100 px-2 py-1 text-sky-700">Akses Terbuka</span>
         </div>
@@ -10026,7 +10041,11 @@ function MobileJournalResultCard({
 
       <div className="mt-4 rounded-2xl bg-slate-100 p-4">
         <p className="text-[13px] font-bold uppercase tracking-wide text-slate-900">Mengapa jurnal ini direkomendasikan?</p>
-        {[["Kesesuaian variabel", index ? 94 : 98], ["Kesesuaian topik", index ? 92 : 96], ["Kesesuaian konteks", index ? 90 : 94], ["Kesesuaian metode", index ? 88 : 91], ["Kesesuaian teori", index ? 86 : 89], ["Kesesuaian periode", index ? 91 : 93]].map(([label, value]) => (
+        {[
+          [["Kesesuaian variabel", 98], ["Kesesuaian topik", 96], ["Kesesuaian konteks", 94], ["Kesesuaian metode", 91], ["Kesesuaian teori", 89], ["Kesesuaian periode", 93]],
+          [["Kesesuaian variabel", 94], ["Kesesuaian topik", 92], ["Kesesuaian konteks", 90], ["Kesesuaian metode", 88], ["Kesesuaian teori", 86], ["Kesesuaian periode", 91]],
+          [["Kesesuaian variabel", 88], ["Kesesuaian topik", 90], ["Kesesuaian konteks", 95], ["Kesesuaian metode", 84], ["Kesesuaian teori", 87], ["Kesesuaian periode", 96]],
+        ][index % 3].map(([label, value]) => (
           <div key={String(label)} className="mt-2.5">
             <div className="flex justify-between text-sm"><span className="text-slate-700">{label}</span><strong className="text-sky-700">{value}%</strong></div>
             <div className="mt-1 h-2 overflow-hidden rounded-full bg-zinc-200"><div className="h-full rounded-full bg-sky-700" style={{ width: `${value}%` }} /></div>
@@ -10035,7 +10054,11 @@ function MobileJournalResultCard({
         <div className="mt-3 rounded-xl bg-[#f1f5f9] p-4 outline outline-1 outline-slate-200">
           <p className="text-sm leading-6">
             <span className="font-semibold text-slate-700">Kutipan relevan:</span>
-            <span className="font-semibold text-slate-900"> &ldquo;Parasocial interaction strengthens purchase intention when viewers perceive urgency and scarcity.&rdquo;</span>
+            <span className="font-semibold text-slate-900"> &ldquo;{[
+              "Parasocial interaction strengthens purchase intention when viewers perceive urgency and scarcity.",
+              "Parasocial interaction and scarcity cues significantly increase buying intention in livestreaming sessions.",
+              "Kepercayaan konsumen memediasi pengaruh ulasan daring terhadap minat beli di ekosistem live commerce.",
+            ][index % 3]}&rdquo;</span>
           </p>
         </div>
       </div>
