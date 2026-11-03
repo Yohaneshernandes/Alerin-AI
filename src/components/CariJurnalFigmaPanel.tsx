@@ -8848,29 +8848,16 @@ function DesktopResearchMap({
 
         {/* Mobile Map Header Outside Shape (Below Tabs) */}
         {!fullscreen && (
-          <div className="mt-3.5 flex items-start justify-between gap-3 md:hidden">
-            <div className="flex items-start gap-2.5">
-              <span className="mt-0.5 shrink-0">{modeIcon}</span>
-              <div>
-                <h3 className="font-['Plus_Jakarta_Sans:Bold'] text-lg font-bold leading-6 text-slate-900">
-                  {modeInfo.title}
-                </h3>
-                <p className="mt-0.5 text-xs leading-relaxed text-slate-500">
-                  {modeInfo.subtitle}
-                </p>
-              </div>
+          <div className="mt-3.5 flex items-start gap-2.5 md:hidden">
+            <span className="mt-0.5 shrink-0">{modeIcon}</span>
+            <div className="min-w-0 flex-1">
+              <h3 className="font-['Plus_Jakarta_Sans:Bold'] text-lg font-bold leading-6 text-slate-900">
+                {modeInfo.title}
+              </h3>
+              <p className="mt-0.5 text-xs leading-relaxed text-slate-500">
+                {modeInfo.subtitle}
+              </p>
             </div>
-            <button
-              type="button"
-              aria-label="Tampilkan peta layar penuh"
-              onClick={() => setFullscreen(true)}
-              className="flex shrink-0 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-600 shadow-2xs hover:bg-slate-50 hover:text-slate-800 transition-colors cursor-pointer"
-            >
-              <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M2 6V2h4M14 6V2h-4M2 10v4h4M14 10v4h-4" />
-              </svg>
-              <span>Perbesar</span>
-            </button>
           </div>
         )}
 
@@ -9444,6 +9431,26 @@ function DesktopResearchMap({
                   </div>
                 );
               })()}
+
+              {/* Mobile Floating Expand Button inside Map Preview */}
+              {isMobilePreview && (
+                <button
+                  type="button"
+                  aria-label="Tampilkan peta layar penuh"
+                  title="Tampilkan peta layar penuh"
+                  onPointerDown={e => e.stopPropagation()}
+                  onClick={e => {
+                    e.stopPropagation();
+                    setFullscreen(true);
+                  }}
+                  className="absolute top-2.5 right-2.5 z-20 flex items-center gap-1.5 rounded-lg border border-slate-200/90 bg-white/95 px-2.5 py-1.5 text-xs font-semibold text-slate-700 shadow-xs backdrop-blur-xs transition-all active:scale-95 cursor-pointer hover:bg-white hover:text-slate-900"
+                >
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M2 6V2h4M14 6V2h-4M2 10v4h4M14 10v4h-4" />
+                  </svg>
+                  <span>Perbesar</span>
+                </button>
+              )}
 
               {!isMobilePreview && (
                 <span
