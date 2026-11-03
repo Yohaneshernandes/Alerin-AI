@@ -8846,6 +8846,34 @@ function DesktopResearchMap({
           </div>
         </div>
 
+        {/* Mobile Map Header Outside Shape (Below Tabs) */}
+        {!fullscreen && (
+          <div className="mt-3.5 flex items-start justify-between gap-3 md:hidden">
+            <div className="flex items-start gap-2.5">
+              <span className="mt-0.5 shrink-0">{modeIcon}</span>
+              <div>
+                <h3 className="font-['Plus_Jakarta_Sans:Bold'] text-lg font-bold leading-6 text-slate-900">
+                  {modeInfo.title}
+                </h3>
+                <p className="mt-0.5 text-xs leading-relaxed text-slate-500">
+                  {modeInfo.subtitle}
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              aria-label="Tampilkan peta layar penuh"
+              onClick={() => setFullscreen(true)}
+              className="flex shrink-0 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-600 shadow-2xs hover:bg-slate-50 hover:text-slate-800 transition-colors cursor-pointer"
+            >
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M2 6V2h4M14 6V2h-4M2 10v4h4M14 10v4h-4" />
+              </svg>
+              <span>Perbesar</span>
+            </button>
+          </div>
+        )}
+
         {fullscreen && (
           <div
             className="fixed inset-0 z-[399] bg-black/40 backdrop-blur-xs"
@@ -8857,10 +8885,10 @@ function DesktopResearchMap({
           className={
             fullscreen
               ? "fixed inset-2 sm:inset-4 md:inset-6 z-[400] flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_24px_80px_rgba(2,6,23,0.35)]"
-              : "mt-4 overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04)]"
+              : "mt-2.5 md:mt-4 overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04)]"
           }
         >
-          <div className="flex items-start justify-between gap-3 px-4 pt-4 md:gap-4 md:px-6 md:pt-5">
+          <div className={`items-start justify-between gap-3 px-4 pt-4 md:gap-4 md:px-6 md:pt-5 ${fullscreen ? "flex" : "hidden md:flex"}`}>
             <div className="flex items-start gap-3">
               <span className="mt-0.5 shrink-0">{modeIcon}</span>
               <div>
@@ -8893,7 +8921,7 @@ function DesktopResearchMap({
             </button>
           </div>
 
-          <div className={`flex gap-4 px-4 pb-2 pt-3 md:px-6 md:pt-4 ${fullscreen ? "min-h-0 flex-1" : ""}`}>
+          <div className={`flex gap-4 ${fullscreen ? "min-h-0 flex-1 px-4 pt-3 pb-2 md:px-6 md:pt-4" : "p-3 md:px-6 md:pb-2 md:pt-4"}`}>
             <div
               ref={graphRef}
               onPointerDown={handleMapPointerDown}
