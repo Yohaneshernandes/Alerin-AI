@@ -13850,7 +13850,7 @@ export default function CariJurnalFigmaPanel({
                           onClick={() => openRiwayatPencarian(item)}
                           className="flex-1 rounded-xl bg-[#00629b] px-4 py-2.5 text-xs font-semibold text-white active:scale-95 transition-transform"
                         >
-                          Cari lagi
+                          Buka
                         </button>
                         <button
                           type="button"
