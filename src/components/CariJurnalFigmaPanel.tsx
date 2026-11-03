@@ -7907,7 +7907,16 @@ function DesktopResearchMap({
     }, 1200);
   };
   const graphRef = useRef<HTMLDivElement | null>(null);
-  const dragRef = useRef<{ pointerId: number; startX: number; startY: number; originX: number; originY: number } | null>(null);
+  const dragRef = useRef<{
+    pointerId: number;
+    startX: number;
+    startY: number;
+    originX: number;
+    originY: number;
+    moved?: boolean;
+    nodeName?: string | null;
+  } | null>(null);
+  const justDraggedRef = useRef<boolean>(false);
   const draggingNodeRef = useRef<{
     name: string;
     pointerId: number;
@@ -7925,6 +7934,11 @@ function DesktopResearchMap({
   };
 
   const handleNodePointerDown = (nodeName: string, event: ReactPointerEvent) => {
+    if (event.pointerType !== "mouse") {
+      // Touch/stylus events bubble to handleMapPointerDown so user can smoothly drag/pan canvas on mobile
+      return;
+    }
+    if (event.button !== 0) return;
     event.stopPropagation();
     const currentOffset = nodeOffsets[nodeName] || { x: 0, y: 0 };
     draggingNodeRef.current = {
@@ -7936,7 +7950,9 @@ function DesktopResearchMap({
       initialOffsetY: currentOffset.y,
       moved: false,
     };
-    (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
+    try {
+      (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
+    } catch {}
   };
 
   const handleNodePointerMove = (event: ReactPointerEvent) => {
@@ -8017,10 +8033,17 @@ function DesktopResearchMap({
   const handleMapPointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
     if (event.pointerType === "mouse" && event.button !== 0) return;
     const target = event.target as HTMLElement;
-    if (target.closest("button, [data-map-node]")) return;
+
+    // On mouse pointer, don't drag map canvas if clicking node buttons or interactive controls
+    if (event.pointerType === "mouse" && target.closest("button, [data-map-node]")) return;
+
+    const nodeEl = target.closest("[data-map-node]") as HTMLElement | null;
+    const nodeName = nodeEl?.getAttribute("data-node-name") ?? null;
 
     activePointersRef.current.set(event.pointerId, { x: event.clientX, y: event.clientY });
-    event.currentTarget.setPointerCapture(event.pointerId);
+    try {
+      event.currentTarget.setPointerCapture(event.pointerId);
+    } catch {}
 
     if (activePointersRef.current.size === 1) {
       dragRef.current = {
@@ -8029,6 +8052,8 @@ function DesktopResearchMap({
         startY: event.clientY,
         originX: pan.x,
         originY: pan.y,
+        moved: false,
+        nodeName: nodeName,
       };
       setDragging(true);
     } else if (activePointersRef.current.size === 2) {
@@ -8054,8 +8079,14 @@ function DesktopResearchMap({
     } else if (activePointersRef.current.size === 1) {
       const drag = dragRef.current;
       if (!drag || drag.pointerId !== event.pointerId) return;
-      const nextX = drag.originX + event.clientX - drag.startX;
-      const nextY = drag.originY + event.clientY - drag.startY;
+      const deltaX = event.clientX - drag.startX;
+      const deltaY = event.clientY - drag.startY;
+      if (Math.hypot(deltaX, deltaY) > 4) {
+        drag.moved = true;
+        justDraggedRef.current = true;
+      }
+      const nextX = drag.originX + deltaX;
+      const nextY = drag.originY + deltaY;
       if (panRafRef.current) cancelAnimationFrame(panRafRef.current);
       panRafRef.current = requestAnimationFrame(() => {
         setPan({ x: nextX, y: nextY });
@@ -8064,6 +8095,20 @@ function DesktopResearchMap({
   };
 
   const handleMapPointerUp = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const drag = dragRef.current;
+    if (drag && drag.pointerId === event.pointerId) {
+      if (!drag.moved && drag.nodeName) {
+        toggleNode(drag.nodeName);
+        setSelectedNodeForDetail(drag.nodeName);
+        setShowNodeArticles(false);
+      }
+      if (drag.moved) {
+        justDraggedRef.current = true;
+        setTimeout(() => {
+          justDraggedRef.current = false;
+        }, 120);
+      }
+    }
     activePointersRef.current.delete(event.pointerId);
     if (activePointersRef.current.size < 2) {
       pinchStartDistRef.current = null;
@@ -8792,10 +8837,17 @@ function DesktopResearchMap({
           </div>
         </div>
 
+        {fullscreen && (
+          <div
+            className="fixed inset-0 z-[399] bg-black/40 backdrop-blur-xs"
+            onClick={() => setFullscreen(false)}
+          />
+        )}
+
         <div
           className={
             fullscreen
-              ? "fixed inset-3 z-[400] flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_24px_80px_rgba(2,6,23,0.35)] md:inset-6"
+              ? "fixed inset-2 sm:inset-4 md:inset-6 z-[400] flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_24px_80px_rgba(2,6,23,0.35)]"
               : "mt-4 overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.04)]"
           }
         >
@@ -8812,7 +8864,7 @@ function DesktopResearchMap({
               aria-label={fullscreen ? "Keluar dari layar penuh" : "Tampilkan peta layar penuh"}
               aria-pressed={fullscreen}
               onClick={() => setFullscreen(value => !value)}
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700 cursor-pointer"
             >
               {fullscreen ? (
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -8836,7 +8888,7 @@ function DesktopResearchMap({
               onDoubleClick={resetMapView}
               className={`relative min-w-0 flex-1 touch-none select-none overflow-hidden rounded-xl ${
                 dragging ? "cursor-grabbing" : "cursor-grab"
-              } ${fullscreen ? "h-full" : "h-[58vh] min-h-[380px] max-h-[620px] md:h-[560px]"} ${
+              } ${fullscreen ? "h-full min-h-[300px]" : "h-48 md:h-[560px]"} ${
                 mode === "kepadatan"
                   ? "bg-[radial-gradient(circle_at_48%_45%,#1d4ed8_0%,#0b3bb8_55%,#072a8c_100%)]"
                   : "bg-[radial-gradient(circle_at_50%_35%,#f8fbff_0%,#ffffff_65%)]"
@@ -8956,7 +9008,11 @@ function DesktopResearchMap({
                             key={node.name}
                             type="button"
                             data-map-node
-                            onClick={() => toggleNode(node.name)}
+                            data-node-name={node.name}
+                            onClick={() => {
+                              if (justDraggedRef.current) return;
+                              toggleNode(node.name);
+                            }}
                             onMouseEnter={() => setHoveredNode(node.name)}
                             onMouseLeave={() => setHoveredNode(null)}
                             aria-pressed={nodeFilter === node.name}
@@ -9080,8 +9136,10 @@ function DesktopResearchMap({
                         <div
                           key={`small-${node.name}-${index}`}
                           data-map-node="small"
+                          data-node-name={node.name}
                           onClick={e => {
                             e.stopPropagation();
+                            if (justDraggedRef.current) return;
                             toggleNode(node.name);
                             setSelectedNodeForDetail(node.name);
                             setShowNodeArticles(false);
@@ -9205,11 +9263,19 @@ function DesktopResearchMap({
 
                           <button
                             type="button"
+                            data-map-node
+                            data-node-name={node.name}
                             onPointerDown={e => handleNodePointerDown(node.name, e)}
                             onPointerMove={handleNodePointerMove}
                             onPointerUp={e => handleNodePointerUp(node.name, e)}
                             onMouseEnter={() => setHoveredNode(node.name)}
                             onMouseLeave={() => setHoveredNode(null)}
+                            onClick={() => {
+                              if (justDraggedRef.current) return;
+                              toggleNode(node.name);
+                              setSelectedNodeForDetail(node.name);
+                              setShowNodeArticles(false);
+                            }}
                             aria-pressed={nodeFilter === node.name}
                             aria-label={`Saring publikasi topik ${node.name}. Seret untuk memindahkan posisi.`}
                             title={`${node.name} · Klik untuk menyaring, seret untuk memindahkan posisi`}
@@ -9232,9 +9298,11 @@ function DesktopResearchMap({
 
                           <span
                             data-map-node
+                            data-node-name={node.name}
                             onMouseEnter={() => setHoveredNode(node.name)}
                             onMouseLeave={() => setHoveredNode(null)}
                             onClick={() => {
+                              if (justDraggedRef.current) return;
                               toggleNode(node.name);
                               setSelectedNodeForDetail(node.name);
                               setShowNodeArticles(false);
