@@ -7875,6 +7875,15 @@ function DesktopResearchMap({
   const pinchStartDistRef = useRef<number | null>(null);
   const pinchStartZoomRef = useRef<number>(100);
   const [fullscreen, setFullscreen] = useState(false);
+  const [isMobileScreen, setIsMobileScreen] = useState(
+    typeof window !== "undefined" ? window.innerWidth < 768 : false,
+  );
+  useEffect(() => {
+    const handleResize = () => setIsMobileScreen(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+  const isMobilePreview = isMobileScreen && !fullscreen;
   const [helpOpen, setHelpOpen] = useState(false);
   const [analysisOpen, setAnalysisOpen] = useState<number | null>(null);
   const [integratedOpen, setIntegratedOpen] = useState(false);
@@ -8864,16 +8873,22 @@ function DesktopResearchMap({
               aria-label={fullscreen ? "Keluar dari layar penuh" : "Tampilkan peta layar penuh"}
               aria-pressed={fullscreen}
               onClick={() => setFullscreen(value => !value)}
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700 cursor-pointer"
+              className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-800 cursor-pointer shadow-2xs md:h-9 md:w-9 md:p-0 md:justify-center"
             >
               {fullscreen ? (
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d="M6 2v4H2M10 2v4h4M6 14v-4H2M10 14v-4h4" />
-                </svg>
+                <>
+                  <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M6 2v4H2M10 2v4h4M6 14v-4H2M10 14v-4h4" />
+                  </svg>
+                  <span className="md:hidden">Kecilkan</span>
+                </>
               ) : (
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d="M2 6V2h4M14 6V2h-4M2 10v4h4M14 10v4h-4" />
-                </svg>
+                <>
+                  <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M2 6V2h4M14 6V2h-4M2 10v4h4M14 10v4h-4" />
+                  </svg>
+                  <span className="md:hidden">Perbesar</span>
+                </>
               )}
             </button>
           </div>
@@ -8958,48 +8973,51 @@ function DesktopResearchMap({
                         />
                       ))}
 
-                      {heatSpots.map((spot, idx) => (
-                        <span
-                          key={spot.name}
-                          className={`pointer-events-none absolute -translate-x-1/2 -translate-y-1/2 transition-[width,height] duration-300 ${
-                            idx % 2 === 0 ? "map-thermal-breathe" : "map-thermal-breathe-alt"
-                          }`}
-                          style={{
-                            left: `${spot.x}%`,
-                            top: `${spot.y}%`,
-                            width: spot.size * densityScale * pulseScale,
-                            height: spot.size * densityScale * pulseScale * 0.82,
-                            opacity: progress <= 0 ? 0 : 1,
-                            animationDelay: `${idx * 0.7}s`,
-                          }}
-                        >
+                      {heatSpots.map((spot, idx) => {
+                        const spotScale = isMobilePreview ? 0.48 : 1;
+                        return (
                           <span
-                            className="absolute inset-0 rounded-full"
+                            key={spot.name}
+                            className={`pointer-events-none absolute -translate-x-1/2 -translate-y-1/2 transition-[width,height] duration-300 ${
+                              idx % 2 === 0 ? "map-thermal-breathe" : "map-thermal-breathe-alt"
+                            }`}
                             style={{
-                              background: "radial-gradient(circle, rgba(74,222,128,0.95) 0%, rgba(34,197,94,0.5) 40%, rgba(29,78,216,0) 74%)",
-                              filter: "blur(14px)",
+                              left: `${spot.x}%`,
+                              top: `${spot.y}%`,
+                              width: spot.size * densityScale * pulseScale * spotScale,
+                              height: spot.size * densityScale * pulseScale * 0.82 * spotScale,
+                              opacity: progress <= 0 ? 0 : 1,
+                              animationDelay: `${idx * 0.7}s`,
                             }}
-                          />
-                          <span
-                            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
-                            style={{
-                              width: "62%",
-                              height: "62%",
-                              background: "radial-gradient(circle, rgba(250,204,21,0.95) 0%, rgba(250,204,21,0.55) 48%, rgba(250,204,21,0) 78%)",
-                              filter: "blur(10px)",
-                            }}
-                          />
-                          <span
-                            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
-                            style={{
-                              width: "34%",
-                              height: "34%",
-                              background: "radial-gradient(circle, rgba(239,68,68,0.98) 0%, rgba(239,68,68,0.7) 52%, rgba(239,68,68,0) 82%)",
-                              filter: "blur(7px)",
-                            }}
-                          />
-                        </span>
-                      ))}
+                          >
+                            <span
+                              className="absolute inset-0 rounded-full"
+                              style={{
+                                background: "radial-gradient(circle, rgba(74,222,128,0.95) 0%, rgba(34,197,94,0.5) 40%, rgba(29,78,216,0) 74%)",
+                                filter: isMobilePreview ? "blur(8px)" : "blur(14px)",
+                              }}
+                            />
+                            <span
+                              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
+                              style={{
+                                width: "62%",
+                                height: "62%",
+                                background: "radial-gradient(circle, rgba(250,204,21,0.95) 0%, rgba(250,204,21,0.55) 48%, rgba(250,204,21,0) 78%)",
+                                filter: isMobilePreview ? "blur(6px)" : "blur(10px)",
+                              }}
+                            />
+                            <span
+                              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
+                              style={{
+                                width: "34%",
+                                height: "34%",
+                                background: "radial-gradient(circle, rgba(239,68,68,0.98) 0%, rgba(239,68,68,0.7) 52%, rgba(239,68,68,0) 82%)",
+                                filter: isMobilePreview ? "blur(4px)" : "blur(7px)",
+                              }}
+                            />
+                          </span>
+                        );
+                      })}
 
                       {mapMainNodes.map((node, idx) => {
                         const pos = getNodePos(node);
@@ -9020,14 +9038,16 @@ function DesktopResearchMap({
                             className="group absolute flex cursor-pointer -translate-x-1/2 -translate-y-1/2 items-center gap-1.5 text-left transition-transform hover:scale-110"
                             style={{ left: `${pos.x}%`, top: `${pos.y}%`, opacity: 0.75 + 0.25 * progress }}
                           >
-                            <span className="relative flex h-3.5 w-3.5 items-center justify-center">
+                            <span className={`relative flex items-center justify-center ${isMobilePreview ? "h-2.5 w-2.5" : "h-3.5 w-3.5"}`}>
                               <span
                                 className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-60"
                                 style={{ animationDuration: `${2.2 + (idx % 3) * 0.5}s` }}
                               />
-                              <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-white shadow-[0_0_10px_rgba(255,255,255,1)]" />
+                              <span className={`relative inline-flex rounded-full bg-white shadow-[0_0_10px_rgba(255,255,255,1)] ${isMobilePreview ? "h-1.5 w-1.5" : "h-2.5 w-2.5"}`} />
                             </span>
-                            <span className="whitespace-nowrap text-[13px] font-extrabold leading-4 text-white [text-shadow:0_1px_8px_rgba(2,20,80,0.95)] transition-colors group-hover:text-yellow-300">
+                            <span className={`whitespace-nowrap font-extrabold text-white [text-shadow:0_1px_8px_rgba(2,20,80,0.95)] transition-colors group-hover:text-yellow-300 ${
+                              isMobilePreview ? "text-[8px] leading-tight" : "text-[13px] leading-4"
+                            }`}>
                               {node.name}
                             </span>
                           </button>
@@ -9108,6 +9128,7 @@ function DesktopResearchMap({
                     )}
 
                     {mapSmallNodes.map((node, index) => {
+                      if (isMobilePreview && index >= 24) return null;
                       const anchor = nearestMain(node);
                       const appeared = mode !== "perkembangan" || anchor.year <= playYear;
                       const color = mode === "perkembangan" ? mapYearColor(anchor.year) : mapClusters[node.cluster].color;
@@ -9129,8 +9150,9 @@ function DesktopResearchMap({
                       // - Sub-topik paling kecil (r <= 4): mulai muncul di zoom 124%, jelas di 140%
                       const minZoom = node.r >= 6 ? 104 : node.r >= 5 ? 114 : 124;
                       const labelLoDOpacity = Math.min(1, Math.max(0, (zoom - minZoom) / 16));
-                      const isLabelVisible = isInteractive || labelLoDOpacity > 0.05;
+                      const isLabelVisible = !isMobilePreview && (isInteractive || labelLoDOpacity > 0.05);
                       const finalOpacity = isInteractive ? 1 : labelLoDOpacity;
+                      const dotRadius = isMobilePreview ? Math.max(2.5, Math.round(node.r * 0.4)) : node.r;
 
                       return (
                         <div
@@ -9158,10 +9180,10 @@ function DesktopResearchMap({
                           <span
                             className="block rounded-full transition-transform duration-200 group-hover:scale-140"
                             style={{
-                              width: node.r * 2,
-                              height: node.r * 2,
-                              marginLeft: -node.r,
-                              marginTop: -node.r,
+                              width: dotRadius * 2,
+                              height: dotRadius * 2,
+                              marginLeft: -dotRadius,
+                              marginTop: -dotRadius,
                               background: color,
                               opacity: isDimmed ? 0.15 : (appeared ? 0.95 : 0.2) * reveal,
                               transform: `scale(${isDimmed ? 0.5 : isInteractive ? 1.4 : 0.6 + 0.4 * reveal})`,
@@ -9209,19 +9231,25 @@ function DesktopResearchMap({
                       const isTarget = hoveredNode === node.name;
                       const isConnected = spotlightNode ? connectedNodeNames.has(node.name) : false;
                       const isDimmed = spotlightNode ? !isConnected : false;
-                      const labelPos = mode === "perkembangan" && node.labelPos === "inside" ? "right" : node.labelPos;
-                      const labelGap = node.r + 12;
+
+                      const isCenter = node.name === "AI literacy";
+                      const currentRadius = isMobilePreview ? (isCenter ? 22 : 6) : node.r;
+                      const labelPos = mode === "perkembangan" && node.labelPos === "inside" && !isMobilePreview ? "right" : node.labelPos;
+                      const labelGap = currentRadius + (isMobilePreview ? 8 : 12);
+
                       const translate =
-                        labelPos === "inside"
+                        isCenter
                           ? "translate(-50%, -50%)"
-                          : labelPos === "top"
-                            ? `translate(-50%, calc(-100% - ${labelGap}px))`
-                            : labelPos === "bottom"
-                              ? `translate(-50%, ${labelGap}px)`
-                              : labelPos === "left"
-                                ? `translate(calc(-100% - ${labelGap}px), -50%)`
-                                : `translate(${labelGap}px, -50%)`;
-                      const textAlign = labelPos === "left" ? "right" : labelPos === "right" ? "left" : "center";
+                          : labelPos === "inside"
+                            ? "translate(-50%, -50%)"
+                            : labelPos === "top"
+                              ? `translate(-50%, calc(-100% - ${labelGap}px))`
+                              : labelPos === "bottom"
+                                ? `translate(-50%, ${labelGap}px)`
+                                : labelPos === "left"
+                                  ? `translate(calc(-100% - ${labelGap}px), -50%)`
+                                  : `translate(${labelGap}px, -50%)`;
+                      const textAlign = isCenter ? "center" : labelPos === "left" ? "right" : labelPos === "right" ? "left" : "center";
                       const floatClass = index % 3 === 0 ? "map-float-1" : index % 3 === 1 ? "map-float-2" : "map-float-3";
 
                       return (
@@ -9235,14 +9263,14 @@ function DesktopResearchMap({
                             animationDelay: `${index * 0.4}s`,
                           }}
                         >
-                          {/* Concentric animated ripple waves on central/major/active nodes */}
-                          {(node.r >= 22 || active || isTarget) && (
+                          {/* Concentric animated ripple waves on central/major/active nodes (Only on desktop or fullscreen) */}
+                          {!isMobilePreview && (node.r >= 22 || active || isTarget) && (
                             <>
                               <span
                                 className="pointer-events-none absolute left-0 top-0 rounded-full"
                                 style={{
-                                  width: node.r * 2,
-                                  height: node.r * 2,
+                                  width: currentRadius * 2,
+                                  height: currentRadius * 2,
                                   border: `2px solid ${color}`,
                                   animation: "map-ripple-ring 3.6s cubic-bezier(0, 0.2, 0.8, 1) infinite",
                                   animationDelay: `${index * 0.5}s`,
@@ -9251,8 +9279,8 @@ function DesktopResearchMap({
                               <span
                                 className="pointer-events-none absolute left-0 top-0 rounded-full"
                                 style={{
-                                  width: node.r * 2,
-                                  height: node.r * 2,
+                                  width: currentRadius * 2,
+                                  height: currentRadius * 2,
                                   border: `1.5px solid ${color}`,
                                   animation: "map-ripple-ring-delayed 3.6s cubic-bezier(0, 0.2, 0.8, 1) infinite",
                                   animationDelay: `${index * 0.5 + 1.2}s`,
@@ -9279,19 +9307,19 @@ function DesktopResearchMap({
                             aria-pressed={nodeFilter === node.name}
                             aria-label={`Saring publikasi topik ${node.name}. Seret untuk memindahkan posisi.`}
                             title={`${node.name} · Klik untuk menyaring, seret untuk memindahkan posisi`}
-                            className={`absolute left-0 top-0 rounded-full border-[3px] border-white transition-all duration-200 cursor-grab active:cursor-grabbing hover:scale-110 select-none ${
-                              isTarget ? "scale-110" : ""
-                            }`}
+                            className={`absolute left-0 top-0 rounded-full transition-all duration-200 cursor-grab active:cursor-grabbing hover:scale-110 select-none ${
+                              isMobilePreview ? "border-[1.5px] border-white shadow-xs" : "border-[3px] border-white"
+                            } ${isTarget ? "scale-110" : ""}`}
                             style={{
-                              width: node.r * 2,
-                              height: node.r * 2,
+                              width: currentRadius * 2,
+                              height: currentRadius * 2,
                               transform: `translate(-50%, -50%) scale(${reveal})`,
                               background: color,
                               backgroundImage:
                                 "linear-gradient(145deg, rgba(255,255,255,0.65) 0%, rgba(255,255,255,0) 52%)",
                               boxShadow: isTarget || isConnected || active
-                                ? `0 0 0 5px ${color}33, 0 0 28px ${color}bb, 0 12px 28px -6px ${color}cc`
-                                : `0 8px 22px -8px ${color}99`,
+                                ? `0 0 0 ${isMobilePreview ? 2 : 5}px ${color}33, 0 0 20px ${color}bb`
+                                : isMobilePreview ? `0 2px 8px -2px ${color}80` : `0 8px 22px -8px ${color}99`,
                               filter: appeared ? "none" : "grayscale(0.85)",
                             }}
                           />
@@ -9307,18 +9335,32 @@ function DesktopResearchMap({
                               setSelectedNodeForDetail(node.name);
                               setShowNodeArticles(false);
                             }}
-                            className={`absolute cursor-pointer whitespace-nowrap transition-all duration-200 ${
-                              labelPos === "inside"
-                                ? "text-[15px] sm:text-[17px] md:text-[19px] font-extrabold leading-6 text-slate-900 select-none"
-                                : "text-[11px] sm:text-[12px] md:text-[13px] font-extrabold leading-[16px] md:leading-[18px] text-slate-900 select-none"
+                            className={`absolute cursor-pointer whitespace-nowrap transition-all duration-200 select-none ${
+                              isMobilePreview
+                                ? (isCenter ? "text-[7.5px] font-extrabold text-white pointer-events-none" : "text-[7.5px] font-bold")
+                                : (labelPos === "inside"
+                                    ? "text-[15px] sm:text-[17px] md:text-[19px] font-extrabold leading-6 text-slate-900"
+                                    : "text-[11px] sm:text-[12px] md:text-[13px] font-extrabold leading-[16px] md:leading-[18px] text-slate-900")
                             } ${isTarget ? "text-sky-700 scale-105" : ""}`}
                             style={{ transform: translate, textAlign }}
                           >
-                            <span className="inline-block max-w-[105px] sm:max-w-[130px] md:max-w-none truncate md:overflow-visible rounded-md bg-white/80 md:bg-transparent px-1.5 py-0.5 shadow-2xs md:shadow-none backdrop-blur-[2px] md:backdrop-blur-none border border-slate-200/50 md:border-transparent">
-                              {node.name}
-                            </span>
-                            {mode === "perkembangan" && (
-                              <span className="block text-[10px] md:text-[12px] font-bold text-slate-500">({node.year.toFixed(1)})</span>
+                            {isMobilePreview ? (
+                              isCenter ? (
+                                <span>{node.name}</span>
+                              ) : (
+                                <span className="inline-block max-w-[85px] truncate rounded bg-white/95 px-1 py-0.5 shadow-2xs border border-slate-200/80 text-slate-800">
+                                  {node.name}
+                                </span>
+                              )
+                            ) : (
+                              <>
+                                <span className="inline-block max-w-[105px] sm:max-w-[130px] md:max-w-none truncate md:overflow-visible rounded-md bg-white/80 md:bg-transparent px-1.5 py-0.5 shadow-2xs md:shadow-none backdrop-blur-[2px] md:backdrop-blur-none border border-slate-200/50 md:border-transparent">
+                                  {node.name}
+                                </span>
+                                {mode === "perkembangan" && (
+                                  <span className="block text-[10px] md:text-[12px] font-bold text-slate-500">({node.year.toFixed(1)})</span>
+                                )}
+                              </>
                             )}
                           </span>
                         </div>
@@ -9375,13 +9417,15 @@ function DesktopResearchMap({
                 );
               })()}
 
-              <span
-                className={`pointer-events-none absolute bottom-3 left-3 z-20 max-w-[calc(100%-24px)] rounded-lg px-2.5 py-1.5 text-[10px] font-medium leading-4 shadow-sm ${
-                  mode === "kepadatan" ? "bg-[#072a8c]/90 text-white/95" : "bg-white/95 text-slate-600 border border-slate-200/80"
-                }`}
-              >
-                💡 Geser kanvas · Cubit untuk zoom · Tap node untuk detail
-              </span>
+              {!isMobilePreview && (
+                <span
+                  className={`pointer-events-none absolute bottom-3 left-3 z-20 max-w-[calc(100%-24px)] rounded-lg px-2.5 py-1.5 text-[10px] font-medium leading-4 shadow-sm ${
+                    mode === "kepadatan" ? "bg-[#072a8c]/90 text-white/95" : "bg-white/95 text-slate-600 border border-slate-200/80"
+                  }`}
+                >
+                  💡 Geser kanvas · Cubit untuk zoom · Tap node untuk detail
+                </span>
+              )}
             </div>
 
           </div>
