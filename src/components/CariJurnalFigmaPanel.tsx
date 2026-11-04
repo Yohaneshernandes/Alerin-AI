@@ -1933,23 +1933,6 @@ function Sidebar({
                   <button
                     type="button"
                     onClick={() => {
-                      window.alert("Tautan riwayat berhasil disalin.");
-                      setMenuIndex(null);
-                      setMenuCoords(null);
-                    }}
-                    className="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50"
-                  >
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="text-slate-400">
-                      <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
-                      <path d="M16 6l-4-4-4 4" />
-                      <path d="M12 2v13" />
-                    </svg>
-                    Bagikan
-                  </button>
-                  <div className="mx-3 my-1 border-t border-slate-100" />
-                  <button
-                    type="button"
-                    onClick={() => {
                       setHapusRiwayatIndex(index);
                       setMenuIndex(null);
                       setMenuCoords(null);
