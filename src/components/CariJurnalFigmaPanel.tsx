@@ -8374,17 +8374,18 @@ function DesktopResearchMap({
   // Auto-play timeline & network simulation
   useEffect(() => {
     if (!isPlaying) return;
+    const step = isMobileScreen ? (mode === "jaringan" ? 0.04 : 0.03) : 0.02;
     const timer = setInterval(() => {
       setProgress(curr => {
         if (curr >= 1) {
           setIsPlaying(false);
           return 1;
         }
-        return Math.min(1, curr + 0.015);
+        return Math.min(1, curr + step);
       });
     }, 30);
     return () => clearInterval(timer);
-  }, [isPlaying]);
+  }, [isPlaying, isMobileScreen, mode]);
 
   const handleTogglePlay = () => {
     if (progress >= 1) setProgress(0);
