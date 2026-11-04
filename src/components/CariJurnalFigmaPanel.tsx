@@ -9159,7 +9159,7 @@ function DesktopResearchMap({
                 )}
               </button>
 
-              {mode !== "perkembangan" && (
+              {mode === "jaringan" && (
                 <button
                   type="button"
                   onClick={() => {
@@ -9737,7 +9737,7 @@ function DesktopResearchMap({
                           style={{
                             left: `${pos.x}%`,
                             top: `${pos.y}%`,
-                            opacity: isDimmed ? 0.3 : (appeared ? 1 : 0.5),
+                            opacity: (isDimmed ? 0.3 : (appeared ? 1 : 0.5)) * reveal,
                             animationDelay: `${index * 0.4}s`,
                           }}
                         >
@@ -9951,72 +9951,74 @@ function DesktopResearchMap({
             </div>
           )}
 
-          <div className="mt-2 flex flex-wrap items-center gap-2.5 sm:gap-3 border-t border-slate-100 px-5 py-3 md:px-6">
-            <button
-              type="button"
-              onClick={handleTogglePlay}
-              className="flex items-center gap-1.5 rounded-lg bg-sky-50 px-3.5 py-1.5 text-xs font-bold text-sky-700 outline outline-1 outline-sky-200 transition-all hover:bg-sky-100 active:scale-95 cursor-pointer shadow-2xs"
-            >
-              {isPlaying && !isTourPlaying ? (
-                <>
-                  <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
-                    <rect x="3" y="2" width="3.5" height="12" rx="1" />
-                    <rect x="9.5" y="2" width="3.5" height="12" rx="1" />
-                  </svg>
-                  <span>Jeda</span>
-                </>
-              ) : (
-                <>
-                  <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
-                    <polygon points="4,2 14,8 4,14" />
-                  </svg>
-                  <span>{mode === "perkembangan" ? "Putar Timeline" : "Putar Simulasi"}</span>
-                </>
-              )}
-            </button>
-
-            {mode !== "perkembangan" && (
+          {mode !== "kepadatan" && (
+            <div className="mt-2 flex flex-wrap items-center gap-2.5 sm:gap-3 border-t border-slate-100 px-5 py-3 md:px-6">
               <button
                 type="button"
-                onClick={() => {
-                  if (isTourPlaying) {
-                    setIsTourPlaying(false);
-                    setIsPlaying(false);
-                  } else {
-                    handleStartTour();
-                  }
-                }}
-                title="Putar simulasi semua mode peta secara otomatis"
-                className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-all active:scale-95 cursor-pointer ${
-                  isTourPlaying
-                    ? "bg-sky-600 text-white shadow-xs"
-                    : "bg-slate-100 text-slate-700 hover:bg-slate-200/80"
-                }`}
+                onClick={handleTogglePlay}
+                className="flex items-center gap-1.5 rounded-lg bg-sky-50 px-3.5 py-1.5 text-xs font-bold text-sky-700 outline outline-1 outline-sky-200 transition-all hover:bg-sky-100 active:scale-95 cursor-pointer shadow-2xs"
               >
-                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M2 4h12M2 8h12M2 12h12" />
-                </svg>
-                <span>{isTourPlaying ? "Tour Berjalan..." : "Preview Semua"}</span>
+                {isPlaying && !isTourPlaying ? (
+                  <>
+                    <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+                      <rect x="3" y="2" width="3.5" height="12" rx="1" />
+                      <rect x="9.5" y="2" width="3.5" height="12" rx="1" />
+                    </svg>
+                    <span>Jeda</span>
+                  </>
+                ) : (
+                  <>
+                    <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+                      <polygon points="4,2 14,8 4,14" />
+                    </svg>
+                    <span>{mode === "perkembangan" ? "Putar Timeline" : "Putar Simulasi"}</span>
+                  </>
+                )}
               </button>
-            )}
 
-            <span className="w-18 shrink-0 text-xs font-bold leading-4 text-slate-800">
-              {mode === "perkembangan" ? `Thn ${playYear.toFixed(1)}` : `Simulasi ${Math.round(progress * 100)}%`}
-            </span>
-            <input
-              type="range"
-              min={0}
-              max={100}
-              value={Math.round(progress * 100)}
-              onChange={event => {
-                setIsTourPlaying(false);
-                setIsPlaying(false);
-                setProgress(Number(event.target.value) / 100);
-              }}
-              aria-label="Kontrol simulasi peta"
-              className="h-1.5 w-full flex-1 cursor-pointer appearance-none rounded-full bg-slate-200 accent-[#0369a1] md:min-w-32"
-            />
-          </div>
+              {mode === "jaringan" && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (isTourPlaying) {
+                      setIsTourPlaying(false);
+                      setIsPlaying(false);
+                    } else {
+                      handleStartTour();
+                    }
+                  }}
+                  title="Putar simulasi semua mode peta secara otomatis"
+                  className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-all active:scale-95 cursor-pointer ${
+                    isTourPlaying
+                      ? "bg-sky-600 text-white shadow-xs"
+                      : "bg-slate-100 text-slate-700 hover:bg-slate-200/80"
+                  }`}
+                >
+                  <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M2 4h12M2 8h12M2 12h12" />
+                  </svg>
+                  <span>{isTourPlaying ? "Tour Berjalan..." : "Preview Semua"}</span>
+                </button>
+              )}
+
+              <span className="w-18 shrink-0 text-xs font-bold leading-4 text-slate-800">
+                {mode === "perkembangan" ? `Thn ${playYear.toFixed(1)}` : `Simulasi ${Math.round(progress * 100)}%`}
+              </span>
+              <input
+                type="range"
+                min={0}
+                max={100}
+                value={Math.round(progress * 100)}
+                onChange={event => {
+                  setIsTourPlaying(false);
+                  setIsPlaying(false);
+                  setProgress(Number(event.target.value) / 100);
+                }}
+                aria-label="Kontrol simulasi peta"
+                className="h-1.5 w-full flex-1 cursor-pointer appearance-none rounded-full bg-slate-200 accent-[#0369a1] md:min-w-32"
+              />
+            </div>
+          )}
 
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-slate-100 px-5 py-3 text-sm leading-5 text-slate-500 md:px-6">
             {modeInfo.stats.map((stat, index) => (
