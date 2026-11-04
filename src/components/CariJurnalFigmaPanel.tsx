@@ -864,7 +864,9 @@ function HapusJurnalModal({
             <path d="M6.5 7v4M9.5 7v4" />
           </svg>
         </div>
-        <h2 className="mt-4 font-['Plus_Jakarta_Sans:Bold'] text-lg font-bold text-[#0f172a] text-center sm:text-left">Kamu yakin ingin menghapus jurnal ini?</h2>
+        <h2 className="mt-4 font-['Plus_Jakarta_Sans:Bold'] text-lg font-bold text-[#0f172a] text-center sm:text-left">
+          Kamu yakin ingin menghapus<br className="sm:hidden" /> <span className="inline-block">jurnal ini?</span>
+        </h2>
         <p className="mt-1.5 text-sm leading-6 text-[#64748b] text-center sm:text-left">
           Jurnal ini akan dihapus dari Koleksi. Tindakan ini tidak bisa dibatalkan.
         </p>
@@ -1016,7 +1018,9 @@ function HapusRiwayatModal({
             <path d="M6.5 7v4M9.5 7v4" />
           </svg>
         </div>
-        <h2 className="mt-4 font-['Plus_Jakarta_Sans:Bold'] text-lg font-bold text-[#0f172a] text-center sm:text-left">Kamu yakin ingin menghapus riwayat ini?</h2>
+        <h2 className="mt-4 font-['Plus_Jakarta_Sans:Bold'] text-lg font-bold text-[#0f172a] text-center sm:text-left">
+          Kamu yakin ingin menghapus<br className="sm:hidden" /> <span className="inline-block">riwayat ini?</span>
+        </h2>
         <p className="mt-1.5 text-sm leading-6 text-[#64748b] text-center sm:text-left">
           Riwayat pencarian ini akan dihapus. Tindakan ini tidak bisa dibatalkan.
         </p>
@@ -1073,7 +1077,9 @@ function HapusLiteratureModal({
             <path d="M6.5 7v4M9.5 7v4" />
           </svg>
         </div>
-        <h2 className="mt-4 font-['Plus_Jakarta_Sans:Bold'] text-lg font-bold text-[#0f172a] text-center sm:text-left">Kamu yakin ingin menghapus literature review ini?</h2>
+        <h2 className="mt-4 font-['Plus_Jakarta_Sans:Bold'] text-lg font-bold text-[#0f172a] text-center sm:text-left">
+          Kamu yakin ingin menghapus<br className="sm:hidden" /> <span className="inline-block">literature review ini?</span>
+        </h2>
         <p className="mt-1.5 text-sm leading-6 text-[#64748b] text-center sm:text-left">
           Literature review ini akan dihapus dari Koleksi. Tindakan ini tidak bisa dibatalkan.
         </p>
@@ -1130,7 +1136,9 @@ function HapusMapModal({
             <path d="M6.5 7v4M9.5 7v4" />
           </svg>
         </div>
-        <h2 className="mt-4 font-['Plus_Jakarta_Sans:Bold'] text-lg font-bold text-[#0f172a] text-center sm:text-left">Kamu yakin ingin menghapus peta penelitian ini?</h2>
+        <h2 className="mt-4 font-['Plus_Jakarta_Sans:Bold'] text-lg font-bold text-[#0f172a] text-center sm:text-left">
+          Kamu yakin ingin menghapus<br className="sm:hidden" /> <span className="inline-block">peta penelitian ini?</span>
+        </h2>
         <p className="mt-1.5 text-sm leading-6 text-[#64748b] text-center sm:text-left">
           Peta penelitian ini akan dihapus dari Koleksi. Tindakan ini tidak bisa dibatalkan.
         </p>
@@ -1188,7 +1196,15 @@ function HapusFolderModal({
           </svg>
         </div>
         <h2 className="mt-4 font-['Plus_Jakarta_Sans:Bold'] text-lg font-bold text-[#0f172a] text-center sm:text-left">
-          {count > 1 ? `Kamu yakin ingin menghapus ${count} folder ini?` : "Kamu yakin ingin menghapus folder ini?"}
+          {count > 1 ? (
+            <>
+              Kamu yakin ingin menghapus<br className="sm:hidden" /> <span className="inline-block">{count} folder ini?</span>
+            </>
+          ) : (
+            <>
+              Kamu yakin ingin menghapus<br className="sm:hidden" /> <span className="inline-block">folder ini?</span>
+            </>
+          )}
         </h2>
         <p className="mt-1.5 text-sm leading-6 text-[#64748b] text-center sm:text-left">
           Folder ini akan dihapus dari Koleksi dan item di dalamnya akan dipindahkan ke "Belum dikelompokkan". Tindakan ini tidak bisa dibatalkan.
@@ -1247,7 +1263,7 @@ function HapusFileModal({
           </svg>
         </div>
         <h2 className="mt-4 font-['Plus_Jakarta_Sans:Bold'] text-lg font-bold text-[#0f172a] text-center sm:text-left">
-          Apakah kamu yakin menghapus file ini?
+          Apakah kamu yakin menghapus<br className="sm:hidden" /> <span className="inline-block">file ini?</span>
         </h2>
         <p className="mt-1.5 text-sm leading-6 text-[#64748b] text-center sm:text-left">
           {fileName ? (
