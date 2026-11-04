@@ -5434,14 +5434,14 @@ function DesktopSearchResults({
             Alerin menelusuri dan menyaring jurnal berdasarkan relevansi dengan pencarianmu untuk menampilkan hasil yang paling sesuai.
           </p>
           <div className="flex flex-col items-start gap-2 pt-4">
-            <span className="rounded-md bg-slate-100 px-2.5 py-1 text-xs font-semibold leading-4 text-slate-700 flex flex-wrap items-center gap-1.5">
-              <span>Hasil Pencarian Dari: {query.trim() || "interaksi parasosial"}</span>
+            <div className="w-full rounded-md bg-slate-100 px-2.5 py-1.5 text-xs font-semibold leading-relaxed text-slate-700 break-words">
+              <span>Hasil Pencarian Dari: {query.trim() || "interaksi parasosial"} </span>
               {query.trim() && !isDoiFormat(query.trim()) && (
-                <span className="inline-flex items-center rounded-full bg-sky-100 px-2 py-0.5 text-[10px] font-semibold text-[#00629b]">
+                <span className="inline-flex items-center align-middle rounded-full bg-sky-100 px-2 py-0.5 text-[10px] font-semibold text-[#00629b] whitespace-nowrap ml-1">
                   {quickSearchCategory === "penulis" ? "Penulis" : quickSearchCategory === "judul" ? "Judul" : "Topik"}
                 </span>
               )}
-            </span>
+            </div>
             <span className="rounded-md bg-slate-100 px-2.5 py-1 text-xs font-semibold leading-4 text-slate-700">Tahun: 2024–2026</span>
           </div>
           <div className="mt-5 border-t border-slate-200/70 pt-5 text-center">
@@ -13272,11 +13272,11 @@ export default function CariJurnalFigmaPanel({
                         <circle cx="7" cy="7" r="4.5" />
                         <path d="M10.4 10.4L14 14" />
                       </svg>
-                      <p className="min-w-0 flex-1 break-words">
+                      <p className="min-w-0 flex-1 break-words leading-relaxed">
                         <span className="font-medium text-slate-900">Hasil Pencarian Dari: </span>
-                        <span className="font-semibold text-slate-900">{searchSubmittedQuery || query.trim() || paragraph.trim() || "interaksi parasosial"}</span>
+                        <span className="font-semibold text-slate-900">{searchSubmittedQuery || query.trim() || paragraph.trim() || "interaksi parasosial"} </span>
                         {(searchSubmittedQuery || query.trim()) && !isDoiFormat(searchSubmittedQuery || query.trim()) && (
-                          <span className="ml-1.5 inline-flex items-center rounded-full bg-sky-100 px-2 py-0.5 text-[10px] font-semibold text-[#00629b]">
+                          <span className="inline-flex items-center align-middle rounded-full bg-sky-100 px-2 py-0.5 text-[10px] font-semibold text-[#00629b] whitespace-nowrap ml-1">
                             {quickSearchCategory === "penulis" ? "Penulis" : quickSearchCategory === "judul" ? "Judul" : "Topik"}
                           </span>
                         )}
