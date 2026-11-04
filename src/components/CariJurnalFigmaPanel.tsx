@@ -12653,6 +12653,7 @@ export default function CariJurnalFigmaPanel({
       const target = list[index];
       if (!target) return list;
       const isPinnedNow = !target.pinned;
+      showToast(isPinnedNow ? "Riwayat disematkan ke atas" : "Sematan riwayat dilepas");
       const updatedTarget: RiwayatItem = { ...target, pinned: isPinnedNow };
       const remaining = list.filter((_, i) => i !== index);
 
@@ -13906,7 +13907,7 @@ export default function CariJurnalFigmaPanel({
                         <div className="min-w-0">
                           <p className="flex items-center gap-1.5 truncate font-['Plus_Jakarta_Sans:SemiBold'] text-sm font-semibold text-[#0f172a] hover:text-[#00629b] transition-colors">
                             {item.pinned && (
-                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0070ba" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-label="Disematkan" className="shrink-0 text-[#0070ba]">
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="#0070ba" stroke="#0070ba" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-label="Disematkan" className="shrink-0 text-[#0070ba]">
                                 <line x1="12" y1="17" x2="12" y2="22" />
                                 <path d="M5 17h14v-1.76a2 2 0 0 0-.89-1.66l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1v3.76a2 2 0 0 1-.33.92l-1.78.9A2 2 0 0 0 5 15.24Z" />
                               </svg>
@@ -13929,18 +13930,45 @@ export default function CariJurnalFigmaPanel({
                         </span>
                       </div>
 
-                      <div className="mt-3 flex gap-2 border-t border-slate-300 pt-3">
+                      <div className="mt-3 flex items-center gap-2 border-t border-slate-300 pt-3">
                         <button
                           type="button"
                           onClick={() => openRiwayatPencarian(item)}
-                          className="flex-1 rounded-xl bg-[#00629b] px-4 py-2.5 text-xs font-semibold text-white active:scale-95 transition-transform"
+                          className="flex-1 rounded-xl bg-[#00629b] px-3.5 py-2.5 text-xs font-semibold text-white active:scale-95 transition-transform"
                         >
                           Buka
                         </button>
                         <button
                           type="button"
+                          onClick={() => handleTogglePinRiwayat(index)}
+                          className={`inline-flex items-center justify-center gap-1.5 rounded-xl border px-3 py-2.5 text-xs font-semibold whitespace-nowrap active:scale-95 transition-all ${
+                            item.pinned
+                              ? "border-sky-300 bg-sky-50 text-[#00629b] hover:bg-sky-100 font-bold"
+                              : "border-slate-200 bg-white text-[#64748b] hover:bg-slate-50 hover:text-slate-800"
+                          }`}
+                          title={item.pinned ? "Lepas sematan" : "Sematkan"}
+                        >
+                          <svg
+                            width="13"
+                            height="13"
+                            viewBox="0 0 24 24"
+                            fill={item.pinned ? "#0070ba" : "none"}
+                            stroke="currentColor"
+                            strokeWidth="1.8"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            aria-hidden="true"
+                            className={`shrink-0 ${item.pinned ? "text-[#00629b]" : "text-slate-400"}`}
+                          >
+                            <line x1="12" y1="17" x2="12" y2="22" />
+                            <path d="M5 17h14v-1.76a2 2 0 0 0-.89-1.66l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1v3.76a2 2 0 0 1-.33.92l-1.78.9A2 2 0 0 0 5 15.24Z" />
+                          </svg>
+                          <span>{item.pinned ? "Lepas sematan" : "Sematkan"}</span>
+                        </button>
+                        <button
+                          type="button"
                           onClick={() => setMobileHapusTarget({ type: "riwayat", index, label: item.label })}
-                          className="rounded-xl border border-slate-200 px-4 py-2.5 text-xs font-semibold text-[#64748b] hover:bg-slate-50 active:scale-95 transition-all"
+                          className="rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs font-semibold text-[#64748b] hover:bg-slate-50 active:scale-95 transition-all"
                         >
                           Hapus
                         </button>
