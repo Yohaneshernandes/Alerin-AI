@@ -12671,6 +12671,8 @@ export default function CariJurnalFigmaPanel({
   }, [view, mobileSearchStage]);
 
   const handleMobileScroll = (event: UIEvent<HTMLElement>) => {
+    if (mobileProfileMenuOpen) setMobileProfileMenuOpen(false);
+    if (mobileCollectionMenuOpen) setMobileCollectionMenuOpen(false);
     const y = event.currentTarget.scrollTop;
     const delta = y - lastMobileScrollY.current;
     if (y < 24 || Math.abs(delta) > 120) setMobileNavHidden(false);
@@ -12678,6 +12680,13 @@ export default function CariJurnalFigmaPanel({
     else if (delta < -6) setMobileNavHidden(false);
     lastMobileScrollY.current = y;
   };
+
+  useEffect(() => {
+    if (!mobileProfileMenuOpen) return;
+    const handleScrollOrTouch = () => setMobileProfileMenuOpen(false);
+    window.addEventListener("scroll", handleScrollOrTouch, { passive: true, capture: true });
+    return () => window.removeEventListener("scroll", handleScrollOrTouch, { capture: true });
+  }, [mobileProfileMenuOpen]);
 
   useEffect(() => {
     if (desktopStage !== "loading") {
@@ -13043,7 +13052,7 @@ export default function CariJurnalFigmaPanel({
       />
 
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-        <header className="flex h-[65px] shrink-0 items-center justify-between border-b border-slate-200/80 bg-white/95 px-[18px] shadow-[0_1px_3px_rgba(0,0,0,0.02)] backdrop-blur-md md:hidden">
+        <header className="relative z-[360] flex h-[65px] shrink-0 items-center justify-between border-b border-slate-200/80 bg-white/95 px-[18px] shadow-[0_1px_3px_rgba(0,0,0,0.02)] backdrop-blur-md md:hidden">
           <div className="flex min-w-0 items-center gap-2">
             <span className="flex h-10 w-10 shrink-0 items-center justify-center">
               <img src={`${mobileAssets}/90eed.svg`} alt="" className="max-w-none origin-center scale-[0.6667]" />
@@ -13080,13 +13089,13 @@ export default function CariJurnalFigmaPanel({
             {mobileProfileMenuOpen && (
               <>
                 <div
-                  className="fixed inset-0 z-[345]"
+                  className="fixed inset-0 z-[365]"
                   onClick={() => setMobileProfileMenuOpen(false)}
                   aria-hidden="true"
                 />
                 <div
                   role="menu"
-                  className={`absolute right-0 top-[calc(100%+10px)] z-[350] w-60 rounded-2xl border p-2 shadow-[0_12px_40px_rgba(0,0,0,0.15)] transition-colors animate-in fade-in zoom-in-95 duration-150 ${
+                  className={`absolute right-0 top-[calc(100%+10px)] z-[370] w-60 rounded-2xl border p-2 shadow-[0_12px_40px_rgba(0,0,0,0.15)] transition-colors animate-in fade-in zoom-in-95 duration-150 ${
                     isDarkMode
                       ? "border-slate-700 bg-slate-900 text-slate-100"
                       : "border-slate-200/90 bg-white text-slate-700"
