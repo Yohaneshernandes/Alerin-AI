@@ -9902,7 +9902,7 @@ function DesktopResearchMap({
               <button
                 type="button"
                 onClick={handleTogglePlay}
-                className="flex items-center gap-1.5 rounded-lg bg-sky-50 px-3.5 py-1.5 text-xs font-bold text-sky-700 outline outline-1 outline-sky-200 transition-all hover:bg-sky-100 active:scale-95 cursor-pointer shadow-2xs"
+                className="sm:hidden flex items-center gap-1.5 rounded-lg bg-sky-50 px-3.5 py-1.5 text-xs font-bold text-sky-700 outline outline-1 outline-sky-200 transition-all hover:bg-sky-100 active:scale-95 cursor-pointer shadow-2xs"
               >
                 {isPlaying ? (
                   <>
