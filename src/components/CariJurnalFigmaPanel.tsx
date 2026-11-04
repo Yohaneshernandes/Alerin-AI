@@ -12711,10 +12711,6 @@ export default function CariJurnalFigmaPanel({
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button type="button" className="relative flex h-9 w-9 items-center justify-center rounded-xl">
-              <img src={`${mobileAssets}/1a16f.svg`} alt="" className="max-w-none origin-center scale-[0.6667]" />
-              <span className="absolute right-1.5 top-1 h-2 w-2 rounded-full border border-white bg-red-500" />
-            </button>
             <button
               type="button"
               onClick={toggleDarkMode}
