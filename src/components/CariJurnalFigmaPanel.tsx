@@ -8229,8 +8229,20 @@ function DesktopResearchMap({
   const [mobileJournalLimit, setMobileJournalLimit] = useState(6);
   const [yearSort, setYearSort] = useState<"asc" | "desc" | null>(null);
   const [relevanSort, setRelevanSort] = useState<"asc" | "desc" | null>(null);
-  const [progress, setProgress] = useState(1);
+  const [progress, setProgress] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isTourPlaying, setIsTourPlaying] = useState(false);
+  const autoPlayedRef = useRef(false);
+
+  useEffect(() => {
+    if (autoPlayedRef.current) return;
+    autoPlayedRef.current = true;
+    setProgress(0);
+    const startTimer = setTimeout(() => {
+      setIsPlaying(true);
+    }, 280);
+    return () => clearTimeout(startTimer);
+  }, []);
   const [nodeOffsets, setNodeOffsets] = useState<Record<string, { x: number; y: number }>>({});
   const [selectedNodeForDetail, setSelectedNodeForDetail] = useState<string | null>(null);
   const [showNodeArticles, setShowNodeArticles] = useState(false);
@@ -8361,20 +8373,52 @@ function DesktopResearchMap({
     }
   };
 
-  // Auto-play timeline simulation
+  // Auto-play timeline & network simulation
   useEffect(() => {
     if (!isPlaying) return;
     const timer = setInterval(() => {
       setProgress(curr => {
         if (curr >= 1) {
+          if (isTourPlaying) {
+            if (mode === "jaringan") {
+              setTimeout(() => {
+                setMode("kepadatan");
+                setProgress(0);
+              }, 450);
+              return 1;
+            } else if (mode === "kepadatan") {
+              setTimeout(() => {
+                setMode("perkembangan");
+                setProgress(0);
+              }, 450);
+              return 1;
+            } else {
+              setIsTourPlaying(false);
+              setIsPlaying(false);
+              return 1;
+            }
+          }
           setIsPlaying(false);
           return 1;
         }
         return Math.min(1, curr + 0.012);
       });
-    }, 70);
+    }, 35);
     return () => clearInterval(timer);
-  }, [isPlaying]);
+  }, [isPlaying, isTourPlaying, mode]);
+
+  const handleTogglePlay = () => {
+    setIsTourPlaying(false);
+    if (progress >= 1) setProgress(0);
+    setIsPlaying(p => !p);
+  };
+
+  const handleStartTour = () => {
+    setMode("jaringan");
+    setProgress(0);
+    setIsTourPlaying(true);
+    setIsPlaying(true);
+  };
 
   const zoomRef = useRef(zoom);
   zoomRef.current = zoom;
@@ -9076,6 +9120,8 @@ function DesktopResearchMap({
                   onClick={() => {
                     setMode(tab.key);
                     setProgress(1);
+                    setIsPlaying(false);
+                    setIsTourPlaying(false);
                     setAnalysisOpen(null);
                     resetMapView();
                   }}
@@ -9090,6 +9136,53 @@ function DesktopResearchMap({
 
             {/* Desktop Quick Tools */}
             <div className="hidden sm:flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={handleTogglePlay}
+                title="Putar simulasi visualisasi peta"
+                className="flex items-center gap-1.5 rounded-lg border border-sky-200/90 bg-sky-50 px-3 py-1.5 text-xs font-semibold text-sky-700 shadow-2xs transition-all duration-75 hover:bg-sky-100 hover:text-sky-800 active:scale-95 cursor-pointer"
+              >
+                {isPlaying && !isTourPlaying ? (
+                  <>
+                    <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+                      <rect x="3" y="2" width="3.5" height="12" rx="1" />
+                      <rect x="9.5" y="2" width="3.5" height="12" rx="1" />
+                    </svg>
+                    <span>Jeda</span>
+                  </>
+                ) : (
+                  <>
+                    <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+                      <polygon points="4,2 14,8 4,14" />
+                    </svg>
+                    <span>{mode === "perkembangan" ? "Putar Timeline" : "Putar Simulasi"}</span>
+                  </>
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  if (isTourPlaying) {
+                    setIsTourPlaying(false);
+                    setIsPlaying(false);
+                  } else {
+                    handleStartTour();
+                  }
+                }}
+                title="Putar simulasi semua mode peta secara otomatis"
+                className={`flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-semibold shadow-2xs transition-all duration-75 active:scale-95 cursor-pointer ${
+                  isTourPlaying
+                    ? "border-sky-500 bg-sky-600 text-white"
+                    : "border-slate-200/90 bg-white text-slate-700 hover:bg-slate-50 hover:text-sky-700 hover:border-sky-200"
+                }`}
+              >
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M2 4h12M2 8h12M2 12h12" />
+                </svg>
+                <span>{isTourPlaying ? "Tour Berjalan..." : "Preview Semua"}</span>
+              </button>
+
               {mode !== "kepadatan" && (
                 <button
                   type="button"
@@ -9478,11 +9571,13 @@ function DesktopResearchMap({
                             : false;
                           const isEdgeDimmed = spotlightNode ? !isEdgeHighlighted : false;
 
+                          const edgeReveal = mode === "jaringan" ? Math.max(0, Math.min(1, (progress - (index / Math.max(1, edgeList.length)) * 0.5) * 3)) : 1;
+
                           const opacity = isEdgeHighlighted
                             ? 0.95
                             : isEdgeDimmed
                               ? 0.08
-                              : mode === "jaringan" ? 0.42 : mode === "perkembangan" ? (visible ? 0.45 : 0.05) : 0.2;
+                              : mode === "jaringan" ? 0.42 * edgeReveal : mode === "perkembangan" ? (visible ? 0.45 : 0.05) : 0.2;
 
                           const strokeWidth = isEdgeHighlighted
                             ? (mode === "jaringan" ? edge.weight * 2 : 2.4)
@@ -9604,7 +9699,11 @@ function DesktopResearchMap({
                       const pos = getNodePos(node);
                       const appeared = mode !== "perkembangan" || node.year <= playYear;
                       const color = mode === "perkembangan" ? mapYearColor(node.year) : mapClusters[node.cluster].color;
-                      const reveal = mode === "jaringan" ? Math.max(0, Math.min(1, 0.35 + (progress - index * 0.012) * 2.4)) : 1;
+                      const reveal = mode === "jaringan"
+                        ? (node.name === "AI literacy"
+                            ? Math.max(0.4, Math.min(1, progress * 2.2))
+                            : Math.max(0, Math.min(1, (progress - 0.06 - index * 0.05) * 2.5)))
+                        : 1;
                       const active = activeNode === node.name;
                       const isTarget = hoveredNode === node.name;
                       const isConnected = spotlightNode ? connectedNodeNames.has(node.name) : false;
@@ -9851,50 +9950,70 @@ function DesktopResearchMap({
             </div>
           )}
 
-          {mode === "perkembangan" && (
-            <div className="mt-2 flex flex-wrap items-center gap-3 border-t border-slate-100 px-5 py-3 md:px-6">
-              <button
-                type="button"
-                onClick={() => {
-                  if (progress >= 1) setProgress(0);
-                  setIsPlaying(p => !p);
-                }}
-                className="flex items-center gap-1.5 rounded-lg bg-sky-50 px-3.5 py-1.5 text-xs font-bold text-sky-700 outline outline-1 outline-sky-200 transition-all hover:bg-sky-100 active:scale-95 cursor-pointer shadow-2xs"
-              >
-                {isPlaying ? (
-                  <>
-                    <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
-                      <rect x="3" y="2" width="3.5" height="12" rx="1" />
-                      <rect x="9.5" y="2" width="3.5" height="12" rx="1" />
-                    </svg>
-                    <span>Jeda</span>
-                  </>
-                ) : (
-                  <>
-                    <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
-                      <polygon points="4,2 14,8 4,14" />
-                    </svg>
-                    <span>Putar Timeline</span>
-                  </>
-                )}
-              </button>
-              <span className="w-18 shrink-0 text-xs font-bold leading-4 text-slate-800">
-                Thn {playYear.toFixed(1)}
-              </span>
-              <input
-                type="range"
-                min={0}
-                max={100}
-                value={Math.round(progress * 100)}
-                onChange={event => {
+          <div className="mt-2 flex flex-wrap items-center gap-2.5 sm:gap-3 border-t border-slate-100 px-5 py-3 md:px-6">
+            <button
+              type="button"
+              onClick={handleTogglePlay}
+              className="flex items-center gap-1.5 rounded-lg bg-sky-50 px-3.5 py-1.5 text-xs font-bold text-sky-700 outline outline-1 outline-sky-200 transition-all hover:bg-sky-100 active:scale-95 cursor-pointer shadow-2xs"
+            >
+              {isPlaying && !isTourPlaying ? (
+                <>
+                  <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+                    <rect x="3" y="2" width="3.5" height="12" rx="1" />
+                    <rect x="9.5" y="2" width="3.5" height="12" rx="1" />
+                  </svg>
+                  <span>Jeda</span>
+                </>
+              ) : (
+                <>
+                  <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+                    <polygon points="4,2 14,8 4,14" />
+                  </svg>
+                  <span>{mode === "perkembangan" ? "Putar Timeline" : "Putar Simulasi"}</span>
+                </>
+              )}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                if (isTourPlaying) {
+                  setIsTourPlaying(false);
                   setIsPlaying(false);
-                  setProgress(Number(event.target.value) / 100);
-                }}
-                aria-label="Kontrol simulasi peta"
-                className="h-1.5 w-full flex-1 cursor-pointer appearance-none rounded-full bg-slate-200 accent-[#0369a1] md:min-w-32"
-              />
-            </div>
-          )}
+                } else {
+                  handleStartTour();
+                }
+              }}
+              title="Putar simulasi semua mode peta secara otomatis"
+              className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-all active:scale-95 cursor-pointer ${
+                isTourPlaying
+                  ? "bg-sky-600 text-white shadow-xs"
+                  : "bg-slate-100 text-slate-700 hover:bg-slate-200/80"
+              }`}
+            >
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M2 4h12M2 8h12M2 12h12" />
+              </svg>
+              <span>{isTourPlaying ? "Tour Berjalan..." : "Preview Semua"}</span>
+            </button>
+
+            <span className="w-18 shrink-0 text-xs font-bold leading-4 text-slate-800">
+              {mode === "perkembangan" ? `Thn ${playYear.toFixed(1)}` : `Simulasi ${Math.round(progress * 100)}%`}
+            </span>
+            <input
+              type="range"
+              min={0}
+              max={100}
+              value={Math.round(progress * 100)}
+              onChange={event => {
+                setIsTourPlaying(false);
+                setIsPlaying(false);
+                setProgress(Number(event.target.value) / 100);
+              }}
+              aria-label="Kontrol simulasi peta"
+              className="h-1.5 w-full flex-1 cursor-pointer appearance-none rounded-full bg-slate-200 accent-[#0369a1] md:min-w-32"
+            />
+          </div>
 
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-slate-100 px-5 py-3 text-sm leading-5 text-slate-500 md:px-6">
             {modeInfo.stats.map((stat, index) => (
