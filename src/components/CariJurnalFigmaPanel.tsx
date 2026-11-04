@@ -2865,13 +2865,6 @@ Mohon bantu saya untuk:
         </button>
         <button
           type="button"
-          onClick={onDetail ?? onAbstrak}
-          className="flex items-center gap-1.5 rounded-lg bg-white px-4 py-2 text-sm font-semibold leading-5 text-slate-700 outline outline-1 outline-offset-[-1px] outline-slate-200 transition-all duration-150 hover:bg-sky-50 hover:text-sky-700 hover:outline-sky-300 hover:shadow-xs active:scale-[0.98]"
-        >
-          Ringkasan Jurnal
-        </button>
-        <button
-          type="button"
           onClick={() => window.open("https://doi.org/10.1016/j.jretconser.2020.102345", "_blank", "noopener,noreferrer")}
           className="flex items-center gap-1.5 rounded-lg bg-white px-4 py-2 text-sm font-semibold leading-5 text-slate-700 outline outline-1 outline-offset-[-1px] outline-slate-200 transition-all duration-150 hover:bg-sky-50 hover:text-sky-700 hover:outline-sky-300 hover:shadow-xs active:scale-[0.98]"
         >
@@ -10799,14 +10792,6 @@ function MobileJournalCollectionCard({
           className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs sm:text-sm font-semibold text-slate-700 shadow-xs transition-colors hover:bg-slate-50 active:scale-[0.98]"
         >
           Buat sitasi
-        </button>
-
-        <button
-          type="button"
-          onClick={onDetail ?? onAbstrak}
-          className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs sm:text-sm font-semibold text-slate-700 shadow-xs transition-colors hover:bg-slate-50 active:scale-[0.98]"
-        >
-          Ringkasan Jurnal
         </button>
 
         <button
