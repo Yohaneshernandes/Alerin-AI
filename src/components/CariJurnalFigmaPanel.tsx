@@ -3187,6 +3187,7 @@ function JournalCard({
       return "";
     }
   });
+  const [isSavedNotice, setIsSavedNotice] = useState(false);
   return (
     <article className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-sm">
       <div className="flex flex-wrap gap-2">
@@ -3204,7 +3205,21 @@ function JournalCard({
           : "Cocok untuk memperkuat landasan teori dan hubungan antarvariabel."}
       </div>
       <label className="mt-4 block min-h-24 cursor-text rounded-xl border border-slate-200 bg-[#f1f5f9] p-4 transition-colors focus-within:border-sky-300 focus-within:bg-white">
-        <span className="block font-['Plus_Jakarta_Sans:Bold'] text-base font-bold text-[#1e293b]">Catatan Pribadi</span>
+        <div className="flex items-center justify-between">
+          <span className="block font-['Plus_Jakarta_Sans:Bold'] text-base font-bold text-[#1e293b]">Catatan Pribadi</span>
+          {isSavedNotice ? (
+            <span className="text-xs text-emerald-600 font-semibold flex items-center gap-1">
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 8.5l3.5 3.5 6.5-7" />
+              </svg>
+              Tersimpan
+            </span>
+          ) : (
+            <span className="text-xs font-normal text-slate-400">
+              Menyimpan Otomatis
+            </span>
+          )}
+        </div>
         <textarea
           value={note}
           onChange={event => {
@@ -3212,6 +3227,8 @@ function JournalCard({
             setNote(formatted);
             try {
               window.localStorage.setItem(`alerin-journal-note-${journal.id}`, formatted);
+              setIsSavedNotice(true);
+              setTimeout(() => setIsSavedNotice(false), 2000);
             } catch {
               /* ignore storage errors */
             }
@@ -11234,12 +11251,16 @@ function MobileJournalCollectionCard({
           <span className="font-['Plus_Jakarta_Sans:Bold'] text-sm font-bold text-[#1e293b]">
             Catatan Pribadi
           </span>
-          {isSavedNotice && (
+          {isSavedNotice ? (
             <span className="text-xs text-emerald-600 font-semibold flex items-center gap-1">
               <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M3 8.5l3.5 3.5 6.5-7" />
               </svg>
               Tersimpan
+            </span>
+          ) : (
+            <span className="text-xs font-normal text-slate-400">
+              Menyimpan Otomatis
             </span>
           )}
         </div>
