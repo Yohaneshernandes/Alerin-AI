@@ -740,6 +740,101 @@ function HapusJurnalModal({
   );
 }
 
+function GantiNamaRiwayatModal({
+  open,
+  currentName,
+  onClose,
+  onSave,
+}: {
+  open: boolean;
+  currentName: string;
+  onClose: () => void;
+  onSave: (newName: string) => void;
+}) {
+  const [name, setName] = useState(currentName);
+
+  useEffect(() => {
+    if (open) {
+      setName(currentName);
+    }
+  }, [currentName, open]);
+
+  if (!open) return null;
+
+  const submit = () => {
+    const trimmed = name.trim();
+    if (!trimmed) return;
+    onSave(trimmed);
+    onClose();
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-[520] flex items-center justify-center bg-black/25 px-4 backdrop-blur-[2.55px]"
+      onClick={onClose}
+      aria-hidden="true"
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Ganti nama riwayat"
+        className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl"
+        onClick={event => event.stopPropagation()}
+      >
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-sky-50 text-[#00629b]">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M12 20h9" />
+              <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z" />
+            </svg>
+          </div>
+          <div>
+            <h2 className="font-['Plus_Jakarta_Sans:Bold'] text-lg font-bold text-[#0f172a]">Ganti nama riwayat</h2>
+            <p className="text-xs leading-4 text-[#64748b]">Ubah judul riwayat pencarian ini.</p>
+          </div>
+        </div>
+
+        <div className="mt-4">
+          <label className="text-[11px] font-semibold text-slate-500">Nama riwayat</label>
+          <input
+            autoFocus
+            value={name}
+            onChange={event => setName(event.target.value)}
+            onKeyDown={event => {
+              if (event.key === "Enter") submit();
+              if (event.key === "Escape") onClose();
+            }}
+            placeholder="Masukkan nama baru..."
+            className="mt-1.5 w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3.5 py-2.5 text-sm text-[#0f172a] outline-none placeholder:text-slate-400 focus:border-sky-500 focus:bg-white focus:ring-2 focus:ring-sky-100 transition-all"
+          />
+        </div>
+
+        <div className="mt-6 flex justify-end gap-2.5">
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex min-h-[38px] items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-[#64748b] transition-colors hover:bg-slate-50 active:scale-95 cursor-pointer"
+          >
+            Batal
+          </button>
+          <button
+            type="button"
+            onClick={submit}
+            disabled={!name.trim()}
+            className={`flex min-h-[38px] items-center justify-center rounded-xl px-5 py-2 text-xs font-semibold text-white transition-all cursor-pointer active:scale-95 ${
+              name.trim()
+                ? "bg-[#00629b] hover:bg-[#005280] shadow-2xs"
+                : "cursor-not-allowed bg-slate-200 text-slate-400"
+            }`}
+          >
+            Simpan
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function HapusRiwayatModal({
   open,
   title: _title,
@@ -1420,6 +1515,7 @@ function Sidebar({
   const [menuIndex, setMenuIndex] = useState<number | null>(null);
   const [menuCoords, setMenuCoords] = useState<{ top?: number; bottom?: number; right: number } | null>(null);
   const [hapusRiwayatIndex, setHapusRiwayatIndex] = useState<number | null>(null);
+  const [gantiNamaRiwayatIndex, setGantiNamaRiwayatIndex] = useState<number | null>(null);
   const [collapsed, setCollapsed] = useState(false);
 
   return (
@@ -1646,12 +1742,11 @@ function Sidebar({
                   <button
                     type="button"
                     onClick={() => {
-                      const name = window.prompt("Ganti nama riwayat", item);
-                      if (name && name.trim()) onRenameRiwayat(index, name.trim());
+                      setGantiNamaRiwayatIndex(index);
                       setMenuIndex(null);
                       setMenuCoords(null);
                     }}
-                    className="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50"
+                    className="flex w-full items-center gap-2.5 px-3.5 py-2 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50 cursor-pointer"
                   >
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="text-slate-400">
                       <path d="M12 20h9" />
@@ -1781,6 +1876,18 @@ function Sidebar({
             }
             onDeleteRiwayat(hapusRiwayatIndex);
             setHapusRiwayatIndex(null);
+          }
+        }}
+      />
+
+      <GantiNamaRiwayatModal
+        open={gantiNamaRiwayatIndex !== null}
+        currentName={gantiNamaRiwayatIndex !== null ? items[gantiNamaRiwayatIndex] : ""}
+        onClose={() => setGantiNamaRiwayatIndex(null)}
+        onSave={newName => {
+          if (gantiNamaRiwayatIndex !== null) {
+            onRenameRiwayat(gantiNamaRiwayatIndex, newName);
+            setGantiNamaRiwayatIndex(null);
           }
         }}
       />
