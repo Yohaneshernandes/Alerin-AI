@@ -9901,11 +9901,8 @@ function DesktopResearchMap({
                   setProgress(Number(event.target.value) / 100);
                 }}
                 aria-label="Kontrol simulasi peta"
-                className="h-1.5 min-w-32 flex-1 cursor-pointer appearance-none rounded-full bg-slate-200 accent-[#0369a1]"
+                className="h-1.5 w-full flex-1 cursor-pointer appearance-none rounded-full bg-slate-200 accent-[#0369a1] md:min-w-32"
               />
-              <span className="shrink-0 text-[11px] leading-4 text-slate-400">
-                Simulasi tahun 2020–2026
-              </span>
             </div>
           )}
 
