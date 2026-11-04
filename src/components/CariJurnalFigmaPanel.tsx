@@ -1329,7 +1329,7 @@ function SlowSearchModal({
           </svg>
         </button>
 
-        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-amber-50 text-amber-600 border border-amber-200/60 shadow-xs">
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-sky-50 text-[#00629b] border border-sky-200/80 shadow-xs">
           <svg
             width="26"
             height="26"
