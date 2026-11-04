@@ -9850,10 +9850,12 @@ function DesktopResearchMap({
                   </div>
                 </div>
               ) : (
-                <div className="flex flex-wrap items-center justify-center gap-3 text-sm font-medium leading-5 text-slate-500">
-                  <span>Rendah</span>
-                  <span className="h-3.5 w-[420px] max-w-full rounded-full" style={{ backgroundImage: mapYearGradient }} />
-                  <span>Tinggi</span>
+                <div className="mx-auto max-w-[900px]">
+                  <div className="h-3.5 rounded-full" style={{ backgroundImage: mapYearGradient }} />
+                  <div className="mt-2 flex justify-between text-xs font-medium leading-4 text-slate-500 md:text-sm">
+                    <span>Rendah</span>
+                    <span>Tinggi</span>
+                  </div>
                 </div>
               )}
             </div>
