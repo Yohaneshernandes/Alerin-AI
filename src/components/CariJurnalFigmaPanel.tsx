@@ -11169,6 +11169,10 @@ function MobileJournalCollectionCard({
           onClick={onDetail}
           className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs sm:text-sm font-semibold text-slate-700 shadow-xs transition-colors hover:bg-slate-50 active:scale-[0.98]"
         >
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M1 8s3-5 7-5 7 5 7 5-3 5-7 5-7-5-7-5z" />
+            <circle cx="8" cy="8" r="2" />
+          </svg>
           Lihat detail
         </button>
 
@@ -11177,6 +11181,10 @@ function MobileJournalCollectionCard({
           onClick={onSitasi}
           className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs sm:text-sm font-semibold text-slate-700 shadow-xs transition-colors hover:bg-slate-50 active:scale-[0.98]"
         >
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M3 7.5h2.2a1.3 1.3 0 0 0 1.3-1.3V4.8a1.3 1.3 0 0 0-1.3-1.3H3.2a1.3 1.3 0 0 0-1.3 1.3V6c0 2 1 3.4 2.8 4.2" />
+            <path d="M9.5 7.5h2.2a1.3 1.3 0 0 0 1.3-1.3V4.8a1.3 1.3 0 0 0-1.3-1.3H9.7a1.3 1.3 0 0 0-1.3 1.3V6c0 2 1 3.4 2.8 4.2" />
+          </svg>
           Buat sitasi
         </button>
 
@@ -11185,6 +11193,10 @@ function MobileJournalCollectionCard({
           onClick={() => window.open("https://doi.org/10.1016/j.jretconser.2020.102345", "_blank", "noopener,noreferrer")}
           className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs sm:text-sm font-semibold text-slate-700 shadow-xs transition-colors hover:bg-slate-50 active:scale-[0.98]"
         >
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M10 2h4v4M6.5 9.5L14 2" />
+            <path d="M12 9v4a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h4" />
+          </svg>
           Buka DOI
         </button>
 
