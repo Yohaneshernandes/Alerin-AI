@@ -14103,8 +14103,7 @@ export default function CariJurnalFigmaPanel({
                 collectionLiterature.length === 0 ? (
                   <div className="mt-6 flex flex-col items-center rounded-2xl bg-white px-6 py-12 text-center shadow-sm">
                     <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                      <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" />
+                      <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" />
                     </svg>
                     <p className="mt-4 max-w-xs text-xs leading-5 text-[#64748b]">
                       Belum ada literature review di folder ini. Lakukan literature review dari Beranda atau pindahkan literatur tersimpan ke folder ini.
@@ -14286,7 +14285,10 @@ export default function CariJurnalFigmaPanel({
                 ) : collectionTab === "review" ? (
                   collectionLiterature.length === 0 ? (
                     <div className="mt-5 flex flex-col items-center rounded-2xl border border-dashed border-slate-200 bg-white px-6 py-16 text-center">
-                      <p className="max-w-sm text-sm leading-6 text-[#64748b]">Belum ada literature review di folder ini.</p>
+                      <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" />
+                      </svg>
+                      <p className="mt-4 max-w-sm text-sm leading-6 text-[#64748b]">Belum ada literature review di folder ini.</p>
                       <button type="button" onClick={startSearching} className="mt-5 rounded-xl bg-[#00629b] px-5 py-2.5 text-xs font-semibold text-white">
                         Mulai literature review
                       </button>
@@ -14307,7 +14309,10 @@ export default function CariJurnalFigmaPanel({
                   )
                 ) : collectionMaps.length === 0 ? (
                   <div className="mt-5 flex flex-col items-center rounded-2xl border border-dashed border-slate-200 bg-white px-6 py-16 text-center">
-                    <p className="max-w-sm text-sm leading-6 text-[#64748b]">Belum ada peta penelitian di folder ini.</p>
+                    <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" />
+                    </svg>
+                    <p className="mt-4 max-w-sm text-sm leading-6 text-[#64748b]">Belum ada peta penelitian di folder ini.</p>
                     <button type="button" onClick={startSearching} className="mt-5 rounded-xl bg-[#00629b] px-5 py-2.5 text-xs font-semibold text-white">
                       Mulai peta penelitian
                     </button>
