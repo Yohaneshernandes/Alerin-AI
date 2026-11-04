@@ -171,11 +171,28 @@ const desktopResultJournals = [
 
 function capitalizeFirstLetter(text: string): string {
   if (!text) return text;
+  if (/^https?:\/\//i.test(text.trim()) || /^10\.\d/i.test(text.trim()) || /^doi:/i.test(text.trim()) || /^doi\.org/i.test(text.trim())) {
+    return text;
+  }
   const firstNonSpace = text.search(/\S/);
   if (firstNonSpace !== -1) {
     return text.slice(0, firstNonSpace) + text.charAt(firstNonSpace).toUpperCase() + text.slice(firstNonSpace + 1);
   }
   return text;
+}
+
+function isDoiFormat(text: string): boolean {
+  const clean = text.trim().toLowerCase();
+  if (!clean) return false;
+  return (
+    clean.startsWith("https://doi.org") ||
+    clean.startsWith("http://doi.org") ||
+    clean.startsWith("doi.org") ||
+    clean.startsWith("doi:") ||
+    clean.includes("doi.org") ||
+    /^10\.\d{4,9}\//.test(clean) ||
+    (clean.startsWith("10.") && clean.includes("/"))
+  );
 }
 
 type ResultDetail = {
@@ -5260,8 +5277,13 @@ function DesktopSearchResults({
             Alerin menelusuri dan menyaring jurnal berdasarkan relevansi dengan pencarianmu untuk menampilkan hasil yang paling sesuai.
           </p>
           <div className="flex flex-col items-start gap-2 pt-4">
-            <span className="rounded-md bg-slate-100 px-2.5 py-1 text-xs font-semibold leading-4 text-slate-700">
-              Hasil Pencarian Dari: {query.trim() || "interaksi parasosial"}
+            <span className="rounded-md bg-slate-100 px-2.5 py-1 text-xs font-semibold leading-4 text-slate-700 flex flex-wrap items-center gap-1.5">
+              <span>Hasil Pencarian Dari: {query.trim() || "interaksi parasosial"}</span>
+              {query.trim() && !isDoiFormat(query.trim()) && (
+                <span className="inline-flex items-center rounded-full bg-sky-100 px-2 py-0.5 text-[10px] font-semibold text-[#00629b]">
+                  {quickSearchCategory === "penulis" ? "Penulis" : quickSearchCategory === "judul" ? "Judul" : "Topik"}
+                </span>
+              )}
             </span>
             <span className="rounded-md bg-slate-100 px-2.5 py-1 text-xs font-semibold leading-4 text-slate-700">Tahun: 2024–2026</span>
           </div>
@@ -11844,6 +11866,7 @@ export default function CariJurnalFigmaPanel({
   });
   const [query, setQuery] = useState("");
   const [searchSubmittedQuery, setSearchSubmittedQuery] = useState("");
+  const [quickSearchCategory, setQuickSearchCategory] = useState<"topik" | "judul" | "penulis">("topik");
   const [paragraph, setParagraph] = useState("");
   const [fileName, setFileName] = useState("");
   const [fileUrl, setFileUrl] = useState<string | null>(null);
@@ -13074,6 +13097,11 @@ export default function CariJurnalFigmaPanel({
                       <p className="min-w-0 flex-1 break-words">
                         <span className="font-medium text-slate-900">Hasil Pencarian Dari: </span>
                         <span className="font-semibold text-slate-900">{searchSubmittedQuery || query.trim() || paragraph.trim() || "interaksi parasosial"}</span>
+                        {(searchSubmittedQuery || query.trim()) && !isDoiFormat(searchSubmittedQuery || query.trim()) && (
+                          <span className="ml-1.5 inline-flex items-center rounded-full bg-sky-100 px-2 py-0.5 text-[10px] font-semibold text-[#00629b]">
+                            {quickSearchCategory === "penulis" ? "Penulis" : quickSearchCategory === "judul" ? "Judul" : "Topik"}
+                          </span>
+                        )}
                       </p>
                     </div>
                     <div className="inline-flex min-h-[32px] w-fit max-w-full items-center gap-2 rounded-xl bg-slate-100 px-3.5 py-1.5 text-xs text-slate-700">
@@ -13677,7 +13705,25 @@ export default function CariJurnalFigmaPanel({
                         ? "border-red-300 bg-red-50/20 focus-within:border-red-500 focus-within:ring-2 focus-within:ring-red-100"
                         : "border-slate-200 bg-slate-50/80 md:bg-white focus-within:border-sky-600 focus-within:ring-2 focus-within:ring-sky-100"
                     }`}>
-                        <img src="/assets/jurnal-design/quick-search/f5f78.svg" alt="" className="max-w-none origin-center scale-[0.6667]" />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (query.trim().length < 3) return;
+                            if (queryError && query.trim() !== "12345") return;
+                            setSearchType("journal");
+                            setResultMode("search");
+                            setSearchSubmittedQuery(query.trim());
+                            if (window.matchMedia("(min-width: 768px)").matches) runSearch();
+                            else {
+                              setLoadingSource("search");
+                              setMobileSearchStage("loading");
+                            }
+                          }}
+                          aria-label="Cari"
+                          className="shrink-0 cursor-pointer p-0.5 hover:opacity-80 transition-opacity"
+                        >
+                          <img src="/assets/jurnal-design/quick-search/f5f78.svg" alt="" className="max-w-none origin-center scale-[0.6667]" />
+                        </button>
                         <input
                           value={query}
                           onChange={event => setQuery(capitalizeFirstLetter(event.target.value))}
@@ -13730,6 +13776,50 @@ export default function CariJurnalFigmaPanel({
                       )}
                     </button>
                   </div>
+
+                  {/* Pilihan Kategori Pencarian Cepat (Topik, Judul, Penulis) - Tidak muncul jika input berupa format DOI */}
+                  {query.trim().length > 0 && !isDoiFormat(query) && !referenceActive && (
+                    <div className="mt-3 rounded-xl border border-slate-200/90 bg-slate-50/80 p-2.5 transition-all animate-in fade-in slide-in-from-top-1 duration-150">
+                      <div className="flex items-center justify-between px-0.5 pb-2">
+                        <span className="text-[11px] font-semibold text-slate-600 md:text-xs">
+                          Pilih kategori pencarian:
+                        </span>
+                        <span className="text-[10px] text-slate-400 font-medium">
+                          {quickSearchCategory === "topik" ? "Kategori: Topik" : quickSearchCategory === "judul" ? "Kategori: Judul" : "Kategori: Penulis"}
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-3 gap-2">
+                        {(
+                          [
+                            ["topik", "Topik"],
+                            ["judul", "Judul"],
+                            ["penulis", "Penulis"],
+                          ] as const
+                        ).map(([catKey, catLabel]) => {
+                          const isSelected = quickSearchCategory === catKey;
+                          return (
+                            <button
+                              key={catKey}
+                              type="button"
+                              onClick={() => setQuickSearchCategory(catKey)}
+                              className={`flex h-9 items-center justify-center gap-1.5 rounded-lg text-xs font-semibold transition-all duration-150 cursor-pointer active:scale-95 ${
+                                isSelected
+                                  ? "bg-[#00629b] text-white shadow-2xs border border-[#00629b]"
+                                  : "bg-white text-slate-700 border border-slate-200/90 hover:bg-slate-100 hover:border-slate-300"
+                              }`}
+                            >
+                              {isSelected && (
+                                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                  <path d="M3.5 8.5l3 3 6-6" />
+                                </svg>
+                              )}
+                              {catLabel}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
 
                   {queryError && (
                     <div
