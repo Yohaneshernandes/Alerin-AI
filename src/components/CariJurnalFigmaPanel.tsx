@@ -13539,7 +13539,7 @@ export default function CariJurnalFigmaPanel({
                             placeholder="100"
                             className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 pr-16 text-sm text-slate-800 outline-none placeholder:text-slate-400 focus:border-sky-400"
                           />
-                          <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm text-slate-500">jurnal</span>
+                          <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm text-slate-500">Jurnal</span>
                         </span>
                       </label>
                     </div>
