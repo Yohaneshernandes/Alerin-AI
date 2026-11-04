@@ -8231,7 +8231,6 @@ function DesktopResearchMap({
   const [relevanSort, setRelevanSort] = useState<"asc" | "desc" | null>(null);
   const [progress, setProgress] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
-  const [isTourPlaying, setIsTourPlaying] = useState(false);
 
   // Auto-play whenever query changes (e.g. user opens a new map from history or search)
   const prevQueryRef = useRef(query);
@@ -8378,45 +8377,18 @@ function DesktopResearchMap({
     const timer = setInterval(() => {
       setProgress(curr => {
         if (curr >= 1) {
-          if (isTourPlaying) {
-            if (mode === "jaringan") {
-              setTimeout(() => {
-                setMode("kepadatan");
-                setProgress(0);
-              }, 450);
-              return 1;
-            } else if (mode === "kepadatan") {
-              setTimeout(() => {
-                setMode("perkembangan");
-                setProgress(0);
-              }, 450);
-              return 1;
-            } else {
-              setIsTourPlaying(false);
-              setIsPlaying(false);
-              return 1;
-            }
-          }
           setIsPlaying(false);
           return 1;
         }
-        return Math.min(1, curr + 0.012);
+        return Math.min(1, curr + 0.015);
       });
-    }, 35);
+    }, 30);
     return () => clearInterval(timer);
-  }, [isPlaying, isTourPlaying, mode]);
+  }, [isPlaying]);
 
   const handleTogglePlay = () => {
-    setIsTourPlaying(false);
     if (progress >= 1) setProgress(0);
     setIsPlaying(p => !p);
-  };
-
-  const handleStartTour = () => {
-    setMode("jaringan");
-    setProgress(0);
-    setIsTourPlaying(true);
-    setIsPlaying(true);
   };
 
   const zoomRef = useRef(zoom);
@@ -9120,7 +9092,6 @@ function DesktopResearchMap({
                     setMode(tab.key);
                     setProgress(0);
                     setIsPlaying(true);
-                    setIsTourPlaying(false);
                     setAnalysisOpen(null);
                     resetMapView();
                   }}
@@ -9141,7 +9112,7 @@ function DesktopResearchMap({
                 title="Putar simulasi visualisasi peta"
                 className="flex items-center gap-1.5 rounded-lg border border-sky-200/90 bg-sky-50 px-3 py-1.5 text-xs font-semibold text-sky-700 shadow-2xs transition-all duration-75 hover:bg-sky-100 hover:text-sky-800 active:scale-95 cursor-pointer"
               >
-                {isPlaying && !isTourPlaying ? (
+                {isPlaying ? (
                   <>
                     <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
                       <rect x="3" y="2" width="3.5" height="12" rx="1" />
@@ -9158,31 +9129,6 @@ function DesktopResearchMap({
                   </>
                 )}
               </button>
-
-              {mode === "jaringan" && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (isTourPlaying) {
-                      setIsTourPlaying(false);
-                      setIsPlaying(false);
-                    } else {
-                      handleStartTour();
-                    }
-                  }}
-                  title="Putar simulasi semua mode peta secara otomatis"
-                  className={`flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-semibold shadow-2xs transition-all duration-75 active:scale-95 cursor-pointer ${
-                    isTourPlaying
-                      ? "border-sky-500 bg-sky-600 text-white"
-                      : "border-slate-200/90 bg-white text-slate-700 hover:bg-slate-50 hover:text-sky-700 hover:border-sky-200"
-                  }`}
-                >
-                  <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <path d="M2 4h12M2 8h12M2 12h12" />
-                  </svg>
-                  <span>{isTourPlaying ? "Tour Berjalan..." : "Preview Semua"}</span>
-                </button>
-              )}
 
               {mode !== "kepadatan" && (
                 <button
@@ -9951,14 +9897,14 @@ function DesktopResearchMap({
             </div>
           )}
 
-          {mode !== "kepadatan" && (
-            <div className="mt-2 flex flex-wrap items-center gap-2.5 sm:gap-3 border-t border-slate-100 px-5 py-3 md:px-6">
+          {mode === "perkembangan" && (
+            <div className="mt-2 flex flex-wrap items-center gap-3 border-t border-slate-100 px-5 py-3 md:px-6">
               <button
                 type="button"
                 onClick={handleTogglePlay}
                 className="flex items-center gap-1.5 rounded-lg bg-sky-50 px-3.5 py-1.5 text-xs font-bold text-sky-700 outline outline-1 outline-sky-200 transition-all hover:bg-sky-100 active:scale-95 cursor-pointer shadow-2xs"
               >
-                {isPlaying && !isTourPlaying ? (
+                {isPlaying ? (
                   <>
                     <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
                       <rect x="3" y="2" width="3.5" height="12" rx="1" />
@@ -9971,38 +9917,12 @@ function DesktopResearchMap({
                     <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
                       <polygon points="4,2 14,8 4,14" />
                     </svg>
-                    <span>{mode === "perkembangan" ? "Putar Timeline" : "Putar Simulasi"}</span>
+                    <span>Putar Timeline</span>
                   </>
                 )}
               </button>
-
-              {mode === "jaringan" && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (isTourPlaying) {
-                      setIsTourPlaying(false);
-                      setIsPlaying(false);
-                    } else {
-                      handleStartTour();
-                    }
-                  }}
-                  title="Putar simulasi semua mode peta secara otomatis"
-                  className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-all active:scale-95 cursor-pointer ${
-                    isTourPlaying
-                      ? "bg-sky-600 text-white shadow-xs"
-                      : "bg-slate-100 text-slate-700 hover:bg-slate-200/80"
-                  }`}
-                >
-                  <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M2 4h12M2 8h12M2 12h12" />
-                  </svg>
-                  <span>{isTourPlaying ? "Tour Berjalan..." : "Preview Semua"}</span>
-                </button>
-              )}
-
               <span className="w-18 shrink-0 text-xs font-bold leading-4 text-slate-800">
-                {mode === "perkembangan" ? `Thn ${playYear.toFixed(1)}` : `Simulasi ${Math.round(progress * 100)}%`}
+                Thn {playYear.toFixed(1)}
               </span>
               <input
                 type="range"
@@ -10010,7 +9930,6 @@ function DesktopResearchMap({
                 max={100}
                 value={Math.round(progress * 100)}
                 onChange={event => {
-                  setIsTourPlaying(false);
                   setIsPlaying(false);
                   setProgress(Number(event.target.value) / 100);
                 }}
