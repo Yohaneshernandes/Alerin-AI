@@ -3343,14 +3343,14 @@ function DesktopJournalResultCard({
             <button
               type="button"
               onClick={() => setIsFeedbackOpen(true)}
-              className="inline-flex items-center gap-1 rounded-sm bg-sky-100 px-2 py-0.5 text-xs font-bold leading-4 text-[#00629b] border border-sky-200 hover:bg-sky-200 transition-colors cursor-pointer"
+              className="inline-flex shrink-0 whitespace-nowrap items-center gap-1.5 rounded-sm bg-sky-100 px-2 py-0.5 text-xs font-bold leading-4 text-[#00629b] border border-sky-200 hover:bg-sky-200 transition-colors cursor-pointer"
               title="Jurnal ini telah diperbarui. Klik jika belum sesuai untuk memperbarui kembali."
             >
-              <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M2.5 8a5.5 5.5 0 0 1 9.39-3.89L13.5 5.5M13.5 2v3.5H10" />
                 <path d="M13.5 8a5.5 5.5 0 0 1-9.39 3.89L2.5 10.5M2.5 14v-3.5H6" />
               </svg>
-              Telah Diperbarui
+              <span>Telah Diperbarui</span>
             </button>
           )}
         </div>
@@ -10544,13 +10544,14 @@ function MobileJournalResultCard({
           <button
             type="button"
             onClick={() => setIsFeedbackOpen(true)}
-            className="flex items-center gap-1 rounded-full bg-sky-100 px-2.5 py-0.5 text-[10px] font-bold text-[#00629b] border border-sky-200"
+            className="inline-flex shrink-0 whitespace-nowrap items-center gap-1.5 rounded-full bg-sky-100 px-2.5 py-1 text-[10.5px] font-bold text-[#00629b] border border-sky-200 hover:bg-sky-200 active:scale-95 transition-all cursor-pointer shadow-2xs"
+            title="Klik jika belum sesuai untuk memperbarui kembali"
           >
-            <svg width="9" height="9" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d="M2.5 8a5.5 5.5 0 0 1 9.39-3.89L13.5 5.5M13.5 2v3.5H10" />
               <path d="M13.5 8a5.5 5.5 0 0 1-9.39 3.89L2.5 10.5M2.5 14v-3.5H6" />
             </svg>
-            Telah Diperbarui
+            <span>Telah Diperbarui</span>
           </button>
         )}
       </div>
