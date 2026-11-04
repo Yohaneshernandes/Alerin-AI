@@ -1058,9 +1058,9 @@ function ParaphraseBubble({ original, versions }: { original: string; versions: 
             <div key={i} className="rounded-xl border p-3 relative" style={{ borderColor: `${v.color}30`, background: `${v.color}08` }}>
               <div className="flex items-center justify-between mb-1.5">
                 <span className="text-[10px] font-bold rounded-full px-2 py-0.5" style={{ color: v.color, background: `${v.color}18` }}>{v.label}</span>
-                <button onClick={() => copy(v.text, i)} className="text-[10px] font-semibold flex items-center gap-1 transition-colors" style={{ color: copied === i ? "#059669" : "#94a3b8" }}>
+                <button onClick={() => copy(v.text, i)} className="text-[10px] font-semibold flex items-center gap-1 transition-colors" style={{ color: copied === i ? "#00629b" : "#94a3b8" }}>
                   {copied === i ? (
-                    <><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>Disalin</>
+                    <><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>Tersalin</>
                   ) : (
                     <><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Salin</>
                   )}
@@ -3481,8 +3481,8 @@ function ParafrasePanel({ onBack }: { onBack: () => void }) {
                     {score !== null && <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-600 border border-emerald-100">+{score}% lebih unik</span>}
                     {output && (
                       <>
-                        <button onClick={handleCopy} className="text-[10px] font-semibold transition-colors flex items-center gap-1" style={{ color: copied ? "#059669" : "#2563eb" }}>
-                          {copied ? <><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>Disalin</> : <><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Salin</>}
+                        <button onClick={handleCopy} className="text-[10px] font-semibold transition-colors flex items-center gap-1" style={{ color: copied ? "#00629b" : "#2563eb" }}>
+                          {copied ? <><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>Tersalin</> : <><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Salin</>}
                         </button>
                         <button onClick={handleDownload} className="text-[10px] font-semibold text-slate-500 hover:text-slate-700 flex items-center gap-1 transition-colors">
                           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Unduh
@@ -3578,8 +3578,8 @@ function ParafrasePanel({ onBack }: { onBack: () => void }) {
             </button>
             {output && (
               <>
-                <button onClick={handleCopy} className="btn-outline flex items-center justify-center gap-2 px-5 py-3.5 text-sm" style={{ color: copied ? "#059669" : undefined, borderColor: copied ? "#059669" : undefined }}>
-                  {copied ? "✓ Disalin!" : "Salin Teks"}
+                <button onClick={handleCopy} className="btn-outline flex items-center justify-center gap-2 px-5 py-3.5 text-sm" style={{ color: copied ? "#00629b" : undefined, borderColor: copied ? "#00629b" : undefined, background: copied ? "#f0f9ff" : undefined }}>
+                  {copied ? "✓ Tersalin" : "Salin Teks"}
                 </button>
                 <button onClick={handleDownload}
                   className="flex items-center justify-center gap-2 px-5 py-3.5 text-sm font-bold rounded-xl text-white transition-all hover:opacity-90"
@@ -4858,7 +4858,7 @@ function CariJudulPanel({ onBack }: { onBack: () => void }) {
           </div>
           <button onClick={handleCopy}
             className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all shrink-0"
-            style={copied ? { background: "#f0fdf4", color: "#15803d", borderColor: "#bbf7d0" } : { background: "#f8fafc", color: "#475569", borderColor: "#e2e8f0" }}>
+            style={copied ? { background: "#f0f9ff", color: "#00629b", borderColor: "#bae6fd" } : { background: "#f8fafc", color: "#475569", borderColor: "#e2e8f0" }}>
             {copied ? "✓ Tersalin" : "Salin judul"}
           </button>
         </div>
@@ -5190,9 +5190,9 @@ function CariJudulPanel({ onBack }: { onBack: () => void }) {
                   <div className="px-5 py-3 border-b border-slate-100 flex items-center gap-2 flex-wrap">
                     <button onClick={handleCopy}
                       className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold border transition-all"
-                      style={copied ? { background: "#f0fdf4", color: "#15803d", borderColor: "#bbf7d0" } : { background: "#f8fafc", color: "#475569", borderColor: "#e2e8f0" }}>
+                      style={copied ? { background: "#f0f9ff", color: "#00629b", borderColor: "#bae6fd" } : { background: "#f8fafc", color: "#475569", borderColor: "#e2e8f0" }}>
                       {copied
-                        ? <><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>Tersalin!</>
+                        ? <><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>Tersalin</>
                         : <><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Salin judul</>
                       }
                     </button>

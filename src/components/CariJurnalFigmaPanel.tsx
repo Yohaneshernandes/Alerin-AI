@@ -3821,8 +3821,10 @@ function RingkasanJurnalModal({
           <button
             type="button"
             onClick={copySummary}
-            className={`flex h-12 flex-1 items-center justify-center gap-2 rounded-xl border border-slate-200/90 bg-white px-5 text-sm font-semibold leading-5 shadow-xs transition-all hover:bg-slate-50 hover:shadow-sm active:scale-[0.98] md:h-10 md:w-44 md:flex-none ${
-              isCopied ? "text-[#00629b]" : "text-slate-800"
+            className={`flex h-12 flex-1 items-center justify-center gap-2 rounded-xl border px-5 text-sm font-semibold leading-5 shadow-xs transition-all active:scale-[0.98] md:h-10 md:w-44 md:flex-none ${
+              isCopied
+                ? "border-sky-300 bg-sky-50 text-[#00629b] shadow-sm"
+                : "border-slate-200/90 bg-white text-slate-800 hover:bg-slate-50 hover:shadow-sm"
             }`}
           >
             {isCopied ? (
@@ -3830,7 +3832,7 @@ function RingkasanJurnalModal({
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <path d="M3 8.5l3.5 3.5 6.5-7" />
                 </svg>
-                Telah disalin
+                Tersalin
               </>
             ) : (
               <>
@@ -4096,8 +4098,10 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
             <button
               type="button"
               onClick={copyTable}
-              className={`flex flex-1 items-center justify-center gap-2 rounded-2xl bg-white px-5 py-3.5 text-sm font-semibold leading-5 shadow-[0px_2px_8px_rgba(0,0,0,0.08)] transition-all hover:bg-slate-50 hover:shadow-[0px_3px_10px_rgba(0,0,0,0.12)] active:scale-[0.98] md:order-1 md:flex-none md:rounded-xl md:px-5 md:py-2.5 ${
-                isCopied ? "text-[#00629b]" : "text-slate-700"
+              className={`flex flex-1 items-center justify-center gap-2 rounded-2xl border px-5 py-3.5 text-sm font-semibold leading-5 shadow-xs transition-all active:scale-[0.98] md:order-1 md:flex-none md:rounded-xl md:px-5 md:py-2.5 ${
+                isCopied
+                  ? "border-sky-300 bg-sky-50 text-[#00629b] shadow-sm"
+                  : "border-slate-200/90 bg-white text-slate-700 hover:bg-slate-50 hover:shadow-sm"
               }`}
             >
               {isCopied ? (
@@ -4105,7 +4109,7 @@ function TabelPenelitianModal({ open, onClose }: { open: boolean; onClose: () =>
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <path d="M3 8.5l3.5 3.5 6.5-7" />
                   </svg>
-                  Telah disalin
+                  Tersalin
                 </>
               ) : (
                 <>
@@ -4285,7 +4289,7 @@ function BuatSitasiModal({ open, onClose }: { open: boolean; onClose: () => void
             onClick={copyCitation}
             className={`flex-1 sm:flex-none flex min-h-[44px] items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition-all active:scale-[0.98] ${
               isCopied
-                ? "bg-[#00629b] text-white shadow-xs"
+                ? "border border-sky-300 bg-sky-50 text-[#00629b] shadow-xs"
                 : "bg-sky-600 text-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] hover:bg-sky-700"
             }`}
           >
@@ -4294,7 +4298,7 @@ function BuatSitasiModal({ open, onClose }: { open: boolean; onClose: () => void
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <path d="M3 8.5l3.5 3.5 6.5-7" />
                 </svg>
-                Telah disalin
+                Tersalin
               </>
             ) : (
               <>
@@ -4415,10 +4419,10 @@ function AbstrakJurnalModal({ open, onClose }: { open: boolean; onClose: () => v
           <button
             type="button"
             onClick={copyAbstract}
-            className={`flex flex-1 items-center justify-center min-h-[44px] gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition-all active:scale-[0.98] md:flex-none ${
+            className={`flex flex-1 items-center justify-center min-h-[44px] gap-2 rounded-xl border px-5 py-2.5 text-sm font-semibold transition-all active:scale-[0.98] md:flex-none ${
               isCopied
-                ? "bg-white text-[#00629b] shadow-[0px_2px_8px_rgba(0,0,0,0.08)]"
-                : "bg-white text-slate-800 shadow-[0px_2px_8px_rgba(0,0,0,0.08)] hover:bg-slate-50 hover:shadow-[0px_3px_10px_rgba(0,0,0,0.12)]"
+                ? "border-sky-300 bg-sky-50 text-[#00629b] shadow-sm"
+                : "border-slate-200/90 bg-white text-slate-800 shadow-[0px_2px_8px_rgba(0,0,0,0.08)] hover:bg-slate-50 hover:shadow-[0px_3px_10px_rgba(0,0,0,0.12)]"
             }`}
           >
             {isCopied ? (
@@ -4426,7 +4430,7 @@ function AbstrakJurnalModal({ open, onClose }: { open: boolean; onClose: () => v
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <path d="M3 8.5l3.5 3.5 6.5-7" />
                 </svg>
-                Telah disalin
+                Tersalin
               </>
             ) : (
               <>
