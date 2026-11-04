@@ -2312,16 +2312,16 @@ function FilterPanel({ open, onClose, onApply, onReset }: { open: boolean; onClo
       <div
         onClick={onClose}
         aria-hidden="true"
-        className={`fixed inset-0 z-[315] bg-black/40 transition-opacity duration-300 ${open ? "opacity-100" : "pointer-events-none opacity-0"}`}
+        className={`fixed inset-0 z-[450] bg-black/40 transition-opacity duration-300 ${open ? "opacity-100" : "pointer-events-none opacity-0"}`}
       />
       <aside
         role="dialog"
         aria-label="Filter jurnal"
-        className={`fixed right-0 top-0 z-[320] flex h-dvh w-full flex-col overflow-hidden rounded-l-[26px] border-l border-slate-200 bg-white shadow-2xl transition-transform duration-300 sm:max-w-[420px] ${
+        className={`fixed right-0 top-0 z-[460] flex h-dvh w-full flex-col overflow-hidden bg-white shadow-2xl transition-transform duration-300 sm:max-w-[420px] sm:rounded-l-[26px] sm:border-l sm:border-slate-200 ${
           open ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <header className="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 bg-white px-6 py-5">
+        <header className="flex shrink-0 items-start justify-between gap-3 border-b border-slate-200 bg-white px-6 py-5 pt-[max(1.25rem,env(safe-area-inset-top))]">
           <div>
             <h2 className="text-xl font-bold leading-7 text-slate-900">Filter jurnal</h2>
             <p className="mt-0.5 text-sm leading-5 text-slate-500">
@@ -2703,7 +2703,7 @@ function FilterPanel({ open, onClose, onApply, onReset }: { open: boolean; onClo
           </FilterSection>
         </div>
 
-        <footer className="flex shrink-0 items-center gap-3 border-t border-slate-200 bg-white/95 px-5 py-4 backdrop-blur">
+        <footer className="flex shrink-0 items-center gap-3 border-t border-slate-200 bg-white/95 px-5 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur">
           <button
             type="button"
             onClick={() => {
