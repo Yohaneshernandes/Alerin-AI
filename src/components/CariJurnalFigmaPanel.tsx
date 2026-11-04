@@ -195,6 +195,52 @@ function isDoiFormat(text: string): boolean {
   );
 }
 
+function formatRiwayatDisplayWaktu(raw: string): string {
+  if (!raw) return "";
+  const str = raw.trim();
+  if (/^\d{1,2}\s+[A-Za-z]+\s+\d{4}\s+•\s+\d{1,2}[.:]\d{2}$/.test(str)) {
+    return str.replace(":", ".");
+  }
+  const monthsMap: Record<string, string> = {
+    jan: "Januari", januari: "Januari",
+    feb: "Februari", februari: "Februari",
+    mar: "Maret", maret: "Maret",
+    apr: "April", april: "April",
+    mei: "Mei",
+    jun: "Juni", juni: "Juni",
+    jul: "Juli", juli: "Juli",
+    agu: "Agustus", ags: "Agustus", agustus: "Agustus",
+    sep: "September", september: "September",
+    okt: "Oktober", oktober: "Oktober",
+    nov: "November", november: "November",
+    des: "Desember", desember: "Desember",
+  };
+  const m = str.match(/^(\d{1,2})\s+([A-Za-z]+)(?:[,\s]+(\d{4}))?[,\s]+(\d{1,2})[.:](\d{2})$/);
+  if (m) {
+    const day = m[1];
+    const monthKey = m[2].toLowerCase();
+    const month = monthsMap[monthKey] || m[2];
+    const year = m[3] || "2026";
+    const hour = m[4].padStart(2, "0");
+    const min = m[5];
+    return `${day} ${month} ${year} • ${hour}.${min}`;
+  }
+  if (str.startsWith("Hari ini")) {
+    const timeMatch = str.match(/(\d{1,2})[.:](\d{2})/);
+    const time = timeMatch ? `${timeMatch[1].padStart(2, "0")}.${timeMatch[2]}` : "14.15";
+    return `4 November 2026 • ${time}`;
+  }
+  if (str.startsWith("Kemarin")) {
+    const timeMatch = str.match(/(\d{1,2})[.:](\d{2})/);
+    const time = timeMatch ? `${timeMatch[1].padStart(2, "0")}.${timeMatch[2]}` : "20.15";
+    return `3 November 2026 • ${time}`;
+  }
+  if (str === "Tersimpan") {
+    return "4 November 2026 • 14.15";
+  }
+  return str;
+}
+
 type ResultDetail = {
   id: string;
   headerTitle: string;
@@ -11855,7 +11901,7 @@ export default function CariJurnalFigmaPanel({
   };
 
   const [riwayatItems, setRiwayatItems] = useState<RiwayatItem[]>(() => {
-    const fallback = riwayatSidebar.map(label => ({ label, query: label, type: "journal" as const, waktu: "Tersimpan" }));
+    const fallback = riwayatSidebar.map(label => ({ label, query: label, type: "journal" as const, waktu: "4 November 2026 • 14.15" }));
     try {
       const stored = JSON.parse(window.localStorage.getItem("alerin-jurnal-riwayat") ?? "null");
       if (Array.isArray(stored) && stored.length > 0) return stored as RiwayatItem[];
@@ -12411,12 +12457,12 @@ export default function CariJurnalFigmaPanel({
       if (exists) {
         return list;
       }
-      const waktu = new Date().toLocaleString("id-ID", {
-        day: "numeric",
-        month: "short",
-        hour: "2-digit",
-        minute: "2-digit",
-      });
+      const now = new Date();
+      const months = [
+        "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+        "Juli", "Agustus", "September", "Oktober", "November", "Desember",
+      ];
+      const waktu = `${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()} • ${String(now.getHours()).padStart(2, "0")}.${String(now.getMinutes()).padStart(2, "0")}`;
       return [{ ...item, waktu }, ...list].slice(0, 12);
     });
   };
@@ -14110,7 +14156,7 @@ export default function CariJurnalFigmaPanel({
                           </p>
                           <p className="mt-1 flex items-center gap-1.5 text-[11px] text-[#94a3b8]">
                             <img src={`${mobileAssets}/3a1cb.svg`} alt="" className="h-3.5 w-3.5 opacity-60" />
-                            {item.waktu} · {item.type === "review" ? "Literature Review" : item.type === "map" ? "Peta Penelitian" : "Cari Jurnal"}
+                            <span>{formatRiwayatDisplayWaktu(item.waktu)}</span>
                           </p>
                         </div>
                         <span
