@@ -9912,7 +9912,7 @@ function DesktopResearchMap({
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-slate-100 px-5 py-3 text-sm leading-5 text-slate-500 md:px-6">
             {modeInfo.stats.map((stat, index) => (
               <span key={stat} className="flex items-center gap-4">
-                {index > 0 && <span className="h-4 w-px bg-slate-300" />}
+                <span className={`h-4 w-px bg-slate-300 ${index === 0 ? "md:hidden" : ""}`} />
                 {stat}
               </span>
             ))}
