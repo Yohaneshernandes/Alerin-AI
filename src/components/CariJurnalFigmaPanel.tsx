@@ -10046,6 +10046,33 @@ function DesktopResearchMap({
             </div>
           )}
 
+          {(mode === "jaringan" || mode === "kepadatan") && (
+            <div className="flex items-center border-t border-slate-100 px-5 py-2.5 sm:hidden">
+              <button
+                type="button"
+                onClick={handleTogglePlay}
+                className="flex items-center gap-1.5 rounded-lg bg-sky-50 px-3.5 py-1.5 text-xs font-bold text-sky-700 outline outline-1 outline-sky-200 transition-all hover:bg-sky-100 active:scale-95 cursor-pointer shadow-2xs"
+              >
+                {isPlaying ? (
+                  <>
+                    <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+                      <rect x="3" y="2" width="3.5" height="12" rx="1" />
+                      <rect x="9.5" y="2" width="3.5" height="12" rx="1" />
+                    </svg>
+                    <span>Jeda</span>
+                  </>
+                ) : (
+                  <>
+                    <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+                      <polygon points="4,2 14,8 4,14" />
+                    </svg>
+                    <span>Putar Simulasi</span>
+                  </>
+                )}
+              </button>
+            </div>
+          )}
+
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-slate-100 px-5 py-3 text-sm leading-5 text-slate-500 md:px-6">
             {modeInfo.stats.map((stat, index) => (
               <span key={stat} className="flex items-center gap-4">
