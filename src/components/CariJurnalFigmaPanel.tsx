@@ -8230,19 +8230,18 @@ function DesktopResearchMap({
   const [yearSort, setYearSort] = useState<"asc" | "desc" | null>(null);
   const [relevanSort, setRelevanSort] = useState<"asc" | "desc" | null>(null);
   const [progress, setProgress] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true);
   const [isTourPlaying, setIsTourPlaying] = useState(false);
-  const autoPlayedRef = useRef(false);
 
+  // Auto-play whenever query changes (e.g. user opens a new map from history or search)
+  const prevQueryRef = useRef(query);
   useEffect(() => {
-    if (autoPlayedRef.current) return;
-    autoPlayedRef.current = true;
-    setProgress(0);
-    const startTimer = setTimeout(() => {
+    if (prevQueryRef.current !== query) {
+      prevQueryRef.current = query;
+      setProgress(0);
       setIsPlaying(true);
-    }, 280);
-    return () => clearTimeout(startTimer);
-  }, []);
+    }
+  }, [query]);
   const [nodeOffsets, setNodeOffsets] = useState<Record<string, { x: number; y: number }>>({});
   const [selectedNodeForDetail, setSelectedNodeForDetail] = useState<string | null>(null);
   const [showNodeArticles, setShowNodeArticles] = useState(false);
@@ -9119,8 +9118,8 @@ function DesktopResearchMap({
                   type="button"
                   onClick={() => {
                     setMode(tab.key);
-                    setProgress(1);
-                    setIsPlaying(false);
+                    setProgress(0);
+                    setIsPlaying(true);
                     setIsTourPlaying(false);
                     setAnalysisOpen(null);
                     resetMapView();
@@ -9160,28 +9159,30 @@ function DesktopResearchMap({
                 )}
               </button>
 
-              <button
-                type="button"
-                onClick={() => {
-                  if (isTourPlaying) {
-                    setIsTourPlaying(false);
-                    setIsPlaying(false);
-                  } else {
-                    handleStartTour();
-                  }
-                }}
-                title="Putar simulasi semua mode peta secara otomatis"
-                className={`flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-semibold shadow-2xs transition-all duration-75 active:scale-95 cursor-pointer ${
-                  isTourPlaying
-                    ? "border-sky-500 bg-sky-600 text-white"
-                    : "border-slate-200/90 bg-white text-slate-700 hover:bg-slate-50 hover:text-sky-700 hover:border-sky-200"
-                }`}
-              >
-                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d="M2 4h12M2 8h12M2 12h12" />
-                </svg>
-                <span>{isTourPlaying ? "Tour Berjalan..." : "Preview Semua"}</span>
-              </button>
+              {mode !== "perkembangan" && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (isTourPlaying) {
+                      setIsTourPlaying(false);
+                      setIsPlaying(false);
+                    } else {
+                      handleStartTour();
+                    }
+                  }}
+                  title="Putar simulasi semua mode peta secara otomatis"
+                  className={`flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-semibold shadow-2xs transition-all duration-75 active:scale-95 cursor-pointer ${
+                    isTourPlaying
+                      ? "border-sky-500 bg-sky-600 text-white"
+                      : "border-slate-200/90 bg-white text-slate-700 hover:bg-slate-50 hover:text-sky-700 hover:border-sky-200"
+                  }`}
+                >
+                  <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M2 4h12M2 8h12M2 12h12" />
+                  </svg>
+                  <span>{isTourPlaying ? "Tour Berjalan..." : "Preview Semua"}</span>
+                </button>
+              )}
 
               {mode !== "kepadatan" && (
                 <button
@@ -9974,28 +9975,30 @@ function DesktopResearchMap({
               )}
             </button>
 
-            <button
-              type="button"
-              onClick={() => {
-                if (isTourPlaying) {
-                  setIsTourPlaying(false);
-                  setIsPlaying(false);
-                } else {
-                  handleStartTour();
-                }
-              }}
-              title="Putar simulasi semua mode peta secara otomatis"
-              className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-all active:scale-95 cursor-pointer ${
-                isTourPlaying
-                  ? "bg-sky-600 text-white shadow-xs"
-                  : "bg-slate-100 text-slate-700 hover:bg-slate-200/80"
-              }`}
-            >
-              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M2 4h12M2 8h12M2 12h12" />
-              </svg>
-              <span>{isTourPlaying ? "Tour Berjalan..." : "Preview Semua"}</span>
-            </button>
+            {mode !== "perkembangan" && (
+              <button
+                type="button"
+                onClick={() => {
+                  if (isTourPlaying) {
+                    setIsTourPlaying(false);
+                    setIsPlaying(false);
+                  } else {
+                    handleStartTour();
+                  }
+                }}
+                title="Putar simulasi semua mode peta secara otomatis"
+                className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-all active:scale-95 cursor-pointer ${
+                  isTourPlaying
+                    ? "bg-sky-600 text-white shadow-xs"
+                    : "bg-slate-100 text-slate-700 hover:bg-slate-200/80"
+                }`}
+              >
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M2 4h12M2 8h12M2 12h12" />
+                </svg>
+                <span>{isTourPlaying ? "Tour Berjalan..." : "Preview Semua"}</span>
+              </button>
+            )}
 
             <span className="w-18 shrink-0 text-xs font-bold leading-4 text-slate-800">
               {mode === "perkembangan" ? `Thn ${playYear.toFixed(1)}` : `Simulasi ${Math.round(progress * 100)}%`}
