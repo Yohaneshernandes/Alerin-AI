@@ -7080,15 +7080,22 @@ function DesktopLiteratureReview({
               </button>
               {openRow === row.key && (
                 <div className="border-t border-slate-200/70 px-5 py-5">
-                  <p className="text-2xl font-bold leading-8 text-slate-900">
-                    {row.key}. {row.title}
-                  </p>
-                  <div className="mt-4 space-y-4">
-                    {row.content.map(paragraph => (
-                      <p key={paragraph} className="text-lg leading-8 text-slate-700">
-                        {paragraph}
-                      </p>
-                    ))}
+                  <div className="flex items-start gap-2.5">
+                    <span className="shrink-0 text-2xl font-bold leading-8 text-slate-900 select-none">
+                      {row.key}.
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <h3 className="text-2xl font-bold leading-8 text-slate-900">
+                        {row.title}
+                      </h3>
+                      <div className="mt-4 space-y-4">
+                        {row.content.map((paragraph, pIdx) => (
+                          <p key={pIdx} className="text-lg leading-8 text-slate-700">
+                            {paragraph}
+                          </p>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
               )}
