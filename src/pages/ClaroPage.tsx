@@ -1057,13 +1057,35 @@ function BirdIcon({ size = 32, color = "#3b82f6" }: { size?: number; color?: str
 
 // ─── Layout shell ─────────────────────────────────────────────────────────────
 // ─── Toast ────────────────────────────────────────────────────────────────────
+function parseClaroToast(rawMsg: string): { title: string; description: string } {
+  const raw = String(rawMsg || "").trim();
+  const lower = raw.toLowerCase();
+  if (lower.includes("dihapus")) return { title: "Berhasil Dihapus", description: raw.endsWith(".") ? raw : `${raw}.` };
+  if (lower.includes("disimpan") || lower.includes("simpan")) return { title: "Berhasil Disimpan", description: raw.endsWith(".") ? raw : `${raw}.` };
+  if (lower.includes("dibuat")) return { title: "Berhasil Dibuat", description: raw.endsWith(".") ? raw : `${raw}.` };
+  if (lower.includes("ditambahkan")) return { title: "Berhasil Ditambahkan", description: raw.endsWith(".") ? raw : `${raw}.` };
+  if (lower.includes("tersinkron") || lower.includes("berhasil")) return { title: "Berhasil", description: raw.endsWith(".") ? raw : `${raw}.` };
+  return { title: "Pemberitahuan", description: raw.endsWith(".") ? raw : `${raw}.` };
+}
+
 function Toast({ msg, onDone }: { msg: string; onDone: () => void }) {
-  useEffect(() => { const t = setTimeout(onDone, 2800); return () => clearTimeout(t); }, [onDone]);
+  useEffect(() => { const t = setTimeout(onDone, 3200); return () => clearTimeout(t); }, [onDone]);
+  const { title, description } = parseClaroToast(msg);
   return (
-    <div className="fixed bottom-6 left-1/2 z-[200] -translate-x-1/2 px-5 py-3 rounded-2xl bg-white border border-slate-200/90 text-slate-800 text-sm font-semibold shadow-[0_10px_35px_rgba(0,0,0,0.12)] flex items-center gap-2"
-      style={{ animation: "fade-up 0.3s ease" }}>
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#00629b" strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>
-      {msg}
+    <div
+      role="status"
+      className="fixed bottom-6 left-1/2 z-[200] -translate-x-1/2 flex max-w-[calc(100vw-2rem)] sm:min-w-[340px] sm:max-w-[420px] items-center gap-3.5 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-[0_12px_36px_rgba(0,0,0,0.12),0_4px_12px_rgba(0,0,0,0.06)]"
+      style={{ animation: "fade-up 0.3s ease" }}
+    >
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#18181b] text-white shadow-xs">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M20 6L9 17l-5-5" />
+        </svg>
+      </div>
+      <div className="min-w-0 flex-1">
+        <h4 className="text-[14.5px] font-bold leading-tight text-slate-900 tracking-[-0.01em]">{title}</h4>
+        {description ? <p className="mt-1 text-xs sm:text-[13px] leading-relaxed text-slate-500 font-normal">{description}</p> : null}
+      </div>
     </div>
   );
 }

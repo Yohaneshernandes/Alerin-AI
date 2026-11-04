@@ -595,18 +595,167 @@ const mobileResultJournals: MobileResultJournal[] = [
   },
 ];
 
-function Toast({ message }: { message: string | null }) {
+function parseToastContent(input: string | { title: string; description?: string }): { title: string; description: string } {
+  if (typeof input === "object" && input !== null) {
+    return {
+      title: input.title,
+      description: input.description || "",
+    };
+  }
+
+  const raw = String(input || "").trim();
+  const lower = raw.toLowerCase();
+
+  if (lower.includes("jurnal dihapus dari koleksi")) {
+    return {
+      title: "Berhasil Dihapus",
+      description: "Jurnal telah dihapus dari Koleksi.",
+    };
+  }
+  if (lower.includes("jurnal disimpan ke koleksi") || lower.includes("jurnal berhasil disimpan")) {
+    return {
+      title: "Berhasil Disimpan",
+      description: "Jurnal telah berhasil disimpan ke Koleksi.",
+    };
+  }
+  if (lower.includes("semua rekomendasi disimpan")) {
+    return {
+      title: "Berhasil Disimpan",
+      description: "Semua rekomendasi telah disimpan ke Koleksi.",
+    };
+  }
+  if (lower.includes("literature review dihapus")) {
+    return {
+      title: "Berhasil Dihapus",
+      description: "Literature review telah dihapus dari Koleksi.",
+    };
+  }
+  if (lower.includes("literature review disimpan")) {
+    return {
+      title: "Berhasil Disimpan",
+      description: "Literature review telah disimpan ke Koleksi.",
+    };
+  }
+  if (lower.includes("peta penelitian dihapus")) {
+    return {
+      title: "Berhasil Dihapus",
+      description: "Peta penelitian telah dihapus dari Koleksi.",
+    };
+  }
+  if (lower.includes("peta penelitian disimpan")) {
+    return {
+      title: "Berhasil Disimpan",
+      description: "Peta penelitian telah disimpan ke Koleksi.",
+    };
+  }
+  if (lower.includes("riwayat disematkan")) {
+    return {
+      title: "Berhasil Disematkan",
+      description: "Riwayat pencarian telah disematkan ke atas.",
+    };
+  }
+  if (lower.includes("sematan riwayat dilepas") || lower.includes("sematan dilepas")) {
+    return {
+      title: "Sematan Dilepas",
+      description: "Sematan pada riwayat pencarian telah dilepas.",
+    };
+  }
+  if (lower.includes("riwayat pencarian dihapus") || lower.includes("riwayat dihapus")) {
+    return {
+      title: "Berhasil Dihapus",
+      description: "Riwayat pencarian telah berhasil dihapus.",
+    };
+  }
+  if (lower.includes("nama riwayat berhasil diubah")) {
+    return {
+      title: "Berhasil Diperbarui",
+      description: "Nama riwayat pencarian berhasil disimpan.",
+    };
+  }
+  if (lower.includes("file berhasil dihapus")) {
+    return {
+      title: "Berhasil Dihapus",
+      description: "File rujukan telah berhasil dihapus.",
+    };
+  }
+  if (lower.includes("batas 3 jurnal gratis")) {
+    return {
+      title: "Batas Kuota",
+      description: "Batas 3 jurnal gratis tercapai. Jurnal lainnya kini terkunci.",
+    };
+  }
+  if (lower.includes("dihapus")) {
+    return {
+      title: "Berhasil Dihapus",
+      description: raw.endsWith(".") ? raw : `${raw}.`,
+    };
+  }
+  if (lower.includes("disimpan") || lower.includes("simpan")) {
+    return {
+      title: "Berhasil Disimpan",
+      description: raw.endsWith(".") ? raw : `${raw}.`,
+    };
+  }
+  if (lower.includes("dipindahkan") || lower.includes("pindah")) {
+    return {
+      title: "Berhasil Dipindahkan",
+      description: raw.endsWith(".") ? raw : `${raw}.`,
+    };
+  }
+  if (lower.includes("diperbarui") || lower.includes("diubah") || lower.includes("diganti")) {
+    return {
+      title: "Berhasil Diperbarui",
+      description: raw.endsWith(".") ? raw : `${raw}.`,
+    };
+  }
+  if (lower.includes("dibuat")) {
+    return {
+      title: "Berhasil Dibuat",
+      description: raw.endsWith(".") ? raw : `${raw}.`,
+    };
+  }
+
+  return {
+    title: "Berhasil",
+    description: raw.endsWith(".") ? raw : `${raw}.`,
+  };
+}
+
+function Toast({ message }: { message: string | { title: string; description?: string } | null }) {
   if (!message) return null;
+  const { title, description } = parseToastContent(message);
+
   return (
     <div
       role="status"
-      className="fixed bottom-20 right-4 z-[360] flex max-w-[calc(100vw-2rem)] items-center gap-2.5 rounded-xl border border-slate-200/90 bg-white px-4 py-3 text-sm font-semibold text-slate-800 shadow-[0_10px_35px_rgba(0,0,0,0.12)] transition-all md:bottom-6 md:right-6"
+      aria-live="polite"
+      className="fixed bottom-20 left-4 right-4 z-[360] flex items-center gap-3.5 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-[0_12px_36px_rgba(0,0,0,0.12),0_4px_12px_rgba(0,0,0,0.06)] transition-all sm:left-auto sm:right-6 sm:w-auto sm:min-w-[340px] sm:max-w-[420px] md:bottom-6 md:right-6 animate-in fade-in slide-in-from-bottom-3 duration-200"
     >
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00629b" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0" aria-hidden="true">
-        <circle cx="12" cy="12" r="10" />
-        <path d="M8 12.5l2.5 2.5L16 9.5" />
-      </svg>
-      <span>{message}</span>
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#18181b] text-white shadow-xs">
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="3.2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M20 6L9 17l-5-5" />
+        </svg>
+      </div>
+      <div className="min-w-0 flex-1">
+        <h4 className="text-[14.5px] font-bold leading-tight text-slate-900 tracking-[-0.01em]">
+          {title}
+        </h4>
+        {description ? (
+          <p className="mt-1 text-xs sm:text-[13px] leading-relaxed text-slate-500 font-normal">
+            {description}
+          </p>
+        ) : null}
+      </div>
     </div>
   );
 }
@@ -12123,7 +12272,7 @@ export default function CariJurnalFigmaPanel({
   const [folderSelectMode, setFolderSelectMode] = useState(false);
   const [selectedFolderIds, setSelectedFolderIds] = useState<string[]>([]);
   const [newFolderOpen, setNewFolderOpen] = useState(false);
-  const [toast, setToast] = useState<string | null>(null);
+  const [toast, setToast] = useState<string | { title: string; description?: string } | null>(null);
   const [ringkasanOpen, setRingkasanOpen] = useState(false);
   const [tabelOpen, setTabelOpen] = useState(false);
   const [sitasiOpen, setSitasiOpen] = useState(false);
@@ -12173,10 +12322,10 @@ export default function CariJurnalFigmaPanel({
     showToast("File berhasil dihapus");
   };
 
-  const showToast = (message: string) => {
+  const showToast = (message: string | { title: string; description?: string }) => {
     setToast(message);
     window.clearTimeout(toastTimer.current);
-    toastTimer.current = window.setTimeout(() => setToast(null), 3200);
+    toastTimer.current = window.setTimeout(() => setToast(null), 3600);
   };
 
   useEffect(() => () => window.clearTimeout(toastTimer.current), []);
