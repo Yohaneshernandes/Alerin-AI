@@ -12792,12 +12792,17 @@ export default function CariJurnalFigmaPanel({
             <div className="min-w-0">
               <p className="truncate font-['Plus_Jakarta_Sans:Bold'] text-base font-bold leading-5 text-slate-900">Alerin Jurnal</p>
               <div className="mt-0.5 flex items-center">
-                <span className="inline-flex items-center gap-0.5 rounded-full bg-[#1e264b] px-1.5 py-0.5 font-['Inter:Bold'] text-[7.5px] font-bold text-white leading-none">
+                <button
+                  type="button"
+                  onClick={() => setUpgradeOpen(true)}
+                  title="Lihat Pilihan Paket"
+                  className="inline-flex items-center gap-0.5 rounded-full bg-[#1e264b] hover:bg-[#2a3466] active:scale-95 px-1.5 py-0.5 font-['Inter:Bold'] text-[7.5px] font-bold text-white leading-none cursor-pointer transition-all shadow-xs"
+                >
                   Plus
                   <span className="relative h-2.5 w-2.5 overflow-hidden">
                     <img src={`${mobileAssets}/8923b.png`} alt="" className="absolute -left-1.5 -top-0.5 h-8 max-w-none" />
                   </span>
-                </span>
+                </button>
               </div>
             </div>
           </div>
@@ -12844,9 +12849,17 @@ export default function CariJurnalFigmaPanel({
                     <div className="min-w-0">
                       <div className="flex items-center gap-1.5">
                         <p className={`truncate font-['Inter:Semi_Bold'] text-xs font-semibold ${isDarkMode ? "text-slate-100" : "text-slate-800"}`}>Raka Aditya</p>
-                        <span className="inline-flex items-center gap-0.5 rounded-full border border-blue-200 bg-indigo-950 px-1.5 py-0.5 font-['Inter:Bold'] text-[7.5px] font-bold text-white">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setMobileProfileMenuOpen(false);
+                            setUpgradeOpen(true);
+                          }}
+                          title="Lihat Pilihan Paket"
+                          className="inline-flex items-center gap-0.5 rounded-full border border-blue-200 bg-indigo-950 px-1.5 py-0.5 font-['Inter:Bold'] text-[7.5px] font-bold text-white hover:opacity-90 active:scale-95 transition-all cursor-pointer"
+                        >
                           Plus
-                        </span>
+                        </button>
                       </div>
                       <p className="truncate text-[10.5px] text-slate-400">Manajemen · Semester 6</p>
                     </div>
