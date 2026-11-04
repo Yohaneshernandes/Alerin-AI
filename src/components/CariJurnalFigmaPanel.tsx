@@ -14190,10 +14190,10 @@ export default function CariJurnalFigmaPanel({
                   {query.trim().length > 0 && !isDoiFormat(query) && !referenceActive && (
                     <div className="mt-3 rounded-xl border border-slate-200/90 bg-slate-50/80 p-2.5 transition-all animate-in fade-in slide-in-from-top-1 duration-150">
                       <div className="flex items-center justify-between px-0.5 pb-2">
-                        <span className="text-[11px] font-semibold text-slate-600 md:text-xs">
+                        <span className="text-[12.5px] font-semibold text-slate-700 sm:text-[13px]">
                           Pilih kategori pencarian:
                         </span>
-                        <span className="text-[10px] text-slate-400 font-medium">
+                        <span className="text-[11.5px] font-medium text-slate-500 sm:text-xs">
                           {quickSearchCategory === "topik" ? "Kategori: Topik" : quickSearchCategory === "judul" ? "Kategori: Judul" : "Kategori: Penulis"}
                         </span>
                       </div>
