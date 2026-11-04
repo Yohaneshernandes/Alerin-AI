@@ -14427,16 +14427,36 @@ export default function CariJurnalFigmaPanel({
                         onClick={() => openRiwayatPencarian(item)}
                         className="flex items-start justify-between gap-3 cursor-pointer select-none"
                       >
-                        <div className="min-w-0">
-                          <p className="flex items-center gap-1.5 truncate font-['Plus_Jakarta_Sans:SemiBold'] text-sm font-semibold text-[#0f172a] hover:text-[#00629b] transition-colors">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-1.5 min-w-0">
                             {item.pinned && (
                               <svg width="12" height="12" viewBox="0 0 24 24" fill="#0070ba" stroke="#0070ba" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-label="Disematkan" className="shrink-0 text-[#0070ba]">
                                 <line x1="12" y1="17" x2="12" y2="22" />
                                 <path d="M5 17h14v-1.76a2 2 0 0 0-.89-1.66l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1v3.76a2 2 0 0 1-.33.92l-1.78.9A2 2 0 0 0 5 15.24Z" />
                               </svg>
                             )}
-                            <span className="truncate">{item.label}</span>
-                          </p>
+                            <span
+                              onClick={() => openRiwayatPencarian(item)}
+                              className="truncate font-['Plus_Jakarta_Sans:SemiBold'] text-sm font-semibold text-[#0f172a] hover:text-[#00629b] transition-colors cursor-pointer"
+                            >
+                              {item.label}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={e => {
+                                e.stopPropagation();
+                                setMobileGantiNamaTarget({ index, label: item.label });
+                              }}
+                              className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md text-slate-400 hover:bg-slate-100 hover:text-slate-700 active:scale-90 transition-all cursor-pointer"
+                              title="Ganti nama"
+                              aria-label="Ganti nama"
+                            >
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                <path d="M12 20h9" />
+                                <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z" />
+                              </svg>
+                            </button>
+                          </div>
                           <p className="mt-1 flex items-center gap-1.5 text-[11px] text-[#94a3b8]">
                             <img src={`${mobileAssets}/3a1cb.svg`} alt="" className="h-3.5 w-3.5 opacity-60" />
                             <span>{formatRiwayatDisplayWaktu(item.waktu)}</span>
@@ -14460,18 +14480,6 @@ export default function CariJurnalFigmaPanel({
                           className="flex-1 rounded-xl bg-[#00629b] px-3.5 py-2.5 text-xs font-semibold text-white active:scale-95 transition-transform"
                         >
                           Buka
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setMobileGantiNamaTarget({ index, label: item.label })}
-                          className="inline-flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-800 active:scale-95 transition-all cursor-pointer"
-                          title="Ganti nama"
-                          aria-label="Ganti nama"
-                        >
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z" />
-                          </svg>
                         </button>
                         <button
                           type="button"
