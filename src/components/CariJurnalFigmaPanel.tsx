@@ -10827,6 +10827,17 @@ function MobileJournalCollectionCard({
 
         <button
           type="button"
+          onClick={onAbstrak}
+          className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs sm:text-sm font-semibold text-slate-700 shadow-xs transition-colors hover:bg-slate-50 active:scale-[0.98]"
+        >
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round" aria-hidden="true">
+            <path d="M3 1.5h6l3 3v9H3zM6 7h4M6 10h4" />
+          </svg>
+          Abstrak
+        </button>
+
+        <button
+          type="button"
           onClick={() => {
             const template = `Halo Alerin, saya ingin mendiskusikan artikel jurnal dari koleksi saya ini:
 
