@@ -11913,6 +11913,7 @@ export default function CariJurnalFigmaPanel({
   const [activeFolderId, setActiveFolderId] = useState("all");
   const [collectionTab, setCollectionTab] = useState<"journal" | "review" | "map">("journal");
   const [mobileCollectionMenuOpen, setMobileCollectionMenuOpen] = useState(false);
+  const [mobileProfileMenuOpen, setMobileProfileMenuOpen] = useState(false);
   const [literatureFolders, setLiteratureFolders] = useState<CollectionFolder[]>(defaultLiteratureFolders);
   const [savedLiterature, setSavedLiterature] = useState<SavedLiterature[]>(initialSavedLiterature);
   const [activeLiteratureFolderId, setActiveLiteratureFolderId] = useState("all");
@@ -12710,15 +12711,111 @@ export default function CariJurnalFigmaPanel({
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="relative flex items-center gap-2">
             <button
               type="button"
-              onClick={toggleDarkMode}
-              title={isDarkMode ? "Ganti ke Mode Terang" : "Ganti ke Mode Gelap"}
-              className="relative rounded-full focus:outline-none"
+              aria-haspopup="menu"
+              aria-expanded={mobileProfileMenuOpen}
+              onClick={() => setMobileProfileMenuOpen(open => !open)}
+              title="Menu Profil"
+              className="relative rounded-full focus:outline-none transition-transform active:scale-95"
             >
-              <img src={`${mobileAssets}/48c68.png`} alt="Profil" className="h-[38px] w-[38px] rounded-full object-cover" />
+              <img src={`${mobileAssets}/48c68.png`} alt="Profil" className="h-[38px] w-[38px] rounded-full object-cover ring-2 ring-transparent focus:ring-sky-400" />
             </button>
+
+            {mobileProfileMenuOpen && (
+              <>
+                <div
+                  className="fixed inset-0 z-[345]"
+                  onClick={() => setMobileProfileMenuOpen(false)}
+                  aria-hidden="true"
+                />
+                <div
+                  role="menu"
+                  className={`absolute right-0 top-[calc(100%+10px)] z-[350] w-60 rounded-2xl border p-2 shadow-[0_12px_40px_rgba(0,0,0,0.15)] transition-colors animate-in fade-in zoom-in-95 duration-150 ${
+                    isDarkMode
+                      ? "border-slate-700 bg-slate-900 text-slate-100"
+                      : "border-slate-200/90 bg-white text-slate-700"
+                  }`}
+                >
+                  {/* Ekor panah balon percakapan (speech bubble pointer) mengarah ke avatar profil */}
+                  <div
+                    className={`pointer-events-none absolute -top-[7px] right-3.5 h-3.5 w-3.5 rotate-45 rounded-tl-[2px] border-l border-t shadow-[-2px_-2px_4px_rgba(0,0,0,0.02)] transition-colors ${
+                      isDarkMode
+                        ? "border-slate-700 bg-slate-900"
+                        : "border-slate-200/90 bg-white"
+                    }`}
+                    aria-hidden="true"
+                  />
+
+                  {/* Header info user */}
+                  <div className={`flex items-center gap-2.5 px-3 py-2 border-b ${isDarkMode ? "border-slate-800" : "border-slate-100"}`}>
+                    <img src={`${mobileAssets}/48c68.png`} alt="Raka Aditya" className="h-8 w-8 rounded-full object-cover shrink-0" />
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        <p className={`truncate font-['Inter:Semi_Bold'] text-xs font-semibold ${isDarkMode ? "text-slate-100" : "text-slate-800"}`}>Raka Aditya</p>
+                        <span className="inline-flex items-center gap-0.5 rounded-full border border-blue-200 bg-indigo-950 px-1.5 py-0.5 font-['Inter:Bold'] text-[7.5px] font-bold text-white">
+                          Plus
+                        </span>
+                      </div>
+                      <p className="truncate text-[10.5px] text-slate-400">Manajemen · Semester 6</p>
+                    </div>
+                  </div>
+
+                  <div className="pt-1">
+                    <button
+                      type="button"
+                      role="menuitem"
+                      onClick={() => {
+                        window.alert("Profil Raka Aditya dibuka.");
+                        setMobileProfileMenuOpen(false);
+                      }}
+                      className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors ${
+                        isDarkMode ? "text-slate-200 hover:bg-slate-800" : "text-slate-600 hover:bg-slate-50"
+                      }`}
+                    >
+                      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                      </svg>
+                      Profil
+                    </button>
+                    <button
+                      type="button"
+                      role="menuitem"
+                      onClick={toggleDarkMode}
+                      className={`flex w-full items-center justify-between gap-2 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors ${
+                        isDarkMode ? "text-slate-200 hover:bg-slate-800" : "text-slate-600 hover:bg-slate-50"
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        {isDarkMode ? (
+                          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-amber-500">
+                            <circle cx="12" cy="12" r="5" />
+                            <line x1="12" y1="1" x2="12" y2="3" />
+                            <line x1="12" y1="21" x2="12" y2="23" />
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                            <line x1="1" y1="12" x2="3" y2="12" />
+                            <line x1="21" y1="12" x2="23" y2="12" />
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                          </svg>
+                        ) : (
+                          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-slate-500">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                          </svg>
+                        )}
+                        <span>{isDarkMode ? "Mode Terang" : "Mode Gelap"}</span>
+                      </div>
+                      <span className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors ${isDarkMode ? "bg-[#00629b]" : "bg-slate-200"}`}>
+                        <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-xs transition-transform ${isDarkMode ? "translate-x-4.5" : "translate-x-0.5"}`} />
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </header>
 
