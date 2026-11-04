@@ -169,9 +169,25 @@ const desktopResultJournals = [
   },
 ];
 
+function isDoiFormat(text: string): boolean {
+  if (!text) return false;
+  const clean = text.trim().toLowerCase();
+  if (!clean) return false;
+  return (
+    clean.includes("doi.org") ||
+    clean.includes("dx.doi.org") ||
+    clean.startsWith("doi:") ||
+    clean.startsWith("doi/") ||
+    clean.startsWith("doi ") ||
+    /^10\.\d{4,9}\//.test(clean) ||
+    (clean.startsWith("10.") && clean.includes("/")) ||
+    /^https?:\/\//i.test(clean)
+  );
+}
+
 function capitalizeFirstLetter(text: string): string {
   if (!text) return text;
-  if (/^https?:\/\//i.test(text.trim()) || /^10\.\d/i.test(text.trim()) || /^doi:/i.test(text.trim()) || /^doi\.org/i.test(text.trim())) {
+  if (isDoiFormat(text)) {
     return text;
   }
   const firstNonSpace = text.search(/\S/);
@@ -179,20 +195,6 @@ function capitalizeFirstLetter(text: string): string {
     return text.slice(0, firstNonSpace) + text.charAt(firstNonSpace).toUpperCase() + text.slice(firstNonSpace + 1);
   }
   return text;
-}
-
-function isDoiFormat(text: string): boolean {
-  const clean = text.trim().toLowerCase();
-  if (!clean) return false;
-  return (
-    clean.startsWith("https://doi.org") ||
-    clean.startsWith("http://doi.org") ||
-    clean.startsWith("doi.org") ||
-    clean.startsWith("doi:") ||
-    clean.includes("doi.org") ||
-    /^10\.\d{4,9}\//.test(clean) ||
-    (clean.startsWith("10.") && clean.includes("/"))
-  );
 }
 
 function formatRiwayatDisplayWaktu(raw: string): string {
@@ -11860,6 +11862,14 @@ function MobileResearchMapCollectionCard({
 const validateSearchInput = (val: string): string | null => {
   const trimmed = val.trim();
   if (!trimmed) return null;
+
+  // Bebaskan format DOI, situs DOI (doi.org), maupun URL dari validasi angka/simbol khusus
+  if (isDoiFormat(trimmed)) {
+    if (trimmed.length > 255) {
+      return "Maksimal 255 karakter.";
+    }
+    return null;
+  }
 
   if (val.length > 50) {
     return "Maksimal 50 karakter.";
