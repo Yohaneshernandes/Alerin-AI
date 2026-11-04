@@ -1295,6 +1295,79 @@ function HapusFileModal({
   );
 }
 
+function SlowSearchModal({
+  open,
+  onClose,
+}: {
+  open: boolean;
+  onClose: () => void;
+}) {
+  if (!open) return null;
+
+  return (
+    <div
+      className="fixed inset-0 z-[360] flex items-center justify-center bg-black/35 px-4 backdrop-blur-[2.5px] animate-in fade-in duration-200"
+      onClick={onClose}
+      aria-hidden="true"
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Proses pencarian membutuhkan waktu lebih lama"
+        className="relative w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl animate-in zoom-in-95 duration-200 border border-slate-100"
+        onClick={event => event.stopPropagation()}
+      >
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Tutup"
+          className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-amber-50 text-amber-600 border border-amber-200/60 shadow-xs">
+          <svg
+            width="26"
+            height="26"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <polyline points="12 6 12 12 16 14" />
+          </svg>
+        </div>
+
+        <h2 className="mt-4 text-center font-['Plus_Jakarta_Sans:Bold'] text-base sm:text-lg font-bold text-[#0f172a] leading-snug">
+          Proses Pencarian Lebih Lama
+        </h2>
+
+        <p className="mt-2 text-center text-sm leading-relaxed text-[#64748b]">
+          Proses pencarian membutuhkan waktu lebih lama. Tunggu hingga proses selesai.
+        </p>
+
+        <div className="mt-5">
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex w-full min-h-[44px] items-center justify-center rounded-xl bg-[#00619c] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#004e7e] active:scale-[0.99] shadow-xs"
+          >
+            Mengerti
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function UpgradeLockedConfirmModal({
   open,
   onClose,
@@ -12303,6 +12376,7 @@ export default function CariJurnalFigmaPanel({
   const [resultMode, setResultMode] = useState<"search" | "analysis">("search");
   const [loadingSource, setLoadingSource] = useState<"search" | "collection" | "history">("search");
   const [isLongLoading, setIsLongLoading] = useState(false);
+  const [showSlowSearchPopup, setShowSlowSearchPopup] = useState(false);
   const [mobileJournalSlideIndex, setMobileJournalSlideIndex] = useState(0);
   const [mobileJournals, setMobileJournals] = useState(mobileResultJournals);
   const [isMobileListRefreshing, setIsMobileListRefreshing] = useState(false);
@@ -12734,29 +12808,35 @@ export default function CariJurnalFigmaPanel({
   useEffect(() => {
     if (mobileSearchStage !== "loading") {
       setIsLongLoading(false);
+      setShowSlowSearchPopup(false);
       return;
     }
     const isSlow = (searchSubmittedQuery || query).trim() === "12345" && searchType === "journal";
-    const duration = isSlow ? 15000 : 2400;
+    const duration = isSlow ? 20000 : 2400;
 
     let subtextTimer: number | undefined;
     if (isSlow) {
+      setShowSlowSearchPopup(false);
       setIsLongLoading(false);
       subtextTimer = window.setTimeout(() => {
         setIsLongLoading(true);
+        setShowSlowSearchPopup(true);
       }, 3500);
     } else {
       setIsLongLoading(false);
+      setShowSlowSearchPopup(false);
     }
 
     const timer = window.setTimeout(() => {
       setMobileSearchStage("results");
       setIsLongLoading(false);
+      setShowSlowSearchPopup(false);
     }, duration);
 
     return () => {
       window.clearTimeout(timer);
       if (subtextTimer) window.clearTimeout(subtextTimer);
+      setShowSlowSearchPopup(false);
     };
   }, [mobileSearchStage]);
 
@@ -12786,29 +12866,35 @@ export default function CariJurnalFigmaPanel({
   useEffect(() => {
     if (desktopStage !== "loading") {
       setIsLongLoading(false);
+      setShowSlowSearchPopup(false);
       return;
     }
     const isSlow = (searchSubmittedQuery || query).trim() === "12345" && searchType === "journal";
-    const duration = isSlow ? 15000 : 2400;
+    const duration = isSlow ? 20000 : 2400;
 
     let subtextTimer: number | undefined;
     if (isSlow) {
+      setShowSlowSearchPopup(false);
       setIsLongLoading(false);
       subtextTimer = window.setTimeout(() => {
         setIsLongLoading(true);
+        setShowSlowSearchPopup(true);
       }, 3500);
     } else {
       setIsLongLoading(false);
+      setShowSlowSearchPopup(false);
     }
 
     const timer = window.setTimeout(() => {
       setDesktopStage("results");
       setIsLongLoading(false);
+      setShowSlowSearchPopup(false);
     }, duration);
 
     return () => {
       window.clearTimeout(timer);
       if (subtextTimer) window.clearTimeout(subtextTimer);
+      setShowSlowSearchPopup(false);
     };
   }, [desktopStage]);
 
@@ -13027,10 +13113,6 @@ export default function CariJurnalFigmaPanel({
   };
 
   const getLoadingSubtitle = () => {
-    const isSlow = (searchSubmittedQuery || query).trim() === "12345" && searchType === "journal";
-    if (isSlow && isLongLoading) {
-      return "Proses pencarian membutuhkan waktu lebih lama. Tunggu hingga proses selesai.";
-    }
     if (loadingSource === "history") {
       if (searchType === "review") return "Alerin sedang membuka literatur review berdasarkan riwayat yang Anda pilih.";
       if (searchType === "map") return "Alerin sedang membuka Peta Penelitian berdasarkan riwayat yang Anda pilih.";
@@ -15431,6 +15513,10 @@ export default function CariJurnalFigmaPanel({
             setMobileGantiNamaTarget(null);
           }
         }}
+      />
+      <SlowSearchModal
+        open={showSlowSearchPopup}
+        onClose={() => setShowSlowSearchPopup(false)}
       />
       <Toast message={toast} />
     </div>
