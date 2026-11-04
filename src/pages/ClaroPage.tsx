@@ -1060,9 +1060,9 @@ function BirdIcon({ size = 32, color = "#3b82f6" }: { size?: number; color?: str
 function Toast({ msg, onDone }: { msg: string; onDone: () => void }) {
   useEffect(() => { const t = setTimeout(onDone, 2800); return () => clearTimeout(t); }, [onDone]);
   return (
-    <div className="fixed bottom-6 left-1/2 z-[200] -translate-x-1/2 px-5 py-3 rounded-2xl text-white text-sm font-semibold shadow-xl flex items-center gap-2"
-      style={{ background: "#111827", animation: "fade-up 0.3s ease" }}>
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#34d399" strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+    <div className="fixed bottom-6 left-1/2 z-[200] -translate-x-1/2 px-5 py-3 rounded-2xl bg-white border border-slate-200/90 text-slate-800 text-sm font-semibold shadow-[0_10px_35px_rgba(0,0,0,0.12)] flex items-center gap-2"
+      style={{ animation: "fade-up 0.3s ease" }}>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#00629b" strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>
       {msg}
     </div>
   );

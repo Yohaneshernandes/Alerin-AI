@@ -600,9 +600,9 @@ function Toast({ message }: { message: string | null }) {
   return (
     <div
       role="status"
-      className="fixed bottom-20 right-4 z-[360] flex max-w-[calc(100vw-2rem)] items-center gap-2.5 rounded-xl bg-[#1f1f1f] px-4 py-3 text-sm font-medium text-white shadow-2xl md:bottom-6 md:right-6"
+      className="fixed bottom-20 right-4 z-[360] flex max-w-[calc(100vw-2rem)] items-center gap-2.5 rounded-xl border border-slate-200/90 bg-white px-4 py-3 text-sm font-semibold text-slate-800 shadow-[0_10px_35px_rgba(0,0,0,0.12)] transition-all md:bottom-6 md:right-6"
     >
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0" aria-hidden="true">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00629b" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0" aria-hidden="true">
         <circle cx="12" cy="12" r="10" />
         <path d="M8 12.5l2.5 2.5L16 9.5" />
       </svg>
