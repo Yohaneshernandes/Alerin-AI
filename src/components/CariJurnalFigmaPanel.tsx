@@ -12221,6 +12221,14 @@ export default function CariJurnalFigmaPanel({
   onDiskusikan?: (templatePrompt: string) => void;
 }) {
   const [view, setView] = useState<JournalView>("home");
+  const [isMobile, setIsMobile] = useState(() => (typeof window !== "undefined" ? window.innerWidth < 768 : false));
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const update = () => setIsMobile(!mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
   const [isDarkMode, setIsDarkMode] = useState(() => {
     try {
       return window.localStorage.getItem("alerin-theme") === "dark";
@@ -14149,7 +14157,7 @@ export default function CariJurnalFigmaPanel({
                               setMobileSearchStage("loading");
                             }
                           }}
-                          placeholder="Ketik topik, judul, penulis, variabel, atau DOI"
+                          placeholder={isMobile ? "Ketik topik, judul atau kata kunci lainnya" : "Ketik topik, judul, penulis, variabel, atau DOI"}
                           disabled={referenceActive}
                           className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-slate-400 placeholder:text-sm disabled:cursor-not-allowed disabled:text-slate-400 md:text-sm"
                         />
