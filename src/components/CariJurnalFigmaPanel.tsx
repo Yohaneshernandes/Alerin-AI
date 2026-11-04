@@ -12134,6 +12134,7 @@ export default function CariJurnalFigmaPanel({
   const [hapusFolderModalOpen, setHapusFolderModalOpen] = useState(false);
   const [hapusFileModalOpen, setHapusFileModalOpen] = useState(false);
   const [mobileHapusTarget, setMobileHapusTarget] = useState<{ type: "riwayat" | "extra"; index: number; label: string } | null>(null);
+  const [mobileGantiNamaTarget, setMobileGantiNamaTarget] = useState<{ index: number; label: string } | null>(null);
   const [extraRiwayatList, setExtraRiwayatList] = useState(riwayatPencarian);
   const toastTimer = useRef<number | undefined>(undefined);
   const [openedLiteratureJournals, setOpenedLiteratureJournals] = useState<string[]>([]);
@@ -14314,6 +14315,18 @@ export default function CariJurnalFigmaPanel({
                         </button>
                         <button
                           type="button"
+                          onClick={() => setMobileGantiNamaTarget({ index, label: item.label })}
+                          className="inline-flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-800 active:scale-95 transition-all cursor-pointer"
+                          title="Ganti nama"
+                          aria-label="Ganti nama"
+                        >
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <path d="M12 20h9" />
+                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z" />
+                          </svg>
+                        </button>
+                        <button
+                          type="button"
                           onClick={() => handleTogglePinRiwayat(index)}
                           className={`inline-flex items-center justify-center gap-1.5 rounded-xl border px-3 py-2.5 text-xs font-semibold whitespace-nowrap active:scale-95 transition-all ${
                             item.pinned
@@ -15142,6 +15155,20 @@ export default function CariJurnalFigmaPanel({
             }
             showToast("Riwayat pencarian dihapus");
             setMobileHapusTarget(null);
+          }
+        }}
+      />
+      <GantiNamaRiwayatModal
+        open={mobileGantiNamaTarget !== null}
+        currentName={mobileGantiNamaTarget?.label ?? ""}
+        onClose={() => setMobileGantiNamaTarget(null)}
+        onSave={newName => {
+          if (mobileGantiNamaTarget) {
+            setRiwayatItems(list =>
+              list.map((item, i) => (i === mobileGantiNamaTarget.index ? { ...item, label: newName } : item))
+            );
+            showToast("Nama riwayat berhasil diubah");
+            setMobileGantiNamaTarget(null);
           }
         }}
       />
