@@ -4988,6 +4988,7 @@ function DesktopSearchResults({
   onShowToast,
   analysis = false,
   fileName = "",
+  quickSearchCategory = "topik",
 }: {
   query: string;
   onBack: () => void;
@@ -5001,6 +5002,7 @@ function DesktopSearchResults({
   onShowToast?: (message: string) => void;
   analysis?: boolean;
   fileName?: string;
+  quickSearchCategory?: "topik" | "judul" | "penulis";
 }) {
   const [temuanNav, setTemuanNav] = useState(0);
   const temuan = temuanAnalisis[temuanNav % temuanAnalisis.length];
@@ -13460,6 +13462,7 @@ export default function CariJurnalFigmaPanel({
                 onShowToast={showToast}
                 analysis={resultMode === "analysis"}
                 fileName={fileName}
+                quickSearchCategory={quickSearchCategory}
               />
             ))}
 

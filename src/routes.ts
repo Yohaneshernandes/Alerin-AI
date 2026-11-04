@@ -1,5 +1,5 @@
 import { createBrowserRouter } from "react-router";
-import Root from "./app/Root";
+import Root, { RootErrorBoundary } from "./app/Root";
 import Home from "./pages/Home";
 import ParafrasePage from "./pages/ParafrasePage";
 import ClaroPage from "./pages/ClaroPage";
@@ -13,6 +13,7 @@ export const router = createBrowserRouter([
   {
     path: "/",
     Component: Root,
+    ErrorBoundary: RootErrorBoundary,
     children: [
       { index: true, Component: ClaroPage },
       { path: "parafrase", Component: ParafrasePage },
