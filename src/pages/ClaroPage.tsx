@@ -2522,7 +2522,8 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
   };
 
   const saveRename = (id: string, newTitle?: string) => {
-    const titleToSave = (newTitle !== undefined ? newTitle : editTitle).trim();
+    const rawTitle = (newTitle !== undefined ? newTitle : editTitle).trim();
+    const titleToSave = rawTitle.slice(0, 20);
     if (!titleToSave) {
       setEditingId(null);
       setRenameModalItem(null);
@@ -2914,8 +2915,9 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
                         <div className="flex items-center gap-1.5 flex-1 min-w-0 pr-1">
                           <input
                             type="text"
+                            maxLength={20}
                             value={editTitle}
-                            onChange={(e) => setEditTitle(e.target.value)}
+                            onChange={(e) => setEditTitle(e.target.value.slice(0, 20))}
                             onKeyDown={(e) => {
                               if (e.key === "Enter") saveRename(item.id);
                               if (e.key === "Escape") setEditingId(null);
@@ -2994,7 +2996,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
                               type="button"
                               onClick={() => {
                                 setRenameModalItem({ id: item.id, title: item.title });
-                                setRenameInput(item.title);
+                                setRenameInput(item.title.slice(0, 20));
                                 setMenuOpenId(null);
                               }}
                               className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[13px] font-medium text-slate-800 hover:bg-slate-100/70 active:scale-[0.99] transition-all text-left"
@@ -3139,13 +3141,19 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1.5">
-                Nama percakapan
-              </label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-xs font-medium text-slate-500">
+                  Nama percakapan
+                </label>
+                <span className="text-[11px] text-slate-400 font-medium">
+                  {renameInput.length}/20
+                </span>
+              </div>
               <input
                 type="text"
+                maxLength={20}
                 value={renameInput}
-                onChange={(e) => setRenameInput(e.target.value)}
+                onChange={(e) => setRenameInput(e.target.value.slice(0, 20))}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") saveRename(renameModalItem.id, renameInput);
                   if (e.key === "Escape") setRenameModalItem(null);
