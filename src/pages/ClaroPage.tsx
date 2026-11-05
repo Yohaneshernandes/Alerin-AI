@@ -4200,8 +4200,8 @@ function ChatInputBox({
                       left: modeDropdownPos.left,
                     }}
                   >
-                    {/* Mode List (Isi dari Gambar 3, terbuka semua, icon abu-abu netral) */}
-                    <div className="space-y-0.5">
+                    {/* Mode List (Tanpa icon, judul & deskripsi bersih) */}
+                    <div className="space-y-1">
                       {MODES.map((m) => {
                         const isSelected = activeMode === m.id;
                         return (
@@ -4213,29 +4213,22 @@ function ChatInputBox({
                               setModeOpen(false);
                               setModeDropdownPos(null);
                             }}
-                            className={`w-full flex items-start gap-2.5 px-2.5 py-2 rounded-2xl text-left transition-all active:scale-[0.99] cursor-pointer ${
+                            className={`w-full flex items-start gap-2.5 px-3 py-2.5 rounded-2xl text-left transition-all active:scale-[0.99] cursor-pointer ${
                               isSelected ? "bg-slate-100/70" : "hover:bg-slate-50"
                             }`}
                           >
-                            {/* Icon abu-abu sesuai nama mode */}
-                            <div
-                              className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5 bg-slate-100 text-slate-600 border border-slate-200/70"
-                            >
-                              {m.icon}
-                            </div>
-
                             {/* Content: Title & Description */}
-                            <div className="flex-1 min-w-0 pr-0.5">
+                            <div className="flex-1 min-w-0 pr-1">
                               <p className="text-[13.5px] font-semibold text-slate-900 leading-tight">
                                 {m.fullTitle}
                               </p>
-                              <p className="text-[11px] text-slate-500 font-normal leading-snug mt-0.5">
+                              <p className="text-[11.5px] text-slate-500 font-normal leading-relaxed mt-1">
                                 {m.desc}
                               </p>
                             </div>
 
                             {/* Checkmark on the side (centangnya di samping) */}
-                            <div className="shrink-0 w-5 flex items-center justify-end mt-1 text-slate-900">
+                            <div className="shrink-0 w-5 flex items-center justify-end mt-0.5 text-slate-900">
                               {isSelected && (
                                 <svg
                                   width="16"
@@ -4254,32 +4247,6 @@ function ChatInputBox({
                           </button>
                         );
                       })}
-                    </div>
-
-                    {/* Divider line matching Gambar 2 */}
-                    <div className="my-1.5 mx-2 h-px bg-slate-100" />
-
-                    {/* Bottom section: Tingkat penalaran matching Gambar 2 */}
-                    <div
-                      onClick={() => setReasoningLevel((prev) => (prev === "Otomatis" ? "Tinggi" : "Otomatis"))}
-                      className="flex items-center justify-between px-3 py-2 rounded-xl hover:bg-slate-50 active:scale-[0.99] transition-all cursor-pointer select-none text-slate-800"
-                    >
-                      <span className="text-[13px] font-medium text-slate-900">Tingkat penalaran</span>
-                      <div className="flex items-center gap-1.5 text-slate-400">
-                        <span className="text-xs text-slate-400 font-normal">{reasoningLevel}</span>
-                        <svg
-                          width="13"
-                          height="13"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2.2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M9 18l6-6-6-6" />
-                        </svg>
-                      </div>
                     </div>
 
                     {/* V-shape bubble pointer pointing down to the button */}
