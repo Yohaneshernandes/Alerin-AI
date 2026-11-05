@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback, useLayoutEffect } from "react";
+import { createPortal } from "react-dom";
 import { Link } from "react-router";
 import maskotImg from "@/imports/Animasi_Maskot_Buku_31_Agu_2026.png";
 import owlGradImg from "@/imports/image-6.png";
@@ -3565,7 +3566,7 @@ const MODES: {
 ];
 
 function ChatInputBox({
-  input, setInput, onSend, onSendWithFile, onNewChat, activeCategory, setActiveCategory, hideTopSuggestions, mobileFloat,
+  input, setInput, onSend, onSendWithFile, onNewChat, activeCategory, setActiveCategory, hideTopSuggestions, mobileFloat, onPopupOpenChange,
 }: {
   input: string;
   setInput: (v: string) => void;
@@ -3576,6 +3577,7 @@ function ChatInputBox({
   setActiveCategory: (c: CategoryKey | null) => void;
   hideTopSuggestions?: boolean;
   mobileFloat?: boolean;
+  onPopupOpenChange?: (open: boolean) => void;
 }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const mobileTextareaRef = useRef<HTMLTextAreaElement>(null);
@@ -3598,6 +3600,11 @@ function ChatInputBox({
   const modeBtnRef = useRef<HTMLButtonElement>(null);
   const uploadBtnRef = useRef<HTMLButtonElement>(null);
   const [modeDropdownPos, setModeDropdownPos] = useState<{ bottom: number; left: number; arrowLeft: number } | null>(null);
+
+  // Notify parent whenever a bottom popup is opened or closed (e.g. to hide floating scroll-to-bottom button)
+  useEffect(() => {
+    onPopupOpenChange?.(modeOpen || uploadMenuOpen);
+  }, [modeOpen, uploadMenuOpen, onPopupOpenChange]);
 
   const calculateModeDropdownPos = (btnTarget: HTMLElement | null) => {
     if (!btnTarget) return null;
@@ -3903,7 +3910,7 @@ function ChatInputBox({
               </button>
 
               {/* Upload popup menu */}
-              {uploadMenuOpen && uploadMenuPos && (
+              {uploadMenuOpen && uploadMenuPos && typeof document !== "undefined" && createPortal(
                 <>
                   <div className="fixed inset-0 z-[190]" onClick={() => setUploadMenuOpen(false)} />
                   <div className="fixed z-[200] w-64 rounded-2xl overflow-hidden"
@@ -3967,7 +3974,8 @@ function ChatInputBox({
                       </div>
                     </button>
                   </div>
-                </>
+                </>,
+                document.body
               )}
             </div>
 
@@ -3989,7 +3997,7 @@ function ChatInputBox({
               </button>
 
               {/* Mode dropdown — fixed to escape overflow:hidden parents (Desain Gambar 2, Isi Gambar 3, Terbuka Semua) */}
-              {modeOpen && modeDropdownPos && (
+              {modeOpen && modeDropdownPos && typeof document !== "undefined" && createPortal(
                 <>
                   <div className="fixed inset-0 z-[195]" onClick={() => { setModeOpen(false); setModeDropdownPos(null); }} />
                   <div
@@ -4106,7 +4114,8 @@ function ChatInputBox({
                       </svg>
                     </div>
                   </div>
-                </>
+                </>,
+                document.body
               )}
             </div>
 
@@ -4761,6 +4770,7 @@ function PercakapanTab({
   const [shortcutModal, setShortcutModal] = useState<ShortcutType | null>(null);
   const [chatImagePreview, setChatImagePreview] = useState<string | null>(null);
   const [showScrollBottom, setShowScrollBottom] = useState(false);
+  const [inputPopupOpen, setInputPopupOpen] = useState(false);
   const [scrollMetrics, setScrollMetrics] = useState({
     show: false,
     thumbHeight: 40,
@@ -5343,8 +5353,8 @@ function PercakapanTab({
       <div className="shrink-0 relative z-10 bg-white md:bg-transparent">
         {/* Floating scroll to bottom button (Gambar 1: icon bulat panah bawah saat scroll ke atas) */}
         <div
-          className={`absolute -top-11 left-1/2 -translate-x-1/2 z-30 transition-all duration-200 ease-out ${
-            showScrollBottom ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 translate-y-2 pointer-events-none"
+          className={`absolute -top-11 left-1/2 -translate-x-1/2 z-20 transition-all duration-200 ease-out ${
+            showScrollBottom && !inputPopupOpen ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 translate-y-2 pointer-events-none"
           }`}
         >
           <button
@@ -5367,6 +5377,7 @@ function PercakapanTab({
             activeCategory={activeCategory} setActiveCategory={setActiveCategory}
             onSendWithFile={sendWithFile}
             hideTopSuggestions
+            onPopupOpenChange={setInputPopupOpen}
           />
         </div>
       </div>
