@@ -1786,10 +1786,21 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
         </div>
       ) : (
         <div className="md:hidden flex items-center justify-between px-4 py-2.5 shrink-0 bg-white z-40" style={{ borderBottom: "1px solid #f1f5f9" }}>
-          <div className="flex items-center gap-2">
-            <img src="/assets/73c1a.png" alt="Alerin" className="size-8 rounded-full border border-white object-cover shadow-sm" />
-            <div>
-              <p className="font-bold text-[14px] text-slate-900 leading-none">ALERIN</p>
+          <div className="flex items-center gap-2.5">
+            <button
+              type="button"
+              onClick={() => setMobileDrawerOpen(true)}
+              aria-label="Buka navigasi"
+              className="size-9 rounded-full border border-slate-200/90 flex flex-col justify-center items-center gap-1 hover:bg-slate-50 transition-colors shrink-0"
+            >
+              <div className="w-3.5 h-0.5 bg-slate-800 rounded-full" />
+              <div className="w-3.5 h-0.5 bg-slate-800 rounded-full" />
+            </button>
+            <div className="flex items-center gap-2">
+              <img src="/assets/73c1a.png" alt="Alerin" className="size-8 rounded-full border border-white object-cover shadow-sm" />
+              <div>
+                <p className="font-bold text-[14px] text-slate-900 leading-none">ALERIN</p>
+              </div>
             </div>
           </div>
           <div className="flex items-center gap-1.5">
@@ -2105,7 +2116,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
         </aside>
 
         {/* Main content */}
-        <main className="flex-1 min-w-0 overflow-hidden flex flex-col pb-24 md:pb-0">
+        <main className="flex-1 min-w-0 overflow-hidden flex flex-col">
           {children}
         </main>
 
@@ -2184,74 +2195,6 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
           </div>
         </aside>
       </div>
-
-      {/* Bottom nav — floating pill, mobile only (hidden on percakapan tab) */}
-      {activeTab !== "percakapan" && (
-        <nav
-          ref={(nav) => {
-            if (!nav) return;
-            const lastScrollPositions = new WeakMap<EventTarget, number>();
-            let visible = true;
-
-            const setVisible = (nextVisible: boolean) => {
-              if (visible === nextVisible) return;
-              visible = nextVisible;
-              nav.style.transform = nextVisible ? "translateY(0)" : "translateY(calc(100% + 2rem))";
-              nav.style.opacity = nextVisible ? "1" : "0";
-              nav.style.pointerEvents = nextVisible ? "auto" : "none";
-            };
-
-            const handleScroll = (event: Event) => {
-              const target = event.target;
-              if (!target) return;
-              const scrollTop = target instanceof Document
-                ? target.scrollingElement?.scrollTop ?? 0
-                : target instanceof HTMLElement
-                ? target.scrollTop
-                : 0;
-              const previousScrollTop = lastScrollPositions.get(target) ?? scrollTop;
-              const delta = scrollTop - previousScrollTop;
-
-              if (scrollTop <= 8) setVisible(true);
-              else if (delta > 2) setVisible(false);
-              else if (delta < -2) setVisible(true);
-
-              lastScrollPositions.set(target, scrollTop);
-            };
-
-            document.addEventListener("scroll", handleScroll, { capture: true, passive: true });
-            return () => document.removeEventListener("scroll", handleScroll, true);
-          }}
-          className="fixed bottom-5 left-3 right-3 z-50 transition-[transform,opacity] duration-300 ease-out will-change-transform md:hidden">
-          <div className="rounded-[22px] flex items-stretch px-2 py-2" style={{
-            background: "rgba(255,255,255,0.88)",
-            backdropFilter: "blur(24px)",
-            WebkitBackdropFilter: "blur(24px)",
-            border: "1px solid rgba(255,255,255,0.95)",
-            boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)",
-          }}>
-            {([
-              { id: "percakapan", label: "Chat", asset: "/assets/689f8.svg", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> },
-              { id: "fitur", label: "Fitur", asset: "/assets/3f19b.svg", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg> },
-              { id: "proyek", label: "Proyek", asset: "/assets/abe62.svg", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> },
-              { id: "progress", label: "Progress", asset: "/assets/cb179.svg", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> },
-              { id: "profil", label: "Profil", asset: "/assets/a16cb.svg", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg> },
-            ] as { id: NavTab; label: string; asset: string; icon: React.ReactNode }[]).map((n) => {
-              const active = activeTab === n.id;
-              return (
-                <button key={n.id} onClick={() => onTab(n.id)}
-                  className="flex-1 flex flex-col items-center justify-center gap-[3px] py-1.5 px-1 rounded-[16px] transition-all"
-                  style={{ background: active ? "#eff6ff" : "transparent", minWidth: 0 }}>
-                  <span className={active ? "text-blue-600" : "text-slate-400"}>
-                    {activeTab === "profil" ? <img src={n.asset} alt="" /> : n.icon}
-                  </span>
-                  <span className="text-[9px] font-semibold leading-none truncate w-full text-center" style={{ color: active ? "#2563eb" : "#94a3b8" }}>{n.label}</span>
-                </button>
-              );
-            })}
-          </div>
-        </nav>
-      )}
 
       {/* Profile popup — fixed, escapes overflow */}
       {profileMenuOpen && profileMenuPos && (
@@ -2587,11 +2530,11 @@ function ChatInputBox({
 
   return (
     <div className={mobileFloat
-      ? "fixed md:relative bottom-[88px] md:bottom-auto left-3 right-3 md:left-auto md:right-auto md:mx-6 md:mb-4 z-[60] md:z-auto pt-2 px-3 pb-2 md:pt-2 md:pb-2 rounded-2xl"
-      : "shrink-0 px-4 md:px-6 pb-3 md:pb-4 pt-2"}
+      ? "fixed md:relative bottom-4 md:bottom-auto left-3 right-3 md:left-auto md:right-auto md:mx-6 md:mb-4 z-[60] md:z-auto pt-1 px-3 pb-2 md:pt-2 md:pb-2 rounded-2xl"
+      : "shrink-0 px-3 md:px-6 pb-2 md:pb-4 pt-0 md:pt-2 md:border-t md:border-slate-200/60"}
       style={mobileFloat
         ? { background: "rgba(255,255,255,0.88)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.92)", boxShadow: "0 8px 32px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.06)" } as React.CSSProperties
-        : { borderTop: "1px solid rgba(226,232,240,0.6)" }}>
+        : {}}>
       <input ref={fileInputRef} type="file" className="hidden" accept=".pdf,.doc,.docx,.txt,.ppt,.pptx"
         onChange={handleFileChange} />
       <input ref={imageInputRef} type="file" className="hidden" accept=".jpg,.jpeg,.png,.webp,.gif"
@@ -2623,7 +2566,7 @@ function ChatInputBox({
       )}
 
       {/* Input card */}
-      <div className="rounded-2xl border overflow-visible mb-2 relative"
+      <div className="rounded-2xl border overflow-visible mb-1 md:mb-2 relative"
         style={{
           background: mobileFloat ? "transparent" : "#fff",
           borderColor: listening ? "#3b82f6" : mobileFloat ? "transparent" : "#e2e8f0",
@@ -3519,7 +3462,7 @@ function PercakapanTab({
         </div>
 
         {/* Bottom Chat Input */}
-        <div className="px-4 pb-4 pt-1 bg-white shrink-0">
+        <div className="px-3 pb-2 pt-0 bg-white shrink-0">
           <ChatInputBox
             input={input} setInput={setInput} onSend={send}
             activeCategory={activeCategory} setActiveCategory={setActiveCategory}
