@@ -2760,7 +2760,14 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
             </button>
             <button
               type="button"
-              onClick={() => onTab("profil")}
+              onClick={(e) => {
+                const rect = e.currentTarget.getBoundingClientRect();
+                setProfileMenuPos({
+                  top: rect.bottom + 8,
+                  right: Math.max(12, window.innerWidth - rect.right),
+                });
+                setProfileMenuOpen((o) => !o);
+              }}
               aria-label="Profil pengguna"
               className="size-9 rounded-full overflow-hidden shrink-0 hover:opacity-90 transition-opacity ring-1 ring-slate-200/90 bg-sky-100 shadow-xs"
             >
@@ -2806,7 +2813,14 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
             </button>
             <button
               type="button"
-              onClick={() => onTab("profil")}
+              onClick={(e) => {
+                const rect = e.currentTarget.getBoundingClientRect();
+                setProfileMenuPos({
+                  top: rect.bottom + 8,
+                  right: Math.max(12, window.innerWidth - rect.right),
+                });
+                setProfileMenuOpen((o) => !o);
+              }}
               aria-label="Profil pengguna"
               className="size-8 rounded-full overflow-hidden shrink-0 hover:opacity-90 transition-opacity ring-1 ring-slate-200 bg-sky-100"
             >
@@ -2814,6 +2828,9 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
                 src="/assets/avatar-profile.jpg"
                 alt="Profil"
                 className="size-full object-cover"
+                onError={(e) => {
+                  (e.currentTarget as HTMLImageElement).src = "/assets/avatar-profile.jpg";
+                }}
               />
             </button>
           </div>
@@ -3520,10 +3537,19 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
               shell?.classList.toggle("profile-dark", isDark);
               if (shell instanceof HTMLElement) shell.style.backgroundColor = isDark ? "#0f172a" : "#ffffff";
             }}
-            className="fixed z-[200] w-64 overflow-hidden rounded-2xl border border-slate-100 bg-white"
+            className="fixed z-[200] w-64 max-w-[calc(100vw-24px)] overflow-hidden rounded-2xl border border-slate-100 bg-white animate-[gemini-fade-in_0.15s_ease-out]"
             style={{ top: profileMenuPos.top, right: profileMenuPos.right, boxShadow: "0 12px 40px rgba(0,0,0,0.13), 0 2px 8px rgba(0,0,0,0.06)" }}>
             <div className="flex items-center gap-3 border-b border-slate-100 px-4 py-4">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-600 text-sm font-bold text-white">RA</div>
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-600 text-sm font-bold text-white overflow-hidden ring-1 ring-slate-100">
+                <img
+                  src="/assets/avatar-profile.jpg"
+                  alt="Raka"
+                  className="h-full w-full object-cover"
+                  onError={(e) => {
+                    (e.currentTarget as HTMLElement).style.display = "none";
+                  }}
+                />
+              </div>
               <div className="min-w-0">
                 <p className="truncate text-sm font-bold text-slate-900">Raka</p>
                 <p className="mt-0.5 truncate text-xs text-slate-400">rakaaditya@gmail.com</p>
