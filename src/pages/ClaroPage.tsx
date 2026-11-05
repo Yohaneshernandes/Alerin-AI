@@ -1887,59 +1887,255 @@ function ParaphraseBubble({ original, versions }: { original: string; versions: 
 }
 
 // ─── Notification panel ───────────────────────────────────────────────────────
-const NOTIFS = [
-  { icon: "🎯", title: "Target mingguan menunggu", desc: "Kamu belum menyelesaikan satu pun target minggu ini.", time: "Baru saja", unread: true },
-  { icon: "⏰", title: "Deadline besok!", desc: "Presentasi Riset Pasar · besok pukul 09.00", time: "1 jam lalu", unread: true },
-  { icon: "🏆", title: "QUIZLAB tersedia", desc: "Quiz baru Sistem Informasi Semester 6 sudah aktif.", time: "3 jam lalu", unread: false },
-  { icon: "💡", title: "Alerin punya saran", desc: "Berdasarkan progresmu, coba mulai BAB II sekarang.", time: "Kemarin", unread: false },
+type NotifItem = {
+  id: string;
+  icon: React.ReactNode;
+  title: string;
+  desc: string;
+  time: string;
+  unread: boolean;
+  tab: NavTab;
+};
+
+const DEFAULT_NOTIFS_UMUM: NotifItem[] = [
+  {
+    id: "notif-target",
+    icon: (
+      /* Concentric circles target / bullseye matching design */
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10" />
+        <circle cx="12" cy="12" r="6" />
+        <circle cx="12" cy="12" r="2" />
+      </svg>
+    ),
+    title: "Target mingguan menunggu",
+    desc: "Kamu belum menyelesaikan satu pun target minggu ini.",
+    time: "Baru saja",
+    unread: true,
+    tab: "progress",
+  },
+  {
+    id: "notif-deadline",
+    icon: (
+      /* Alarm clock matching design */
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="13" r="8" />
+        <path d="M12 9v4l2 2" />
+        <path d="M5 3 2 6" />
+        <path d="m22 6-3-3" />
+        <path d="M6.38 18.7 4 21" />
+        <path d="M17.64 18.67 20 21" />
+      </svg>
+    ),
+    title: "Deadline besok!",
+    desc: "Presentasi Riset Pasar · besok pukul 09.00",
+    time: "1 jam lalu",
+    unread: true,
+    tab: "progress",
+  },
+  {
+    id: "notif-quiz",
+    icon: (
+      /* Trophy icon for QUIZLAB matching design */
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+        <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+        <path d="M4 22h16" />
+        <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
+        <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
+        <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
+      </svg>
+    ),
+    title: "QUIZLAB tersedia",
+    desc: "Quiz baru Sistem Informasi Semester 6 sudah aktif.",
+    time: "3 jam lalu",
+    unread: false,
+    tab: "quizlab",
+  },
+  {
+    id: "notif-saran",
+    icon: (
+      /* Lightbulb icon for Alerin punya saran matching design */
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-1 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5" />
+        <path d="M9 18h6" />
+        <path d="M10 22h4" />
+      </svg>
+    ),
+    title: "Alerin punya saran",
+    desc: "Berdasarkan progresmu, coba mulai BAB II sekarang.",
+    time: "Kemarin",
+    unread: false,
+    tab: "percakapan",
+  },
+];
+
+const DEFAULT_NOTIFS_SISTEM: NotifItem[] = [
+  {
+    id: "notif-v24",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+        <path d="m9 12 2 2 4-4" />
+      </svg>
+    ),
+    title: "Pembaruan Alerin v2.4",
+    desc: "Peningkatan kecepatan respon dan performa model penalaran terbaru.",
+    time: "2 hari lalu",
+    unread: false,
+    tab: "percakapan",
+  },
+  {
+    id: "notif-sync",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+        <polyline points="22 4 12 14.01 9 11.01" />
+      </svg>
+    ),
+    title: "Sinkronisasi Berhasil",
+    desc: "Riwayat obrolan dan data tugas perkuliahan telah aman tersimpan.",
+    time: "3 hari lalu",
+    unread: false,
+    tab: "percakapan",
+  },
 ];
 
 function NotifPanel({ onClose, onNavigate }: { onClose: () => void; onNavigate: (t: NavTab) => void }) {
-  return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center px-4"
-      style={{ background: "rgba(0,0,0,0.45)", backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)" }}
-      onClick={onClose}>
-      <div className="w-full max-w-sm bg-white rounded-2xl overflow-hidden"
-        style={{ boxShadow: "0 24px 64px rgba(0,0,0,0.22)" }}
-        onClick={e => e.stopPropagation()}>
-        {/* Header */}
-        <div className="flex items-center justify-between px-4 py-3.5 border-b border-slate-100">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+  const [activeTab, setActiveTab] = useState<"umum" | "sistem">("umum");
+  const [notifsUmum, setNotifsUmum] = useState<NotifItem[]>(DEFAULT_NOTIFS_UMUM);
+  const [notifsSistem, setNotifsSistem] = useState<NotifItem[]>(DEFAULT_NOTIFS_SISTEM);
+
+  const handleMarkAllRead = () => {
+    setNotifsUmum((prev) => prev.map((n) => ({ ...n, unread: false })));
+    setNotifsSistem((prev) => prev.map((n) => ({ ...n, unread: false })));
+  };
+
+  const currentList = activeTab === "umum" ? notifsUmum : notifsSistem;
+
+  const content = (
+    <div
+      className="fixed inset-0 z-[220] flex items-center justify-center p-4 bg-black/45 backdrop-blur-xs select-none animate-[gemini-fade-in_0.15s_ease-out]"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-[390px] bg-white rounded-3xl overflow-hidden shadow-2xl border border-slate-100 flex flex-col animate-[gemini-zoom-in_0.2s_ease-out]"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header (Tanda lonceng warna abu-abu sesuai permintaan) */}
+        <div className="flex items-center justify-between px-5 pt-5 pb-3">
+          <div className="flex items-center gap-2.5">
+            {/* Tanda lonceng abu-abu netral */}
+            <div className="size-9 rounded-full bg-slate-100 border border-slate-200/70 flex items-center justify-center text-slate-600 shrink-0">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+              </svg>
             </div>
-            <p className="font-bold text-sm text-slate-800">Notifikasi</p>
+            <h3 className="font-bold text-[17px] text-slate-900 tracking-tight">Notifikasi</h3>
           </div>
           <div className="flex items-center gap-2">
-            <button className="text-[11px] font-semibold text-blue-600">Tandai dibaca</button>
-            <button onClick={onClose} className="text-slate-400 hover:text-slate-700 w-7 h-7 flex items-center justify-center rounded-lg hover:bg-slate-100">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            <button
+              type="button"
+              onClick={handleMarkAllRead}
+              className="text-xs font-semibold text-blue-600 hover:text-blue-700 active:scale-95 transition-all cursor-pointer"
+            >
+              Tandai dibaca
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Tutup notifikasi"
+              className="size-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 active:scale-90 transition-all cursor-pointer"
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
             </button>
           </div>
         </div>
-        {/* Items */}
-        {NOTIFS.map((n, i) => (
-          <button key={i} onClick={() => { onNavigate(i === 0 || i === 1 ? "progress" : "percakapan"); onClose(); }}
-            className="w-full flex items-start gap-3 px-4 py-3.5 hover:bg-slate-50 active:bg-slate-100 transition-colors text-left border-b border-slate-50 last:border-0">
-            <span className="text-lg shrink-0 mt-0.5">{n.icon}</span>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-1.5 mb-0.5">
-                <p className="text-xs font-bold text-slate-800 truncate">{n.title}</p>
-                {n.unread && <span className="w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0" />}
-              </div>
-              <p className="text-[11px] text-slate-500 leading-relaxed">{n.desc}</p>
-              <p className="text-[10px] text-slate-400 mt-1">{n.time}</p>
-            </div>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="2" className="shrink-0 mt-1"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+
+        {/* Tab row (Umum & Sistem) */}
+        <div className="flex border-b border-slate-100 px-5 gap-8">
+          <button
+            type="button"
+            onClick={() => setActiveTab("umum")}
+            className={`pb-2.5 text-sm font-semibold transition-all relative cursor-pointer ${
+              activeTab === "umum"
+                ? "text-blue-600 border-b-2 border-blue-600"
+                : "text-slate-400 hover:text-slate-600 font-medium border-b-2 border-transparent"
+            }`}
+          >
+            Umum
           </button>
-        ))}
-        {/* Footer */}
-        <div className="px-4 py-3 border-t border-slate-50">
-          <button className="w-full text-xs font-semibold text-blue-600 text-center py-1">Lihat semua notifikasi</button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("sistem")}
+            className={`pb-2.5 text-sm font-semibold transition-all relative cursor-pointer ${
+              activeTab === "sistem"
+                ? "text-blue-600 border-b-2 border-blue-600"
+                : "text-slate-400 hover:text-slate-600 font-medium border-b-2 border-transparent"
+            }`}
+          >
+            Sistem
+          </button>
+        </div>
+
+        {/* Items list — tanpa scrollbar garis biru samping (scrollbar hidden & clean) */}
+        <div
+          className="max-h-[60vh] overflow-y-auto divide-y divide-slate-100/90 pb-2 [&::-webkit-scrollbar]:hidden"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        >
+          {currentList.length === 0 ? (
+            <div className="py-12 text-center text-slate-400 text-xs">
+              Tidak ada notifikasi baru
+            </div>
+          ) : (
+            currentList.map((n) => (
+              <button
+                key={n.id}
+                type="button"
+                onClick={() => {
+                  onNavigate(n.tab);
+                  onClose();
+                }}
+                className="w-full flex items-start gap-3.5 px-5 py-3.5 hover:bg-slate-50/80 active:bg-slate-100/70 transition-colors text-left cursor-pointer group"
+              >
+                {/* Outlined squircle icon */}
+                <div className="size-11 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-center shrink-0 mt-0.5 text-slate-700 shadow-2xs group-hover:bg-white group-hover:border-slate-300 transition-colors">
+                  {n.icon}
+                </div>
+
+                {/* Content */}
+                <div className="flex-1 min-w-0 pr-1">
+                  <div className="flex items-center gap-1.5 leading-snug">
+                    <h4 className="text-[13.5px] font-bold text-slate-900 truncate">{n.title}</h4>
+                    {n.unread && <span className="size-2 rounded-full bg-blue-600 shrink-0 inline-block" />}
+                  </div>
+                  <p className="text-xs text-slate-500 font-normal leading-relaxed mt-0.5 line-clamp-2">
+                    {n.desc}
+                  </p>
+                  <span className="text-[11px] text-slate-400 font-normal mt-1 block">
+                    {n.time}
+                  </span>
+                </div>
+
+                {/* Right chevron */}
+                <div className="shrink-0 pt-3 text-slate-300 group-hover:text-slate-400 transition-colors">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="m9 18 6-6-6-6" />
+                  </svg>
+                </div>
+              </button>
+            ))
+          )}
         </div>
       </div>
     </div>
   );
+
+  return typeof document !== "undefined" ? createPortal(content, document.body) : content;
 }
 
 // ─── Upgrade modal ────────────────────────────────────────────────────────────
@@ -2895,15 +3091,13 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
         </div>
       )}
       {notifOpen && (
-        <div className="md:hidden">
-          <NotifPanel
-            onClose={() => setNotifOpen(false)}
-            onNavigate={tab => {
-              onTab(tab);
-              setNotifOpen(false);
-            }}
-          />
-        </div>
+        <NotifPanel
+          onClose={() => setNotifOpen(false)}
+          onNavigate={tab => {
+            onTab(tab);
+            setNotifOpen(false);
+          }}
+        />
       )}
 
       {/* Modal Ubah Nama Riwayat */}
@@ -3185,7 +3379,6 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
                   Upgrade Alerin
                 </button>
-                {notifOpen && <NotifPanel onClose={() => setNotifOpen(false)} onNavigate={(t) => { onTab(t); setNotifOpen(false); }} />}
               </div>
             </>
           ) : (
@@ -3254,7 +3447,6 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
               <span className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full bg-red-500 border border-white" />
             </button>
           </div>
-          {notifOpen && <NotifPanel onClose={() => setNotifOpen(false)} onNavigate={(t) => { onTab(t); setNotifOpen(false); }} />}
 
           <div className="rounded-2xl border border-slate-100 p-4 mb-4" style={{ boxShadow: "0 1px 6px rgba(0,0,0,0.05)" }}>
             <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Progress Minggu Ini</p>
