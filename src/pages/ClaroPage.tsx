@@ -26,6 +26,7 @@ type ChatMsg = {
   generating?: boolean;
   paraphrase?: { original: string; versions: { label: string; text: string; color: string }[] };
   fileCard?: { name: string; type: string; size: string; previewUrl?: string };
+  fileCards?: { name: string; type: string; size: string; previewUrl?: string }[];
   suggestions?: string[];
   sources?: ChatSource[];
   featureRec?: FeatureRec;
@@ -3763,7 +3764,7 @@ function ChatInputBox({
   input: string;
   setInput: (v: string) => void;
   onSend: (text: string) => void;
-  onSendWithFile?: (text: string, file: { name: string; type: string; size: string; previewUrl?: string }) => void;
+  onSendWithFile?: (text: string, file: { name: string; type: string; size: string; previewUrl?: string }, allFiles?: { name: string; type: string; size: string; previewUrl?: string }[]) => void;
   onNewChat?: () => void;
   activeCategory: CategoryKey | null;
   setActiveCategory: (c: CategoryKey | null) => void;
@@ -3783,8 +3784,9 @@ function ChatInputBox({
   const [uploadMenuOpen, setUploadMenuOpen] = useState(false);
   const [uploadMenuPos, setUploadMenuPos] = useState<{ bottom: number; left: number } | null>(null);
   const [listening, setListening] = useState(false);
-  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
-  const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
+  type UploadedItem = { id: string; file: File; name: string; type: string; size: string; previewUrl?: string };
+  const [uploadedItems, setUploadedItems] = useState<UploadedItem[]>([]);
+  const [selectedPreviewItem, setSelectedPreviewItem] = useState<UploadedItem | null>(null);
   const [previewModalOpen, setPreviewModalOpen] = useState(false);
   const recognitionRef = useRef<any>(null);
   const cardContainerRef = useRef<HTMLDivElement>(null);
@@ -3836,32 +3838,43 @@ function ChatInputBox({
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setUploadedFile(file);
-    if (file.type.startsWith("image/") || /\.(jpg|jpeg|png|webp|gif)$/i.test(file.name)) {
-      const url = URL.createObjectURL(file);
-      setImagePreviewUrl(url);
-    } else {
-      setImagePreviewUrl(null);
-    }
+    const files = Array.from(e.target.files ?? []);
+    if (files.length === 0) return;
+    const newItems: UploadedItem[] = files.map((file) => {
+      const isImage = file.type.startsWith("image/") || /\.(jpg|jpeg|png|webp|gif)$/i.test(file.name);
+      const ext = file.name.split(".").pop()?.toUpperCase() ?? (isImage ? "FOTO" : "FILE");
+      const size = file.size < 1024 * 1024
+        ? `${(file.size / 1024).toFixed(0)} KB`
+        : `${(file.size / (1024 * 1024)).toFixed(1)} MB`;
+      return {
+        id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        file,
+        name: file.name,
+        type: ext,
+        size,
+        previewUrl: isImage ? URL.createObjectURL(file) : undefined,
+      };
+    });
+    setUploadedItems((prev) => [...prev, ...newItems]);
     e.target.value = "";
     setUploadMenuOpen(false);
   };
 
-  const removeUploadedFile = () => {
-    if (imagePreviewUrl) {
-      URL.revokeObjectURL(imagePreviewUrl);
-      setImagePreviewUrl(null);
-    }
-    setUploadedFile(null);
+  const removeItem = (id: string) => {
+    setUploadedItems((prev) => {
+      const target = prev.find((item) => item.id === id);
+      if (target?.previewUrl) URL.revokeObjectURL(target.previewUrl);
+      return prev.filter((item) => item.id !== id);
+    });
   };
 
   useEffect(() => {
     return () => {
-      if (imagePreviewUrl) URL.revokeObjectURL(imagePreviewUrl);
+      uploadedItems.forEach((item) => {
+        if (item.previewUrl) URL.revokeObjectURL(item.previewUrl);
+      });
     };
-  }, [imagePreviewUrl]);
+  }, [uploadedItems]);
 
   const openUploadMenu = (btnRef?: React.RefObject<HTMLButtonElement | null>) => {
     const target = btnRef?.current ?? uploadBtnRef.current;
@@ -3963,17 +3976,33 @@ function ChatInputBox({
   };
 
   const handleSend = () => {
-    if (uploadedFile) {
-      const ext = uploadedFile.name.split(".").pop()?.toUpperCase() ?? "FILE";
-      const size = uploadedFile.size < 1024 * 1024
-        ? `${(uploadedFile.size / 1024).toFixed(0)} KB`
-        : `${(uploadedFile.size / (1024 * 1024)).toFixed(1)} MB`;
+    if (uploadedItems.length > 0) {
+      const filesPayload = uploadedItems.map((item) => ({
+        name: item.name,
+        type: item.type,
+        size: item.size,
+        previewUrl: item.previewUrl,
+      }));
+      const primaryFile = filesPayload[0];
+      const photoCount = uploadedItems.filter((i) => Boolean(i.previewUrl)).length;
+      let defaultText = "";
+      if (photoCount > 1) {
+        defaultText = `Tolong analisis ${photoCount} foto ini.`;
+      } else if (photoCount === 1) {
+        defaultText = "Tolong analisis foto ini.";
+      } else {
+        defaultText = uploadedItems.length > 1 ? `Tolong analisis ${uploadedItems.length} file ini.` : "Tolong analisis file ini.";
+      }
+
       onSendWithFile?.(
-        input.trim() || (imagePreviewUrl ? "Tolong analisis foto ini." : "Tolong analisis file ini."),
-        { name: uploadedFile.name, type: ext, size, previewUrl: imagePreviewUrl ?? undefined }
+        input.trim() || defaultText,
+        primaryFile,
+        filesPayload
       );
-      setUploadedFile(null);
-      setImagePreviewUrl(null);
+      uploadedItems.forEach((item) => {
+        if (item.previewUrl) URL.revokeObjectURL(item.previewUrl);
+      });
+      setUploadedItems([]);
       setInput("");
     } else {
       onSend(input);
@@ -3991,9 +4020,9 @@ function ChatInputBox({
       style={mobileFloat
         ? { background: "rgba(255,255,255,0.88)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.92)", boxShadow: "0 8px 32px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.06)" } as React.CSSProperties
         : {}}>
-      <input ref={fileInputRef} type="file" className="hidden" accept=".pdf,.doc,.docx,.txt,.ppt,.pptx"
+      <input ref={fileInputRef} type="file" multiple className="hidden" accept=".pdf,.doc,.docx,.txt,.ppt,.pptx"
         onChange={handleFileChange} />
-      <input ref={imageInputRef} type="file" className="hidden" accept=".jpg,.jpeg,.png,.webp,.gif"
+      <input ref={imageInputRef} type="file" multiple className="hidden" accept=".jpg,.jpeg,.png,.webp,.gif"
         onChange={handleFileChange} />
 
       {/* Suggestion pills — default or per-category, hidden in chat mode */}
@@ -4021,52 +4050,57 @@ function ChatInputBox({
             : mobileFloat ? "none" : undefined,
           transition: "box-shadow 0.2s, border-color 0.2s",
         }}>
-        {/* Photo preview thumbnail inside card (exact match with reference screenshot) */}
-        {imagePreviewUrl ? (
-          <div className="pt-3 px-3.5 pb-1 flex items-center">
-            <div className="relative inline-block group">
-              <button
-                type="button"
-                onClick={() => setPreviewModalOpen(true)}
-                className="block relative rounded-2xl overflow-hidden size-16 border border-slate-200/80 shadow-xs hover:opacity-95 transition-opacity cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-                title="Ketuk untuk melihat foto ukuran penuh"
-              >
-                <img
-                  src={imagePreviewUrl}
-                  alt="Preview foto"
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-black/0 hover:bg-black/10 transition-colors flex items-center justify-center" />
-              </button>
+        {/* Attachment preview thumbnails inside card (supports multiple photos & files) */}
+        {uploadedItems.length > 0 && (
+          <div className="pt-3 px-3.5 pb-1 flex items-center gap-2.5 overflow-x-auto max-w-full" style={{ scrollbarWidth: "none" }}>
+            {uploadedItems.map((item) => (
+              item.previewUrl ? (
+                <div key={item.id} className="relative inline-block shrink-0 group">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedPreviewItem(item);
+                      setPreviewModalOpen(true);
+                    }}
+                    className="block relative rounded-2xl overflow-hidden size-16 border border-slate-200/80 shadow-xs hover:opacity-95 transition-opacity cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                    title={`Ketuk untuk melihat ${item.name}`}
+                  >
+                    <img
+                      src={item.previewUrl}
+                      alt={item.name}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black/0 hover:bg-black/10 transition-colors flex items-center justify-center" />
+                  </button>
 
-              {/* Close / remove button on top-right of thumbnail */}
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  removeUploadedFile();
-                }}
-                aria-label="Hapus foto"
-                className="absolute -top-1.5 -right-1.5 size-5 rounded-full bg-slate-900/80 hover:bg-slate-900 text-white flex items-center justify-center shadow-xs transition-transform hover:scale-110 active:scale-95"
-              >
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                  <line x1="18" y1="6" x2="6" y2="18" />
-                  <line x1="6" y1="6" x2="18" y2="18" />
-                </svg>
-              </button>
-            </div>
+                  {/* Close / remove button on top-right of thumbnail */}
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeItem(item.id);
+                    }}
+                    aria-label={`Hapus ${item.name}`}
+                    className="absolute -top-1.5 -right-1.5 size-5 rounded-full bg-slate-900/80 hover:bg-slate-900 text-white flex items-center justify-center shadow-xs transition-transform hover:scale-110 active:scale-95 cursor-pointer z-10"
+                  >
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                      <line x1="18" y1="6" x2="6" y2="18" />
+                      <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                  </button>
+                </div>
+              ) : (
+                <div key={item.id} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-blue-50 border border-blue-200/80 shrink-0">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  <span className="text-xs text-blue-700 font-medium truncate max-w-[160px]">{item.name}</span>
+                  <button type="button" onClick={() => removeItem(item.id)} className="text-slate-400 hover:text-slate-600 ml-1 cursor-pointer">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  </button>
+                </div>
+              )
+            ))}
           </div>
-        ) : uploadedFile ? (
-          <div className="pt-3 px-3.5 pb-1">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-blue-50 border border-blue-200/80">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-              <span className="text-xs text-blue-700 font-medium truncate max-w-[180px]">{uploadedFile.name}</span>
-              <button type="button" onClick={removeUploadedFile} className="text-slate-400 hover:text-slate-600 ml-1">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-              </button>
-            </div>
-          </div>
-        ) : null}
+        )}
 
         {/* Mobile textarea: concise placeholder "Tanya Alerin" */}
         <textarea
@@ -4146,11 +4180,17 @@ function ChatInputBox({
                       const inp = document.createElement("input");
                       inp.type = "file"; inp.accept = "image/*"; inp.capture = "environment";
                       inp.onchange = (e) => {
-                        const f = (e.target as HTMLInputElement).files?.[0];
-                        if (f) {
-                          setUploadedFile(f);
-                          const url = URL.createObjectURL(f);
-                          setImagePreviewUrl(url);
+                        const files = Array.from((e.target as HTMLInputElement).files ?? []);
+                        if (files.length > 0) {
+                          const newItems: UploadedItem[] = files.map((f) => ({
+                            id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+                            file: f,
+                            name: f.name || `Kamera-${Date.now()}.jpg`,
+                            type: "JPG",
+                            size: `${(f.size / 1024).toFixed(0)} KB`,
+                            previewUrl: URL.createObjectURL(f),
+                          }));
+                          setUploadedItems((prev) => [...prev, ...newItems]);
                           setUploadMenuOpen(false);
                         }
                       };
@@ -4327,10 +4367,10 @@ function ChatInputBox({
             {/* Send */}
             <button
               onClick={handleSend}
-              disabled={!input.trim() && !uploadedFile}
+              disabled={!input.trim() && uploadedItems.length === 0}
               aria-label="Kirim pesan"
               className={`w-9 h-9 rounded-full flex items-center justify-center text-white transition-all ${
-                (input.trim() || uploadedFile)
+                (input.trim() || uploadedItems.length > 0)
                   ? "bg-blue-600 hover:bg-blue-700 shadow-sm cursor-pointer active:scale-95"
                   : "bg-indigo-200 opacity-30 cursor-not-allowed"
               }`}
@@ -4342,7 +4382,7 @@ function ChatInputBox({
       </div>
 
       {/* Full Image Preview Modal (Lightbox) */}
-      {previewModalOpen && imagePreviewUrl && (
+      {previewModalOpen && selectedPreviewItem?.previewUrl && (
         <div
           role="dialog"
           aria-modal="true"
@@ -4353,20 +4393,18 @@ function ChatInputBox({
           <div className="w-full flex items-center justify-between text-white pt-2 px-2" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center gap-2 min-w-0 pr-4">
               <span className="text-sm font-semibold truncate text-white/90">
-                {uploadedFile?.name ?? "Preview Foto"}
+                {selectedPreviewItem.name}
               </span>
-              {uploadedFile && (
-                <span className="text-xs text-white/60 shrink-0">
-                  ({(uploadedFile.size / 1024).toFixed(0)} KB)
-                </span>
-              )}
+              <span className="text-xs text-white/60 shrink-0">
+                ({selectedPreviewItem.size})
+              </span>
             </div>
 
             <button
               type="button"
               onClick={() => setPreviewModalOpen(false)}
               aria-label="Tutup preview"
-              className="size-9 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-colors shrink-0"
+              className="size-9 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-colors shrink-0 cursor-pointer"
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                 <line x1="18" y1="6" x2="6" y2="18" />
@@ -4378,8 +4416,8 @@ function ChatInputBox({
           {/* Centered Image */}
           <div className="flex-1 flex items-center justify-center p-2 max-w-full max-h-[75vh]" onClick={(e) => e.stopPropagation()}>
             <img
-              src={imagePreviewUrl}
-              alt={uploadedFile?.name ?? "Preview"}
+              src={selectedPreviewItem.previewUrl}
+              alt={selectedPreviewItem.name}
               className="max-w-full max-h-[70vh] rounded-2xl object-contain shadow-2xl"
             />
           </div>
@@ -4389,10 +4427,10 @@ function ChatInputBox({
             <button
               type="button"
               onClick={() => {
-                removeUploadedFile();
+                removeItem(selectedPreviewItem.id);
                 setPreviewModalOpen(false);
               }}
-              className="px-4 py-2 rounded-full bg-red-600/80 hover:bg-red-600 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors"
+              className="px-4 py-2 rounded-full bg-red-600/80 hover:bg-red-600 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
             >
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
               Hapus Foto
@@ -4400,7 +4438,7 @@ function ChatInputBox({
             <button
               type="button"
               onClick={() => setPreviewModalOpen(false)}
-              className="px-5 py-2 rounded-full bg-white/20 hover:bg-white/30 text-white text-xs font-semibold transition-colors"
+              className="px-5 py-2 rounded-full bg-white/20 hover:bg-white/30 text-white text-xs font-semibold transition-colors cursor-pointer"
             >
               Tutup
             </button>
@@ -5074,25 +5112,36 @@ function PercakapanTab({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const sendWithFile = useCallback((text: string, file: { name: string; type: string; size: string; previewUrl?: string }) => {
+  const sendWithFile = useCallback((text: string, file: { name: string; type: string; size: string; previewUrl?: string }, allFiles?: { name: string; type: string; size: string; previewUrl?: string }[]) => {
     setChatMode(true);
-    const userMsg: ChatMsg = { role: "user", text: text.trim(), time: now(), fileCard: file };
+    const files = allFiles && allFiles.length > 0 ? allFiles : [file];
+    const userMsg: ChatMsg = { role: "user", text: text.trim(), time: now(), fileCard: file, fileCards: files };
     setMsgs((m) => [...m, userMsg]);
     setInput("");
+    setTimeout(scrollToBottom, 40);
 
-    const title = file.previewUrl ? `Foto ${file.name}` : `Analisis ${file.name}`;
+    const photoFiles = files.filter((f) => Boolean(f.previewUrl));
+    const title = photoFiles.length > 1
+      ? `${photoFiles.length} Foto`
+      : file.previewUrl ? `Foto ${file.name}` : `Analisis ${file.name}`;
     window.dispatchEvent(new CustomEvent("alerin-add-history", { detail: { title, query: text.trim() || title } }));
 
     setTyping(true);
     setTimeout(() => {
       setTyping(false);
-      const isPhoto = Boolean(file.previewUrl) || Boolean(file.type.match(/(JPG|JPEG|PNG|WEBP|GIF)/i));
-      const reply = isPhoto
-        ? `Aku sudah melihat foto yang kamu unggah (${file.name}). Ada yang ingin kamu tanyakan atau ingin aku analisis dari foto ini?`
-        : `Oke, saya sudah menerima file **${file.name}** (${file.type}, ${file.size}). Saya akan membantu menganalisisnya. Apa yang ingin kamu ketahui dari dokumen ini?`;
+      let reply = "";
+      if (photoFiles.length > 1) {
+        reply = `Aku sudah melihat ${photoFiles.length} foto yang kamu unggah. Ada yang ingin kamu tanyakan atau minta aku analisis dari foto-foto ini?`;
+      } else if (photoFiles.length === 1) {
+        reply = `Aku sudah melihat foto yang kamu unggah (${file.name}). Ada yang ingin kamu tanyakan atau ingin aku analisis dari foto ini?`;
+      } else {
+        reply = files.length > 1
+          ? `Oke, saya sudah menerima ${files.length} file dokumen. Saya akan membantu menganalisisnya. Apa yang ingin kamu ketahui dari file-file ini?`
+          : `Oke, saya sudah menerima file **${file.name}** (${file.type}, ${file.size}). Saya akan membantu menganalisisnya. Apa yang ingin kamu ketahui dari dokumen ini?`;
+      }
       setMsgs((m) => [...m, { role: "claro", text: reply, time: now() }]);
     }, 5000);
-  }, []);
+  }, [scrollToBottom]);
 
   const send = useCallback((text: string) => {
     if (!text.trim()) return;
@@ -5338,7 +5387,37 @@ function PercakapanTab({
           if (m.role === "user") {
             return (
               <div key={i} className="flex flex-col items-end gap-1">
-                {m.fileCard && (
+                {m.fileCards && m.fileCards.length > 0 ? (
+                  <div className="flex flex-wrap justify-end gap-2 mb-1 max-w-[280px] md:max-w-[360px]">
+                    {m.fileCards.map((fc, idx) => (
+                      fc.previewUrl ? (
+                        <div
+                          key={idx}
+                          onClick={() => setChatImagePreview(fc.previewUrl ?? null)}
+                          className={`cursor-pointer group relative rounded-2xl overflow-hidden border border-slate-200/40 shadow-xs ${
+                            m.fileCards && m.fileCards.length === 1 ? "w-full max-w-[200px] h-36" : "w-[120px] h-28"
+                          }`}
+                          title="Ketuk untuk melihat foto"
+                        >
+                          <img src={fc.previewUrl} alt={fc.name} className="w-full h-full object-cover" />
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                            <span className="opacity-0 group-hover:opacity-100 text-white text-[10px] font-medium bg-black/60 px-2 py-0.5 rounded-full transition-opacity">Lihat</span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div key={idx} className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl" style={{ background: "#1e293b" }}>
+                          <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0" style={{ background: "#fee2e2" }}>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="1.8" strokeLinecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-xs font-bold text-white truncate max-w-[150px]">{fc.name}</p>
+                            <p className="text-[10px] text-slate-400">{fc.type} · {fc.size}</p>
+                          </div>
+                        </div>
+                      )
+                    ))}
+                  </div>
+                ) : m.fileCard ? (
                   m.fileCard.previewUrl ? (
                     <div
                       onClick={() => setChatImagePreview(m.fileCard?.previewUrl ?? null)}
@@ -5361,7 +5440,7 @@ function PercakapanTab({
                       </div>
                     </div>
                   )
-                )}
+                ) : null}
                 <div className="max-w-[80%] md:max-w-[68%] rounded-2xl rounded-br-sm px-4 py-3 text-[0.9375rem] leading-relaxed text-white claro-user-bubble">
                   {m.text}
                 </div>
