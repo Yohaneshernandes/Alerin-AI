@@ -1774,12 +1774,15 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
               type="button"
               onClick={() => onTab("profil")}
               aria-label="Profil pengguna"
-              className="size-9 rounded-full overflow-hidden shrink-0 hover:opacity-90 transition-opacity ring-1 ring-slate-200"
+              className="size-9 rounded-full overflow-hidden shrink-0 hover:opacity-90 transition-opacity ring-1 ring-slate-200 bg-sky-100"
             >
               <img
-                src={typeof window !== "undefined" && window.localStorage.getItem("alerin-profile-photo") ? (window.localStorage.getItem("alerin-profile-photo") as string) : "/assets/avatar-duck.png"}
+                src="/assets/avatar-profile.jpg"
                 alt="Profil"
                 className="size-full object-cover"
+                onError={(e) => {
+                  (e.currentTarget as HTMLImageElement).src = "/assets/avatar-profile.jpg";
+                }}
               />
             </button>
           </div>
@@ -1813,11 +1816,17 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
               <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-red-500 border border-white" />
             </button>
-            <button onClick={onNewChat}
-              className="h-8 px-[18px] rounded-xl text-xs font-bold text-white flex items-center gap-1 transition-opacity hover:opacity-90"
-              style={{ backgroundColor: "rgb(52, 124, 234)" }}>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              Chat
+            <button
+              type="button"
+              onClick={() => onTab("profil")}
+              aria-label="Profil pengguna"
+              className="size-8 rounded-full overflow-hidden shrink-0 hover:opacity-90 transition-opacity ring-1 ring-slate-200 bg-sky-100"
+            >
+              <img
+                src="/assets/avatar-profile.jpg"
+                alt="Profil"
+                className="size-full object-cover"
+              />
             </button>
           </div>
         </div>
