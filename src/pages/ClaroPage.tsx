@@ -1640,6 +1640,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
   const [calOpen, setCalOpen] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true); // single toggle for both sidebars
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
   const [profileMenuPos, setProfileMenuPos] = useState<{ top: number; right: number } | null>(null);
@@ -1738,31 +1739,215 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
       )}
 
       {/* Mobile top header */}
-      <div className="md:hidden flex items-center justify-between px-4 py-2.5 shrink-0 bg-white z-40" style={{ borderBottom: "1px solid #f1f5f9" }}>
-        <div className="flex items-center gap-2">
-          <img src="/assets/73c1a.png" alt="Alerin" className="size-8 rounded-full border border-white object-cover shadow-sm" />
-          <div>
-            <p className="font-bold text-[14px] text-slate-900 leading-none">ALERIN</p>
+      {activeTab === "percakapan" ? (
+        <div className="md:hidden flex items-center justify-between px-4 py-3 shrink-0 bg-white z-40 border-b border-slate-100">
+          <div className="flex items-center gap-2.5">
+            <button
+              type="button"
+              onClick={() => setMobileDrawerOpen(true)}
+              aria-label="Buka navigasi"
+              className="size-10 rounded-full border border-slate-200/90 flex flex-col justify-center items-center gap-1 hover:bg-slate-50 transition-colors shrink-0"
+            >
+              <div className="w-4 h-0.5 bg-slate-800 rounded-full" />
+              <div className="w-4 h-0.5 bg-slate-800 rounded-full" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setUpgradeOpen(true)}
+              className="h-10 px-4 py-2 rounded-full border border-slate-200/90 flex items-center gap-1.5 hover:bg-blue-50/50 transition-colors shrink-0"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              <span className="text-blue-600 text-sm font-semibold leading-5">Upgrade</span>
+            </button>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setNotifOpen(o => !o)}
+              aria-label="Notifikasi"
+              className="relative size-9 rounded-xl flex items-center justify-center text-slate-500 hover:bg-slate-100 transition-colors shrink-0"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              <span className="size-1.5 absolute top-2 right-2 bg-red-500 rounded-full border border-white" />
+            </button>
+            <button
+              type="button"
+              onClick={() => onTab("profil")}
+              aria-label="Profil pengguna"
+              className="size-9 rounded-full overflow-hidden shrink-0 hover:opacity-90 transition-opacity ring-1 ring-slate-200"
+            >
+              <img
+                src={typeof window !== "undefined" && window.localStorage.getItem("alerin-profile-photo") ? (window.localStorage.getItem("alerin-profile-photo") as string) : "/assets/avatar-duck.png"}
+                alt="Profil"
+                className="size-full object-cover"
+              />
+            </button>
           </div>
         </div>
-        <div className="flex items-center gap-1.5">
-          <button onClick={() => setSearchOpen(true)}
-            className="w-8 h-8 flex items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 transition-colors">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          </button>
-          <button onClick={() => setNotifOpen(o => !o)}
-            className="relative w-8 h-8 flex items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 transition-colors">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-            <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-red-500 border border-white" />
-          </button>
-          <button onClick={onNewChat}
-            className="h-8 px-[18px] rounded-xl text-xs font-bold text-white flex items-center gap-1 transition-opacity hover:opacity-90"
-            style={{ backgroundColor: "rgb(52, 124, 234)" }}>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Chat
-          </button>
+      ) : (
+        <div className="md:hidden flex items-center justify-between px-4 py-2.5 shrink-0 bg-white z-40" style={{ borderBottom: "1px solid #f1f5f9" }}>
+          <div className="flex items-center gap-2">
+            <img src="/assets/73c1a.png" alt="Alerin" className="size-8 rounded-full border border-white object-cover shadow-sm" />
+            <div>
+              <p className="font-bold text-[14px] text-slate-900 leading-none">ALERIN</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <button onClick={() => setSearchOpen(true)}
+              className="w-8 h-8 flex items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 transition-colors">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </button>
+            <button onClick={() => setNotifOpen(o => !o)}
+              className="relative w-8 h-8 flex items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 transition-colors">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-red-500 border border-white" />
+            </button>
+            <button onClick={onNewChat}
+              className="h-8 px-[18px] rounded-xl text-xs font-bold text-white flex items-center gap-1 transition-opacity hover:opacity-90"
+              style={{ backgroundColor: "rgb(52, 124, 234)" }}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Chat
+            </button>
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* Mobile Drawer Sidebar (Gambar 3) */}
+      {mobileDrawerOpen && (
+        <div className="md:hidden fixed inset-0 z-[150]">
+          <div
+            className="fixed inset-0 bg-black/40 backdrop-blur-xs transition-opacity"
+            onClick={() => setMobileDrawerOpen(false)}
+          />
+          <aside
+            className="fixed top-0 left-0 bottom-0 w-72 max-w-[85vw] bg-white z-[160] shadow-2xl flex flex-col justify-between py-5 px-4 overflow-y-auto"
+            style={{ animation: "drawerSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1)" }}
+          >
+            <div>
+              {/* Drawer Header */}
+              <div className="flex items-center justify-between mb-5">
+                <div className="flex items-center gap-2.5">
+                  <img src="/assets/73c1a.png" alt="Alerin" className="size-9 rounded-full object-cover shadow-sm border border-white" />
+                  <span className="font-bold text-slate-900 text-lg leading-none font-sans">ALERIN</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => { setMobileDrawerOpen(false); setSearchOpen(true); }}
+                    aria-label="Cari percakapan"
+                    className="size-8 rounded-xl flex items-center justify-center text-slate-700 hover:bg-slate-100 transition-colors"
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setMobileDrawerOpen(false)}
+                    aria-label="Tutup menu"
+                    className="size-8 rounded-full border border-neutral-200/80 flex items-center justify-center text-neutral-800 hover:bg-slate-100 transition-colors"
+                  >
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+                  </button>
+                </div>
+              </div>
+
+              {/* Navigation Menu */}
+              <nav className="space-y-1 mb-6">
+                <button
+                  type="button"
+                  onClick={() => { onTab("percakapan"); setMobileDrawerOpen(false); }}
+                  className={`w-full h-11 px-3.5 py-2.5 rounded-2xl flex items-center gap-3 transition-colors text-left ${activeTab === "percakapan" ? "bg-gray-900 text-white font-bold" : "text-slate-600 hover:bg-slate-100 font-medium"}`}
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                  <span className="text-base">Percakapan</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => { onTab("fitur"); setMobileDrawerOpen(false); }}
+                  className={`w-full h-11 px-3.5 py-2.5 rounded-2xl flex items-center gap-3 transition-colors text-left ${activeTab === "fitur" ? "bg-gray-900 text-white font-bold" : "text-slate-600 hover:bg-slate-100 font-medium"}`}
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+                  <span className="text-base">Semua Fitur</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => { onTab("proyek"); setMobileDrawerOpen(false); }}
+                  className={`w-full h-11 px-3.5 py-2.5 rounded-2xl flex items-center gap-3 transition-colors text-left ${activeTab === "proyek" ? "bg-gray-900 text-white font-bold" : "text-slate-600 hover:bg-slate-100 font-medium"}`}
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  <span className="text-base">Proyek Saya</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => { onTab("progress"); setMobileDrawerOpen(false); }}
+                  className={`w-full h-11 px-3.5 py-2.5 rounded-2xl flex items-center gap-3 transition-colors text-left ${activeTab === "progress" ? "bg-gray-900 text-white font-bold" : "text-slate-600 hover:bg-slate-100 font-medium"}`}
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  <span className="text-base">Progres</span>
+                </button>
+              </nav>
+
+              {/* Riwayat Section */}
+              <div className="pt-1">
+                <div className="text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-3 px-1">Riwayat</div>
+                <div className="space-y-3 overflow-y-auto max-h-[38vh] pr-1">
+                  {[
+                    "Rencana  Ke Vietnam",
+                    "Batas Waktu Magrib",
+                    "Hadiah Lomba",
+                    "Klarifikasi FGD",
+                    "Hapus Memori MacBook",
+                    "Memasukkan Device Realme",
+                  ].map((item, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => {
+                        onTab("percakapan");
+                        setMobileDrawerOpen(false);
+                        onOpenHistory([
+                          { role: "user", text: item, time: "Baru saja" },
+                          { role: "claro", text: `Ini rangkuman riwayat percakapan mengenai "${item}". Ada hal yang ingin ditanyakan atau didiskusikan lebih lanjut?`, time: "Baru saja" }
+                        ]);
+                      }}
+                      className="block w-full text-left text-neutral-800 text-[15px] font-normal leading-relaxed truncate hover:text-blue-600 transition-colors px-1"
+                    >
+                      {item}
+                    </button>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileDrawerOpen(false);
+                      setSearchOpen(true);
+                    }}
+                    className="block w-full text-left text-neutral-400 text-[15px] font-normal hover:text-neutral-600 transition-colors pt-1 px-1"
+                  >
+                    Lihat semua...
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom + Obrolan button */}
+            <div className="pt-4">
+              <button
+                type="button"
+                onClick={() => {
+                  onNewChat();
+                  setMobileDrawerOpen(false);
+                }}
+                className="w-full h-11 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-sm flex items-center justify-center gap-2 font-semibold text-sm transition-colors"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <span>Obrolan</span>
+              </button>
+            </div>
+          </aside>
+        </div>
+      )}
       {notifOpen && (
         <div className="md:hidden">
           <NotifPanel
@@ -2000,71 +2185,73 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
         </aside>
       </div>
 
-      {/* Bottom nav — floating pill, mobile only */}
-      <nav
-        ref={(nav) => {
-          if (!nav) return;
-          const lastScrollPositions = new WeakMap<EventTarget, number>();
-          let visible = true;
+      {/* Bottom nav — floating pill, mobile only (hidden on percakapan tab) */}
+      {activeTab !== "percakapan" && (
+        <nav
+          ref={(nav) => {
+            if (!nav) return;
+            const lastScrollPositions = new WeakMap<EventTarget, number>();
+            let visible = true;
 
-          const setVisible = (nextVisible: boolean) => {
-            if (visible === nextVisible) return;
-            visible = nextVisible;
-            nav.style.transform = nextVisible ? "translateY(0)" : "translateY(calc(100% + 2rem))";
-            nav.style.opacity = nextVisible ? "1" : "0";
-            nav.style.pointerEvents = nextVisible ? "auto" : "none";
-          };
+            const setVisible = (nextVisible: boolean) => {
+              if (visible === nextVisible) return;
+              visible = nextVisible;
+              nav.style.transform = nextVisible ? "translateY(0)" : "translateY(calc(100% + 2rem))";
+              nav.style.opacity = nextVisible ? "1" : "0";
+              nav.style.pointerEvents = nextVisible ? "auto" : "none";
+            };
 
-          const handleScroll = (event: Event) => {
-            const target = event.target;
-            if (!target) return;
-            const scrollTop = target instanceof Document
-              ? target.scrollingElement?.scrollTop ?? 0
-              : target instanceof HTMLElement
-              ? target.scrollTop
-              : 0;
-            const previousScrollTop = lastScrollPositions.get(target) ?? scrollTop;
-            const delta = scrollTop - previousScrollTop;
+            const handleScroll = (event: Event) => {
+              const target = event.target;
+              if (!target) return;
+              const scrollTop = target instanceof Document
+                ? target.scrollingElement?.scrollTop ?? 0
+                : target instanceof HTMLElement
+                ? target.scrollTop
+                : 0;
+              const previousScrollTop = lastScrollPositions.get(target) ?? scrollTop;
+              const delta = scrollTop - previousScrollTop;
 
-            if (scrollTop <= 8) setVisible(true);
-            else if (delta > 2) setVisible(false);
-            else if (delta < -2) setVisible(true);
+              if (scrollTop <= 8) setVisible(true);
+              else if (delta > 2) setVisible(false);
+              else if (delta < -2) setVisible(true);
 
-            lastScrollPositions.set(target, scrollTop);
-          };
+              lastScrollPositions.set(target, scrollTop);
+            };
 
-          document.addEventListener("scroll", handleScroll, { capture: true, passive: true });
-          return () => document.removeEventListener("scroll", handleScroll, true);
-        }}
-        className="fixed bottom-5 left-3 right-3 z-50 transition-[transform,opacity] duration-300 ease-out will-change-transform md:hidden">
-        <div className="rounded-[22px] flex items-stretch px-2 py-2" style={{
-          background: "rgba(255,255,255,0.88)",
-          backdropFilter: "blur(24px)",
-          WebkitBackdropFilter: "blur(24px)",
-          border: "1px solid rgba(255,255,255,0.95)",
-          boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)",
-        }}>
-          {([
-            { id: "percakapan", label: "Chat", asset: "/assets/689f8.svg", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> },
-            { id: "fitur", label: "Fitur", asset: "/assets/3f19b.svg", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg> },
-            { id: "proyek", label: "Proyek", asset: "/assets/abe62.svg", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> },
-            { id: "progress", label: "Progress", asset: "/assets/cb179.svg", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> },
-            { id: "profil", label: "Profil", asset: "/assets/a16cb.svg", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg> },
-          ] as { id: NavTab; label: string; asset: string; icon: React.ReactNode }[]).map((n) => {
-            const active = activeTab === n.id;
-            return (
-              <button key={n.id} onClick={() => onTab(n.id)}
-                className="flex-1 flex flex-col items-center justify-center gap-[3px] py-1.5 px-1 rounded-[16px] transition-all"
-                style={{ background: active ? "#eff6ff" : "transparent", minWidth: 0 }}>
-                <span className={active ? "text-blue-600" : "text-slate-400"}>
-                  {activeTab === "profil" ? <img src={n.asset} alt="" /> : n.icon}
-                </span>
-                <span className="text-[9px] font-semibold leading-none truncate w-full text-center" style={{ color: active ? "#2563eb" : "#94a3b8" }}>{n.label}</span>
-              </button>
-            );
-          })}
-        </div>
-      </nav>
+            document.addEventListener("scroll", handleScroll, { capture: true, passive: true });
+            return () => document.removeEventListener("scroll", handleScroll, true);
+          }}
+          className="fixed bottom-5 left-3 right-3 z-50 transition-[transform,opacity] duration-300 ease-out will-change-transform md:hidden">
+          <div className="rounded-[22px] flex items-stretch px-2 py-2" style={{
+            background: "rgba(255,255,255,0.88)",
+            backdropFilter: "blur(24px)",
+            WebkitBackdropFilter: "blur(24px)",
+            border: "1px solid rgba(255,255,255,0.95)",
+            boxShadow: "0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)",
+          }}>
+            {([
+              { id: "percakapan", label: "Chat", asset: "/assets/689f8.svg", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> },
+              { id: "fitur", label: "Fitur", asset: "/assets/3f19b.svg", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg> },
+              { id: "proyek", label: "Proyek", asset: "/assets/abe62.svg", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> },
+              { id: "progress", label: "Progress", asset: "/assets/cb179.svg", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> },
+              { id: "profil", label: "Profil", asset: "/assets/a16cb.svg", icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg> },
+            ] as { id: NavTab; label: string; asset: string; icon: React.ReactNode }[]).map((n) => {
+              const active = activeTab === n.id;
+              return (
+                <button key={n.id} onClick={() => onTab(n.id)}
+                  className="flex-1 flex flex-col items-center justify-center gap-[3px] py-1.5 px-1 rounded-[16px] transition-all"
+                  style={{ background: active ? "#eff6ff" : "transparent", minWidth: 0 }}>
+                  <span className={active ? "text-blue-600" : "text-slate-400"}>
+                    {activeTab === "profil" ? <img src={n.asset} alt="" /> : n.icon}
+                  </span>
+                  <span className="text-[9px] font-semibold leading-none truncate w-full text-center" style={{ color: active ? "#2563eb" : "#94a3b8" }}>{n.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </nav>
+      )}
 
       {/* Profile popup — fixed, escapes overflow */}
       {profileMenuOpen && profileMenuPos && (
@@ -2463,7 +2650,8 @@ function ChatInputBox({
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-slate-200 text-xs font-medium text-slate-500 hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50 transition-all whitespace-nowrap"
                 style={uploadMenuOpen ? { borderColor: "#93c5fd", color: "#2563eb", background: "#eff6ff" } : {}}>
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                Lampirkan
+                <span className="hidden md:inline">Lampirkan</span>
+                <span className="md:hidden">Upload</span>
               </button>
 
               {/* Upload popup menu */}
@@ -2568,24 +2756,26 @@ function ChatInputBox({
             </div>
 
             {/* Divider */}
-            <div className="w-px h-4 bg-slate-200 shrink-0 mx-0.5" />
+            <div className="hidden md:block w-px h-4 bg-slate-200 shrink-0 mx-0.5" />
 
-            {/* Category chips — inline scrollable */}
-            {CATEGORIES.map((cat) => {
-              const isActive = activeCategory === cat.id;
-              return (
-                <button
-                  key={cat.id}
-                  onClick={() => setActiveCategory(isActive ? null : (cat.id as CategoryKey))}
-                  className="shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-full border text-xs font-semibold transition-all whitespace-nowrap"
-                  style={isActive
-                    ? { background: "#2563eb", color: "#fff", borderColor: "#2563eb" }
-                    : { background: "transparent", color: "#64748b", borderColor: "#e2e8f0" }}>
-                  <span style={{ color: isActive ? "#fff" : "#64748b" }}>{cat.icon}</span>
-                  {cat.label}
-                </button>
-              );
-            })}
+            {/* Category chips — inline scrollable (desktop only) */}
+            <div className="hidden md:flex items-center gap-1.5 shrink-0">
+              {CATEGORIES.map((cat) => {
+                const isActive = activeCategory === cat.id;
+                return (
+                  <button
+                    key={cat.id}
+                    onClick={() => setActiveCategory(isActive ? null : (cat.id as CategoryKey))}
+                    className="shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-full border text-xs font-semibold transition-all whitespace-nowrap"
+                    style={isActive
+                      ? { background: "#2563eb", color: "#fff", borderColor: "#2563eb" }
+                      : { background: "transparent", color: "#64748b", borderColor: "#e2e8f0" }}>
+                    <span style={{ color: isActive ? "#fff" : "#64748b" }}>{cat.icon}</span>
+                    {cat.label}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           {/* Right side: voice + send */}
@@ -2612,9 +2802,16 @@ function ChatInputBox({
             </button>
 
             {/* Send */}
-            <button onClick={handleSend} disabled={!input.trim() && !uploadedFile}
-              className="w-9 h-9 rounded-full flex items-center justify-center text-white transition-all disabled:opacity-30"
-              style={{ background: (input.trim() || uploadedFile) ? "linear-gradient(135deg,#3b82f6,#6366f1)" : "#c7d2fe" }}>
+            <button
+              onClick={handleSend}
+              disabled={!input.trim() && !uploadedFile}
+              aria-label="Kirim pesan"
+              className={`w-9 h-9 rounded-full flex items-center justify-center text-white transition-all ${
+                (input.trim() || uploadedFile)
+                  ? "bg-blue-600 hover:bg-blue-700 shadow-sm cursor-pointer"
+                  : "bg-indigo-200 opacity-30 cursor-not-allowed"
+              }`}
+            >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
             </button>
           </div>
@@ -3215,95 +3412,86 @@ function PercakapanTab({
   if (!chatMode) {
     return (
       <>
-      <div className="flex-1 flex flex-col overflow-hidden relative" style={{
+      {/* Desktop view (biarkan seperti sekarang) */}
+      <div className="hidden md:flex flex-1 flex-col overflow-hidden relative" style={{
         background: "linear-gradient(160deg, #fafcff 0%, #f4f8ff 40%, #f8fbff 70%, #fafcff 100%)",
       }}>
-      <div className="absolute inset-0 pointer-events-none" style={{
-        backgroundImage: "radial-gradient(circle, rgba(59,130,246,0.035) 1px, transparent 1px)",
-        backgroundSize: "24px 24px",
-        zIndex: 0,
-      }} />
+        <div className="absolute inset-0 pointer-events-none" style={{
+          backgroundImage: "radial-gradient(circle, rgba(59,130,246,0.035) 1px, transparent 1px)",
+          backgroundSize: "24px 24px",
+          zIndex: 0,
+        }} />
         <div className="flex-1 overflow-y-auto relative z-10">
           <div className="max-w-5xl mx-auto px-4 md:px-6 py-5">
-          {/* Hero card */}
-          <div className="rounded-2xl mb-4 overflow-hidden" style={{
-            background: "#ffffff",
-            border: "1.5px solid rgba(191,219,254,0.4)",
-            boxShadow: "0 2px 16px rgba(59,130,246,0.06), 0 1px 3px rgba(59,130,246,0.04)",
-          }}>
-            <div className="flex items-center gap-6 px-6 py-5">
-              {/* Left: text */}
-              <div className="flex-1 min-w-0">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold mb-3" style={{ background: "#eff6ff", border: "1.5px solid #bfdbfe", color: "#374151" }}>
-                  <svg width="9" height="9" viewBox="0 0 12 12" fill="none">
-                    <path d="M6 0l1.2 3.8L11 4.5l-3 2.9.7 4L6 9.5l-2.7 1.9.7-4-3-2.9 3.8-.7z" fill="#2563eb"/>
-                  </svg>
-                  AI khusus dunia perkuliahan
-                </span>
-                <h2 className="font-display font-900 leading-snug mb-2 text-slate-900" style={{ fontSize: "clamp(1.15rem, 3.2vw, 1.6rem)" }}>
-                  Tanya apa saja tentang kuliah.{" "}
-                  <span style={{ color: "#2563eb", fontWeight: 600 }}>Alerin bantu sampai jelas.</span>
-                </h2>
-                <p className="text-slate-500 text-[12px] leading-relaxed mb-4">
-                  Mulai dari materi, tugas, jurnal, hingga skripsi—semua dalam satu ruang yang memahami perjalanan kuliahmu.
-                </p>
-                <button onClick={() => send("Halo Alerin! Aku mau mulai belajar hari ini.")}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-white transition-all hover:opacity-90 active:scale-95"
-                  style={{ background: "linear-gradient(135deg,#2563eb,#4f46e5)", boxShadow: "0 4px 12px rgba(37,99,235,0.3)" }}>
-                  Mulai Chat
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            {/* Hero card */}
+            <div className="rounded-2xl mb-4 overflow-hidden" style={{
+              background: "#ffffff",
+              border: "1.5px solid rgba(191,219,254,0.4)",
+              boxShadow: "0 2px 16px rgba(59,130,246,0.06), 0 1px 3px rgba(59,130,246,0.04)",
+            }}>
+              <div className="flex items-center gap-6 px-6 py-5">
+                {/* Left: text */}
+                <div className="flex-1 min-w-0">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold mb-3" style={{ background: "#eff6ff", border: "1.5px solid #bfdbfe", color: "#374151" }}>
+                    <svg width="9" height="9" viewBox="0 0 12 12" fill="none">
+                      <path d="M6 0l1.2 3.8L11 4.5l-3 2.9.7 4L6 9.5l-2.7 1.9.7-4-3-2.9 3.8-.7z" fill="#2563eb"/>
+                    </svg>
+                    AI khusus dunia perkuliahan
+                  </span>
+                  <h2 className="font-display font-900 leading-snug mb-2 text-slate-900" style={{ fontSize: "clamp(1.15rem, 3.2vw, 1.6rem)" }}>
+                    Tanya apa saja tentang kuliah.{" "}
+                    <span style={{ color: "#2563eb", fontWeight: 600 }}>Alerin bantu sampai jelas.</span>
+                  </h2>
+                  <p className="text-slate-500 text-[12px] leading-relaxed mb-4">
+                    Mulai dari materi, tugas, jurnal, hingga skripsi—semua dalam satu ruang yang memahami perjalanan kuliahmu.
+                  </p>
+                  <button onClick={() => send("Halo Alerin! Aku mau mulai belajar hari ini.")}
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-white transition-all hover:opacity-90 active:scale-95"
+                    style={{ background: "linear-gradient(135deg,#2563eb,#4f46e5)", boxShadow: "0 4px 12px rgba(37,99,235,0.3)" }}>
+                    Mulai Chat
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                  </button>
+                </div>
+
+                {/* Right: mascot */}
+                <img src={claroIconImg} alt="Alerin mascot" className="hidden sm:block shrink-0 object-contain" style={{ width: 100, height: 100 }} />
+              </div>
+            </div>
+
+            {/* Shortcuts */}
+            <div className="mb-7">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <p className="font-bold text-slate-800 text-base">Pintasan untukmu</p>
+                  <p className="text-xs text-slate-400">Disesuaikan dengan jurusan dan semester</p>
+                </div>
+                <button onClick={() => onTab("fitur")} className="text-xs font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-1">
+                  Lihat semua <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </button>
               </div>
-
-              {/* Right: mascot */}
-              <img src={claroIconImg} alt="Alerin mascot" className="hidden sm:block shrink-0 object-contain" style={{ width: 100, height: 100 }} />
-            </div>
-          </div>
-
-          {/* Shortcuts */}
-          <div className="mb-7">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <p className="font-bold text-slate-800 text-base">Pintasan untukmu</p>
-                <p className="text-xs text-slate-400">Disesuaikan dengan jurusan dan semester</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {SHORTCUTS.map((s, idx) => {
+                  const types: ShortcutType[] = ["mata-kuliah", "tugas", "skripsi", "cari-judul"];
+                  const sType = types[idx] ?? "mata-kuliah";
+                  return (
+                    <button key={s.title} onClick={() => setShortcutModal(sType)}
+                      className="flex items-center gap-3 p-4 rounded-2xl bg-white border border-slate-100 hover:border-blue-200 hover:shadow-sm transition-all text-left group">
+                      <div className="w-9 h-9 rounded-xl flex items-center justify-center text-lg shrink-0" style={{ background: s.bg }}>{s.icon}</div>
+                      <div>
+                        <p className="text-sm font-bold text-slate-800 group-hover:text-blue-600 transition-colors">{s.title}</p>
+                        <p className="text-[11px] text-slate-400">{s.desc}</p>
+                      </div>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="2" className="ml-auto shrink-0"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </button>
+                  );
+                })}
               </div>
-              <button onClick={() => onTab("fitur")} className="text-xs font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-1">
-                Lihat semua <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-              </button>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {SHORTCUTS.map((s, idx) => {
-                const types: ShortcutType[] = ["mata-kuliah", "tugas", "skripsi", "cari-judul"];
-                const sType = types[idx] ?? "mata-kuliah";
-                return (
-                  <button key={s.title} onClick={() => setShortcutModal(sType)}
-                    className="flex items-center gap-3 p-4 rounded-2xl bg-white border border-slate-100 hover:border-blue-200 hover:shadow-sm transition-all text-left group">
-                    <div className="w-9 h-9 rounded-xl flex items-center justify-center text-lg shrink-0" style={{ background: s.bg }}>{s.icon}</div>
-                    <div>
-                      <p className="text-sm font-bold text-slate-800 group-hover:text-blue-600 transition-colors">{s.title}</p>
-                      <p className="text-[11px] text-slate-400">{s.desc}</p>
-                    </div>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="2" className="ml-auto shrink-0"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                  </button>
-                );
-              })}
             </div>
           </div>
-
-
-          {/* Mobile only: input scrolls with content */}
-          <div className="md:hidden">
-            <ChatInputBox
-              input={input} setInput={setInput} onSend={send}
-              activeCategory={activeCategory} setActiveCategory={setActiveCategory}
-              onSendWithFile={sendWithFile}
-            />
-          </div>
-          </div>{/* close max-w-5xl */}
-        </div>{/* close overflow-y-auto */}
+        </div>
 
         {/* Desktop only: static input pinned at bottom */}
-        <div className="hidden md:block shrink-0">
+        <div className="shrink-0">
           <div className="max-w-5xl mx-auto">
             <ChatInputBox
               input={input} setInput={setInput} onSend={send}
@@ -3312,7 +3500,35 @@ function PercakapanTab({
             />
           </div>
         </div>
-      </div>{/* close flex-1 flex-col */}
+      </div>
+
+      {/* Mobile view (Gambar 2) */}
+      <div className="flex md:hidden flex-1 flex-col justify-between overflow-hidden relative bg-white">
+        {/* Centered Welcome Card */}
+        <div className="flex-1 flex flex-col items-center justify-center px-5 py-4">
+          <div className="w-full max-w-[340px] bg-white rounded-2xl shadow-[0px_1px_3px_0px_rgba(59,130,246,0.04),0px_2px_16px_0px_rgba(59,130,246,0.06)] border border-blue-200/40 p-6 flex flex-col items-center text-center">
+            <img src="/assets/73c1a.png" alt="Alerin" className="size-20 mb-4 object-contain" />
+            <h2 className="text-slate-900 text-lg font-normal leading-snug">
+              Tanya apa saja tentang kuliah.{" "}
+              <span className="text-blue-500 font-bold">Alerin bantu sampai jelas.</span>
+            </h2>
+            <p className="mt-3 text-slate-500 text-xs font-normal leading-relaxed">
+              Mulai dari materi, tugas, jurnal, hingga skripsi semua dalam satu ruang yang memahami perjalanan kuliahmu.
+            </p>
+          </div>
+        </div>
+
+        {/* Bottom Chat Input */}
+        <div className="px-4 pb-4 pt-1 bg-white shrink-0">
+          <ChatInputBox
+            input={input} setInput={setInput} onSend={send}
+            activeCategory={activeCategory} setActiveCategory={setActiveCategory}
+            onSendWithFile={sendWithFile}
+            hideTopSuggestions
+          />
+        </div>
+      </div>
+
       {shortcutModal && (
         <ShortcutModal
           type={shortcutModal}

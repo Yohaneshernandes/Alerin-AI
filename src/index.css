@@ -627,3 +627,12 @@ body {
 .map-ambient-breathe {
   animation: map-ambient-drift 18s ease-in-out infinite;
 }
+
+@keyframes drawerSlideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
