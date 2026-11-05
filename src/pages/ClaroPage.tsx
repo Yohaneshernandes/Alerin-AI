@@ -5526,7 +5526,7 @@ function PercakapanTab({
                     </div>
                   )
                 ) : null}
-                <div className="max-w-[80%] md:max-w-[68%] rounded-2xl rounded-br-sm px-4 py-3 text-[0.9375rem] leading-relaxed text-white claro-user-bubble">
+                <div className="max-w-[80%] md:max-w-[68%] rounded-2xl rounded-br-sm px-4 py-3 text-[0.9375rem] leading-relaxed text-slate-900 bg-white border border-slate-200/90 shadow-xs claro-user-bubble">
                   {m.text}
                 </div>
                 <p className="text-[10px] text-slate-400 pr-1">{m.time}</p>
