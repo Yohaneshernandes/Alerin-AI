@@ -3764,7 +3764,7 @@ const MODES: {
 ];
 
 function ChatInputBox({
-  input, setInput, onSend, onSendWithFile, onNewChat, activeCategory, setActiveCategory, hideTopSuggestions, mobileFloat, onPopupOpenChange,
+  input, setInput, onSend, onSendWithFile, onNewChat, activeCategory, setActiveCategory, hideTopSuggestions, mobileFloat, onPopupOpenChange, loading, onStop,
 }: {
   input: string;
   setInput: (v: string) => void;
@@ -3776,6 +3776,8 @@ function ChatInputBox({
   hideTopSuggestions?: boolean;
   mobileFloat?: boolean;
   onPopupOpenChange?: (open: boolean) => void;
+  loading?: boolean;
+  onStop?: () => void;
 }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const mobileTextareaRef = useRef<HTMLTextAreaElement>(null);
@@ -4015,7 +4017,14 @@ function ChatInputBox({
   };
 
   const handleKey = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); }
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      if (loading) {
+        onStop?.();
+      } else {
+        handleSend();
+      }
+    }
   };
 
   return (
@@ -4369,19 +4378,34 @@ function ChatInputBox({
               )}
             </button>
 
-            {/* Send */}
-            <button
-              onClick={handleSend}
-              disabled={!input.trim() && uploadedItems.length === 0}
-              aria-label="Kirim pesan"
-              className={`w-9 h-9 rounded-full flex items-center justify-center text-white transition-all ${
-                (input.trim() || uploadedItems.length > 0)
-                  ? "bg-blue-600 hover:bg-blue-700 shadow-sm cursor-pointer active:scale-95"
-                  : "bg-indigo-200 opacity-30 cursor-not-allowed"
-              }`}
-            >
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-            </button>
+            {/* Send / Stop button */}
+            {loading ? (
+              <button
+                type="button"
+                onClick={onStop}
+                title="Hentikan respons"
+                aria-label="Hentikan respons"
+                className="w-9 h-9 rounded-full flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white shadow-sm cursor-pointer active:scale-95 transition-all"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                  <rect x="5" y="5" width="14" height="14" rx="2.5" />
+                </svg>
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={handleSend}
+                disabled={!input.trim() && uploadedItems.length === 0}
+                aria-label="Kirim pesan"
+                className={`w-9 h-9 rounded-full flex items-center justify-center text-white transition-all ${
+                  (input.trim() || uploadedItems.length > 0)
+                    ? "bg-blue-600 hover:bg-blue-700 shadow-sm cursor-pointer active:scale-95"
+                    : "bg-indigo-200 opacity-30 cursor-not-allowed"
+                }`}
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -4983,6 +5007,24 @@ function PercakapanTab({
   const chatScrollRef = useRef<HTMLDivElement>(null);
   const scrollAnimRef = useRef<number | null>(null);
   const scrollTimeoutRef = useRef<number | null>(null);
+  const responseTimeoutRef = useRef<any>(null);
+
+  const handleStop = useCallback(() => {
+    if (responseTimeoutRef.current) {
+      clearTimeout(responseTimeoutRef.current);
+      responseTimeoutRef.current = null;
+    }
+    setTyping(false);
+    setMsgs((m) => m.filter((msg) => !msg.generating));
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (responseTimeoutRef.current) clearTimeout(responseTimeoutRef.current);
+    };
+  }, []);
+
+  const isGenerating = typing || msgs.some((m) => m.generating);
 
   const updateScrollMetrics = useCallback(() => {
     const el = chatScrollRef.current;
@@ -5132,7 +5174,7 @@ function PercakapanTab({
     window.dispatchEvent(new CustomEvent("alerin-add-history", { detail: { title, query: text.trim() || title } }));
 
     setTyping(true);
-    setTimeout(() => {
+    responseTimeoutRef.current = setTimeout(() => {
       setTyping(false);
       let reply = "";
       if (photoFiles.length > 1) {
@@ -5175,7 +5217,7 @@ function PercakapanTab({
           imageOrientation: orientation,
         },
       ]);
-      setTimeout(() => {
+      responseTimeoutRef.current = setTimeout(() => {
         const replyText = `Ini gambar tentang "${prompt}" yang sudah Alerin buat untuk kamu! ✨`;
         setMsgs((m) =>
           m.map((msg, i) =>
@@ -5194,7 +5236,7 @@ function PercakapanTab({
       }, 12000);
     } else if (isParaphraseRequest(text)) {
       setTyping(true);
-      setTimeout(() => {
+      responseTimeoutRef.current = setTimeout(() => {
         setTyping(false);
         const original = extractTargetText(text);
         const versions = generateParaphrases(original);
@@ -5202,7 +5244,7 @@ function PercakapanTab({
       }, 5000);
     } else {
       setTyping(true);
-      setTimeout(() => {
+      responseTimeoutRef.current = setTimeout(() => {
         setTyping(false);
         const replyText = getAIResponse(text);
         setMsgs((m) => [...m, { role: "claro", text: replyText, time: now(), suggestions: getSuggestions(text, replyText), sources: getSources(text, replyText), featureRec: getFeatureRec(text) }]);
@@ -5298,6 +5340,8 @@ function PercakapanTab({
               input={input} setInput={setInput} onSend={send}
               activeCategory={activeCategory} setActiveCategory={setActiveCategory}
               onSendWithFile={sendWithFile}
+              loading={isGenerating}
+              onStop={handleStop}
             />
           </div>
         </div>
@@ -5325,6 +5369,8 @@ function PercakapanTab({
             input={input} setInput={setInput} onSend={send}
             activeCategory={activeCategory} setActiveCategory={setActiveCategory}
             onSendWithFile={sendWithFile}
+            loading={isGenerating}
+            onStop={handleStop}
           />
         </div>
       </div>
@@ -5621,6 +5667,8 @@ function PercakapanTab({
             onSendWithFile={sendWithFile}
             hideTopSuggestions
             onPopupOpenChange={setInputPopupOpen}
+            loading={isGenerating}
+            onStop={handleStop}
           />
         </div>
       </div>
