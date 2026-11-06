@@ -8736,7 +8736,7 @@ const DEFAULT_MOBILE_PROJECTS: MobileProjectItem[] = [
     category: "dibuat",
     pastelBg: "bg-[#EAF2FF]",
     iconColor: "text-[#2F80ED]",
-    iconType: "toga",
+    iconType: "folder",
     msgs: [
       { role: "user", text: "Halo Alerin, bantu selesaikan tugas Pekerjaan Rumah Statistika.", time: "10.00" },
       { role: "claro", text: "Tentu! Kirimkan soal atau data tugas Pekerjaan Rumah yang ingin dibahas bersama.", time: "10.01" },
@@ -8748,8 +8748,8 @@ const DEFAULT_MOBILE_PROJECTS: MobileProjectItem[] = [
     time: "1 bulan yang lalu · 2 anggota",
     category: "dibagikan",
     members: 2,
-    pastelBg: "bg-[#F2F4F7]",
-    iconColor: "text-[#344054]",
+    pastelBg: "bg-[#EAF2FF]",
+    iconColor: "text-[#2F80ED]",
     iconType: "folder",
     msgs: [
       { role: "user", text: "Bantu buat caption Instagram edukasi tentang tips skripsi.", time: "14.00" },
@@ -8762,9 +8762,9 @@ const DEFAULT_MOBILE_PROJECTS: MobileProjectItem[] = [
     time: "2 minggu yang lalu · 9 anggota",
     category: "dibagikan",
     members: 9,
-    pastelBg: "bg-[#EBFDF2]",
-    iconColor: "text-[#12B76A]",
-    iconType: "money",
+    pastelBg: "bg-[#EAF2FF]",
+    iconColor: "text-[#2F80ED]",
+    iconType: "folder",
     msgs: [
       { role: "user", text: "Catatan kuliah dan materi keuangan Pak Agik.", time: "09.00" },
       { role: "claro", text: "Berikut rangkuman konsep dasar manajemen keuangan kuliah Pak Agik...", time: "09.02" },
@@ -8775,9 +8775,9 @@ const DEFAULT_MOBILE_PROJECTS: MobileProjectItem[] = [
     title: "Metodologi Penelitian",
     time: "Terakhir diperbarui hari ini",
     category: "dibuat",
-    pastelBg: "bg-[#F4F3FF]",
-    iconColor: "text-[#6941C6]",
-    iconType: "microscope",
+    pastelBg: "bg-[#EAF2FF]",
+    iconColor: "text-[#2F80ED]",
+    iconType: "folder",
     msgs: PROJECTS[0]?.msgs,
   },
   {
@@ -8785,9 +8785,9 @@ const DEFAULT_MOBILE_PROJECTS: MobileProjectItem[] = [
     title: "Skripsi Live Shopping",
     time: "2 hari yang lalu",
     category: "dibuat",
-    pastelBg: "bg-[#FFF1F3]",
-    iconColor: "text-[#E11D48]",
-    iconType: "sparkles",
+    pastelBg: "bg-[#EAF2FF]",
+    iconColor: "text-[#2F80ED]",
+    iconType: "folder",
     msgs: PROJECTS[1]?.msgs,
   },
   {
@@ -8795,9 +8795,9 @@ const DEFAULT_MOBILE_PROJECTS: MobileProjectItem[] = [
     title: "Persiapan UAS",
     time: "3 hari yang lalu",
     category: "dibuat",
-    pastelBg: "bg-[#FEF6EE]",
-    iconColor: "text-[#B54708]",
-    iconType: "toga",
+    pastelBg: "bg-[#EAF2FF]",
+    iconColor: "text-[#2F80ED]",
+    iconType: "folder",
     msgs: PROJECTS[2]?.msgs,
   },
 ];
@@ -8955,7 +8955,20 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
   const [projects, setProjects] = useState<MobileProjectItem[]>(() => {
     try {
       const saved = localStorage.getItem("alerin_user_projects");
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed: MobileProjectItem[] = JSON.parse(saved);
+        // Pastikan semua proyek menggunakan folder biru konsisten seperti milik Yohanes
+        const normalized = parsed.map((p) => ({
+          ...p,
+          pastelBg: "bg-[#EAF2FF]",
+          iconColor: "text-[#2F80ED]",
+          iconType: "folder" as const,
+        }));
+        try {
+          localStorage.setItem("alerin_user_projects", JSON.stringify(normalized));
+        } catch {}
+        return normalized;
+      }
     } catch {}
     return DEFAULT_MOBILE_PROJECTS;
   });
@@ -9399,8 +9412,8 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
             </button>
 
             <div className="flex items-center gap-2 max-w-[210px]">
-              <span className="text-blue-600 shrink-0">
-                <ProjectIcon type={selectedProject.iconType} />
+              <span className="text-[#2F80ED] shrink-0">
+                <ProjectIcon type="folder" />
               </span>
               <h2 className="text-[17px] font-bold text-neutral-900 truncate">
                 {selectedProject.title}
@@ -9621,8 +9634,8 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
             </button>
 
             <div className="flex items-center gap-2 max-w-[210px]">
-              <span className="text-blue-600 shrink-0">
-                <ProjectIcon type={selectedProject.iconType} />
+              <span className="text-[#2F80ED] shrink-0">
+                <ProjectIcon type="folder" />
               </span>
               <h1 className="text-[17px] font-bold text-neutral-900 truncate">
                 {selectedProject.title}
@@ -9929,9 +9942,9 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                     }}
                     className="w-full flex items-center gap-3.5 py-3.5 px-1 hover:bg-neutral-50 active:bg-neutral-100/70 transition-colors text-left group cursor-pointer"
                   >
-                    {/* Pastel rounded square icon */}
-                    <div className={`size-12 rounded-2xl flex items-center justify-center shrink-0 ${p.pastelBg} ${p.iconColor}`}>
-                      <ProjectIcon type={p.iconType} />
+                    {/* Pastel rounded square icon: folder biru seperti Yohanes */}
+                    <div className="size-12 rounded-2xl flex items-center justify-center shrink-0 bg-[#EAF2FF] text-[#2F80ED]">
+                      <ProjectIcon type="folder" />
                     </div>
 
                     {/* Title & Subtitle */}
@@ -10024,8 +10037,8 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                     style={{ boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}
                   >
                     <div className="flex items-start justify-between mb-4">
-                      <div className={`size-10 rounded-xl flex items-center justify-center ${p.pastelBg} ${p.iconColor}`}>
-                        <ProjectIcon type={p.iconType} />
+                      <div className="size-10 rounded-xl flex items-center justify-center bg-[#EAF2FF] text-[#2F80ED]">
+                        <ProjectIcon type="folder" />
                       </div>
                       <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600">Aktif</span>
                     </div>
