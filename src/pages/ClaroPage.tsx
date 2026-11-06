@@ -5342,10 +5342,31 @@ function cleanMdText(text: string): string {
     .replace(/\s*[—–]\s*/g, ": ");
 }
 
-function MarkdownRenderer({ text }: { text: string }) {
+function MarkdownRenderer({ text, isStreaming }: { text: string; isStreaming?: boolean }) {
+  if (!text.trim()) {
+    if (isStreaming) {
+      return (
+        <span
+          className="inline-block w-2 h-4 bg-blue-600 rounded-[2px] animate-pulse align-middle"
+          aria-hidden="true"
+        />
+      );
+    }
+    return null;
+  }
+
   const lines = text.split("\n");
   const elements: React.ReactNode[] = [];
   let i = 0;
+  let cursorRendered = false;
+
+  let lastNonEmptyLineIdx = -1;
+  for (let idx = lines.length - 1; idx >= 0; idx--) {
+    if (lines[idx].trim()) {
+      lastNonEmptyLineIdx = idx;
+      break;
+    }
+  }
 
   while (i < lines.length) {
     const raw = lines[i];
@@ -5384,7 +5405,19 @@ function MarkdownRenderer({ text }: { text: string }) {
       const cls = h1m
         ? "text-[1.0625rem] font-bold text-slate-900 mt-7 mb-3 leading-snug"
         : "text-[0.9375rem] font-semibold text-slate-800 mt-6 mb-2.5 leading-snug";
-      elements.push(<p key={i} className={cls}>{renderInlineMd(content)}</p>);
+      const isLast = i === lastNonEmptyLineIdx;
+      if (isStreaming && isLast) cursorRendered = true;
+      elements.push(
+        <p key={i} className={cls}>
+          {renderInlineMd(content)}
+          {isStreaming && isLast && (
+            <span
+              className="inline-block w-2 h-4 ml-1.5 bg-blue-600 rounded-[2px] animate-pulse align-middle"
+              aria-hidden="true"
+            />
+          )}
+        </p>
+      );
       i++; continue;
     }
 
@@ -5460,12 +5493,23 @@ function MarkdownRenderer({ text }: { text: string }) {
       const items: React.ReactNode[] = [];
       let n = 1;
       while (i < lines.length && /^\d+\.\s+/.test(lines[i].trim())) {
+        const itemLineIdx = i;
         let c = lines[i].trim().replace(/^\d+\.\s+/, "");
         c = cleanMdText(c);
+        const isLastItem = itemLineIdx === lastNonEmptyLineIdx;
+        if (isStreaming && isLastItem) cursorRendered = true;
         items.push(
-          <li key={i} className="flex gap-2 items-start">
+          <li key={itemLineIdx} className="flex gap-2 items-start">
             <span className="shrink-0 font-normal text-slate-800 text-[0.9375rem] leading-7 select-none">{n}.</span>
-            <span className="flex-1 text-[0.9375rem] text-slate-700 leading-7">{renderInlineMd(c)}</span>
+            <span className="flex-1 text-[0.9375rem] text-slate-700 leading-7">
+              {renderInlineMd(c)}
+              {isStreaming && isLastItem && (
+                <span
+                  className="inline-block w-2 h-4 ml-1.5 bg-blue-600 rounded-[2px] animate-pulse align-middle"
+                  aria-hidden="true"
+                />
+              )}
+            </span>
           </li>
         );
         n++; i++;
@@ -5478,12 +5522,23 @@ function MarkdownRenderer({ text }: { text: string }) {
     if (/^[-•○—]\s+/.test(line)) {
       const items: React.ReactNode[] = [];
       while (i < lines.length && /^[-•○—]\s+/.test(lines[i].trim())) {
+        const itemLineIdx = i;
         let c = lines[i].trim().replace(/^[-•○—]\s+/, "");
         c = cleanMdText(c);
+        const isLastItem = itemLineIdx === lastNonEmptyLineIdx;
+        if (isStreaming && isLastItem) cursorRendered = true;
         items.push(
-          <li key={i} className="flex gap-2.5 items-start">
+          <li key={itemLineIdx} className="flex gap-2.5 items-start">
             <span className="shrink-0 w-1.5 h-1.5 rounded-full bg-slate-400 mt-[0.6rem]" />
-            <span className="flex-1 text-[0.9375rem] text-slate-700 leading-7">{renderInlineMd(c)}</span>
+            <span className="flex-1 text-[0.9375rem] text-slate-700 leading-7">
+              {renderInlineMd(c)}
+              {isStreaming && isLastItem && (
+                <span
+                  className="inline-block w-2 h-4 ml-1.5 bg-blue-600 rounded-[2px] animate-pulse align-middle"
+                  aria-hidden="true"
+                />
+              )}
+            </span>
           </li>
         );
         i++;
@@ -5494,15 +5549,33 @@ function MarkdownRenderer({ text }: { text: string }) {
 
     // Paragraph
     const cleanLine = cleanMdText(line);
+    const isLast = i === lastNonEmptyLineIdx;
+    if (isStreaming && isLast) cursorRendered = true;
     elements.push(
       <p key={i} className="text-[0.9375rem] text-slate-700 leading-7 mb-1">
         {renderInlineMd(cleanLine)}
+        {isStreaming && isLast && (
+          <span
+            className="inline-block w-2 h-4 ml-1.5 bg-blue-600 rounded-[2px] animate-pulse align-middle"
+            aria-hidden="true"
+          />
+        )}
       </p>
     );
     i++;
   }
 
-  return <div className="space-y-0">{elements}</div>;
+  return (
+    <div className="space-y-0">
+      {elements}
+      {isStreaming && !cursorRendered && (
+        <span
+          className="inline-block w-2 h-4 ml-1.5 bg-blue-600 rounded-[2px] animate-pulse align-middle"
+          aria-hidden="true"
+        />
+      )}
+    </div>
+  );
 }
 
 // ─── Shortcut Modal ───────────────────────────────────────────────────────────
@@ -5751,23 +5824,66 @@ function PercakapanTab({
   const scrollAnimRef = useRef<number | null>(null);
   const scrollTimeoutRef = useRef<number | null>(null);
   const responseTimeoutRef = useRef<any>(null);
+  const streamIntervalRef = useRef<any>(null);
+  const touchStartYRef = useRef<number>(0);
+  const userScrolledUpRef = useRef<boolean>(false);
 
   const handleStop = useCallback(() => {
     if (responseTimeoutRef.current) {
       clearTimeout(responseTimeoutRef.current);
       responseTimeoutRef.current = null;
     }
+    if (streamIntervalRef.current) {
+      clearInterval(streamIntervalRef.current);
+      streamIntervalRef.current = null;
+    }
     setTyping(false);
-    setMsgs((m) => m.filter((msg) => !msg.generating));
+    setMsgs((m) =>
+      m
+        .filter((msg) => !(msg.generating && msg.imagePrompt))
+        .map((msg) => (msg.generating ? { ...msg, generating: false } : msg))
+    );
   }, []);
 
   useEffect(() => {
     return () => {
       if (responseTimeoutRef.current) clearTimeout(responseTimeoutRef.current);
+      if (streamIntervalRef.current) clearInterval(streamIntervalRef.current);
     };
   }, []);
 
   const isGenerating = typing || msgs.some((m) => m.generating);
+
+  const handleTouchStart = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
+    if (e.touches && e.touches.length > 0) {
+      touchStartYRef.current = e.touches[0].clientY;
+    }
+  }, []);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
+    if (e.touches && e.touches.length > 0) {
+      const currentY = e.touches[0].clientY;
+      const diffY = currentY - touchStartYRef.current;
+      // Pengguna menggeser ke bawah (melihat pesan di atas)
+      if (diffY > 4) {
+        userScrolledUpRef.current = true;
+      }
+    }
+    const el = chatScrollRef.current;
+    if (el) {
+      const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
+      if (distanceFromBottom > 35) {
+        userScrolledUpRef.current = true;
+      }
+    }
+  }, []);
+
+  const handleWheel = useCallback((e: React.WheelEvent<HTMLDivElement>) => {
+    if (e.deltaY < 0) {
+      // Pengguna scroll ke atas via mouse / trackpad
+      userScrolledUpRef.current = true;
+    }
+  }, []);
 
   const updateScrollMetrics = useCallback(() => {
     const el = chatScrollRef.current;
@@ -5812,8 +5928,14 @@ function PercakapanTab({
     const el = chatScrollRef.current;
     if (!el) return;
     const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
-    // Tampilkan tombol scroll ke bawah jika pengguna scroll ke atas lebih dari 80px dari bawah
-    setShowScrollBottom(distanceFromBottom > 80);
+    // Tampilkan tombol scroll ke bawah jika pengguna scroll ke atas lebih dari 60px dari bawah
+    if (distanceFromBottom > 60) {
+      userScrolledUpRef.current = true;
+      setShowScrollBottom(true);
+    } else if (distanceFromBottom <= 20) {
+      userScrolledUpRef.current = false;
+      setShowScrollBottom(false);
+    }
 
     setScrollMetrics((prev) => (prev.isScrolling ? prev : { ...prev, isScrolling: true }));
     if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
@@ -5826,6 +5948,8 @@ function PercakapanTab({
   }, [updateScrollMetrics]);
 
   const scrollToBottom = useCallback(() => {
+    userScrolledUpRef.current = false;
+    setShowScrollBottom(false);
     const el = chatScrollRef.current;
     if (el) {
       el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
@@ -5856,9 +5980,10 @@ function PercakapanTab({
 
   useEffect(() => {
     const el = chatScrollRef.current;
-    if (!el || el.scrollHeight - el.scrollTop - el.clientHeight < 160) {
-      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-    }
+    if (!el) return;
+    // Jangan paksa scroll ke bawah jika pengguna sedang scroll ke atas membaca chat lama
+    if (userScrolledUpRef.current) return;
+    el.scrollTop = el.scrollHeight;
   }, [msgs, typing]);
 
   useEffect(() => {
@@ -5902,12 +6027,71 @@ function PercakapanTab({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const streamResponse = useCallback((fullText: string, extras: Partial<ChatMsg>) => {
+    if (streamIntervalRef.current) {
+      clearInterval(streamIntervalRef.current);
+      streamIntervalRef.current = null;
+    }
+
+    const tokens = fullText.match(/(\s+|\S+)/g) || [fullText];
+    const totalTokens = tokens.length;
+    // Step size menyesuaikan panjang teks: 1-2 kata per tik untuk teks pendek, 3-4 kata untuk teks panjang
+    const stepSize = totalTokens > 300 ? 4 : totalTokens > 150 ? 3 : totalTokens > 60 ? 2 : 1;
+    let tokenIdx = Math.min(stepSize, totalTokens);
+    const initialText = tokens.slice(0, tokenIdx).join("");
+
+    const msgTime = now();
+    const isDoneInitially = tokenIdx >= totalTokens;
+
+    setMsgs((prev) => [
+      ...prev,
+      {
+        role: "claro",
+        text: initialText,
+        time: msgTime,
+        generating: !isDoneInitially,
+        ...(isDoneInitially ? extras : {}),
+      },
+    ]);
+
+    if (isDoneInitially) return;
+
+    streamIntervalRef.current = setInterval(() => {
+      tokenIdx = Math.min(totalTokens, tokenIdx + stepSize);
+      const currentText = tokens.slice(0, tokenIdx).join("");
+      const isDone = tokenIdx >= totalTokens;
+
+      setMsgs((prev) => {
+        const lastIdx = prev.length - 1;
+        if (lastIdx < 0) return prev;
+        return prev.map((m, idx) => {
+          if (idx !== lastIdx) return m;
+          return {
+            ...m,
+            text: currentText,
+            generating: !isDone,
+            ...(isDone ? extras : {}),
+          };
+        });
+      });
+
+      if (isDone) {
+        if (streamIntervalRef.current) {
+          clearInterval(streamIntervalRef.current);
+          streamIntervalRef.current = null;
+        }
+      }
+    }, 24);
+  }, []);
+
   const sendWithFile = useCallback((text: string, file: { name: string; type: string; size: string; previewUrl?: string }, allFiles?: { name: string; type: string; size: string; previewUrl?: string }[]) => {
     setChatMode(true);
     const files = allFiles && allFiles.length > 0 ? allFiles : [file];
     const userMsg: ChatMsg = { role: "user", text: text.trim(), time: now(), fileCard: file, fileCards: files };
     setMsgs((m) => [...m, userMsg]);
     setInput("");
+    userScrolledUpRef.current = false;
+    setShowScrollBottom(false);
     setTimeout(scrollToBottom, 40);
 
     const photoFiles = files.filter((f) => Boolean(f.previewUrl));
@@ -5929,9 +6113,9 @@ function PercakapanTab({
           ? `Oke, saya sudah menerima ${files.length} file dokumen. Saya akan membantu menganalisisnya. Apa yang ingin kamu ketahui dari file-file ini?`
           : `Oke, saya sudah menerima file **${file.name}** (${file.type}, ${file.size}). Saya akan membantu menganalisisnya. Apa yang ingin kamu ketahui dari dokumen ini?`;
       }
-      setMsgs((m) => [...m, { role: "claro", text: reply, time: now() }]);
-    }, 5000);
-  }, [scrollToBottom]);
+      streamResponse(reply, {});
+    }, 900);
+  }, [scrollToBottom, streamResponse]);
 
   const send = useCallback((text: string) => {
     if (!text.trim()) return;
@@ -5939,6 +6123,8 @@ function PercakapanTab({
     const userMsg: ChatMsg = { role: "user", text: text.trim(), time: now() };
     setMsgs((m) => [...m, userMsg]);
     setInput("");
+    userScrolledUpRef.current = false;
+    setShowScrollBottom(false);
     setTimeout(scrollToBottom, 40);
 
     const title = text.trim().length > 36 ? text.trim().slice(0, 36).trim() + "..." : text.trim();
@@ -5983,17 +6169,26 @@ function PercakapanTab({
         setTyping(false);
         const original = extractTargetText(text);
         const versions = generateParaphrases(original);
-        setMsgs((m) => [...m, { role: "claro", text: "Berikut beberapa pilihan parafrase untuk teksmu. Pilih yang paling sesuai dengan gaya penulisanmu!", time: now(), paraphrase: { original, versions }, suggestions: ["Parafrase kalimat lain", "Cara hindari plagiarisme"], featureRec: getFeatureRec(text) }]);
-      }, 5000);
+        const replyText = "Berikut beberapa pilihan parafrase untuk teksmu. Pilih yang paling sesuai dengan gaya penulisanmu!";
+        streamResponse(replyText, {
+          paraphrase: { original, versions },
+          suggestions: ["Parafrase kalimat lain", "Cara hindari plagiarisme"],
+          featureRec: getFeatureRec(text),
+        });
+      }, 900);
     } else {
       setTyping(true);
       responseTimeoutRef.current = setTimeout(() => {
         setTyping(false);
         const replyText = getAIResponse(text);
-        setMsgs((m) => [...m, { role: "claro", text: replyText, time: now(), suggestions: getSuggestions(text, replyText), sources: getSources(text, replyText), featureRec: getFeatureRec(text) }]);
-      }, 5400);
+        streamResponse(replyText, {
+          suggestions: getSuggestions(text, replyText),
+          sources: getSources(text, replyText),
+          featureRec: getFeatureRec(text),
+        });
+      }, 900);
     }
-  }, []);
+  }, [scrollToBottom, streamResponse]);
 
   if (!chatMode) {
     return (
@@ -6160,6 +6355,9 @@ function PercakapanTab({
       <div
         ref={chatScrollRef}
         onScroll={handleChatScroll}
+        onWheel={handleWheel}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
         className="flex-1 overflow-y-auto relative z-10 pb-4"
         style={{ scrollbarWidth: "none" }}
       >
@@ -6270,11 +6468,13 @@ function PercakapanTab({
                   </div>
                 ) : m.paraphrase ? (
                   <div className="flex flex-col gap-4">
-                    <MarkdownRenderer text={m.text} />
-                    <ParaphraseBubble original={m.paraphrase.original} versions={m.paraphrase.versions} />
+                    <MarkdownRenderer text={m.text} isStreaming={m.generating} />
+                    {!m.generating && (
+                      <ParaphraseBubble original={m.paraphrase.original} versions={m.paraphrase.versions} />
+                    )}
                   </div>
                 ) : (
-                  <MarkdownRenderer text={m.text} />
+                  <MarkdownRenderer text={m.text} isStreaming={m.generating} />
                 )}
                 <p className="text-[10px] text-slate-400 mt-3">{m.time}</p>
 
