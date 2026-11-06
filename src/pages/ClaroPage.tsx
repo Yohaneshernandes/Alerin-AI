@@ -162,10 +162,20 @@ function translateInterfaceNode(root: Node, language: "id" | "en") {
 }
 
 // ─── Image generation ─────────────────────────────────────────────────────────
-const IMAGE_KEYWORDS = ["gambar", "ilustrasi", "foto", "visualisasi", "buat gambar", "generate gambar", "buatkan gambar", "bikin gambar", "tampilkan gambar", "render", "desain gambar", "tunjukkan gambar"];
+const IMAGE_KEYWORDS = [
+  "gambar", "ilustrasi", "foto", "visualisasi", "buat gambar", "generate gambar",
+  "buatkan gambar", "bikin gambar", "tampilkan gambar", "render", "desain gambar",
+  "tunjukkan gambar", "photo", "image", "foto saja", "output foto", "ouput foto"
+];
 
 function isImageRequest(text: string): boolean {
-  const lower = text.toLowerCase();
+  const lower = text.toLowerCase().trim();
+  // Cegah bentrok jika pengguna secara spesifik meminta output code, file, atau link
+  if (
+    /^(?:output\s+code|ouput\s+code|code|kode|koding|coding|output\s+link|ouput\s+link|link|tautan|url|output\s+file|ouput\s+file|file|dokumen)(?:\s+saja)?$/i.test(lower)
+  ) {
+    return false;
+  }
   return IMAGE_KEYWORDS.some(k => lower.includes(k));
 }
 
@@ -182,10 +192,11 @@ function detectImageOrientation(text: string): "landscape" | "portrait" {
   ];
   if (landscapeKeywords.some(k => lower.includes(k))) return "landscape";
   if (portraitKeywords.some(k => lower.includes(k))) return "portrait";
-  return "portrait";
+  return "landscape";
 }
 
 const IMAGE_MAP: { keywords: string[]; url: string; orientation: "landscape" | "portrait"; credit: string }[] = [
+  { keywords: ["foto", "foto saja", "output foto", "ouput foto", "minta foto", "gambar saja", "foto mahasiswa"], url: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&h=500&fit=crop&auto=format", orientation: "landscape", credit: "Unsplash" },
   { keywords: ["lanscape", "landscape", "pemandangan alam", "panorama"], url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&h=500&fit=crop&auto=format", orientation: "landscape", credit: "Unsplash" },
   { keywords: ["potrait", "portrait", "foto profil", "foto diri"], url: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&h=800&fit=crop&auto=format", orientation: "portrait", credit: "Unsplash" },
   { keywords: ["kampus", "universitas", "kuliah", "gedung kampus"], url: "https://images.unsplash.com/photo-1562774053-701939374585?w=800&h=500&fit=crop&auto=format", orientation: "landscape", credit: "Unsplash" },
@@ -215,7 +226,7 @@ function getImageData(text: string): { url: string; orientation: "landscape" | "
   const orientation = detectImageOrientation(text);
   if (orientation === "landscape") {
     return {
-      url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&h=500&fit=crop&auto=format",
+      url: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&h=500&fit=crop&auto=format",
       orientation: "landscape",
     };
   }
@@ -230,7 +241,12 @@ function getImageUrl(text: string): string {
 }
 
 function extractImagePrompt(text: string): string {
-  const lower = text.toLowerCase();
+  const lower = text.toLowerCase().trim();
+  if (
+    /^(?:foto|foto\s+saja|output\s+foto|ouput\s+foto|minta\s+foto|kirim\s+foto|gambar|gambar\s+saja|output\s+gambar|ouput\s+gambar|photo|image)$/i.test(lower)
+  ) {
+    return "Dokumentasi Kampus & Kolaborasi Mahasiswa";
+  }
   for (const kw of IMAGE_KEYWORDS) {
     const idx = lower.indexOf(kw);
     if (idx !== -1) {
@@ -238,7 +254,7 @@ function extractImagePrompt(text: string): string {
       if (after.length > 2) return after.charAt(0).toUpperCase() + after.slice(1);
     }
   }
-  return text.trim();
+  return text.trim() || "Dokumentasi Kampus & Kolaborasi Mahasiswa";
 }
 
 // ─── Paraphrase detection ─────────────────────────────────────────────────────
@@ -944,18 +960,74 @@ const QUIZ_QUESTIONS = [
 ];
 
 const AI_RESPONSES: [RegExp, string][] = [
-  [/ouput.*ngasih file|output.*ngasih file|ngasih file|kasih file|ouput.*file|output.*file|lampiran file|contoh file|bisa kasih file|contoh lampiran|bisa buat file|format file/i, `Kalau Alerin memberikan file, tampilannya bisa seperti lampiran file yang bisa kamu buka atau unduh.
+  // ── 1. FILE OUTPUT (Pilihan format file lampiran: PDF, Excel, Word) ───────────
+  [
+    /(?:output|ouput|kasih|minta|kirim|contoh|buatkan|format)\s+.*(?:file|dokumen|lampiran)|^(?:file|files|dokumen|lampiran|unduh\s*file|download\s*file)(?:\s+saja)?$/i,
+    `Kalau Alerin memberikan **file/dokumen**, tampilannya seperti lampiran file di bawah ini yang bisa langsung kamu buka atau unduh:
 
 Contohnya:
 
 \`\`\`files
-Laporan Data Mahasiswa.pdf | PDF · 2 halaman | pdf
-Data Mahasiswa.xlsx | Excel · 6 kolom | excel
+Laporan Data Mahasiswa.pdf | PDF · 2 halaman | pdf | Selesai | Download PDF
+Data Mahasiswa.xlsx | Excel · 6 kolom | xlsx | Selesai | Download Excel
+Panduan Dashboard Akademik.docx | Word · Bisa diedit | docx | Selesai | Download Word
 \`\`\`
 
-Aku juga bisa membuat file PDF, Excel, Word, dan PowerPoint.
+Aku juga bisa membuat dan menyusun file PDF, Excel, Word, dan PowerPoint sesuai topik riset atau tugas kuliahmu! 📂
 
-Kamu ingin mencoba Alerin membuat file Excel dengan banyak kolom dan teks panjang?`],
+Kamu ingin mencoba Alerin membuat file Excel atau dokumen lain?`
+  ],
+
+  // ── 2. LINK OUTPUT (Kartu referensi tautan resmi interaktif) ────────────────
+  [
+    /(?:output|ouput|kasih|minta|kirim|contoh|sumber|referensi|kumpulan)\s+.*(?:link|tautan|url|website)|^(?:link|links|tautan|url|website)(?:\s+saja)?$/i,
+    `Kalau Alerin memberikan **tautan/link**, tampilannya seperti kartu referensi tautan interaktif yang rapi, lengkap dengan kategori sumber, deskripsi, dan tombol kunjungi:
+
+Contohnya:
+
+\`\`\`links
+Portal Jurnal SINTA & Scopus | Ilmiah | Database jurnal dan publikasi ilmiah terakreditasi nasional dan internasional untuk riset | https://sinta.kemdikbud.go.id | Kunjungi Website
+Perpustakaan Digital Nasional | Terbuka | Akses jutaan buku digital, repositori tesis, dan referensi akademik resmi | https://perpusnas.go.id | Buka Koleksi
+Google Scholar Indonesia | Riset | Mesin pencari artikel ilmiah, kutipan, dan publikasi penelitian akademik | https://scholar.google.co.id | Akses Scholar
+\`\`\`
+
+Semua tautan dapat kamu klik langsung untuk membuka halaman rujukan resmi terkait. 🔗`
+  ],
+
+  // ── 3. CODE OUTPUT (Blok kode syntax highlighting & tombol copy) ─────────────
+  [
+    /(?:output|ouput|kasih|minta|kirim|contoh|tampilan|tampilkan|blok)\s+.*(?:code|kode|koding|coding|script|programming|syntax)|^(?:code|kode|koding|coding|script|program)(?:\s+saja)?$/i,
+    `Kalau Alerin memberikan **kode/programming**, tampilannya seperti blok kode yang bisa di-scroll horizontal, disalin dengan satu klik, dan dibaca dengan syntax highlighting:
+
+Contohnya:
+
+**Contoh HTML dengan teks panjang**
+
+\`\`\`html
+<div class="container">
+  <h1>Dashboard Mahasiswa</h1>
+  <p>
+    Selamat datang di sistem informasi akademik mahasiswa.
+  </p>
+  <button>Mulai Sekarang</button>
+</div>
+\`\`\`
+
+**Contoh JavaScript**
+
+\`\`\`javascript
+const mahasiswa = {
+  nama: "Andi Pratama",
+  jurusan: "Sistem Informasi",
+  status: "Aktif",
+  deskripsi: "Mahasiswa yang sedang melakukan penelitian skripsi di Alerin"
+};
+
+console.log(\`Halo \${mahasiswa.nama}, selamat belajar!\`);
+\`\`\`
+
+Kamu bisa langsung menyalin kode di atas menggunakan tombol salin di pojok kanan atas setiap blok kode. 💻`
+  ],
 
   [/panduan dashboard|dokumen akademik|contoh dokumen|file pdf dan word|file docx|lampiran dokumen|download pdf/i, `Contoh dokumen: **Panduan Dashboard Akademik**
 
@@ -6600,7 +6672,7 @@ function PercakapanTab({
         },
       ]);
       responseTimeoutRef.current = setTimeout(() => {
-        const replyText = `Ini gambar tentang "${prompt}" yang sudah Alerin buat untuk kamu! ✨`;
+        const replyText = `Kalau Alerin memberikan **foto/gambar**, tampilannya seperti pratinjau visual di bawah ini. Kamu bisa klik foto untuk melihat dalam resolusi penuh! 📸✨`;
         setMsgs((m) =>
           m.map((msg, i) =>
             i === m.length - 1 && msg.generating
@@ -6610,12 +6682,12 @@ function PercakapanTab({
                   imageUrl,
                   imageOrientation: orientation,
                   text: replyText,
-                  suggestions: ["Buat gambar tema lain", "Ceritakan detail gambar ini"],
+                  suggestions: ["Buat foto kegiatan mahasiswa", "Buat foto perpustakaan", "Tampilkan foto gedung kampus"],
                 }
               : msg
           )
         );
-      }, 12000);
+      }, 2600);
     } else if (isParaphraseRequest(text)) {
       setTyping(true);
       responseTimeoutRef.current = setTimeout(() => {
@@ -6660,6 +6732,44 @@ function PercakapanTab({
     setFeedbackPopupIdx(null);
     setMoreMenuIdx(null);
     setMsgs((prev) => prev.slice(0, msgIdx));
+
+    if (isImageRequest(userQuery)) {
+      const prompt = extractImagePrompt(userQuery);
+      const imgData = getImageData(userQuery);
+      const imageUrl = imgData.url;
+      const orientation = imgData.orientation;
+      setMsgs((m) => [
+        ...m,
+        {
+          role: "claro",
+          text: "",
+          time: now(),
+          generating: true,
+          imagePrompt: prompt,
+          imageOrientation: orientation,
+        },
+      ]);
+      userScrolledUpRef.current = false;
+      responseTimeoutRef.current = setTimeout(() => {
+        const replyText = `Kalau Alerin memberikan **foto/gambar**, tampilannya seperti pratinjau visual di bawah ini. Kamu bisa klik foto untuk melihat dalam resolusi penuh! 📸✨`;
+        setMsgs((m) =>
+          m.map((msg, i) =>
+            i === m.length - 1 && msg.generating
+              ? {
+                  ...msg,
+                  generating: false,
+                  imageUrl,
+                  imageOrientation: orientation,
+                  text: replyText,
+                  suggestions: ["Buat foto kegiatan mahasiswa", "Buat foto perpustakaan", "Tampilkan foto gedung kampus"],
+                }
+              : msg
+          )
+        );
+      }, 2600);
+      return;
+    }
+
     setTyping(true);
     userScrolledUpRef.current = false;
     responseTimeoutRef.current = setTimeout(() => {
