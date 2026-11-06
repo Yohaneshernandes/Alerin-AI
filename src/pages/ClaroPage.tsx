@@ -2543,6 +2543,8 @@ function AddTargetModal({ onClose, onToast }: { onClose: () => void; onToast: (m
   );
 }
 
+const ShellDrawerContext = createContext<() => void>(() => {});
+
 function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { children: React.ReactNode; activeTab: NavTab; onTab: (t: NavTab) => void; onOpenHistory: (msgs: ChatMsg[]) => void; onNewChat: () => void }) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
@@ -2707,7 +2709,8 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
   ];
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden bg-white" style={{ fontFamily: "'Inter', sans-serif" }}>
+    <ShellDrawerContext.Provider value={() => setMobileDrawerOpen(true)}>
+      <div className="h-screen flex flex-col overflow-hidden bg-white" style={{ fontFamily: "'Inter', sans-serif" }}>
       {searchOpen && (
         <SearchModal
           onClose={() => setSearchOpen(false)}
@@ -2843,7 +2846,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
             </button>
           </div>
         </header>
-      ) : (
+      ) : activeTab === "proyek" ? null : (
         <div className="md:hidden flex items-center justify-between px-4 py-2.5 shrink-0 bg-white z-40" style={{ borderBottom: "1px solid #f1f5f9" }}>
           <div className="flex items-center gap-2.5">
             <button
@@ -3751,7 +3754,8 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
           </div>
         </>
       )}
-    </div>
+      </div>
+    </ShellDrawerContext.Provider>
   );
 }
 
@@ -8511,46 +8515,523 @@ function FiturTab({ onChat, openFeatureKey, onFeatureOpened }: { onChat: (prompt
 }
 
 // ─── TAB: Proyek Saya ─────────────────────────────────────────────────────────
-function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpenHistory: (msgs: ChatMsg[]) => void }) {
-  const [newProjectOpen, setNewProjectOpen] = useState(false);
-  const [toast, setToast] = useState<string | null>(null);
+// ─── TAB: Proyek Saya ─────────────────────────────────────────────────────────
+interface MobileProjectItem {
+  id: string;
+  title: string;
+  time: string;
+  category: "dibuat" | "dibagikan";
+  members?: number;
+  pastelBg: string;
+  iconColor: string;
+  iconType: "toga" | "folder" | "money" | "microscope" | "sparkles";
+  msgs?: ChatMsg[];
+}
+
+const DEFAULT_MOBILE_PROJECTS: MobileProjectItem[] = [
+  {
+    id: "proj-1",
+    title: "Pekerjaan Rumah",
+    time: "1 hari yang lalu",
+    category: "dibuat",
+    pastelBg: "bg-[#EAF2FF]",
+    iconColor: "text-[#2F80ED]",
+    iconType: "toga",
+    msgs: [
+      { role: "user", text: "Halo Alerin, bantu selesaikan tugas Pekerjaan Rumah Statistika.", time: "10.00" },
+      { role: "claro", text: "Tentu! Kirimkan soal atau data tugas Pekerjaan Rumah yang ingin dibahas bersama.", time: "10.01" },
+    ],
+  },
+  {
+    id: "proj-2",
+    title: "Caption",
+    time: "1 bulan yang lalu · 2 anggota",
+    category: "dibagikan",
+    members: 2,
+    pastelBg: "bg-[#F2F4F7]",
+    iconColor: "text-[#344054]",
+    iconType: "folder",
+    msgs: [
+      { role: "user", text: "Bantu buat caption Instagram edukasi tentang tips skripsi.", time: "14.00" },
+      { role: "claro", text: "Berikut 3 opsi caption Instagram edukasi yang menarik dan engaging...", time: "14.01" },
+    ],
+  },
+  {
+    id: "proj-3",
+    title: "Pak Agik",
+    time: "2 minggu yang lalu · 9 anggota",
+    category: "dibagikan",
+    members: 9,
+    pastelBg: "bg-[#EBFDF2]",
+    iconColor: "text-[#12B76A]",
+    iconType: "money",
+    msgs: [
+      { role: "user", text: "Catatan kuliah dan materi keuangan Pak Agik.", time: "09.00" },
+      { role: "claro", text: "Berikut rangkuman konsep dasar manajemen keuangan kuliah Pak Agik...", time: "09.02" },
+    ],
+  },
+  {
+    id: "proj-4",
+    title: "Metodologi Penelitian",
+    time: "Terakhir diperbarui hari ini",
+    category: "dibuat",
+    pastelBg: "bg-[#F4F3FF]",
+    iconColor: "text-[#6941C6]",
+    iconType: "microscope",
+    msgs: PROJECTS[0]?.msgs,
+  },
+  {
+    id: "proj-5",
+    title: "Skripsi Live Shopping",
+    time: "2 hari yang lalu",
+    category: "dibuat",
+    pastelBg: "bg-[#FFF1F3]",
+    iconColor: "text-[#E11D48]",
+    iconType: "sparkles",
+    msgs: PROJECTS[1]?.msgs,
+  },
+  {
+    id: "proj-6",
+    title: "Persiapan UAS",
+    time: "3 hari yang lalu",
+    category: "dibuat",
+    pastelBg: "bg-[#FEF6EE]",
+    iconColor: "text-[#B54708]",
+    iconType: "toga",
+    msgs: PROJECTS[2]?.msgs,
+  },
+];
+
+function ProjectIcon({ type }: { type: MobileProjectItem["iconType"] }) {
+  if (type === "toga") {
+    return (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+        <path d="M6 12v5c3 3 9 3 12 0v-5" />
+      </svg>
+    );
+  }
+  if (type === "folder") {
+    return (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+      </svg>
+    );
+  }
+  if (type === "money") {
+    return (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 7v10M15 9.5a2.5 2.5 0 0 0-5 0c0 3 5 2 5 5a2.5 2.5 0 0 1-5 0" />
+      </svg>
+    );
+  }
+  if (type === "microscope") {
+    return (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M6 18h8" />
+        <path d="M3 22h18" />
+        <path d="M14 22a7 7 0 1 0 0-14h-1" />
+        <path d="M9 14h2" />
+        <path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z" />
+        <path d="M12 6V3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3" />
+      </svg>
+    );
+  }
   return (
-    <div className="flex-1 flex flex-col overflow-hidden">
-      {newProjectOpen && <NewProjectModal onClose={() => setNewProjectOpen(false)} onToast={m => setToast(m)} />}
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
+    </svg>
+  );
+}
+
+function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpenHistory: (msgs: ChatMsg[]) => void }) {
+  const openDrawer = useContext(ShellDrawerContext);
+  const [projects, setProjects] = useState<MobileProjectItem[]>(() => {
+    try {
+      const saved = localStorage.getItem("alerin_user_projects");
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return DEFAULT_MOBILE_PROJECTS;
+  });
+
+  const saveProjects = (items: MobileProjectItem[]) => {
+    try {
+      localStorage.setItem("alerin_user_projects", JSON.stringify(items));
+    } catch {}
+  };
+
+  const [activeFilterTab, setActiveFilterTab] = useState<"semua" | "dibuat" | "dibagikan">("dibuat");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [newProjectOpen, setNewProjectOpen] = useState(false);
+  const [projectName, setProjectName] = useState("");
+  const [memoryEnabled, setMemoryEnabled] = useState(true);
+  const [toast, setToast] = useState<string | null>(null);
+
+  const handleCreateProject = () => {
+    const trimmed = projectName.trim();
+    if (!trimmed) return;
+    const newProj: MobileProjectItem = {
+      id: `proj-${Date.now()}`,
+      title: trimmed,
+      time: "Baru saja",
+      category: "dibuat",
+      pastelBg: "bg-[#EAF2FF]",
+      iconColor: "text-[#2F80ED]",
+      iconType: "folder",
+      msgs: [
+        { role: "user", text: `Halo Alerin, saya baru membuat proyek ${trimmed}.`, time: now() },
+        { role: "claro", text: `Halo! Proyek "${trimmed}" siap digunakan. Semua catatan dan percakapan di sini akan tersimpan rapi. Apa yang ingin kita bahas pertama kali?`, time: now() },
+      ],
+    };
+    const next = [newProj, ...projects];
+    setProjects(next);
+    saveProjects(next);
+    setProjectName("");
+    setNewProjectOpen(false);
+    setToast(`Proyek "${trimmed}" berhasil dibuat!`);
+  };
+
+  const filteredProjects = projects.filter((p) => {
+    if (activeFilterTab === "dibuat" && p.category !== "dibuat") return false;
+    if (activeFilterTab === "dibagikan" && p.category !== "dibagikan") return false;
+    if (searchQuery.trim()) {
+      return p.title.toLowerCase().includes(searchQuery.trim().toLowerCase());
+    }
+    return true;
+  });
+
+  return (
+    <div className="flex-1 flex flex-col h-full bg-white relative overflow-hidden select-none">
       {toast && <Toast msg={toast} onDone={() => setToast(null)} />}
 
-      <div className="flex-1 overflow-y-auto px-4 md:px-8 py-4 md:py-6">
-        <div className="flex items-start justify-between mb-6">
-          <div>
-            <h2 className="font-display font-800 text-2xl text-slate-900 mb-1">Proyek Saya</h2>
-            <p className="text-slate-500 text-sm">Simpan percakapan penting dan lanjutkan tanpa mengulang konteks.</p>
+      {/* ── Modal Pop-up 'Buat Proyek' (Flow Pembuatan Proyek Baru) ── */}
+      {newProjectOpen && (
+        <div
+          className="fixed inset-0 z-[250] flex items-center justify-center p-4 bg-black/45 backdrop-blur-xs animate-[gemini-fade-in_0.15s_ease-out]"
+          onClick={() => setNewProjectOpen(false)}
+          role="dialog"
+          aria-modal="true"
+        >
+          <div
+            className="w-full max-w-[340px] bg-white rounded-3xl p-5 shadow-2xl border border-neutral-100 flex flex-col gap-4 animate-[gemini-zoom-in_0.2s_ease-out]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal header */}
+            <div className="flex items-center justify-between">
+              <h3 className="text-base font-bold text-neutral-900">Buat Proyek</h3>
+              <button
+                type="button"
+                onClick={() => setNewProjectOpen(false)}
+                className="size-7 rounded-full text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 flex items-center justify-center transition-colors cursor-pointer"
+                aria-label="Tutup"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
+
+            {/* 1. Input text field untuk memasukkan Nama Proyek */}
+            <div>
+              <label className="block text-xs font-semibold text-neutral-700 mb-1.5">
+                Nama Proyek
+              </label>
+              <input
+                type="text"
+                value={projectName}
+                onChange={(e) => setProjectName(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && projectName.trim()) handleCreateProject();
+                  if (e.key === "Escape") setNewProjectOpen(false);
+                }}
+                placeholder="Masukkan nama proyek..."
+                autoFocus
+                className="w-full text-sm text-neutral-800 bg-neutral-50 border border-neutral-200 focus:border-blue-500 focus:bg-white focus:ring-3 focus:ring-blue-100 rounded-xl px-3.5 py-2.5 outline-none transition-all placeholder:text-neutral-400"
+              />
+            </div>
+
+            {/* 2. Toggle Switch untuk Kelola Memori */}
+            <div className="flex items-start justify-between gap-3 pt-1">
+              <div className="flex-1 pr-1">
+                <p className="text-[13px] font-semibold text-neutral-900 leading-snug">
+                  Kelola Memori
+                </p>
+                <p className="text-[11px] text-neutral-500 leading-relaxed mt-0.5">
+                  Pilih apakah proyek mengambil memori profil pengguna atau tidak.
+                </p>
+              </div>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={memoryEnabled}
+                onClick={() => setMemoryEnabled((prev) => !prev)}
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                  memoryEnabled ? "bg-neutral-900" : "bg-neutral-200"
+                }`}
+              >
+                <span
+                  className={`pointer-events-none inline-block size-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+                    memoryEnabled ? "translate-x-5" : "translate-x-0"
+                  }`}
+                />
+              </button>
+            </div>
+
+            {/* 3. Teks redaksi kecil di bawah toggle memori */}
+            <p className="text-[11px] text-neutral-500 leading-relaxed -mt-1">
+              Setiap proyek gratis menyimpan hingga 10 riwayat.
+            </p>
+
+            {/* 4. Teks informasi limitasi di bagian bawah */}
+            <div className="rounded-xl bg-neutral-50 p-2.5 border border-neutral-100">
+              <p className="text-[11px] text-neutral-600 font-medium">
+                Batas Proyek: <span className="font-bold text-neutral-800">Gratis (10)</span>, <span className="font-bold text-neutral-800">Plus (20)</span>, <span className="font-bold text-neutral-800">Pro (50)</span>
+              </p>
+            </div>
+
+            {/* 5. Tombol aksi 'Batal' (kiri) dan 'Buat' (kanan) */}
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-neutral-100">
+              <button
+                type="button"
+                onClick={() => setNewProjectOpen(false)}
+                className="flex-1 px-4 py-2.5 rounded-xl text-xs font-semibold text-neutral-600 hover:bg-neutral-100 transition-colors cursor-pointer text-center"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                disabled={!projectName.trim()}
+                onClick={handleCreateProject}
+                className="flex-1 px-4 py-2.5 rounded-xl text-xs font-bold bg-neutral-900 hover:bg-neutral-800 text-white shadow-xs transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 text-center"
+              >
+                Buat
+              </button>
+            </div>
           </div>
-          <button onClick={() => setNewProjectOpen(true)} className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90" style={{ background: "linear-gradient(135deg,#3b82f6,#6366f1)" }}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Proyek baru
+        </div>
+      )}
+
+      {/* ── Mobile View (Image 2 style) ── */}
+      <div className="md:hidden flex-1 flex flex-col h-full overflow-hidden bg-white">
+        {/* Header: Tombol hamburger kiri, judul 'Proyek' tengah, tombol '+' kanan */}
+        <header className="shrink-0 flex items-center justify-between px-4 pt-3 pb-2 bg-white z-20">
+          <button
+            type="button"
+            onClick={openDrawer}
+            aria-label="Menu navigasi"
+            className="size-11 rounded-full border border-neutral-200/90 bg-white flex flex-col items-center justify-center gap-1.5 hover:bg-neutral-50 active:scale-95 transition-all shadow-2xs cursor-pointer"
+          >
+            <span className="w-4.5 h-[2px] bg-neutral-900 rounded-full" />
+            <span className="w-4.5 h-[2px] bg-neutral-900 rounded-full" />
+          </button>
+
+          <h1 className="text-[17px] font-bold text-neutral-900 tracking-tight">
+            Proyek
+          </h1>
+
+          <button
+            type="button"
+            onClick={() => setNewProjectOpen(true)}
+            aria-label="Buat proyek baru"
+            className="size-11 rounded-full border border-neutral-200/90 bg-white flex items-center justify-center text-neutral-900 hover:bg-neutral-50 active:scale-95 transition-all shadow-2xs cursor-pointer"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+          </button>
+        </header>
+
+        {/* Filter / Tab Navigasi (Dibuat oleh Anda aktif secara default) */}
+        <div className="shrink-0 flex items-center gap-2 px-4 py-2 overflow-x-auto select-none" style={{ scrollbarWidth: "none" }}>
+          <button
+            type="button"
+            onClick={() => setActiveFilterTab("semua")}
+            className={`px-4 py-2 rounded-full text-sm transition-all cursor-pointer whitespace-nowrap ${
+              activeFilterTab === "semua"
+                ? "bg-[#F2F4F7] text-neutral-900 font-semibold"
+                : "text-neutral-500 hover:text-neutral-900 font-medium"
+            }`}
+          >
+            Semua
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveFilterTab("dibuat")}
+            className={`px-4 py-2 rounded-full text-sm transition-all cursor-pointer whitespace-nowrap ${
+              activeFilterTab === "dibuat"
+                ? "bg-[#F2F4F7] text-neutral-900 font-semibold"
+                : "text-neutral-500 hover:text-neutral-900 font-medium"
+            }`}
+          >
+            Dibuat oleh Anda
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveFilterTab("dibagikan")}
+            className={`px-4 py-2 rounded-full text-sm transition-all cursor-pointer whitespace-nowrap ${
+              activeFilterTab === "dibagikan"
+                ? "bg-[#F2F4F7] text-neutral-900 font-semibold"
+                : "text-neutral-500 hover:text-neutral-900 font-medium"
+            }`}
+          >
+            Dibagikan ke...
           </button>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {PROJECTS.map((p) => (
-            <button key={p.title} onClick={() => { onOpenHistory(p.msgs); onTab("percakapan"); }}
-              className="rounded-2xl bg-white border border-slate-100 p-5 hover:border-blue-200 hover:shadow-md transition-all text-left group" style={{ boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}>
-              <div className="flex items-start justify-between mb-4">
-                <div className="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center text-lg">
-                  {p.emoji}
+
+        {/* Project List (scrolls smoothly behind floating search bar) */}
+        <div className="flex-1 overflow-y-auto px-4 pt-2 pb-28 divide-y divide-neutral-100/60" style={{ scrollbarWidth: "none" }}>
+          {filteredProjects.length === 0 ? (
+            /* Empty State */
+            <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
+              <div className="size-16 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-400 mb-3.5">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+                </svg>
+              </div>
+              <h3 className="text-base font-bold text-neutral-900 mb-1">
+                Belum memiliki proyek
+              </h3>
+              <p className="text-xs text-neutral-400 max-w-[260px] leading-relaxed mb-5">
+                {searchQuery
+                  ? `Tidak ada proyek yang sesuai dengan "${searchQuery}".`
+                  : "Mulai buat proyek baru untuk mengorganisir materi kuliah dan percakapanmu."}
+              </p>
+              <button
+                type="button"
+                onClick={() => setNewProjectOpen(true)}
+                className="px-4 py-2.5 rounded-full border border-neutral-300 text-xs font-semibold text-neutral-800 bg-white hover:bg-neutral-50 active:scale-95 transition-all shadow-2xs cursor-pointer flex items-center gap-1.5"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+                <span>Buat Proyek Baru</span>
+              </button>
+            </div>
+          ) : (
+            filteredProjects.map((p) => (
+              <button
+                key={p.id}
+                type="button"
+                onClick={() => {
+                  if (p.msgs && p.msgs.length > 0) onOpenHistory(p.msgs);
+                  onTab("percakapan");
+                }}
+                className="w-full flex items-center gap-3.5 py-3.5 px-1 hover:bg-neutral-50 active:bg-neutral-100/70 transition-colors text-left group cursor-pointer"
+              >
+                {/* Pastel rounded square icon */}
+                <div className={`size-12 rounded-2xl flex items-center justify-center shrink-0 ${p.pastelBg} ${p.iconColor}`}>
+                  <ProjectIcon type={p.iconType} />
                 </div>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600">{p.status}</span>
-              </div>
-              <h3 className="font-display font-700 text-base text-slate-800 mb-1 group-hover:text-blue-600 transition-colors">{p.title}</h3>
-              <p className="text-xs text-slate-400 mb-4">{p.updated}</p>
-              {/* Preview last message */}
-              {p.msgs.length > 0 && (
-                <p className="text-[11px] text-slate-500 truncate mb-3 italic">"{p.msgs[p.msgs.length - 1].text.slice(0, 60)}…"</p>
-              )}
-              <div className="flex items-center gap-1.5 text-xs font-semibold text-blue-600 group-hover:text-blue-700 transition-colors">
-                Lanjutkan percakapan <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-              </div>
+
+                {/* Title & Subtitle */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-semibold text-[15px] text-neutral-900 truncate">
+                      {p.title}
+                    </h3>
+                    {p.members && (
+                      <span className="flex items-center text-neutral-500 text-xs gap-1 shrink-0">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                          <circle cx="9" cy="7" r="4" />
+                          <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                        </svg>
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-neutral-400 mt-0.5 truncate">
+                    {p.time}
+                  </p>
+                </div>
+              </button>
+            ))
+          )}
+        </div>
+
+        {/* Floating Search Bar (Capsule at bottom) */}
+        <div className="fixed bottom-5 left-4 right-4 z-30 max-w-md mx-auto pointer-events-auto">
+          <div className="rounded-full border border-neutral-200/90 bg-white/95 backdrop-blur-md px-4 py-3 flex items-center gap-3 shadow-xs">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-neutral-400 shrink-0">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Cari proyek"
+              className="flex-1 bg-transparent text-sm text-neutral-900 placeholder:text-neutral-400 outline-none"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery("")}
+                className="size-5 rounded-full text-neutral-400 hover:text-neutral-600 flex items-center justify-center cursor-pointer"
+                aria-label="Hapus pencarian"
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* ── Desktop View (kept for screens >= md) ── */}
+      <div className="hidden md:flex flex-1 flex-col overflow-hidden">
+        <div className="flex-1 overflow-y-auto px-6 lg:px-8 py-6">
+          <div className="flex items-start justify-between mb-6">
+            <div>
+              <h2 className="font-display font-800 text-2xl text-slate-900 mb-1">Proyek Saya</h2>
+              <p className="text-slate-500 text-sm">Simpan percakapan penting dan lanjutkan tanpa mengulang konteks.</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setNewProjectOpen(true)}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90 shadow-sm cursor-pointer"
+              style={{ background: "linear-gradient(135deg,#3b82f6,#6366f1)" }}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              <span>Proyek baru</span>
             </button>
-          ))}
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {projects.map((p) => (
+              <button
+                key={p.id}
+                type="button"
+                onClick={() => {
+                  if (p.msgs && p.msgs.length > 0) onOpenHistory(p.msgs);
+                  onTab("percakapan");
+                }}
+                className="rounded-2xl bg-white border border-slate-100 p-5 hover:border-blue-200 hover:shadow-md transition-all text-left group cursor-pointer"
+                style={{ boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div className={`size-10 rounded-xl flex items-center justify-center ${p.pastelBg} ${p.iconColor}`}>
+                    <ProjectIcon type={p.iconType} />
+                  </div>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600">Aktif</span>
+                </div>
+                <h3 className="font-display font-700 text-base text-slate-800 mb-1 group-hover:text-blue-600 transition-colors">{p.title}</h3>
+                <p className="text-xs text-slate-400 mb-4">{p.time}</p>
+                {p.msgs && p.msgs.length > 0 && (
+                  <p className="text-[11px] text-slate-500 truncate mb-3 italic">"{p.msgs[p.msgs.length - 1].text.slice(0, 60)}…"</p>
+                )}
+                <div className="flex items-center gap-1.5 text-xs font-semibold text-blue-600 group-hover:text-blue-700 transition-colors">
+                  Lanjutkan percakapan <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </div>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </div>
