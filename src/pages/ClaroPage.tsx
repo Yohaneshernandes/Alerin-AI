@@ -2012,6 +2012,9 @@ function NotifPanel({ onClose, onNavigate }: { onClose: () => void; onNavigate: 
     setNotifsSistem((prev) => prev.map((n) => ({ ...n, unread: false })));
   };
 
+  const unreadUmum = notifsUmum.filter((n) => n.unread).length;
+  const unreadSistem = notifsSistem.filter((n) => n.unread).length;
+
   const currentList = activeTab === "umum" ? notifsUmum : notifsSistem;
 
   const content = (
@@ -2057,29 +2060,60 @@ function NotifPanel({ onClose, onNavigate }: { onClose: () => void; onNavigate: 
           </div>
         </div>
 
-        {/* Tab row (Umum & Sistem) */}
-        <div className="flex border-b border-slate-100 px-5 gap-8">
+        {/* Tab row (Umum & Sistem) — sejajar dua full pop-up, di tengah, dan menampilkan jumlah notifikasi */}
+        <div className="grid grid-cols-2 border-b border-slate-100 w-full relative">
           <button
             type="button"
             onClick={() => setActiveTab("umum")}
-            className={`pb-2.5 text-sm font-semibold transition-all relative cursor-pointer ${
+            className={`relative flex items-center justify-center gap-2 py-3 text-sm font-semibold transition-all cursor-pointer ${
               activeTab === "umum"
-                ? "text-blue-600 border-b-2 border-blue-600"
-                : "text-slate-400 hover:text-slate-600 font-medium border-b-2 border-transparent"
+                ? "text-blue-600 font-bold"
+                : "text-slate-400 hover:text-slate-600 font-medium"
             }`}
           >
-            Umum
+            <span>Umum</span>
+            <span
+              className={`px-2 py-0.5 rounded-full text-xs font-bold transition-colors ${
+                activeTab === "umum"
+                  ? "bg-blue-100 text-blue-700"
+                  : "bg-slate-100 text-slate-500"
+              }`}
+            >
+              {notifsUmum.length}
+            </span>
+            {unreadUmum > 0 && (
+              <span className="size-1.5 rounded-full bg-blue-600 shrink-0" />
+            )}
+            {activeTab === "umum" && (
+              <span className="absolute bottom-0 inset-x-0 h-0.5 bg-blue-600 rounded-full" />
+            )}
           </button>
+
           <button
             type="button"
             onClick={() => setActiveTab("sistem")}
-            className={`pb-2.5 text-sm font-semibold transition-all relative cursor-pointer ${
+            className={`relative flex items-center justify-center gap-2 py-3 text-sm font-semibold transition-all cursor-pointer ${
               activeTab === "sistem"
-                ? "text-blue-600 border-b-2 border-blue-600"
-                : "text-slate-400 hover:text-slate-600 font-medium border-b-2 border-transparent"
+                ? "text-blue-600 font-bold"
+                : "text-slate-400 hover:text-slate-600 font-medium"
             }`}
           >
-            Sistem
+            <span>Sistem</span>
+            <span
+              className={`px-2 py-0.5 rounded-full text-xs font-bold transition-colors ${
+                activeTab === "sistem"
+                  ? "bg-blue-100 text-blue-700"
+                  : "bg-slate-100 text-slate-500"
+              }`}
+            >
+              {notifsSistem.length}
+            </span>
+            {unreadSistem > 0 && (
+              <span className="size-1.5 rounded-full bg-blue-600 shrink-0" />
+            )}
+            {activeTab === "sistem" && (
+              <span className="absolute bottom-0 inset-x-0 h-0.5 bg-blue-600 rounded-full" />
+            )}
           </button>
         </div>
 
