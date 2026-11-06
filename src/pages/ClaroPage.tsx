@@ -4671,12 +4671,18 @@ function ChatInputBox({
           <div className="flex items-center gap-2 overflow-x-auto flex-1 min-w-0" style={{ scrollbarWidth: "none" }}>
             {/* Upload trigger */}
             <div className="relative shrink-0">
-              <button ref={uploadBtnRef} onClick={() => openUploadMenu(uploadBtnRef)}
-                className="flex items-center gap-1.5 h-8 px-3.5 py-1.5 rounded-full border border-slate-200/90 text-xs font-semibold text-slate-600 hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50 transition-all whitespace-nowrap bg-white/70 md:bg-transparent shadow-xs"
-                style={uploadMenuOpen ? { borderColor: "#93c5fd", color: "#2563eb", background: "#eff6ff" } : {}}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                <span className="hidden md:inline">Lampirkan</span>
-                <span className="md:hidden">Upload</span>
+              <button
+                ref={uploadBtnRef}
+                type="button"
+                onClick={() => openUploadMenu(uploadBtnRef)}
+                aria-label="Tambah lampiran"
+                className="size-8 rounded-full border border-slate-200/90 flex items-center justify-center text-slate-600 hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50 transition-all shrink-0 bg-white/70 md:bg-white shadow-xs cursor-pointer"
+                style={uploadMenuOpen ? { borderColor: "#93c5fd", color: "#2563eb", background: "#eff6ff" } : {}}
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
               </button>
 
               {/* Upload popup menu */}
@@ -5050,10 +5056,13 @@ function ChatInputBox({
                 <button
                   type="button"
                   onClick={() => openUploadMenu(uploadBtnRef)}
-                  className="flex items-center gap-1.5 h-8 px-3.5 py-1.5 rounded-full border border-slate-200/90 text-xs font-semibold text-slate-600 hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50 transition-all cursor-pointer bg-white"
+                  aria-label="Tambah lampiran"
+                  className="size-8 rounded-full border border-slate-200/90 flex items-center justify-center text-slate-600 hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50 transition-all cursor-pointer bg-white shadow-xs shrink-0"
                 >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                  <span>Upload</span>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                  </svg>
                 </button>
               )}
             </div>
