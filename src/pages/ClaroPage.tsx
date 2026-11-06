@@ -4513,16 +4513,16 @@ function ChatInputBox({
           </div>
         )}
 
-        {/* Glass Floating Expand Button (Gambar 2): Tampil saat teks sudah banyak / bisa di-scroll */}
+        {/* Glass Floating Expand Button (Gambar 2): Tampil saat teks sudah banyak / bisa di-scroll, teks nembus di belakangnya */}
         {canExpand && (
           <button
             type="button"
             onClick={() => setIsFullscreenInput(true)}
             aria-label="Perbesar kolom teks"
             title="Perbesar kolom teks"
-            className="absolute top-2.5 right-2.5 z-20 size-7.5 sm:size-8 rounded-xl bg-white/70 backdrop-blur-md border border-white/90 shadow-[0_2px_8px_rgba(0,0,0,0.06)] text-slate-500 hover:text-slate-800 active:scale-95 transition-all flex items-center justify-center cursor-pointer select-none"
+            className="absolute top-2.5 right-2.5 z-20 size-7.5 sm:size-8 rounded-xl bg-white/75 backdrop-blur-md border border-white/90 shadow-[0_2px_8px_rgba(0,0,0,0.06)] text-slate-500 hover:text-slate-800 active:scale-95 transition-all flex items-center justify-center cursor-pointer select-none"
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
               <path d="M15 3h6v6" />
               <path d="M9 21H3v-6" />
             </svg>
@@ -4536,7 +4536,7 @@ function ChatInputBox({
           onChange={(e) => setInput(e.target.value)}
           placeholder={listening ? "Berbicara sekarang…" : "Tanya Alerin"}
           rows={1}
-          className={`md:hidden w-full px-4 ${canExpand ? "pr-11" : ""} pt-3 pb-1 text-[15px] text-slate-800 placeholder-slate-400 resize-none outline-none leading-relaxed rounded-t-2xl bg-transparent min-h-[38px]`}
+          className="md:hidden w-full px-4 pt-3 pb-1 text-[15px] text-slate-800 placeholder-slate-400 resize-none outline-none leading-relaxed rounded-t-2xl bg-transparent min-h-[38px]"
         />
         {/* Desktop textarea: full placeholder (Enter keyboard langsung kirim) */}
         <textarea
@@ -4546,7 +4546,7 @@ function ChatInputBox({
           onKeyDown={handleDesktopKey}
           placeholder={listening ? "Berbicara sekarang…" : (activeCat?.placeholder ?? "Tanya Alerin tentang materi, tugas, jurnal, skripsi, atau kebutuhan kuliah lainnya...")}
           rows={2}
-          className={`hidden md:block w-full px-4 ${canExpand ? "pr-11" : ""} pt-3.5 pb-2 text-[15px] text-slate-800 placeholder-slate-400 resize-none outline-none leading-relaxed rounded-t-2xl bg-transparent min-h-[58px]`}
+          className="hidden md:block w-full px-4 pt-3.5 pb-2 text-[15px] text-slate-800 placeholder-slate-400 resize-none outline-none leading-relaxed rounded-t-2xl bg-transparent min-h-[58px]"
         />
         {/* Bottom row inside card */}
         <div className="flex items-center px-3 pb-2.5 pt-1 gap-2">
@@ -4931,7 +4931,7 @@ function ChatInputBox({
           </div>
 
           {/* Bottom Bar: Action & Circular Send Button with Up-Arrow (Gambar 3) */}
-          <div className="p-4 pt-2.5 pb-6 flex items-center justify-between border-t border-slate-100 bg-white shrink-0">
+          <div className="p-4 pt-2.5 pb-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] flex items-center justify-between border-t border-slate-100 bg-white shrink-0">
             <div className="flex items-center gap-2 overflow-x-auto min-w-0 pr-2">
               {uploadedItems.length > 0 ? (
                 <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-xs font-semibold text-blue-700">
