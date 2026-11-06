@@ -4186,7 +4186,7 @@ function ChatInputBox({
     }
   };
 
-  const handleKey = (e: React.KeyboardEvent) => {
+  const handleDesktopKey = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       if (loading) {
@@ -4286,22 +4286,21 @@ function ChatInputBox({
           </div>
         )}
 
-        {/* Mobile textarea: concise placeholder "Tanya Alerin" */}
+        {/* Mobile textarea: concise placeholder "Tanya Alerin" (Enter keyboard di mobile tidak auto-kirim, kirim hanya lewat tombol) */}
         <textarea
           ref={mobileTextareaRef}
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          onKeyDown={handleKey}
           placeholder={listening ? "Berbicara sekarang…" : "Tanya Alerin"}
           rows={1}
           className="md:hidden w-full px-4 pt-3 pb-1 text-[15px] text-slate-800 placeholder-slate-400 resize-none outline-none leading-relaxed rounded-t-2xl bg-transparent min-h-[38px]"
         />
-        {/* Desktop textarea: full placeholder */}
+        {/* Desktop textarea: full placeholder (Enter keyboard langsung kirim) */}
         <textarea
           ref={textareaRef}
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          onKeyDown={handleKey}
+          onKeyDown={handleDesktopKey}
           placeholder={listening ? "Berbicara sekarang…" : (activeCat?.placeholder ?? "Tanya Alerin tentang materi, tugas, jurnal, skripsi, atau kebutuhan kuliah lainnya...")}
           rows={2}
           className="hidden md:block w-full px-4 pt-3.5 pb-2 text-[15px] text-slate-800 placeholder-slate-400 resize-none outline-none leading-relaxed rounded-t-2xl bg-transparent min-h-[58px]"
