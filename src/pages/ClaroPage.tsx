@@ -4689,38 +4689,32 @@ function ChatInputBox({
               {uploadMenuOpen && uploadMenuPos && typeof document !== "undefined" && createPortal(
                 <>
                   <div className="fixed inset-0 z-[190]" onClick={() => setUploadMenuOpen(false)} />
-                  <div className="fixed z-[200] w-64 rounded-2xl overflow-hidden"
+                  <div className="fixed z-[200] w-52 rounded-2xl overflow-hidden"
                     style={{
                       bottom: uploadMenuPos.bottom,
-                      left: Math.min(uploadMenuPos.left, window.innerWidth - 270),
+                      left: Math.min(uploadMenuPos.left, window.innerWidth - 220),
                       background: "#fff",
                       border: "1px solid #e2e8f0",
                       boxShadow: "0 12px 40px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)",
                     }}>
                     {/* Upload dokumen */}
                     <button onClick={() => { fileInputRef.current?.click(); }}
-                      className="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-50 transition-colors text-left">
+                      className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-slate-50 transition-colors text-left">
                       <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 bg-slate-100 text-slate-700 border border-slate-200/70">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                       </div>
-                      <div>
-                        <p className="font-semibold text-xs text-slate-800">File</p>
-                        <p className="text-[10px] text-slate-400">PDF, Word, PPT, TXT</p>
-                      </div>
+                      <span className="font-semibold text-xs text-slate-800">File</span>
                     </button>
 
                     <div className="mx-4 h-px bg-slate-100" />
 
                     {/* Upload foto */}
                     <button onClick={() => { imageInputRef.current?.click(); }}
-                      className="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-50 transition-colors text-left">
+                      className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-slate-50 transition-colors text-left">
                       <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 bg-slate-100 text-slate-700 border border-slate-200/70">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                       </div>
-                      <div>
-                        <p className="font-semibold text-xs text-slate-800">Foto</p>
-                        <p className="text-[10px] text-slate-400">JPG, PNG, WEBP, GIF</p>
-                      </div>
+                      <span className="font-semibold text-xs text-slate-800">Foto</span>
                     </button>
 
                     <div className="mx-4 h-px bg-slate-100" />
@@ -4746,14 +4740,11 @@ function ChatInputBox({
                       };
                       inp.click();
                     }}
-                      className="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-50 transition-colors text-left">
+                      className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-slate-50 transition-colors text-left">
                       <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 bg-slate-100 text-slate-700 border border-slate-200/70">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
                       </div>
-                      <div>
-                        <p className="font-semibold text-xs text-slate-800">Kamera</p>
-                        <p className="text-[10px] text-slate-400">Foto langsung dari kamera</p>
-                      </div>
+                      <span className="font-semibold text-xs text-slate-800">Kamera</span>
                     </button>
                   </div>
                 </>,
