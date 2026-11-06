@@ -1069,9 +1069,9 @@ Gunakan pendekatan kualitatif jika kamu ingin:
 
 Banyak peneliti sekarang memilih *mixed methods* — menggabungkan keduanya. Misalnya:
 
-1. **Sequential Explanatory** — mulai dengan kuantitatif, lalu perdalam dengan kualitatif
-2. **Sequential Exploratory** — mulai kualitatif untuk membangun instrumen, lalu kuantitatif untuk validasi
-3. **Concurrent Triangulation** — keduanya berjalan paralel dan hasilnya dibandingkan
+1. **Sequential Explanatory:** mulai dengan kuantitatif, lalu perdalam dengan kualitatif
+2. **Sequential Exploratory:** mulai kualitatif untuk membangun instrumen, lalu kuantitatif untuk validasi
+3. **Concurrent Triangulation:** keduanya berjalan paralel dan hasilnya dibandingkan
 
 Mau aku bantu tentukan mana yang paling cocok untuk topik penelitianmu?`],
 
@@ -1093,10 +1093,10 @@ Skripsi pada umumnya terdiri dari lima bab utama, masing-masing dengan peran yan
 
 Latar belakang adalah kesan pertama yang dinilai dosen pembimbing. Gunakan struktur ini:
 
-1. **Mulai dari hal umum** — gambaran besar topik atau fenomena yang sedang terjadi
-2. **Perkecil ke masalah spesifik** — data statistik, fakta, atau gap yang ada di lapangan
-3. **Tunjukkan urgensi** — mengapa masalah ini penting untuk diteliti sekarang?
-4. **Hubungkan ke penelitianmu** — bagaimana penelitianmu akan berkontribusi?
+1. **Mulai dari hal umum:** gambaran besar topik atau fenomena yang sedang terjadi
+2. **Perkecil ke masalah spesifik:** data statistik, fakta, atau gap yang ada di lapangan
+3. **Tunjukkan urgensi:** mengapa masalah ini penting untuk diteliti sekarang?
+4. **Hubungkan ke penelitianmu:** bagaimana penelitianmu akan berkontribusi?
 
 ## Timeline Pengerjaan yang Realistis
 
@@ -5007,6 +5007,14 @@ function CodeBlock({ lang, code }: { lang: string; code: string }) {
   );
 }
 
+function cleanMdText(text: string): string {
+  // Hapus strip/garis pemisah (em-dash ' — ' atau ' – ') agar output jawaban bebas dari tanda garis
+  return text
+    .replace(/:\s*[—–]\s*/g, ": ")
+    .replace(/\s+[—–]\s+/g, ": ")
+    .replace(/\s*[—–]\s*/g, ": ");
+}
+
 function MarkdownRenderer({ text }: { text: string }) {
   const lines = text.split("\n");
   const elements: React.ReactNode[] = [];
@@ -5033,9 +5041,9 @@ function MarkdownRenderer({ text }: { text: string }) {
       continue;
     }
 
-    // Horizontal rule
+    // Horizontal rule → hapus garis horizontal
     if (/^---+$/.test(line)) {
-      elements.push(<hr key={i} className="border-slate-200 my-5" />);
+      elements.push(<div key={i} className="my-2" />);
       i++; continue;
     }
 
@@ -5045,7 +5053,7 @@ function MarkdownRenderer({ text }: { text: string }) {
     const h3m = line.match(/^###\s+(.+)/);
     const boldOnly = /^\*\*[^*]+\*\*$/.test(line);
     if (h1m || h2m || h3m || boldOnly) {
-      const content = h1m ? h1m[1] : h2m ? h2m[1] : h3m ? h3m[1] : line.slice(2, -2);
+      const content = cleanMdText(h1m ? h1m[1] : h2m ? h2m[1] : h3m ? h3m[1] : line.slice(2, -2));
       const cls = h1m
         ? "text-[1.0625rem] font-bold text-slate-900 mt-7 mb-3 leading-snug"
         : "text-[0.9375rem] font-semibold text-slate-800 mt-6 mb-2.5 leading-snug";
@@ -5053,7 +5061,7 @@ function MarkdownRenderer({ text }: { text: string }) {
       i++; continue;
     }
 
-    // Table block: lines starting with |
+    // Table block: lines starting with | (tanpa garis tepi kasar)
     if (line.startsWith("|")) {
       const tableLines: string[] = [];
       while (i < lines.length && lines[i].trim().startsWith("|")) {
@@ -5066,13 +5074,13 @@ function MarkdownRenderer({ text }: { text: string }) {
       const headers = rows[0] ? parseRow(rows[0]) : [];
       const body = rows.slice(1);
       elements.push(
-        <div key={`tbl-${i}`} className="my-5 overflow-x-auto rounded-xl border border-slate-200" style={{ boxShadow: "0 1px 4px rgba(0,0,0,0.04)" }}>
+        <div key={`tbl-${i}`} className="my-4 overflow-x-auto rounded-xl bg-slate-50/70 p-2">
           <table className="w-full text-[0.875rem] border-collapse">
             <thead>
-              <tr style={{ background: "linear-gradient(90deg,#f8faff,#f1f5ff)" }}>
+              <tr className="bg-slate-100/80 rounded-lg">
                 {headers.map((h, ci) => (
-                  <th key={ci} className="px-4 py-3 text-left text-[0.8125rem] font-semibold text-slate-700 border-b border-slate-200 whitespace-nowrap">
-                    {renderInlineMd(h)}
+                  <th key={ci} className="px-3.5 py-2.5 text-left text-[0.8125rem] font-semibold text-slate-700 whitespace-nowrap">
+                    {renderInlineMd(cleanMdText(h))}
                   </th>
                 ))}
               </tr>
@@ -5081,10 +5089,10 @@ function MarkdownRenderer({ text }: { text: string }) {
               {body.map((row, ri) => {
                 const cells = parseRow(row);
                 return (
-                  <tr key={ri} className={ri % 2 === 0 ? "bg-white" : "bg-slate-50/60"}>
+                  <tr key={ri} className={ri % 2 === 0 ? "bg-white" : "bg-transparent"}>
                     {cells.map((cell, ci) => (
-                      <td key={ci} className="px-4 py-3 text-slate-700 border-b border-slate-100 leading-relaxed align-top">
-                        {renderInlineMd(cell)}
+                      <td key={ci} className="px-3.5 py-2.5 text-slate-700 leading-relaxed align-top">
+                        {renderInlineMd(cleanMdText(cell))}
                       </td>
                     ))}
                   </tr>
@@ -5097,21 +5105,22 @@ function MarkdownRenderer({ text }: { text: string }) {
       continue;
     }
 
-    // Numbered list
+    // Numbered list (nomor normal font, tanpa bulatan)
     if (/^\d+\.\s+/.test(line)) {
       const items: React.ReactNode[] = [];
       let n = 1;
       while (i < lines.length && /^\d+\.\s+/.test(lines[i].trim())) {
-        const c = lines[i].trim().replace(/^\d+\.\s+/, "");
+        let c = lines[i].trim().replace(/^\d+\.\s+/, "");
+        c = cleanMdText(c);
         items.push(
-          <li key={i} className="flex gap-3.5 items-start">
-            <span className="shrink-0 min-w-[1.5rem] h-6 rounded-full bg-blue-50 border border-blue-100 text-blue-600 text-[10px] font-bold flex items-center justify-center leading-none mt-0.5">{n}</span>
+          <li key={i} className="flex gap-2 items-start">
+            <span className="shrink-0 font-normal text-slate-800 text-[0.9375rem] leading-7 select-none">{n}.</span>
             <span className="flex-1 text-[0.9375rem] text-slate-700 leading-7">{renderInlineMd(c)}</span>
           </li>
         );
         n++; i++;
       }
-      elements.push(<ol key={`ol-${i}`} className="space-y-3 my-4 list-none">{items}</ol>);
+      elements.push(<ol key={`ol-${i}`} className="space-y-1.5 my-3 list-none">{items}</ol>);
       continue;
     }
 
@@ -5119,23 +5128,25 @@ function MarkdownRenderer({ text }: { text: string }) {
     if (/^[-•○—]\s+/.test(line)) {
       const items: React.ReactNode[] = [];
       while (i < lines.length && /^[-•○—]\s+/.test(lines[i].trim())) {
-        const c = lines[i].trim().replace(/^[-•○—]\s+/, "");
+        let c = lines[i].trim().replace(/^[-•○—]\s+/, "");
+        c = cleanMdText(c);
         items.push(
-          <li key={i} className="flex gap-3 items-start">
-            <span className="shrink-0 w-[0.4375rem] h-[0.4375rem] rounded-full bg-slate-400 mt-[0.6rem]" />
+          <li key={i} className="flex gap-2.5 items-start">
+            <span className="shrink-0 w-1.5 h-1.5 rounded-full bg-slate-400 mt-[0.6rem]" />
             <span className="flex-1 text-[0.9375rem] text-slate-700 leading-7">{renderInlineMd(c)}</span>
           </li>
         );
         i++;
       }
-      elements.push(<ul key={`ul-${i}`} className="space-y-2.5 my-4 list-none">{items}</ul>);
+      elements.push(<ul key={`ul-${i}`} className="space-y-1.5 my-3 list-none">{items}</ul>);
       continue;
     }
 
     // Paragraph
+    const cleanLine = cleanMdText(line);
     elements.push(
       <p key={i} className="text-[0.9375rem] text-slate-700 leading-7 mb-1">
-        {renderInlineMd(line)}
+        {renderInlineMd(cleanLine)}
       </p>
     );
     i++;
