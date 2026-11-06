@@ -8871,34 +8871,6 @@ const DEFAULT_MOBILE_PROJECTS: MobileProjectItem[] = [
     ],
   },
   {
-    id: "proj-2",
-    title: "Caption",
-    time: "1 bulan yang lalu · 2 anggota",
-    category: "dibagikan",
-    members: 2,
-    pastelBg: "bg-[#EAF2FF]",
-    iconColor: "text-[#2F80ED]",
-    iconType: "folder",
-    msgs: [
-      { role: "user", text: "Bantu buat caption Instagram edukasi tentang tips skripsi.", time: "14.00" },
-      { role: "claro", text: "Berikut 3 opsi caption Instagram edukasi yang menarik dan engaging...", time: "14.01" },
-    ],
-  },
-  {
-    id: "proj-3",
-    title: "Pak Agik",
-    time: "2 minggu yang lalu · 9 anggota",
-    category: "dibagikan",
-    members: 9,
-    pastelBg: "bg-[#EAF2FF]",
-    iconColor: "text-[#2F80ED]",
-    iconType: "folder",
-    msgs: [
-      { role: "user", text: "Catatan kuliah dan materi keuangan Pak Agik.", time: "09.00" },
-      { role: "claro", text: "Berikut rangkuman konsep dasar manajemen keuangan kuliah Pak Agik...", time: "09.02" },
-    ],
-  },
-  {
     id: "proj-4",
     title: "Metodologi Penelitian",
     time: "Terakhir diperbarui hari ini",
@@ -9085,8 +9057,12 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
       const saved = localStorage.getItem("alerin_user_projects");
       if (saved) {
         const parsed: MobileProjectItem[] = JSON.parse(saved);
+        // Hapus folder "Pak Agik" dan "Caption" jika sebelumnya tersimpan di localStorage
+        const filtered = parsed.filter(
+          (p) => p.title !== "Pak Agik" && p.title !== "Caption" && p.id !== "proj-2" && p.id !== "proj-3"
+        );
         // Pastikan semua proyek menggunakan folder biru konsisten seperti milik Yohanes
-        const normalized = parsed.map((p) => ({
+        const normalized = filtered.map((p) => ({
           ...p,
           pastelBg: "bg-[#EAF2FF]",
           iconColor: "text-[#2F80ED]",
