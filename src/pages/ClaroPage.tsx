@@ -4099,9 +4099,6 @@ const PROMPT_SUGGESTIONS = [
   "Bantu cari ide judul skripsi yang menarik",
   "Cari jurnal Scopus & SINTA terbaru",
   "Parafrase abstrak agar bebas plagiasi",
-  "Bantu buat kerangka BAB II skripsi",
-  "Jelaskan metode penelitian kuantitatif",
-  "Perbaiki struktur kalimat akademik ini",
 ];
 
 const CATEGORY_SUGGESTIONS: Record<CategoryKey, string[]> = {
@@ -4109,41 +4106,26 @@ const CATEGORY_SUGGESTIONS: Record<CategoryKey, string[]> = {
     "Perbaiki struktur kalimat paragraf ini",
     "Bantu buat abstrak skripsi yang baik",
     "Cara menulis latar belakang yang kuat",
-    "Contoh kalimat transisi antar paragraf",
-    "Review dan koreksi tulisan BAB I saya",
-    "Teknik parafrase agar tidak plagiat",
   ],
   metodologi: [
     "Perbedaan penelitian kualitatif dan kuantitatif",
     "Cara menentukan jumlah sampel yang tepat",
     "Apa itu uji validitas dan reliabilitas?",
-    "Bantu susun kuesioner untuk penelitian saya",
-    "Cara memilih teknik sampling yang tepat",
-    "Perbedaan metode survei dan eksperimen",
   ],
   analisis: [
     "Cara baca output SPSS regresi linear",
     "Apa itu uji normalitas dan kapan dipakai?",
     "Interpretasi nilai R square dalam penelitian",
-    "Cara analisis data kualitatif dengan coding",
-    "Perbedaan uji T dan uji ANOVA",
-    "Cara membuat tabel distribusi frekuensi",
   ],
   sidang: [
     "Pertanyaan sidang yang sering ditanya penguji",
     "Cara jawab pertanyaan metodologi di sidang",
     "Teknik presentasi skripsi yang meyakinkan",
-    "Cara buat slide sidang yang baik",
-    "Apa yang dilakukan jika tidak bisa jawab penguji?",
-    "Persiapan mental sebelum sidang skripsi",
   ],
   referensi: [
     "Cari jurnal Scopus tentang e-commerce 2023",
     "Cara menulis daftar pustaka APA style",
     "Rekomendasi buku metodologi penelitian",
-    "Cara pakai Mendeley untuk sitasi otomatis",
-    "Cara cari jurnal gratis di Google Scholar",
-    "Apa itu DOI dan cara mencantumkannya?",
   ],
 };
 
@@ -4554,10 +4536,10 @@ function ChatInputBox({
       <input ref={imageInputRef} type="file" multiple className="hidden" accept=".jpg,.jpeg,.png,.webp,.gif"
         onChange={handleFileChange} />
 
-      {/* Suggestion pills — default or per-category, hidden in chat mode */}
+      {/* Suggestion pills — default or per-category, hidden in chat mode (dibatasi 3 saja) */}
       {!hideTopSuggestions && (
         <div className="flex gap-2 overflow-x-auto pb-2.5 pt-0.5 px-0.5" style={{ scrollbarWidth: "none" }}>
-          {currentSuggestions.map((s) => (
+          {currentSuggestions.slice(0, 3).map((s) => (
             <button
               key={s}
               type="button"
