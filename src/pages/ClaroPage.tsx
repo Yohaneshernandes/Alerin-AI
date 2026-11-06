@@ -4272,8 +4272,8 @@ const MODES: {
     label: "Luma",
     fullTitle: "Luma - Cepat",
     desc: "Pertanyaan rutin, penjelasan singkat, penyuntingan ringan, dan ide awal",
-    color: "#475569",
-    bg: "#f1f5f9",
+    color: "#334155",
+    bg: "#ffffff",
     border: "#e2e8f0",
     icon: (
       /* Lightning / Flash icon for Luma (Cepat) */
@@ -4287,8 +4287,8 @@ const MODES: {
     label: "Vera",
     fullTitle: "Vera - Cermat",
     desc: "Analisis terstruktur, perbandingan, penelaahan file, dan tugas multi-langkah menengah",
-    color: "#475569",
-    bg: "#f1f5f9",
+    color: "#334155",
+    bg: "#ffffff",
     border: "#e2e8f0",
     icon: (
       /* Structured analysis document icon for Vera (Cermat) */
@@ -4306,8 +4306,8 @@ const MODES: {
     label: "Alta",
     fullTitle: "Alta - Mendalam",
     desc: "Metodologi kompleks, sintesis, kritik argumen, dan keputusan akademik mendalam",
-    color: "#475569",
-    bg: "#f1f5f9",
+    color: "#334155",
+    bg: "#ffffff",
     border: "#e2e8f0",
     icon: (
       /* Multi-level deep reasoning layers for Alta (Mendalam) */
@@ -4836,8 +4836,9 @@ function ChatInputBox({
                   if (pos) setModeDropdownPos(pos);
                   setModeOpen(true);
                 }}
-                className="flex items-center gap-1.5 h-8 px-3.5 py-1.5 rounded-full border text-xs font-semibold transition-all whitespace-nowrap shadow-xs"
-                style={{ borderColor: currentMode.border, color: currentMode.color, background: currentMode.bg }}>
+                className="flex items-center gap-1.5 h-8 px-3.5 py-1.5 rounded-full border border-slate-200/90 text-xs font-semibold transition-all whitespace-nowrap shadow-xs cursor-pointer bg-white/70 md:bg-white text-slate-700 hover:border-blue-300 hover:text-blue-600"
+                style={modeOpen ? { borderColor: "#93c5fd", color: "#2563eb", background: "#eff6ff" } : {}}
+              >
                 {currentMode.icon}
                 {currentMode.label}
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ opacity: 0.6 }}><path d="M6 9l6 6 6-6"/></svg>
@@ -4969,12 +4970,16 @@ function ChatInputBox({
           <div className="flex items-center gap-2 shrink-0 ml-auto pl-1">
             {/* Voice button */}
             <button
+              type="button"
               onClick={toggleListening}
               title={listening ? "Hentikan dikte" : "Dikte suara (Bahasa Indonesia)"}
-              className="w-9 h-9 rounded-full flex items-center justify-center transition-all"
-              style={listening
-                ? { background: "#ef4444", color: "#fff", boxShadow: "0 0 0 4px rgba(239,68,68,0.15)" }
-                : { background: "#f1f5f9", color: "#64748b" }}>
+              aria-label={listening ? "Hentikan dikte" : "Dikte suara"}
+              className={`size-8 rounded-full border flex items-center justify-center transition-all cursor-pointer shadow-xs shrink-0 ${
+                listening
+                  ? "bg-red-500 border-red-500 text-white shadow-[0_0_0_4px_rgba(239,68,68,0.15)]"
+                  : "border-slate-200/90 bg-white/70 md:bg-white text-slate-600 hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50"
+              }`}
+            >
               {listening ? (
                 /* animated mic bars */
                 <span className="flex items-end gap-px h-4">
@@ -4984,7 +4989,7 @@ function ChatInputBox({
                   ))}
                 </span>
               ) : (
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
               )}
             </button>
 
@@ -4995,9 +5000,9 @@ function ChatInputBox({
                 onClick={onStop}
                 title="Hentikan respons"
                 aria-label="Hentikan respons"
-                className="w-9 h-9 rounded-full flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white shadow-sm cursor-pointer active:scale-95 transition-all"
+                className="size-8 rounded-full flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white shadow-xs cursor-pointer active:scale-95 transition-all shrink-0"
               >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
                   <rect x="5" y="5" width="14" height="14" rx="2.5" />
                 </svg>
               </button>
@@ -5007,13 +5012,13 @@ function ChatInputBox({
                 onClick={handleSend}
                 disabled={!input.trim() && uploadedItems.length === 0}
                 aria-label="Kirim pesan"
-                className={`w-9 h-9 rounded-full flex items-center justify-center text-white transition-all ${
+                className={`size-8 rounded-full flex items-center justify-center text-white transition-all shrink-0 ${
                   (input.trim() || uploadedItems.length > 0)
-                    ? "bg-blue-600 hover:bg-blue-700 shadow-sm cursor-pointer active:scale-95"
+                    ? "bg-blue-600 hover:bg-blue-700 shadow-xs cursor-pointer active:scale-95"
                     : "bg-indigo-200 opacity-30 cursor-not-allowed"
                 }`}
               >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
               </button>
             )}
           </div>
