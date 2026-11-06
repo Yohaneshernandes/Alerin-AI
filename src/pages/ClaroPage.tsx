@@ -3832,6 +3832,7 @@ function ChatInputBox({
   const recognitionRef = useRef<any>(null);
   const cardContainerRef = useRef<HTMLDivElement>(null);
   const modeRef = useRef<HTMLDivElement>(null);
+  const modeDropdownRef = useRef<HTMLDivElement>(null);
   const modeBtnRef = useRef<HTMLButtonElement>(null);
   const uploadBtnRef = useRef<HTMLButtonElement>(null);
   const [modeDropdownPos, setModeDropdownPos] = useState<{ bottom: number; left: number; arrowLeft: number } | null>(null);
@@ -3941,17 +3942,27 @@ function ChatInputBox({
 
   // Close mode dropdown on outside click
   useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (modeRef.current && !modeRef.current.contains(e.target as Node)) {
-        setModeOpen(false);
-        setModeDropdownPos(null);
+    if (!modeOpen) return;
+    const handler = (e: MouseEvent | TouchEvent) => {
+      const target = e.target as Node;
+      if (
+        modeRef.current?.contains(target) ||
+        modeDropdownRef.current?.contains(target)
+      ) {
+        return;
       }
+      setModeOpen(false);
+      setModeDropdownPos(null);
     };
     document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, []);
+    document.addEventListener("touchstart", handler);
+    return () => {
+      document.removeEventListener("mousedown", handler);
+      document.removeEventListener("touchstart", handler);
+    };
+  }, [modeOpen]);
 
-  // Auto-close floating dropdowns on window scroll or resize to prevent misalignment
+  // Auto-close floating dropdowns on window resize
   useEffect(() => {
     if (!modeOpen && !uploadMenuOpen) return;
     const handleClose = () => {
@@ -3962,10 +3973,8 @@ function ChatInputBox({
       if (uploadMenuOpen) setUploadMenuOpen(false);
     };
     window.addEventListener("resize", handleClose);
-    window.addEventListener("scroll", handleClose, true);
     return () => {
       window.removeEventListener("resize", handleClose);
-      window.removeEventListener("scroll", handleClose, true);
     };
   }, [modeOpen, uploadMenuOpen]);
 
@@ -4279,8 +4288,16 @@ function ChatInputBox({
               {/* Mode dropdown — fixed to escape overflow:hidden parents (Desain Gambar 2, Isi Gambar 3, Terbuka Semua) */}
               {modeOpen && modeDropdownPos && typeof document !== "undefined" && createPortal(
                 <>
-                  <div className="fixed inset-0 z-[195]" onClick={() => { setModeOpen(false); setModeDropdownPos(null); }} />
                   <div
+                    className="fixed inset-0 z-[195] cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setModeOpen(false);
+                      setModeDropdownPos(null);
+                    }}
+                  />
+                  <div
+                    ref={modeDropdownRef}
                     className="fixed w-[270px] max-w-[calc(100vw-24px)] rounded-[24px] bg-white/98 backdrop-blur-xl border border-slate-200/70 p-2 z-[200] select-none transition-all duration-200 ease-out animate-[gemini-fade-in_0.2s_ease-out]"
                     style={{
                       boxShadow: "0 16px 40px -8px rgba(0,0,0,0.12), 0 4px 14px rgba(0,0,0,0.05)",
@@ -4296,7 +4313,8 @@ function ChatInputBox({
                           <button
                             key={m.id}
                             type="button"
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.stopPropagation();
                               setActiveMode(m.id);
                               setModeOpen(false);
                               setModeDropdownPos(null);
