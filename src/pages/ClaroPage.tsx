@@ -3213,10 +3213,12 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
                             className="flex-1 text-left text-neutral-800 text-[15px] font-normal leading-relaxed truncate hover:text-blue-600 transition-colors pr-2 flex items-center gap-1.5"
                           >
                             {item.pinned && (
-                              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="1.5" className="text-blue-600 shrink-0" title="Disematkan">
-                                <line x1="12" y1="17" x2="12" y2="22"/>
-                                <path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.89A2 2 0 0 1 15 10.76V6h1a1 1 0 0 0 0-2H8a1 1 0 0 0 0 2h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.89A2 2 0 0 0 5 15.24Z"/>
-                              </svg>
+                              <span title="Disematkan" className="inline-flex shrink-0">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="1.5" className="text-blue-600">
+                                  <line x1="12" y1="17" x2="12" y2="22"/>
+                                  <path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.89A2 2 0 0 1 15 10.76V6h1a1 1 0 0 0 0-2H8a1 1 0 0 0 0 2h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.89A2 2 0 0 0 5 15.24Z"/>
+                                </svg>
+                              </span>
                             )}
                             <span className="truncate">{item.title}</span>
                           </button>
