@@ -4167,6 +4167,29 @@ function ChatInputBox({
   const modeBtnRef = useRef<HTMLButtonElement>(null);
   const uploadBtnRef = useRef<HTMLButtonElement>(null);
   const [modeDropdownPos, setModeDropdownPos] = useState<{ bottom: number; left: number; arrowLeft: number } | null>(null);
+  const [canExpand, setCanExpand] = useState(false);
+  const [isFullscreenInput, setIsFullscreenInput] = useState(false);
+
+  // Deteksi jika teks sudah banyak / scrollable untuk memunculkan tombol perbesar (expand)
+  useEffect(() => {
+    const el = mobileTextareaRef.current || textareaRef.current;
+    if (!el) {
+      setCanExpand(input.length > 80 || input.split("\n").length >= 4);
+      return;
+    }
+    const isScrollable = el.scrollHeight > 100 || input.length > 80 || input.split("\n").length >= 4;
+    setCanExpand(isScrollable);
+  }, [input]);
+
+  // Tutup editor layar penuh jika tombol Escape ditekan
+  useEffect(() => {
+    if (!isFullscreenInput) return;
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setIsFullscreenInput(false);
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [isFullscreenInput]);
 
   // Notify parent whenever a bottom popup is opened or closed (e.g. to hide floating scroll-to-bottom button)
   useEffect(() => {
@@ -4490,6 +4513,22 @@ function ChatInputBox({
           </div>
         )}
 
+        {/* Glass Floating Expand Button (Gambar 2): Tampil saat teks sudah banyak / bisa di-scroll */}
+        {canExpand && (
+          <button
+            type="button"
+            onClick={() => setIsFullscreenInput(true)}
+            aria-label="Perbesar kolom teks"
+            title="Perbesar kolom teks"
+            className="absolute top-2.5 right-2.5 z-20 size-7.5 sm:size-8 rounded-xl bg-white/70 backdrop-blur-md border border-white/90 shadow-[0_2px_8px_rgba(0,0,0,0.06)] text-slate-500 hover:text-slate-800 active:scale-95 transition-all flex items-center justify-center cursor-pointer select-none"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M15 3h6v6" />
+              <path d="M9 21H3v-6" />
+            </svg>
+          </button>
+        )}
+
         {/* Mobile textarea: concise placeholder "Tanya Alerin" (Enter keyboard di mobile tidak auto-kirim, kirim hanya lewat tombol) */}
         <textarea
           ref={mobileTextareaRef}
@@ -4497,7 +4536,7 @@ function ChatInputBox({
           onChange={(e) => setInput(e.target.value)}
           placeholder={listening ? "Berbicara sekarang…" : "Tanya Alerin"}
           rows={1}
-          className="md:hidden w-full px-4 pt-3 pb-1 text-[15px] text-slate-800 placeholder-slate-400 resize-none outline-none leading-relaxed rounded-t-2xl bg-transparent min-h-[38px]"
+          className={`md:hidden w-full px-4 ${canExpand ? "pr-11" : ""} pt-3 pb-1 text-[15px] text-slate-800 placeholder-slate-400 resize-none outline-none leading-relaxed rounded-t-2xl bg-transparent min-h-[38px]`}
         />
         {/* Desktop textarea: full placeholder (Enter keyboard langsung kirim) */}
         <textarea
@@ -4507,7 +4546,7 @@ function ChatInputBox({
           onKeyDown={handleDesktopKey}
           placeholder={listening ? "Berbicara sekarang…" : (activeCat?.placeholder ?? "Tanya Alerin tentang materi, tugas, jurnal, skripsi, atau kebutuhan kuliah lainnya...")}
           rows={2}
-          className="hidden md:block w-full px-4 pt-3.5 pb-2 text-[15px] text-slate-800 placeholder-slate-400 resize-none outline-none leading-relaxed rounded-t-2xl bg-transparent min-h-[58px]"
+          className={`hidden md:block w-full px-4 ${canExpand ? "pr-11" : ""} pt-3.5 pb-2 text-[15px] text-slate-800 placeholder-slate-400 resize-none outline-none leading-relaxed rounded-t-2xl bg-transparent min-h-[58px]`}
         />
         {/* Bottom row inside card */}
         <div className="flex items-center px-3 pb-2.5 pt-1 gap-2">
@@ -4855,6 +4894,84 @@ function ChatInputBox({
             </button>
           </div>
         </div>
+      )}
+
+      {/* Fullscreen Input Modal (Gambar 3): Tampilan layar penuh saat di-expand */}
+      {isFullscreenInput && typeof document !== "undefined" && createPortal(
+        <div
+          className="fixed inset-0 z-[280] bg-white flex flex-col animate-[gemini-fade-in_0.15s_ease-out]"
+          style={{ height: "100dvh" }}
+        >
+          {/* Top Collapse Button (Gambar 3: icon di pojok kanan atas) */}
+          <div className="absolute top-3.5 right-3.5 z-30">
+            <button
+              type="button"
+              onClick={() => setIsFullscreenInput(false)}
+              aria-label="Kecilkan kolom teks"
+              title="Kecilkan ke kotak pesan"
+              className="size-8.5 rounded-xl bg-slate-100/90 hover:bg-slate-200 text-slate-600 hover:text-slate-900 active:scale-95 transition-all flex items-center justify-center cursor-pointer shadow-xs select-none"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M4 14h6v6" />
+                <path d="M20 10h-6V4" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Fullscreen scrollable editing area */}
+          <div className="flex-1 flex flex-col p-4 pt-3.5 overflow-hidden relative">
+            <textarea
+              autoFocus
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Tulis pesan lengkapmu di sini..."
+              className="flex-1 w-full text-[16px] text-slate-900 placeholder-slate-400 outline-none resize-none leading-relaxed bg-transparent overflow-y-auto pr-11"
+              style={{ scrollbarWidth: "thin" }}
+            />
+          </div>
+
+          {/* Bottom Bar: Action & Circular Send Button with Up-Arrow (Gambar 3) */}
+          <div className="p-4 pt-2.5 pb-6 flex items-center justify-between border-t border-slate-100 bg-white shrink-0">
+            <div className="flex items-center gap-2 overflow-x-auto min-w-0 pr-2">
+              {uploadedItems.length > 0 ? (
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-xs font-semibold text-blue-700">
+                  <span>{uploadedItems.length} berkas terlampir</span>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => openUploadMenu(uploadBtnRef)}
+                  className="flex items-center gap-1.5 h-8 px-3.5 py-1.5 rounded-full border border-slate-200/90 text-xs font-semibold text-slate-600 hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50 transition-all cursor-pointer bg-white"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  <span>Upload</span>
+                </button>
+              )}
+            </div>
+
+            {/* Circular Send button with Up Arrow (Gambar 3) */}
+            <button
+              type="button"
+              disabled={!input.trim() && uploadedItems.length === 0}
+              onClick={() => {
+                setIsFullscreenInput(false);
+                handleSend();
+              }}
+              aria-label="Kirim pesan"
+              className={`size-11 rounded-full flex items-center justify-center text-white transition-all shadow-md shrink-0 ${
+                input.trim() || uploadedItems.length > 0
+                  ? "bg-blue-600 hover:bg-blue-700 active:scale-95 cursor-pointer shadow-blue-500/25"
+                  : "bg-blue-300 opacity-40 cursor-not-allowed"
+              }`}
+            >
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="12" y1="19" x2="12" y2="5" />
+                <polyline points="5 12 12 5 19 12" />
+              </svg>
+            </button>
+          </div>
+        </div>,
+        document.body
       )}
 
     </div>
