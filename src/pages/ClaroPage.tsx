@@ -9024,13 +9024,9 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
   const [chatInputText, setChatInputText] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [likedMsgIndices, setLikedMsgIndices] = useState<Set<number>>(new Set());
-  const [activeModel, setActiveModel] = useState<"Luma" | "Vera" | "Alta">("Luma");
-  const [modelDropdownOpen, setModelDropdownOpen] = useState(false);
-  const [uploadedChatFiles, setUploadedChatFiles] = useState<Array<{ name: string; size: string; type: string }>>([]);
 
   const chatEndRef = useRef<HTMLDivElement>(null);
   const sourceFileInputRef = useRef<HTMLInputElement>(null);
-  const chatFileInputRef = useRef<HTMLInputElement>(null);
 
   const handleCreateProject = () => {
     const trimmed = projectName.trim();
@@ -9229,24 +9225,8 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
     <div className="flex-1 flex flex-col h-full bg-white relative overflow-hidden select-none">
       {toast && <Toast msg={toast} onDone={() => setToast(null)} />}
 
-      {/* Hidden file inputs for uploads */}
+      {/* Hidden file input for source documents */}
       <input ref={sourceFileInputRef} type="file" accept=".pdf,.doc,.docx,.txt" className="hidden" onChange={handleSourceUpload} />
-      <input
-        ref={chatFileInputRef}
-        type="file"
-        accept="image/*,.pdf,.doc,.docx"
-        className="hidden"
-        onChange={(e) => {
-          const file = e.target.files?.[0];
-          if (file) {
-            const ext = file.name.split(".").pop()?.toUpperCase() ?? "FILE";
-            const size = file.size < 1024 * 1024 ? `${(file.size / 1024).toFixed(0)} KB` : `${(file.size / (1024 * 1024)).toFixed(1)} MB`;
-            setUploadedChatFiles((prev) => [...prev, { name: file.name, size, type: ext }]);
-            setToast(`Berkas "${file.name}" siap dikirim`);
-          }
-          e.target.value = "";
-        }}
-      />
 
       {/* ── Modal Pop-up 'Buat Proyek' ── */}
       {newProjectOpen && (
@@ -9602,132 +9582,21 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
             <div ref={chatEndRef} />
           </div>
 
-          {/* Bottom Chat Input (Alerin style as requested: + Upload, Mode pill, Textarea, Mic, Send) */}
-          <div className="shrink-0 p-3 bg-white border-t border-neutral-100 max-w-2xl mx-auto w-full">
-            {uploadedChatFiles.length > 0 && (
-              <div className="flex flex-wrap gap-2 mb-2">
-                {uploadedChatFiles.map((f, i) => (
-                  <div key={i} className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-neutral-100 text-xs text-neutral-800">
-                    <span className="font-bold text-blue-600">[{f.type}]</span>
-                    <span className="truncate max-w-[140px]">{f.name}</span>
-                    <button
-                      type="button"
-                      onClick={() => setUploadedChatFiles((prev) => prev.filter((_, idx) => idx !== i))}
-                      className="size-4 text-neutral-400 hover:text-neutral-700 rounded-full flex items-center justify-center ml-1"
-                    >
-                      ×
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            <div className="rounded-3xl border border-neutral-200/90 bg-white p-3 shadow-xs focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-100 transition-all">
-              <textarea
-                value={chatInputText}
-                onChange={(e) => setChatInputText(e.target.value)}
-                onKeyDown={(e) => {
-                  const isMobileDevice = typeof window !== "undefined" && (window.innerWidth < 768 || "ontouchstart" in window);
-                  if (e.key === "Enter" && !e.shiftKey && !isMobileDevice) {
-                    e.preventDefault();
-                    if (chatInputText.trim() && !isGenerating) {
-                      handleSendMessageInChat(chatInputText);
-                    }
-                  }
-                }}
-                placeholder={`Tanya apa saja tentang ${selectedProject.title}...`}
-                rows={1}
-                className="w-full bg-transparent text-sm text-neutral-900 placeholder:text-neutral-400 outline-none resize-none max-h-32 min-h-[24px]"
-              />
-
-              <div className="flex items-center justify-between pt-2 mt-1 border-t border-neutral-100">
-                <div className="flex items-center gap-2 relative">
-                  {/* + Upload */}
-                  <button
-                    type="button"
-                    onClick={() => chatFileInputRef.current?.click()}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-neutral-200 text-xs font-semibold text-neutral-700 hover:bg-neutral-50 active:scale-95 transition-all cursor-pointer"
-                  >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
-                    <span>Upload</span>
-                  </button>
-
-                  {/* Mode selector pill: ⚡ Luma */}
-                  <button
-                    type="button"
-                    onClick={() => setModelDropdownOpen((prev) => !prev)}
-                    className="flex items-center gap-1 px-3 py-1.5 rounded-full border border-neutral-200 text-xs font-semibold text-neutral-700 hover:bg-neutral-50 active:scale-95 transition-all cursor-pointer"
-                  >
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" className="text-amber-500">
-                      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-                    </svg>
-                    <span>{activeModel}</span>
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m6 9 6 6 6-6"/></svg>
-                  </button>
-
-                  {modelDropdownOpen && (
-                    <>
-                      <div className="fixed inset-0 z-[190]" onClick={() => setModelDropdownOpen(false)} />
-                      <div className="absolute left-0 bottom-10 z-[200] w-64 bg-white rounded-2xl border border-neutral-200 shadow-xl p-2 animate-[gemini-fade-in_0.15s_ease-out]">
-                        {(["Luma", "Vera", "Alta"] as const).map((m) => (
-                          <button
-                            key={m}
-                            type="button"
-                            onClick={() => {
-                              setActiveModel(m);
-                              setModelDropdownOpen(false);
-                            }}
-                            className={`w-full flex items-center justify-between p-2 rounded-xl text-xs font-medium text-left transition-colors ${
-                              activeModel === m ? "bg-neutral-100 text-neutral-900 font-bold" : "text-neutral-700 hover:bg-neutral-50"
-                            }`}
-                          >
-                            <div>
-                              <p className="font-semibold">{m} {m === "Luma" ? "- Cepat" : m === "Vera" ? "- Cermat" : "- Mendalam"}</p>
-                              <p className="text-[10px] text-neutral-400 font-normal">
-                                {m === "Luma" ? "Pertanyaan rutin & ide awal" : m === "Vera" ? "Analisis terstruktur & dokumen" : "Metodologi kompleks & sintesis"}
-                              </p>
-                            </div>
-                            {activeModel === m && (
-                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                            )}
-                          </button>
-                        ))}
-                      </div>
-                    </>
-                  )}
-                </div>
-
-                <div className="flex items-center gap-1.5">
-                  {/* Mic */}
-                  <button
-                    type="button"
-                    onClick={() => setToast("Fitur mikrofon aktif")}
-                    className="size-9 rounded-full flex items-center justify-center text-neutral-600 hover:bg-neutral-100 active:scale-95 transition-all cursor-pointer"
-                    aria-label="Bicara"
-                  >
-                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
-                      <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
-                      <line x1="12" y1="19" x2="12" y2="22" />
-                    </svg>
-                  </button>
-
-                  {/* Send button */}
-                  <button
-                    type="button"
-                    disabled={!chatInputText.trim() || isGenerating}
-                    onClick={() => handleSendMessageInChat(chatInputText)}
-                    className="size-9 rounded-full bg-blue-600 hover:bg-blue-700 active:scale-95 disabled:opacity-35 disabled:cursor-not-allowed text-white flex items-center justify-center transition-all cursor-pointer shadow-xs"
-                    aria-label="Kirim pesan"
-                  >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                      <line x1="22" y1="2" x2="11" y2="13" />
-                      <polygon points="22 2 15 22 11 13 2 9 22 2" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            </div>
+          {/* Bottom Chat Input matching Gambar 2 / Alerin Chat */}
+          <div className="shrink-0 bg-white z-20">
+            <ChatInputBox
+              input={chatInputText}
+              setInput={setChatInputText}
+              onSend={(text) => handleSendMessageInChat(text)}
+              onSendWithFile={(text, file) => {
+                handleSendMessageInChat(text || (file?.name ? `Menganalisis file: ${file.name}` : "Halo Alerin"));
+              }}
+              activeCategory={null}
+              setActiveCategory={() => {}}
+              hideTopSuggestions
+              loading={isGenerating}
+              onStop={() => setIsGenerating(false)}
+            />
           </div>
         </div>
       ) : selectedProject ? (
@@ -9847,7 +9716,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
 
           {/* Content: Obrolan List or Sumber List */}
           {projectSubTab === "obrolan" ? (
-            <div className="flex-1 overflow-y-auto px-4 pt-2 pb-28 space-y-4" style={{ scrollbarWidth: "none" }}>
+            <div className="flex-1 overflow-y-auto px-4 pt-2 pb-4 space-y-4" style={{ scrollbarWidth: "none" }}>
               {(projectChatsMap[selectedProject.id] ?? []).length === 0 ? (
                 <div className="py-20 text-center px-4">
                   <p className="text-sm font-semibold text-neutral-800 mb-1">Belum ada obrolan</p>
@@ -9875,7 +9744,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
             </div>
           ) : (
             /* Sumber Tab */
-            <div className="flex-1 overflow-y-auto px-4 pt-2 pb-28 space-y-3" style={{ scrollbarWidth: "none" }}>
+            <div className="flex-1 overflow-y-auto px-4 pt-2 pb-4 space-y-3" style={{ scrollbarWidth: "none" }}>
               <div className="flex items-center justify-between pb-2 border-b border-neutral-100">
                 <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wider">Dokumen Referensi</p>
                 <button
@@ -9930,61 +9799,19 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
             </div>
           )}
 
-          {/* Floating capsule input on Gambar 2 (+ Kirim pesan [Proyek]... mic, blue wave) */}
-          <div className="fixed bottom-5 left-4 right-4 z-30 max-w-md mx-auto pointer-events-auto">
-            <div className="rounded-full border border-neutral-200/90 bg-white/95 backdrop-blur-md px-3.5 py-2.5 flex items-center gap-2.5 shadow-xs">
-              <button
-                type="button"
-                onClick={() => sourceFileInputRef.current?.click()}
-                aria-label="Tambah lampiran"
-                className="size-8 rounded-full flex items-center justify-center text-neutral-700 hover:bg-neutral-100 transition-colors shrink-0 cursor-pointer"
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="12" y1="5" x2="12" y2="19" />
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
-              </button>
-              <input
-                type="text"
-                value={newChatQuickText}
-                onChange={(e) => setNewChatQuickText(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && newChatQuickText.trim()) {
-                    handleStartNewProjectChat(newChatQuickText);
-                  }
-                }}
-                placeholder={`Kirim pesan ${selectedProject.title}...`}
-                className="flex-1 bg-transparent text-sm text-neutral-900 placeholder:text-neutral-400 outline-none"
-              />
-              <button
-                type="button"
-                onClick={() => setToast("Fitur mikrofon aktif")}
-                aria-label="Mikrofon"
-                className="size-8 rounded-full flex items-center justify-center text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 transition-colors shrink-0 cursor-pointer"
-              >
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
-                  <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
-                  <line x1="12" y1="19" x2="12" y2="22" />
-                </svg>
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  if (newChatQuickText.trim()) {
-                    handleStartNewProjectChat(newChatQuickText);
-                  } else {
-                    setToast("Silakan ketik pesan terlebih dahulu");
-                  }
-                }}
-                aria-label="Kirim pesan"
-                className="size-9 rounded-full bg-blue-600 hover:bg-blue-700 active:scale-95 text-white flex items-center justify-center transition-all shrink-0 cursor-pointer shadow-xs"
-              >
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 2v20M17 5v14M7 5v14M22 10v4M2 10v4" />
-                </svg>
-              </button>
-            </div>
+          {/* Bottom Chat Input matching Gambar 2 / Alerin Chat */}
+          <div className="shrink-0 bg-white z-20">
+            <ChatInputBox
+              input={newChatQuickText}
+              setInput={setNewChatQuickText}
+              onSend={(text) => handleStartNewProjectChat(text)}
+              onSendWithFile={(text, file) => {
+                handleStartNewProjectChat(text || (file?.name ? `Menganalisis file: ${file.name}` : "Halo Alerin"));
+              }}
+              activeCategory={null}
+              setActiveCategory={() => {}}
+              hideTopSuggestions
+            />
           </div>
         </div>
       ) : (
