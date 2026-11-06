@@ -962,7 +962,7 @@ const QUIZ_QUESTIONS = [
 const AI_RESPONSES: [RegExp, string][] = [
   // ── 1. FILE OUTPUT (Pilihan format file lampiran: PDF, Excel, Word) ───────────
   [
-    /(?:output|ouput|kasih|minta|kirim|contoh|buatkan|format)\s+.*(?:file|dokumen|lampiran)|^(?:file|files|dokumen|lampiran|unduh\s*file|download\s*file)(?:\s+saja)?$/i,
+    /\b(?:file|files|dokumen|lampiran|unduh\s*file|download\s*file)\b/i,
     `Kalau Alerin memberikan **file/dokumen**, tampilannya seperti lampiran file di bawah ini yang bisa langsung kamu buka atau unduh:
 
 Contohnya:
@@ -978,9 +978,27 @@ Aku juga bisa membuat dan menyusun file PDF, Excel, Word, dan PowerPoint sesuai 
 Kamu ingin mencoba Alerin membuat file Excel atau dokumen lain?`
   ],
 
-  // ── 2. LINK OUTPUT (Kartu referensi tautan resmi interaktif) ────────────────
+  // ── 2. KOLOM / TABEL OUTPUT (Tabel responsif banyak kolom, teks hitam & bisa digeser) ──
   [
-    /(?:output|ouput|kasih|minta|kirim|contoh|sumber|referensi|kumpulan)\s+.*(?:link|tautan|url|website)|^(?:link|links|tautan|url|website)(?:\s+saja)?$/i,
+    /\b(?:kolom|tabel)\b/i,
+    `Kalau Alerin memberikan **kolom/tabel**, tampilannya berupa tabel responsif yang rapi, warna teks hitam, dan bisa digeser ke kiri dan kanan (horizontal scroll) agar nyaman dibaca di layar HP:
+
+Contohnya:
+
+| Bab | Judul | Isi Utama | Bobot Nilai | Status Pengerjaan |
+|---|---|---|---|---|
+| **BAB I** | Pendahuluan | Latar belakang, rumusan masalah, tujuan, manfaat, dan batasan penelitian | 15% | Siap Direvisi |
+| **BAB II** | Kajian Pustaka | Landasan teori, penelitian terdahulu, kerangka konseptual, dan hipotesis | 25% | Sedang Dikerjakan |
+| **BAB III** | Metodologi | Desain penelitian, populasi & sampel, instrumen, prosedur pengumpulan data, teknik analisis | 20% | Draf Awal |
+| **BAB IV** | Hasil & Pembahasan | Deskripsi data, hasil uji statistik/analisis, pembahasan dikaitkan dengan teori | 30% | Belum Dimulai |
+| **BAB V** | Penutup | Kesimpulan, implikasi, keterbatasan, dan saran untuk penelitian selanjutnya | 10% | Belum Dimulai |
+
+Tabel di atas memiliki banyak kolom dan teks panjang sehingga bisa kamu geser ke samping secara leluasa. 📊`
+  ],
+
+  // ── 3. LINK OUTPUT (Kartu referensi tautan resmi interaktif) ────────────────
+  [
+    /\b(?:link|links|tautan|url|website)\b/i,
     `Kalau Alerin memberikan **tautan/link**, tampilannya seperti kartu referensi tautan interaktif yang rapi, lengkap dengan kategori sumber, deskripsi, dan tombol kunjungi:
 
 Contohnya:
@@ -994,9 +1012,9 @@ Google Scholar Indonesia | Riset | Mesin pencari artikel ilmiah, kutipan, dan pu
 Semua tautan dapat kamu klik langsung untuk membuka halaman rujukan resmi terkait. 🔗`
   ],
 
-  // ── 3. CODE OUTPUT (Blok kode syntax highlighting & tombol copy) ─────────────
+  // ── 4. CODE OUTPUT (Blok kode syntax highlighting & tombol copy) ─────────────
   [
-    /(?:output|ouput|kasih|minta|kirim|contoh|tampilan|tampilkan|blok)\s+.*(?:code|kode|koding|coding|script|programming|syntax)|^(?:code|kode|koding|coding|script|program)(?:\s+saja)?$/i,
+    /\b(?:code|codes|kode|koding|coding|script|programming|syntax)\b/i,
     `Kalau Alerin memberikan **kode/programming**, tampilannya seperti blok kode yang bisa di-scroll horizontal, disalin dengan satu klik, dan dibaca dengan syntax highlighting:
 
 Contohnya:
@@ -1027,24 +1045,6 @@ console.log(\`Halo \${mahasiswa.nama}, selamat belajar!\`);
 \`\`\`
 
 Kamu bisa langsung menyalin kode di atas menggunakan tombol salin di pojok kanan atas setiap blok kode. 💻`
-  ],
-
-  // ── 4. KOLOM / TABEL OUTPUT (Tabel responsif banyak kolom, teks hitam & bisa digeser) ──
-  [
-    /(?:output|ouput|kasih|minta|kirim|contoh|buatkan|format|bikin|tampilkan)\s+.*(?:kolom|tabel)|^(?:kolom|tabel|tabel\s*kolom|banyak\s*kolom)(?:\s+saja)?$/i,
-    `Kalau Alerin memberikan **kolom/tabel**, tampilannya berupa tabel responsif yang rapi, warna teks hitam, dan bisa digeser ke kiri dan kanan (horizontal scroll) agar nyaman dibaca di layar HP:
-
-Contohnya:
-
-| Bab | Judul | Isi Utama | Bobot Nilai | Status Pengerjaan |
-|---|---|---|---|---|
-| **BAB I** | Pendahuluan | Latar belakang, rumusan masalah, tujuan, manfaat, dan batasan penelitian | 15% | Siap Direvisi |
-| **BAB II** | Kajian Pustaka | Landasan teori, penelitian terdahulu, kerangka konseptual, dan hipotesis | 25% | Sedang Dikerjakan |
-| **BAB III** | Metodologi | Desain penelitian, populasi & sampel, instrumen, prosedur pengumpulan data, teknik analisis | 20% | Draf Awal |
-| **BAB IV** | Hasil & Pembahasan | Deskripsi data, hasil uji statistik/analisis, pembahasan dikaitkan dengan teori | 30% | Belum Dimulai |
-| **BAB V** | Penutup | Kesimpulan, implikasi, keterbatasan, dan saran untuk penelitian selanjutnya | 10% | Belum Dimulai |
-
-Tabel di atas memiliki banyak kolom dan teks panjang sehingga bisa kamu geser ke samping secara leluasa. 📊`
   ],
 
   [/panduan dashboard|dokumen akademik|contoh dokumen|file pdf dan word|file docx|lampiran dokumen|download pdf/i, `Contoh dokumen: **Panduan Dashboard Akademik**
@@ -1495,8 +1495,9 @@ Ceritakan apa yang sedang kamu kerjakan hari ini, dan kita mulai bersama!`],
 ];
 
 function getAIResponse(msg: string): string {
+  const cleanMsg = (msg || "").trim();
   for (const [pattern, resp] of AI_RESPONSES) {
-    if (pattern.test(msg)) return resp;
+    if (pattern.test(msg) || pattern.test(cleanMsg)) return resp;
   }
   return `Pertanyaan yang menarik! Izinkan aku memberikan jawaban yang terstruktur dan komprehensif.
 
