@@ -3942,21 +3942,13 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
                 <span className="text-sm font-medium">Saran &amp; Laporan</span>
               </button>
 
-              <button type="button" onClick={() => { showToast("Alerin dapat dipasang di desktop dan mobile."); setProfileMenuOpen(false); }}
+              <button type="button" onClick={() => { showToast("Pintasan Alerin siap dipasang di layar utama."); setProfileMenuOpen(false); }}
                 className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-slate-600 transition-colors hover:bg-slate-50">
                 <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="3" y="3" width="18" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M9 8l3 3 3-3M12 5v6"/></svg>
                 <span className="flex flex-col">
-                  <span className="text-sm font-medium">Pasang Aplikasi</span>
-                  <span className="text-[11px] text-slate-400">Untuk desktop dan mobile</span>
+                  <span className="text-sm font-medium">Pasang Pintasan</span>
+                  <span className="text-[11px] text-slate-400">Cara cepat mengakses  Alerin</span>
                 </span>
-              </button>
-            </div>
-
-            <div className="border-t border-slate-100 p-2">
-              <button type="button" onClick={() => { setLogoutConfirmOpen(true); setProfileMenuOpen(false); }}
-                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-red-500 transition-colors hover:bg-red-50">
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-                <span className="text-sm font-semibold">Keluar</span>
               </button>
             </div>
           </div>
