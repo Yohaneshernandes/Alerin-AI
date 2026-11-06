@@ -170,9 +170,9 @@ const IMAGE_KEYWORDS = [
 
 function isImageRequest(text: string): boolean {
   const lower = text.toLowerCase().trim();
-  // Cegah bentrok jika pengguna secara spesifik meminta output code, file, atau link
+  // Cegah bentrok jika pengguna secara spesifik meminta output code, file, link, atau kolom/tabel
   if (
-    /^(?:output\s+code|ouput\s+code|code|kode|koding|coding|output\s+link|ouput\s+link|link|tautan|url|output\s+file|ouput\s+file|file|dokumen)(?:\s+saja)?$/i.test(lower)
+    /^(?:output\s+code|ouput\s+code|code|kode|koding|coding|output\s+link|ouput\s+link|link|tautan|url|output\s+file|ouput\s+file|file|dokumen|output\s+kolom|ouput\s+kolom|kolom|tabel)(?:\s+saja)?$/i.test(lower)
   ) {
     return false;
   }
@@ -1029,6 +1029,24 @@ console.log(\`Halo \${mahasiswa.nama}, selamat belajar!\`);
 Kamu bisa langsung menyalin kode di atas menggunakan tombol salin di pojok kanan atas setiap blok kode. 💻`
   ],
 
+  // ── 4. KOLOM / TABEL OUTPUT (Tabel responsif banyak kolom, teks hitam & bisa digeser) ──
+  [
+    /(?:output|ouput|kasih|minta|kirim|contoh|buatkan|format|bikin|tampilkan)\s+.*(?:kolom|tabel)|^(?:kolom|tabel|tabel\s*kolom|banyak\s*kolom)(?:\s+saja)?$/i,
+    `Kalau Alerin memberikan **kolom/tabel**, tampilannya berupa tabel responsif yang rapi, warna teks hitam, dan bisa digeser ke kiri dan kanan (horizontal scroll) agar nyaman dibaca di layar HP:
+
+Contohnya:
+
+| Bab | Judul | Isi Utama | Bobot Nilai | Status Pengerjaan |
+|---|---|---|---|---|
+| **BAB I** | Pendahuluan | Latar belakang, rumusan masalah, tujuan, manfaat, dan batasan penelitian | 15% | Siap Direvisi |
+| **BAB II** | Kajian Pustaka | Landasan teori, penelitian terdahulu, kerangka konseptual, dan hipotesis | 25% | Sedang Dikerjakan |
+| **BAB III** | Metodologi | Desain penelitian, populasi & sampel, instrumen, prosedur pengumpulan data, teknik analisis | 20% | Draf Awal |
+| **BAB IV** | Hasil & Pembahasan | Deskripsi data, hasil uji statistik/analisis, pembahasan dikaitkan dengan teori | 30% | Belum Dimulai |
+| **BAB V** | Penutup | Kesimpulan, implikasi, keterbatasan, dan saran untuk penelitian selanjutnya | 10% | Belum Dimulai |
+
+Tabel di atas memiliki banyak kolom dan teks panjang sehingga bisa kamu geser ke samping secara leluasa. 📊`
+  ],
+
   [/panduan dashboard|dokumen akademik|contoh dokumen|file pdf dan word|file docx|lampiran dokumen|download pdf/i, `Contoh dokumen: **Panduan Dashboard Akademik**
 
 Dokumen berisi:
@@ -1517,6 +1535,7 @@ const SUGGESTION_MAP: { pattern: RegExp; suggestions: string[] }[] = [
   { pattern: /ai|kecerdasan buatan|machine learning/i, suggestions: ["Aplikasi AI di bidang akademik", "Etika penggunaan AI untuk skripsi", "Referensi AI terbaru (2023-2024)"] },
   { pattern: /python|kode|coding|program|javascript|sql|database|api|web|react|frontend|backend/i, suggestions: ["Tambahkan error handling", "Jelaskan kode ini baris per baris", "Buat unit test untuk fungsi ini"] },
   { pattern: /ngasih file|output.*file|lampiran|contoh dokumen|buat file excel|contoh file/i, suggestions: ["Coba buat file Excel dengan banyak kolom", "Buatkan dokumen Panduan PDF & Word", "Tampilkan referensi website UI/UX"] },
+  { pattern: /kolom|tabel/i, suggestions: ["Tambah kolom deadline & bobot", "Ubah format tabel jadi Excel", "Jelaskan isi setiap kolom"] },
   { pattern: /referensi website|referensi ui|link referensi/i, suggestions: ["Buka Figma Community untuk UI Kit", "Cari inspirasi di Dribbble", "Buatkan ringkasan struktur dashboard"] },
 ];
 
