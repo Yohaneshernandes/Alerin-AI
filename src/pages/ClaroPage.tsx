@@ -944,6 +944,76 @@ const QUIZ_QUESTIONS = [
 ];
 
 const AI_RESPONSES: [RegExp, string][] = [
+  [/ouput.*ngasih file|output.*ngasih file|ngasih file|kasih file|ouput.*file|output.*file|lampiran file|contoh file|bisa kasih file|contoh lampiran|bisa buat file|format file/i, `Kalau Alerin memberikan file, tampilannya bisa seperti lampiran file yang bisa kamu buka atau unduh.
+
+Contohnya:
+
+\`\`\`files
+Laporan Data Mahasiswa.pdf | PDF · 2 halaman | pdf
+Data Mahasiswa.xlsx | Excel · 6 kolom | excel
+\`\`\`
+
+Aku juga bisa membuat file PDF, Excel, Word, dan PowerPoint.
+
+Kamu ingin mencoba Alerin membuat file Excel dengan banyak kolom dan teks panjang?`],
+
+  [/panduan dashboard|dokumen akademik|contoh dokumen|file pdf dan word|file docx|lampiran dokumen|download pdf/i, `Contoh dokumen: **Panduan Dashboard Akademik**
+
+Dokumen berisi:
+- Pendahuluan dan struktur dashboard.
+- Rekomendasi tabel dengan banyak kolom.
+- Penanganan teks panjang.
+- Desain responsif untuk mobile.
+- Checklist UI/UX.
+
+**Lampiran file**
+
+\`\`\`files
+Panduan Dashboard Akademik.pdf | PDF · Siap dibaca dan dicetak | pdf | Selesai | Download PDF
+Panduan Dashboard Akademik.docx | Word · Bisa diedit | word | Selesai | Download Word
+\`\`\`
+
+Begini format yang kamu maksud? 😊`],
+
+  [/referensi website|referensi ui|referensi desain|sumber website|link referensi|kumpulan link/i, `## Referensi UI/UX Dashboard
+
+Dalam membuat dashboard modern, kita perlu memperhatikan hierarki visual, konsistensi komponen, keterbacaan tabel, dan responsivitas. Referensi desain bisa membantu menemukan pola layout yang lebih efektif dan menghindari desain yang terlalu padat.
+
+**Referensi website:**
+
+\`\`\`links
+Dribbble | Inspirasi UI | Referensi visual untuk dashboard, aplikasi, dan desain antarmuka. | https://dribbble.com | Buka Dribbble
+Behance | Portofolio | Melihat studi kasus dan portofolio desain lengkap. | https://behance.net | Buka Behance
+Figma Community | UI Kit | Mencari UI kit, template, dan komponen Figma. | https://figma.com/community | Buka Figma Community
+\`\`\`
+
+Jadi format jawaban Alerin bisa seperti ini:
+1. Penjelasan panjang di bagian atas.
+2. Tabel jika diperlukan.
+3. File PDF atau Word jika dibuat.
+4. Kumpulan link di bagian bawah.
+
+Kita pakai format ini sebagai gaya jawaban berikutnya ya! 😊`],
+
+  [/buat file excel|excel banyak kolom|contoh excel|file excel/i, `Tentu! Ini contoh file **Data Mahasiswa** lengkap dengan tabel kolom dan lampiran file Excel yang bisa langsung kamu unduh:
+
+| No | NIM | Nama Mahasiswa | Program Studi | Semester | Status Akademik |
+|----|-----|----------------|---------------|----------|-----------------|
+| 1 | 2024001 | Andi Pratama | Sistem Informasi | Semester 6 | Aktif |
+| 2 | 2024002 | Siti Amelia | Informatika | Semester 6 | Aktif |
+| 3 | 2024003 | Budi Santoso | Manajemen Bisnis | Semester 4 | Aktif |
+| 4 | 2024004 | Dewi Lestari | Akuntansi | Semester 8 | Lulus Sidang |
+| 5 | 2024005 | Rian Hidayat | Ilmu Komunikasi | Semester 6 | Aktif |
+
+**Lampiran file**
+
+\`\`\`files
+Data_Mahasiswa_Lengkap.xlsx | Excel · 6 kolom · 150 data baris | excel | Selesai | Download Excel
+Laporan_Rekapitulasi.pdf | PDF · 3 halaman siap cetak | pdf | Selesai | Download PDF
+\`\`\`
+
+File siap dibuka di Microsoft Excel atau Google Sheets. Mau Alerin tambahkan kolom atau data lainnya?`],
+
   [/contoh kode|tampilan kode|output code|contoh programming|blok kode|contoh html|contoh javascript/i, `Kalau Alerin memberikan **kode/programming**, tampilannya seperti blok kode yang bisa di-scroll horizontal, disalin, dan dibaca dengan syntax highlighting.
 
 Contohnya:
@@ -1374,6 +1444,8 @@ const SUGGESTION_MAP: { pattern: RegExp; suggestions: string[] }[] = [
   { pattern: /skripsi|tesis|penelitian/i, suggestions: ["Cek kerangka penelitianku", "Saran topik yang feasible", "Timeline skripsi realistis"] },
   { pattern: /ai|kecerdasan buatan|machine learning/i, suggestions: ["Aplikasi AI di bidang akademik", "Etika penggunaan AI untuk skripsi", "Referensi AI terbaru (2023-2024)"] },
   { pattern: /python|kode|coding|program|javascript|sql|database|api|web|react|frontend|backend/i, suggestions: ["Tambahkan error handling", "Jelaskan kode ini baris per baris", "Buat unit test untuk fungsi ini"] },
+  { pattern: /ngasih file|output.*file|lampiran|contoh dokumen|buat file excel|contoh file/i, suggestions: ["Coba buat file Excel dengan banyak kolom", "Buatkan dokumen Panduan PDF & Word", "Tampilkan referensi website UI/UX"] },
+  { pattern: /referensi website|referensi ui|link referensi/i, suggestions: ["Buka Figma Community untuk UI Kit", "Cari inspirasi di Dribbble", "Buatkan ringkasan struktur dashboard"] },
 ];
 
 const DEFAULT_SUGGESTIONS = ["Lanjutkan penjelasannya lebih detail", "Berikan contoh konkret", "Apa yang harus kulakukan selanjutnya?"];
@@ -5334,6 +5406,293 @@ function CodeBlock({ lang, code }: { lang: string; code: string }) {
   );
 }
 
+// ─── File Attachment Card (Gambar 1 & Gambar 2: Lampiran File Alerin) ─────────
+type FileAttachmentItem = {
+  name: string;
+  meta: string;
+  type: string;
+  badge?: string;
+  downloadLabel?: string;
+};
+
+function FileAttachmentCard({ items }: { items: FileAttachmentItem[] }) {
+  const [downloadingName, setDownloadingName] = React.useState<string | null>(null);
+
+  const handleDownload = (item: FileAttachmentItem) => {
+    setDownloadingName(item.name);
+    setTimeout(() => setDownloadingName(null), 1800);
+    try {
+      let content = `Dokumen: ${item.name}\nDeskripsi: ${item.meta}\nDibuat oleh: Alerin AI\nTanggal: ${new Date().toLocaleDateString("id-ID")}\n\nDokumen berhasil diunduh dari Alerin AI.`;
+      let mime = "text/plain";
+      if (item.name.endsWith(".csv") || item.name.endsWith(".xlsx")) {
+        content = "No,NIM,Nama Mahasiswa,Program Studi,Status\n1,00123,Andi Pratama,Sistem Informasi,Aktif\n2,00124,Siti Amelia,Informatika,Aktif\n3,00125,Budi Santoso,Manajemen,Aktif\n4,00126,Dewi Lestari,Akuntansi,Aktif\n5,00127,Rian Hidayat,Ilmu Komunikasi,Aktif\n";
+        mime = "text/csv;charset=utf-8;";
+      }
+      const blob = new Blob([content], { type: mime });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = item.name;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      console.error("Gagal mengunduh file", e);
+    }
+  };
+
+  const getIconAndStyle = (type: string, name: string) => {
+    const lower = (type + " " + name).toLowerCase();
+    if (lower.includes("pdf")) {
+      return {
+        bg: "bg-[#FEECEC]",
+        color: "text-[#DC2626]",
+        icon: (
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+            <polyline points="14 2 14 8 20 8" />
+            <path d="M9 13v4" />
+            <path d="M9 13h2a1.5 1.5 0 0 1 0 3H9" />
+          </svg>
+        ),
+      };
+    }
+    if (lower.includes("excel") || lower.includes("xlsx") || lower.includes("sheet") || lower.includes("csv")) {
+      return {
+        bg: "bg-[#EAF7EE]",
+        color: "text-[#16A34A]",
+        icon: (
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+            <polyline points="14 2 14 8 20 8" />
+            <path d="M8 13h8" />
+            <path d="M8 17h8" />
+            <path d="M12 10v9" />
+          </svg>
+        ),
+      };
+    }
+    if (lower.includes("word") || lower.includes("doc") || lower.includes("docx")) {
+      return {
+        bg: "bg-[#EBF3FE]",
+        color: "text-[#2563EB]",
+        icon: (
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+            <polyline points="14 2 14 8 20 8" />
+            <path d="M9 17l1.5-6 1.5 4 1.5-4 1.5 6" />
+          </svg>
+        ),
+      };
+    }
+    if (lower.includes("ppt") || lower.includes("powerpoint")) {
+      return {
+        bg: "bg-[#FEF3EB]",
+        color: "text-[#EA580C]",
+        icon: (
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+            <polyline points="14 2 14 8 20 8" />
+            <circle cx="10.5" cy="12.5" r="1.5" />
+          </svg>
+        ),
+      };
+    }
+    return {
+      bg: "bg-[#F1F5F9]",
+      color: "text-[#475569]",
+      icon: (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+          <polyline points="14 2 14 8 20 8" />
+        </svg>
+      ),
+    };
+  };
+
+  return (
+    <div className="bg-white rounded-[22px] border border-neutral-200/90 shadow-[0_1px_4px_rgba(0,0,0,0.04)] overflow-hidden my-3.5 divide-y divide-neutral-100">
+      {items.map((item, idx) => {
+        const { bg, color, icon } = getIconAndStyle(item.type, item.name);
+        const hasBottomAction = Boolean(item.downloadLabel);
+
+        return (
+          <div key={idx} className="p-3.5 sm:p-4 hover:bg-neutral-50/70 transition-colors">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3.5 min-w-0">
+                <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${bg} ${color}`}>
+                  {icon}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-[0.9375rem] font-semibold text-neutral-900 truncate">{item.name}</p>
+                  <p className="text-[0.8125rem] text-neutral-500 mt-0.5 leading-normal">{item.meta}</p>
+                </div>
+              </div>
+
+              {item.badge ? (
+                <span className="shrink-0 text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+                  {item.badge}
+                </span>
+              ) : !hasBottomAction ? (
+                <button
+                  type="button"
+                  onClick={() => handleDownload(item)}
+                  title={`Unduh ${item.name}`}
+                  className="p-2 text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100 rounded-lg active:scale-90 transition-all shrink-0 cursor-pointer"
+                >
+                  {downloadingName === item.name ? (
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="animate-pulse">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  ) : (
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                      <polyline points="7 10 12 15 17 10" />
+                      <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg>
+                  )}
+                </button>
+              ) : null}
+            </div>
+
+            {hasBottomAction && (
+              <button
+                type="button"
+                onClick={() => handleDownload(item)}
+                className="inline-flex items-center gap-1.5 text-[0.875rem] font-medium text-neutral-900 hover:text-blue-600 underline decoration-dotted decoration-neutral-400 underline-offset-4 cursor-pointer mt-2.5 ml-0.5 active:opacity-70 transition-colors"
+              >
+                {downloadingName === item.name ? (
+                  <>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    <span className="text-emerald-700">Mengunduh...</span>
+                  </>
+                ) : (
+                  <>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                      <polyline points="7 10 12 15 17 10" />
+                      <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg>
+                    <span>{item.downloadLabel}</span>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="7" y1="17" x2="17" y2="7" />
+                      <polyline points="7 7 17 7 17 17" />
+                    </svg>
+                  </>
+                )}
+              </button>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// ─── Reference Links Card (Gambar 3 & Gambar 4: Kumpulan Link Referensi) ───────
+type ReferenceLinkItem = {
+  title: string;
+  badge?: string;
+  desc: string;
+  url: string;
+  actionLabel?: string;
+};
+
+function ReferenceLinksCard({ items }: { items: ReferenceLinkItem[] }) {
+  const getBrandIcon = (title: string, url: string) => {
+    const t = (title + " " + url).toLowerCase();
+    if (t.includes("dribbble")) {
+      return (
+        <div className="w-5 h-5 rounded-full bg-[#ea4c89] flex items-center justify-center text-white shrink-0">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M19.13 5.09C15.22 9.14 10 10.44 2.25 10.94" />
+            <path d="M21.75 12.84c-6.62-1.41-12.14 1-16.38 6.32" />
+            <path d="M8.56 2.75c4.37 6 6 9.42 8 17.72" />
+          </svg>
+        </div>
+      );
+    }
+    if (t.includes("behance")) {
+      return (
+        <div className="w-5 h-5 rounded-md bg-[#0057ff] flex items-center justify-center text-white text-[10px] font-bold shrink-0">
+          Bē
+        </div>
+      );
+    }
+    if (t.includes("figma")) {
+      return (
+        <div className="w-5 h-5 flex items-center justify-center shrink-0">
+          <svg width="14" height="21" viewBox="0 0 38 57" fill="none">
+            <path d="M19 28.5A9.5 9.5 0 1 1 28.5 19 9.5 9.5 0 0 1 19 28.5z" fill="#1ABCFE"/>
+            <path d="M0 47.5A9.5 9.5 0 0 1 9.5 38H19v9.5A9.5 9.5 0 0 1 9.5 57 9.5 9.5 0 0 1 0 47.5z" fill="#0ACF83"/>
+            <path d="M19 0v19h9.5A9.5 9.5 0 1 0 28.5 0H19z" fill="#FF7262"/>
+            <path d="M0 9.5A9.5 9.5 0 0 0 9.5 19H19V0H9.5A9.5 9.5 0 0 0 0 9.5z" fill="#F24E1E"/>
+            <path d="M0 28.5A9.5 9.5 0 0 0 9.5 38H19V19H9.5A9.5 9.5 0 0 0 0 28.5z" fill="#A259FF"/>
+          </svg>
+        </div>
+      );
+    }
+    if (t.includes("scholar") || t.includes("jurnal") || t.includes("scopus")) {
+      return (
+        <div className="w-5 h-5 rounded-md bg-[#4285F4] flex items-center justify-center text-white shrink-0">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+            <path d="M6 12v5c3 3 9 3 12 0v-5" />
+          </svg>
+        </div>
+      );
+    }
+    return (
+      <div className="w-5 h-5 rounded-md bg-neutral-100 flex items-center justify-center text-neutral-600 shrink-0">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="2" y1="12" x2="22" y2="12" />
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+        </svg>
+      </div>
+    );
+  };
+
+  return (
+    <div className="bg-white rounded-[22px] border border-neutral-200/90 shadow-[0_1px_4px_rgba(0,0,0,0.04)] overflow-hidden my-3.5 divide-y divide-neutral-100">
+      {items.map((item, idx) => (
+        <div key={idx} className="p-3.5 sm:p-4 hover:bg-neutral-50/70 transition-colors">
+          <div className="flex items-center justify-between gap-3 mb-1.5">
+            <div className="flex items-center gap-2.5 min-w-0">
+              {getBrandIcon(item.title, item.url)}
+              <h4 className="text-[0.9375rem] font-semibold text-neutral-900 truncate">{item.title}</h4>
+            </div>
+            {item.badge && (
+              <span className="shrink-0 text-[11px] font-medium px-2.5 py-0.5 rounded-full bg-neutral-100 text-neutral-600">
+                {item.badge}
+              </span>
+            )}
+          </div>
+          <p className="text-[0.8125rem] text-neutral-600 leading-relaxed mb-3">
+            {item.desc}
+          </p>
+          <a
+            href={item.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 text-[0.875rem] font-medium text-neutral-900 hover:text-blue-600 underline decoration-dotted decoration-neutral-400 underline-offset-4 transition-colors"
+          >
+            {item.actionLabel || `Buka ${item.title}`}
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="7" y1="17" x2="17" y2="7" />
+              <polyline points="7 7 17 7 17 17" />
+            </svg>
+          </a>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function cleanMdText(text: string): string {
   // Hapus strip/garis pemisah (em-dash ' — ' atau ' – ') agar output jawaban bebas dari tanda garis
   return text
@@ -5375,7 +5734,7 @@ function MarkdownRenderer({ text, isStreaming }: { text: string; isStreaming?: b
     // Blank line → skip
     if (!line) { i++; continue; }
 
-    // Code block (fenced with ```)
+    // Code block or Special Cards (files / links)
     if (line.startsWith("```")) {
       const lang = line.slice(3).trim().toLowerCase();
       i++;
@@ -5385,6 +5744,69 @@ function MarkdownRenderer({ text, isStreaming }: { text: string; isStreaming?: b
         i++;
       }
       i++; // skip closing ```
+
+      // Files Attachment Card (Gambar 1 & Gambar 2)
+      if (lang === "files" || lang === "file" || lang === "lampiran") {
+        let fileItems: FileAttachmentItem[] = [];
+        const rawJoined = codeLines.join("\n").trim();
+        if (rawJoined.startsWith("[") && rawJoined.endsWith("]")) {
+          try {
+            fileItems = JSON.parse(rawJoined);
+          } catch (_) {}
+        }
+        if (fileItems.length === 0) {
+          codeLines.forEach((cl) => {
+            const trimmed = cl.trim();
+            if (!trimmed) return;
+            const parts = trimmed.split("|").map((p) => p.trim());
+            if (parts.length >= 2) {
+              fileItems.push({
+                name: parts[0],
+                meta: parts[1],
+                type: parts[2] || (parts[0].split(".").pop() ?? "file"),
+                badge: parts[3] || undefined,
+                downloadLabel: parts[4] || undefined,
+              });
+            }
+          });
+        }
+        if (fileItems.length > 0) {
+          elements.push(<FileAttachmentCard key={`files-${i}`} items={fileItems} />);
+          continue;
+        }
+      }
+
+      // Website Reference Links Card (Gambar 3 & Gambar 4)
+      if (lang === "links" || lang === "referensi" || lang === "references") {
+        let linkItems: ReferenceLinkItem[] = [];
+        const rawJoined = codeLines.join("\n").trim();
+        if (rawJoined.startsWith("[") && rawJoined.endsWith("]")) {
+          try {
+            linkItems = JSON.parse(rawJoined);
+          } catch (_) {}
+        }
+        if (linkItems.length === 0) {
+          codeLines.forEach((cl) => {
+            const trimmed = cl.trim();
+            if (!trimmed) return;
+            const parts = trimmed.split("|").map((p) => p.trim());
+            if (parts.length >= 3) {
+              linkItems.push({
+                title: parts[0],
+                badge: parts[1] || undefined,
+                desc: parts[2],
+                url: parts[3] || "#",
+                actionLabel: parts[4] || undefined,
+              });
+            }
+          });
+        }
+        if (linkItems.length > 0) {
+          elements.push(<ReferenceLinksCard key={`links-${i}`} items={linkItems} />);
+          continue;
+        }
+      }
+
       elements.push(<CodeBlock key={`code-${i}`} lang={lang} code={codeLines.join("\n")} />);
       continue;
     }
