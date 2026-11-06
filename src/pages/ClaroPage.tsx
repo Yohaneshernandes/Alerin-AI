@@ -944,6 +944,41 @@ const QUIZ_QUESTIONS = [
 ];
 
 const AI_RESPONSES: [RegExp, string][] = [
+  [/contoh kode|tampilan kode|output code|contoh programming|blok kode|contoh html|contoh javascript/i, `Kalau Alerin memberikan **kode/programming**, tampilannya seperti blok kode yang bisa di-scroll horizontal, disalin, dan dibaca dengan syntax highlighting.
+
+Contohnya:
+
+**Contoh HTML dengan teks panjang**
+
+\`\`\`html
+<div class="container">
+  <h1>Dashboard Mahasiswa</h1>
+  <p>
+    Selamat datang di sistem informasi akademik mahasiswa.
+  </p>
+  <button>Mulai Sekarang</button>
+</div>
+\`\`\`
+
+**Contoh JavaScript**
+
+\`\`\`javascript
+const mahasiswa = {
+  nama: "Andi Pratama",
+  jurusan: "Sistem Informasi",
+  status: "Aktif",
+  deskripsi: "Mahasiswa yang sedang melakukan penelitian skripsi tentang kecerdasan buatan."
+};
+\`\`\`
+
+Jadi:
+- Kode panjang tetap dalam blok kode.
+- Baris kode tidak berantakan.
+- Bisa disalin sekaligus.
+- Bisa menggunakan horizontal scroll jika baris terlalu panjang.
+
+Kalau kode sangat panjang, aku juga bisa memberikannya sebagai file .html, .js, .tsx, atau .zip. ❤️`],
+
   [/kolom sayang|bukan list|buatkan tabel|tabel penelitian|contoh tabel|tabel mahasiswa/i, `OHH maksudmu tabel dengan banyak kolom sungguhan, bukan daftar vertikal. 😭❤️
 
 Contohnya begini:
@@ -5009,8 +5044,27 @@ function renderInlineMd(text: string): React.ReactNode[] {
   });
 }
 
+function getDisplayLangName(lang: string): string {
+  const l = (lang || "").trim().toLowerCase();
+  if (l === "html") return "HTML";
+  if (l === "javascript" || l === "js") return "JavaScript";
+  if (l === "typescript" || l === "ts") return "TypeScript";
+  if (l === "jsx") return "JSX";
+  if (l === "tsx") return "TSX";
+  if (l === "python" || l === "py") return "Python";
+  if (l === "sql") return "SQL";
+  if (l === "css") return "CSS";
+  if (l === "json") return "JSON";
+  if (l === "bash" || l === "sh" || l === "shell") return "Bash";
+  if (l === "cpp" || l === "c++") return "C++";
+  if (l === "c") return "C";
+  if (l === "java") return "Java";
+  return lang ? lang.charAt(0).toUpperCase() + lang.slice(1) : "Code";
+}
+
 function CodeBlock({ lang, code }: { lang: string; code: string }) {
   const [copied, setCopied] = React.useState(false);
+  const [showPreview, setShowPreview] = React.useState(false);
 
   const copy = () => {
     navigator.clipboard.writeText(code).then(() => {
@@ -5020,123 +5074,262 @@ function CodeBlock({ lang, code }: { lang: string; code: string }) {
   };
 
   const highlight = (line: string, language: string): React.ReactNode => {
-    if (language === "json") {
+    const l = language.toLowerCase();
+
+    // 1. HTML / XML / SVG
+    if (l === "html" || l === "xml" || l === "svg") {
+      const tokenRegex = /(<!--[\s\S]*?-->)|(<\/?[a-zA-Z0-9_-]+)|(\/?>)|(\b[a-zA-Z0-9_-]+(?=\=))|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/g;
       const parts: React.ReactNode[] = [];
-      let rest = line;
-      let ki = 0;
-      const jsonToken = /("(?:[^"\\]|\\.)*"\s*:)|("(?:[^"\\]|\\.)*")|(true|false|null)|(-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)/g;
+      let lastIndex = 0;
       let m: RegExpExecArray | null;
-      let lastIdx = 0;
-      jsonToken.lastIndex = 0;
-      while ((m = jsonToken.exec(rest)) !== null) {
-        if (m.index > lastIdx) parts.push(<span key={ki++} style={{ color: "#e2e8f0" }}>{rest.slice(lastIdx, m.index)}</span>);
-        if (m[1]) parts.push(<span key={ki++} style={{ color: "#93c5fd" }}>{m[1]}</span>);
-        else if (m[2]) parts.push(<span key={ki++} style={{ color: "#86efac" }}>{m[2]}</span>);
-        else if (m[3]) parts.push(<span key={ki++} style={{ color: "#f97316" }}>{m[3]}</span>);
-        else if (m[4]) parts.push(<span key={ki++} style={{ color: "#fb923c" }}>{m[4]}</span>);
-        lastIdx = m.index + m[0].length;
+      let k = 0;
+      tokenRegex.lastIndex = 0;
+      while ((m = tokenRegex.exec(line)) !== null) {
+        if (m.index > lastIndex) {
+          parts.push(<span key={k++} className="text-neutral-900">{line.slice(lastIndex, m.index)}</span>);
+        }
+        if (m[1]) {
+          parts.push(<span key={k++} className="text-neutral-400 italic">{m[1]}</span>);
+        } else if (m[2]) {
+          parts.push(<span key={k++} style={{ color: "#b02a87" }} className="font-medium">{m[2]}</span>);
+        } else if (m[3]) {
+          parts.push(<span key={k++} style={{ color: "#b02a87" }} className="font-medium">{m[3]}</span>);
+        } else if (m[4]) {
+          parts.push(<span key={k++} className="text-neutral-600">{m[4]}</span>);
+        } else if (m[5]) {
+          parts.push(<span key={k++} style={{ color: "#dc2626" }}>{m[5]}</span>);
+        }
+        lastIndex = m.index + m[0].length;
       }
-      if (lastIdx < rest.length) parts.push(<span key={ki++} style={{ color: "#e2e8f0" }}>{rest.slice(lastIdx)}</span>);
-      return parts.length ? <>{parts}</> : <span style={{ color: "#e2e8f0" }}>{line}</span>;
-    }
-    if (language === "python" || language === "py") {
-      const kw = /\b(def|class|import|from|return|if|elif|else|for|while|in|not|and|or|True|False|None|with|as|try|except|finally|raise|pass|break|continue|lambda|yield|async|await|self)\b/g;
-      const str = /(["'])(?:(?!\1)[^\\]|\\.)*?\1/g;
-      const comment = /(#.*)/g;
-      const num = /\b(\d+(?:\.\d+)?)\b/g;
-      const fn = /\b([a-zA-Z_]\w*)\s*(?=\()/g;
-      let result = line
-        .replace(comment, '<c-comment>$1</c-comment>')
-        .replace(str, '<c-string>$&</c-string>')
-        .replace(kw, '<c-kw>$1</c-kw>')
-        .replace(fn, '<c-fn>$1</c-fn>')
-        .replace(num, '<c-num>$1</c-num>');
-      const colorMap: Record<string, string> = { "c-kw": "#c084fc", "c-string": "#86efac", "c-comment": "#64748b", "c-fn": "#60a5fa", "c-num": "#fb923c" };
-      const parts2: React.ReactNode[] = [];
-      const tagRe = /<(c-\w+)>(.*?)<\/\1>/g;
-      let li = 0, m2: RegExpExecArray | null;
-      tagRe.lastIndex = 0;
-      while ((m2 = tagRe.exec(result)) !== null) {
-        if (m2.index > li) parts2.push(<span key={li} style={{ color: "#e2e8f0" }}>{result.slice(li, m2.index)}</span>);
-        parts2.push(<span key={m2.index} style={{ color: colorMap[m2[1]] ?? "#e2e8f0" }}>{m2[2]}</span>);
-        li = m2.index + m2[0].length;
+      if (lastIndex < line.length) {
+        parts.push(<span key={k++} className="text-neutral-900">{line.slice(lastIndex)}</span>);
       }
-      if (li < result.length) parts2.push(<span key={li + 9999} style={{ color: "#e2e8f0" }}>{result.slice(li)}</span>);
-      return <>{parts2}</>;
+      return parts.length ? <>{parts}</> : <span className="text-neutral-900">{line}</span>;
     }
-    if (language === "sql") {
-      const kw = /\b(SELECT|FROM|WHERE|JOIN|LEFT|RIGHT|INNER|OUTER|ON|GROUP BY|ORDER BY|HAVING|INSERT|UPDATE|DELETE|CREATE|TABLE|DROP|ALTER|INDEX|AS|AND|OR|NOT|IN|IS|NULL|DISTINCT|LIMIT|OFFSET|SET|VALUES|INTO)\b/gi;
-      const parts3: React.ReactNode[] = [];
-      let li3 = 0, m3: RegExpExecArray | null;
-      kw.lastIndex = 0;
-      while ((m3 = kw.exec(line)) !== null) {
-        if (m3.index > li3) parts3.push(<span key={li3} style={{ color: "#e2e8f0" }}>{line.slice(li3, m3.index)}</span>);
-        parts3.push(<span key={m3.index} style={{ color: "#c084fc", fontWeight: 600 }}>{m3[0]}</span>);
-        li3 = m3.index + m3[0].length;
+
+    // 2. JavaScript / TypeScript / JSX / TSX
+    if (/^(javascript|js|typescript|ts|jsx|tsx)$/.test(l)) {
+      const tokenRegex = /(\/\/.*|\/\*[\s\S]*?\*\/)|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`)|(\b(?:const|let|var|function|return|if|else|for|while|in|of|import|export|default|class|extends|new|this|typeof|instanceof|async|await|try|catch|finally|throw|null|undefined|true|false|void|type|interface|enum)\b)|(\b[a-zA-Z_$][\w$]*(?=\s*:))|(\b\d+(?:\.\d+)?\b)/g;
+      const parts: React.ReactNode[] = [];
+      let lastIndex = 0;
+      let m: RegExpExecArray | null;
+      let k = 0;
+      tokenRegex.lastIndex = 0;
+      while ((m = tokenRegex.exec(line)) !== null) {
+        if (m.index > lastIndex) {
+          parts.push(<span key={k++} className="text-neutral-900">{line.slice(lastIndex, m.index)}</span>);
+        }
+        if (m[1]) {
+          parts.push(<span key={k++} className="text-neutral-400 italic">{m[1]}</span>);
+        } else if (m[2]) {
+          parts.push(<span key={k++} style={{ color: "#dc2626" }}>{m[2]}</span>);
+        } else if (m[3]) {
+          parts.push(<span key={k++} style={{ color: "#b02a87" }} className="font-medium">{m[3]}</span>);
+        } else if (m[4]) {
+          parts.push(<span key={k++} className="text-neutral-700">{m[4]}</span>);
+        } else if (m[5]) {
+          parts.push(<span key={k++} style={{ color: "#ea580c" }}>{m[5]}</span>);
+        }
+        lastIndex = m.index + m[0].length;
       }
-      if (li3 < line.length) parts3.push(<span key={li3 + 9999} style={{ color: "#e2e8f0" }}>{line.slice(li3)}</span>);
-      return <>{parts3}</>;
-    }
-    // js/ts/jsx/tsx
-    if (/^(js|ts|jsx|tsx|javascript|typescript)$/.test(language)) {
-      const kw = /\b(const|let|var|function|return|if|else|for|while|in|of|import|export|default|class|extends|new|this|typeof|instanceof|async|await|try|catch|finally|throw|null|undefined|true|false|void|type|interface|enum)\b/g;
-      const str = /(["'`])(?:(?!\1)[^\\]|\\.)*?\1/g;
-      const comment = /(\/\/.*)/g;
-      const num = /\b(\d+(?:\.\d+)?)\b/g;
-      const fn = /\b([a-zA-Z_$][\w$]*)\s*(?=\()/g;
-      let r = line
-        .replace(comment, '<c-comment>$1</c-comment>')
-        .replace(str, '<c-string>$&</c-string>')
-        .replace(kw, '<c-kw>$1</c-kw>')
-        .replace(fn, '<c-fn>$1</c-fn>')
-        .replace(num, '<c-num>$1</c-num>');
-      const colorMap2: Record<string, string> = { "c-kw": "#c084fc", "c-string": "#86efac", "c-comment": "#64748b", "c-fn": "#60a5fa", "c-num": "#fb923c" };
-      const prt: React.ReactNode[] = [];
-      const tagRe2 = /<(c-\w+)>(.*?)<\/\1>/g;
-      let li4 = 0, m4: RegExpExecArray | null;
-      tagRe2.lastIndex = 0;
-      while ((m4 = tagRe2.exec(r)) !== null) {
-        if (m4.index > li4) prt.push(<span key={li4} style={{ color: "#e2e8f0" }}>{r.slice(li4, m4.index)}</span>);
-        prt.push(<span key={m4.index} style={{ color: colorMap2[m4[1]] ?? "#e2e8f0" }}>{m4[2]}</span>);
-        li4 = m4.index + m4[0].length;
+      if (lastIndex < line.length) {
+        parts.push(<span key={k++} className="text-neutral-900">{line.slice(lastIndex)}</span>);
       }
-      if (li4 < r.length) prt.push(<span key={li4 + 9999} style={{ color: "#e2e8f0" }}>{r.slice(li4)}</span>);
-      return <>{prt}</>;
+      return parts.length ? <>{parts}</> : <span className="text-neutral-900">{line}</span>;
     }
-    return <span style={{ color: "#e2e8f0" }}>{line}</span>;
+
+    // 3. Python
+    if (l === "python" || l === "py") {
+      const tokenRegex = /(#.*)|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')|(\b(?:def|class|import|from|return|if|elif|else|for|while|in|not|and|or|True|False|None|with|as|try|except|finally|raise|pass|break|continue|lambda|yield|async|await|self)\b)|(\b[a-zA-Z_]\w*(?=\s*\())|(\b\d+(?:\.\d+)?\b)/g;
+      const parts: React.ReactNode[] = [];
+      let lastIndex = 0;
+      let m: RegExpExecArray | null;
+      let k = 0;
+      tokenRegex.lastIndex = 0;
+      while ((m = tokenRegex.exec(line)) !== null) {
+        if (m.index > lastIndex) {
+          parts.push(<span key={k++} className="text-neutral-900">{line.slice(lastIndex, m.index)}</span>);
+        }
+        if (m[1]) {
+          parts.push(<span key={k++} className="text-neutral-400 italic">{m[1]}</span>);
+        } else if (m[2]) {
+          parts.push(<span key={k++} style={{ color: "#dc2626" }}>{m[2]}</span>);
+        } else if (m[3]) {
+          parts.push(<span key={k++} style={{ color: "#b02a87" }} className="font-medium">{m[3]}</span>);
+        } else if (m[4]) {
+          parts.push(<span key={k++} style={{ color: "#2563eb" }}>{m[4]}</span>);
+        } else if (m[5]) {
+          parts.push(<span key={k++} style={{ color: "#ea580c" }}>{m[5]}</span>);
+        }
+        lastIndex = m.index + m[0].length;
+      }
+      if (lastIndex < line.length) {
+        parts.push(<span key={k++} className="text-neutral-900">{line.slice(lastIndex)}</span>);
+      }
+      return parts.length ? <>{parts}</> : <span className="text-neutral-900">{line}</span>;
+    }
+
+    // 4. SQL
+    if (l === "sql") {
+      const tokenRegex = /(--.*)|('(?:[^'\\]|\\.)*')|(\b(?:SELECT|FROM|WHERE|JOIN|LEFT|RIGHT|INNER|OUTER|ON|GROUP BY|ORDER BY|HAVING|INSERT|UPDATE|DELETE|CREATE|TABLE|DROP|ALTER|INDEX|AS|AND|OR|NOT|IN|IS|NULL|DISTINCT|LIMIT|OFFSET|SET|VALUES|INTO|PRIMARY|KEY|AUTO_INCREMENT|VARCHAR|INT|TEXT|DATE|DATETIME)\b)|(\b\d+(?:\.\d+)?\b)/gi;
+      const parts: React.ReactNode[] = [];
+      let lastIndex = 0;
+      let m: RegExpExecArray | null;
+      let k = 0;
+      tokenRegex.lastIndex = 0;
+      while ((m = tokenRegex.exec(line)) !== null) {
+        if (m.index > lastIndex) {
+          parts.push(<span key={k++} className="text-neutral-900">{line.slice(lastIndex, m.index)}</span>);
+        }
+        if (m[1]) {
+          parts.push(<span key={k++} className="text-neutral-400 italic">{m[1]}</span>);
+        } else if (m[2]) {
+          parts.push(<span key={k++} style={{ color: "#dc2626" }}>{m[2]}</span>);
+        } else if (m[3]) {
+          parts.push(<span key={k++} style={{ color: "#b02a87" }} className="font-medium">{m[3]}</span>);
+        } else if (m[4]) {
+          parts.push(<span key={k++} style={{ color: "#ea580c" }}>{m[4]}</span>);
+        }
+        lastIndex = m.index + m[0].length;
+      }
+      if (lastIndex < line.length) {
+        parts.push(<span key={k++} className="text-neutral-900">{line.slice(lastIndex)}</span>);
+      }
+      return parts.length ? <>{parts}</> : <span className="text-neutral-900">{line}</span>;
+    }
+
+    // 5. JSON
+    if (l === "json") {
+      const tokenRegex = /("(?:[^"\\]|\\.)*"\s*:)|("(?:[^"\\]|\\.)*")|(true|false|null)|(-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)/g;
+      const parts: React.ReactNode[] = [];
+      let lastIndex = 0;
+      let m: RegExpExecArray | null;
+      let k = 0;
+      tokenRegex.lastIndex = 0;
+      while ((m = tokenRegex.exec(line)) !== null) {
+        if (m.index > lastIndex) {
+          parts.push(<span key={k++} className="text-neutral-900">{line.slice(lastIndex, m.index)}</span>);
+        }
+        if (m[1]) {
+          parts.push(<span key={k++} className="text-neutral-700 font-medium">{m[1]}</span>);
+        } else if (m[2]) {
+          parts.push(<span key={k++} style={{ color: "#dc2626" }}>{m[2]}</span>);
+        } else if (m[3]) {
+          parts.push(<span key={k++} style={{ color: "#b02a87" }}>{m[3]}</span>);
+        } else if (m[4]) {
+          parts.push(<span key={k++} style={{ color: "#ea580c" }}>{m[4]}</span>);
+        }
+        lastIndex = m.index + m[0].length;
+      }
+      if (lastIndex < line.length) {
+        parts.push(<span key={k++} className="text-neutral-900">{line.slice(lastIndex)}</span>);
+      }
+      return parts.length ? <>{parts}</> : <span className="text-neutral-900">{line}</span>;
+    }
+
+    // Default
+    return <span className="text-neutral-900">{line}</span>;
   };
 
-  const displayLang = lang || "code";
-  const langLabel = displayLang.toUpperCase();
+  const displayLangName = getDisplayLangName(lang);
 
   return (
-    <div className="my-4 rounded-2xl overflow-hidden" style={{ background: "#0f1623", border: "1px solid rgba(255,255,255,0.08)", boxShadow: "0 4px 20px rgba(0,0,0,0.2)" }}>
-      {/* Header bar */}
-      <div className="flex items-center justify-between px-4 py-2.5" style={{ background: "rgba(255,255,255,0.05)", borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
-        <div className="flex items-center gap-2">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-          <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">{langLabel}</span>
-        </div>
-        <button onClick={copy} className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-medium transition-all"
-          style={{ background: copied ? "rgba(34,197,94,0.15)" : "rgba(255,255,255,0.07)", color: copied ? "#4ade80" : "#94a3b8" }}>
-          {copied ? (
-            <><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg> Tersalin</>
-          ) : (
-            <><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Salin</>
+    <div className="my-3.5 rounded-[22px] sm:rounded-3xl border border-neutral-200/90 bg-[#F8F9FA] overflow-hidden select-text shadow-xs">
+      {/* Header bar: Language name on left, actions on right (matching Gambar 1 & 2) */}
+      <div className="flex items-center justify-between px-4 sm:px-5 py-3 border-b border-neutral-200/70 bg-transparent">
+        <span className="text-[13px] font-semibold text-neutral-800 tracking-tight">
+          {displayLangName}
+        </span>
+        <div className="flex items-center gap-1.5">
+          {/* If HTML/SVG, show preview pills [>-] and play button as seen in Gambar 1 */}
+          {(lang.toLowerCase() === "html" || lang.toLowerCase() === "svg") && (
+            <>
+              <button
+                type="button"
+                onClick={() => setShowPreview((p) => !p)}
+                title="Buka pratinjau HTML"
+                aria-label="Buka pratinjau HTML"
+                className="size-7 rounded-lg text-neutral-600 hover:text-neutral-900 hover:bg-neutral-200/60 active:scale-95 transition-all flex items-center justify-center cursor-pointer font-mono text-[11px] font-bold"
+              >
+                {"[>-]"}
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowPreview((p) => !p)}
+                title="Jalankan kode"
+                aria-label="Jalankan kode"
+                className="size-7 rounded-lg text-neutral-600 hover:text-neutral-900 hover:bg-neutral-200/60 active:scale-95 transition-all flex items-center justify-center cursor-pointer"
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M5 3l14 9-14 9V3z" />
+                </svg>
+              </button>
+            </>
           )}
-        </button>
+
+          {/* Copy button matching Gambar 1 & 2 (icon 2 rounded overlapping rectangles) */}
+          <button
+            type="button"
+            onClick={copy}
+            title={copied ? "Tersalin!" : "Salin kode"}
+            aria-label={copied ? "Tersalin" : "Salin kode"}
+            className="size-8 rounded-lg text-neutral-600 hover:text-neutral-900 hover:bg-neutral-200/60 active:scale-95 transition-all flex items-center justify-center cursor-pointer"
+          >
+            {copied ? (
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            ) : (
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+              </svg>
+            )}
+          </button>
+        </div>
       </div>
-      {/* Code */}
-      <div className="overflow-x-auto p-4">
-        <pre className="text-[0.8125rem] leading-6 font-mono m-0" style={{ fontFamily: "'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace" }}>
+
+      {/* Code contents — horizontal scrollable, no line numbers, light syntax highlighting */}
+      <div
+        className="overflow-x-auto touch-pan-x p-4 sm:p-5 pt-3.5 pb-4"
+        style={{
+          WebkitOverflowScrolling: "touch",
+          scrollbarWidth: "thin",
+        }}
+      >
+        <pre
+          className="text-[13.5px] leading-relaxed font-mono m-0 text-neutral-900 select-text"
+          style={{ fontFamily: "'JetBrains Mono', 'Fira Code', 'Cascadia Code', Menlo, Monaco, Consolas, monospace" }}
+        >
           {code.split("\n").map((ln, idx) => (
-            <div key={idx} className="flex gap-4">
-              <span className="select-none w-6 text-right shrink-0" style={{ color: "#334155" }}>{idx + 1}</span>
-              <span>{highlight(ln, displayLang)}</span>
+            <div key={idx} className="whitespace-pre">
+              {highlight(ln, lang)}
             </div>
           ))}
         </pre>
       </div>
+
+      {/* HTML Live Preview Drawer */}
+      {showPreview && (
+        <div className="border-t border-neutral-200 bg-white p-4 animate-[gemini-fade-in_0.15s_ease-out]">
+          <div className="flex items-center justify-between pb-2 mb-2 border-b border-neutral-100">
+            <span className="text-xs font-semibold text-neutral-700">Pratinjau Hasil HTML</span>
+            <button
+              type="button"
+              onClick={() => setShowPreview(false)}
+              className="text-xs text-neutral-400 hover:text-neutral-700 px-2 py-0.5 rounded hover:bg-neutral-100 cursor-pointer"
+            >
+              Tutup
+            </button>
+          </div>
+          <iframe
+            srcDoc={code}
+            title="Pratinjau HTML"
+            sandbox="allow-scripts"
+            className="w-full h-44 rounded-xl border border-neutral-200 bg-white"
+          />
+        </div>
+      )}
     </div>
   );
 }
