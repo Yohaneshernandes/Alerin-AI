@@ -4717,8 +4717,8 @@ function MarkdownRenderer({ text }: { text: string }) {
     if (h1m || h2m || h3m || boldOnly) {
       const content = h1m ? h1m[1] : h2m ? h2m[1] : h3m ? h3m[1] : line.slice(2, -2);
       const cls = h1m
-        ? "text-[1.0625rem] font-bold text-slate-900 mt-7 mb-3 leading-snug"
-        : "text-[0.9375rem] font-semibold text-slate-800 mt-6 mb-2.5 leading-snug";
+        ? "text-[1.0625rem] font-bold text-slate-900 mt-7 mb-3 leading-snug first:mt-0"
+        : "text-[0.9375rem] font-semibold text-slate-800 mt-6 mb-2.5 leading-snug first:mt-0";
       elements.push(<p key={i} className={cls}>{renderInlineMd(content)}</p>);
       i++; continue;
     }
@@ -4804,7 +4804,7 @@ function MarkdownRenderer({ text }: { text: string }) {
 
     // Paragraph
     elements.push(
-      <p key={i} className="text-[0.9375rem] text-slate-700 leading-7 mb-1">
+      <p key={i} className="text-[0.9375rem] text-slate-700 leading-7 mb-1 first:mt-0 last:mb-0">
         {renderInlineMd(line)}
       </p>
     );
@@ -5561,35 +5561,43 @@ function PercakapanTab({
               </div>
 
               {/* Content */}
-              <div className="pl-1.5 md:pl-9">
+              <div className="pl-1.5 md:pl-9 flex flex-col items-start gap-1">
                 {m.generating && m.imagePrompt ? (
                   <ImageGeneratingBubble
                     prompt={m.imagePrompt}
                     orientation={m.imageOrientation}
                   />
                 ) : m.imageUrl ? (
-                  <div className="flex flex-col gap-3">
+                  <div className="flex flex-col gap-3 max-w-[92%] md:max-w-[85%]">
                     <ImageResultBubble
                       imageUrl={m.imageUrl}
                       prompt={m.imagePrompt ?? ""}
                       orientation={m.imageOrientation}
                       onPreview={(url) => setChatImagePreview(url)}
                     />
-                    <MarkdownRenderer text={m.text} />
+                    {m.text && (
+                      <div className="rounded-2xl rounded-tl-sm px-4.5 py-3.5 md:px-5 md:py-4 text-[0.9375rem] leading-relaxed text-slate-800 bg-white border border-slate-200/90 shadow-xs claro-ai-bubble">
+                        <MarkdownRenderer text={m.text} />
+                      </div>
+                    )}
                   </div>
                 ) : m.paraphrase ? (
-                  <div className="flex flex-col gap-4">
-                    <MarkdownRenderer text={m.text} />
+                  <div className="flex flex-col gap-4 max-w-[92%] md:max-w-[85%]">
+                    <div className="rounded-2xl rounded-tl-sm px-4.5 py-3.5 md:px-5 md:py-4 text-[0.9375rem] leading-relaxed text-slate-800 bg-white border border-slate-200/90 shadow-xs claro-ai-bubble">
+                      <MarkdownRenderer text={m.text} />
+                    </div>
                     <ParaphraseBubble original={m.paraphrase.original} versions={m.paraphrase.versions} />
                   </div>
                 ) : (
-                  <MarkdownRenderer text={m.text} />
+                  <div className="rounded-2xl rounded-tl-sm px-4.5 py-3.5 md:px-5 md:py-4 text-[0.9375rem] leading-relaxed text-slate-800 bg-white border border-slate-200/90 shadow-xs claro-ai-bubble max-w-[92%] md:max-w-[85%] w-fit">
+                    <MarkdownRenderer text={m.text} />
+                  </div>
                 )}
-                <p className="text-[10px] text-slate-400 mt-3">{m.time}</p>
+                <p className="text-[10px] text-slate-400 mt-1 pl-1">{m.time}</p>
 
                 {/* Sources */}
                 {m.sources && m.sources.length > 0 && (
-                  <div className="mt-4">
+                  <div className="mt-3 w-full max-w-[92%] md:max-w-[85%]">
                     <details className="group">
                       <summary className="flex items-center gap-2 cursor-pointer list-none select-none w-fit">
                         <div className="flex -space-x-1.5">
@@ -5635,7 +5643,7 @@ function PercakapanTab({
 
                 {/* Suggestions */}
                 {isLastAlerin && m.suggestions && m.suggestions.length > 0 && (
-                  <div className="mt-4">
+                  <div className="mt-3 w-full max-w-[92%] md:max-w-[85%]">
                     <p className="text-[11px] text-slate-400 font-medium mb-2">Kalau mau, saya bisa:</p>
                     <div className="flex flex-col gap-1.5">
                       {m.suggestions.map((s, si) => (
@@ -5654,7 +5662,7 @@ function PercakapanTab({
                 {isLastAlerin && m.featureRec && (
                   <button
                     onClick={() => openFeature(m.featureRec!)}
-                    className="mt-4 w-full text-left flex items-center gap-3 px-4 py-3 rounded-2xl border transition-all hover:shadow-md group"
+                    className="mt-3 w-full max-w-[92%] md:max-w-[85%] text-left flex items-center gap-3 px-4 py-3 rounded-2xl border transition-all hover:shadow-md group"
                     style={{ background: "linear-gradient(135deg, #f8faff 0%, #fff 100%)", borderColor: "#dbeafe", boxShadow: "0 1px 6px rgba(59,130,246,0.07)" }}>
                     <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl shrink-0"
                       style={{ background: `${m.featureRec.color}15`, border: `1.5px solid ${m.featureRec.color}30` }}>
