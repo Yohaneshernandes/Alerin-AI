@@ -944,6 +944,18 @@ const QUIZ_QUESTIONS = [
 ];
 
 const AI_RESPONSES: [RegExp, string][] = [
+  [/kolom sayang|bukan list|buatkan tabel|tabel penelitian|contoh tabel|tabel mahasiswa/i, `OHH maksudmu tabel dengan banyak kolom sungguhan, bukan daftar vertikal. 😭❤️
+
+Contohnya begini:
+
+| Nama | NIM | Program Studi | Judul Penelitian | Metodologi | Hasil Penelitian |
+|------|-----|---------------|------------------|------------|------------------|
+| Andi Pratama | 00123 | Sistem Informasi | Analisis Pengaruh AI terhadap Efektivitas Pembelajaran Mahasiswa | Kuantitatif dengan regresi linear berganda | AI terbukti meningkatkan efisiensi belajar mahasiswa secara signifikan |
+| Siti Amelia | 00124 | Informatika | Implementasi Sistem Informasi Akademik Berbasis Web | Metode Waterfall | Sistem berhasil memangkas waktu pendaftaran KRS hingga 60% |
+| Budi Santoso | 00125 | Manajemen | Pengaruh Digital Marketing terhadap Keputusan Pembelian Konsumen | Survei kuantitatif | Media sosial berpengaruh dominan terhadap keputusan pembelian |
+
+Nah, ini yang kamu maksud, kan? Tabel asli dengan kolom dan baris.`],
+
   [/python|kode python|contoh python|buat fungsi|function python/i, `Tentu! Berikut contoh kode Python yang bisa kamu pakai untuk analisis data sederhana menggunakan pandas — sangat berguna untuk skripsi kuantitatif.
 
 \`\`\`python
@@ -4988,11 +5000,11 @@ function renderInlineMd(text: string): React.ReactNode[] {
   const parts = text.split(/(\*\*[^*]+\*\*|\*[^*]+\*|`[^`]+`)/g);
   return parts.map((part, i) => {
     if (part.startsWith("**") && part.endsWith("**"))
-      return <strong key={i} className="font-semibold text-slate-900">{part.slice(2, -2)}</strong>;
+      return <strong key={i} className="font-semibold text-black">{part.slice(2, -2)}</strong>;
     if (part.startsWith("*") && part.endsWith("*"))
-      return <em key={i} className="italic">{part.slice(1, -1)}</em>;
+      return <em key={i} className="italic text-black">{part.slice(1, -1)}</em>;
     if (part.startsWith("`") && part.endsWith("`"))
-      return <code key={i} className="bg-slate-100 text-blue-600 px-1.5 py-0.5 rounded text-[0.82em] font-mono">{part.slice(1, -1)}</code>;
+      return <code key={i} className="bg-slate-100 text-slate-800 px-1.5 py-0.5 rounded text-[0.82em] font-mono">{part.slice(1, -1)}</code>;
     return part;
   });
 }
@@ -5183,7 +5195,7 @@ function MarkdownRenderer({ text }: { text: string }) {
       i++; continue;
     }
 
-    // Table block: lines starting with | (tanpa garis tepi kasar)
+    // Table block: lines starting with | (format ChatGPT seperti Gambar 2 & 3: bisa digeser horizontal & warna teks hitam saja)
     if (line.startsWith("|")) {
       const tableLines: string[] = [];
       while (i < lines.length && lines[i].trim().startsWith("|")) {
@@ -5196,12 +5208,22 @@ function MarkdownRenderer({ text }: { text: string }) {
       const headers = rows[0] ? parseRow(rows[0]) : [];
       const body = rows.slice(1);
       elements.push(
-        <div key={`tbl-${i}`} className="my-4 overflow-x-auto rounded-xl bg-slate-50/70 p-2">
-          <table className="w-full text-[0.875rem] border-collapse">
+        <div
+          key={`tbl-${i}`}
+          className="my-3.5 overflow-x-auto touch-pan-x -mx-1 sm:mx-0 select-text"
+          style={{
+            WebkitOverflowScrolling: "touch",
+            scrollbarWidth: "none",
+          }}
+        >
+          <table className="w-max min-w-full text-[0.9375rem] text-black border-collapse text-left">
             <thead>
-              <tr className="bg-slate-100/80 rounded-lg">
+              <tr className="border-b border-neutral-200">
                 {headers.map((h, ci) => (
-                  <th key={ci} className="px-3.5 py-2.5 text-left text-[0.8125rem] font-semibold text-slate-700 whitespace-nowrap">
+                  <th
+                    key={ci}
+                    className="px-4 py-3 text-left text-[0.9375rem] font-semibold text-black whitespace-nowrap"
+                  >
                     {renderInlineMd(cleanMdText(h))}
                   </th>
                 ))}
@@ -5211,12 +5233,25 @@ function MarkdownRenderer({ text }: { text: string }) {
               {body.map((row, ri) => {
                 const cells = parseRow(row);
                 return (
-                  <tr key={ri} className={ri % 2 === 0 ? "bg-white" : "bg-transparent"}>
-                    {cells.map((cell, ci) => (
-                      <td key={ci} className="px-3.5 py-2.5 text-slate-700 leading-relaxed align-top">
-                        {renderInlineMd(cleanMdText(cell))}
-                      </td>
-                    ))}
+                  <tr
+                    key={ri}
+                    className="border-b border-neutral-100 last:border-b-0 hover:bg-neutral-50/40 transition-colors"
+                  >
+                    {cells.map((cell, ci) => {
+                      const isShort = cell.trim().length <= 15;
+                      return (
+                        <td
+                          key={ci}
+                          className={`px-4 py-3.5 text-black text-[0.9375rem] leading-relaxed align-top ${
+                            isShort
+                              ? "min-w-[85px] whitespace-nowrap"
+                              : "min-w-[170px] max-w-[340px] whitespace-normal"
+                          }`}
+                        >
+                          {renderInlineMd(cleanMdText(cell))}
+                        </td>
+                      );
+                    })}
                   </tr>
                 );
               })}
