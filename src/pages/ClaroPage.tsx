@@ -353,17 +353,15 @@ function SearchModal({ onClose, onSelect }: { onClose: () => void; onSelect?: (t
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center pt-20"
-      style={{ background: "rgba(0,0,0,0.35)", backdropFilter: "blur(3px)" }}
+      className="fixed inset-0 z-[250] flex items-start justify-center p-4 pt-14 sm:pt-20 bg-black/45 backdrop-blur-xs animate-[gemini-fade-in_0.15s_ease-out]"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-xl rounded-2xl overflow-hidden bg-white"
-        style={{ boxShadow: "0 20px 60px rgba(0,0,0,0.18)", border: "1px solid #e5e7eb" }}
+        className="w-full max-w-[350px] sm:max-w-lg rounded-3xl overflow-hidden bg-white shadow-2xl border border-slate-100 flex flex-col animate-[gemini-zoom-in_0.2s_ease-out]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Search input row */}
-        <div className="flex items-center gap-3 px-5 py-4">
+        <div className="flex items-center gap-3 px-5 py-3.5 border-b border-slate-100/60">
           <input
             ref={inputRef}
             value={query}
@@ -375,30 +373,39 @@ function SearchModal({ onClose, onSelect }: { onClose: () => void; onSelect?: (t
               }
             }}
             placeholder="Cari..."
-            className="flex-1 bg-transparent text-slate-800 text-base placeholder-slate-400 outline-none"
+            className="flex-1 bg-transparent text-slate-800 text-[15px] placeholder-slate-400 outline-none"
           />
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-700 transition-colors">
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Tutup pencarian"
+            className="size-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer shrink-0"
+          >
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
           </button>
         </div>
 
         {/* ── Empty state: Obrolan terbaru ── */}
         {!hasQuery && (
-          <div className="pb-4">
-            <p className="px-5 pb-2 text-xs font-semibold text-slate-400">Obrolan terbaru</p>
+          <div className="pb-3 pt-1.5 max-h-[60vh] overflow-y-auto [&::-webkit-scrollbar]:hidden" style={{ scrollbarWidth: "none" }}>
+            <p className="px-5 pb-2 pt-1 text-xs font-semibold text-slate-400">Obrolan terbaru</p>
             {RECENT_CHATS.map((title) => (
               <button
                 key={title}
+                type="button"
                 onClick={() => {
                   onSelect?.(title);
                   onClose();
                 }}
-                className="w-full flex items-center gap-3 px-5 py-3 hover:bg-slate-50 transition-colors text-left group"
+                className="w-full flex items-center gap-3 px-5 py-2.5 hover:bg-slate-50 active:bg-slate-100 transition-colors text-left group cursor-pointer"
               >
                 <span className="text-slate-400 group-hover:text-slate-600 transition-colors shrink-0">
                   <ChatBubbleIcon />
                 </span>
-                <span className="text-sm text-slate-700 group-hover:text-slate-900 transition-colors">{title}</span>
+                <span className="text-sm text-slate-700 group-hover:text-slate-900 transition-colors truncate">{title}</span>
               </button>
             ))}
           </div>
