@@ -2610,8 +2610,13 @@ function NewProjectModal({ onClose, onToast }: { onClose: () => void; onToast: (
         <div className="space-y-4">
           <div>
             <label className="text-xs font-semibold text-slate-600 block mb-1.5">Nama Proyek</label>
-            <input value={name} onChange={e => setName(e.target.value)} placeholder="Contoh: Skripsi Analisis TAM..."
-              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-800 placeholder-slate-400 outline-none focus:border-blue-400 transition-colors" />
+            <input
+              value={name}
+              onChange={e => setName(e.target.value.slice(0, 20))}
+              maxLength={20}
+              placeholder="Contoh: Skripsi Analisis TAM..."
+              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-800 placeholder-slate-400 outline-none focus:border-blue-400 transition-colors"
+            />
           </div>
           <div>
             <label className="text-xs font-semibold text-slate-600 block mb-1.5">Tipe Proyek</label>
@@ -9146,7 +9151,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
   const sourceFileInputRef = useRef<HTMLInputElement>(null);
 
   const handleCreateProject = () => {
-    const trimmed = projectName.trim();
+    const trimmed = projectName.trim().slice(0, 20);
     if (!trimmed) return;
     const newProj: MobileProjectItem = {
       id: `proj-${Date.now()}`,
@@ -9170,7 +9175,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
   };
 
   const handleRenameProject = () => {
-    const trimmed = renameProjectInput.trim();
+    const trimmed = renameProjectInput.trim().slice(0, 20);
     if (!trimmed || !selectedProject) return;
     const updated = projects.map((p) => (p.id === selectedProject.id ? { ...p, title: trimmed } : p));
     setProjects(updated);
@@ -9373,7 +9378,8 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
               <input
                 type="text"
                 value={projectName}
-                onChange={(e) => setProjectName(e.target.value)}
+                onChange={(e) => setProjectName(e.target.value.slice(0, 20))}
+                maxLength={20}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && projectName.trim()) handleCreateProject();
                   if (e.key === "Escape") setNewProjectOpen(false);
@@ -9422,7 +9428,8 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
             <input
               type="text"
               value={renameProjectInput}
-              onChange={(e) => setRenameProjectInput(e.target.value)}
+              onChange={(e) => setRenameProjectInput(e.target.value.slice(0, 20))}
+              maxLength={20}
               onKeyDown={(e) => {
                 if (e.key === "Enter" && renameProjectInput.trim()) handleRenameProject();
                 if (e.key === "Escape") setRenameProjectModal(false);
