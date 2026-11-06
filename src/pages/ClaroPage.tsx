@@ -6226,6 +6226,61 @@ function PercakapanTab({
   const touchStartYRef = useRef<number>(0);
   const userScrolledUpRef = useRef<boolean>(false);
 
+  // Action bar states (Copy, Jempol Feedback, Muat lagi, Share, More)
+  const [feedbackPopupIdx, setFeedbackPopupIdx] = useState<number | null>(null);
+  const [moreMenuIdx, setMoreMenuIdx] = useState<number | null>(null);
+  const [openSourcesIdx, setOpenSourcesIdx] = useState<number | null>(null);
+  const [feedbackMap, setFeedbackMap] = useState<Record<number, "like" | "dislike">>({});
+  const [copiedIdx, setCopiedIdx] = useState<number | null>(null);
+  const [actionToast, setActionToast] = useState<string | null>(null);
+
+  const showActionToast = useCallback((msg: string) => {
+    setActionToast(msg);
+    setTimeout(() => setActionToast(null), 2200);
+  }, []);
+
+  const handleFeedback = useCallback((idx: number, type: "like" | "dislike") => {
+    setFeedbackMap((prev) => ({
+      ...prev,
+      [idx]: prev[idx] === type ? undefined! : type,
+    }));
+    setFeedbackPopupIdx(null);
+    if (type === "like") {
+      showActionToast("Terima kasih atas tanggapanmu! 👍");
+    } else {
+      showActionToast("Masukanmu dicatat untuk perbaikan. 🙏");
+    }
+  }, [showActionToast]);
+
+  const handleCopyMessage = useCallback((text: string, idx: number) => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopiedIdx(idx);
+      showActionToast("Teks respon disalin!");
+      setTimeout(() => setCopiedIdx(null), 2000);
+    });
+  }, [showActionToast]);
+
+  const handleShareMessage = useCallback((text: string) => {
+    if (navigator.share) {
+      navigator.share({ title: "Jawaban Alerin AI", text }).catch(() => {});
+    } else {
+      navigator.clipboard.writeText(text).then(() => {
+        showActionToast("Tautan respon disalin!");
+      });
+    }
+  }, [showActionToast]);
+
+  const handleReadAloud = useCallback((text: string) => {
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+      const clean = text.replace(/[#*`_]/g, "");
+      const utter = new SpeechSynthesisUtterance(clean.slice(0, 300));
+      utter.lang = "id-ID";
+      window.speechSynthesis.speak(utter);
+      showActionToast("Membacakan respon Alerin...");
+    }
+  }, [showActionToast]);
+
   const handleStop = useCallback(() => {
     if (responseTimeoutRef.current) {
       clearTimeout(responseTimeoutRef.current);
@@ -6588,6 +6643,36 @@ function PercakapanTab({
     }
   }, [scrollToBottom, streamResponse]);
 
+  const handleRegenerate = useCallback((msgIdx: number) => {
+    let userQuery = "";
+    for (let k = msgIdx - 1; k >= 0; k--) {
+      if (msgs[k].role === "user") {
+        userQuery = msgs[k].text;
+        break;
+      }
+    }
+    if (!userQuery && msgs.length > 0) {
+      userQuery = msgs[0].text;
+    }
+    if (!userQuery) return;
+
+    showActionToast("Memuat ulang respon Alerin... ⟳");
+    setFeedbackPopupIdx(null);
+    setMoreMenuIdx(null);
+    setMsgs((prev) => prev.slice(0, msgIdx));
+    setTyping(true);
+    userScrolledUpRef.current = false;
+    responseTimeoutRef.current = setTimeout(() => {
+      setTyping(false);
+      const replyText = getAIResponse(userQuery);
+      streamResponse(replyText, {
+        suggestions: getSuggestions(userQuery, replyText),
+        sources: getSources(userQuery, replyText),
+        featureRec: getFeatureRec(userQuery),
+      });
+    }, 700);
+  }, [msgs, showActionToast, streamResponse]);
+
   if (!chatMode) {
     return (
       <>
@@ -6874,29 +6959,220 @@ function PercakapanTab({
                 ) : (
                   <MarkdownRenderer text={m.text} isStreaming={m.generating} />
                 )}
-                <p className="text-[10px] text-slate-400 mt-3">{m.time}</p>
+                {/* Bottom row: Action Bar (Copy, Jempol Feedback, Muat lagi, Share, More) & Sumber sejajar */}
+                {!m.generating ? (
+                  <div className="mt-3.5 pt-0.5">
+                    <div className="flex items-center justify-between gap-2 flex-wrap">
+                      {/* Left: Action Bar Icons */}
+                      <div className="flex items-center gap-0.5 text-slate-400">
+                        {/* 1. Copy button */}
+                        <button
+                          type="button"
+                          onClick={() => handleCopyMessage(m.text, i)}
+                          title="Salin respon"
+                          className="size-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100/90 active:scale-95 transition-all"
+                        >
+                          {copiedIdx === i ? (
+                            <svg className="w-4 h-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                          ) : (
+                            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                              <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                            </svg>
+                          )}
+                        </button>
 
-                {/* Sources */}
-                {m.sources && m.sources.length > 0 && (
-                  <div className="mt-4">
-                    <details className="group">
-                      <summary className="flex items-center gap-2 cursor-pointer list-none select-none w-fit">
-                        <div className="flex -space-x-1.5">
-                          {m.sources.slice(0, 3).map((_, si) => (
-                            <div key={si} className="w-5 h-5 rounded-full border-2 border-white flex items-center justify-center text-[8px] font-bold text-white"
-                              style={{ background: si === 0 ? "#3b82f6" : si === 1 ? "#6366f1" : "#8b5cf6", zIndex: 3 - si }}>
-                              {si + 1}
-                            </div>
-                          ))}
+                        {/* 2. Thumbs rating button (Combined thumb icon with popup) */}
+                        <div className="relative">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setMoreMenuIdx(null);
+                              setFeedbackPopupIdx(feedbackPopupIdx === i ? null : i);
+                            }}
+                            title="Tanggapan suka atau tidak suka"
+                            className={`size-7 rounded-lg flex items-center justify-center active:scale-95 transition-all ${
+                              feedbackMap[i] === "like"
+                                ? "text-blue-600 bg-blue-50 hover:bg-blue-100"
+                                : feedbackMap[i] === "dislike"
+                                ? "text-rose-600 bg-rose-50 hover:bg-rose-100"
+                                : "text-slate-400 hover:text-slate-700 hover:bg-slate-100/90"
+                            }`}
+                          >
+                            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M7 10v9M7 14h2.5l1.2-4.2a1.5 1.5 0 0 1 1.4-1h.4a1.5 1.5 0 0 1 1.5 1.5V13h3a1.5 1.5 0 0 1 1.4 2.1l-1.8 4A1.5 1.5 0 0 1 15.2 20H7" />
+                              <path d="M17 14V5M17 10h-2.5l-1.2 4.2a1.5 1.5 0 0 1-1.4 1h-.4a1.5 1.5 0 0 1-1.5-1.5V11h-3a1.5 1.5 0 0 1-1.4-2.1l1.8-4A1.5 1.5 0 0 1 8.8 4H17" opacity="0.8" />
+                            </svg>
+                          </button>
+
+                          {/* Popup kecil suka atau tidak suka respon */}
+                          {feedbackPopupIdx === i && (
+                            <>
+                              <div
+                                className="fixed inset-0 z-30"
+                                onClick={() => setFeedbackPopupIdx(null)}
+                              />
+                              <div className="absolute bottom-full left-0 mb-2 z-40 bg-white rounded-2xl border border-slate-200/90 shadow-[0_8px_30px_rgba(0,0,0,0.12)] p-1.5 w-52 flex flex-col gap-1 text-xs animate-in fade-in zoom-in-95">
+                                <button
+                                  type="button"
+                                  onClick={() => handleFeedback(i, "like")}
+                                  className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-left font-medium transition-all ${
+                                    feedbackMap[i] === "like"
+                                      ? "bg-blue-50 text-blue-600 font-semibold"
+                                      : "hover:bg-slate-50 text-slate-700"
+                                  }`}
+                                >
+                                  <span className="w-6 h-6 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 text-xs">
+                                    👍
+                                  </span>
+                                  <div className="flex-1 min-w-0">
+                                    <p className="font-semibold text-slate-800">Suka respon</p>
+                                    <p className="text-[10px] text-slate-400">Jawaban tepat & membantu</p>
+                                  </div>
+                                  {feedbackMap[i] === "like" && (
+                                    <svg className="w-4 h-4 text-blue-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                                  )}
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() => handleFeedback(i, "dislike")}
+                                  className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-left font-medium transition-all ${
+                                    feedbackMap[i] === "dislike"
+                                      ? "bg-rose-50 text-rose-600 font-semibold"
+                                      : "hover:bg-slate-50 text-slate-700"
+                                  }`}
+                                >
+                                  <span className="w-6 h-6 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center shrink-0 text-xs">
+                                    👎
+                                  </span>
+                                  <div className="flex-1 min-w-0">
+                                    <p className="font-semibold text-slate-800">Tidak suka respon</p>
+                                    <p className="text-[10px] text-slate-400">Kurang tepat / relevan</p>
+                                  </div>
+                                  {feedbackMap[i] === "dislike" && (
+                                    <svg className="w-4 h-4 text-rose-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                                  )}
+                                </button>
+                              </div>
+                            </>
+                          )}
                         </div>
-                        <span className="text-xs font-semibold text-slate-500 group-open:text-blue-600 transition-colors">
-                          {m.sources.length} Sumber
-                        </span>
-                        <svg className="w-3 h-3 text-slate-400 transition-transform group-open:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M6 9l6 6 6-6"/></svg>
-                      </summary>
-                      <div className="mt-3 flex flex-col gap-2">
+
+                        {/* 3. Muat lagi (Regenerate) */}
+                        <button
+                          type="button"
+                          onClick={() => handleRegenerate(i)}
+                          title="Muat lagi respon"
+                          className="size-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100/90 active:scale-95 transition-all"
+                        >
+                          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M21 12a9 9 0 1 1-2.64-6.36L21 8" />
+                            <polyline points="21 3 21 8 16 8" />
+                          </svg>
+                        </button>
+
+                        {/* 4. Share */}
+                        <button
+                          type="button"
+                          onClick={() => handleShareMessage(m.text)}
+                          title="Bagikan respon"
+                          className="size-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100/90 active:scale-95 transition-all"
+                        >
+                          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M4 12v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-6" />
+                            <polyline points="16 6 12 2 8 6" />
+                            <line x1="12" y1="2" x2="12" y2="15" />
+                          </svg>
+                        </button>
+
+                        {/* 5. More (•••) */}
+                        <div className="relative">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setFeedbackPopupIdx(null);
+                              setMoreMenuIdx(moreMenuIdx === i ? null : i);
+                            }}
+                            title="Opsi lainnya"
+                            className="size-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100/90 active:scale-95 transition-all"
+                          >
+                            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                              <circle cx="5" cy="12" r="1.5" />
+                              <circle cx="12" cy="12" r="1.5" />
+                              <circle cx="19" cy="12" r="1.5" />
+                            </svg>
+                          </button>
+
+                          {moreMenuIdx === i && (
+                            <>
+                              <div
+                                className="fixed inset-0 z-30"
+                                onClick={() => setMoreMenuIdx(null)}
+                              />
+                              <div className="absolute bottom-full left-0 mb-2 z-40 bg-white rounded-2xl border border-slate-200/90 shadow-[0_8px_30px_rgba(0,0,0,0.12)] p-1.5 w-48 flex flex-col gap-1 text-xs animate-in fade-in zoom-in-95">
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setMoreMenuIdx(null);
+                                    handleReadAloud(m.text);
+                                  }}
+                                  className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-left font-medium hover:bg-slate-50 text-slate-700 transition-colors"
+                                >
+                                  <svg className="w-4 h-4 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+                                  <span>Bacakan respon</span>
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setMoreMenuIdx(null);
+                                    showActionToast("Laporan respon diterima. Terima kasih!");
+                                  }}
+                                  className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-left font-medium hover:bg-rose-50 text-rose-600 transition-colors"
+                                >
+                                  <svg className="w-4 h-4 text-rose-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+                                  <span>Laporkan respon</span>
+                                </button>
+                              </div>
+                            </>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Right: Sumber (sejajar / lurus dengan action bar) & Timestamp */}
+                      <div className="flex items-center gap-3">
+                        {m.sources && m.sources.length > 0 && (
+                          <button
+                            type="button"
+                            onClick={() => setOpenSourcesIdx((prev) => (prev === i ? null : i))}
+                            className="flex items-center gap-1.5 cursor-pointer select-none text-left py-1 px-2 rounded-lg hover:bg-slate-100/80 transition-colors"
+                          >
+                            <div className="flex -space-x-1.5">
+                              {m.sources.slice(0, 3).map((_, si) => (
+                                <div
+                                  key={si}
+                                  className="w-4.5 h-4.5 rounded-full border border-white flex items-center justify-center text-[8px] font-bold text-white shadow-xs"
+                                  style={{ background: si === 0 ? "#3b82f6" : si === 1 ? "#6366f1" : "#8b5cf6", zIndex: 3 - si }}
+                                >
+                                  {si + 1}
+                                </div>
+                              ))}
+                            </div>
+                            <span className={`text-xs font-semibold transition-colors ${openSourcesIdx === i ? "text-blue-600" : "text-slate-500"}`}>
+                              {m.sources.length} Sumber
+                            </span>
+                            <svg className={`w-3 h-3 text-slate-400 transition-transform ${openSourcesIdx === i ? "rotate-180 text-blue-600" : ""}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M6 9l6 6 6-6"/></svg>
+                          </button>
+                        )}
+                        <span className="text-[10px] text-slate-400 pr-0.5">{m.time}</span>
+                      </div>
+                    </div>
+
+                    {/* Expandable Sources Details (Full width) */}
+                    {m.sources && m.sources.length > 0 && openSourcesIdx === i && (
+                      <div className="mt-3 flex flex-col gap-2 animate-in fade-in duration-200">
                         {m.sources.map((src, si) => (
-                          <div key={si} className="flex items-start gap-2.5 p-2.5 rounded-xl border border-slate-100 bg-slate-50/60">
+                          <div key={si} className="flex items-start gap-2.5 p-2.5 rounded-xl border border-slate-100 bg-slate-50/70">
                             <div className="w-5 h-5 rounded-lg flex items-center justify-center text-[9px] font-bold text-white shrink-0 mt-0.5"
                               style={{ background: si === 0 ? "#3b82f6" : si === 1 ? "#6366f1" : "#8b5cf6" }}>
                               {si + 1}
@@ -6918,8 +7194,10 @@ function PercakapanTab({
                           </div>
                         ))}
                       </div>
-                    </details>
+                    )}
                   </div>
+                ) : (
+                  <p className="text-[10px] text-slate-400 mt-3">{m.time}</p>
                 )}
 
                 {/* Suggestions */}
@@ -7061,6 +7339,13 @@ function PercakapanTab({
             Tutup
           </button>
         </div>
+      </div>
+    )}
+
+    {/* Floating Action Feedback Toast */}
+    {actionToast && (
+      <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[260] bg-slate-900/95 backdrop-blur-md text-white text-xs font-medium px-4 py-2 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.25)] border border-slate-700/60 pointer-events-none flex items-center gap-2 animate-in fade-in zoom-in-95">
+        <span>{actionToast}</span>
       </div>
     )}
     </>
