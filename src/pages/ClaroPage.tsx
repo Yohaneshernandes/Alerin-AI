@@ -2512,6 +2512,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
   const [renameModalItem, setRenameModalItem] = useState<{ id: string; title: string } | null>(null);
   const [renameInput, setRenameInput] = useState("");
   const [moveToProjectItem, setMoveToProjectItem] = useState<{ id: string; title: string } | null>(null);
+  const [deleteConfirmItem, setDeleteConfirmItem] = useState<{ id: string; title: string } | null>(null);
   const [selectedProjectId, setSelectedProjectId] = useState<string>("proj-1");
   const [expandedHistory, setExpandedHistory] = useState(false);
 
@@ -3056,7 +3057,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
                             <button
                               type="button"
                               onClick={() => {
-                                deleteRiwayat(item.id);
+                                setDeleteConfirmItem({ id: item.id, title: item.title });
                                 setMenuOpenId(null);
                               }}
                               className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[13px] font-medium text-red-600 hover:bg-red-50 active:scale-[0.99] transition-all text-left"
@@ -3296,6 +3297,72 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
                 className="px-4 py-2 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-xs transition-colors"
               >
                 Pindahkan
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Konfirmasi Hapus Percakapan */}
+      {deleteConfirmItem && (
+        <div
+          className="fixed inset-0 z-[250] flex items-center justify-center p-4 bg-black/45 backdrop-blur-xs animate-[gemini-fade-in_0.15s_ease-out]"
+          role="dialog"
+          aria-modal="true"
+          onClick={() => setDeleteConfirmItem(null)}
+        >
+          <div
+            className="w-full max-w-[340px] bg-white rounded-3xl p-5 shadow-2xl border border-slate-100 flex flex-col gap-4 animate-[gemini-zoom-in_0.2s_ease-out]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="size-8 rounded-xl bg-red-50 text-red-600 flex items-center justify-center shrink-0 border border-red-100">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="3 6 5 6 21 6" />
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                    <line x1="10" y1="11" x2="10" y2="17" />
+                    <line x1="14" y1="11" x2="14" y2="17" />
+                  </svg>
+                </div>
+                <h3 className="text-base font-bold text-slate-900">Hapus Percakapan?</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setDeleteConfirmItem(null)}
+                className="size-7 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center transition-colors cursor-pointer"
+                aria-label="Tutup"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
+
+            <div>
+              <p className="text-xs text-slate-500 leading-relaxed">
+                Apakah kamu yakin ingin menghapus percakapan <span className="font-semibold text-slate-800">"{deleteConfirmItem.title}"</span>? Tindakan ini tidak dapat dibatalkan.
+              </p>
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-1 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={() => setDeleteConfirmItem(null)}
+                className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  deleteRiwayat(deleteConfirmItem.id);
+                  setDeleteConfirmItem(null);
+                }}
+                className="px-4 py-2 rounded-xl text-xs font-bold bg-red-600 hover:bg-red-700 text-white shadow-xs transition-colors cursor-pointer active:scale-95"
+              >
+                Hapus
               </button>
             </div>
           </div>
@@ -4717,8 +4784,8 @@ function MarkdownRenderer({ text }: { text: string }) {
     if (h1m || h2m || h3m || boldOnly) {
       const content = h1m ? h1m[1] : h2m ? h2m[1] : h3m ? h3m[1] : line.slice(2, -2);
       const cls = h1m
-        ? "text-[1.0625rem] font-bold text-slate-900 mt-7 mb-3 leading-snug first:mt-0"
-        : "text-[0.9375rem] font-semibold text-slate-800 mt-6 mb-2.5 leading-snug first:mt-0";
+        ? "text-[1.0625rem] font-bold text-slate-900 mt-7 mb-3 leading-snug"
+        : "text-[0.9375rem] font-semibold text-slate-800 mt-6 mb-2.5 leading-snug";
       elements.push(<p key={i} className={cls}>{renderInlineMd(content)}</p>);
       i++; continue;
     }
@@ -4804,7 +4871,7 @@ function MarkdownRenderer({ text }: { text: string }) {
 
     // Paragraph
     elements.push(
-      <p key={i} className="text-[0.9375rem] text-slate-700 leading-7 mb-1 first:mt-0 last:mb-0">
+      <p key={i} className="text-[0.9375rem] text-slate-700 leading-7 mb-1">
         {renderInlineMd(line)}
       </p>
     );
@@ -5561,43 +5628,35 @@ function PercakapanTab({
               </div>
 
               {/* Content */}
-              <div className="pl-1.5 md:pl-9 flex flex-col items-start gap-1">
+              <div className="pl-1.5 md:pl-9">
                 {m.generating && m.imagePrompt ? (
                   <ImageGeneratingBubble
                     prompt={m.imagePrompt}
                     orientation={m.imageOrientation}
                   />
                 ) : m.imageUrl ? (
-                  <div className="flex flex-col gap-3 max-w-[92%] md:max-w-[85%]">
+                  <div className="flex flex-col gap-3">
                     <ImageResultBubble
                       imageUrl={m.imageUrl}
                       prompt={m.imagePrompt ?? ""}
                       orientation={m.imageOrientation}
                       onPreview={(url) => setChatImagePreview(url)}
                     />
-                    {m.text && (
-                      <div className="rounded-2xl rounded-tl-sm px-4.5 py-3.5 md:px-5 md:py-4 text-[0.9375rem] leading-relaxed text-slate-800 bg-white border border-slate-200/90 shadow-xs claro-ai-bubble">
-                        <MarkdownRenderer text={m.text} />
-                      </div>
-                    )}
+                    <MarkdownRenderer text={m.text} />
                   </div>
                 ) : m.paraphrase ? (
-                  <div className="flex flex-col gap-4 max-w-[92%] md:max-w-[85%]">
-                    <div className="rounded-2xl rounded-tl-sm px-4.5 py-3.5 md:px-5 md:py-4 text-[0.9375rem] leading-relaxed text-slate-800 bg-white border border-slate-200/90 shadow-xs claro-ai-bubble">
-                      <MarkdownRenderer text={m.text} />
-                    </div>
+                  <div className="flex flex-col gap-4">
+                    <MarkdownRenderer text={m.text} />
                     <ParaphraseBubble original={m.paraphrase.original} versions={m.paraphrase.versions} />
                   </div>
                 ) : (
-                  <div className="rounded-2xl rounded-tl-sm px-4.5 py-3.5 md:px-5 md:py-4 text-[0.9375rem] leading-relaxed text-slate-800 bg-white border border-slate-200/90 shadow-xs claro-ai-bubble max-w-[92%] md:max-w-[85%] w-fit">
-                    <MarkdownRenderer text={m.text} />
-                  </div>
+                  <MarkdownRenderer text={m.text} />
                 )}
-                <p className="text-[10px] text-slate-400 mt-1 pl-1">{m.time}</p>
+                <p className="text-[10px] text-slate-400 mt-3">{m.time}</p>
 
                 {/* Sources */}
                 {m.sources && m.sources.length > 0 && (
-                  <div className="mt-3 w-full max-w-[92%] md:max-w-[85%]">
+                  <div className="mt-4">
                     <details className="group">
                       <summary className="flex items-center gap-2 cursor-pointer list-none select-none w-fit">
                         <div className="flex -space-x-1.5">
@@ -5643,7 +5702,7 @@ function PercakapanTab({
 
                 {/* Suggestions */}
                 {isLastAlerin && m.suggestions && m.suggestions.length > 0 && (
-                  <div className="mt-3 w-full max-w-[92%] md:max-w-[85%]">
+                  <div className="mt-4">
                     <p className="text-[11px] text-slate-400 font-medium mb-2">Kalau mau, saya bisa:</p>
                     <div className="flex flex-col gap-1.5">
                       {m.suggestions.map((s, si) => (
@@ -5662,7 +5721,7 @@ function PercakapanTab({
                 {isLastAlerin && m.featureRec && (
                   <button
                     onClick={() => openFeature(m.featureRec!)}
-                    className="mt-3 w-full max-w-[92%] md:max-w-[85%] text-left flex items-center gap-3 px-4 py-3 rounded-2xl border transition-all hover:shadow-md group"
+                    className="mt-4 w-full text-left flex items-center gap-3 px-4 py-3 rounded-2xl border transition-all hover:shadow-md group"
                     style={{ background: "linear-gradient(135deg, #f8faff 0%, #fff 100%)", borderColor: "#dbeafe", boxShadow: "0 1px 6px rgba(59,130,246,0.07)" }}>
                     <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl shrink-0"
                       style={{ background: `${m.featureRec.color}15`, border: `1.5px solid ${m.featureRec.color}30` }}>

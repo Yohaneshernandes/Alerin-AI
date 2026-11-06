@@ -703,22 +703,6 @@ body {
   }
 }
 
-.claro-ai-bubble {
-  background: #ffffff;
-  color: #1e293b;
-  border: 1px solid rgba(226, 232, 240, 0.9);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
-}
-
-@media (min-width: 768px) {
-  .claro-ai-bubble {
-    background: #ffffff;
-    color: #1e293b;
-    border: 1px solid rgba(226, 232, 240, 0.9);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
-  }
-}
-
 .claro-glass-card {
   background: rgba(255, 255, 255, 0.88);
   backdrop-filter: blur(24px) saturate(180%);
