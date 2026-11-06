@@ -562,6 +562,142 @@ type RiwayatItem = {
 
 const DEFAULT_RIWAYAT_ITEMS: RiwayatItem[] = [
   {
+    id: "rw-u1",
+    title: "Bantu cari ide judul skripsi ...",
+    time: "Baru saja",
+    msgs: [
+      {
+        role: "user",
+        text: "Bantu cari ide judul skripsi yang menarik tentang AI",
+        time: "10.00",
+      },
+      {
+        role: "claro",
+        text: "Tentu! Berikut beberapa ide judul skripsi menarik seputar kecerdasan buatan (AI) yang relevan dan aplikatif.",
+        time: "10.01",
+      },
+    ],
+  },
+  {
+    id: "rw-u2",
+    title: "Bantu buat kerangka BAB I...",
+    time: "1 jam lalu",
+    msgs: [
+      {
+        role: "user",
+        text: "Bantu buat kerangka BAB I skripsi",
+        time: "09.00",
+      },
+      {
+        role: "claro",
+        text: "Siap! Berikut rancangan kerangka terstruktur BAB I Pendahuluan untuk skripsimu.",
+        time: "09.01",
+      },
+    ],
+  },
+  {
+    id: "rw-u3",
+    title: "Parafrase abstrak agar be...",
+    time: "3 jam lalu",
+    msgs: [
+      {
+        role: "user",
+        text: "Parafrase abstrak ini agar bebas plagiasi",
+        time: "07.00",
+      },
+      {
+        role: "claro",
+        text: "Berikut hasil parafrase abstrak yang telah dioptimasi dengan gaya bahasa akademis.",
+        time: "07.01",
+      },
+    ],
+  },
+  {
+    id: "rw-u4",
+    title: "Perbaiki struktur kalimat a...",
+    time: "Kemarin",
+    msgs: [
+      {
+        role: "user",
+        text: "Perbaiki struktur kalimat akademik di paragraf ini",
+        time: "14.00",
+      },
+      {
+        role: "claro",
+        text: "Berikut perbaikan struktur kalimat yang lebih lugas dan formal.",
+        time: "14.01",
+      },
+    ],
+  },
+  {
+    id: "rw-u5",
+    title: "kajkjskjakjskj",
+    time: "Kemarin",
+    msgs: [
+      {
+        role: "user",
+        text: "kajkjskjakjskj",
+        time: "15.00",
+      },
+      {
+        role: "claro",
+        text: "Halo! Ada yang bisa Alerin bantu untuk tugas atau materi kuliahmu hari ini?",
+        time: "15.01",
+      },
+    ],
+  },
+  {
+    id: "rw-u6",
+    title: "ini",
+    time: "2 hari lalu",
+    msgs: [
+      {
+        role: "user",
+        text: "ini",
+        time: "16.00",
+      },
+      {
+        role: "claro",
+        text: "Silakan kirimkan pertanyaan atau file yang ingin kamu diskusikan.",
+        time: "16.01",
+      },
+    ],
+  },
+  {
+    id: "rw-u7",
+    title: "foto lanscpae",
+    time: "3 hari lalu",
+    msgs: [
+      {
+        role: "user",
+        text: "foto lanscpae",
+        time: "11.00",
+      },
+      {
+        role: "claro",
+        text: "Foto pemandangan telah dianalisis. Apakah butuh bantuan deskripsi atau analisis komposisi?",
+        time: "11.01",
+      },
+    ],
+  },
+  {
+    id: "rw-u8",
+    title: "dammmm",
+    time: "4 hari lalu",
+    msgs: [
+      {
+        role: "user",
+        text: "dammmm",
+        time: "13.00",
+      },
+      {
+        role: "claro",
+        text: "Tetap semangat! Kita bisa tuntaskan tugas skripsi atau kuliah ini langkah demi langkah.",
+        time: "13.01",
+      },
+    ],
+  },
+  {
     id: "rw-1",
     title: "Rencana Ke Vietnam",
     time: "Baru saja",
@@ -2564,7 +2700,19 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
   const [historyList, setHistoryList] = useState<RiwayatItem[]>(() => {
     try {
       const saved = localStorage.getItem("alerin_mobile_riwayat");
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const existingIds = new Set(parsed.map((i: RiwayatItem) => i.id));
+          const missing = DEFAULT_RIWAYAT_ITEMS.filter((i) => !existingIds.has(i.id));
+          if (missing.length > 0) {
+            const merged = [...parsed, ...missing];
+            localStorage.setItem("alerin_mobile_riwayat", JSON.stringify(merged));
+            return merged;
+          }
+          return parsed;
+        }
+      }
     } catch {}
     return DEFAULT_RIWAYAT_ITEMS;
   });
@@ -2577,11 +2725,41 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
   const [deleteConfirmItem, setDeleteConfirmItem] = useState<{ id: string; title: string } | null>(null);
   const [selectedProjectId, setSelectedProjectId] = useState<string>("proj-1");
   const [expandedHistory, setExpandedHistory] = useState(false);
+  const [isRefreshingHistory, setIsRefreshingHistory] = useState(false);
 
   const saveRiwayatToStorage = (items: RiwayatItem[]) => {
     try {
       localStorage.setItem("alerin_mobile_riwayat", JSON.stringify(items));
     } catch {}
+  };
+
+  const handleRefreshRiwayat = () => {
+    setIsRefreshingHistory(true);
+    setTimeout(() => {
+      setHistoryList((prev) => {
+        try {
+          const saved = localStorage.getItem("alerin_mobile_riwayat");
+          if (saved) {
+            const parsed = JSON.parse(saved);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              const existingIds = new Set(parsed.map((i: RiwayatItem) => i.id));
+              const missing = DEFAULT_RIWAYAT_ITEMS.filter((i) => !existingIds.has(i.id));
+              const merged = [...parsed, ...missing];
+              saveRiwayatToStorage(merged);
+              return merged;
+            }
+          }
+        } catch {}
+        const existingIds = new Set(prev.map((i) => i.id));
+        const missing = DEFAULT_RIWAYAT_ITEMS.filter((i) => !existingIds.has(i.id));
+        const next = [...prev, ...missing];
+        saveRiwayatToStorage(next);
+        return next;
+      });
+      setExpandedHistory((prev) => !prev);
+      setIsRefreshingHistory(false);
+      showToast("Riwayat percakapan diperbarui");
+    }, 300);
   };
 
   const saveRename = (id: string, newTitle?: string) => {
@@ -2986,8 +3164,8 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
               {/* Riwayat Section */}
               <div className="pt-1">
                 <div className="text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-2 px-1">Riwayat</div>
-                <div className="space-y-1 overflow-y-auto max-h-[38vh] pr-1">
-                  {(expandedHistory ? historyList : historyList.slice(0, 5)).map((item) => (
+                <div className="space-y-1 overflow-y-auto max-h-[48vh] pr-1">
+                  {(expandedHistory ? historyList : historyList.slice(0, 8)).map((item) => (
                     <div
                       key={item.id}
                       className="relative flex items-center justify-between rounded-xl px-1.5 py-1 hover:bg-slate-50 transition-colors group"
@@ -3136,27 +3314,55 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
                       )}
                     </div>
                   ))}
-                  {historyList.length > 5 && (
-                    <button
-                      type="button"
-                      onClick={() => setExpandedHistory((prev) => !prev)}
-                      className="flex items-center gap-1.5 w-full text-left text-neutral-500 hover:text-blue-600 text-sm font-medium transition-colors pt-2 pb-1 px-1.5 cursor-pointer"
-                    >
-                      <span>{expandedHistory ? "Tampilkan lebih sedikit" : "Lihat selengkapnya"}</span>
-                      <svg
-                        width="14"
-                        height="14"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2.2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className={`transition-transform duration-200 ${expandedHistory ? "rotate-180" : ""}`}
+                  {historyList.length >= 8 && (
+                    <div className="pt-1.5 pb-1 px-1">
+                      <button
+                        type="button"
+                        onClick={handleRefreshRiwayat}
+                        disabled={isRefreshingHistory}
+                        className="flex items-center gap-2 w-full text-left text-neutral-500 hover:text-blue-600 text-[13px] font-medium transition-colors py-1 px-1 cursor-pointer group"
                       >
-                        <path d="M6 9l6 6 6-6" />
-                      </svg>
-                    </button>
+                        <svg
+                          width="14"
+                          height="14"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          className={`text-neutral-400 group-hover:text-blue-600 transition-all ${
+                            isRefreshingHistory ? "animate-spin text-blue-600" : ""
+                          }`}
+                        >
+                          <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
+                        </svg>
+                        <span>
+                          {isRefreshingHistory
+                            ? "Menyegarkan riwayat..."
+                            : expandedHistory
+                            ? "Tampilkan lebih sedikit"
+                            : "Lihat selengkapnya"}
+                        </span>
+                        {!isRefreshingHistory && (
+                          <svg
+                            width="13"
+                            height="13"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2.2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className={`ml-auto text-neutral-400 group-hover:text-blue-600 transition-transform duration-200 ${
+                              expandedHistory ? "rotate-180" : ""
+                            }`}
+                          >
+                            <path d="M6 9l6 6 6-6" />
+                          </svg>
+                        )}
+                      </button>
+                    </div>
                   )}
                 </div>
               </div>
