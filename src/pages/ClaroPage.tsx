@@ -1315,18 +1315,37 @@ function Toast({ msg, onDone }: { msg: string; onDone: () => void }) {
   return (
     <div
       role="status"
-      className="fixed bottom-6 left-1/2 z-[200] -translate-x-1/2 flex max-w-[calc(100vw-2rem)] sm:min-w-[340px] sm:max-w-[420px] items-center gap-3.5 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-[0_12px_36px_rgba(0,0,0,0.12),0_4px_12px_rgba(0,0,0,0.06)]"
-      style={{ animation: "fade-up 0.3s ease" }}
+      aria-live="polite"
+      className="fixed bottom-6 left-4 right-4 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 z-[300] mx-auto w-auto max-w-[400px] sm:min-w-[340px] sm:max-w-[420px] flex items-center justify-between gap-3.5 rounded-2xl border border-slate-200/80 bg-white p-3.5 sm:p-4 shadow-[0_16px_40px_rgba(0,0,0,0.14),0_4px_12px_rgba(0,0,0,0.06)] animate-[gemini-fade-in_0.2s_ease-out]"
     >
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#18181b] text-white shadow-xs">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-          <path d="M20 6L9 17l-5-5" />
+      <div className="flex items-center gap-3.5 min-w-0 flex-1">
+        <div className="flex h-9.5 w-9.5 shrink-0 items-center justify-center rounded-full bg-[#18181b] text-white shadow-xs">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+        </div>
+        <div className="min-w-0 flex-1">
+          <h4 className="text-[14px] font-bold leading-tight text-slate-900 tracking-tight truncate">
+            {title}
+          </h4>
+          {description ? (
+            <p className="mt-0.5 text-xs leading-snug text-slate-500 font-normal line-clamp-2">
+              {description}
+            </p>
+          ) : null}
+        </div>
+      </div>
+      <button
+        type="button"
+        onClick={onDone}
+        className="size-7 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center transition-colors shrink-0 cursor-pointer"
+        aria-label="Tutup notifikasi"
+      >
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
         </svg>
-      </div>
-      <div className="min-w-0 flex-1">
-        <h4 className="text-[14.5px] font-bold leading-tight text-slate-900 tracking-[-0.01em]">{title}</h4>
-        {description ? <p className="mt-1 text-xs sm:text-[13px] leading-relaxed text-slate-500 font-normal">{description}</p> : null}
-      </div>
+      </button>
     </div>
   );
 }
