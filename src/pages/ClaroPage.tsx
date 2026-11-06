@@ -2362,9 +2362,6 @@ function NotifPanel({ onClose, onNavigate }: { onClose: () => void; onNavigate: 
             >
               {notifsUmum.length}
             </span>
-            {unreadUmum > 0 && (
-              <span className="size-1.5 rounded-full bg-blue-600 shrink-0" />
-            )}
             {activeTab === "umum" && (
               <span className="absolute bottom-0 inset-x-0 h-0.5 bg-blue-600 rounded-full" />
             )}
@@ -2389,9 +2386,6 @@ function NotifPanel({ onClose, onNavigate }: { onClose: () => void; onNavigate: 
             >
               {notifsSistem.length}
             </span>
-            {unreadSistem > 0 && (
-              <span className="size-1.5 rounded-full bg-blue-600 shrink-0" />
-            )}
             {activeTab === "sistem" && (
               <span className="absolute bottom-0 inset-x-0 h-0.5 bg-blue-600 rounded-full" />
             )}
