@@ -7162,21 +7162,29 @@ function PercakapanTab({
                                 <button
                                   type="button"
                                   onClick={() => handleFeedback(i, "like")}
-                                  className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-left font-medium transition-all ${
+                                  className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl text-left font-medium transition-all ${
                                     feedbackMap[i] === "like"
                                       ? "bg-blue-50 text-blue-600 font-semibold"
                                       : "hover:bg-slate-50 text-slate-700"
                                   }`}
                                 >
-                                  <div className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-                                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                      <path d="M7 10v12" />
-                                      <path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2h0a3.13 3.13 0 0 1 3 3.88Z" />
-                                    </svg>
-                                  </div>
+                                  <svg
+                                    className={`w-4.5 h-4.5 shrink-0 transition-colors ${
+                                      feedbackMap[i] === "like" ? "text-blue-600" : "text-slate-500 group-hover:text-slate-700"
+                                    }`}
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="1.8"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                  >
+                                    <path d="M7 10v12" />
+                                    <path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2h0a3.13 3.13 0 0 1 3 3.88Z" />
+                                  </svg>
                                   <div className="flex-1 min-w-0">
-                                    <p className="font-semibold text-slate-800">Suka respon</p>
-                                    <p className="text-[10px] text-slate-400">Jawaban tepat & membantu</p>
+                                    <p className="font-semibold text-slate-800 leading-tight">Suka respon</p>
+                                    <p className="text-[10px] text-slate-400 mt-0.5">Jawaban tepat & membantu</p>
                                   </div>
                                   {feedbackMap[i] === "like" && (
                                     <svg className="w-4 h-4 text-blue-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
@@ -7186,21 +7194,29 @@ function PercakapanTab({
                                 <button
                                   type="button"
                                   onClick={() => handleFeedback(i, "dislike")}
-                                  className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-left font-medium transition-all ${
+                                  className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl text-left font-medium transition-all ${
                                     feedbackMap[i] === "dislike"
                                       ? "bg-rose-50 text-rose-600 font-semibold"
                                       : "hover:bg-slate-50 text-slate-700"
                                   }`}
                                 >
-                                  <div className="w-7 h-7 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center shrink-0">
-                                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                      <path d="M17 14V2" />
-                                      <path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22h0a3.13 3.13 0 0 1-3-3.88Z" />
-                                    </svg>
-                                  </div>
+                                  <svg
+                                    className={`w-4.5 h-4.5 shrink-0 transition-colors ${
+                                      feedbackMap[i] === "dislike" ? "text-rose-600" : "text-slate-500 group-hover:text-slate-700"
+                                    }`}
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="1.8"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                  >
+                                    <path d="M17 14V2" />
+                                    <path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22h0a3.13 3.13 0 0 1-3-3.88Z" />
+                                  </svg>
                                   <div className="flex-1 min-w-0">
-                                    <p className="font-semibold text-slate-800">Tidak suka respon</p>
-                                    <p className="text-[10px] text-slate-400">Kurang tepat / relevan</p>
+                                    <p className="font-semibold text-slate-800 leading-tight">Tidak suka respon</p>
+                                    <p className="text-[10px] text-slate-400 mt-0.5">Kurang tepat / relevan</p>
                                   </div>
                                   {feedbackMap[i] === "dislike" && (
                                     <svg className="w-4 h-4 text-rose-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
