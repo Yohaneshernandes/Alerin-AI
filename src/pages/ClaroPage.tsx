@@ -7273,18 +7273,7 @@ function PercakapanTab({
                                 className="fixed inset-0 z-30"
                                 onClick={() => setMoreMenuIdx(null)}
                               />
-                              <div className="absolute bottom-full left-0 mb-2 z-40 bg-white rounded-2xl border border-slate-200/90 shadow-[0_8px_30px_rgba(0,0,0,0.12)] p-1.5 w-48 flex flex-col gap-1 text-xs animate-in fade-in zoom-in-95">
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    setMoreMenuIdx(null);
-                                    handleReadAloud(m.text);
-                                  }}
-                                  className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-left font-medium hover:bg-slate-50 text-slate-700 transition-colors"
-                                >
-                                  <svg className="w-4 h-4 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
-                                  <span>Bacakan respon</span>
-                                </button>
+                              <div className="absolute bottom-full left-0 mb-2 z-40 bg-white rounded-2xl border border-slate-200/90 shadow-[0_8px_30px_rgba(0,0,0,0.12)] p-1.5 w-44 flex flex-col gap-1 text-xs animate-in fade-in zoom-in-95">
                                 <button
                                   type="button"
                                   onClick={() => {
