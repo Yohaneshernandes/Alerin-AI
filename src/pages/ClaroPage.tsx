@@ -5796,15 +5796,19 @@ function cleanMdText(text: string): string {
     .replace(/\s*[—–]\s*/g, ": ");
 }
 
+function StreamingCursor({ noMargin }: { noMargin?: boolean }) {
+  return (
+    <span
+      className={`inline-block w-[3px] h-[1.15em] ${noMargin ? "" : "ml-1"} bg-blue-600 rounded-full animate-pulse align-middle`}
+      aria-hidden="true"
+    />
+  );
+}
+
 function MarkdownRenderer({ text, isStreaming }: { text: string; isStreaming?: boolean }) {
   if (!text.trim()) {
     if (isStreaming) {
-      return (
-        <span
-          className="inline-block w-2 h-4 bg-blue-600 rounded-[2px] animate-pulse align-middle"
-          aria-hidden="true"
-        />
-      );
+      return <StreamingCursor noMargin />;
     }
     return null;
   }
@@ -5927,12 +5931,7 @@ function MarkdownRenderer({ text, isStreaming }: { text: string; isStreaming?: b
       elements.push(
         <p key={i} className={cls}>
           {renderInlineMd(content)}
-          {isStreaming && isLast && (
-            <span
-              className="inline-block w-2 h-4 ml-1.5 bg-blue-600 rounded-[2px] animate-pulse align-middle"
-              aria-hidden="true"
-            />
-          )}
+          {isStreaming && isLast && <StreamingCursor />}
         </p>
       );
       i++; continue;
@@ -6020,12 +6019,7 @@ function MarkdownRenderer({ text, isStreaming }: { text: string; isStreaming?: b
             <span className="shrink-0 font-normal text-slate-800 text-[0.9375rem] leading-7 select-none">{n}.</span>
             <span className="flex-1 text-[0.9375rem] text-slate-700 leading-7">
               {renderInlineMd(c)}
-              {isStreaming && isLastItem && (
-                <span
-                  className="inline-block w-2 h-4 ml-1.5 bg-blue-600 rounded-[2px] animate-pulse align-middle"
-                  aria-hidden="true"
-                />
-              )}
+              {isStreaming && isLastItem && <StreamingCursor />}
             </span>
           </li>
         );
@@ -6049,12 +6043,7 @@ function MarkdownRenderer({ text, isStreaming }: { text: string; isStreaming?: b
             <span className="shrink-0 w-1.5 h-1.5 rounded-full bg-slate-400 mt-[0.6rem]" />
             <span className="flex-1 text-[0.9375rem] text-slate-700 leading-7">
               {renderInlineMd(c)}
-              {isStreaming && isLastItem && (
-                <span
-                  className="inline-block w-2 h-4 ml-1.5 bg-blue-600 rounded-[2px] animate-pulse align-middle"
-                  aria-hidden="true"
-                />
-              )}
+              {isStreaming && isLastItem && <StreamingCursor />}
             </span>
           </li>
         );
@@ -6071,12 +6060,7 @@ function MarkdownRenderer({ text, isStreaming }: { text: string; isStreaming?: b
     elements.push(
       <p key={i} className="text-[0.9375rem] text-slate-700 leading-7 mb-1">
         {renderInlineMd(cleanLine)}
-        {isStreaming && isLast && (
-          <span
-            className="inline-block w-2 h-4 ml-1.5 bg-blue-600 rounded-[2px] animate-pulse align-middle"
-            aria-hidden="true"
-          />
-        )}
+        {isStreaming && isLast && <StreamingCursor />}
       </p>
     );
     i++;
@@ -6085,12 +6069,7 @@ function MarkdownRenderer({ text, isStreaming }: { text: string; isStreaming?: b
   return (
     <div className="space-y-0">
       {elements}
-      {isStreaming && !cursorRendered && (
-        <span
-          className="inline-block w-2 h-4 ml-1.5 bg-blue-600 rounded-[2px] animate-pulse align-middle"
-          aria-hidden="true"
-        />
-      )}
+      {isStreaming && !cursorRendered && <StreamingCursor />}
     </div>
   );
 }
@@ -6607,8 +6586,9 @@ function PercakapanTab({
 
     const tokens = fullText.match(/(\s+|\S+)/g) || [fullText];
     const totalTokens = tokens.length;
-    // Step size menyesuaikan panjang teks: 1-2 kata per tik untuk teks pendek, 3-4 kata untuk teks panjang
-    const stepSize = totalTokens > 300 ? 4 : totalTokens > 150 ? 3 : totalTokens > 60 ? 2 : 1;
+    // Step size 1 kata/token per tik agar teks mengalir halus kata per kata tanpa loncatan kasar
+    const stepSize = totalTokens > 750 ? 2 : 1;
+    const intervalMs = totalTokens > 400 ? 11 : totalTokens > 220 ? 15 : totalTokens > 100 ? 18 : 22;
     let tokenIdx = Math.min(stepSize, totalTokens);
     const initialText = tokens.slice(0, tokenIdx).join("");
 
@@ -6653,7 +6633,7 @@ function PercakapanTab({
           streamIntervalRef.current = null;
         }
       }
-    }, 24);
+    }, intervalMs);
   }, []);
 
   const sendWithFile = useCallback((text: string, file: { name: string; type: string; size: string; previewUrl?: string }, allFiles?: { name: string; type: string; size: string; previewUrl?: string }[]) => {
