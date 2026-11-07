@@ -10206,6 +10206,7 @@ interface MobileProjectItem {
   iconColor: string;
   iconType: "toga" | "folder" | "money" | "microscope" | "sparkles";
   msgs?: ChatMsg[];
+  pinned?: boolean;
 }
 
 const DEFAULT_MOBILE_PROJECTS: MobileProjectItem[] = [
@@ -10486,6 +10487,26 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
   const [renameChatInput, setRenameChatInput] = useState("");
   const [deleteChatConfirm, setDeleteChatConfirm] = useState(false);
 
+  // Popup menu titik tiga pada item proyek (sesuai Gambar 2)
+  const [activeProjectMenu, setActiveProjectMenu] = useState<MobileProjectItem | null>(null);
+
+  const handleTogglePin = (target: MobileProjectItem) => {
+    const isNowPinned = !target.pinned;
+    const updated = projects.map((p) =>
+      p.id === target.id ? { ...p, pinned: isNowPinned } : p
+    );
+    setProjects(updated);
+    saveProjects(updated);
+    setToast(isNowPinned ? `Proyek "${target.title}" disematkan` : `Sematan proyek "${target.title}" dilepas`);
+  };
+
+  const handleShareProject = (target: MobileProjectItem) => {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(`${window.location.origin}/proyek/${target.id}`);
+    }
+    setToast(`Tautan proyek "${target.title}" berhasil disalin!`);
+  };
+
   // Quick chat input on Gambar 2
   const [newChatQuickText, setNewChatQuickText] = useState("");
 
@@ -10681,14 +10702,20 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
     e.target.value = "";
   };
 
-  const filteredProjects = projects.filter((p) => {
-    if (activeFilterTab === "dibuat" && p.category !== "dibuat") return false;
-    if (activeFilterTab === "dibagikan" && p.category !== "dibagikan") return false;
-    if (searchQuery.trim()) {
-      return p.title.toLowerCase().includes(searchQuery.trim().toLowerCase());
-    }
-    return true;
-  });
+  const filteredProjects = projects
+    .filter((p) => {
+      if (activeFilterTab === "dibuat" && p.category !== "dibuat") return false;
+      if (activeFilterTab === "dibagikan" && p.category !== "dibagikan") return false;
+      if (searchQuery.trim()) {
+        return p.title.toLowerCase().includes(searchQuery.trim().toLowerCase());
+      }
+      return true;
+    })
+    .sort((a, b) => {
+      if (a.pinned && !b.pinned) return -1;
+      if (!a.pinned && b.pinned) return 1;
+      return 0;
+    });
 
   return (
     <div className="flex-1 flex flex-col h-full bg-white relative overflow-hidden select-none">
@@ -10843,6 +10870,136 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
             <div className="flex items-center justify-end gap-2 pt-2 border-t border-neutral-100">
               <button type="button" onClick={() => setDeleteChatConfirm(false)} className="flex-1 px-4 py-2.5 rounded-xl text-xs font-semibold text-neutral-600 hover:bg-neutral-100 text-center">Batal</button>
               <button type="button" onClick={handleDeleteChat} className="flex-1 px-4 py-2.5 rounded-xl text-xs font-bold bg-red-600 text-white text-center hover:bg-red-700">Hapus</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Modal Popup Menu Titik Tiga Item Proyek (sesuai Gambar 2) ── */}
+      {activeProjectMenu && (
+        <div
+          className="fixed inset-0 z-[250] flex flex-col items-center justify-start pt-24 px-4 bg-black/45 backdrop-blur-xs select-none animate-[gemini-fade-in_0.15s_ease-out]"
+          onClick={() => setActiveProjectMenu(null)}
+        >
+          <div
+            className="w-full max-w-[340px] flex flex-col gap-2.5 animate-[gemini-zoom-in_0.2s_ease-out]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header capsule: item proyek yang sedang dipilih */}
+            <div className="w-full bg-white rounded-3xl p-3.5 flex items-center gap-3.5 shadow-lg border border-neutral-100">
+              <div className="size-12 rounded-2xl flex items-center justify-center shrink-0 bg-[#EAF2FF] text-[#2F80ED]">
+                <ProjectIcon type={activeProjectMenu.iconType || "folder"} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1.5">
+                  {activeProjectMenu.pinned && (
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="text-neutral-900 shrink-0">
+                      <line x1="12" y1="17" x2="12" y2="22" />
+                      <path d="M5 17h14v-2l-3-4V4h1V2H7v2h1v7l-3 4v2z" />
+                    </svg>
+                  )}
+                  <h3 className="font-semibold text-[15px] text-neutral-900 truncate">
+                    {activeProjectMenu.title}
+                  </h3>
+                </div>
+                <p className="text-xs text-neutral-400 mt-0.5 truncate">
+                  {activeProjectMenu.time}
+                </p>
+              </div>
+            </div>
+
+            {/* Menu Pop-up Card */}
+            <div className="w-full bg-white rounded-[26px] p-2 shadow-2xl border border-neutral-100 flex flex-col divide-y divide-neutral-100/60">
+              {/* 1. Obrolan proyek baru */}
+              <button
+                type="button"
+                onClick={() => {
+                  const target = activeProjectMenu;
+                  setActiveProjectMenu(null);
+                  setSelectedProject(target);
+                  setProjectSubTab("obrolan");
+                  setSelectedProjectChat(null);
+                }}
+                className="w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl hover:bg-neutral-50 active:bg-neutral-100 transition-all text-left text-[14.5px] font-medium text-neutral-800 cursor-pointer"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-neutral-800 shrink-0">
+                  <path d="M12 20h9" />
+                  <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                </svg>
+                <span>Obrolan proyek baru</span>
+              </button>
+
+              {/* 2. Sematkan / Lepas sematan */}
+              <button
+                type="button"
+                onClick={() => {
+                  const target = activeProjectMenu;
+                  setActiveProjectMenu(null);
+                  handleTogglePin(target);
+                }}
+                className="w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl hover:bg-neutral-50 active:bg-neutral-100 transition-all text-left text-[14.5px] font-medium text-neutral-800 cursor-pointer"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-neutral-800 shrink-0">
+                  <line x1="12" y1="17" x2="12" y2="22" />
+                  <path d="M5 17h14v-2l-3-4V4h1V2H7v2h1v7l-3 4v2z" />
+                </svg>
+                <span>{activeProjectMenu.pinned ? "Lepas sematan" : "Sematkan"}</span>
+              </button>
+
+              {/* 3. Bagikan */}
+              <button
+                type="button"
+                onClick={() => {
+                  const target = activeProjectMenu;
+                  setActiveProjectMenu(null);
+                  handleShareProject(target);
+                }}
+                className="w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl hover:bg-neutral-50 active:bg-neutral-100 transition-all text-left text-[14.5px] font-medium text-neutral-800 cursor-pointer"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-neutral-800 shrink-0">
+                  <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+                  <polyline points="16 6 12 2 8 6" />
+                  <line x1="12" y1="2" x2="12" y2="15" />
+                </svg>
+                <span>Bagikan</span>
+              </button>
+
+              {/* 4. Pengaturan proyek */}
+              <button
+                type="button"
+                onClick={() => {
+                  const target = activeProjectMenu;
+                  setActiveProjectMenu(null);
+                  setSelectedProject(target);
+                  setRenameProjectInput(target.title);
+                  setRenameProjectModal(true);
+                }}
+                className="w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl hover:bg-neutral-50 active:bg-neutral-100 transition-all text-left text-[14.5px] font-medium text-neutral-800 cursor-pointer"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-neutral-800 shrink-0">
+                  <circle cx="12" cy="12" r="3" />
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                </svg>
+                <span>Pengaturan proyek</span>
+              </button>
+
+              {/* 5. Hapus */}
+              <button
+                type="button"
+                onClick={() => {
+                  const target = activeProjectMenu;
+                  setActiveProjectMenu(null);
+                  setSelectedProject(target);
+                  setDeleteProjectConfirm(true);
+                }}
+                className="w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl hover:bg-rose-50 active:bg-rose-100/70 transition-all text-left text-[14.5px] font-medium text-rose-600 cursor-pointer"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-rose-600 shrink-0">
+                  <polyline points="3 6 5 6 21 6" />
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                </svg>
+                <span>Hapus</span>
+              </button>
             </div>
           </div>
         </div>
@@ -11390,9 +11547,8 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                 </div>
               ) : (
                 filteredProjects.map((p) => (
-                  <button
+                  <div
                     key={p.id}
-                    type="button"
                     onClick={() => {
                       setSelectedProject(p);
                       setProjectSubTab("obrolan");
@@ -11402,12 +11558,18 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                   >
                     {/* Pastel rounded square icon: folder biru seperti Yohanes */}
                     <div className="size-12 rounded-2xl flex items-center justify-center shrink-0 bg-[#EAF2FF] text-[#2F80ED]">
-                      <ProjectIcon type="folder" />
+                      <ProjectIcon type={p.iconType || "folder"} />
                     </div>
 
                     {/* Title & Subtitle */}
-                    <div className="flex-1 min-w-0">
+                    <div className="flex-1 min-w-0 pr-1">
                       <div className="flex items-center gap-2">
+                        {p.pinned && (
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="text-neutral-900 shrink-0">
+                            <line x1="12" y1="17" x2="12" y2="22" />
+                            <path d="M5 17h14v-2l-3-4V4h1V2H7v2h1v7l-3 4v2z" />
+                          </svg>
+                        )}
                         <h3 className="font-semibold text-[15px] text-neutral-900 truncate">
                           {p.title}
                         </h3>
@@ -11426,7 +11588,24 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                         {p.time}
                       </p>
                     </div>
-                  </button>
+
+                    {/* Titik tiga button (sesuai Gambar 2) */}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setActiveProjectMenu(p);
+                      }}
+                      aria-label={`Menu pilihan proyek ${p.title}`}
+                      className="size-8 rounded-full flex items-center justify-center text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 active:scale-90 transition-all shrink-0 cursor-pointer"
+                    >
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                        <circle cx="5" cy="12" r="2" />
+                        <circle cx="12" cy="12" r="2" />
+                        <circle cx="19" cy="12" r="2" />
+                      </svg>
+                    </button>
+                  </div>
                 ))
               )}
             </div>
@@ -11498,7 +11677,31 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                       <div className="size-10 rounded-xl flex items-center justify-center bg-[#EAF2FF] text-[#2F80ED]">
                         <ProjectIcon type="folder" />
                       </div>
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600">Aktif</span>
+                      <div className="flex items-center gap-1.5">
+                        {p.pinned && (
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="text-neutral-900 shrink-0">
+                            <line x1="12" y1="17" x2="12" y2="22" />
+                            <path d="M5 17h14v-2l-3-4V4h1V2H7v2h1v7l-3 4v2z" />
+                          </svg>
+                        )}
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600">Aktif</span>
+                        <div
+                          role="button"
+                          tabIndex={0}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setActiveProjectMenu(p);
+                          }}
+                          aria-label={`Menu proyek ${p.title}`}
+                          className="size-7 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+                        >
+                          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                            <circle cx="5" cy="12" r="2" />
+                            <circle cx="12" cy="12" r="2" />
+                            <circle cx="19" cy="12" r="2" />
+                          </svg>
+                        </div>
+                      </div>
                     </div>
                     <h3 className="font-display font-700 text-base text-slate-800 mb-1 group-hover:text-blue-600 transition-colors">{p.title}</h3>
                     <p className="text-xs text-slate-400 mb-4">{p.time}</p>
