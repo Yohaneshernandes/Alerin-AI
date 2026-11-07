@@ -6686,7 +6686,7 @@ function PercakapanTab({
           : `Oke, saya sudah menerima file **${file.name}** (${file.type}, ${file.size}). Saya akan membantu menganalisisnya. Apa yang ingin kamu ketahui dari dokumen ini?`;
       }
       streamResponse(reply, {});
-    }, 900);
+    }, 4800);
   }, [scrollToBottom, streamResponse]);
 
   const send = useCallback((text: string) => {
@@ -6747,7 +6747,7 @@ function PercakapanTab({
           suggestions: ["Parafrase kalimat lain", "Cara hindari plagiarisme"],
           featureRec: getFeatureRec(text),
         });
-      }, 900);
+      }, 5000);
     } else {
       setTyping(true);
       responseTimeoutRef.current = setTimeout(() => {
@@ -6758,7 +6758,7 @@ function PercakapanTab({
           sources: getSources(text, replyText),
           featureRec: getFeatureRec(text),
         });
-      }, 900);
+      }, 5400);
     }
   }, [scrollToBottom, streamResponse]);
 
@@ -6827,7 +6827,7 @@ function PercakapanTab({
         sources: getSources(userQuery, replyText),
         featureRec: getFeatureRec(userQuery),
       });
-    }, 700);
+    }, 5400);
   }, [msgs, showActionToast, streamResponse]);
 
   if (!chatMode) {
@@ -10546,7 +10546,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
       setProjectChatsMap(updatedMap);
       saveProjectChats(updatedMap);
       setIsGenerating(false);
-    }, 850);
+    }, 5200);
   };
 
   const handleSendMessageInChat = (text: string) => {
@@ -10594,7 +10594,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
       saveProjectChats(finalMap);
       setIsGenerating(false);
       setTimeout(() => chatEndRef.current?.scrollIntoView({ behavior: "smooth" }), 60);
-    }, 900);
+    }, 5200);
   };
 
   const handleRenameChat = () => {
