@@ -11405,7 +11405,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                     key={chat.id}
                     type="button"
                     onClick={() => setSelectedProjectChat(chat)}
-                    className="w-full text-left py-1 hover:bg-neutral-50 rounded-xl transition-colors cursor-pointer group block"
+                    className="w-full text-left px-2.5 py-1.5 hover:bg-neutral-50 active:bg-neutral-100/70 rounded-xl transition-colors cursor-pointer group block"
                   >
                     <h3 className="text-[15px] font-semibold text-neutral-900 group-hover:text-blue-600 transition-colors">
                       {chat.title}
