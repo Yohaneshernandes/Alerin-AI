@@ -2410,16 +2410,16 @@ function NotifPanel({ onClose, onNavigate }: { onClose: () => void; onNavigate: 
   const [activeTab, setActiveTab] = useState<"umum" | "sistem">("umum");
   const [notifsUmum, setNotifsUmum] = useState<NotifItem[]>(DEFAULT_NOTIFS_UMUM);
   const [notifsSistem, setNotifsSistem] = useState<NotifItem[]>(DEFAULT_NOTIFS_SISTEM);
+  const [isSimulatedEmpty, setIsSimulatedEmpty] = useState(false);
 
   const handleMarkAllRead = () => {
     setNotifsUmum((prev) => prev.map((n) => ({ ...n, unread: false })));
     setNotifsSistem((prev) => prev.map((n) => ({ ...n, unread: false })));
   };
 
-  const unreadUmum = notifsUmum.filter((n) => n.unread).length;
-  const unreadSistem = notifsSistem.filter((n) => n.unread).length;
-
-  const currentList = activeTab === "umum" ? notifsUmum : notifsSistem;
+  const displayUmum = isSimulatedEmpty ? [] : notifsUmum;
+  const displaySistem = isSimulatedEmpty ? [] : notifsSistem;
+  const currentList = activeTab === "umum" ? displayUmum : displaySistem;
 
   const content = (
     <div
@@ -2430,23 +2430,37 @@ function NotifPanel({ onClose, onNavigate }: { onClose: () => void; onNavigate: 
         className="w-full max-w-[390px] bg-white rounded-3xl overflow-hidden shadow-2xl border border-slate-100 flex flex-col animate-[gemini-zoom-in_0.2s_ease-out]"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header (Tanda lonceng warna abu-abu sesuai permintaan) */}
+        {/* Header (Tanda lonceng - klik untuk toggle status kosong / ada notifikasi) */}
         <div className="flex items-center justify-between px-5 pt-5 pb-3">
           <div className="flex items-center gap-2.5">
-            {/* Tanda lonceng abu-abu netral */}
-            <div className="size-9 rounded-full bg-slate-100 border border-slate-200/70 flex items-center justify-center text-slate-600 shrink-0">
+            {/* Tanda lonceng abu-abu netral: klik untuk toggle tampilan kosong / default */}
+            <button
+              type="button"
+              onClick={() => setIsSimulatedEmpty((prev) => !prev)}
+              title={isSimulatedEmpty ? "Tampilkan notifikasi" : "Simulasikan tidak ada notifikasi"}
+              className={`size-9 rounded-full border flex items-center justify-center transition-all cursor-pointer active:scale-95 ${
+                isSimulatedEmpty
+                  ? "bg-slate-200/80 border-slate-300 text-slate-700 shadow-inner"
+                  : "bg-slate-100 hover:bg-slate-200/80 border-slate-200/70 text-slate-600 shadow-2xs"
+              }`}
+            >
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
                 <path d="M13.73 21a2 2 0 0 1-3.46 0" />
               </svg>
-            </div>
+            </button>
             <h3 className="font-bold text-[17px] text-slate-900 tracking-tight">Notifikasi</h3>
           </div>
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={handleMarkAllRead}
-              className="text-xs font-semibold text-slate-900 hover:text-black active:scale-95 transition-all cursor-pointer"
+              disabled={isSimulatedEmpty || currentList.length === 0}
+              className={`text-xs font-semibold transition-all ${
+                isSimulatedEmpty || currentList.length === 0
+                  ? "text-slate-400 cursor-not-allowed"
+                  : "text-slate-900 hover:text-black active:scale-95 cursor-pointer"
+              }`}
             >
               Tandai dibaca
             </button>
@@ -2483,7 +2497,7 @@ function NotifPanel({ onClose, onNavigate }: { onClose: () => void; onNavigate: 
                   : "bg-slate-100 text-slate-500"
               }`}
             >
-              {notifsUmum.length}
+              {displayUmum.length}
             </span>
             {activeTab === "umum" && (
               <span className="absolute bottom-0 inset-x-0 h-0.5 bg-blue-600 rounded-full" />
@@ -2507,7 +2521,7 @@ function NotifPanel({ onClose, onNavigate }: { onClose: () => void; onNavigate: 
                   : "bg-slate-100 text-slate-500"
               }`}
             >
-              {notifsSistem.length}
+              {displaySistem.length}
             </span>
             {activeTab === "sistem" && (
               <span className="absolute bottom-0 inset-x-0 h-0.5 bg-blue-600 rounded-full" />
@@ -2521,8 +2535,29 @@ function NotifPanel({ onClose, onNavigate }: { onClose: () => void; onNavigate: 
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {currentList.length === 0 ? (
-            <div className="py-12 text-center text-slate-400 text-xs">
-              Tidak ada notifikasi baru
+            <div className="py-14 px-6 flex flex-col items-center justify-center text-center animate-[gemini-fade-in_0.2s_ease-out]">
+              <div className="size-16 rounded-full bg-slate-50 border border-slate-200/80 flex items-center justify-center text-slate-400 mb-3.5 shadow-2xs">
+                {activeTab === "umum" ? (
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                    <line x1="4" y1="4" x2="20" y2="20" />
+                  </svg>
+                ) : (
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
+                    <path d="m9 12 2 2 4-4" />
+                  </svg>
+                )}
+              </div>
+              <h4 className="text-[15px] font-bold text-slate-800 tracking-tight">
+                {activeTab === "umum" ? "Tidak ada notifikasi" : "Tidak ada notifikasi sistem"}
+              </h4>
+              <p className="text-xs text-slate-400 font-normal leading-relaxed mt-1.5 max-w-[260px]">
+                {activeTab === "umum"
+                  ? "Belum ada pembaruan tugas, deadline, atau aktivitas perkuliahan baru untukmu saat ini."
+                  : "Semua sistem sinkronisasi data dan server berjalan normal tanpa kendala."}
+              </p>
             </div>
           ) : (
             currentList.map((n) => (
