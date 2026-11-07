@@ -2983,6 +2983,12 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
   const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
   const [profileMenuPos, setProfileMenuPos] = useState<{ top: number; right: number } | null>(null);
   const profileBtnRef = useRef<HTMLButtonElement>(null);
+  const [isDarkTheme, setIsDarkTheme] = useState(() => {
+    if (typeof window !== "undefined") {
+      return window.localStorage.getItem("alerin-theme") === "dark";
+    }
+    return false;
+  });
 
   const sortPinnedRiwayat = (items: RiwayatItem[]): RiwayatItem[] => {
     return [
@@ -4191,42 +4197,42 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
                 <span className="text-sm font-medium">Profil</span>
               </button>
 
-              {(() => {
-                const isDark = window.localStorage.getItem("alerin-theme") === "dark";
-                return (
-                  <button
-                    type="button"
-                    role="switch"
-                    aria-checked={isDark}
-                    onClick={(event) => {
-                      const shell = event.currentTarget.closest(".h-screen");
-                      const nextDark = !shell?.classList.contains("profile-dark");
-                      shell?.classList.toggle("profile-dark", nextDark);
-                      if (shell instanceof HTMLElement) shell.style.backgroundColor = nextDark ? "#0f172a" : "#ffffff";
-                      window.localStorage.setItem("alerin-theme", nextDark ? "dark" : "light");
-                      event.currentTarget.setAttribute("aria-checked", String(nextDark));
-                      const label = event.currentTarget.querySelector("[data-theme-label]");
-                      if (label) label.textContent = "Mode Gelap";
-                      const track = event.currentTarget.querySelector("[data-theme-track]");
-                      track?.classList.toggle("bg-blue-600", nextDark);
-                      track?.classList.toggle("bg-slate-200", !nextDark);
-                      const knob = event.currentTarget.querySelector("[data-theme-knob]");
-                      knob?.classList.toggle("translate-x-5", nextDark);
-                      knob?.classList.toggle("translate-x-0", !nextDark);
-                    }}
-                    className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-slate-600 transition-colors hover:bg-slate-50 cursor-pointer">
-                    <span className="flex items-center gap-3">
-                      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-                      </svg>
-                      <span data-theme-label className="text-sm font-medium">Mode Gelap</span>
-                    </span>
-                    <span data-theme-track className={`relative h-6 w-11 rounded-full transition-colors ${isDark ? "bg-blue-600" : "bg-slate-200"}`}>
-                      <span data-theme-knob className={`absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${isDark ? "translate-x-5" : "translate-x-0"}`} />
-                    </span>
-                  </button>
-                );
-              })()}
+              <button
+                type="button"
+                role="switch"
+                aria-checked={isDarkTheme}
+                onClick={() => {
+                  const nextDark = !isDarkTheme;
+                  setIsDarkTheme(nextDark);
+                  if (typeof window !== "undefined") {
+                    window.localStorage.setItem("alerin-theme", nextDark ? "dark" : "light");
+                    const shell = document.querySelector(".h-screen");
+                    shell?.classList.toggle("profile-dark", nextDark);
+                    if (shell instanceof HTMLElement) shell.style.backgroundColor = nextDark ? "#0f172a" : "#ffffff";
+                  }
+                  showToast(nextDark ? "Mode Gelap diaktifkan" : "Mode Cerah diaktifkan");
+                }}
+                className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-slate-600 transition-colors hover:bg-slate-50 cursor-pointer"
+              >
+                <span className="flex items-center gap-3">
+                  {isDarkTheme ? (
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500">
+                      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                    </svg>
+                  ) : (
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-amber-500">
+                      <circle cx="12" cy="12" r="4" />
+                      <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+                    </svg>
+                  )}
+                  <span className="text-sm font-medium">
+                    {isDarkTheme ? "Mode Gelap" : "Mode Cerah"}
+                  </span>
+                </span>
+                <span className={`relative h-6 w-11 rounded-full transition-colors ${isDarkTheme ? "bg-blue-600" : "bg-slate-200"}`}>
+                  <span className={`absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform duration-200 ${isDarkTheme ? "translate-x-5" : "translate-x-0"}`} />
+                </span>
+              </button>
 
               <button type="button" onClick={() => { showToast("Form saran & laporan siap digunakan."); setProfileMenuOpen(false); }}
                 className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-slate-600 transition-colors hover:bg-slate-50">
