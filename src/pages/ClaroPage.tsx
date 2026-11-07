@@ -5303,9 +5303,9 @@ function ChatInputBox({
               )}
             </div>
 
-            {/* Bottom Bar: Delete Attachment & Close */}
+            {/* Bottom Bar: Delete Attachment */}
             <div
-              className="w-full max-w-sm flex items-center justify-center gap-3 pb-3"
+              className="w-full max-w-sm flex items-center justify-center pb-3"
               onClick={(e) => e.stopPropagation()}
             >
               <button
@@ -5314,17 +5314,9 @@ function ChatInputBox({
                   removeItem(selectedPreviewItem.id);
                   setPreviewModalOpen(false);
                 }}
-                className="px-4 py-2 rounded-full bg-red-600/80 hover:bg-red-600 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer shadow-xs"
+                className="px-6 py-2.5 rounded-full bg-red-600 hover:bg-red-700 text-white text-xs font-semibold transition-all cursor-pointer shadow-xs active:scale-95"
               >
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                <span>Hapus Lampiran</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setPreviewModalOpen(false)}
-                className="px-5 py-2 rounded-full bg-white/20 hover:bg-white/30 text-white text-xs font-semibold transition-colors cursor-pointer"
-              >
-                Tutup
+                {isImage ? "Hapus Foto" : "Hapus Lampiran"}
               </button>
             </div>
           </div>
