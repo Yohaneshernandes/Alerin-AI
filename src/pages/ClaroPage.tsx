@@ -316,6 +316,17 @@ function generateParaphrases(original: string): { label: string; text: string; c
   ];
 }
 
+// ─── Emoticon & Emoji Stripper ────────────────────────────────────────────────
+// Memastikan semua teks jawaban Alerin bersih dari emoji dan emoticon apapun
+function stripEmoticons(str: string): string {
+  if (!str) return "";
+  return str
+    .replace(/[\p{Extended_Pictographic}\uFE0F\u200D\u20E3\p{Emoji_Presentation}]/gu, "")
+    .replace(/ +([.,!?:;])/g, "$1")
+    .replace(/[ \t]+$/gm, "")
+    .replace(/[ \t]{2,}/g, " ");
+}
+
 // ─── Search data ─────────────────────────────────────────────────────────────
 const SEARCH_HISTORY = [
   { id: 1, type: "chat", title: "Analisis Website Skripsi", snippet: "...mbingan Skripsi Online Class Program dan membandingkannya dengan konsep sis...", date: "27 Agu", keyword: "Skripsi" },
@@ -965,7 +976,7 @@ const PROJECTS: { title: string; updated: string; status: string; emoji: string;
     title: "Catatan Alerin 4", updated: "Terakhir diperbarui 4 hari lalu", status: "Aktif", emoji: "📝",
     msgs: [
       { role: "user", text: "Simpan catatan ini: rumusan masalah skripsi saya adalah pengaruh media sosial terhadap produktivitas belajar mahasiswa.", time: "11.00" },
-      { role: "claro", text: "Catatan tersimpan! ✅\n\n**Rumusan Masalah:**\n*'Apakah penggunaan media sosial berpengaruh signifikan terhadap produktivitas belajar mahasiswa?'*\n\nSaran perbaikan agar lebih akademis:\n*'Seberapa besar pengaruh intensitas penggunaan media sosial terhadap produktivitas belajar mahasiswa Universitas X angkatan 2022-2024?'*\n\nMau saya bantu kembangkan menjadi hipotesis penelitian?", time: "11.01" },
+      { role: "claro", text: "Catatan tersimpan!\n\n**Rumusan Masalah:**\n*'Apakah penggunaan media sosial berpengaruh signifikan terhadap produktivitas belajar mahasiswa?'*\n\nSaran perbaikan agar lebih akademis:\n*'Seberapa besar pengaruh intensitas penggunaan media sosial terhadap produktivitas belajar mahasiswa Universitas X angkatan 2022-2024?'*\n\nMau saya bantu kembangkan menjadi hipotesis penelitian?", time: "11.01" },
       { role: "user", text: "Iya, buatkan hipotesisnya.", time: "11.03" },
       { role: "claro", text: "**Hipotesis Penelitian:**\n\n**H₀:** Intensitas penggunaan media sosial tidak berpengaruh signifikan terhadap produktivitas belajar mahasiswa.\n\n**H₁:** Intensitas penggunaan media sosial berpengaruh signifikan dan negatif terhadap produktivitas belajar mahasiswa.\n\nUji dengan uji-t (parsial) pada signifikansi α = 0,05.", time: "11.04" },
     ],
@@ -1004,7 +1015,7 @@ Data Mahasiswa.xlsx | Excel · 6 kolom | xlsx | Selesai | Download Excel
 Panduan Dashboard Akademik.docx | Word · Bisa diedit | docx | Selesai | Download Word
 \`\`\`
 
-Aku juga bisa membuat dan menyusun file PDF, Excel, Word, dan PowerPoint sesuai topik riset atau tugas kuliahmu! 📂
+Aku juga bisa membuat dan menyusun file PDF, Excel, Word, dan PowerPoint sesuai topik riset atau tugas kuliahmu!
 
 Kamu ingin mencoba Alerin membuat file Excel atau dokumen lain?`
   ],
@@ -1024,7 +1035,7 @@ Contohnya:
 | **BAB IV** | Hasil & Pembahasan | Deskripsi data, hasil uji statistik/analisis, pembahasan dikaitkan dengan teori | 30% | Belum Dimulai |
 | **BAB V** | Penutup | Kesimpulan, implikasi, keterbatasan, dan saran untuk penelitian selanjutnya | 10% | Belum Dimulai |
 
-Tabel di atas memiliki banyak kolom dan teks panjang sehingga bisa kamu geser ke samping secara leluasa. 📊`
+Tabel di atas memiliki banyak kolom dan teks panjang sehingga bisa kamu geser ke samping secara leluasa.`
   ],
 
   // ── 3. LINK OUTPUT (Kartu referensi tautan resmi interaktif) ────────────────
@@ -1040,7 +1051,7 @@ Perpustakaan Digital Nasional | Terbuka | Akses jutaan buku digital, repositori 
 Google Scholar Indonesia | Riset | Mesin pencari artikel ilmiah, kutipan, dan publikasi penelitian akademik | https://scholar.google.co.id | Akses Scholar
 \`\`\`
 
-Semua tautan dapat kamu klik langsung untuk membuka halaman rujukan resmi terkait. 🔗`
+Semua tautan dapat kamu klik langsung untuk membuka halaman rujukan resmi terkait.`
   ],
 
   // ── 4. CODE OUTPUT (Blok kode syntax highlighting & tombol copy) ─────────────
@@ -1075,7 +1086,7 @@ const mahasiswa = {
 console.log(\`Halo \${mahasiswa.nama}, selamat belajar!\`);
 \`\`\`
 
-Kamu bisa langsung menyalin kode di atas menggunakan tombol salin di pojok kanan atas setiap blok kode. 💻`
+Kamu bisa langsung menyalin kode di atas menggunakan tombol salin di pojok kanan atas setiap blok kode.`
   ],
 
   [/panduan dashboard|dokumen akademik|contoh dokumen|file pdf dan word|file docx|lampiran dokumen|download pdf/i, `Contoh dokumen: **Panduan Dashboard Akademik**
@@ -1094,7 +1105,7 @@ Panduan Dashboard Akademik.pdf | PDF · Siap dibaca dan dicetak | pdf | Selesai 
 Panduan Dashboard Akademik.docx | Word · Bisa diedit | word | Selesai | Download Word
 \`\`\`
 
-Begini format yang kamu maksud? 😊`],
+Begini format yang kamu maksud?`],
 
   [/referensi website|referensi ui|referensi desain|sumber website|link referensi|kumpulan link/i, `## Referensi UI/UX Dashboard
 
@@ -1114,7 +1125,7 @@ Jadi format jawaban Alerin bisa seperti ini:
 3. File PDF atau Word jika dibuat.
 4. Kumpulan link di bagian bawah.
 
-Kita pakai format ini sebagai gaya jawaban berikutnya ya! 😊`],
+Kita pakai format ini sebagai gaya jawaban berikutnya ya!`],
 
   [/buat file excel|excel banyak kolom|contoh excel|file excel/i, `Tentu! Ini contoh file **Data Mahasiswa** lengkap dengan tabel kolom dan lampiran file Excel yang bisa langsung kamu unduh:
 
@@ -1168,9 +1179,9 @@ Jadi:
 - Bisa disalin sekaligus.
 - Bisa menggunakan horizontal scroll jika baris terlalu panjang.
 
-Kalau kode sangat panjang, aku juga bisa memberikannya sebagai file .html, .js, .tsx, atau .zip. ❤️`],
+Kalau kode sangat panjang, aku juga bisa memberikannya sebagai file .html, .js, .tsx, atau .zip.`],
 
-  [/kolom sayang|bukan list|buatkan tabel|tabel penelitian|contoh tabel|tabel mahasiswa/i, `OHH maksudmu tabel dengan banyak kolom sungguhan, bukan daftar vertikal. 😭❤️
+  [/kolom sayang|bukan list|buatkan tabel|tabel penelitian|contoh tabel|tabel mahasiswa/i, `OHH maksudmu tabel dengan banyak kolom sungguhan, bukan daftar vertikal.
 
 Contohnya begini:
 
@@ -1528,9 +1539,9 @@ Ceritakan apa yang sedang kamu kerjakan hari ini, dan kita mulai bersama!`],
 function getAIResponse(msg: string): string {
   const cleanMsg = (msg || "").trim();
   for (const [pattern, resp] of AI_RESPONSES) {
-    if (pattern.test(msg) || pattern.test(cleanMsg)) return resp;
+    if (pattern.test(msg) || pattern.test(cleanMsg)) return stripEmoticons(resp);
   }
-  return `Pertanyaan yang menarik! Izinkan aku memberikan jawaban yang terstruktur dan komprehensif.
+  return stripEmoticons(`Pertanyaan yang menarik! Izinkan aku memberikan jawaban yang terstruktur dan komprehensif.
 
 ## Pemahaman Awal
 
@@ -1548,7 +1559,7 @@ Sebelum aku menjawab lebih mendalam, ada beberapa hal yang perlu kamu pahami ter
 2. Jika ini berkaitan dengan penelitian, sebutkan metode dan variabel yang kamu gunakan
 3. Bagikan draf atau tulisanmu jika ada, aku bantu perbaiki dan perkuat argumennya
 
-Semakin spesifik pertanyaanmu, semakin tepat dan berguna jawaban yang bisa aku berikan. Yuk, ceritakan lebih lanjut!`;
+Semakin spesifik pertanyaanmu, semakin tepat dan berguna jawaban yang bisa aku berikan. Yuk, ceritakan lebih lanjut!`);
 }
 
 const SUGGESTION_MAP: { pattern: RegExp; suggestions: string[] }[] = [
@@ -5855,14 +5866,15 @@ function StreamingCursor({ noMargin }: { noMargin?: boolean }) {
 }
 
 function MarkdownRenderer({ text, isStreaming }: { text: string; isStreaming?: boolean }) {
-  if (!text.trim()) {
+  const cleanText = stripEmoticons(text);
+  if (!cleanText.trim()) {
     if (isStreaming) {
       return <StreamingCursor noMargin />;
     }
     return null;
   }
 
-  const lines = text.split("\n");
+  const lines = cleanText.split("\n");
   const elements: React.ReactNode[] = [];
   let i = 0;
   let cursorRendered = false;
@@ -6401,7 +6413,8 @@ function PercakapanTab({
   }, [showActionToast]);
 
   const handleCopyMessage = useCallback((text: string, idx: number) => {
-    navigator.clipboard.writeText(text).then(() => {
+    const cleanText = stripEmoticons(text);
+    navigator.clipboard.writeText(cleanText).then(() => {
       setCopiedIdx(idx);
       showActionToast("Teks respon disalin!");
       setTimeout(() => setCopiedIdx(null), 2000);
@@ -6634,7 +6647,8 @@ function PercakapanTab({
       streamIntervalRef.current = null;
     }
 
-    const tokens = fullText.match(/(\s+|\S+)/g) || [fullText];
+    const cleanFullText = stripEmoticons(fullText);
+    const tokens = cleanFullText.match(/(\s+|\S+)/g) || [cleanFullText];
     const totalTokens = tokens.length;
     // Step size 1 kata/token per tik agar teks mengalir halus kata per kata tanpa loncatan kasar
     const stepSize = totalTokens > 750 ? 2 : 1;
@@ -6749,7 +6763,7 @@ function PercakapanTab({
         },
       ]);
       responseTimeoutRef.current = setTimeout(() => {
-        const replyText = `Kalau Alerin memberikan **foto/gambar**, tampilannya seperti pratinjau visual di bawah ini. Kamu bisa klik foto untuk melihat dalam resolusi penuh! 📸✨`;
+        const replyText = `Kalau Alerin memberikan **foto/gambar**, tampilannya seperti pratinjau visual di bawah ini. Kamu bisa klik foto untuk melihat dalam resolusi penuh!`;
         setMsgs((m) =>
           m.map((msg, i) =>
             i === m.length - 1 && msg.generating
@@ -6828,7 +6842,7 @@ function PercakapanTab({
       ]);
       userScrolledUpRef.current = false;
       responseTimeoutRef.current = setTimeout(() => {
-        const replyText = `Kalau Alerin memberikan **foto/gambar**, tampilannya seperti pratinjau visual di bawah ini. Kamu bisa klik foto untuk melihat dalam resolusi penuh! 📸✨`;
+        const replyText = `Kalau Alerin memberikan **foto/gambar**, tampilannya seperti pratinjau visual di bawah ini. Kamu bisa klik foto untuk melihat dalam resolusi penuh!`;
         setMsgs((m) =>
           m.map((msg, i) =>
             i === m.length - 1 && msg.generating
@@ -10310,7 +10324,7 @@ const DEFAULT_PROJECT_CHATS: Record<string, ProjectChatItem[]> = {
         { role: "user", text: "Gak lah", time: "13.13" },
         {
           role: "claro",
-          text: "Wkwkwk, yaudah 😭😭\n\nKenapa nih? Alerin temenin ngobrol aja, nggak usah ngapa-ngapain. ❤️",
+          text: "Wkwkwk, yaudah.\n\nKenapa nih? Alerin temenin ngobrol aja, nggak usah ngapa-ngapain.",
           time: "13.14",
         },
       ],
@@ -10553,11 +10567,11 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
     setTimeout(() => {
       let aiText = `Halo! Di dalam proyek **${selectedProject.title}**, Alerin siap membantu mendiskusikan "${trimmed}". Semua catatan dan analisis kita akan tersimpan di sini.`;
       if (trimmed.toLowerCase().includes("gak") || trimmed.toLowerCase().includes("nggak")) {
-        aiText = "Wkwkwk, yaudah 😭😭\n\nKenapa nih? Alerin temenin ngobrol aja, nggak usah ngapa-ngapain. ❤️";
+        aiText = "Wkwkwk, yaudah.\n\nKenapa nih? Alerin temenin ngobrol aja, nggak usah ngapa-ngapain.";
       } else if (selectedProject.id === "proj-1" || selectedProject.title.toLowerCase().includes("rumah")) {
         aiText = `Tentu! Untuk tugas Pekerjaan Rumah terkait "${trimmed}", ini panduan penyelesaiannya secara bertahap:\n\n1. Identifikasi data dan variabel yang diketahui.\n2. Tentukan rumus atau landasan teori yang berlaku.\n3. Uraikan langkah pengerjaan dengan runut agar mudah dipahami dosen/guru.\n\nApakah butuh bantuan langkah hitungan lebih rinci?`;
       }
-      const aiMsg: ChatMsg = { role: "claro", text: aiText, time: now() };
+      const aiMsg: ChatMsg = { role: "claro", text: stripEmoticons(aiText), time: now() };
       const updatedChat = {
         ...newChat,
         lastSnippet: aiText.slice(0, 48) + "...",
@@ -10598,11 +10612,11 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
     setTimeout(() => {
       let aiText = `Baik, terkait "${trimmed}" di dalam proyek **${selectedProject.title}**:\n\nSemua pembahasan tersimpan rapi. Ada yang ingin ditanyakan atau ditambahkan lagi?`;
       if (trimmed.toLowerCase().includes("gak") || trimmed.toLowerCase().includes("nggak")) {
-        aiText = "Wkwkwk, yaudah 😭😭\n\nKenapa nih? Alerin temenin ngobrol aja, nggak usah ngapa-ngapain. ❤️";
+        aiText = "Wkwkwk, yaudah.\n\nKenapa nih? Alerin temenin ngobrol aja, nggak usah ngapa-ngapain.";
       } else if (selectedProject.id === "proj-1" || selectedProject.title.toLowerCase().includes("rumah")) {
         aiText = `Untuk menyelesaikan bagian tugas ini dengan tepat:\n\n- Pastikan seluruh syarat pertanyaan telah terpenuhi.\n- Gunakan referensi modul atau catatan kelas yang sudah kita unggah di tab Sumber.\n\nIngin Alerin buatkan rangkuman poin-poin pentingnya?`;
       }
-      const aiMsg: ChatMsg = { role: "claro", text: aiText, time: now() };
+      const aiMsg: ChatMsg = { role: "claro", text: stripEmoticons(aiText), time: now() };
       const finalMsgs = [...updatedMsgs, aiMsg];
       const finalChat: ProjectChatItem = {
         ...updatedChat,
