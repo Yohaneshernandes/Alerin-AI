@@ -180,7 +180,15 @@ function isImageRequest(text: string): boolean {
 }
 
 function detectImageOrientation(text: string): "landscape" | "portrait" {
-  const lower = text.toLowerCase();
+  const lower = text.toLowerCase().trim();
+  // Khusus: jika pengguna mengetik "foto saja" -> LANDSCAPE
+  if (lower === "foto saja" || lower.includes("foto saja") || lower.includes("lanscape") || lower.includes("landscape") || lower.includes("horizontal") || lower.includes("pemandangan")) {
+    return "landscape";
+  }
+  // Khusus: jika pengguna mengetik "foto" -> PORTRAIT
+  if (lower === "foto" || /^(?:output\s+foto|ouput\s+foto|foto)$/i.test(lower) || lower.includes("potrait") || lower.includes("portrait") || lower.includes("vertikal")) {
+    return "portrait";
+  }
   const landscapeKeywords = [
     "landscape", "lanscape", "horizontal", "lebar", "pemandangan", "scenery",
     "wallpaper", "alam", "gunung", "pantai", "laut", "sunset", "sunrise",
@@ -192,13 +200,13 @@ function detectImageOrientation(text: string): "landscape" | "portrait" {
   ];
   if (landscapeKeywords.some(k => lower.includes(k))) return "landscape";
   if (portraitKeywords.some(k => lower.includes(k))) return "portrait";
-  return "landscape";
+  return "portrait";
 }
 
 const IMAGE_MAP: { keywords: string[]; url: string; orientation: "landscape" | "portrait"; credit: string }[] = [
-  { keywords: ["foto", "foto saja", "output foto", "ouput foto", "minta foto", "gambar saja", "foto mahasiswa"], url: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&h=500&fit=crop&auto=format", orientation: "landscape", credit: "Unsplash" },
+  { keywords: ["foto saja", "gambar saja", "landscape saja", "lanscape saja", "foto lanscape", "foto landscape"], url: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&h=500&fit=crop&auto=format", orientation: "landscape", credit: "Unsplash" },
+  { keywords: ["foto potrait", "foto portrait", "foto", "output foto", "ouput foto", "minta foto", "kirim foto", "potrait", "portrait", "foto profil", "foto diri"], url: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&h=800&fit=crop&auto=format", orientation: "portrait", credit: "Unsplash" },
   { keywords: ["lanscape", "landscape", "pemandangan alam", "panorama"], url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&h=500&fit=crop&auto=format", orientation: "landscape", credit: "Unsplash" },
-  { keywords: ["potrait", "portrait", "foto profil", "foto diri"], url: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&h=800&fit=crop&auto=format", orientation: "portrait", credit: "Unsplash" },
   { keywords: ["kampus", "universitas", "kuliah", "gedung kampus"], url: "https://images.unsplash.com/photo-1562774053-701939374585?w=800&h=500&fit=crop&auto=format", orientation: "landscape", credit: "Unsplash" },
   { keywords: ["perpustakaan", "buku", "library", "membaca"], url: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=600&h=800&fit=crop&auto=format", orientation: "portrait", credit: "Unsplash" },
   { keywords: ["skripsi", "penelitian", "jurnal", "tesis", "akademik"], url: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=800&h=500&fit=crop&auto=format", orientation: "landscape", credit: "Unsplash" },
@@ -217,7 +225,24 @@ const IMAGE_MAP: { keywords: string[]; url: string; orientation: "landscape" | "
 ];
 
 function getImageData(text: string): { url: string; orientation: "landscape" | "portrait" } {
-  const lower = text.toLowerCase();
+  const lower = text.toLowerCase().trim();
+
+  // Khusus: jika pengguna mengetik "foto saja" -> LANDSCAPE
+  if (lower === "foto saja" || lower.includes("foto saja") || lower.includes("lanscape") || lower.includes("landscape")) {
+    return {
+      url: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&h=500&fit=crop&auto=format",
+      orientation: "landscape",
+    };
+  }
+
+  // Khusus: jika pengguna mengetik "foto" -> PORTRAIT
+  if (lower === "foto" || /^(?:output\s+foto|ouput\s+foto|foto)$/i.test(lower) || lower.includes("potrait") || lower.includes("portrait")) {
+    return {
+      url: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&h=800&fit=crop&auto=format",
+      orientation: "portrait",
+    };
+  }
+
   for (const entry of IMAGE_MAP) {
     if (entry.keywords.some(k => lower.includes(k))) {
       return { url: entry.url, orientation: entry.orientation };
@@ -242,8 +267,14 @@ function getImageUrl(text: string): string {
 
 function extractImagePrompt(text: string): string {
   const lower = text.toLowerCase().trim();
+  if (lower === "foto" || /^(?:output\s+foto|ouput\s+foto|foto)$/i.test(lower)) {
+    return "Foto Portrait Mahasiswa";
+  }
+  if (lower === "foto saja" || /^(?:foto\s+saja|gambar\s+saja)$/i.test(lower)) {
+    return "Dokumentasi Kampus & Kolaborasi Mahasiswa";
+  }
   if (
-    /^(?:foto|foto\s+saja|output\s+foto|ouput\s+foto|minta\s+foto|kirim\s+foto|gambar|gambar\s+saja|output\s+gambar|ouput\s+gambar|photo|image)$/i.test(lower)
+    /^(?:minta\s+foto|kirim\s+foto|gambar|output\s+gambar|ouput\s+gambar|photo|image)$/i.test(lower)
   ) {
     return "Dokumentasi Kampus & Kolaborasi Mahasiswa";
   }
