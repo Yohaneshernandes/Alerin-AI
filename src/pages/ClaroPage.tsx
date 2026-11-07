@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback, useLayoutEffect, createContext, useContext } from "react";
+import React, { useState, useRef, useEffect, useCallback, useMemo, useLayoutEffect, createContext, useContext } from "react";
 import { createPortal } from "react-dom";
 import { Link } from "react-router";
 import maskotImg from "@/imports/Animasi_Maskot_Buku_31_Agu_2026.png";
@@ -2907,6 +2907,13 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
   const [profileMenuPos, setProfileMenuPos] = useState<{ top: number; right: number } | null>(null);
   const profileBtnRef = useRef<HTMLButtonElement>(null);
 
+  const sortPinnedRiwayat = (items: RiwayatItem[]): RiwayatItem[] => {
+    return [
+      ...items.filter((item) => item.pinned),
+      ...items.filter((item) => !item.pinned),
+    ];
+  };
+
   const [historyList, setHistoryList] = useState<RiwayatItem[]>(() => {
     try {
       const saved = localStorage.getItem("alerin_mobile_riwayat");
@@ -2915,16 +2922,13 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
         if (Array.isArray(parsed) && parsed.length > 0) {
           const existingIds = new Set(parsed.map((i: RiwayatItem) => i.id));
           const missing = DEFAULT_RIWAYAT_ITEMS.filter((i) => !existingIds.has(i.id));
-          if (missing.length > 0) {
-            const merged = [...parsed, ...missing];
-            localStorage.setItem("alerin_mobile_riwayat", JSON.stringify(merged));
-            return merged;
-          }
-          return parsed;
+          const merged = sortPinnedRiwayat([...parsed, ...missing]);
+          localStorage.setItem("alerin_mobile_riwayat", JSON.stringify(merged));
+          return merged;
         }
       }
     } catch {}
-    return DEFAULT_RIWAYAT_ITEMS;
+    return sortPinnedRiwayat(DEFAULT_RIWAYAT_ITEMS);
   });
   const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -2937,9 +2941,14 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
   const [expandedHistory, setExpandedHistory] = useState(false);
   const [isRefreshingHistory, setIsRefreshingHistory] = useState(false);
 
+  const sortedHistoryList = useMemo(() => {
+    return sortPinnedRiwayat(historyList);
+  }, [historyList]);
+
   const saveRiwayatToStorage = (items: RiwayatItem[]) => {
     try {
-      localStorage.setItem("alerin_mobile_riwayat", JSON.stringify(items));
+      const sorted = sortPinnedRiwayat(items);
+      localStorage.setItem("alerin_mobile_riwayat", JSON.stringify(sorted));
     } catch {}
   };
 
@@ -2954,7 +2963,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
             if (Array.isArray(parsed) && parsed.length > 0) {
               const existingIds = new Set(parsed.map((i: RiwayatItem) => i.id));
               const missing = DEFAULT_RIWAYAT_ITEMS.filter((i) => !existingIds.has(i.id));
-              const merged = [...parsed, ...missing];
+              const merged = sortPinnedRiwayat([...parsed, ...missing]);
               saveRiwayatToStorage(merged);
               return merged;
             }
@@ -2962,7 +2971,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
         } catch {}
         const existingIds = new Set(prev.map((i) => i.id));
         const missing = DEFAULT_RIWAYAT_ITEMS.filter((i) => !existingIds.has(i.id));
-        const next = [...prev, ...missing];
+        const next = sortPinnedRiwayat([...prev, ...missing]);
         saveRiwayatToStorage(next);
         return next;
       });
@@ -3025,7 +3034,10 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
         const existingIdx = prev.findIndex((item) => item.title.toLowerCase() === detail.title.toLowerCase());
         if (existingIdx >= 0) {
           const item = prev[existingIdx];
-          const next = [item, ...prev.filter((_, i) => i !== existingIdx)];
+          const remaining = prev.filter((_, i) => i !== existingIdx);
+          const next = item.pinned
+            ? [item, ...remaining.filter((x) => x.pinned), ...remaining.filter((x) => !x.pinned)]
+            : [...remaining.filter((x) => x.pinned), item, ...remaining.filter((x) => !x.pinned)];
           saveRiwayatToStorage(next);
           return next;
         }
@@ -3038,7 +3050,11 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
             { role: "claro", text: getAIResponse(detail.query), time: now() },
           ],
         };
-        const next = [newItem, ...prev];
+        const next = [
+          ...prev.filter((x) => x.pinned),
+          newItem,
+          ...prev.filter((x) => !x.pinned),
+        ];
         saveRiwayatToStorage(next);
         return next;
       });
@@ -3120,7 +3136,12 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
                 msgs: newMsgs,
               };
               setHistoryList((prev) => {
-                const next = [newItem, ...prev.filter((h) => h.title.toLowerCase() !== title.toLowerCase())];
+                const filtered = prev.filter((h) => h.title.toLowerCase() !== title.toLowerCase());
+                const next = [
+                  ...filtered.filter((x) => x.pinned),
+                  newItem,
+                  ...filtered.filter((x) => !x.pinned),
+                ];
                 saveRiwayatToStorage(next);
                 return next;
               });
@@ -3375,7 +3396,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
               <div className="pt-1">
                 <div className="text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-2 px-1">Riwayat</div>
                 <div className="space-y-1 overflow-y-auto max-h-[48vh] pr-1">
-                  {(expandedHistory ? historyList : historyList.slice(0, 8)).map((item) => (
+                  {(expandedHistory ? sortedHistoryList : sortedHistoryList.slice(0, 8)).map((item) => (
                     <div
                       key={item.id}
                       className="relative flex items-center justify-between rounded-xl px-1.5 py-1 hover:bg-slate-50 transition-colors group"
@@ -3526,7 +3547,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
                       )}
                     </div>
                   ))}
-                  {historyList.length >= 8 && (
+                  {sortedHistoryList.length >= 8 && (
                     <div className="pt-1.5 pb-1 px-1">
                       <button
                         type="button"
