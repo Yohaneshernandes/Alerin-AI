@@ -4507,6 +4507,63 @@ function ChatInputBox({
     return { bottom, left, arrowLeft };
   };
 
+  const renderFileBadge = (item: UploadedItem) => {
+    const ext = (item.type || item.name.split(".").pop() || "").toUpperCase();
+    if (ext === "PDF") {
+      return (
+        <div className="flex flex-col items-start leading-none text-[#E11D48]">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+          </svg>
+          <span className="text-[9.5px] font-black tracking-tight mt-0.5">PDF</span>
+        </div>
+      );
+    }
+    if (ext === "DOC" || ext === "DOCX") {
+      return (
+        <div className="flex flex-col items-start leading-none text-[#2563EB]">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+          </svg>
+          <span className="text-[9.5px] font-black tracking-tight mt-0.5">DOC</span>
+        </div>
+      );
+    }
+    if (ext === "XLS" || ext === "XLSX") {
+      return (
+        <div className="flex flex-col items-start leading-none text-[#16A34A]">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+          </svg>
+          <span className="text-[9.5px] font-black tracking-tight mt-0.5">XLS</span>
+        </div>
+      );
+    }
+    if (ext === "PPT" || ext === "PPTX") {
+      return (
+        <div className="flex flex-col items-start leading-none text-[#EA580C]">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+          </svg>
+          <span className="text-[9.5px] font-black tracking-tight mt-0.5">PPT</span>
+        </div>
+      );
+    }
+    return (
+      <div className="flex flex-col items-start leading-none text-slate-700">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+          <polyline points="14 2 14 8 20 8" />
+        </svg>
+        <span className="text-[9px] font-black tracking-tight mt-0.5">{ext.slice(0, 4) || "FILE"}</span>
+      </div>
+    );
+  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? []);
     if (files.length === 0) return;
@@ -4522,7 +4579,7 @@ function ChatInputBox({
         name: file.name,
         type: ext,
         size,
-        previewUrl: isImage ? URL.createObjectURL(file) : undefined,
+        previewUrl: URL.createObjectURL(file),
       };
     });
     setUploadedItems((prev) => [...prev, ...newItems]);
@@ -4735,55 +4792,88 @@ function ChatInputBox({
             : mobileFloat ? "none" : undefined,
           transition: "box-shadow 0.2s, border-color 0.2s",
         }}>
-        {/* Attachment preview thumbnails inside card (supports multiple photos & files) */}
+        {/* Attachment preview thumbnails inside card (supports multiple photos & files, matching Gambar user) */}
         {uploadedItems.length > 0 && (
-          <div className="pt-3 px-3.5 pb-1 flex items-center gap-2.5 overflow-x-auto max-w-full" style={{ scrollbarWidth: "none" }}>
-            {uploadedItems.map((item) => (
-              item.previewUrl ? (
-                <div key={item.id} className="relative inline-block shrink-0 group">
-                  <button
-                    type="button"
+          <div className="pt-3 px-3 pb-2 flex items-center gap-2.5 overflow-x-auto max-w-full" style={{ scrollbarWidth: "none" }}>
+            {uploadedItems.map((item) => {
+              const isImage = item.file.type.startsWith("image/") || /\.(jpg|jpeg|png|webp|gif)$/i.test(item.name);
+
+              if (isImage) {
+                return (
+                  <div
+                    key={item.id}
                     onClick={() => {
                       setSelectedPreviewItem(item);
                       setPreviewModalOpen(true);
                     }}
-                    className="block relative rounded-2xl overflow-hidden size-16 border border-slate-200/80 shadow-xs hover:opacity-95 transition-opacity cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                    className="relative size-[86px] rounded-[22px] overflow-hidden shrink-0 cursor-pointer shadow-2xs border border-slate-200/60 group"
                     title={`Ketuk untuk melihat ${item.name}`}
                   >
                     <img
                       src={item.previewUrl}
                       alt={item.name}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                     />
-                    <div className="absolute inset-0 bg-black/0 hover:bg-black/10 transition-colors flex items-center justify-center" />
-                  </button>
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/15 transition-colors" />
 
-                  {/* Close / remove button on top-right of thumbnail */}
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      removeItem(item.id);
-                    }}
-                    aria-label={`Hapus ${item.name}`}
-                    className="absolute -top-1.5 -right-1.5 size-5 rounded-full bg-slate-900/80 hover:bg-slate-900 text-white flex items-center justify-center shadow-xs transition-transform hover:scale-110 active:scale-95 cursor-pointer z-10"
-                  >
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                      <line x1="18" y1="6" x2="6" y2="18" />
-                      <line x1="6" y1="6" x2="18" y2="18" />
-                    </svg>
-                  </button>
+                    {/* Close / remove circular button */}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeItem(item.id);
+                      }}
+                      aria-label={`Hapus ${item.name}`}
+                      className="absolute top-2 right-2 size-5 rounded-full bg-neutral-800/80 hover:bg-neutral-900 text-white flex items-center justify-center transition-transform hover:scale-110 active:scale-95 cursor-pointer shadow-xs z-10"
+                    >
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                      </svg>
+                    </button>
+                  </div>
+                );
+              }
+
+              // Document Card matching Gambar user (PDF / Word / Excel / PPT / etc.)
+              return (
+                <div
+                  key={item.id}
+                  onClick={() => {
+                    setSelectedPreviewItem(item);
+                    setPreviewModalOpen(true);
+                  }}
+                  className="size-[86px] rounded-[22px] bg-[#F2F4F7] p-2.5 flex flex-col justify-between relative shrink-0 cursor-pointer hover:bg-[#E5E7EB] border border-neutral-200/50 transition-all select-none shadow-2xs group"
+                  title={`Ketuk untuk melihat preview ${item.name}`}
+                >
+                  <div className="flex items-start justify-between w-full">
+                    {/* File Icon with type badge (e.g. Red PDF, Blue DOC) */}
+                    {renderFileBadge(item)}
+
+                    {/* Close / remove circular button */}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeItem(item.id);
+                      }}
+                      aria-label={`Hapus ${item.name}`}
+                      className="size-5 rounded-full bg-neutral-600 hover:bg-neutral-800 text-white flex items-center justify-center transition-transform hover:scale-110 active:scale-95 cursor-pointer shadow-xs"
+                    >
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  {/* File Name */}
+                  <p className="text-[12px] font-semibold text-neutral-900 leading-tight line-clamp-2 break-words pr-0.5">
+                    {item.name.replace(/\.[^/.]+$/, "") || item.name}
+                  </p>
                 </div>
-              ) : (
-                <div key={item.id} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-blue-50 border border-blue-200/80 shrink-0">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                  <span className="text-xs text-blue-700 font-medium truncate max-w-[160px]">{item.name}</span>
-                  <button type="button" onClick={() => removeItem(item.id)} className="text-slate-400 hover:text-slate-600 ml-1 cursor-pointer">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                  </button>
-                </div>
-              )
-            ))}
+              );
+            })}
           </div>
         )}
 
@@ -5106,70 +5196,140 @@ function ChatInputBox({
         </div>
       </div>
 
-      {/* Full Image Preview Modal (Lightbox) */}
-      {previewModalOpen && selectedPreviewItem?.previewUrl && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          className="fixed inset-0 z-[250] bg-black/85 backdrop-blur-md flex flex-col items-center justify-between p-4"
-          onClick={() => setPreviewModalOpen(false)}
-        >
-          {/* Top bar with close button & file name */}
-          <div className="w-full flex items-center justify-between text-white pt-2 px-2" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-center gap-2 min-w-0 pr-4">
-              <span className="text-sm font-semibold truncate text-white/90">
-                {selectedPreviewItem.name}
-              </span>
-              <span className="text-xs text-white/60 shrink-0">
-                ({selectedPreviewItem.size})
-              </span>
+      {/* File & Photo Preview Modal */}
+      {previewModalOpen && selectedPreviewItem && (() => {
+        const isImage = selectedPreviewItem.file.type.startsWith("image/") || /\.(jpg|jpeg|png|webp|gif)$/i.test(selectedPreviewItem.name);
+        const isPdf = selectedPreviewItem.file.type === "application/pdf" || /\.pdf$/i.test(selectedPreviewItem.name);
+
+        return (
+          <div
+            role="dialog"
+            aria-modal="true"
+            className="fixed inset-0 z-[250] bg-black/85 backdrop-blur-md flex flex-col items-center justify-between p-3 sm:p-5 select-none animate-[gemini-fade-in_0.15s_ease-out]"
+            onClick={() => setPreviewModalOpen(false)}
+          >
+            {/* Top Bar: Title, Size, Open in new tab, Close */}
+            <div
+              className="w-full max-w-4xl flex items-center justify-between text-white pt-2 px-2"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center gap-2.5 min-w-0 pr-4">
+                <span className="text-[15px] font-semibold truncate text-white">
+                  {selectedPreviewItem.name}
+                </span>
+                <span className="text-xs text-white/60 shrink-0 px-2 py-0.5 rounded-full bg-white/10">
+                  {selectedPreviewItem.size}
+                </span>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0">
+                {selectedPreviewItem.previewUrl && (
+                  <a
+                    href={selectedPreviewItem.previewUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    download={selectedPreviewItem.name}
+                    className="h-8 px-3 rounded-full bg-white/15 hover:bg-white/25 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                  >
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                      <polyline points="7 10 12 15 17 10" />
+                      <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg>
+                    <span className="hidden sm:inline">Buka / Unduh</span>
+                  </a>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setPreviewModalOpen(false)}
+                  aria-label="Tutup preview"
+                  className="size-8 rounded-full bg-white/15 hover:bg-white/25 text-white flex items-center justify-center transition-colors cursor-pointer"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </button>
+              </div>
             </div>
 
-            <button
-              type="button"
-              onClick={() => setPreviewModalOpen(false)}
-              aria-label="Tutup preview"
-              className="size-9 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-colors shrink-0 cursor-pointer"
+            {/* Middle Preview View */}
+            <div
+              className="flex-1 w-full max-w-4xl flex items-center justify-center my-3 p-1 overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-            </button>
-          </div>
+              {isImage ? (
+                <img
+                  src={selectedPreviewItem.previewUrl}
+                  alt={selectedPreviewItem.name}
+                  className="max-w-full max-h-[72vh] rounded-2xl object-contain shadow-2xl"
+                />
+              ) : isPdf ? (
+                <div className="w-full h-[68vh] rounded-2xl overflow-hidden bg-white shadow-2xl flex flex-col border border-white/10">
+                  <iframe
+                    src={`${selectedPreviewItem.previewUrl}#toolbar=1`}
+                    className="w-full h-full border-0 rounded-2xl bg-white"
+                    title={selectedPreviewItem.name}
+                  />
+                </div>
+              ) : (
+                /* Document Viewer Card (DOC, XLS, PPT, TXT, etc.) */
+                <div className="w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl text-center flex flex-col items-center">
+                  <div className="size-20 rounded-3xl bg-blue-50 text-blue-600 flex items-center justify-center mb-4 shadow-xs">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                      <polyline points="14 2 14 8 20 8" />
+                    </svg>
+                  </div>
+                  <h4 className="text-base font-bold text-neutral-900 mb-1 max-w-full truncate px-4">
+                    {selectedPreviewItem.name}
+                  </h4>
+                  <p className="text-xs text-neutral-500 mb-5">
+                    {selectedPreviewItem.size} · Berkas {selectedPreviewItem.type}
+                  </p>
+                  {selectedPreviewItem.previewUrl && (
+                    <a
+                      href={selectedPreviewItem.previewUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      download={selectedPreviewItem.name}
+                      className="px-6 py-2.5 rounded-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition-all shadow-xs flex items-center gap-2 cursor-pointer"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                      <span>Buka / Unduh Berkas</span>
+                    </a>
+                  )}
+                </div>
+              )}
+            </div>
 
-          {/* Centered Image */}
-          <div className="flex-1 flex items-center justify-center p-2 max-w-full max-h-[75vh]" onClick={(e) => e.stopPropagation()}>
-            <img
-              src={selectedPreviewItem.previewUrl}
-              alt={selectedPreviewItem.name}
-              className="max-w-full max-h-[70vh] rounded-2xl object-contain shadow-2xl"
-            />
-          </div>
-
-          {/* Bottom Bar: Action buttons */}
-          <div className="w-full max-w-sm flex items-center justify-center gap-3 pb-4" onClick={(e) => e.stopPropagation()}>
-            <button
-              type="button"
-              onClick={() => {
-                removeItem(selectedPreviewItem.id);
-                setPreviewModalOpen(false);
-              }}
-              className="px-4 py-2 rounded-full bg-red-600/80 hover:bg-red-600 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+            {/* Bottom Bar: Delete Attachment & Close */}
+            <div
+              className="w-full max-w-sm flex items-center justify-center gap-3 pb-3"
+              onClick={(e) => e.stopPropagation()}
             >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-              Hapus Foto
-            </button>
-            <button
-              type="button"
-              onClick={() => setPreviewModalOpen(false)}
-              className="px-5 py-2 rounded-full bg-white/20 hover:bg-white/30 text-white text-xs font-semibold transition-colors cursor-pointer"
-            >
-              Tutup
-            </button>
+              <button
+                type="button"
+                onClick={() => {
+                  removeItem(selectedPreviewItem.id);
+                  setPreviewModalOpen(false);
+                }}
+                className="px-4 py-2 rounded-full bg-red-600/80 hover:bg-red-600 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer shadow-xs"
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                <span>Hapus Lampiran</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setPreviewModalOpen(false)}
+                className="px-5 py-2 rounded-full bg-white/20 hover:bg-white/30 text-white text-xs font-semibold transition-colors cursor-pointer"
+              >
+                Tutup
+              </button>
+            </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* Fullscreen Input Modal (Gambar 3): Tampilan layar penuh saat di-expand */}
       {isFullscreenInput && typeof document !== "undefined" && createPortal(
