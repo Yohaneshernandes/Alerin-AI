@@ -10488,7 +10488,10 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
   const [deleteChatConfirm, setDeleteChatConfirm] = useState(false);
 
   // Popup menu titik tiga pada item proyek (sesuai Gambar 2)
-  const [activeProjectMenu, setActiveProjectMenu] = useState<MobileProjectItem | null>(null);
+  const [activeProjectMenu, setActiveProjectMenu] = useState<{
+    item: MobileProjectItem;
+    rect: { top: number; left: number; width: number; height: number };
+  } | null>(null);
 
   const handleTogglePin = (target: MobileProjectItem) => {
     const isNowPinned = !target.pinned;
@@ -10876,45 +10879,89 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
       )}
 
       {/* ── Modal Popup Menu Titik Tiga Item Proyek (sesuai Gambar 2) ── */}
-      {activeProjectMenu && (
-        <div
-          className="fixed inset-0 z-[250] flex flex-col items-center justify-start pt-24 px-4 bg-black/45 backdrop-blur-xs select-none animate-[gemini-fade-in_0.15s_ease-out]"
-          onClick={() => setActiveProjectMenu(null)}
-        >
-          <div
-            className="w-full max-w-[340px] flex flex-col gap-2.5 animate-[gemini-zoom-in_0.2s_ease-out]"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Header capsule: item proyek yang sedang dipilih */}
-            <div className="w-full bg-white rounded-3xl p-3.5 flex items-center gap-3.5 shadow-lg border border-neutral-100">
-              <div className="size-12 rounded-2xl flex items-center justify-center shrink-0 bg-[#EAF2FF] text-[#2F80ED]">
-                <ProjectIcon type={activeProjectMenu.iconType || "folder"} />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-1.5">
-                  {activeProjectMenu.pinned && (
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="text-neutral-900 shrink-0">
-                      <line x1="12" y1="17" x2="12" y2="22" />
-                      <path d="M5 17h14v-2l-3-4V4h1V2H7v2h1v7l-3 4v2z" />
-                    </svg>
-                  )}
-                  <h3 className="font-semibold text-[15px] text-neutral-900 truncate">
-                    {activeProjectMenu.title}
-                  </h3>
-                </div>
-                <p className="text-xs text-neutral-400 mt-0.5 truncate">
-                  {activeProjectMenu.time}
-                </p>
-              </div>
-            </div>
+      {activeProjectMenu && (() => {
+        const { item, rect } = activeProjectMenu;
+        const menuHeight = 255;
+        const gap = 8;
+        const spaceBelow = window.innerHeight - (rect.top + rect.height);
+        const showAbove = spaceBelow < menuHeight + 20;
 
-            {/* Menu Pop-up Card */}
-            <div className="w-full bg-white rounded-[26px] p-2 shadow-2xl border border-neutral-100 flex flex-col divide-y divide-neutral-100/60">
+        const menuTop = showAbove
+          ? Math.max(16, rect.top - gap - menuHeight)
+          : (rect.height > 0
+              ? Math.min(rect.top + rect.height + gap, window.innerHeight - menuHeight - 16)
+              : Math.min(rect.top, window.innerHeight - menuHeight - 16));
+
+        // Lebar menu popup sekitar 275px atau selebar kartu, rata kiri sesuai Gambar 2
+        const menuWidth = Math.min(rect.width > 0 ? rect.width : 275, 275);
+        const menuLeft = Math.max(16, Math.min(rect.left, window.innerWidth - menuWidth - 16));
+
+        return (
+          <div
+            className="fixed inset-0 z-[250] bg-black/40 backdrop-blur-xs select-none animate-[gemini-fade-in_0.15s_ease-out]"
+            onClick={() => setActiveProjectMenu(null)}
+          >
+            {/* 1. Header capsule: Tetap tepat di posisi semula item proyek yang diklik tanpa bergeser */}
+            {rect.height > 0 && (
+              <div
+                style={{
+                  position: "fixed",
+                  top: `${rect.top}px`,
+                  left: `${rect.left}px`,
+                  width: `${rect.width}px`,
+                  height: `${rect.height}px`,
+                }}
+                className="bg-white rounded-[24px] px-2.5 py-3.5 flex items-center gap-3.5 shadow-xl border border-neutral-100/90 z-30 animate-[gemini-zoom-in_0.15s_ease-out]"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="size-12 rounded-2xl flex items-center justify-center shrink-0 bg-[#EAF2FF] text-[#2F80ED]">
+                  <ProjectIcon type={item.iconType || "folder"} />
+                </div>
+                <div className="flex-1 min-w-0 pr-1">
+                  <div className="flex items-center gap-2">
+                    {item.pinned && (
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="text-neutral-900 shrink-0">
+                        <line x1="12" y1="17" x2="12" y2="22" />
+                        <path d="M5 17h14v-2l-3-4V4h1V2H7v2h1v7l-3 4v2z" />
+                      </svg>
+                    )}
+                    <h3 className="font-semibold text-[15px] text-neutral-900 truncate">
+                      {item.title}
+                    </h3>
+                    {item.members && (
+                      <span className="flex items-center text-neutral-500 text-xs gap-1 shrink-0">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                          <circle cx="9" cy="7" r="4" />
+                          <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                        </svg>
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-neutral-400 mt-0.5 truncate">
+                    {item.time}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* 2. Menu Pop-up Card tetap mengikut di dekat folder */}
+            <div
+              style={{
+                position: "fixed",
+                top: `${menuTop}px`,
+                left: `${menuLeft}px`,
+                width: `${menuWidth}px`,
+              }}
+              className="bg-white rounded-[24px] p-2 shadow-2xl border border-neutral-100/90 flex flex-col divide-y divide-neutral-100/60 z-30 animate-[gemini-zoom-in_0.18s_ease-out]"
+              onClick={(e) => e.stopPropagation()}
+            >
               {/* 1. Obrolan proyek baru */}
               <button
                 type="button"
                 onClick={() => {
-                  const target = activeProjectMenu;
+                  const target = item;
                   setActiveProjectMenu(null);
                   setSelectedProject(target);
                   setProjectSubTab("obrolan");
@@ -10933,7 +10980,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
               <button
                 type="button"
                 onClick={() => {
-                  const target = activeProjectMenu;
+                  const target = item;
                   setActiveProjectMenu(null);
                   handleTogglePin(target);
                 }}
@@ -10943,14 +10990,14 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                   <line x1="12" y1="17" x2="12" y2="22" />
                   <path d="M5 17h14v-2l-3-4V4h1V2H7v2h1v7l-3 4v2z" />
                 </svg>
-                <span>{activeProjectMenu.pinned ? "Lepas sematan" : "Sematkan"}</span>
+                <span>{item.pinned ? "Lepas sematan" : "Sematkan"}</span>
               </button>
 
               {/* 3. Bagikan */}
               <button
                 type="button"
                 onClick={() => {
-                  const target = activeProjectMenu;
+                  const target = item;
                   setActiveProjectMenu(null);
                   handleShareProject(target);
                 }}
@@ -10968,7 +11015,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
               <button
                 type="button"
                 onClick={() => {
-                  const target = activeProjectMenu;
+                  const target = item;
                   setActiveProjectMenu(null);
                   setSelectedProject(target);
                   setRenameProjectInput(target.title);
@@ -10987,7 +11034,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
               <button
                 type="button"
                 onClick={() => {
-                  const target = activeProjectMenu;
+                  const target = item;
                   setActiveProjectMenu(null);
                   setSelectedProject(target);
                   setDeleteProjectConfirm(true);
@@ -11002,8 +11049,8 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
               </button>
             </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* ═══════════════════════════════════════════════════════════════════════
           SCREEN 3: GAMBAR 3 — DETAIL CHAT PERCAKAPAN PROYEK
@@ -11554,7 +11601,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                       setProjectSubTab("obrolan");
                       setSelectedProjectChat(null);
                     }}
-                    className="w-full flex items-center gap-3.5 py-3.5 px-1 hover:bg-neutral-50 active:bg-neutral-100/70 transition-colors text-left group cursor-pointer"
+                    className="project-item-row w-full flex items-center gap-3.5 py-3.5 px-2 hover:bg-neutral-50 active:bg-neutral-100/70 transition-colors text-left group cursor-pointer rounded-2xl"
                   >
                     {/* Pastel rounded square icon: folder biru seperti Yohanes */}
                     <div className="size-12 rounded-2xl flex items-center justify-center shrink-0 bg-[#EAF2FF] text-[#2F80ED]">
@@ -11594,7 +11641,17 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation();
-                        setActiveProjectMenu(p);
+                        const row = e.currentTarget.closest(".project-item-row") as HTMLElement | null;
+                        const rect = row ? row.getBoundingClientRect() : e.currentTarget.getBoundingClientRect();
+                        setActiveProjectMenu({
+                          item: p,
+                          rect: {
+                            top: rect.top,
+                            left: rect.left,
+                            width: rect.width,
+                            height: rect.height,
+                          },
+                        });
                       }}
                       aria-label={`Menu pilihan proyek ${p.title}`}
                       className="size-8 rounded-full flex items-center justify-center text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 active:scale-90 transition-all shrink-0 cursor-pointer"
@@ -11690,7 +11747,19 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                           tabIndex={0}
                           onClick={(e) => {
                             e.stopPropagation();
-                            setActiveProjectMenu(p);
+                            const btn = e.currentTarget;
+                            const btnRect = btn.getBoundingClientRect();
+                            const popupWidth = 275;
+                            const left = Math.max(16, Math.min(btnRect.right - popupWidth, window.innerWidth - popupWidth - 16));
+                            setActiveProjectMenu({
+                              item: p,
+                              rect: {
+                                top: btnRect.bottom + 6,
+                                left: left,
+                                width: popupWidth,
+                                height: 0,
+                              },
+                            });
                           }}
                           aria-label={`Menu proyek ${p.title}`}
                           className="size-7 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
