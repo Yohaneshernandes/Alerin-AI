@@ -4839,7 +4839,6 @@ function ChatInputBox({
                 className="flex items-center gap-1.5 h-8 px-3.5 py-1.5 rounded-full border border-slate-200/90 text-xs font-semibold transition-all whitespace-nowrap shadow-xs cursor-pointer bg-white/70 md:bg-white text-slate-700 hover:border-blue-300 hover:text-blue-600"
                 style={modeOpen ? { borderColor: "#93c5fd", color: "#2563eb", background: "#eff6ff" } : {}}
               >
-                {currentMode.icon}
                 {currentMode.label}
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ opacity: 0.6 }}><path d="M6 9l6 6 6-6"/></svg>
               </button>
