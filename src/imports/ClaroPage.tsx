@@ -1125,7 +1125,7 @@ function NotifPanel({ onClose, onNavigate }: { onClose: () => void; onNavigate: 
             <p className="font-bold text-sm text-slate-800">Notifikasi</p>
           </div>
           <div className="flex items-center gap-2">
-            <button className="text-[11px] font-semibold text-blue-600">Tandai dibaca</button>
+            <button className="text-[11px] font-semibold text-slate-900 hover:text-black">Tandai dibaca</button>
             <button onClick={onClose} className="text-slate-400 hover:text-slate-700 w-7 h-7 flex items-center justify-center rounded-lg hover:bg-slate-100">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>

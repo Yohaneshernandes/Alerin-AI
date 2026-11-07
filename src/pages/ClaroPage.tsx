@@ -2415,7 +2415,7 @@ function NotifPanel({ onClose, onNavigate }: { onClose: () => void; onNavigate: 
             <button
               type="button"
               onClick={handleMarkAllRead}
-              className="text-xs font-semibold text-blue-600 hover:text-blue-700 active:scale-95 transition-all cursor-pointer"
+              className="text-xs font-semibold text-slate-900 hover:text-black active:scale-95 transition-all cursor-pointer"
             >
               Tandai dibaca
             </button>
