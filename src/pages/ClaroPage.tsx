@@ -7117,7 +7117,7 @@ function PercakapanTab({
                     </div>
                   )
                 ) : null}
-                <div className="max-w-[80%] md:max-w-[68%] rounded-2xl rounded-br-sm px-4 py-3 text-[0.9375rem] leading-relaxed text-slate-900 bg-white border border-slate-200/90 shadow-xs claro-user-bubble">
+                <div className="max-w-[80%] md:max-w-[68%] rounded-2xl rounded-br-sm px-4 py-3 text-[0.9375rem] leading-relaxed text-slate-900 bg-[#EAF2FF] border border-[#BFDBFE]/80 shadow-xs claro-user-bubble select-text">
                   {m.text}
                 </div>
                 <p className="text-[10px] text-slate-400 pr-1">{m.time}</p>
@@ -11281,7 +11281,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
               if (m.role === "user") {
                 return (
                   <div key={idx} className="flex flex-col items-end gap-1">
-                    <div className="max-w-[82%] rounded-2xl rounded-tr-sm px-4 py-2.5 text-[15px] leading-relaxed text-blue-950 bg-[#EAF2FF] border border-[#D0E2FF]/80 shadow-2xs select-text">
+                    <div className="max-w-[82%] rounded-2xl rounded-tr-sm px-4 py-2.5 text-[15px] leading-relaxed text-slate-900 bg-[#EAF2FF] border border-[#BFDBFE]/80 shadow-2xs select-text">
                       {m.text}
                     </div>
                     <span className="text-[10px] text-neutral-400 pr-1">{m.time}</span>
