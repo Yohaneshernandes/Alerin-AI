@@ -5458,10 +5458,11 @@ function CodeBlock({ lang, code }: { lang: string; code: string }) {
 
       {/* Code contents — horizontal scrollable, no line numbers, light syntax highlighting */}
       <div
-        className="overflow-x-auto touch-pan-x p-4 sm:p-5 pt-3.5 pb-4"
+        className="overflow-x-auto p-4 sm:p-5 pt-3.5 pb-4"
         style={{
           WebkitOverflowScrolling: "touch",
           scrollbarWidth: "thin",
+          touchAction: "pan-x pan-y",
         }}
       >
         <pre
@@ -5952,10 +5953,11 @@ function MarkdownRenderer({ text, isStreaming }: { text: string; isStreaming?: b
       elements.push(
         <div
           key={`tbl-${i}`}
-          className="my-3.5 overflow-x-auto touch-pan-x -mx-1 sm:mx-0 select-text"
+          className="my-3.5 overflow-x-auto -mx-1 sm:mx-0 select-text"
           style={{
             WebkitOverflowScrolling: "touch",
             scrollbarWidth: "none",
+            touchAction: "pan-x pan-y",
           }}
         >
           <table className="w-max min-w-full text-[0.9375rem] text-black border-collapse text-left">
