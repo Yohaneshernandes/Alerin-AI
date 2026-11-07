@@ -3396,7 +3396,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
               <div className="pt-1">
                 <div className="text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-2 px-1">Riwayat</div>
                 <div className="space-y-1 overflow-y-auto max-h-[48vh] pr-1">
-                  {(expandedHistory ? sortedHistoryList : sortedHistoryList.slice(0, 8)).map((item) => (
+                  {(expandedHistory ? sortedHistoryList : sortedHistoryList.slice(0, 7)).map((item) => (
                     <div
                       key={item.id}
                       className="relative flex items-center justify-between rounded-xl px-1.5 py-1 hover:bg-slate-50 transition-colors group"
@@ -3547,7 +3547,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
                       )}
                     </div>
                   ))}
-                  {sortedHistoryList.length >= 8 && (
+                  {sortedHistoryList.length > 7 && (
                     <div className="pt-1.5 pb-1 px-1">
                       <button
                         type="button"
