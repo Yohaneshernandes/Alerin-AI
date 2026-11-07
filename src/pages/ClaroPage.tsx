@@ -7314,17 +7314,17 @@ function PercakapanTab({
                               {m.sources.slice(0, 3).map((_, si) => (
                                 <div
                                   key={si}
-                                  className="w-4.5 h-4.5 rounded-full border border-white flex items-center justify-center text-[8px] font-bold text-white shadow-xs"
-                                  style={{ background: si === 0 ? "#3b82f6" : si === 1 ? "#6366f1" : "#8b5cf6", zIndex: 3 - si }}
+                                  className="w-4.5 h-4.5 rounded-full border border-white flex items-center justify-center text-[8px] font-bold text-white shadow-xs bg-black"
+                                  style={{ zIndex: 3 - si }}
                                 >
                                   {si + 1}
                                 </div>
                               ))}
                             </div>
-                            <span className={`text-xs font-semibold transition-colors ${openSourcesIdx === i ? "text-blue-600" : "text-slate-500"}`}>
+                            <span className={`text-xs font-semibold transition-colors ${openSourcesIdx === i ? "text-black font-bold" : "text-neutral-800 hover:text-black"}`}>
                               {m.sources.length} Sumber
                             </span>
-                            <svg className={`w-3 h-3 text-slate-400 transition-transform ${openSourcesIdx === i ? "rotate-180 text-blue-600" : ""}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M6 9l6 6 6-6"/></svg>
+                            <svg className={`w-3 h-3 text-neutral-500 transition-transform duration-200 ${openSourcesIdx === i ? "rotate-180 text-black" : ""}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M6 9l6 6 6-6"/></svg>
                           </button>
                         )}
                         <span className="text-[10px] text-slate-400 pr-0.5">{m.time}</span>
@@ -7336,23 +7336,27 @@ function PercakapanTab({
                       <div className="mt-3 flex flex-col gap-2 animate-in fade-in duration-200">
                         {m.sources.map((src, si) => (
                           <div key={si} className="flex items-start gap-2.5 p-2.5 rounded-xl border border-slate-100 bg-slate-50/70">
-                            <div className="w-5 h-5 rounded-lg flex items-center justify-center text-[9px] font-bold text-white shrink-0 mt-0.5"
-                              style={{ background: si === 0 ? "#3b82f6" : si === 1 ? "#6366f1" : "#8b5cf6" }}>
+                            <div className="w-5 h-5 rounded-md flex items-center justify-center text-[9px] font-bold text-white shrink-0 mt-0.5 bg-black">
                               {si + 1}
                             </div>
                             <div className="flex-1 min-w-0">
                               {src.url ? (
                                 <a href={src.url} target="_blank" rel="noopener noreferrer"
-                                  className="text-xs font-medium text-blue-600 hover:underline leading-snug line-clamp-2">
+                                  className="text-xs font-medium text-neutral-900 hover:text-blue-600 hover:underline leading-snug line-clamp-2">
                                   {src.title}
                                 </a>
                               ) : (
-                                <p className="text-xs font-medium text-slate-700 leading-snug line-clamp-2">{src.title}</p>
+                                <p className="text-xs font-medium text-slate-800 leading-snug line-clamp-2">{src.title}</p>
                               )}
-                              <p className="text-[10px] text-slate-400 mt-0.5">{src.author} · {src.year}</p>
+                              <p className="text-[10px] text-slate-400 mt-0.5 flex items-center gap-1.5">
+                                <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" className="text-slate-500 shrink-0">
+                                  <path d="M12 3L1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z" />
+                                </svg>
+                                <span>{src.author} · {src.year}</span>
+                              </p>
                             </div>
                             {src.url && (
-                              <svg className="w-3 h-3 text-slate-300 shrink-0 mt-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                              <svg className="w-3 h-3 text-slate-400 shrink-0 mt-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                             )}
                           </div>
                         ))}
