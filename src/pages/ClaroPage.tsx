@@ -4126,7 +4126,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
                       window.localStorage.setItem("alerin-theme", nextDark ? "dark" : "light");
                       event.currentTarget.setAttribute("aria-checked", String(nextDark));
                       const label = event.currentTarget.querySelector("[data-theme-label]");
-                      if (label) label.textContent = nextDark ? "Mode Gelap" : "Mode Terang";
+                      if (label) label.textContent = "Mode Gelap";
                       const track = event.currentTarget.querySelector("[data-theme-track]");
                       track?.classList.toggle("bg-blue-600", nextDark);
                       track?.classList.toggle("bg-slate-200", !nextDark);
@@ -4134,10 +4134,12 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
                       knob?.classList.toggle("translate-x-5", nextDark);
                       knob?.classList.toggle("translate-x-0", !nextDark);
                     }}
-                    className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-slate-600 transition-colors hover:bg-slate-50">
+                    className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-slate-600 transition-colors hover:bg-slate-50 cursor-pointer">
                     <span className="flex items-center gap-3">
-                      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-                      <span data-theme-label className="text-sm font-medium">{isDark ? "Mode Gelap" : "Mode Terang"}</span>
+                      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                      </svg>
+                      <span data-theme-label className="text-sm font-medium">Mode Gelap</span>
                     </span>
                     <span data-theme-track className={`relative h-6 w-11 rounded-full transition-colors ${isDark ? "bg-blue-600" : "bg-slate-200"}`}>
                       <span data-theme-knob className={`absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${isDark ? "translate-x-5" : "translate-x-0"}`} />
