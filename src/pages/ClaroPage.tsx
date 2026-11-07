@@ -3444,10 +3444,11 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
                             className="flex-1 text-left text-neutral-800 text-[15px] font-normal leading-relaxed truncate hover:text-blue-600 transition-colors pr-2 flex items-center gap-1.5"
                           >
                             {item.pinned && (
-                              <span title="Disematkan" className="inline-flex shrink-0">
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="1.5" className="text-blue-600">
-                                  <line x1="12" y1="17" x2="12" y2="22"/>
-                                  <path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.89A2 2 0 0 1 15 10.76V6h1a1 1 0 0 0 0-2H8a1 1 0 0 0 0 2h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.89A2 2 0 0 0 5 15.24Z"/>
+                              <span title="Disematkan" className="inline-flex shrink-0 text-black">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-black">
+                                  <path d="M9 4v6l-2 4v2h10v-2l-2-4V4" />
+                                  <line x1="12" y1="16" x2="12" y2="21" />
+                                  <line x1="8" y1="4" x2="16" y2="4" />
                                 </svg>
                               </span>
                             )}
@@ -3519,9 +3520,10 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
                               onClick={() => togglePinRiwayat(item.id)}
                               className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[13px] font-medium text-slate-800 hover:bg-slate-100/70 active:scale-[0.99] transition-all text-left"
                             >
-                              <svg width="15" height="15" viewBox="0 0 24 24" fill={item.pinned ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={item.pinned ? "text-blue-600 shrink-0" : "text-slate-500 shrink-0"}>
-                                <line x1="12" y1="17" x2="12" y2="22"/>
-                                <path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.89A2 2 0 0 1 15 10.76V6h1a1 1 0 0 0 0-2H8a1 1 0 0 0 0 2h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.89A2 2 0 0 0 5 15.24Z"/>
+                              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-black shrink-0">
+                                <path d="M9 4v6l-2 4v2h10v-2l-2-4V4" />
+                                <line x1="12" y1="16" x2="12" y2="21" />
+                                <line x1="8" y1="4" x2="16" y2="4" />
                               </svg>
                               <span>{item.pinned ? "Lepas Sematan" : "Sematkan"}</span>
                             </button>
