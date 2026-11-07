@@ -2939,7 +2939,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
   const [deleteConfirmItem, setDeleteConfirmItem] = useState<{ id: string; title: string } | null>(null);
   const [selectedProjectId, setSelectedProjectId] = useState<string>("proj-1");
   const [expandedHistory, setExpandedHistory] = useState(false);
-  const [isRefreshingHistory, setIsRefreshingHistory] = useState(false);
+  const [isLoadingMoreHistory, setIsLoadingMoreHistory] = useState(false);
 
   const sortedHistoryList = useMemo(() => {
     return sortPinnedRiwayat(historyList);
@@ -2952,33 +2952,24 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
     } catch {}
   };
 
-  const handleRefreshRiwayat = () => {
-    setIsRefreshingHistory(true);
+  const handleToggleExpandHistory = () => {
+    if (expandedHistory) {
+      setExpandedHistory(false);
+      return;
+    }
+    setIsLoadingMoreHistory(true);
     setTimeout(() => {
       setHistoryList((prev) => {
-        try {
-          const saved = localStorage.getItem("alerin_mobile_riwayat");
-          if (saved) {
-            const parsed = JSON.parse(saved);
-            if (Array.isArray(parsed) && parsed.length > 0) {
-              const existingIds = new Set(parsed.map((i: RiwayatItem) => i.id));
-              const missing = DEFAULT_RIWAYAT_ITEMS.filter((i) => !existingIds.has(i.id));
-              const merged = sortPinnedRiwayat([...parsed, ...missing]);
-              saveRiwayatToStorage(merged);
-              return merged;
-            }
-          }
-        } catch {}
         const existingIds = new Set(prev.map((i) => i.id));
         const missing = DEFAULT_RIWAYAT_ITEMS.filter((i) => !existingIds.has(i.id));
+        if (missing.length === 0) return prev;
         const next = sortPinnedRiwayat([...prev, ...missing]);
         saveRiwayatToStorage(next);
         return next;
       });
-      setExpandedHistory((prev) => !prev);
-      setIsRefreshingHistory(false);
-      showToast("Riwayat percakapan diperbarui");
-    }, 300);
+      setExpandedHistory(true);
+      setIsLoadingMoreHistory(false);
+    }, 650);
   };
 
   const saveRename = (id: string, newTitle?: string) => {
@@ -3549,53 +3540,42 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
                       )}
                     </div>
                   ))}
-                  {sortedHistoryList.length > 7 && (
+                  {/* Skeleton loading matching Gambar 2 when "Lihat selengkapnya" is clicked */}
+                  {isLoadingMoreHistory && (
+                    <div className="space-y-3 py-2.5 px-1.5 animate-pulse">
+                      <div className="h-2.5 w-[68%] rounded-sm bg-neutral-200" />
+                      <div className="h-2.5 w-[36%] rounded-sm bg-neutral-200" />
+                      <div className="h-2.5 w-[56%] rounded-sm bg-neutral-200" />
+                    </div>
+                  )}
+
+                  {sortedHistoryList.length > 7 && !isLoadingMoreHistory && (
                     <div className="pt-1.5 pb-1 px-1">
                       <button
                         type="button"
-                        onClick={handleRefreshRiwayat}
-                        disabled={isRefreshingHistory}
-                        className="flex items-center gap-2 w-full text-left text-neutral-500 hover:text-blue-600 text-[13px] font-medium transition-colors py-1 px-1 cursor-pointer group"
+                        onClick={handleToggleExpandHistory}
+                        className="flex items-center justify-between w-full text-left text-neutral-500 hover:text-blue-600 text-[13px] font-medium transition-colors py-1 px-1 cursor-pointer group"
                       >
+                        <span>
+                          {expandedHistory
+                            ? "Tampilkan lebih sedikit"
+                            : "Lihat selengkapnya"}
+                        </span>
                         <svg
-                          width="14"
-                          height="14"
+                          width="13"
+                          height="13"
                           viewBox="0 0 24 24"
                           fill="none"
                           stroke="currentColor"
                           strokeWidth="2.2"
                           strokeLinecap="round"
                           strokeLinejoin="round"
-                          className={`text-neutral-400 group-hover:text-blue-600 transition-all ${
-                            isRefreshingHistory ? "animate-spin text-blue-600" : ""
+                          className={`ml-auto text-neutral-400 group-hover:text-blue-600 transition-transform duration-200 ${
+                            expandedHistory ? "rotate-180" : ""
                           }`}
                         >
-                          <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
+                          <path d="M6 9l6 6 6-6" />
                         </svg>
-                        <span>
-                          {isRefreshingHistory
-                            ? "Menyegarkan riwayat..."
-                            : expandedHistory
-                            ? "Tampilkan lebih sedikit"
-                            : "Lihat selengkapnya"}
-                        </span>
-                        {!isRefreshingHistory && (
-                          <svg
-                            width="13"
-                            height="13"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2.2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            className={`ml-auto text-neutral-400 group-hover:text-blue-600 transition-transform duration-200 ${
-                              expandedHistory ? "rotate-180" : ""
-                            }`}
-                          >
-                            <path d="M6 9l6 6 6-6" />
-                          </svg>
-                        )}
                       </button>
                     </div>
                   )}
