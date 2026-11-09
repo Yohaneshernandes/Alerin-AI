@@ -1014,7 +1014,7 @@ Contohnya:
 \`\`\`files
 Laporan Data Mahasiswa.pdf | PDF · 2 halaman | pdf | Selesai | Download PDF
 Data Mahasiswa.xlsx | Excel · 6 kolom | xlsx | Selesai | Download Excel
-Panduan Dashboard Akademik.docx | Word · Bisa diedit | docx | Selesai | Download Word
+Panduan Dashboard Akademik.docx | Word · 4 halaman | docx | Selesai | Download Word
 \`\`\`
 
 Aku juga bisa membuat dan menyusun file PDF, Excel, Word, dan PowerPoint sesuai topik riset atau tugas kuliahmu!
@@ -1104,7 +1104,7 @@ Dokumen berisi:
 
 \`\`\`files
 Panduan Dashboard Akademik.pdf | PDF · Siap dibaca dan dicetak | pdf | Selesai | Download PDF
-Panduan Dashboard Akademik.docx | Word · Bisa diedit | word | Selesai | Download Word
+Panduan Dashboard Akademik.docx | Word · 4 halaman | word | Selesai | Download Word
 \`\`\`
 
 Begini format yang kamu maksud?`],
@@ -6072,11 +6072,33 @@ function FileAttachmentCard({ items }: { items: FileAttachmentItem[] }) {
         bg: "bg-[#FEECEC]",
         color: "text-[#DC2626]",
         icon: (
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
-            <polyline points="14 2 14 8 20 8" />
-            <path d="M9 13v4" />
-            <path d="M9 13h2a1.5 1.5 0 0 1 0 3H9" />
+          <svg width="26" height="26" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+            <path
+              d="M6 3.5C6 2.67157 6.67157 2 7.5 2H18L24 8V24.5C24 25.3284 23.3284 26 22.5 26H7.5C6.67157 26 6 25.3284 6 24.5V3.5Z"
+              fill="white"
+              stroke="#DC2626"
+              strokeWidth="1.6"
+              strokeLinejoin="round"
+            />
+            <path d="M18 2V8H24" fill="#FEE2E2" stroke="#DC2626" strokeWidth="1.6" strokeLinejoin="round" />
+            <path d="M16 8H9" stroke="#FCA5A5" strokeWidth="1.3" strokeLinecap="round" />
+            <path d="M20 13H18" stroke="#FCA5A5" strokeWidth="1.3" strokeLinecap="round" />
+            <path d="M21 16.5H18" stroke="#FCA5A5" strokeWidth="1.3" strokeLinecap="round" />
+            <path d="M21 20H9" stroke="#FCA5A5" strokeWidth="1.3" strokeLinecap="round" />
+            <path d="M18 22.5H9" stroke="#FCA5A5" strokeWidth="1.3" strokeLinecap="round" />
+            <rect x="2" y="11" width="16" height="9.5" rx="2.5" fill="#DC2626" />
+            <text
+              x="10"
+              y="17.8"
+              fill="white"
+              fontSize="5.8"
+              fontWeight="900"
+              fontFamily="system-ui, -apple-system, sans-serif"
+              textAnchor="middle"
+              letterSpacing="-0.2"
+            >
+              PDF
+            </text>
           </svg>
         ),
       };
@@ -6086,12 +6108,21 @@ function FileAttachmentCard({ items }: { items: FileAttachmentItem[] }) {
         bg: "bg-[#EAF7EE]",
         color: "text-[#16A34A]",
         icon: (
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
-            <polyline points="14 2 14 8 20 8" />
-            <path d="M8 13h8" />
-            <path d="M8 17h8" />
-            <path d="M12 10v9" />
+          <svg width="26" height="26" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+            <path
+              d="M6 3.5C6 2.67157 6.67157 2 7.5 2H18L24 8V24.5C24 25.3284 23.3284 26 22.5 26H7.5C6.67157 26 6 25.3284 6 24.5V3.5Z"
+              fill="white"
+              stroke="#16A34A"
+              strokeWidth="1.6"
+              strokeLinejoin="round"
+            />
+            <path d="M18 2V8H24" fill="#DCFCE7" stroke="#16A34A" strokeWidth="1.6" strokeLinejoin="round" />
+            <rect x="14" y="11" width="7.5" height="11" rx="1" fill="#F0FDF4" stroke="#86EFAC" strokeWidth="1.1" />
+            <line x1="14" y1="14.5" x2="21.5" y2="14.5" stroke="#86EFAC" strokeWidth="1.1" />
+            <line x1="14" y1="18" x2="21.5" y2="18" stroke="#86EFAC" strokeWidth="1.1" />
+            <line x1="17.7" y1="11" x2="17.7" y2="22" stroke="#86EFAC" strokeWidth="1.1" />
+            <rect x="3" y="11" width="12" height="11" rx="2.5" fill="#16A34A" />
+            <path d="M6 13.5L12 19.5M12 13.5L6 19.5" stroke="white" strokeWidth="2" strokeLinecap="round" />
           </svg>
         ),
       };
@@ -6101,10 +6132,26 @@ function FileAttachmentCard({ items }: { items: FileAttachmentItem[] }) {
         bg: "bg-[#EBF3FE]",
         color: "text-[#2563EB]",
         icon: (
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
-            <polyline points="14 2 14 8 20 8" />
-            <path d="M9 17l1.5-6 1.5 4 1.5-4 1.5 6" />
+          <svg width="26" height="26" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+            <path
+              d="M6 3.5C6 2.67157 6.67157 2 7.5 2H18L24 8V24.5C24 25.3284 23.3284 26 22.5 26H7.5C6.67157 26 6 25.3284 6 24.5V3.5Z"
+              fill="white"
+              stroke="#2563EB"
+              strokeWidth="1.6"
+              strokeLinejoin="round"
+            />
+            <path d="M18 2V8H24" fill="#DBEAFE" stroke="#2563EB" strokeWidth="1.6" strokeLinejoin="round" />
+            <path d="M15 13H21" stroke="#93C5FD" strokeWidth="1.4" strokeLinecap="round" />
+            <path d="M15 16.5H21" stroke="#93C5FD" strokeWidth="1.4" strokeLinecap="round" />
+            <path d="M15 20H19" stroke="#93C5FD" strokeWidth="1.4" strokeLinecap="round" />
+            <rect x="3" y="11" width="12" height="11" rx="2.5" fill="#2563EB" />
+            <path
+              d="M5.5 14L7 19L8.8 15.5L10.5 19L12 14"
+              stroke="white"
+              strokeWidth="1.6"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
           </svg>
         ),
       };
@@ -6114,10 +6161,25 @@ function FileAttachmentCard({ items }: { items: FileAttachmentItem[] }) {
         bg: "bg-[#FEF3EB]",
         color: "text-[#EA580C]",
         icon: (
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
-            <polyline points="14 2 14 8 20 8" />
-            <circle cx="10.5" cy="12.5" r="1.5" />
+          <svg width="26" height="26" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+            <path
+              d="M6 3.5C6 2.67157 6.67157 2 7.5 2H18L24 8V24.5C24 25.3284 23.3284 26 22.5 26H7.5C6.67157 26 6 25.3284 6 24.5V3.5Z"
+              fill="white"
+              stroke="#EA580C"
+              strokeWidth="1.6"
+              strokeLinejoin="round"
+            />
+            <path d="M18 2V8H24" fill="#FFEDD5" stroke="#EA580C" strokeWidth="1.6" strokeLinejoin="round" />
+            <circle cx="18" cy="16.5" r="3.5" stroke="#FDBA74" strokeWidth="1.4" fill="none" />
+            <path d="M18 13V16.5H21.5" stroke="#FDBA74" strokeWidth="1.4" />
+            <rect x="3" y="11" width="12" height="11" rx="2.5" fill="#EA580C" />
+            <path
+              d="M6.5 19V13.5H9.5C10.6 13.5 11.5 14.3 11.5 15.3C11.5 16.3 10.6 17.1 9.5 17.1H6.5"
+              stroke="white"
+              strokeWidth="1.6"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
           </svg>
         ),
       };
@@ -6126,9 +6188,18 @@ function FileAttachmentCard({ items }: { items: FileAttachmentItem[] }) {
       bg: "bg-[#F1F5F9]",
       color: "text-[#475569]",
       icon: (
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
-          <polyline points="14 2 14 8 20 8" />
+        <svg width="26" height="26" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+          <path
+            d="M6 3.5C6 2.67157 6.67157 2 7.5 2H18L24 8V24.5C24 25.3284 23.3284 26 22.5 26H7.5C6.67157 26 6 25.3284 6 24.5V3.5Z"
+            fill="white"
+            stroke="#64748B"
+            strokeWidth="1.6"
+            strokeLinejoin="round"
+          />
+          <path d="M18 2V8H24" fill="#E2E8F0" stroke="#64748B" strokeWidth="1.6" strokeLinejoin="round" />
+          <path d="M10 13H18" stroke="#94A3B8" strokeWidth="1.4" strokeLinecap="round" />
+          <path d="M10 17H18" stroke="#94A3B8" strokeWidth="1.4" strokeLinecap="round" />
+          <path d="M10 21H15" stroke="#94A3B8" strokeWidth="1.4" strokeLinecap="round" />
         </svg>
       ),
     };
@@ -6149,7 +6220,9 @@ function FileAttachmentCard({ items }: { items: FileAttachmentItem[] }) {
                 </div>
                 <div className="min-w-0">
                   <p className="text-[0.9375rem] font-semibold text-neutral-900 truncate">{item.name}</p>
-                  <p className="text-[0.8125rem] text-neutral-500 mt-0.5 leading-normal">{item.meta}</p>
+                  <p className="text-[0.8125rem] text-neutral-500 mt-0.5 leading-normal">
+                    {item.meta ? item.meta.replace(/bisa diedit/gi, "4 halaman") : ""}
+                  </p>
                 </div>
               </div>
 
