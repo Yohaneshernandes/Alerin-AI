@@ -395,6 +395,7 @@ function SearchModal({
 }) {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<SearchFilter>("semua");
+  const [showRecentChats, setShowRecentChats] = useState(true);
   const inputRef = useRef<HTMLInputElement>(null);
   const hasQuery = query.trim().length > 0;
 
@@ -570,23 +571,45 @@ function SearchModal({
         {/* ── Empty state: Obrolan terbaru ── */}
         {!hasQuery && (
           <div className="pb-3 pt-1.5 max-h-[60vh] overflow-y-auto [&::-webkit-scrollbar]:hidden" style={{ scrollbarWidth: "none" }}>
-            <p className="px-5 pb-2 pt-1 text-xs font-semibold text-slate-400">Obrolan terbaru</p>
-            {recentChats.map((title) => (
-              <button
-                key={title}
-                type="button"
-                onClick={() => {
-                  onSelect?.(title, "chat");
-                  onClose();
-                }}
-                className="w-full flex items-center gap-3 px-5 py-2.5 hover:bg-slate-50 active:bg-slate-100 transition-colors text-left group cursor-pointer"
-              >
-                <span className="text-slate-400 group-hover:text-slate-600 transition-colors shrink-0">
-                  <ChatBubbleIcon />
-                </span>
-                <span className="text-sm text-slate-700 group-hover:text-slate-900 transition-colors truncate">{title}</span>
-              </button>
-            ))}
+            <button
+              type="button"
+              onClick={() => setShowRecentChats((prev) => !prev)}
+              className="w-full flex items-center justify-between px-5 pb-2 pt-1 text-xs font-semibold text-slate-400 hover:text-slate-600 transition-colors cursor-pointer select-none text-left"
+              title="Klik untuk melihat simulasi tampilan kosong obrolan"
+            >
+              <span>Obrolan terbaru</span>
+            </button>
+            {showRecentChats && recentChats.length > 0 ? (
+              recentChats.map((title) => (
+                <button
+                  key={title}
+                  type="button"
+                  onClick={() => {
+                    onSelect?.(title, "chat");
+                    onClose();
+                  }}
+                  className="w-full flex items-center gap-3 px-5 py-2.5 hover:bg-slate-50 active:bg-slate-100 transition-colors text-left group cursor-pointer"
+                >
+                  <span className="text-slate-400 group-hover:text-slate-600 transition-colors shrink-0">
+                    <ChatBubbleIcon />
+                  </span>
+                  <span className="text-sm text-slate-700 group-hover:text-slate-900 transition-colors truncate">{title}</span>
+                </button>
+              ))
+            ) : (
+              <div className="py-10 px-6 flex flex-col items-center justify-center text-center animate-[gemini-fade-in_0.2s_ease-out]">
+                <div className="size-13 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-center mb-3 shadow-2xs text-slate-400">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                    <line x1="9" y1="10" x2="15" y2="10" />
+                  </svg>
+                </div>
+                <h4 className="text-[14.5px] font-bold text-slate-800 tracking-tight">Tidak ada obrolan</h4>
+                <p className="text-xs text-slate-400 font-normal leading-relaxed mt-1 max-w-[220px]">
+                  Belum ada riwayat percakapan yang tersimpan
+                </p>
+              </div>
+            )}
           </div>
         )}
 
