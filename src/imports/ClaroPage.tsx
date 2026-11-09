@@ -1300,7 +1300,7 @@ function NotifPanel({ onClose, onNavigate }: { onClose: () => void; onNavigate: 
             <span className="text-lg shrink-0 mt-0.5">{n.icon}</span>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-1.5 mb-0.5">
-                <p className="text-xs font-bold text-slate-800 truncate">{n.title}</p>
+                <p className="text-xs font-medium text-slate-800 truncate">{n.title}</p>
                 {n.unread && <span className="w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0" />}
               </div>
               <p className="text-[11px] text-slate-500 leading-relaxed">{n.desc}</p>

@@ -2770,7 +2770,7 @@ function NotifPanel({ onClose, onNavigate }: { onClose: () => void; onNavigate: 
                 {/* Content */}
                 <div className="flex-1 min-w-0 pr-1">
                   <div className="flex items-center gap-1.5 leading-snug">
-                    <h4 className="text-[13.5px] font-bold text-slate-900 truncate">{n.title}</h4>
+                    <h4 className="text-[13.5px] font-medium text-slate-900 truncate">{n.title}</h4>
                     {n.unread && <span className="size-2 rounded-full bg-blue-600 shrink-0 inline-block" />}
                   </div>
                   <p className="text-xs text-slate-500 font-normal leading-relaxed mt-0.5 line-clamp-2">
