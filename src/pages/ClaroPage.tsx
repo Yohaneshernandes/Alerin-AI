@@ -21,6 +21,7 @@ type ChatMsg = {
   role: "user" | "claro";
   text: string;
   time: string;
+  date?: string;
   imageUrl?: string;
   imagePrompt?: string;
   imageOrientation?: "landscape" | "portrait";
@@ -595,18 +596,18 @@ Mau aku bantu tentukan mana yang paling cocok untuk topik penelitianmu?`, time: 
     label: "Ide judul live shopping",
     time: "Kemarin",
     msgs: [
-      { role: "user", text: "Saya sedang mencari judul skripsi tentang live shopping, ada ide?", time: "14:20" },
-      { role: "claro", text: "Tentu! Berikut beberapa kandidat judul untuk topik live shopping:\n\n1. **Pengaruh Interaktivitas Live Shopping terhadap Keputusan Pembelian Impulsif di TikTok Shop**\n2. **Analisis Faktor-Faktor yang Mempengaruhi Kepercayaan Konsumen dalam Live Commerce**\n3. **Peran Kredibilitas Streamer pada Intensi Pembelian melalui Platform Live Shopping**\n4. **Pengaruh Scarcity Appeal dan Social Proof dalam Live Shopping terhadap Purchase Intention**\n\nMana yang paling sesuai dengan minat dan data yang bisa kamu akses?", time: "14:21" },
-      { role: "user", text: "Yang nomor 1 menarik, bisa bantu rumusan masalahnya?", time: "14:23" },
-      { role: "claro", text: "Berikut rumusan masalah untuk judul tersebut:\n\n1. Apakah interaktivitas live shopping berpengaruh signifikan terhadap keputusan pembelian impulsif?\n2. Apakah engagement streamer memoderasi hubungan antara interaktivitas dan keputusan pembelian impulsif?\n3. Seberapa besar pengaruh interaktivitas live shopping terhadap keputusan pembelian impulsif konsumen TikTok Shop di Indonesia?\n\nSaya sarankan fokus ke 1-2 rumusan agar penelitian lebih terarah.", time: "14:24" },
+      { role: "user", text: "Saya sedang mencari judul skripsi tentang live shopping, ada ide?", time: "14:20", date: "Kemarin" },
+      { role: "claro", text: "Tentu! Berikut beberapa kandidat judul untuk topik live shopping:\n\n1. **Pengaruh Interaktivitas Live Shopping terhadap Keputusan Pembelian Impulsif di TikTok Shop**\n2. **Analisis Faktor-Faktor yang Mempengaruhi Kepercayaan Konsumen dalam Live Commerce**\n3. **Peran Kredibilitas Streamer pada Intensi Pembelian melalui Platform Live Shopping**\n4. **Pengaruh Scarcity Appeal dan Social Proof dalam Live Shopping terhadap Purchase Intention**\n\nMana yang paling sesuai dengan minat dan data yang bisa kamu akses?", time: "14:21", date: "Kemarin" },
+      { role: "user", text: "Yang nomor 1 menarik, bisa bantu rumusan masalahnya?", time: "14:23", date: "Kemarin" },
+      { role: "claro", text: "Berikut rumusan masalah untuk judul tersebut:\n\n1. Apakah interaktivitas live shopping berpengaruh signifikan terhadap keputusan pembelian impulsif?\n2. Apakah engagement streamer memoderasi hubungan antara interaktivitas dan keputusan pembelian impulsif?\n3. Seberapa besar pengaruh interaktivitas live shopping terhadap keputusan pembelian impulsif konsumen TikTok Shop di Indonesia?\n\nSaya sarankan fokus ke 1-2 rumusan agar penelitian lebih terarah.", time: "14:24", date: "Kemarin" },
     ],
   },
   {
     label: "Revisi rumusan masalah",
     time: "27 Agu",
     msgs: [
-      { role: "user", text: "Tolong periksa rumusan masalah skripsi saya: 'Apakah terdapat pengaruh kualitas pelayanan terhadap kepuasan pelanggan pada aplikasi ojek online?'", time: "09:10" },
-      { role: "claro", text: "Rumusan masalahnya sudah cukup baik, tapi ada beberapa yang bisa diperkuat:\n\n**Versi yang lebih kuat:**\n*'Apakah kualitas pelayanan (service quality) berpengaruh signifikan terhadap kepuasan pelanggan (customer satisfaction) pengguna aplikasi ojek online di Indonesia?'*\n\n**Saran perbaikan:**\n• Tambahkan objek penelitian yang lebih spesifik (misalnya: Gojek, Grab, atau keduanya)\n• Tentukan populasi yang jelas (pengguna aktif, mahasiswa, dsb)\n• Pertimbangkan dimensi kualitas pelayanan apa yang akan diukur (SERVQUAL: reliability, responsiveness, assurance, empathy, tangibles)", time: "09:11" },
+      { role: "user", text: "Tolong periksa rumusan masalah skripsi saya: 'Apakah terdapat pengaruh kualitas pelayanan terhadap kepuasan pelanggan pada aplikasi ojek online?'", time: "09:10", date: "27 Agu" },
+      { role: "claro", text: "Rumusan masalahnya sudah cukup baik, tapi ada beberapa yang bisa diperkuat:\n\n**Versi yang lebih kuat:**\n*'Apakah kualitas pelayanan (service quality) berpengaruh signifikan terhadap kepuasan pelanggan (customer satisfaction) pengguna aplikasi ojek online di Indonesia?'*\n\n**Saran perbaikan:**\n• Tambahkan objek penelitian yang lebih spesifik (misalnya: Gojek, Grab, atau keduanya)\n• Tentukan populasi yang jelas (pengguna aktif, mahasiswa, dsb)\n• Pertimbangkan dimensi kualitas pelayanan apa yang akan diukur (SERVQUAL: reliability, responsiveness, assurance, empathy, tangibles)", time: "09:11", date: "27 Agu" },
     ],
   },
 ];
@@ -1842,6 +1843,23 @@ function getFeatureRec(userMsg: string): FeatureRec | undefined {
 
 function now() {
   return new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
+}
+
+function getMessageTimestampDisplay(m: ChatMsg): string {
+  const rawTime = (m.time || now()).trim();
+  const timeFormatted = rawTime.replace(":", ".");
+
+  if (
+    timeFormatted.toLowerCase().startsWith("hari ini") ||
+    timeFormatted.toLowerCase().startsWith("kemarin") ||
+    timeFormatted.toLowerCase().includes("lalu") ||
+    timeFormatted.toLowerCase().includes("baru saja")
+  ) {
+    return timeFormatted;
+  }
+
+  const dateLabel = m.date || "Hari ini";
+  return `${dateLabel}, ${timeFormatted}`;
 }
 
 // ─── Bird mascot icon ─────────────────────────────────────────────────────────
@@ -7540,7 +7558,18 @@ function PercakapanTab({
                                 className="fixed inset-0 z-30"
                                 onClick={() => setMoreMenuIdx(null)}
                               />
-                              <div className="absolute bottom-full left-0 mb-2 z-40 bg-white rounded-2xl border border-slate-200/90 shadow-[0_8px_30px_rgba(0,0,0,0.12)] p-1.5 w-44 flex flex-col gap-1 text-xs animate-in fade-in zoom-in-95">
+                              <div className="absolute bottom-full left-0 mb-2 z-40 bg-white rounded-2xl border border-slate-200/90 shadow-[0_8px_30px_rgba(0,0,0,0.12)] p-1.5 min-w-[175px] flex flex-col gap-1 text-xs animate-in fade-in zoom-in-95">
+                                {/* Tanggal & Jam respon */}
+                                <div className="px-3 py-2 border-b border-slate-100 flex items-center gap-2 select-none">
+                                  <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                                    <circle cx="12" cy="12" r="10" />
+                                    <polyline points="12 6 12 12 16 14" />
+                                  </svg>
+                                  <span className="text-[11px] font-medium text-slate-500 whitespace-nowrap">
+                                    {getMessageTimestampDisplay(m)}
+                                  </span>
+                                </div>
+
                                 <button
                                   type="button"
                                   onClick={() => {
@@ -7549,8 +7578,8 @@ function PercakapanTab({
                                   }}
                                   className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-left font-medium hover:bg-rose-50 text-rose-600 transition-colors"
                                 >
-                                  <svg className="w-4 h-4 text-rose-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
-                                  <span>Laporkan respon</span>
+                                  <svg className="w-4 h-4 text-rose-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+                                  <span className="whitespace-nowrap">Laporkan respon</span>
                                 </button>
                               </div>
                             </>
