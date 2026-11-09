@@ -11056,7 +11056,67 @@ interface MobileProjectItem {
   useMemory?: boolean;
 }
 
+function parseRelativeTimeToMs(timeStr?: string): number {
+  const t = (timeStr || "").toLowerCase().trim();
+  const now = Date.now();
+  const ONE_MIN = 60 * 1000;
+  const ONE_HOUR = 60 * ONE_MIN;
+  const ONE_DAY = 24 * ONE_HOUR;
+
+  if (t.includes("baru saja") || t.includes("just now") || t.includes("detik") || t.includes("menit")) {
+    return now - ONE_MIN;
+  }
+  if (t.includes("hari ini") || t.includes("today")) {
+    return now - 2 * ONE_HOUR;
+  }
+  if (t.includes("kemarin") || t.includes("1 hari yang lalu")) {
+    return now - ONE_DAY;
+  }
+  const dayMatch = t.match(/(\d+)\s*hari/);
+  if (dayMatch) {
+    return now - parseInt(dayMatch[1], 10) * ONE_DAY;
+  }
+  const weekMatch = t.match(/(\d+)\s*minggu/);
+  if (weekMatch) {
+    return now - parseInt(weekMatch[1], 10) * 7 * ONE_DAY;
+  }
+  const monthMatch = t.match(/(\d+)\s*bulan/);
+  if (monthMatch) {
+    return now - parseInt(monthMatch[1], 10) * 30 * ONE_DAY;
+  }
+  const yearMatch = t.match(/(\d+)\s*tahun/);
+  if (yearMatch) {
+    return now - parseInt(yearMatch[1], 10) * 365 * ONE_DAY;
+  }
+  return 0;
+}
+
+function getProjectTimestamp(p: MobileProjectItem): number {
+  const parsed = parseRelativeTimeToMs(p.time);
+  const now = Date.now();
+  if (p.updatedAt && p.updatedAt > 0) {
+    const isTodayOrRecent = p.time && (p.time.includes("hari ini") || p.time.includes("Baru saja") || p.time.includes("menit"));
+    if (isTodayOrRecent) {
+      if (p.updatedAt > now - 86400000) return p.updatedAt;
+      return parsed;
+    }
+    return parsed || p.updatedAt;
+  }
+  return parsed;
+}
+
 const DEFAULT_MOBILE_PROJECTS: MobileProjectItem[] = [
+  {
+    id: "proj-4",
+    title: "Metodologi Penelitian",
+    time: "Terakhir diperbarui hari ini",
+    updatedAt: 1731150000000,
+    category: "dibuat",
+    pastelBg: "bg-[#F2F4F7]",
+    iconColor: "text-neutral-900",
+    iconType: "folder",
+    msgs: PROJECTS[0]?.msgs,
+  },
   {
     id: "proj-1",
     title: "Pekerjaan Rumah",
@@ -11070,17 +11130,6 @@ const DEFAULT_MOBILE_PROJECTS: MobileProjectItem[] = [
       { role: "user", text: "Halo Alerin, bantu selesaikan tugas Pekerjaan Rumah Statistika.", time: "10.00" },
       { role: "claro", text: "Tentu! Kirimkan soal atau data tugas Pekerjaan Rumah yang ingin dibahas bersama.", time: "10.01" },
     ],
-  },
-  {
-    id: "proj-4",
-    title: "Metodologi Penelitian",
-    time: "Terakhir diperbarui hari ini",
-    updatedAt: 1731150000000,
-    category: "dibuat",
-    pastelBg: "bg-[#F2F4F7]",
-    iconColor: "text-neutral-900",
-    iconType: "folder",
-    msgs: PROJECTS[0]?.msgs,
   },
   {
     id: "proj-5",
@@ -11105,21 +11154,6 @@ const DEFAULT_MOBILE_PROJECTS: MobileProjectItem[] = [
     msgs: PROJECTS[2]?.msgs,
   },
   {
-    id: "proj-shared-1",
-    title: "Caption",
-    time: "1 bulan yang lalu",
-    updatedAt: 1728500000000,
-    category: "dibagikan",
-    members: 2,
-    pastelBg: "bg-[#F2F4F7]",
-    iconColor: "text-neutral-900",
-    iconType: "folder",
-    msgs: [
-      { role: "user", text: "Halo tim, mari diskusikan caption kampanye media sosial terbaru.", time: "14.00" },
-      { role: "claro", text: "Siap! Kirimkan tema atau draft caption yang ingin kita optimasi bersama.", time: "14.01" },
-    ],
-  },
-  {
     id: "proj-shared-2",
     title: "Pekerjaan kantor",
     time: "3 minggu yang lalu",
@@ -11132,6 +11166,21 @@ const DEFAULT_MOBILE_PROJECTS: MobileProjectItem[] = [
     msgs: [
       { role: "user", text: "Halo tim Pekerjaan kantor, ada dokumen SOP dan laporan yang perlu ditinjau.", time: "09.00" },
       { role: "claro", text: "Alerin siap membantu mereview dokumen dan menyusun ringkasan pekerjaan kantor untuk tim.", time: "09.02" },
+    ],
+  },
+  {
+    id: "proj-shared-1",
+    title: "Caption",
+    time: "1 bulan yang lalu",
+    updatedAt: 1728500000000,
+    category: "dibagikan",
+    members: 2,
+    pastelBg: "bg-[#F2F4F7]",
+    iconColor: "text-neutral-900",
+    iconType: "folder",
+    msgs: [
+      { role: "user", text: "Halo tim, mari diskusikan caption kampanye media sosial terbaru.", time: "14.00" },
+      { role: "claro", text: "Siap! Kirimkan tema atau draft caption yang ingin kita optimasi bersama.", time: "14.01" },
     ],
   },
 ];
@@ -11344,13 +11393,23 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
           const pk = DEFAULT_MOBILE_PROJECTS.find((p) => p.title.toLowerCase() === "pekerjaan kantor");
           if (pk) filtered.push(pk);
         }
-        // Pastikan semua proyek menggunakan folder hitam konsisten
-        const normalized = filtered.map((p) => ({
-          ...p,
-          pastelBg: "bg-[#F2F4F7]",
-          iconColor: "text-neutral-900",
-          iconType: "folder" as const,
-        }));
+        // Pastikan semua proyek menggunakan folder hitam konsisten dan diurutkan sesuai tanggal diubah
+        const normalized = filtered
+          .map((p) => {
+            const ts = getProjectTimestamp(p);
+            return {
+              ...p,
+              updatedAt: p.updatedAt && p.updatedAt > 0 && Math.abs(p.updatedAt - ts) < 86400000 * 3 ? p.updatedAt : ts,
+              pastelBg: "bg-[#F2F4F7]",
+              iconColor: "text-neutral-900",
+              iconType: "folder" as const,
+            };
+          })
+          .sort((a, b) => {
+            if (a.pinned && !b.pinned) return -1;
+            if (!a.pinned && b.pinned) return 1;
+            return getProjectTimestamp(b) - getProjectTimestamp(a);
+          });
         try {
           localStorage.setItem("alerin_user_projects", JSON.stringify(normalized));
         } catch {}
@@ -11875,8 +11934,8 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
     .sort((a, b) => {
       if (a.pinned && !b.pinned) return -1;
       if (!a.pinned && b.pinned) return 1;
-      const aTime = a.updatedAt || 0;
-      const bTime = b.updatedAt || 0;
+      const aTime = getProjectTimestamp(a);
+      const bTime = getProjectTimestamp(b);
       if (bTime !== aTime) return bTime - aTime;
       return 0;
     });
