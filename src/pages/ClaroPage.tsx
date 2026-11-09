@@ -3490,7 +3490,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
       )}
 
       {/* Mobile top header */}
-      {activeTab === "percakapan" ? (
+      {activeTab === "percakapan" || activeTab === "fitur" ? (
         <header
           className="md:hidden fixed top-0 left-0 right-0 flex items-center justify-between px-4 py-3 z-40 bg-white/80 backdrop-blur-xl border-b border-slate-200/40"
           style={{ WebkitBackdropFilter: "blur(20px)", backdropFilter: "blur(20px)" }}
