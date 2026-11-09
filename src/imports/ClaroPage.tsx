@@ -2539,16 +2539,29 @@ function MarkdownRenderer({ text }: { text: string }) {
       const rows = tableLines.filter(r => !isSep(r));
       const headers = rows[0] ? parseRow(rows[0]) : [];
       const body = rows.slice(1);
+      const colCount = Math.max(headers.length, ...body.map(r => parseRow(r).length));
+      const isFitScreen = colCount <= 3;
+
       elements.push(
-        <div key={`tbl-${i}`} className="my-5 overflow-x-auto rounded-xl border border-slate-200" style={{ boxShadow: "0 1px 4px rgba(0,0,0,0.04)" }}>
-          <table className="w-full text-[0.875rem] border-collapse">
+        <div key={`tbl-${i}`} className="my-5 w-full overflow-x-auto rounded-xl border border-slate-200 select-text" style={{ boxShadow: "0 1px 4px rgba(0,0,0,0.04)" }}>
+          <table className={`border-collapse text-left ${isFitScreen ? "w-full table-fixed text-[13px] sm:text-[0.875rem]" : "w-max min-w-full text-[13px] sm:text-[0.875rem]"}`}>
             <thead>
               <tr style={{ background: "linear-gradient(90deg,#f8faff,#f1f5ff)" }}>
-                {headers.map((h, ci) => (
-                  <th key={ci} className="px-4 py-3 text-left text-[0.8125rem] font-semibold text-slate-700 border-b border-slate-200 whitespace-nowrap">
-                    {renderInlineMd(h)}
-                  </th>
-                ))}
+                {headers.map((h, ci) => {
+                  let colWidthClass = "";
+                  if (isFitScreen) {
+                    if (colCount === 2) {
+                      colWidthClass = ci === 0 ? "w-[36%] sm:w-[32%]" : "w-[64%] sm:w-[68%]";
+                    } else if (colCount === 3) {
+                      colWidthClass = ci === 0 ? "w-[22%] sm:w-[20%]" : ci === 1 ? "w-[32%] sm:w-[30%]" : "w-[46%] sm:w-[50%]";
+                    }
+                  }
+                  return (
+                    <th key={ci} className={`py-2.5 sm:py-3 text-left font-semibold text-slate-700 border-b border-slate-200 break-words ${colWidthClass} ${ci === 0 ? "pl-2 pr-1.5 sm:px-4" : ci === colCount - 1 ? "pl-1.5 pr-2 sm:px-4" : "px-1.5 sm:px-4"}`}>
+                      {renderInlineMd(h)}
+                    </th>
+                  );
+                })}
               </tr>
             </thead>
             <tbody>
@@ -2557,7 +2570,7 @@ function MarkdownRenderer({ text }: { text: string }) {
                 return (
                   <tr key={ri} className={ri % 2 === 0 ? "bg-white" : "bg-slate-50/60"}>
                     {cells.map((cell, ci) => (
-                      <td key={ci} className="px-4 py-3 text-slate-700 border-b border-slate-100 leading-relaxed align-top">
+                      <td key={ci} className={`py-2.5 sm:py-3 text-slate-700 border-b border-slate-100 leading-snug sm:leading-relaxed align-top break-words ${ci === 0 ? "pl-2 pr-1.5 sm:px-4 font-semibold sm:font-medium" : ci === colCount - 1 ? "pl-1.5 pr-2 sm:px-4" : "px-1.5 sm:px-4"}`}>
                         {renderInlineMd(cell)}
                       </td>
                     ))}

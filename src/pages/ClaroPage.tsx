@@ -6150,27 +6150,52 @@ function MarkdownRenderer({ text, isStreaming }: { text: string; isStreaming?: b
       const rows = tableLines.filter(r => !isSep(r));
       const headers = rows[0] ? parseRow(rows[0]) : [];
       const body = rows.slice(1);
+      const colCount = Math.max(headers.length, ...body.map(r => parseRow(r).length));
+      const isFitScreen = colCount <= 3;
+
       elements.push(
         <div
           key={`tbl-${i}`}
-          className="my-3.5 overflow-x-auto -mx-1 sm:mx-0 select-text"
+          className="my-3.5 w-full overflow-x-auto select-text"
           style={{
             WebkitOverflowScrolling: "touch",
             scrollbarWidth: "none",
             touchAction: "pan-x pan-y",
           }}
         >
-          <table className="w-max min-w-full text-[0.9375rem] text-black border-collapse text-left">
+          <table
+            className={`text-black border-collapse text-left ${
+              isFitScreen
+                ? "w-full table-fixed text-[13px] sm:text-[0.9375rem]"
+                : "w-max min-w-full text-[13px] sm:text-[0.9375rem]"
+            }`}
+          >
             <thead>
               <tr className="border-b border-neutral-200">
-                {headers.map((h, ci) => (
-                  <th
-                    key={ci}
-                    className="px-4 py-3 text-left text-[0.9375rem] font-semibold text-black whitespace-nowrap"
-                  >
-                    {renderInlineMd(cleanMdText(h))}
-                  </th>
-                ))}
+                {headers.map((h, ci) => {
+                  let colWidthClass = "";
+                  if (isFitScreen) {
+                    if (colCount === 2) {
+                      colWidthClass = ci === 0 ? "w-[36%] sm:w-[32%]" : "w-[64%] sm:w-[68%]";
+                    } else if (colCount === 3) {
+                      colWidthClass = ci === 0 ? "w-[22%] sm:w-[20%]" : ci === 1 ? "w-[32%] sm:w-[30%]" : "w-[46%] sm:w-[50%]";
+                    }
+                  }
+                  return (
+                    <th
+                      key={ci}
+                      className={`py-2.5 sm:py-3 text-left font-semibold text-black break-words ${colWidthClass} ${
+                        ci === 0
+                          ? "pl-0.5 sm:pl-2 pr-1.5 sm:pr-3"
+                          : ci === colCount - 1
+                          ? "pl-1.5 sm:pl-3 pr-0.5 sm:pr-2"
+                          : "px-1.5 sm:px-3"
+                      } ${!isFitScreen ? "whitespace-nowrap px-4" : ""}`}
+                    >
+                      {renderInlineMd(cleanMdText(h))}
+                    </th>
+                  );
+                })}
               </tr>
             </thead>
             <tbody>
@@ -6182,15 +6207,16 @@ function MarkdownRenderer({ text, isStreaming }: { text: string; isStreaming?: b
                     className="border-b border-neutral-100 last:border-b-0 hover:bg-neutral-50/40 transition-colors"
                   >
                     {cells.map((cell, ci) => {
-                      const isShort = cell.trim().length <= 15;
                       return (
                         <td
                           key={ci}
-                          className={`px-4 py-3.5 text-black text-[0.9375rem] leading-relaxed align-top ${
-                            isShort
-                              ? "min-w-[85px] whitespace-nowrap"
-                              : "min-w-[170px] max-w-[340px] whitespace-normal"
-                          }`}
+                          className={`py-2.5 sm:py-3.5 text-black leading-snug sm:leading-relaxed align-top break-words ${
+                            ci === 0
+                              ? "pl-0.5 sm:pl-2 pr-1.5 sm:pr-3 font-semibold sm:font-medium"
+                              : ci === colCount - 1
+                              ? "pl-1.5 sm:pl-3 pr-0.5 sm:pr-2"
+                              : "px-1.5 sm:px-3"
+                          } ${!isFitScreen ? "min-w-[120px] px-4" : ""}`}
                         >
                           {renderInlineMd(cleanMdText(cell))}
                         </td>
