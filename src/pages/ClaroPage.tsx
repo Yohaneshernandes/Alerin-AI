@@ -10374,8 +10374,8 @@ const DEFAULT_MOBILE_PROJECTS: MobileProjectItem[] = [
     title: "Pekerjaan Rumah",
     time: "1 hari yang lalu",
     category: "dibuat",
-    pastelBg: "bg-[#EAF2FF]",
-    iconColor: "text-[#2F80ED]",
+    pastelBg: "bg-[#F2F4F7]",
+    iconColor: "text-neutral-900",
     iconType: "folder",
     msgs: [
       { role: "user", text: "Halo Alerin, bantu selesaikan tugas Pekerjaan Rumah Statistika.", time: "10.00" },
@@ -10387,8 +10387,8 @@ const DEFAULT_MOBILE_PROJECTS: MobileProjectItem[] = [
     title: "Metodologi Penelitian",
     time: "Terakhir diperbarui hari ini",
     category: "dibuat",
-    pastelBg: "bg-[#EAF2FF]",
-    iconColor: "text-[#2F80ED]",
+    pastelBg: "bg-[#F2F4F7]",
+    iconColor: "text-neutral-900",
     iconType: "folder",
     msgs: PROJECTS[0]?.msgs,
   },
@@ -10397,8 +10397,8 @@ const DEFAULT_MOBILE_PROJECTS: MobileProjectItem[] = [
     title: "Skripsi Live Shopping",
     time: "2 hari yang lalu",
     category: "dibuat",
-    pastelBg: "bg-[#EAF2FF]",
-    iconColor: "text-[#2F80ED]",
+    pastelBg: "bg-[#F2F4F7]",
+    iconColor: "text-neutral-900",
     iconType: "folder",
     msgs: PROJECTS[1]?.msgs,
   },
@@ -10407,8 +10407,8 @@ const DEFAULT_MOBILE_PROJECTS: MobileProjectItem[] = [
     title: "Persiapan UAS",
     time: "3 hari yang lalu",
     category: "dibuat",
-    pastelBg: "bg-[#EAF2FF]",
-    iconColor: "text-[#2F80ED]",
+    pastelBg: "bg-[#F2F4F7]",
+    iconColor: "text-neutral-900",
     iconType: "folder",
     msgs: PROJECTS[2]?.msgs,
   },
@@ -10573,11 +10573,11 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
         const filtered = parsed.filter(
           (p) => p.title !== "Pak Agik" && p.title !== "Caption" && p.id !== "proj-2" && p.id !== "proj-3"
         );
-        // Pastikan semua proyek menggunakan folder biru konsisten seperti milik Yohanes
+        // Pastikan semua proyek menggunakan folder hitam konsisten
         const normalized = filtered.map((p) => ({
           ...p,
-          pastelBg: "bg-[#EAF2FF]",
-          iconColor: "text-[#2F80ED]",
+          pastelBg: "bg-[#F2F4F7]",
+          iconColor: "text-neutral-900",
           iconType: "folder" as const,
         }));
         try {
@@ -10690,8 +10690,8 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
       title: trimmed,
       time: "Baru saja",
       category: "dibuat",
-      pastelBg: "bg-[#EAF2FF]",
-      iconColor: "text-[#2F80ED]",
+      pastelBg: "bg-[#F2F4F7]",
+      iconColor: "text-neutral-900",
       iconType: "folder",
       msgs: [
         { role: "user", text: `Halo Alerin, saya baru membuat proyek ${trimmed}.`, time: now() },
@@ -11199,7 +11199,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                 className="bg-white rounded-[24px] px-2.5 py-3.5 flex items-center gap-3.5 shadow-xl border border-neutral-100/90 z-30 animate-[gemini-zoom-in_0.15s_ease-out]"
                 onClick={(e) => e.stopPropagation()}
               >
-                <div className="size-12 rounded-2xl flex items-center justify-center shrink-0 bg-[#EAF2FF] text-[#2F80ED]">
+                <div className="size-12 rounded-2xl flex items-center justify-center shrink-0 bg-[#F2F4F7] text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100">
                   <ProjectIcon type={item.iconType || "folder"} />
                 </div>
                 <div className="flex-1 min-w-0 pr-1">
@@ -11359,7 +11359,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
             </button>
 
             <div className="flex items-center gap-2 max-w-[210px]">
-              <span className="text-[#2F80ED] shrink-0">
+              <span className="text-neutral-900 dark:text-neutral-100 shrink-0">
                 <ProjectIcon type="folder" />
               </span>
               <h2 className="text-[17px] font-bold text-neutral-900 truncate">
@@ -11581,7 +11581,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
             </button>
 
             <div className="flex items-center gap-2 max-w-[210px]">
-              <span className="text-[#2F80ED] shrink-0">
+              <span className="text-neutral-900 dark:text-neutral-100 shrink-0">
                 <ProjectIcon type="folder" />
               </span>
               <h1 className="text-[17px] font-bold text-neutral-900 truncate">
@@ -11889,8 +11889,8 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                     }}
                     className="project-item-row w-full flex items-center gap-3.5 py-3.5 px-2 hover:bg-neutral-50 active:bg-neutral-100/70 transition-colors text-left group cursor-pointer rounded-2xl"
                   >
-                    {/* Pastel rounded square icon: folder biru seperti Yohanes */}
-                    <div className="size-12 rounded-2xl flex items-center justify-center shrink-0 bg-[#EAF2FF] text-[#2F80ED]">
+                    {/* Pastel rounded square icon: folder hitam */}
+                    <div className="size-12 rounded-2xl flex items-center justify-center shrink-0 bg-[#F2F4F7] text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100">
                       <ProjectIcon type={p.iconType || "folder"} />
                     </div>
 
@@ -12017,7 +12017,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                     style={{ boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}
                   >
                     <div className="flex items-start justify-between mb-4">
-                      <div className="size-10 rounded-xl flex items-center justify-center bg-[#EAF2FF] text-[#2F80ED]">
+                      <div className="size-10 rounded-xl flex items-center justify-center bg-[#F2F4F7] text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100">
                         <ProjectIcon type="folder" />
                       </div>
                       <div className="flex items-center gap-1.5">
