@@ -12314,7 +12314,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
   }, [selectedProject]);
 
   const handleRenameChat = () => {
-    const trimmed = renameChatInput.trim();
+    const trimmed = renameChatInput.trim().slice(0, 20);
     if (!trimmed || !selectedProject || !selectedProjectChat) return;
     const updatedChat = { ...selectedProjectChat, title: trimmed };
     setSelectedProjectChat(updatedChat);
@@ -12830,11 +12830,17 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
       {renameChatModal && (
         <div className="fixed inset-0 z-[250] flex items-center justify-center p-4 bg-black/45 backdrop-blur-xs animate-[gemini-fade-in_0.15s_ease-out]" onClick={() => setRenameChatModal(false)}>
           <div className="w-full max-w-[340px] bg-white rounded-3xl p-5 shadow-2xl border border-neutral-100 flex flex-col gap-4 animate-[gemini-zoom-in_0.2s_ease-out]" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-base font-bold text-neutral-900">Ganti Nama Obrolan</h3>
+            <div className="flex items-center justify-between">
+              <h3 className="text-base font-bold text-neutral-900">Ganti Nama Obrolan</h3>
+              <span className={`text-[11px] font-medium ${renameChatInput.length >= 20 ? "text-amber-600 font-semibold" : "text-neutral-400"}`}>
+                {renameChatInput.length}/20
+              </span>
+            </div>
             <input
               type="text"
+              maxLength={20}
               value={renameChatInput}
-              onChange={(e) => setRenameChatInput(capitalizeWords(e.target.value))}
+              onChange={(e) => setRenameChatInput(capitalizeWords(e.target.value.slice(0, 20)))}
               autoCapitalize="words"
               autoCorrect="on"
               spellCheck={false}
@@ -13098,7 +13104,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                     <button
                       type="button"
                       onClick={() => {
-                        setRenameChatInput(selectedProjectChat.title);
+                        setRenameChatInput(selectedProjectChat.title.slice(0, 20));
                         setRenameChatModal(true);
                         setChatMenuOpen(false);
                       }}
