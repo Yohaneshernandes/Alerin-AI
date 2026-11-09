@@ -6825,54 +6825,37 @@ function PercakapanTab({
 
   const handleCopyUserMessage = useCallback((text: string) => {
     const cleanText = stripEmoticons(text);
-    navigator.clipboard.writeText(cleanText).then(() => {
-      showActionToast("Pesan disalin!");
-      setActiveUserBubbleMenuIdx(null);
-    }).catch(() => {
-      showActionToast("Gagal menyalin pesan.");
-      setActiveUserBubbleMenuIdx(null);
-    });
-  }, [showActionToast]);
-
-  const handleEditUserMessage = useCallback((text: string) => {
-    setInput(text);
-    setActiveUserBubbleMenuIdx(null);
-    showActionToast("Pesan dimuat ke kolom chat");
-    setTimeout(() => {
-      const textareas = document.querySelectorAll<HTMLTextAreaElement>("textarea");
-      const ta = textareas[textareas.length - 1] || textareas[0];
-      if (ta) {
-        ta.focus();
-        ta.setSelectionRange(text.length, text.length);
+    const fallbackCopy = () => {
+      try {
+        const textarea = document.createElement("textarea");
+        textarea.value = cleanText;
+        textarea.style.position = "fixed";
+        textarea.style.left = "-9999px";
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+        showActionToast("Pesan disalin!");
+      } catch (e) {
+        showActionToast("Gagal menyalin pesan.");
       }
-    }, 60);
-  }, [showActionToast]);
+    };
 
-  const handleShareUserMessage = useCallback((text: string) => {
-    setActiveUserBubbleMenuIdx(null);
-    if (typeof navigator !== "undefined" && navigator.share) {
-      navigator.share({ title: "Pesan Saya", text }).catch(() => {});
+    if (navigator?.clipboard?.writeText) {
+      navigator.clipboard.writeText(cleanText)
+        .then(() => showActionToast("Pesan disalin!"))
+        .catch(() => fallbackCopy());
     } else {
-      navigator.clipboard.writeText(text).then(() => {
-        showActionToast("Tautan / teks pesan disalin!");
-      });
+      fallbackCopy();
     }
+    setActiveUserBubbleMenuIdx(null);
   }, [showActionToast]);
 
-  const handleSelectBubbleText = useCallback((idx: number) => {
-    setActiveUserBubbleMenuIdx(null);
-    setTimeout(() => {
-      const el = document.getElementById(`user-bubble-text-${idx}`);
-      if (el) {
-        const selection = window.getSelection();
-        const range = document.createRange();
-        range.selectNodeContents(el);
-        selection?.removeAllRanges();
-        selection?.addRange(range);
-        showActionToast("Teks dipilih");
-      }
-    }, 50);
-  }, [showActionToast]);
+  // In-bubble Edit & Text Select States
+  const [editingBubbleIdx, setEditingBubbleIdx] = useState<number | null>(null);
+  const [editingBubbleText, setEditingBubbleText] = useState("");
+  const [selectingTextModal, setSelectingTextModal] = useState<string | null>(null);
 
   const handleCopyMessage = useCallback((text: string, idx: number) => {
     const cleanText = stripEmoticons(text);
@@ -7160,6 +7143,69 @@ function PercakapanTab({
         }
       }
     }, intervalMs);
+  }, []);
+
+  const handleStartEditBubble = useCallback((idx: number, text: string) => {
+    setActiveUserBubbleMenuIdx(null);
+    setEditingBubbleIdx(idx);
+    setEditingBubbleText(text);
+  }, []);
+
+  const handleSaveEditBubble = useCallback((idx: number, newText: string) => {
+    const trimmed = newText.trim();
+    if (!trimmed) return;
+    setMsgs((prev) => {
+      const next = [...prev];
+      if (next[idx]) {
+        next[idx] = { ...next[idx], text: trimmed };
+      }
+      return next;
+    });
+    setEditingBubbleIdx(null);
+    showActionToast("Pesan berhasil diperbarui!");
+
+    // Jika pesan setelahnya adalah respon Alerin, generate ulang respon Alerin
+    const nextMsg = msgs[idx + 1];
+    if (nextMsg && nextMsg.role === "claro") {
+      setMsgs((prev) => prev.slice(0, idx + 1));
+      setTimeout(() => {
+        streamResponse(getAIResponse(trimmed), {});
+      }, 200);
+    }
+  }, [msgs, showActionToast, streamResponse]);
+
+  const handleCancelEditBubble = useCallback(() => {
+    setEditingBubbleIdx(null);
+  }, []);
+
+  const handleShareUserMessage = useCallback((text: string) => {
+    setActiveUserBubbleMenuIdx(null);
+    if (typeof navigator !== "undefined" && navigator.share) {
+      navigator.share({ title: "Pesan Saya", text }).catch(() => {});
+    } else {
+      navigator.clipboard?.writeText(text).then(() => {
+        showActionToast("Tautan / teks pesan disalin!");
+      }).catch(() => {
+        showActionToast("Pesan disalin!");
+      });
+    }
+  }, [showActionToast]);
+
+  const handleSelectBubbleText = useCallback((idx: number, text: string) => {
+    setActiveUserBubbleMenuIdx(null);
+    setSelectingTextModal(text);
+    setTimeout(() => {
+      const el = document.getElementById(`user-bubble-text-${idx}`);
+      if (el) {
+        try {
+          const selection = window.getSelection();
+          const range = document.createRange();
+          range.selectNodeContents(el);
+          selection?.removeAllRanges();
+          selection?.addRange(range);
+        } catch (e) {}
+      }
+    }, 80);
   }, []);
 
   const sendWithFile = useCallback((text: string, file: { name: string; type: string; size: string; previewUrl?: string }, allFiles?: { name: string; type: string; size: string; previewUrl?: string }[]) => {
@@ -7578,105 +7624,181 @@ function PercakapanTab({
                     </div>
                   )
                 ) : null}
-                <div className="relative inline-block max-w-[80%] md:max-w-[68%]">
-                  <div
-                    id={`user-bubble-text-${i}`}
-                    onTouchStart={(e) => handleBubbleTouchStart(i, e)}
-                    onTouchMove={handleBubbleTouchMove}
-                    onTouchEnd={handleBubbleTouchEnd}
-                    onTouchCancel={handleBubbleTouchEnd}
-                    onMouseDown={(e) => handleBubbleMouseDown(i, e)}
-                    onMouseMove={handleBubbleMouseMove}
-                    onMouseUp={handleBubbleMouseUp}
-                    onMouseLeave={handleBubbleMouseUp}
-                    onContextMenu={(e) => handleBubbleContextMenu(i, e)}
-                    style={{ WebkitTouchCallout: "none" }}
-                    className={`rounded-2xl rounded-br-sm px-4 py-3 text-[0.9375rem] leading-relaxed text-slate-900 bg-[#EAF2FF] border border-[#BFDBFE]/80 shadow-xs claro-user-bubble select-text cursor-pointer transition-all duration-150 ${
-                      activeUserBubbleMenuIdx === i ? "ring-2 ring-blue-500 shadow-md brightness-95" : "hover:brightness-[0.98]"
-                    }`}
-                    title="Tahan untuk membuka menu aksi"
-                  >
-                    {m.text}
-                  </div>
-
-                  {/* Pop-up Menu Aksi Bubble Chat (Long-Press) */}
-                  {activeUserBubbleMenuIdx === i && (
-                    <>
-                      <div
-                        className="fixed inset-0 z-40"
-                        onClick={() => setActiveUserBubbleMenuIdx(null)}
-                      />
-                      <div
-                        className={`absolute right-0 z-50 bg-white rounded-2xl border border-slate-200/90 shadow-[0_12px_36px_rgba(0,0,0,0.16)] p-1.5 w-40 flex flex-col gap-0.5 text-xs animate-in fade-in zoom-in-95 ${
-                          userBubbleMenuPlacement === "bottom" ? "top-full mt-2" : "bottom-full mb-2"
-                        }`}
-                        onClick={(e) => e.stopPropagation()}
+                {editingBubbleIdx === i ? (
+                  <div className="w-full max-w-[85vw] sm:max-w-[420px] bg-white rounded-2xl rounded-tr-sm border-2 border-blue-500 shadow-md p-3.5 flex flex-col gap-2.5 animate-in fade-in duration-150 text-left">
+                    <div className="flex items-center justify-between pb-1.5 border-b border-slate-100">
+                      <span className="text-[12px] font-semibold text-blue-600 flex items-center gap-1.5">
+                        <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M12 20h9"/>
+                          <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                        </svg>
+                        Edit Pesan
+                      </span>
+                      <span className="text-[10px] text-slate-400">Tekan Simpan untuk memperbarui</span>
+                    </div>
+                    <textarea
+                      value={editingBubbleText}
+                      onChange={(e) => setEditingBubbleText(e.target.value)}
+                      className="w-full min-h-[72px] max-h-[220px] p-2.5 text-sm text-slate-900 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white resize-y leading-relaxed"
+                      autoFocus
+                      rows={Math.min(6, Math.max(2, editingBubbleText.split('\n').length))}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && !e.shiftKey) {
+                          e.preventDefault();
+                          handleSaveEditBubble(i, editingBubbleText);
+                        } else if (e.key === "Escape") {
+                          e.preventDefault();
+                          handleCancelEditBubble();
+                        }
+                      }}
+                    />
+                    <div className="flex items-center justify-end gap-2 pt-1">
+                      <button
+                        type="button"
+                        onClick={handleCancelEditBubble}
+                        className="px-3 py-1.5 text-xs font-medium text-slate-600 hover:text-slate-800 hover:bg-slate-100 active:bg-slate-200 rounded-xl transition-colors cursor-pointer"
                       >
-                        {/* 1. Salin */}
-                        <button
-                          type="button"
-                          onClick={() => handleCopyUserMessage(m.text)}
-                          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left font-medium text-slate-700 hover:bg-slate-100/90 active:bg-slate-100 transition-colors cursor-pointer"
-                        >
-                          <svg className="w-4 h-4 text-slate-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-                          </svg>
-                          <span>Salin</span>
-                        </button>
+                        Batal
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleSaveEditBubble(i, editingBubbleText)}
+                        disabled={!editingBubbleText.trim()}
+                        className="px-3.5 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl transition-colors shadow-xs flex items-center gap-1.5 cursor-pointer"
+                      >
+                        <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                        Simpan
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="relative inline-block max-w-[80%] md:max-w-[68%]">
+                    <div
+                      id={`user-bubble-text-${i}`}
+                      onTouchStart={(e) => handleBubbleTouchStart(i, e)}
+                      onTouchMove={handleBubbleTouchMove}
+                      onTouchEnd={handleBubbleTouchEnd}
+                      onTouchCancel={handleBubbleTouchEnd}
+                      onMouseDown={(e) => handleBubbleMouseDown(i, e)}
+                      onMouseMove={handleBubbleMouseMove}
+                      onMouseUp={handleBubbleMouseUp}
+                      onMouseLeave={handleBubbleMouseUp}
+                      onContextMenu={(e) => handleBubbleContextMenu(i, e)}
+                      style={{ WebkitTouchCallout: "none" }}
+                      className={`rounded-2xl rounded-br-sm px-4 py-3 text-[0.9375rem] leading-relaxed text-slate-900 bg-[#EAF2FF] border border-[#BFDBFE]/80 shadow-xs claro-user-bubble select-text cursor-pointer transition-all duration-150 ${
+                        activeUserBubbleMenuIdx === i ? "ring-2 ring-blue-500 shadow-md brightness-95" : "hover:brightness-[0.98]"
+                      }`}
+                      title="Tahan untuk membuka menu aksi"
+                    >
+                      {m.text}
+                    </div>
 
-                        {/* 2. Edit */}
-                        <button
-                          type="button"
-                          onClick={() => handleEditUserMessage(m.text)}
-                          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left font-medium text-slate-700 hover:bg-slate-100/90 active:bg-slate-100 transition-colors cursor-pointer"
+                    {/* Pop-up Menu Aksi Bubble Chat (Long-Press) */}
+                    {activeUserBubbleMenuIdx === i && (
+                      <>
+                        <div
+                          className="fixed inset-0 z-40 bg-transparent"
+                          onClick={() => setActiveUserBubbleMenuIdx(null)}
+                          onTouchStart={() => setActiveUserBubbleMenuIdx(null)}
+                        />
+                        <div
+                          className={`absolute right-0 z-50 bg-white rounded-2xl border border-slate-200/90 shadow-[0_12px_36px_rgba(0,0,0,0.18)] p-1.5 w-44 flex flex-col gap-0.5 text-xs animate-in fade-in zoom-in-95 ${
+                            userBubbleMenuPlacement === "bottom" ? "top-full mt-2" : "bottom-full mb-2"
+                          }`}
+                          onClick={(e) => e.stopPropagation()}
+                          onPointerDown={(e) => e.stopPropagation()}
+                          onTouchStart={(e) => e.stopPropagation()}
+                          onTouchEnd={(e) => e.stopPropagation()}
+                          onMouseDown={(e) => e.stopPropagation()}
                         >
-                          <svg className="w-4 h-4 text-slate-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M12 20h9"/>
-                            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
-                          </svg>
-                          <span>Edit</span>
-                        </button>
+                          {/* 1. Salin */}
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleCopyUserMessage(m.text);
+                            }}
+                            onPointerDown={(e) => e.stopPropagation()}
+                            onMouseDown={(e) => e.stopPropagation()}
+                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left font-medium text-slate-700 hover:bg-slate-100/90 active:bg-slate-100 transition-colors cursor-pointer"
+                          >
+                            <svg className="w-4 h-4 text-slate-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                              <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                            </svg>
+                            <span>Salin</span>
+                          </button>
 
-                        {/* 3. Bagikan */}
-                        <button
-                          type="button"
-                          onClick={() => handleShareUserMessage(m.text)}
-                          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left font-medium text-slate-700 hover:bg-slate-100/90 active:bg-slate-100 transition-colors cursor-pointer"
-                        >
-                          <svg className="w-4 h-4 text-slate-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M4 12v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-6" />
-                            <polyline points="16 6 12 2 8 6" />
-                            <line x1="12" y1="2" x2="12" y2="15" />
-                          </svg>
-                          <span>Bagikan</span>
-                        </button>
+                          {/* 2. Edit */}
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleStartEditBubble(i, m.text);
+                            }}
+                            onPointerDown={(e) => e.stopPropagation()}
+                            onMouseDown={(e) => e.stopPropagation()}
+                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left font-medium text-slate-700 hover:bg-slate-100/90 active:bg-slate-100 transition-colors cursor-pointer"
+                          >
+                            <svg className="w-4 h-4 text-slate-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M12 20h9"/>
+                              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                            </svg>
+                            <span>Edit</span>
+                          </button>
 
-                        {/* 4. Pilih teks */}
-                        <button
-                          type="button"
-                          onClick={() => handleSelectBubbleText(i)}
-                          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left font-medium text-slate-700 hover:bg-slate-100/90 active:bg-slate-100 transition-colors cursor-pointer"
-                        >
-                          <svg className="w-4 h-4 text-slate-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                            <line x1="4" y1="7" x2="4" y2="4"/>
-                            <line x1="4" y1="4" x2="7" y2="4"/>
-                            <line x1="20" y1="7" x2="20" y2="4"/>
-                            <line x1="20" y1="4" x2="17" y2="4"/>
-                            <line x1="4" y1="17" x2="4" y2="20"/>
-                            <line x1="4" y1="20" x2="7" y2="20"/>
-                            <line x1="20" y1="17" x2="20" y2="20"/>
-                            <line x1="20" y1="20" x2="17" y2="20"/>
-                            <line x1="9" y1="9" x2="15" y2="9"/>
-                            <line x1="12" y1="9" x2="12" y2="15"/>
-                            <line x1="9" y1="15" x2="15" y2="15"/>
-                          </svg>
-                          <span>Pilih teks</span>
-                        </button>
-                      </div>
-                    </>
-                  )}
-                </div>
+                          {/* 3. Bagikan */}
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleShareUserMessage(m.text);
+                            }}
+                            onPointerDown={(e) => e.stopPropagation()}
+                            onMouseDown={(e) => e.stopPropagation()}
+                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left font-medium text-slate-700 hover:bg-slate-100/90 active:bg-slate-100 transition-colors cursor-pointer"
+                          >
+                            <svg className="w-4 h-4 text-slate-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M4 12v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-6" />
+                              <polyline points="16 6 12 2 8 6" />
+                              <line x1="12" y1="2" x2="12" y2="15" />
+                            </svg>
+                            <span>Bagikan</span>
+                          </button>
+
+                          {/* 4. Pilih teks */}
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleSelectBubbleText(i, m.text);
+                            }}
+                            onPointerDown={(e) => e.stopPropagation()}
+                            onMouseDown={(e) => e.stopPropagation()}
+                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left font-medium text-slate-700 hover:bg-slate-100/90 active:bg-slate-100 transition-colors cursor-pointer"
+                          >
+                            <svg className="w-4 h-4 text-slate-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                              <line x1="4" y1="7" x2="4" y2="4"/>
+                              <line x1="4" y1="4" x2="7" y2="4"/>
+                              <line x1="20" y1="7" x2="20" y2="4"/>
+                              <line x1="20" y1="4" x2="17" y2="4"/>
+                              <line x1="4" y1="17" x2="4" y2="20"/>
+                              <line x1="4" y1="20" x2="7" y2="20"/>
+                              <line x1="20" y1="17" x2="20" y2="20"/>
+                              <line x1="20" y1="20" x2="17" y2="20"/>
+                              <line x1="9" y1="9" x2="15" y2="9"/>
+                              <line x1="12" y1="9" x2="12" y2="15"/>
+                              <line x1="9" y1="15" x2="15" y2="15"/>
+                            </svg>
+                            <span>Pilih teks</span>
+                          </button>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )}
                 <p className="text-[10px] text-slate-400 pr-1">{m.time}</p>
               </div>
             );
@@ -8025,6 +8147,129 @@ function PercakapanTab({
           >
             Tutup
           </button>
+        </div>
+      </div>
+    )}
+
+    {/* Modal Pilih & Salin Teks */}
+    {selectingTextModal !== null && (
+      <div
+        className="fixed inset-0 z-[270] flex items-center justify-center p-4 bg-black/45 backdrop-blur-xs animate-[gemini-fade-in_0.15s_ease-out]"
+        onClick={() => setSelectingTextModal(null)}
+      >
+        <div
+          className="w-full max-w-[420px] bg-white rounded-3xl p-5 shadow-2xl border border-slate-100 flex flex-col gap-3.5 animate-[gemini-zoom-in_0.2s_ease-out]"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <div className="size-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="4" y1="7" x2="4" y2="4"/>
+                  <line x1="4" y1="4" x2="7" y2="4"/>
+                  <line x1="20" y1="7" x2="20" y2="4"/>
+                  <line x1="20" y1="4" x2="17" y2="4"/>
+                  <line x1="4" y1="17" x2="4" y2="20"/>
+                  <line x1="4" y1="20" x2="7" y2="20"/>
+                  <line x1="20" y1="17" x2="20" y2="20"/>
+                  <line x1="20" y1="20" x2="17" y2="20"/>
+                  <line x1="9" y1="9" x2="15" y2="9"/>
+                  <line x1="12" y1="9" x2="12" y2="15"/>
+                  <line x1="9" y1="15" x2="15" y2="15"/>
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-slate-900 leading-tight">Pilih Teks</h3>
+                <p className="text-[11px] text-slate-500">Sorot bagian teks atau salin semua teks di bawah</p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setSelectingTextModal(null)}
+              className="size-7 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center transition-colors cursor-pointer"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+          </div>
+
+          <div className="relative">
+            <textarea
+              id="select-text-modal-area"
+              readOnly
+              value={selectingTextModal}
+              onClick={(e) => {
+                const target = e.currentTarget;
+                if (target.selectionStart === target.selectionEnd) {
+                  target.select();
+                }
+              }}
+              className="w-full max-h-[260px] min-h-[120px] p-3 text-sm leading-relaxed text-slate-800 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white select-text cursor-text resize-y font-normal"
+            />
+          </div>
+
+          <div className="flex items-center justify-between gap-2 pt-1 border-t border-slate-100">
+            <button
+              type="button"
+              onClick={() => {
+                const el = document.getElementById("select-text-modal-area") as HTMLTextAreaElement | null;
+                if (el) {
+                  el.focus();
+                  el.select();
+                }
+              }}
+              className="px-3 py-2 text-xs font-medium text-blue-600 hover:bg-blue-50 active:bg-blue-100 rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer"
+            >
+              <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                <path d="M9 3v18"/>
+              </svg>
+              Pilih Semua
+            </button>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setSelectingTextModal(null)}
+                className="px-3.5 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 active:bg-slate-200 rounded-xl transition-colors cursor-pointer"
+              >
+                Tutup
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const el = document.getElementById("select-text-modal-area") as HTMLTextAreaElement | null;
+                  let textToCopy = selectingTextModal || "";
+                  let isPartial = false;
+                  if (el && el.selectionStart !== el.selectionEnd) {
+                    textToCopy = el.value.substring(el.selectionStart, el.selectionEnd);
+                    isPartial = true;
+                  }
+                  if (navigator?.clipboard?.writeText) {
+                    navigator.clipboard.writeText(textToCopy).then(() => {
+                      showActionToast(isPartial ? "Bagian teks disalin!" : "Teks berhasil disalin!");
+                      setSelectingTextModal(null);
+                    }).catch(() => {
+                      showActionToast("Teks disalin!");
+                      setSelectingTextModal(null);
+                    });
+                  } else {
+                    showActionToast("Teks disalin!");
+                    setSelectingTextModal(null);
+                  }
+                }}
+                className="px-4 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 rounded-xl transition-colors shadow-xs flex items-center gap-1.5 cursor-pointer"
+              >
+                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                </svg>
+                Salin
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     )}
@@ -11055,13 +11300,72 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
 
   const handleProjCopyUserMessage = useCallback((text: string) => {
     const cleanText = stripEmoticons(text);
-    navigator.clipboard?.writeText(cleanText).then(() => {
-      setToast("Pesan disalin!");
+    const fallbackCopy = () => {
+      try {
+        const textarea = document.createElement("textarea");
+        textarea.value = cleanText;
+        textarea.style.position = "fixed";
+        textarea.style.left = "-9999px";
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+        setToast("Pesan disalin!");
+      } catch (e) {
+        setToast("Gagal menyalin pesan.");
+      }
+    };
+
+    if (navigator?.clipboard?.writeText) {
+      navigator.clipboard.writeText(cleanText).then(() => {
+        setToast("Pesan disalin!");
+        setActiveProjUserBubbleIdx(null);
+      }).catch(() => {
+        fallbackCopy();
+        setActiveProjUserBubbleIdx(null);
+      });
+    } else {
+      fallbackCopy();
       setActiveProjUserBubbleIdx(null);
-    }).catch(() => {
-      setToast("Gagal menyalin pesan.");
-      setActiveProjUserBubbleIdx(null);
-    });
+    }
+  }, []);
+
+  const [editingProjBubbleIdx, setEditingProjBubbleIdx] = useState<number | null>(null);
+  const [editingProjBubbleText, setEditingProjBubbleText] = useState("");
+  const [selectingProjTextModal, setSelectingProjTextModal] = useState<string | null>(null);
+
+  const handleProjStartEditBubble = useCallback((idx: number, text: string) => {
+    setActiveProjUserBubbleIdx(null);
+    setEditingProjBubbleIdx(idx);
+    setEditingProjBubbleText(text);
+  }, []);
+
+  const handleProjSaveEditBubble = useCallback((idx: number, newText: string) => {
+    const trimmed = newText.trim();
+    if (!trimmed || !selectedProjectChat || !selectedProject) return;
+    const nextMsgs = [...selectedProjectChat.msgs];
+    if (nextMsgs[idx]) {
+      nextMsgs[idx] = { ...nextMsgs[idx], text: trimmed };
+    }
+    const updatedChat: ProjectChatItem = {
+      ...selectedProjectChat,
+      lastSnippet: trimmed,
+      msgs: nextMsgs,
+    };
+    setSelectedProjectChat(updatedChat);
+    setProjectChatsMap((prev) => ({
+      ...prev,
+      [selectedProject.id]: (prev[selectedProject.id] || []).map((c) =>
+        c.id === updatedChat.id ? updatedChat : c
+      ),
+    }));
+    setEditingProjBubbleIdx(null);
+    setToast("Pesan berhasil diperbarui!");
+  }, [selectedProjectChat, selectedProject]);
+
+  const handleProjCancelEditBubble = useCallback(() => {
+    setEditingProjBubbleIdx(null);
   }, []);
 
   const handleProjEditUserMessage = useCallback((text: string) => {
@@ -11081,19 +11385,21 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
     }
   }, []);
 
-  const handleProjSelectBubbleText = useCallback((idx: number) => {
+  const handleProjSelectBubbleText = useCallback((idx: number, text: string) => {
     setActiveProjUserBubbleIdx(null);
+    setSelectingProjTextModal(text);
     setTimeout(() => {
       const el = document.getElementById(`proj-user-bubble-text-${idx}`);
       if (el) {
-        const selection = window.getSelection();
-        const range = document.createRange();
-        range.selectNodeContents(el);
-        selection?.removeAllRanges();
-        selection?.addRange(range);
-        setToast("Teks dipilih");
+        try {
+          const selection = window.getSelection();
+          const range = document.createRange();
+          range.selectNodeContents(el);
+          selection?.removeAllRanges();
+          selection?.addRange(range);
+        } catch (e) {}
       }
-    }, 50);
+    }, 80);
   }, []);
 
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -11301,6 +11607,129 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
   return (
     <div className="flex-1 flex flex-col h-full bg-white relative overflow-hidden select-none">
       {toast && <Toast msg={toast} onDone={() => setToast(null)} />}
+
+      {/* Modal Pilih & Salin Teks Proyek */}
+      {selectingProjTextModal !== null && (
+        <div
+          className="fixed inset-0 z-[270] flex items-center justify-center p-4 bg-black/45 backdrop-blur-xs animate-[gemini-fade-in_0.15s_ease-out]"
+          onClick={() => setSelectingProjTextModal(null)}
+        >
+          <div
+            className="w-full max-w-[420px] bg-white rounded-3xl p-5 shadow-2xl border border-slate-100 flex flex-col gap-3.5 animate-[gemini-zoom-in_0.2s_ease-out]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="size-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="4" y1="7" x2="4" y2="4"/>
+                    <line x1="4" y1="4" x2="7" y2="4"/>
+                    <line x1="20" y1="7" x2="20" y2="4"/>
+                    <line x1="20" y1="4" x2="17" y2="4"/>
+                    <line x1="4" y1="17" x2="4" y2="20"/>
+                    <line x1="4" y1="20" x2="7" y2="20"/>
+                    <line x1="20" y1="17" x2="20" y2="20"/>
+                    <line x1="20" y1="20" x2="17" y2="20"/>
+                    <line x1="9" y1="9" x2="15" y2="9"/>
+                    <line x1="12" y1="9" x2="12" y2="15"/>
+                    <line x1="9" y1="15" x2="15" y2="15"/>
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-slate-900 leading-tight">Pilih Teks</h3>
+                  <p className="text-[11px] text-slate-500">Sorot bagian teks atau salin semua teks di bawah</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectingProjTextModal(null)}
+                className="size-7 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center transition-colors cursor-pointer"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="relative">
+              <textarea
+                id="select-proj-text-modal-area"
+                readOnly
+                value={selectingProjTextModal}
+                onClick={(e) => {
+                  const target = e.currentTarget;
+                  if (target.selectionStart === target.selectionEnd) {
+                    target.select();
+                  }
+                }}
+                className="w-full max-h-[260px] min-h-[120px] p-3 text-sm leading-relaxed text-slate-800 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white select-text cursor-text resize-y font-normal"
+              />
+            </div>
+
+            <div className="flex items-center justify-between gap-2 pt-1 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={() => {
+                  const el = document.getElementById("select-proj-text-modal-area") as HTMLTextAreaElement | null;
+                  if (el) {
+                    el.focus();
+                    el.select();
+                  }
+                }}
+                className="px-3 py-2 text-xs font-medium text-blue-600 hover:bg-blue-50 active:bg-blue-100 rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer"
+              >
+                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="2"/>
+                  <path d="M9 3v18"/>
+                </svg>
+                Pilih Semua
+              </button>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setSelectingProjTextModal(null)}
+                  className="px-3.5 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 active:bg-slate-200 rounded-xl transition-colors cursor-pointer"
+                >
+                  Tutup
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const el = document.getElementById("select-proj-text-modal-area") as HTMLTextAreaElement | null;
+                    let textToCopy = selectingProjTextModal || "";
+                    let isPartial = false;
+                    if (el && el.selectionStart !== el.selectionEnd) {
+                      textToCopy = el.value.substring(el.selectionStart, el.selectionEnd);
+                      isPartial = true;
+                    }
+                    if (navigator?.clipboard?.writeText) {
+                      navigator.clipboard.writeText(textToCopy).then(() => {
+                        setToast(isPartial ? "Bagian teks disalin!" : "Teks berhasil disalin!");
+                        setSelectingProjTextModal(null);
+                      }).catch(() => {
+                        setToast("Teks disalin!");
+                        setSelectingProjTextModal(null);
+                      });
+                    } else {
+                      setToast("Teks disalin!");
+                      setSelectingProjTextModal(null);
+                    }
+                  }}
+                  className="px-4 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 rounded-xl transition-colors shadow-xs flex items-center gap-1.5 cursor-pointer"
+                >
+                  <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                  </svg>
+                  Salin
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Hidden file input for source documents */}
       <input ref={sourceFileInputRef} type="file" accept=".pdf,.doc,.docx,.txt" className="hidden" onChange={handleSourceUpload} />
@@ -11908,105 +12337,181 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
               if (m.role === "user") {
                 return (
                   <div key={idx} className="flex flex-col items-end gap-1 relative">
-                    <div className="relative inline-block max-w-[82%]">
-                      <div
-                        id={`proj-user-bubble-text-${idx}`}
-                        onTouchStart={(e) => handleProjBubbleTouchStart(idx, e)}
-                        onTouchMove={handleProjBubbleTouchMove}
-                        onTouchEnd={handleProjBubbleTouchEnd}
-                        onTouchCancel={handleProjBubbleTouchEnd}
-                        onMouseDown={(e) => handleProjBubbleMouseDown(idx, e)}
-                        onMouseMove={handleProjBubbleMouseMove}
-                        onMouseUp={handleProjBubbleMouseUp}
-                        onMouseLeave={handleProjBubbleMouseUp}
-                        onContextMenu={(e) => handleProjBubbleContextMenu(idx, e)}
-                        style={{ WebkitTouchCallout: "none" }}
-                        className={`rounded-2xl rounded-tr-sm px-4 py-2.5 text-[15px] leading-relaxed text-slate-900 bg-[#EAF2FF] border border-[#BFDBFE]/80 shadow-2xs select-text cursor-pointer transition-all duration-150 ${
-                          activeProjUserBubbleIdx === idx ? "ring-2 ring-blue-500 shadow-md brightness-95" : "hover:brightness-[0.98]"
-                        }`}
-                        title="Tahan untuk membuka menu aksi"
-                      >
-                        {m.text}
-                      </div>
-
-                      {/* Pop-up Menu Aksi Bubble Chat (Long-Press) */}
-                      {activeProjUserBubbleIdx === idx && (
-                        <>
-                          <div
-                            className="fixed inset-0 z-40"
-                            onClick={() => setActiveProjUserBubbleIdx(null)}
-                          />
-                          <div
-                            className={`absolute right-0 z-50 bg-white rounded-2xl border border-slate-200/90 shadow-[0_12px_36px_rgba(0,0,0,0.16)] p-1.5 w-40 flex flex-col gap-0.5 text-xs animate-in fade-in zoom-in-95 ${
-                              projBubblePlacement === "bottom" ? "top-full mt-2" : "bottom-full mb-2"
-                            }`}
-                            onClick={(e) => e.stopPropagation()}
+                    {editingProjBubbleIdx === idx ? (
+                      <div className="w-full max-w-[85vw] sm:max-w-[420px] bg-white rounded-2xl rounded-tr-sm border-2 border-blue-500 shadow-md p-3.5 flex flex-col gap-2.5 animate-in fade-in duration-150 text-left">
+                        <div className="flex items-center justify-between pb-1.5 border-b border-slate-100">
+                          <span className="text-[12px] font-semibold text-blue-600 flex items-center gap-1.5">
+                            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M12 20h9"/>
+                              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                            </svg>
+                            Edit Pesan
+                          </span>
+                          <span className="text-[10px] text-slate-400">Tekan Simpan untuk memperbarui</span>
+                        </div>
+                        <textarea
+                          value={editingProjBubbleText}
+                          onChange={(e) => setEditingProjBubbleText(e.target.value)}
+                          className="w-full min-h-[72px] max-h-[220px] p-2.5 text-sm text-slate-900 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white resize-y leading-relaxed"
+                          autoFocus
+                          rows={Math.min(6, Math.max(2, editingProjBubbleText.split('\n').length))}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" && !e.shiftKey) {
+                              e.preventDefault();
+                              handleProjSaveEditBubble(idx, editingProjBubbleText);
+                            } else if (e.key === "Escape") {
+                              e.preventDefault();
+                              handleProjCancelEditBubble();
+                            }
+                          }}
+                        />
+                        <div className="flex items-center justify-end gap-2 pt-1">
+                          <button
+                            type="button"
+                            onClick={handleProjCancelEditBubble}
+                            className="px-3 py-1.5 text-xs font-medium text-slate-600 hover:text-slate-800 hover:bg-slate-100 active:bg-slate-200 rounded-xl transition-colors cursor-pointer"
                           >
-                            {/* 1. Salin */}
-                            <button
-                              type="button"
-                              onClick={() => handleProjCopyUserMessage(m.text)}
-                              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left font-medium text-slate-700 hover:bg-slate-100/90 active:bg-slate-100 transition-colors cursor-pointer"
-                            >
-                              <svg className="w-4 h-4 text-slate-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-                              </svg>
-                              <span>Salin</span>
-                            </button>
+                            Batal
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleProjSaveEditBubble(idx, editingProjBubbleText)}
+                            disabled={!editingProjBubbleText.trim()}
+                            className="px-3.5 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl transition-colors shadow-xs flex items-center gap-1.5 cursor-pointer"
+                          >
+                            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                              <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                            Simpan
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="relative inline-block max-w-[82%]">
+                        <div
+                          id={`proj-user-bubble-text-${idx}`}
+                          onTouchStart={(e) => handleProjBubbleTouchStart(idx, e)}
+                          onTouchMove={handleProjBubbleTouchMove}
+                          onTouchEnd={handleProjBubbleTouchEnd}
+                          onTouchCancel={handleProjBubbleTouchEnd}
+                          onMouseDown={(e) => handleProjBubbleMouseDown(idx, e)}
+                          onMouseMove={handleProjBubbleMouseMove}
+                          onMouseUp={handleProjBubbleMouseUp}
+                          onMouseLeave={handleProjBubbleMouseUp}
+                          onContextMenu={(e) => handleProjBubbleContextMenu(idx, e)}
+                          style={{ WebkitTouchCallout: "none" }}
+                          className={`rounded-2xl rounded-tr-sm px-4 py-2.5 text-[15px] leading-relaxed text-slate-900 bg-[#EAF2FF] border border-[#BFDBFE]/80 shadow-2xs select-text cursor-pointer transition-all duration-150 ${
+                            activeProjUserBubbleIdx === idx ? "ring-2 ring-blue-500 shadow-md brightness-95" : "hover:brightness-[0.98]"
+                          }`}
+                          title="Tahan untuk membuka menu aksi"
+                        >
+                          {m.text}
+                        </div>
 
-                            {/* 2. Edit */}
-                            <button
-                              type="button"
-                              onClick={() => handleProjEditUserMessage(m.text)}
-                              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left font-medium text-slate-700 hover:bg-slate-100/90 active:bg-slate-100 transition-colors cursor-pointer"
+                        {/* Pop-up Menu Aksi Bubble Chat (Long-Press) */}
+                        {activeProjUserBubbleIdx === idx && (
+                          <>
+                            <div
+                              className="fixed inset-0 z-40 bg-transparent"
+                              onClick={() => setActiveProjUserBubbleIdx(null)}
+                              onTouchStart={() => setActiveProjUserBubbleIdx(null)}
+                            />
+                            <div
+                              className={`absolute right-0 z-50 bg-white rounded-2xl border border-slate-200/90 shadow-[0_12px_36px_rgba(0,0,0,0.18)] p-1.5 w-44 flex flex-col gap-0.5 text-xs animate-in fade-in zoom-in-95 ${
+                                projBubblePlacement === "bottom" ? "top-full mt-2" : "bottom-full mb-2"
+                              }`}
+                              onClick={(e) => e.stopPropagation()}
+                              onPointerDown={(e) => e.stopPropagation()}
+                              onTouchStart={(e) => e.stopPropagation()}
+                              onTouchEnd={(e) => e.stopPropagation()}
+                              onMouseDown={(e) => e.stopPropagation()}
                             >
-                              <svg className="w-4 h-4 text-slate-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M12 20h9"/>
-                                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
-                              </svg>
-                              <span>Edit</span>
-                            </button>
+                              {/* 1. Salin */}
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleProjCopyUserMessage(m.text);
+                                }}
+                                onPointerDown={(e) => e.stopPropagation()}
+                                onMouseDown={(e) => e.stopPropagation()}
+                                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left font-medium text-slate-700 hover:bg-slate-100/90 active:bg-slate-100 transition-colors cursor-pointer"
+                              >
+                                <svg className="w-4 h-4 text-slate-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                                </svg>
+                                <span>Salin</span>
+                              </button>
 
-                            {/* 3. Bagikan */}
-                            <button
-                              type="button"
-                              onClick={() => handleProjShareUserMessage(m.text)}
-                              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left font-medium text-slate-700 hover:bg-slate-100/90 active:bg-slate-100 transition-colors cursor-pointer"
-                            >
-                              <svg className="w-4 h-4 text-slate-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M4 12v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-6" />
-                                <polyline points="16 6 12 2 8 6" />
-                                <line x1="12" y1="2" x2="12" y2="15" />
-                              </svg>
-                              <span>Bagikan</span>
-                            </button>
+                              {/* 2. Edit */}
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleProjStartEditBubble(idx, m.text);
+                                }}
+                                onPointerDown={(e) => e.stopPropagation()}
+                                onMouseDown={(e) => e.stopPropagation()}
+                                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left font-medium text-slate-700 hover:bg-slate-100/90 active:bg-slate-100 transition-colors cursor-pointer"
+                              >
+                                <svg className="w-4 h-4 text-slate-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                                  <path d="M12 20h9"/>
+                                  <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                                </svg>
+                                <span>Edit</span>
+                              </button>
 
-                            {/* 4. Pilih teks */}
-                            <button
-                              type="button"
-                              onClick={() => handleProjSelectBubbleText(idx)}
-                              className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left font-medium text-slate-700 hover:bg-slate-100/90 active:bg-slate-100 transition-colors cursor-pointer"
-                            >
-                              <svg className="w-4 h-4 text-slate-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                                <line x1="4" y1="7" x2="4" y2="4"/>
-                                <line x1="4" y1="4" x2="7" y2="4"/>
-                                <line x1="20" y1="7" x2="20" y2="4"/>
-                                <line x1="20" y1="4" x2="17" y2="4"/>
-                                <line x1="4" y1="17" x2="4" y2="20"/>
-                                <line x1="4" y1="20" x2="7" y2="20"/>
-                                <line x1="20" y1="17" x2="20" y2="20"/>
-                                <line x1="20" y1="20" x2="17" y2="20"/>
-                                <line x1="9" y1="9" x2="15" y2="9"/>
-                                <line x1="12" y1="9" x2="12" y2="15"/>
-                                <line x1="9" y1="15" x2="15" y2="15"/>
-                              </svg>
-                              <span>Pilih teks</span>
-                            </button>
-                          </div>
-                        </>
-                      )}
-                    </div>
+                              {/* 3. Bagikan */}
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleProjShareUserMessage(m.text);
+                                }}
+                                onPointerDown={(e) => e.stopPropagation()}
+                                onMouseDown={(e) => e.stopPropagation()}
+                                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left font-medium text-slate-700 hover:bg-slate-100/90 active:bg-slate-100 transition-colors cursor-pointer"
+                              >
+                                <svg className="w-4 h-4 text-slate-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                                  <path d="M4 12v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-6" />
+                                  <polyline points="16 6 12 2 8 6" />
+                                  <line x1="12" y1="2" x2="12" y2="15" />
+                                </svg>
+                                <span>Bagikan</span>
+                              </button>
+
+                              {/* 4. Pilih teks */}
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleProjSelectBubbleText(idx, m.text);
+                                }}
+                                onPointerDown={(e) => e.stopPropagation()}
+                                onMouseDown={(e) => e.stopPropagation()}
+                                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left font-medium text-slate-700 hover:bg-slate-100/90 active:bg-slate-100 transition-colors cursor-pointer"
+                              >
+                                <svg className="w-4 h-4 text-slate-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                                  <line x1="4" y1="7" x2="4" y2="4"/>
+                                  <line x1="4" y1="4" x2="7" y2="4"/>
+                                  <line x1="20" y1="7" x2="20" y2="4"/>
+                                  <line x1="20" y1="4" x2="17" y2="4"/>
+                                  <line x1="4" y1="17" x2="4" y2="20"/>
+                                  <line x1="4" y1="20" x2="7" y2="20"/>
+                                  <line x1="20" y1="17" x2="20" y2="20"/>
+                                  <line x1="20" y1="20" x2="17" y2="20"/>
+                                  <line x1="9" y1="9" x2="15" y2="9"/>
+                                  <line x1="12" y1="9" x2="12" y2="15"/>
+                                  <line x1="9" y1="15" x2="15" y2="15"/>
+                                </svg>
+                                <span>Pilih teks</span>
+                              </button>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    )}
                     <span className="text-[10px] text-neutral-400 pr-1">{m.time}</span>
                   </div>
                 );
