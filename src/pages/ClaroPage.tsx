@@ -4193,11 +4193,14 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
                 Pilih proyek tujuan untuk <span className="font-semibold text-slate-700 font-['Inter:Medium']">"{moveToProjectItem.title}"</span>:
               </p>
 
-              <div className="space-y-1.5 max-h-[220px] overflow-y-auto pr-0.5">
+              <div className="space-y-1.5 max-h-[193px] overflow-y-auto pr-1 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-slate-200 [&::-webkit-scrollbar-thumb]:rounded-full">
                 {[
                   { id: "proj-1", name: "Metodologi Penelitian" },
                   { id: "proj-2", name: "Skripsi Live Shopping" },
                   { id: "proj-3", name: "Tugas Analisis Data" },
+                  { id: "proj-4", name: "Persiapan UAS" },
+                  { id: "proj-5", name: "Pekerjaan Rumah" },
+                  { id: "proj-6", name: "Proyek Riset Skripsi" },
                 ].map((proj) => {
                   const isChosen = selectedProjectId === proj.id;
                   return (
@@ -4205,7 +4208,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
                       key={proj.id}
                       type="button"
                       onClick={() => setSelectedProjectId(proj.id)}
-                      className={`w-full flex items-center gap-3 p-2.5 rounded-xl border text-left transition-all ${
+                      className={`w-full h-[50px] shrink-0 flex items-center gap-3 px-3 py-2 rounded-xl border text-left transition-all ${
                         isChosen
                           ? "border-neutral-900 bg-neutral-50/70"
                           : "border-slate-100 hover:border-slate-200 hover:bg-slate-50"
@@ -4243,7 +4246,16 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
               <button
                 type="button"
                 onClick={() => {
-                  const projName = selectedProjectId === "proj-1" ? "Metodologi Penelitian" : selectedProjectId === "proj-2" ? "Skripsi Live Shopping" : "Tugas Analisis Data";
+                  const targetFolders = [
+                    { id: "proj-1", name: "Metodologi Penelitian" },
+                    { id: "proj-2", name: "Skripsi Live Shopping" },
+                    { id: "proj-3", name: "Tugas Analisis Data" },
+                    { id: "proj-4", name: "Persiapan UAS" },
+                    { id: "proj-5", name: "Pekerjaan Rumah" },
+                    { id: "proj-6", name: "Proyek Riset Skripsi" },
+                  ];
+                  const target = targetFolders.find((p) => p.id === selectedProjectId);
+                  const projName = target ? target.name : "Proyek";
                   showToast(`Percakapan berhasil dipindahkan ke ${projName}`);
                   setMoveToProjectItem(null);
                 }}
