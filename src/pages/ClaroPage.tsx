@@ -4445,25 +4445,24 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
                     shell?.classList.toggle("profile-dark", nextDark);
                     if (shell instanceof HTMLElement) shell.style.backgroundColor = nextDark ? "#0f172a" : "#ffffff";
                   }
-                  showToast(nextDark ? "Mode Gelap diaktifkan" : "Mode Cerah diaktifkan");
+                  showToast(nextDark ? "Mode Gelap diaktifkan" : "Mode Terang diaktifkan");
                 }}
                 className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-slate-600 transition-colors hover:bg-slate-50 cursor-pointer"
               >
                 <span className="flex items-center gap-3">
-                  <svg
-                    width="17"
-                    height="17"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.8"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className={isDarkTheme ? "text-blue-500" : "text-slate-400"}
-                  >
-                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-                  </svg>
-                  <span className="text-sm font-medium">Mode Gelap</span>
+                  {isDarkTheme ? (
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-amber-500">
+                      <circle cx="12" cy="12" r="4" />
+                      <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+                    </svg>
+                  ) : (
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500">
+                      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                    </svg>
+                  )}
+                  <span className="text-sm font-medium">
+                    {isDarkTheme ? "Mode Terang" : "Mode Gelap"}
+                  </span>
                 </span>
                 <span className={`relative h-6 w-11 rounded-full transition-colors ${isDarkTheme ? "bg-blue-600" : "bg-slate-200"}`}>
                   <span className={`absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform duration-200 ${isDarkTheme ? "translate-x-5" : "translate-x-0"}`} />
