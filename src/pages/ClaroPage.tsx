@@ -36,13 +36,16 @@ type ChatMsg = {
 };
 type SearchFilter = "semua" | "chat" | "dokumen" | "proyek";
 
-// ─── Auto-Capitalize Awal Kata untuk Seluruh Input Teks & Pop-up ──────────────
+// ─── Auto-Capitalize Awal Kalimat untuk Seluruh Input Teks & Pop-up ───────────
 export function capitalizeWords(str: string): string {
   if (!str) return str;
-  return str.replace(/(^|[\s\n\r(/"'‘“«\[{])([a-z\u00E0-\u00FC])/gu, (_match, prefix, char) => {
-    return prefix + char.toUpperCase();
-  });
+  return str
+    // Awal teks / awal kalimat
+    .replace(/^([\s"'‘“«(\[{]*)([a-z\u00E0-\u00FC])/u, (_m, pre, c) => pre + c.toUpperCase())
+    // Awal kalimat setelah tanda akhir kalimat (. ? !) atau baris baru (\n)
+    .replace(/([.!?\n\r]+[\s"'‘“«(\[{]*)([a-z\u00E0-\u00FC])/gu, (_m, pre, c) => pre + c.toUpperCase());
 }
+export const capitalizeSentence = capitalizeWords;
 
 // Indonesian remains the source language so existing content keeps working,
 // while the English layer can also translate content mounted after navigation.
@@ -535,7 +538,7 @@ function SearchModal({
             ref={inputRef}
             value={query}
             onChange={(e) => setQuery(capitalizeWords(e.target.value))}
-            autoCapitalize="words"
+            autoCapitalize="sentences"
             autoCorrect="on"
             spellCheck={false}
             onKeyDown={(e) => {
@@ -3143,7 +3146,7 @@ function AddTargetModal({ onClose, onToast }: { onClose: () => void; onToast: (m
             <input
               value={label}
               onChange={(e) => setLabel(capitalizeWords(e.target.value))}
-              autoCapitalize="words"
+              autoCapitalize="sentences"
               autoCorrect="on"
               spellCheck={false}
               placeholder="Contoh: Selesaikan BAB III..."
@@ -3712,7 +3715,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
                             maxLength={20}
                             value={editTitle}
                             onChange={(e) => setEditTitle(capitalizeWords(e.target.value.slice(0, 20)))}
-                            autoCapitalize="words"
+                            autoCapitalize="sentences"
                             autoCorrect="on"
                             spellCheck={false}
                             onKeyDown={(e) => {
@@ -3972,7 +3975,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
                 maxLength={20}
                 value={renameInput}
                 onChange={(e) => setRenameInput(capitalizeWords(e.target.value.slice(0, 20)))}
-                autoCapitalize="words"
+                autoCapitalize="sentences"
                 autoCorrect="on"
                 spellCheck={false}
                 onKeyDown={(e) => {
@@ -5140,7 +5143,7 @@ function ChatInputBox({
           ref={mobileTextareaRef}
           value={input}
           onChange={(e) => setInput(capitalizeWords(e.target.value))}
-          autoCapitalize="words"
+          autoCapitalize="sentences"
           autoCorrect="on"
           spellCheck={false}
           placeholder={listening ? "Berbicara sekarang…" : "Diskusi dengan Alerin"}
@@ -5152,7 +5155,7 @@ function ChatInputBox({
           ref={textareaRef}
           value={input}
           onChange={(e) => setInput(capitalizeWords(e.target.value))}
-          autoCapitalize="words"
+          autoCapitalize="sentences"
           autoCorrect="on"
           spellCheck={false}
           onKeyDown={handleDesktopKey}
@@ -5704,7 +5707,7 @@ function ChatInputBox({
               autoFocus
               value={input}
               onChange={(e) => setInput(capitalizeWords(e.target.value))}
-              autoCapitalize="words"
+              autoCapitalize="sentences"
               autoCorrect="on"
               spellCheck={false}
               placeholder="Tulis pesan lengkapmu di sini..."
@@ -7926,7 +7929,7 @@ function PercakapanTab({
                     <textarea
                       value={editingBubbleText}
                       onChange={(e) => setEditingBubbleText(capitalizeWords(e.target.value))}
-                      autoCapitalize="words"
+                      autoCapitalize="sentences"
                       autoCorrect="on"
                       spellCheck={false}
                       className="w-full min-h-[72px] max-h-[220px] p-2.5 text-sm text-slate-900 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white resize-y leading-relaxed"
@@ -10389,7 +10392,7 @@ function CariJudulPanel({ onBack }: { onBack: () => void }) {
               </div>
               <div>
                 <label className="block text-xs font-semibold text-slate-600 mb-1.5">Jurusan <span className="text-red-400">Wajib</span></label>
-                <input value={jurusan} onChange={e => setJurusan(capitalizeWords(e.target.value))} autoCapitalize="words" autoCorrect="on" spellCheck={false} placeholder="Manajemen" className={inputCls} style={inputSt} onFocus={onF} onBlur={onB} />
+                <input value={jurusan} onChange={e => setJurusan(capitalizeWords(e.target.value))} autoCapitalize="sentences" autoCorrect="on" spellCheck={false} placeholder="Manajemen" className={inputCls} style={inputSt} onFocus={onF} onBlur={onB} />
               </div>
             </div>
 
@@ -10398,7 +10401,7 @@ function CariJudulPanel({ onBack }: { onBack: () => void }) {
               <div className="flex items-center justify-between mb-1.5">
                 <label className="text-xs font-semibold text-slate-600">Fokus yang ingin diteliti <span className="text-red-400">Wajib</span></label>
               </div>
-              <input value={fokus} onChange={e => setFokus(capitalizeWords(e.target.value))} autoCapitalize="words" autoCorrect="on" spellCheck={false}
+              <input value={fokus} onChange={e => setFokus(capitalizeWords(e.target.value))} autoCapitalize="sentences" autoCorrect="on" spellCheck={false}
                 placeholder="Contoh: perilaku pembelian impulsif"
                 className={inputCls} style={inputSt} onFocus={onF} onBlur={onB} />
               <p className="text-[11px] text-slate-400 mt-1">Gunakan konsep atau hasil yang ingin dijelaskan, bukan kalimat judul lengkap.</p>
@@ -10408,11 +10411,11 @@ function CariJudulPanel({ onBack }: { onBack: () => void }) {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-semibold text-slate-600 mb-1.5">Fenomena utama <span className="text-red-400">Wajib</span></label>
-                <input value={fenomena} onChange={e => setFenomena(capitalizeWords(e.target.value))} autoCapitalize="words" autoCorrect="on" spellCheck={false} placeholder="live shopping TikTok" className={inputCls} style={inputSt} onFocus={onF} onBlur={onB} />
+                <input value={fenomena} onChange={e => setFenomena(capitalizeWords(e.target.value))} autoCapitalize="sentences" autoCorrect="on" spellCheck={false} placeholder="live shopping TikTok" className={inputCls} style={inputSt} onFocus={onF} onBlur={onB} />
               </div>
               <div>
                 <label className="block text-xs font-semibold text-slate-600 mb-1.5">Objek / Responden <span className="text-red-400">Wajib</span></label>
-                <input value={objek} onChange={e => setObjek(capitalizeWords(e.target.value))} autoCapitalize="words" autoCorrect="on" spellCheck={false} placeholder="mahasiswa Gen Z" className={inputCls} style={inputSt} onFocus={onF} onBlur={onB} />
+                <input value={objek} onChange={e => setObjek(capitalizeWords(e.target.value))} autoCapitalize="sentences" autoCorrect="on" spellCheck={false} placeholder="mahasiswa Gen Z" className={inputCls} style={inputSt} onFocus={onF} onBlur={onB} />
               </div>
             </div>
 
@@ -10420,11 +10423,11 @@ function CariJudulPanel({ onBack }: { onBack: () => void }) {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-semibold text-slate-600 mb-1.5">Lokasi / konteks</label>
-                <input value={lokasi} onChange={e => setLokasi(capitalizeWords(e.target.value))} autoCapitalize="words" autoCorrect="on" spellCheck={false} placeholder="Kota Malang" className={inputCls} style={inputSt} onFocus={onF} onBlur={onB} />
+                <input value={lokasi} onChange={e => setLokasi(capitalizeWords(e.target.value))} autoCapitalize="sentences" autoCorrect="on" spellCheck={false} placeholder="Kota Malang" className={inputCls} style={inputSt} onFocus={onF} onBlur={onB} />
               </div>
               <div>
                 <label className="block text-xs font-semibold text-slate-600 mb-1.5">Teori yang dikuasai</label>
-                <input value={teori} onChange={e => setTeori(capitalizeWords(e.target.value))} autoCapitalize="words" autoCorrect="on" spellCheck={false} placeholder="TAM, S-O-R, SEM" className={inputCls} style={inputSt} onFocus={onF} onBlur={onB} />
+                <input value={teori} onChange={e => setTeori(capitalizeWords(e.target.value))} autoCapitalize="sentences" autoCorrect="on" spellCheck={false} placeholder="TAM, S-O-R, SEM" className={inputCls} style={inputSt} onFocus={onF} onBlur={onB} />
               </div>
             </div>
 
@@ -10456,7 +10459,7 @@ function CariJudulPanel({ onBack }: { onBack: () => void }) {
             <div>
               <label className="block text-xs font-semibold text-slate-600 mb-1.5">Batas waktu atau kendala</label>
               <textarea value={kendala} onChange={e => setKendala(capitalizeWords(e.target.value.slice(0, 500)))}
-                autoCapitalize="words" autoCorrect="on" spellCheck={false}
+                autoCapitalize="sentences" autoCorrect="on" spellCheck={false}
                 placeholder="Contoh: waktu penelitian 4 bulan, responden hanya bisa daring..."
                 rows={3} className={inputCls + " resize-none"} style={inputSt} onFocus={onF} onBlur={onB} />
               <p className="text-[11px] text-slate-400 mt-1 text-right">{kendala.length}/500 karakter</p>
@@ -12573,7 +12576,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                 type="text"
                 value={projectName}
                 onChange={(e) => setProjectName(capitalizeWords(e.target.value.slice(0, 20)))}
-                autoCapitalize="words"
+                autoCapitalize="sentences"
                 autoCorrect="on"
                 spellCheck={false}
                 maxLength={20}
@@ -12663,7 +12666,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                 maxLength={20}
                 value={renameProjectInput}
                 onChange={(e) => setRenameProjectInput(capitalizeWords(e.target.value.slice(0, 20)))}
-                autoCapitalize="words"
+                autoCapitalize="sentences"
                 autoCorrect="on"
                 spellCheck={false}
                 onKeyDown={(e) => {
@@ -12852,7 +12855,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
               maxLength={20}
               value={renameChatInput}
               onChange={(e) => setRenameChatInput(capitalizeWords(e.target.value.slice(0, 20)))}
-              autoCapitalize="words"
+              autoCapitalize="sentences"
               autoCorrect="on"
               spellCheck={false}
               onKeyDown={(e) => {
@@ -13170,7 +13173,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                         <textarea
                           value={editingProjBubbleText}
                           onChange={(e) => setEditingProjBubbleText(capitalizeWords(e.target.value))}
-                          autoCapitalize="words"
+                          autoCapitalize="sentences"
                           autoCorrect="on"
                           spellCheck={false}
                           className="w-full min-h-[72px] max-h-[220px] p-2.5 text-sm text-slate-900 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white resize-y leading-relaxed"
@@ -14005,7 +14008,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(capitalizeWords(e.target.value))}
-                  autoCapitalize="words"
+                  autoCapitalize="sentences"
                   autoCorrect="on"
                   spellCheck={false}
                   placeholder="Cari proyek"
@@ -15694,7 +15697,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
                     <div className="relative">
                       <img src="/assets/40306.svg" alt="" className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                       <input value={namaLengkap} onChange={e => setNamaLengkap(capitalizeWords(e.target.value))}
-                        autoCapitalize="words" autoCorrect="on" spellCheck={false}
+                        autoCapitalize="sentences" autoCorrect="on" spellCheck={false}
                         className="w-full pl-10 pr-4 h-11 rounded-[12px] text-[14px] text-[#1b1b1c] border border-[#e2e8f0] outline-none transition-all placeholder:text-[rgba(113,113,122,0.6)] font-['Plus_Jakarta_Sans']"
                         style={{ background: "#f8fafc" }}
                         onFocus={e => { e.currentTarget.style.outline = "2px solid #2563eb"; e.currentTarget.style.background = "#fff"; }}
@@ -17823,7 +17826,7 @@ function ProfilTab({ onTab, onRegister }: { onTab: (t: NavTab) => void; onRegist
                       <div className="grid gap-5 sm:grid-cols-2">
                         <label className="block">
                           <span className="mb-2 block text-sm font-semibold text-slate-700">Nama Lengkap</span>
-                          <input value={nama} onChange={event => setNama(capitalizeWords(event.target.value))} autoCapitalize="words" autoCorrect="on" spellCheck={false} className={`${inCls} px-4 py-3 text-base`} style={inSt} onFocus={inF} onBlur={inB} />
+                          <input value={nama} onChange={event => setNama(capitalizeWords(event.target.value))} autoCapitalize="sentences" autoCorrect="on" spellCheck={false} className={`${inCls} px-4 py-3 text-base`} style={inSt} onFocus={inF} onBlur={inB} />
                         </label>
                         <label className="block">
                           <span className="mb-2 block text-sm font-semibold text-slate-700">Jenjang Akademik</span>
@@ -17835,11 +17838,11 @@ function ProfilTab({ onTab, onRegister }: { onTab: (t: NavTab) => void; onRegist
                         </label>
                         <label className="block">
                           <span className="mb-2 block text-sm font-semibold text-slate-700">Universitas</span>
-                          <input value={universitas} onChange={event => setUniversitas(capitalizeWords(event.target.value))} autoCapitalize="words" autoCorrect="on" spellCheck={false} className={`${inCls} px-4 py-3 text-base`} style={inSt} onFocus={inF} onBlur={inB} />
+                          <input value={universitas} onChange={event => setUniversitas(capitalizeWords(event.target.value))} autoCapitalize="sentences" autoCorrect="on" spellCheck={false} className={`${inCls} px-4 py-3 text-base`} style={inSt} onFocus={inF} onBlur={inB} />
                         </label>
                         <label className="block">
                           <span className="mb-2 block text-sm font-semibold text-slate-700">Jurusan</span>
-                          <input value={prodi} onChange={event => setProdi(capitalizeWords(event.target.value))} autoCapitalize="words" autoCorrect="on" spellCheck={false} className={`${inCls} px-4 py-3 text-base`} style={inSt} onFocus={inF} onBlur={inB} />
+                          <input value={prodi} onChange={event => setProdi(capitalizeWords(event.target.value))} autoCapitalize="sentences" autoCorrect="on" spellCheck={false} className={`${inCls} px-4 py-3 text-base`} style={inSt} onFocus={inF} onBlur={inB} />
                         </label>
                         <label className="block sm:col-span-2">
                           <span className="mb-2 block text-sm font-semibold text-slate-700">Semester Saat Ini</span>
