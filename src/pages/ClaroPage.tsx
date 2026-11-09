@@ -12299,7 +12299,10 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                 className="bg-white rounded-[24px] px-2.5 py-3.5 flex items-center gap-3.5 shadow-xl border border-neutral-100/90 z-30 animate-[gemini-zoom-in_0.15s_ease-out]"
                 onClick={(e) => e.stopPropagation()}
               >
-                <div className="size-12 rounded-2xl flex items-center justify-center shrink-0 bg-[#F2F4F7] text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100">
+                <div
+                  className="size-12 rounded-2xl flex items-center justify-center shrink-0 bg-[#F2F4F7] text-neutral-900"
+                  style={{ backgroundColor: "#F2F4F7", color: "#111827" }}
+                >
                   <ProjectIcon type={item.iconType || "folder"} />
                 </div>
                 <div className="flex-1 min-w-0 pr-1">
@@ -13163,8 +13166,11 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                     }}
                     className="project-item-row w-full flex items-center gap-3.5 py-3.5 px-2 hover:bg-neutral-50 active:bg-neutral-100/70 transition-colors text-left group cursor-pointer rounded-2xl"
                   >
-                    {/* Pastel rounded square icon: folder hitam */}
-                    <div className="size-12 rounded-2xl flex items-center justify-center shrink-0 bg-[#F2F4F7] text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100">
+                    {/* Pastel rounded square icon: shape abu-abu, line folder hitam */}
+                    <div
+                      className="size-12 rounded-2xl flex items-center justify-center shrink-0 bg-[#F2F4F7] text-neutral-900"
+                      style={{ backgroundColor: "#F2F4F7", color: "#111827" }}
+                    >
                       <ProjectIcon type={p.iconType || "folder"} />
                     </div>
 
@@ -13291,7 +13297,10 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                     style={{ boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}
                   >
                     <div className="flex items-start justify-between mb-4">
-                      <div className="size-10 rounded-xl flex items-center justify-center bg-[#F2F4F7] text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100">
+                      <div
+                        className="size-10 rounded-xl flex items-center justify-center bg-[#F2F4F7] text-neutral-900"
+                        style={{ backgroundColor: "#F2F4F7", color: "#111827" }}
+                      >
                         <ProjectIcon type="folder" />
                       </div>
                       <div className="flex items-center gap-1.5">
