@@ -9,7 +9,7 @@ import aleriniWelcomeImg from "@/imports/WebsiteForClassProgram/eeec25fee4848e45
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type NavTab = "percakapan" | "fitur" | "proyek" | "progress" | "quizlab" | "profil";
-type ChatSource = { title: string; author: string; year: string; url?: string };
+type ChatSource = { title: string; author: string; year: string; url?: string; logo?: string };
 type FeatureKey = "parafrase" | "grammar" | "plagiasi" | "jurnal" | "judul" | "quizlab" | "progress" | "ppt" | "simulasi";
 type FeatureRec = { label: string; desc: string; tab?: NavTab; featureKey?: FeatureKey; icon: string; color: string };
 type ChatMsg = { role: "user" | "claro"; text: string; time: string; imageUrl?: string; imagePrompt?: string; generating?: boolean; paraphrase?: { original: string; versions: { label: string; text: string; color: string }[] }; fileCard?: { name: string; type: string; size: string }; suggestions?: string[]; sources?: ChatSource[]; featureRec?: FeatureRec };

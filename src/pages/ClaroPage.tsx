@@ -6738,6 +6738,11 @@ function PercakapanTab({
   const [copiedIdx, setCopiedIdx] = useState<number | null>(null);
   const [actionToast, setActionToast] = useState<string | null>(null);
 
+  const showActionToast = useCallback((msg: string) => {
+    setActionToast(msg);
+    setTimeout(() => setActionToast(null), 2200);
+  }, []);
+
   const handleCopyMessage = useCallback((text: string, idx: number) => {
     const cleanText = stripEmoticons(text);
     navigator.clipboard.writeText(cleanText).then(() => {
