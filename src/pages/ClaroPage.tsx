@@ -3072,7 +3072,12 @@ function NewProjectModal({ onClose, onToast }: { onClose: () => void; onToast: (
         </div>
         <div className="space-y-4">
           <div>
-            <label className="text-xs font-semibold text-slate-600 block mb-1.5">Nama Proyek</label>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-xs font-semibold text-slate-600">Nama Proyek</label>
+              <span className="text-[11px] font-medium text-slate-400 tabular-nums">
+                {name.length}/20
+              </span>
+            </div>
             <input
               value={name}
               onChange={e => setName(e.target.value.slice(0, 20))}
@@ -12030,7 +12035,12 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
               </button>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-neutral-700 mb-1.5">Nama Proyek</label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-xs font-semibold text-neutral-700">Nama Proyek</label>
+                <span className="text-[11px] font-medium text-neutral-400 tabular-nums">
+                  {projectName.length}/20
+                </span>
+              </div>
               <input
                 type="text"
                 value={projectName}
