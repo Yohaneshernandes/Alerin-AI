@@ -2052,7 +2052,7 @@ function Toast({ msg, onDone }: { msg: string; onDone: () => void }) {
       className="fixed bottom-6 left-4 right-4 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 z-[300] mx-auto w-auto max-w-[400px] sm:min-w-[340px] sm:max-w-[420px] flex items-center justify-between gap-3.5 rounded-2xl border border-slate-200/80 bg-white p-3.5 sm:p-4 shadow-[0_16px_40px_rgba(0,0,0,0.14),0_4px_12px_rgba(0,0,0,0.06)] animate-[gemini-fade-in_0.2s_ease-out]"
     >
       <div className="flex items-center gap-3.5 min-w-0 flex-1">
-        <div className="flex h-9.5 w-9.5 shrink-0 items-center justify-center rounded-full bg-[#18181b] text-white shadow-xs">
+        <div className="flex h-9.5 w-9.5 shrink-0 items-center justify-center rounded-full bg-blue-600 text-white shadow-sm shadow-blue-500/20">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <polyline points="20 6 9 17 4 12" />
           </svg>

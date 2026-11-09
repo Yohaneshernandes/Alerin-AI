@@ -1112,7 +1112,7 @@ function Toast({ msg, onDone }: { msg: string; onDone: () => void }) {
       className="fixed bottom-6 left-1/2 z-[200] -translate-x-1/2 flex max-w-[calc(100vw-2rem)] sm:min-w-[340px] sm:max-w-[420px] items-center gap-3.5 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-[0_12px_36px_rgba(0,0,0,0.12),0_4px_12px_rgba(0,0,0,0.06)]"
       style={{ animation: "fade-up 0.3s ease" }}
     >
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#18181b] text-white shadow-xs">
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-600 text-white shadow-sm shadow-blue-500/20">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
           <path d="M20 6L9 17l-5-5" />
         </svg>

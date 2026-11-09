@@ -731,7 +731,7 @@ function Toast({ message }: { message: string | { title: string; description?: s
       aria-live="polite"
       className="fixed bottom-20 left-4 right-4 z-[360] flex items-center gap-3.5 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-[0_12px_36px_rgba(0,0,0,0.12),0_4px_12px_rgba(0,0,0,0.06)] transition-all sm:left-auto sm:right-6 sm:w-auto sm:min-w-[340px] sm:max-w-[420px] md:bottom-6 md:right-6 animate-in fade-in slide-in-from-bottom-3 duration-200"
     >
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#18181b] text-white shadow-xs">
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-600 text-white shadow-sm shadow-blue-500/20">
         <svg
           width="18"
           height="18"
