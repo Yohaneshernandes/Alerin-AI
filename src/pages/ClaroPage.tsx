@@ -11101,10 +11101,18 @@ const DEFAULT_MOBILE_PROJECTS: MobileProjectItem[] = [
   },
 ];
 
-function ProjectIcon({ type, className }: { type: MobileProjectItem["iconType"]; className?: string }) {
+function ProjectIcon({
+  type,
+  className,
+  fill = "none",
+}: {
+  type: MobileProjectItem["iconType"];
+  className?: string;
+  fill?: string;
+}) {
   if (type === "toga") {
     return (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill={fill} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
         <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
         <path d="M6 12v5c3 3 9 3 12 0v-5" />
       </svg>
@@ -11112,7 +11120,7 @@ function ProjectIcon({ type, className }: { type: MobileProjectItem["iconType"];
   }
   if (type === "folder") {
     return (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" fillOpacity="0.14" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill={fill} stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" className={className}>
         <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
       </svg>
     );
@@ -12452,7 +12460,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
 
             <div className="flex items-center gap-2 max-w-[210px]">
               <span className="shrink-0 flex items-center text-neutral-900" style={{ color: "#111827" }}>
-                <ProjectIcon type={selectedProject.iconType || "folder"} />
+                <ProjectIcon type={selectedProject.iconType || "folder"} fill="white" />
               </span>
               <h2 className="text-[17px] font-bold text-neutral-900 truncate">
                 {selectedProject.title}
@@ -12846,7 +12854,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
 
             <div className="flex items-center gap-2 max-w-[210px]">
               <span className="shrink-0 flex items-center text-neutral-900" style={{ color: "#111827" }}>
-                <ProjectIcon type={selectedProject.iconType || "folder"} />
+                <ProjectIcon type={selectedProject.iconType || "folder"} fill="white" />
               </span>
               <h1 className="text-[17px] font-bold text-neutral-900 truncate">
                 {selectedProject.title}
