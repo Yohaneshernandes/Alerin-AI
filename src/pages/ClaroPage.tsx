@@ -3313,7 +3313,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
 
   const saveRename = (id: string, newTitle?: string) => {
     const rawTitle = (newTitle !== undefined ? newTitle : editTitle).trim();
-    const titleToSave = rawTitle.slice(0, 20);
+    const titleToSave = rawTitle.slice(0, 25);
     if (!titleToSave) {
       setEditingId(null);
       setRenameModalItem(null);
@@ -3832,7 +3832,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
                               type="button"
                               onClick={() => {
                                 setRenameModalItem({ id: item.id, title: item.title });
-                                setRenameInput(item.title.slice(0, 20));
+                                setRenameInput(item.title.slice(0, 25));
                                 setMenuOpenId(null);
                               }}
                               className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[13px] font-medium text-slate-800 hover:bg-slate-100/70 active:scale-[0.99] transition-all text-left"
@@ -4000,14 +4000,14 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
                   Nama percakapan
                 </label>
                 <span className="text-[11px] text-slate-400 font-medium">
-                  {renameInput.length}/20
+                  {renameInput.length}/25
                 </span>
               </div>
               <input
                 type="text"
-                maxLength={20}
+                maxLength={25}
                 value={renameInput}
-                onChange={(e) => setRenameInput(capitalizeWords(e.target.value.slice(0, 20)))}
+                onChange={(e) => setRenameInput(capitalizeWords(e.target.value.slice(0, 25)))}
                 autoCapitalize="sentences"
                 autoCorrect="on"
                 spellCheck={false}
@@ -12045,7 +12045,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
   };
 
   const handleRenameProject = () => {
-    const trimmed = renameProjectInput.trim().slice(0, 20);
+    const trimmed = renameProjectInput.trim().slice(0, 25);
     if (!trimmed || !selectedProject) return;
     const updated = projects.map((p) => (p.id === selectedProject.id ? { ...p, title: trimmed } : p));
     setProjects(updated);
@@ -12387,7 +12387,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
   }, [selectedProject]);
 
   const handleRenameChat = () => {
-    const trimmed = renameChatInput.trim().slice(0, 20);
+    const trimmed = renameChatInput.trim().slice(0, 25);
     if (!trimmed || !selectedProject || !selectedProjectChat) return;
     const updatedChat = { ...selectedProjectChat, title: trimmed };
     setSelectedProjectChat(updatedChat);
@@ -12717,14 +12717,14 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                   Nama proyek
                 </label>
                 <span className="text-[11px] text-slate-400 font-medium">
-                  {renameProjectInput.length}/20
+                  {renameProjectInput.length}/25
                 </span>
               </div>
               <input
                 type="text"
-                maxLength={20}
+                maxLength={25}
                 value={renameProjectInput}
-                onChange={(e) => setRenameProjectInput(capitalizeWords(e.target.value.slice(0, 20)))}
+                onChange={(e) => setRenameProjectInput(capitalizeWords(e.target.value.slice(0, 25)))}
                 autoCapitalize="sentences"
                 autoCorrect="on"
                 spellCheck={false}
@@ -12905,15 +12905,15 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
           <div className="w-full max-w-[340px] bg-white rounded-3xl p-5 shadow-2xl border border-neutral-100 flex flex-col gap-4 animate-[gemini-zoom-in_0.2s_ease-out]" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between">
               <h3 className="text-base font-bold text-neutral-900">Ganti Nama Obrolan</h3>
-              <span className={`text-[11px] font-medium ${renameChatInput.length >= 20 ? "text-amber-600 font-semibold" : "text-neutral-400"}`}>
-                {renameChatInput.length}/20
+              <span className={`text-[11px] font-medium ${renameChatInput.length >= 25 ? "text-amber-600 font-semibold" : "text-neutral-400"}`}>
+                {renameChatInput.length}/25
               </span>
             </div>
             <input
               type="text"
-              maxLength={20}
+              maxLength={25}
               value={renameChatInput}
-              onChange={(e) => setRenameChatInput(capitalizeWords(e.target.value.slice(0, 20)))}
+              onChange={(e) => setRenameChatInput(capitalizeWords(e.target.value.slice(0, 25)))}
               autoCapitalize="sentences"
               autoCorrect="on"
               spellCheck={false}
