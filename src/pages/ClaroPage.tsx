@@ -6615,7 +6615,7 @@ function MarkdownRenderer({ text, isStreaming }: { text: string; isStreaming?: b
             }`}
           >
             <thead>
-              <tr className="border-b border-neutral-300">
+              <tr className="border-t border-b border-neutral-300 bg-neutral-50/70">
                 {headers.map((h, ci) => {
                   let colWidthClass = "";
                   if (isFitScreen) {
@@ -6628,7 +6628,7 @@ function MarkdownRenderer({ text, isStreaming }: { text: string; isStreaming?: b
                   return (
                     <th
                       key={ci}
-                      className={`py-2.5 sm:py-3 text-left font-semibold text-black break-words ${colWidthClass} ${
+                      className={`py-2.5 sm:py-3 text-left font-semibold text-black break-words border-t border-b border-neutral-300 ${colWidthClass} ${
                         ci === 0
                           ? "pl-0.5 sm:pl-2 pr-1.5 sm:pr-3"
                           : ci === colCount - 1
@@ -6645,16 +6645,17 @@ function MarkdownRenderer({ text, isStreaming }: { text: string; isStreaming?: b
             <tbody>
               {body.map((row, ri) => {
                 const cells = parseRow(row);
+                const isLastRow = ri === body.length - 1;
                 return (
                   <tr
                     key={ri}
-                    className="border-b border-neutral-200 last:border-b-0 hover:bg-neutral-50/40 transition-colors"
+                    className={`border-b ${isLastRow ? "border-neutral-300" : "border-neutral-200"} hover:bg-neutral-50/40 transition-colors`}
                   >
                     {cells.map((cell, ci) => {
                       return (
                         <td
                           key={ci}
-                          className={`py-2.5 sm:py-3.5 text-black leading-snug sm:leading-relaxed align-top break-words ${
+                          className={`py-2.5 sm:py-3.5 text-black leading-snug sm:leading-relaxed align-top break-words ${isLastRow ? "border-b border-neutral-300" : ""} ${
                             ci === 0
                               ? "pl-0.5 sm:pl-2 pr-1.5 sm:pr-3 font-semibold sm:font-medium"
                               : ci === colCount - 1

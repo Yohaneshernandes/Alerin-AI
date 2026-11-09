@@ -78,7 +78,9 @@ body {
 }
 
 .profile-dark .bg-slate-50,
-.alerin-dark-theme .bg-slate-50 {
+.profile-dark .bg-neutral-50,
+.alerin-dark-theme .bg-slate-50,
+.alerin-dark-theme .bg-neutral-50 {
   background-color: #0f172a !important;
 }
 
@@ -160,9 +162,13 @@ body {
 .profile-dark .border-slate-100,
 .profile-dark .border-slate-200,
 .profile-dark .border-slate-300,
+.profile-dark .border-neutral-200,
+.profile-dark .border-neutral-300,
 .alerin-dark-theme .border-slate-100,
 .alerin-dark-theme .border-slate-200,
 .alerin-dark-theme .border-slate-300,
+.alerin-dark-theme .border-neutral-200,
+.alerin-dark-theme .border-neutral-300,
 .alerin-dark-theme .border-slate-200\/80,
 .alerin-dark-theme .border-slate-200\/70,
 .alerin-dark-theme .border-slate-200\/60,
