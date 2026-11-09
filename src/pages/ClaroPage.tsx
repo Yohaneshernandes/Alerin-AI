@@ -2253,8 +2253,6 @@ function ImageResultBubble({
 }) {
   const [visible, setVisible] = useState(false);
   const [loaded, setLoaded] = useState(false);
-  const [liked, setLiked] = useState(false);
-  const [disliked, setDisliked] = useState(false);
   const [detectedOrientation, setDetectedOrientation] = useState<"landscape" | "portrait" | null>(null);
 
   useEffect(() => {
@@ -2316,67 +2314,6 @@ function ImageResultBubble({
             <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
             <polyline points="16 6 12 2 8 6" />
             <line x1="12" y1="2" x2="12" y2="15" />
-          </svg>
-        </button>
-      </div>
-
-      {/* Action toolbar below image matching video frame 09 */}
-      <div className="flex items-center gap-1 text-neutral-500 px-1 pt-0.5">
-        <button
-          type="button"
-          title="Suka"
-          onClick={() => {
-            setLiked((v) => !v);
-            if (disliked) setDisliked(false);
-          }}
-          className={`size-8 rounded-full flex items-center justify-center transition-colors active:scale-90 ${liked ? "text-blue-600 bg-blue-50" : "hover:text-neutral-800 hover:bg-neutral-100"}`}
-        >
-          <svg width="15" height="15" viewBox="0 0 24 24" fill={liked ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M7 10v12" />
-            <path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h3" />
-          </svg>
-        </button>
-        <button
-          type="button"
-          title="Tidak suka"
-          onClick={() => {
-            setDisliked((v) => !v);
-            if (liked) setLiked(false);
-          }}
-          className={`size-8 rounded-full flex items-center justify-center transition-colors active:scale-90 ${disliked ? "text-red-500 bg-red-50" : "hover:text-neutral-800 hover:bg-neutral-100"}`}
-        >
-          <svg width="15" height="15" viewBox="0 0 24 24" fill={disliked ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M17 14V2" />
-            <path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-3" />
-          </svg>
-        </button>
-        <button
-          type="button"
-          title="Bagikan"
-          onClick={() => {
-            if (navigator.share) {
-              navigator.share({ title: prompt, url: imageUrl }).catch(() => {});
-            } else {
-              navigator.clipboard.writeText(imageUrl).catch(() => {});
-            }
-          }}
-          className="size-8 rounded-full flex items-center justify-center hover:text-neutral-800 hover:bg-neutral-100 transition-colors active:scale-90"
-        >
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
-            <polyline points="16 6 12 2 8 6" />
-            <line x1="12" y1="2" x2="12" y2="15" />
-          </svg>
-        </button>
-        <button
-          type="button"
-          title="Lainnya"
-          className="size-8 rounded-full flex items-center justify-center hover:text-neutral-800 hover:bg-neutral-100 transition-colors active:scale-90"
-        >
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="1.5" fill="currentColor" />
-            <circle cx="19" cy="12" r="1.5" fill="currentColor" />
-            <circle cx="5" cy="12" r="1.5" fill="currentColor" />
           </svg>
         </button>
       </div>
