@@ -10940,26 +10940,78 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
         </div>
       )}
 
-      {/* ── Modal Ganti Nama Proyek ── */}
+      {/* ── Modal Ganti Nama Proyek (gaya identik pop up riwayat) ── */}
       {renameProjectModal && (
-        <div className="fixed inset-0 z-[250] flex items-center justify-center p-4 bg-black/45 backdrop-blur-xs animate-[gemini-fade-in_0.15s_ease-out]" onClick={() => setRenameProjectModal(false)}>
-          <div className="w-full max-w-[340px] bg-white rounded-3xl p-5 shadow-2xl border border-neutral-100 flex flex-col gap-4 animate-[gemini-zoom-in_0.2s_ease-out]" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-base font-bold text-neutral-900">Ganti Nama Proyek</h3>
-            <input
-              type="text"
-              value={renameProjectInput}
-              onChange={(e) => setRenameProjectInput(e.target.value.slice(0, 20))}
-              maxLength={20}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && renameProjectInput.trim()) handleRenameProject();
-                if (e.key === "Escape") setRenameProjectModal(false);
-              }}
-              autoFocus
-              className="w-full text-sm text-neutral-800 bg-neutral-50 border border-neutral-200 focus:border-blue-500 focus:bg-white rounded-xl px-3.5 py-2.5 outline-none"
-            />
-            <div className="flex items-center justify-end gap-2 pt-2 border-t border-neutral-100">
-              <button type="button" onClick={() => setRenameProjectModal(false)} className="flex-1 px-4 py-2.5 rounded-xl text-xs font-semibold text-neutral-600 hover:bg-neutral-100 text-center">Batal</button>
-              <button type="button" disabled={!renameProjectInput.trim()} onClick={handleRenameProject} className="flex-1 px-4 py-2.5 rounded-xl text-xs font-bold bg-blue-600 text-white text-center hover:bg-blue-700">Simpan</button>
+        <div
+          className="fixed inset-0 z-[250] flex items-center justify-center p-4 bg-black/45 backdrop-blur-xs animate-[gemini-fade-in_0.15s_ease-out]"
+          onClick={() => setRenameProjectModal(false)}
+        >
+          <div
+            className="w-full max-w-[340px] bg-white rounded-3xl p-5 shadow-2xl border border-slate-100 flex flex-col gap-4 animate-[gemini-zoom-in_0.2s_ease-out]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="size-8 rounded-xl bg-slate-100 text-slate-900 flex items-center justify-center shrink-0">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 20h9" />
+                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                  </svg>
+                </div>
+                <h3 className="text-base font-bold text-slate-900">Ganti Nama Proyek</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setRenameProjectModal(false)}
+                className="size-7 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center transition-colors cursor-pointer"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-xs font-medium text-slate-500">
+                  Nama proyek
+                </label>
+                <span className="text-[11px] text-slate-400 font-medium">
+                  {renameProjectInput.length}/20
+                </span>
+              </div>
+              <input
+                type="text"
+                maxLength={20}
+                value={renameProjectInput}
+                onChange={(e) => setRenameProjectInput(e.target.value.slice(0, 20))}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && renameProjectInput.trim()) handleRenameProject();
+                  if (e.key === "Escape") setRenameProjectModal(false);
+                }}
+                autoFocus
+                placeholder="Masukkan nama proyek..."
+                className="w-full text-[14px] text-slate-800 bg-slate-50 border border-slate-200 focus:border-blue-500 focus:bg-white focus:ring-3 focus:ring-blue-100 rounded-xl px-3.5 py-2.5 outline-none transition-all"
+              />
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-1">
+              <button
+                type="button"
+                onClick={() => setRenameProjectModal(false)}
+                className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                disabled={!renameProjectInput.trim()}
+                onClick={handleRenameProject}
+                className="px-4 py-2 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white shadow-xs transition-colors cursor-pointer"
+              >
+                Simpan
+              </button>
             </div>
           </div>
         </div>
@@ -11243,7 +11295,26 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                 <span>Obrolan proyek baru</span>
               </button>
 
-              {/* 2. Sematkan / Lepas sematan */}
+              {/* 2. Ganti nama */}
+              <button
+                type="button"
+                onClick={() => {
+                  const target = item;
+                  setActiveProjectMenu(null);
+                  setSelectedProject(target);
+                  setRenameProjectInput(target.title);
+                  setRenameProjectModal(true);
+                }}
+                className="w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl hover:bg-neutral-50 active:bg-neutral-100 transition-all text-left text-[14.5px] font-medium text-neutral-800 cursor-pointer"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-neutral-800 shrink-0">
+                  <path d="M12 20h9" />
+                  <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                </svg>
+                <span>Ganti nama</span>
+              </button>
+
+              {/* 3. Sematkan / Lepas sematan */}
               <button
                 type="button"
                 onClick={() => {
@@ -11260,7 +11331,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                 <span>{item.pinned ? "Lepas sematan" : "Sematkan"}</span>
               </button>
 
-              {/* 3. Bagikan */}
+              {/* 4. Bagikan */}
               <button
                 type="button"
                 onClick={() => {
@@ -11276,25 +11347,6 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                   <line x1="12" y1="2" x2="12" y2="15" />
                 </svg>
                 <span>Bagikan</span>
-              </button>
-
-              {/* 4. Pengaturan proyek */}
-              <button
-                type="button"
-                onClick={() => {
-                  const target = item;
-                  setActiveProjectMenu(null);
-                  setSelectedProject(target);
-                  setRenameProjectInput(target.title);
-                  setRenameProjectModal(true);
-                }}
-                className="w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl hover:bg-neutral-50 active:bg-neutral-100 transition-all text-left text-[14.5px] font-medium text-neutral-800 cursor-pointer"
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-neutral-800 shrink-0">
-                  <circle cx="12" cy="12" r="3" />
-                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
-                </svg>
-                <span>Pengaturan proyek</span>
               </button>
 
               {/* 5. Hapus */}
