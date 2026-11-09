@@ -11720,7 +11720,21 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
   // Chat conversation state on Gambar 3
   const [chatInputText, setChatInputText] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
-  const [likedMsgIndices, setLikedMsgIndices] = useState<Set<number>>(new Set());
+  const [projOpenSourcesIdx, setProjOpenSourcesIdx] = useState<number | null>(null);
+  const [projMoreMenuIdx, setProjMoreMenuIdx] = useState<number | null>(null);
+  const [projCopiedIdx, setProjCopiedIdx] = useState<number | null>(null);
+  const [projLikedIndices, setProjLikedIndices] = useState<Set<number>>(new Set());
+  const [projDislikedIndices, setProjDislikedIndices] = useState<Set<number>>(new Set());
+  const [projImagePreview, setProjImagePreview] = useState<string | null>(null);
+  const projStreamIntervalRef = useRef<any>(null);
+  const projResponseTimeoutRef = useRef<any>(null);
+
+  useEffect(() => {
+    return () => {
+      if (projStreamIntervalRef.current) clearInterval(projStreamIntervalRef.current);
+      if (projResponseTimeoutRef.current) clearTimeout(projResponseTimeoutRef.current);
+    };
+  }, []);
 
   // User Bubble Long-Press Menu States in Project Chat
   const [activeProjUserBubbleIdx, setActiveProjUserBubbleIdx] = useState<number | null>(null);
@@ -11981,7 +11995,228 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
     setToast("Proyek berhasil dihapus");
   };
 
-  const handleStartNewProjectChat = (text: string) => {
+  const updateChatInStateAndStorage = useCallback((updatedChat: ProjectChatItem) => {
+    setSelectedProjectChat(updatedChat);
+    if (!selectedProject) return;
+    setProjectChatsMap((prev) => {
+      const currentList = prev[selectedProject.id] || [];
+      const nextList = [updatedChat, ...currentList.filter((c) => c.id !== updatedChat.id)];
+      const nextMap = { ...prev, [selectedProject.id]: nextList };
+      saveProjectChats(nextMap);
+      return nextMap;
+    });
+    bumpProjectToTop(selectedProject.id);
+  }, [selectedProject, bumpProjectToTop]);
+
+  const runProjectChatResponse = useCallback((queryText: string, currentChat: ProjectChatItem) => {
+    if (projStreamIntervalRef.current) {
+      clearInterval(projStreamIntervalRef.current);
+      projStreamIntervalRef.current = null;
+    }
+    if (projResponseTimeoutRef.current) {
+      clearTimeout(projResponseTimeoutRef.current);
+      projResponseTimeoutRef.current = null;
+    }
+
+    setIsGenerating(true);
+    setTimeout(() => chatEndRef.current?.scrollIntoView({ behavior: "smooth" }), 60);
+
+    if (isImageRequest(queryText)) {
+      const prompt = extractImagePrompt(queryText);
+      const imgData = getImageData(queryText);
+      const tempMsg: ChatMsg = {
+        role: "claro",
+        text: "",
+        time: now(),
+        generating: true,
+        imagePrompt: prompt,
+        imageOrientation: imgData.orientation,
+      };
+      const chatWithTemp: ProjectChatItem = {
+        ...currentChat,
+        msgs: [...currentChat.msgs, tempMsg],
+        updatedAt: Date.now(),
+      };
+      setSelectedProjectChat(chatWithTemp);
+
+      projResponseTimeoutRef.current = setTimeout(() => {
+        const replyText = `Kalau Alerin memberikan **foto/gambar**, tampilannya seperti pratinjau visual di bawah ini. Kamu bisa klik foto untuk melihat dalam resolusi penuh!`;
+        const resolvedAiMsg: ChatMsg = {
+          role: "claro",
+          generating: false,
+          imageUrl: imgData.url,
+          imageOrientation: imgData.orientation,
+          text: replyText,
+          time: now(),
+          suggestions: ["Buat foto kegiatan mahasiswa", "Buat foto perpustakaan", "Tampilkan foto gedung kampus"],
+        };
+        const finalChat: ProjectChatItem = {
+          ...currentChat,
+          lastSnippet: replyText.slice(0, 48) + "...",
+          updatedAt: Date.now(),
+          msgs: [...currentChat.msgs, resolvedAiMsg],
+        };
+        updateChatInStateAndStorage(finalChat);
+        setIsGenerating(false);
+        setTimeout(() => chatEndRef.current?.scrollIntoView({ behavior: "smooth" }), 60);
+      }, 2600);
+      return;
+    }
+
+    if (isParaphraseRequest(queryText)) {
+      projResponseTimeoutRef.current = setTimeout(() => {
+        const original = extractTargetText(queryText);
+        const versions = generateParaphrases(original);
+        const replyText = "Berikut beberapa pilihan parafrase untuk teksmu. Pilih yang paling sesuai dengan gaya penulisanmu!";
+        const extras: Partial<ChatMsg> = {
+          paraphrase: { original, versions },
+          suggestions: ["Parafrase kalimat lain", "Cara hindari plagiarisme"],
+          featureRec: getFeatureRec(queryText),
+        };
+
+        const tokens = replyText.match(/(\s+|\S+)/g) || [replyText];
+        const totalTokens = tokens.length;
+        let tokenIdx = 1;
+        const initialText = tokens.slice(0, tokenIdx).join("");
+        const isDoneInitially = tokenIdx >= totalTokens;
+
+        const initialAiMsg: ChatMsg = {
+          role: "claro",
+          text: initialText,
+          time: now(),
+          generating: !isDoneInitially,
+          ...(isDoneInitially ? extras : {}),
+        };
+
+        let chatSoFar: ProjectChatItem = {
+          ...currentChat,
+          lastSnippet: initialText,
+          updatedAt: Date.now(),
+          msgs: [...currentChat.msgs, initialAiMsg],
+        };
+        setSelectedProjectChat(chatSoFar);
+        setIsGenerating(false);
+
+        if (isDoneInitially) {
+          updateChatInStateAndStorage(chatSoFar);
+          return;
+        }
+
+        projStreamIntervalRef.current = setInterval(() => {
+          tokenIdx = Math.min(totalTokens, tokenIdx + 1);
+          const currentText = tokens.slice(0, tokenIdx).join("");
+          const isDone = tokenIdx >= totalTokens;
+
+          const updatedMsgs = [...chatSoFar.msgs];
+          const lastIdx = updatedMsgs.length - 1;
+          if (lastIdx >= 0) {
+            updatedMsgs[lastIdx] = {
+              ...updatedMsgs[lastIdx],
+              text: currentText,
+              generating: !isDone,
+              ...(isDone ? extras : {}),
+            };
+          }
+          chatSoFar = {
+            ...chatSoFar,
+            lastSnippet: currentText.slice(0, 48) + "...",
+            msgs: updatedMsgs,
+          };
+          setSelectedProjectChat(chatSoFar);
+          chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+
+          if (isDone) {
+            if (projStreamIntervalRef.current) {
+              clearInterval(projStreamIntervalRef.current);
+              projStreamIntervalRef.current = null;
+            }
+            updateChatInStateAndStorage(chatSoFar);
+          }
+        }, 20);
+      }, 3500);
+      return;
+    }
+
+    // Standard Alerin AI Response matching Alerin Chat di awal
+    projResponseTimeoutRef.current = setTimeout(() => {
+      setIsGenerating(false);
+      const replyText = getAIResponse(queryText);
+      const suggestions = getSuggestions(queryText, replyText);
+      const sources = getSources(queryText, replyText);
+      const featureRec = getFeatureRec(queryText);
+      const extras: Partial<ChatMsg> = {
+        suggestions,
+        sources,
+        featureRec,
+      };
+
+      const cleanFullText = stripEmoticons(replyText);
+      const tokens = cleanFullText.match(/(\s+|\S+)/g) || [cleanFullText];
+      const totalTokens = tokens.length;
+      const stepSize = totalTokens > 750 ? 2 : 1;
+      const intervalMs = totalTokens > 400 ? 11 : totalTokens > 220 ? 15 : totalTokens > 100 ? 18 : 22;
+      let tokenIdx = Math.min(stepSize, totalTokens);
+      const initialText = tokens.slice(0, tokenIdx).join("");
+      const isDoneInitially = tokenIdx >= totalTokens;
+
+      const initialAiMsg: ChatMsg = {
+        role: "claro",
+        text: initialText,
+        time: now(),
+        generating: !isDoneInitially,
+        ...(isDoneInitially ? extras : {}),
+      };
+
+      let chatSoFar: ProjectChatItem = {
+        ...currentChat,
+        lastSnippet: initialText,
+        updatedAt: Date.now(),
+        msgs: [...currentChat.msgs, initialAiMsg],
+      };
+      setSelectedProjectChat(chatSoFar);
+      setTimeout(() => chatEndRef.current?.scrollIntoView({ behavior: "smooth" }), 40);
+
+      if (isDoneInitially) {
+        updateChatInStateAndStorage(chatSoFar);
+        return;
+      }
+
+      projStreamIntervalRef.current = setInterval(() => {
+        tokenIdx = Math.min(totalTokens, tokenIdx + stepSize);
+        const currentText = tokens.slice(0, tokenIdx).join("");
+        const isDone = tokenIdx >= totalTokens;
+
+        const updatedMsgs = [...chatSoFar.msgs];
+        const lastIdx = updatedMsgs.length - 1;
+        if (lastIdx >= 0) {
+          updatedMsgs[lastIdx] = {
+            ...updatedMsgs[lastIdx],
+            text: currentText,
+            generating: !isDone,
+            ...(isDone ? extras : {}),
+          };
+        }
+
+        chatSoFar = {
+          ...chatSoFar,
+          lastSnippet: currentText.slice(0, 48) + "...",
+          msgs: updatedMsgs,
+        };
+        setSelectedProjectChat(chatSoFar);
+        chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+
+        if (isDone) {
+          if (projStreamIntervalRef.current) {
+            clearInterval(projStreamIntervalRef.current);
+            projStreamIntervalRef.current = null;
+          }
+          updateChatInStateAndStorage(chatSoFar);
+        }
+      }, intervalMs);
+    }, 3800);
+  }, [updateChatInStateAndStorage]);
+
+  const handleStartNewProjectChat = useCallback((text: string) => {
     const trimmed = text.trim();
     if (!trimmed || !selectedProject) return;
     const nowTimestamp = Date.now();
@@ -11995,42 +12230,14 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
       updatedAt: nowTimestamp,
       msgs: [userMsg],
     };
-    const currentList = projectChatsMap[selectedProject.id] ?? [];
-    const nextList = [newChat, ...currentList.filter((c) => c.id !== newChat.id)];
-    const nextMap = { ...projectChatsMap, [selectedProject.id]: nextList };
-    setProjectChatsMap(nextMap);
-    saveProjectChats(nextMap);
     setSelectedProjectChat(newChat);
     setNewChatQuickText("");
-    setIsGenerating(true);
-    bumpProjectToTop(selectedProject.id);
+    updateChatInStateAndStorage(newChat);
 
-    setTimeout(() => {
-      let aiText = `Halo! Di dalam proyek **${selectedProject.title}**, Alerin siap membantu mendiskusikan "${trimmed}". Semua catatan dan analisis kita akan tersimpan di sini.`;
-      if (trimmed.toLowerCase().includes("gak") || trimmed.toLowerCase().includes("nggak")) {
-        aiText = "Wkwkwk, yaudah.\n\nKenapa nih? Alerin temenin ngobrol aja, nggak usah ngapa-ngapain.";
-      } else if (selectedProject.id === "proj-1" || selectedProject.title.toLowerCase().includes("rumah")) {
-        aiText = `Tentu! Untuk tugas Pekerjaan Rumah terkait "${trimmed}", ini panduan penyelesaiannya secara bertahap:\n\n1. Identifikasi data dan variabel yang diketahui.\n2. Tentukan rumus atau landasan teori yang berlaku.\n3. Uraikan langkah pengerjaan dengan runut agar mudah dipahami dosen/guru.\n\nApakah butuh bantuan langkah hitungan lebih rinci?`;
-      }
-      const aiMsg: ChatMsg = { role: "claro", text: stripEmoticons(aiText), time: now() };
-      const updatedChat: ProjectChatItem = {
-        ...newChat,
-        lastSnippet: aiText.slice(0, 48) + "...",
-        time: now(),
-        updatedAt: Date.now(),
-        msgs: [userMsg, aiMsg],
-      };
-      setSelectedProjectChat(updatedChat);
-      const updatedList = [updatedChat, ...currentList.filter((c) => c.id !== updatedChat.id)];
-      const updatedMap = { ...projectChatsMap, [selectedProject.id]: updatedList };
-      setProjectChatsMap(updatedMap);
-      saveProjectChats(updatedMap);
-      bumpProjectToTop(selectedProject.id);
-      setIsGenerating(false);
-    }, 5200);
-  };
+    runProjectChatResponse(trimmed, newChat);
+  }, [selectedProject, updateChatInStateAndStorage, runProjectChatResponse]);
 
-  const handleSendMessageInChat = (text: string) => {
+  const handleSendMessageInChat = useCallback((text: string) => {
     const trimmed = text.trim();
     if (!trimmed || !selectedProject || !selectedProjectChat) return;
     const nowTimestamp = Date.now();
@@ -12045,43 +12252,68 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
     };
     setSelectedProjectChat(updatedChat);
     setChatInputText("");
-    setIsGenerating(true);
+    updateChatInStateAndStorage(updatedChat);
 
-    const currentList = projectChatsMap[selectedProject.id] ?? [];
-    const nextList = [updatedChat, ...currentList.filter((c) => c.id !== updatedChat.id)];
-    const nextMap = { ...projectChatsMap, [selectedProject.id]: nextList };
-    setProjectChatsMap(nextMap);
-    saveProjectChats(nextMap);
-    bumpProjectToTop(selectedProject.id);
+    runProjectChatResponse(trimmed, updatedChat);
+  }, [selectedProject, selectedProjectChat, updateChatInStateAndStorage, runProjectChatResponse]);
 
-    setTimeout(() => chatEndRef.current?.scrollIntoView({ behavior: "smooth" }), 60);
-
-    setTimeout(() => {
-      let aiText = `Baik, terkait "${trimmed}" di dalam proyek **${selectedProject.title}**:\n\nSemua pembahasan tersimpan rapi. Ada yang ingin ditanyakan atau ditambahkan lagi?`;
-      if (trimmed.toLowerCase().includes("gak") || trimmed.toLowerCase().includes("nggak")) {
-        aiText = "Wkwkwk, yaudah.\n\nKenapa nih? Alerin temenin ngobrol aja, nggak usah ngapa-ngapain.";
-      } else if (selectedProject.id === "proj-1" || selectedProject.title.toLowerCase().includes("rumah")) {
-        aiText = `Untuk menyelesaikan bagian tugas ini dengan tepat:\n\n- Pastikan seluruh syarat pertanyaan telah terpenuhi.\n- Gunakan referensi modul atau catatan kelas yang sudah kita unggah di tab Sumber.\n\nIngin Alerin buatkan rangkuman poin-poin pentingnya?`;
+  const handleProjRegenerate = useCallback((msgIdx: number) => {
+    if (!selectedProjectChat) return;
+    let userQuery = "";
+    for (let k = msgIdx - 1; k >= 0; k--) {
+      if (selectedProjectChat.msgs[k]?.role === "user") {
+        userQuery = selectedProjectChat.msgs[k].text;
+        break;
       }
-      const aiMsg: ChatMsg = { role: "claro", text: stripEmoticons(aiText), time: now() };
-      const finalMsgs = [...updatedMsgs, aiMsg];
-      const finalChat: ProjectChatItem = {
-        ...updatedChat,
-        lastSnippet: aiText.slice(0, 48) + "...",
-        time: now(),
-        updatedAt: Date.now(),
-        msgs: finalMsgs,
-      };
-      setSelectedProjectChat(finalChat);
-      const finalList = [finalChat, ...currentList.filter((c) => c.id !== finalChat.id)];
-      const finalMap = { ...projectChatsMap, [selectedProject.id]: finalList };
-      setProjectChatsMap(finalMap);
-      saveProjectChats(finalMap);
-      bumpProjectToTop(selectedProject.id);
-      setIsGenerating(false);
-      setTimeout(() => chatEndRef.current?.scrollIntoView({ behavior: "smooth" }), 60);
-    }, 5200);
-  };
+    }
+    if (!userQuery && selectedProjectChat.msgs.length > 0) {
+      userQuery = selectedProjectChat.msgs[0].text;
+    }
+    if (!userQuery) return;
+
+    setToast("Memuat ulang respon Alerin... ⟳");
+    setProjMoreMenuIdx(null);
+
+    const truncatedMsgs = selectedProjectChat.msgs.slice(0, msgIdx);
+    const truncatedChat: ProjectChatItem = {
+      ...selectedProjectChat,
+      msgs: truncatedMsgs,
+      updatedAt: Date.now(),
+    };
+    setSelectedProjectChat(truncatedChat);
+    runProjectChatResponse(userQuery, truncatedChat);
+  }, [selectedProjectChat, runProjectChatResponse]);
+
+  const handleProjStop = useCallback(() => {
+    if (projStreamIntervalRef.current) {
+      clearInterval(projStreamIntervalRef.current);
+      projStreamIntervalRef.current = null;
+    }
+    if (projResponseTimeoutRef.current) {
+      clearTimeout(projResponseTimeoutRef.current);
+      projResponseTimeoutRef.current = null;
+    }
+    setIsGenerating(false);
+    if (selectedProjectChat) {
+      updateChatInStateAndStorage(selectedProjectChat);
+    }
+  }, [selectedProjectChat, updateChatInStateAndStorage]);
+
+  const handleProjCopyMessage = useCallback((text: string, idx: number) => {
+    navigator.clipboard?.writeText(text);
+    setProjCopiedIdx(idx);
+    setToast("Teks berhasil disalin");
+    setTimeout(() => setProjCopiedIdx(null), 1800);
+  }, []);
+
+  const handleProjShareMessage = useCallback((text: string) => {
+    if (navigator.share) {
+      navigator.share({ title: selectedProject?.title || "Alerin", text }).catch(() => {});
+    } else {
+      navigator.clipboard?.writeText(text);
+      setToast("Tautan / teks respon disalin!");
+    }
+  }, [selectedProject]);
 
   const handleRenameChat = () => {
     const trimmed = renameChatInput.trim();
@@ -12152,6 +12384,25 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
   return (
     <div className="flex-1 flex flex-col h-full bg-white relative overflow-hidden select-none">
       {toast && <Toast msg={toast} onDone={() => setToast(null)} />}
+
+      {/* Modal Preview Gambar Proyek */}
+      {projImagePreview && (
+        <div
+          className="fixed inset-0 z-[280] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-[gemini-fade-in_0.15s_ease-out]"
+          onClick={() => setProjImagePreview(null)}
+        >
+          <div className="relative max-w-3xl max-h-[90vh] flex flex-col items-center" onClick={(e) => e.stopPropagation()}>
+            <img src={projImagePreview} alt="Pratinjau foto proyek" className="max-w-full max-h-[85vh] rounded-2xl object-contain shadow-2xl" />
+            <button
+              type="button"
+              onClick={() => setProjImagePreview(null)}
+              className="absolute top-3 right-3 size-9 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center cursor-pointer active:scale-95 transition-all"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Modal Pilih & Salin Teks Proyek */}
       {selectingProjTextModal !== null && (
@@ -13075,87 +13326,281 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
               }
 
               // Alerin AI message
+              const isLastAlerin = idx === selectedProjectChat.msgs.length - 1 || 
+                (idx === selectedProjectChat.msgs.length - 2 && selectedProjectChat.msgs[selectedProjectChat.msgs.length - 1].role === "user");
+
               return (
-                <div key={idx} className="flex flex-col items-start gap-1 max-w-[94%]">
-                  <div className="text-[15px] leading-relaxed text-neutral-900 select-text font-normal space-y-2">
-                    <MarkdownRenderer text={m.text} />
-                  </div>
+                <div key={idx} className="flex flex-col gap-3 max-w-[94%]">
+                  {/* Content */}
+                  <div>
+                    {m.generating && m.imagePrompt ? (
+                      <ImageGeneratingBubble
+                        prompt={m.imagePrompt}
+                        orientation={m.imageOrientation}
+                      />
+                    ) : m.imageUrl ? (
+                      <div className="flex flex-col gap-3">
+                        <ImageResultBubble
+                          imageUrl={m.imageUrl}
+                          prompt={m.imagePrompt ?? ""}
+                          orientation={m.imageOrientation}
+                          onPreview={(url) => setProjImagePreview(url)}
+                        />
+                        <MarkdownRenderer text={m.text} />
+                      </div>
+                    ) : m.paraphrase ? (
+                      <div className="flex flex-col gap-4">
+                        <MarkdownRenderer text={m.text} isStreaming={m.generating} />
+                        {!m.generating && (
+                          <ParaphraseBubble original={m.paraphrase.original} versions={m.paraphrase.versions} />
+                        )}
+                      </div>
+                    ) : (
+                      <MarkdownRenderer text={m.text} isStreaming={m.generating} />
+                    )}
 
-                  {/* 4 Action Icons below Alerin message as seen in Gambar 3 */}
-                  <div className="flex items-center gap-2 mt-1 -ml-1 text-neutral-400">
-                    {/* Copy */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        navigator.clipboard?.writeText(m.text);
-                        setToast("Teks berhasil disalin");
-                      }}
-                      aria-label="Salin jawaban"
-                      className="p-1 hover:text-neutral-700 active:scale-90 transition-all cursor-pointer"
-                    >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-                        <rect width="13" height="13" x="9" y="9" rx="2" ry="2" />
-                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-                      </svg>
-                    </button>
+                    {/* Bottom row: Action Bar (Copy, Muat lagi, Share, More, Thumbs) & Sumber sejajar */}
+                    {!m.generating ? (
+                      <div className="mt-3.5 pt-0.5">
+                        <div className="flex items-center justify-between gap-2 flex-wrap">
+                          {/* Left: Action Bar Icons */}
+                          <div className="flex items-center gap-0.5 text-slate-400">
+                            {/* 1. Copy button */}
+                            <button
+                              type="button"
+                              onClick={() => handleProjCopyMessage(m.text, idx)}
+                              title="Salin respon"
+                              className="size-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100/90 active:scale-95 transition-all cursor-pointer"
+                            >
+                              {projCopiedIdx === idx ? (
+                                <svg className="w-4 h-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                              ) : (
+                                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                                </svg>
+                              )}
+                            </button>
 
-                    {/* Thumbs up */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setLikedMsgIndices((prev) => {
-                          const next = new Set(prev);
-                          if (next.has(idx)) next.delete(idx);
-                          else next.add(idx);
-                          return next;
-                        });
-                        setToast("Terima kasih atas tanggapannya!");
-                      }}
-                      aria-label="Suka respon"
-                      className={`p-1 active:scale-90 transition-all cursor-pointer ${
-                        likedMsgIndices.has(idx) ? "text-blue-600" : "hover:text-neutral-700"
-                      }`}
-                    >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill={likedMsgIndices.has(idx) ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M7 10v12" />
-                        <path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z" />
-                      </svg>
-                    </button>
+                            {/* 2. Muat lagi (Regenerate) */}
+                            <button
+                              type="button"
+                              onClick={() => handleProjRegenerate(idx)}
+                              title="Muat lagi respon"
+                              className="size-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100/90 active:scale-95 transition-all cursor-pointer"
+                            >
+                              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M21 12a9 9 0 1 1-2.64-6.36L21 8" />
+                                <polyline points="21 3 21 8 16 8" />
+                              </svg>
+                            </button>
 
-                    {/* Share */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (navigator.share) {
-                          navigator.share({ title: selectedProject.title, text: m.text }).catch(() => {});
-                        } else {
-                          navigator.clipboard?.writeText(m.text);
-                          setToast("Tautan obrolan disalin!");
-                        }
-                      }}
-                      aria-label="Bagikan"
-                      className="p-1 hover:text-neutral-700 active:scale-90 transition-all cursor-pointer"
-                    >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
-                        <polyline points="16 6 12 2 8 6" />
-                        <line x1="12" y1="2" x2="12" y2="15" />
-                      </svg>
-                    </button>
+                            {/* 3. Share */}
+                            <button
+                              type="button"
+                              onClick={() => handleProjShareMessage(m.text)}
+                              title="Bagikan respon"
+                              className="size-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100/90 active:scale-95 transition-all cursor-pointer"
+                            >
+                              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M4 12v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-6" />
+                                <polyline points="16 6 12 2 8 6" />
+                                <line x1="12" y1="2" x2="12" y2="15" />
+                              </svg>
+                            </button>
 
-                    {/* 3 dots */}
-                    <button
-                      type="button"
-                      onClick={() => setToast("Pesan tersimpan di proyek")}
-                      aria-label="Menu opsi"
-                      className="p-1 hover:text-neutral-700 active:scale-90 transition-all cursor-pointer"
-                    >
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                        <circle cx="12" cy="12" r="1.5" />
-                        <circle cx="19" cy="12" r="1.5" />
-                        <circle cx="5" cy="12" r="1.5" />
-                      </svg>
-                    </button>
+                            {/* 4. More (•••) */}
+                            <div className="relative">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setProjMoreMenuIdx(projMoreMenuIdx === idx ? null : idx);
+                                }}
+                                title="Opsi lainnya"
+                                className="size-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100/90 active:scale-95 transition-all cursor-pointer"
+                              >
+                                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                                  <circle cx="5" cy="12" r="1.5" />
+                                  <circle cx="12" cy="12" r="1.5" />
+                                  <circle cx="19" cy="12" r="1.5" />
+                                </svg>
+                              </button>
+
+                              {projMoreMenuIdx === idx && (
+                                <>
+                                  <div
+                                    className="fixed inset-0 z-30"
+                                    onClick={() => setProjMoreMenuIdx(null)}
+                                  />
+                                  <div className="absolute bottom-full left-0 mb-2 z-40 bg-white rounded-2xl border border-slate-200/90 shadow-[0_8px_30px_rgba(0,0,0,0.12)] p-1.5 min-w-[175px] flex flex-col gap-1 text-xs animate-in fade-in zoom-in-95">
+                                    {/* Tanggal & Jam respon */}
+                                    <div className="px-3 py-2 border-b border-slate-100 flex items-center gap-2 select-none">
+                                      <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                                        <circle cx="12" cy="12" r="10" />
+                                        <polyline points="12 6 12 12 16 14" />
+                                      </svg>
+                                      <span className="text-[11px] font-medium text-slate-500 whitespace-nowrap">
+                                        {getMessageTimestampDisplay(m)}
+                                      </span>
+                                    </div>
+
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        setProjMoreMenuIdx(null);
+                                        setToast("Laporan respon diterima. Terima kasih!");
+                                      }}
+                                      className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-left font-medium hover:bg-rose-50 text-rose-600 transition-colors cursor-pointer"
+                                    >
+                                      <svg className="w-4 h-4 text-rose-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+                                      <span className="whitespace-nowrap">Laporkan respon</span>
+                                    </button>
+                                  </div>
+                                </>
+                              )}
+                            </div>
+
+                            {/* Thumbs Up (Suka) */}
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setProjLikedIndices((prev) => {
+                                  const next = new Set(prev);
+                                  if (next.has(idx)) next.delete(idx);
+                                  else {
+                                    next.add(idx);
+                                    setProjDislikedIndices((d) => { const nd = new Set(d); nd.delete(idx); return nd; });
+                                  }
+                                  return next;
+                                });
+                                setToast("Terima kasih atas tanggapannya!");
+                              }}
+                              title="Suka respon"
+                              className={`size-7 rounded-lg flex items-center justify-center active:scale-95 transition-all cursor-pointer ${
+                                projLikedIndices.has(idx) ? "text-blue-600 bg-blue-50" : "text-slate-400 hover:text-slate-700 hover:bg-slate-100/90"
+                              }`}
+                            >
+                              <svg className="w-4 h-4" viewBox="0 0 24 24" fill={projLikedIndices.has(idx) ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M7 10v12" />
+                                <path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z" />
+                              </svg>
+                            </button>
+
+                            {/* Thumbs Down (Tidak Suka) */}
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setProjDislikedIndices((prev) => {
+                                  const next = new Set(prev);
+                                  if (next.has(idx)) next.delete(idx);
+                                  else {
+                                    next.add(idx);
+                                    setProjLikedIndices((l) => { const nl = new Set(l); nl.delete(idx); return nl; });
+                                  }
+                                  return next;
+                                });
+                                setToast("Masukan dicatat. Alerin akan berusaha lebih baik!");
+                              }}
+                              title="Tidak suka respon"
+                              className={`size-7 rounded-lg flex items-center justify-center active:scale-95 transition-all cursor-pointer ${
+                                projDislikedIndices.has(idx) ? "text-rose-600 bg-rose-50" : "text-slate-400 hover:text-slate-700 hover:bg-slate-100/90"
+                              }`}
+                            >
+                              <svg className="w-4 h-4" viewBox="0 0 24 24" fill={projDislikedIndices.has(idx) ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M17 14V2" />
+                                <path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z" />
+                              </svg>
+                            </button>
+                          </div>
+
+                          {/* Right: Sumber (sejajar / lurus dengan action bar) & Timestamp */}
+                          <div className="flex items-center gap-3">
+                            {m.sources && m.sources.length > 0 && (
+                              <button
+                                type="button"
+                                onClick={() => setProjOpenSourcesIdx((prev) => (prev === idx ? null : idx))}
+                                className="flex items-center gap-1.5 cursor-pointer select-none text-left py-1 px-2 rounded-lg hover:bg-slate-100/80 transition-colors"
+                              >
+                                <div className="flex -space-x-1.5 items-center">
+                                  {m.sources.slice(0, 3).map((src, si) => (
+                                    <SourceLogoIcon
+                                      key={si}
+                                      source={src}
+                                      index={si}
+                                      size="sm"
+                                      style={{ zIndex: 3 - si }}
+                                    />
+                                  ))}
+                                </div>
+                                <span className={`text-xs font-semibold transition-colors ${projOpenSourcesIdx === idx ? "text-black font-bold" : "text-neutral-800 hover:text-black"}`}>
+                                  {m.sources.length} Sumber
+                                </span>
+                                <svg className={`w-3 h-3 text-neutral-500 transition-transform duration-200 ${projOpenSourcesIdx === idx ? "rotate-180 text-black" : ""}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M6 9l6 6 6-6"/></svg>
+                              </button>
+                            )}
+                            <span className="text-[10px] text-slate-400 pr-0.5">{m.time}</span>
+                          </div>
+                        </div>
+
+                        {/* Expandable Sources Details (Full width) */}
+                        {m.sources && m.sources.length > 0 && projOpenSourcesIdx === idx && (
+                          <div className="mt-3 flex flex-col gap-2 animate-in fade-in duration-200">
+                            {m.sources.map((src, si) => (
+                              <div key={si} className="flex items-start gap-2.5 p-2.5 rounded-xl border border-slate-100 bg-slate-50/70 hover:bg-slate-50 transition-colors">
+                                <SourceLogoIcon
+                                  source={src}
+                                  index={si}
+                                  size="md"
+                                  className="mt-0.5"
+                                />
+                                <div className="flex-1 min-w-0">
+                                  {src.url ? (
+                                    <a href={src.url} target="_blank" rel="noopener noreferrer"
+                                      className="text-xs font-medium text-neutral-900 hover:text-blue-600 hover:underline leading-snug line-clamp-2">
+                                      {src.title}
+                                    </a>
+                                  ) : (
+                                    <p className="text-xs font-medium text-slate-800 leading-snug line-clamp-2">{src.title}</p>
+                                  )}
+                                  <p className="text-[10px] text-slate-400 mt-0.5 flex items-center gap-1.5">
+                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" className="text-slate-500 shrink-0">
+                                      <path d="M12 3L1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z" />
+                                    </svg>
+                                    <span>{src.author} · {src.year}</span>
+                                  </p>
+                                </div>
+                                {src.url && (
+                                  <svg className="w-3 h-3 text-slate-400 shrink-0 mt-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/></svg>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <p className="text-[10px] text-slate-400 mt-3">{m.time}</p>
+                    )}
+
+                    {/* Suggestions */}
+                    {isLastAlerin && m.suggestions && m.suggestions.length > 0 && (
+                      <div className="mt-4">
+                        <p className="text-[11px] text-slate-400 font-medium mb-2">Kalau mau, saya bisa:</p>
+                        <div className="flex flex-col gap-1.5">
+                          {m.suggestions.map((s, si) => (
+                            <button
+                              key={si}
+                              type="button"
+                              onClick={() => handleSendMessageInChat(s)}
+                              className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-left transition-all hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50 cursor-pointer"
+                              style={{ background: "rgba(255,255,255,0.8)", border: "1px solid rgba(226,232,240,0.8)", color: "#475569", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}
+                            >
+                              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2.5"><path d="M9 18l6-6-6-6"/></svg>
+                              {s}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               );
@@ -13183,7 +13628,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
               setActiveCategory={() => {}}
               hideTopSuggestions
               loading={isGenerating}
-              onStop={() => setIsGenerating(false)}
+              onStop={handleProjStop}
             />
           </div>
         </div>
