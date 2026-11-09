@@ -11723,8 +11723,6 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
   const [projOpenSourcesIdx, setProjOpenSourcesIdx] = useState<number | null>(null);
   const [projMoreMenuIdx, setProjMoreMenuIdx] = useState<number | null>(null);
   const [projCopiedIdx, setProjCopiedIdx] = useState<number | null>(null);
-  const [projLikedIndices, setProjLikedIndices] = useState<Set<number>>(new Set());
-  const [projDislikedIndices, setProjDislikedIndices] = useState<Set<number>>(new Set());
   const [projImagePreview, setProjImagePreview] = useState<string | null>(null);
   const projStreamIntervalRef = useRef<any>(null);
   const projResponseTimeoutRef = useRef<any>(null);
@@ -13359,12 +13357,12 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                       <MarkdownRenderer text={m.text} isStreaming={m.generating} />
                     )}
 
-                    {/* Bottom row: Action Bar (Copy, Muat lagi, Share, More, Thumbs) & Sumber sejajar */}
+                    {/* Bottom row: Action Bar (Copy, Muat lagi, Share, More) di kiri & Sumber + Timestamp di kanan (sebaris) */}
                     {!m.generating ? (
-                      <div className="mt-3.5 pt-0.5">
-                        <div className="flex items-center justify-between gap-2 flex-wrap">
-                          {/* Left: Action Bar Icons */}
-                          <div className="flex items-center gap-0.5 text-slate-400">
+                      <div className="mt-3.5 pt-0.5 w-full">
+                        <div className="flex items-center justify-between gap-1.5 w-full">
+                          {/* Left: Salin, Muat lagi, Bagikan, Titik Tiga */}
+                          <div className="flex items-center gap-0.5 text-slate-400 shrink-0">
                             {/* 1. Copy button */}
                             <button
                               type="button"
@@ -13459,67 +13457,15 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                                 </>
                               )}
                             </div>
-
-                            {/* Thumbs Up (Suka) */}
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setProjLikedIndices((prev) => {
-                                  const next = new Set(prev);
-                                  if (next.has(idx)) next.delete(idx);
-                                  else {
-                                    next.add(idx);
-                                    setProjDislikedIndices((d) => { const nd = new Set(d); nd.delete(idx); return nd; });
-                                  }
-                                  return next;
-                                });
-                                setToast("Terima kasih atas tanggapannya!");
-                              }}
-                              title="Suka respon"
-                              className={`size-7 rounded-lg flex items-center justify-center active:scale-95 transition-all cursor-pointer ${
-                                projLikedIndices.has(idx) ? "text-blue-600 bg-blue-50" : "text-slate-400 hover:text-slate-700 hover:bg-slate-100/90"
-                              }`}
-                            >
-                              <svg className="w-4 h-4" viewBox="0 0 24 24" fill={projLikedIndices.has(idx) ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M7 10v12" />
-                                <path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z" />
-                              </svg>
-                            </button>
-
-                            {/* Thumbs Down (Tidak Suka) */}
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setProjDislikedIndices((prev) => {
-                                  const next = new Set(prev);
-                                  if (next.has(idx)) next.delete(idx);
-                                  else {
-                                    next.add(idx);
-                                    setProjLikedIndices((l) => { const nl = new Set(l); nl.delete(idx); return nl; });
-                                  }
-                                  return next;
-                                });
-                                setToast("Masukan dicatat. Alerin akan berusaha lebih baik!");
-                              }}
-                              title="Tidak suka respon"
-                              className={`size-7 rounded-lg flex items-center justify-center active:scale-95 transition-all cursor-pointer ${
-                                projDislikedIndices.has(idx) ? "text-rose-600 bg-rose-50" : "text-slate-400 hover:text-slate-700 hover:bg-slate-100/90"
-                              }`}
-                            >
-                              <svg className="w-4 h-4" viewBox="0 0 24 24" fill={projDislikedIndices.has(idx) ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M17 14V2" />
-                                <path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z" />
-                              </svg>
-                            </button>
                           </div>
 
-                          {/* Right: Sumber (sejajar / lurus dengan action bar) & Timestamp */}
-                          <div className="flex items-center gap-3">
+                          {/* Right: Sumber & Timestamp sebaris di sebelah kanan */}
+                          <div className="flex items-center gap-2 shrink-0">
                             {m.sources && m.sources.length > 0 && (
                               <button
                                 type="button"
                                 onClick={() => setProjOpenSourcesIdx((prev) => (prev === idx ? null : idx))}
-                                className="flex items-center gap-1.5 cursor-pointer select-none text-left py-1 px-2 rounded-lg hover:bg-slate-100/80 transition-colors"
+                                className="flex items-center gap-1.5 cursor-pointer select-none text-left py-1 px-1.5 rounded-lg hover:bg-slate-100/80 transition-colors"
                               >
                                 <div className="flex -space-x-1.5 items-center">
                                   {m.sources.slice(0, 3).map((src, si) => (
@@ -13538,7 +13484,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                                 <svg className={`w-3 h-3 text-neutral-500 transition-transform duration-200 ${projOpenSourcesIdx === idx ? "rotate-180 text-black" : ""}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M6 9l6 6 6-6"/></svg>
                               </button>
                             )}
-                            <span className="text-[10px] text-slate-400 pr-0.5">{m.time}</span>
+                            <span className="text-[10px] text-slate-400 whitespace-nowrap">{m.time}</span>
                           </div>
                         </div>
 
