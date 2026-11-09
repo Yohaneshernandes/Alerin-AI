@@ -6714,31 +6714,11 @@ function PercakapanTab({
   const touchStartYRef = useRef<number>(0);
   const userScrolledUpRef = useRef<boolean>(false);
 
-  // Action bar states (Copy, Jempol Feedback, Muat lagi, Share, More)
-  const [feedbackPopupIdx, setFeedbackPopupIdx] = useState<number | null>(null);
+  // Action bar states (Copy, Muat lagi, Share, More)
   const [moreMenuIdx, setMoreMenuIdx] = useState<number | null>(null);
   const [openSourcesIdx, setOpenSourcesIdx] = useState<number | null>(null);
-  const [feedbackMap, setFeedbackMap] = useState<Record<number, "like" | "dislike">>({});
   const [copiedIdx, setCopiedIdx] = useState<number | null>(null);
   const [actionToast, setActionToast] = useState<string | null>(null);
-
-  const showActionToast = useCallback((msg: string) => {
-    setActionToast(msg);
-    setTimeout(() => setActionToast(null), 2200);
-  }, []);
-
-  const handleFeedback = useCallback((idx: number, type: "like" | "dislike") => {
-    setFeedbackMap((prev) => ({
-      ...prev,
-      [idx]: prev[idx] === type ? undefined! : type,
-    }));
-    setFeedbackPopupIdx(null);
-    if (type === "like") {
-      showActionToast("Terima kasih atas tanggapanmu! 👍");
-    } else {
-      showActionToast("Masukanmu dicatat untuk perbaikan. 🙏");
-    }
-  }, [showActionToast]);
 
   const handleCopyMessage = useCallback((text: string, idx: number) => {
     const cleanText = stripEmoticons(text);
@@ -7148,7 +7128,6 @@ function PercakapanTab({
     if (!userQuery) return;
 
     showActionToast("Memuat ulang respon Alerin... ⟳");
-    setFeedbackPopupIdx(null);
     setMoreMenuIdx(null);
     setMsgs((prev) => prev.slice(0, msgIdx));
 
@@ -7511,126 +7490,7 @@ function PercakapanTab({
                           )}
                         </button>
 
-                        {/* 2. Thumbs rating button (Combined thumb icon with popup) */}
-                        <div className="relative">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setMoreMenuIdx(null);
-                              setFeedbackPopupIdx(feedbackPopupIdx === i ? null : i);
-                            }}
-                            title="Tanggapan suka atau tidak suka"
-                            className={`size-7 rounded-lg flex items-center justify-center active:scale-95 transition-all ${
-                              feedbackMap[i] === "like"
-                                ? "text-blue-600 bg-blue-50 hover:bg-blue-100"
-                                : feedbackMap[i] === "dislike"
-                                ? "text-rose-600 bg-rose-50 hover:bg-rose-100"
-                                : "text-slate-400 hover:text-slate-700 hover:bg-slate-100/90"
-                            }`}
-                          >
-                            {feedbackMap[i] === "like" ? (
-                              <svg className="w-4 h-4 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M7 10v12" />
-                                <path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2h0a3.13 3.13 0 0 1 3 3.88Z" />
-                              </svg>
-                            ) : feedbackMap[i] === "dislike" ? (
-                              <svg className="w-4 h-4 text-rose-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M17 14V2" />
-                                <path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22h0a3.13 3.13 0 0 1-3-3.88Z" />
-                              </svg>
-                            ) : (
-                              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
-                                {/* Thumb Up (left, scaled Lucide) */}
-                                <g transform="translate(0.5, 0.5) scale(0.58)" strokeWidth="2.6">
-                                  <path d="M7 10v12" />
-                                  <path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z" />
-                                </g>
-                                {/* Thumb Down (right, 180deg rotated) */}
-                                <g transform="rotate(180 12 12) translate(0.5, 0.5) scale(0.58)" strokeWidth="2.6">
-                                  <path d="M7 10v12" />
-                                  <path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z" />
-                                </g>
-                              </svg>
-                            )}
-                          </button>
-
-                          {/* Popup kecil suka atau tidak suka respon */}
-                          {feedbackPopupIdx === i && (
-                            <>
-                              <div
-                                className="fixed inset-0 z-30"
-                                onClick={() => setFeedbackPopupIdx(null)}
-                              />
-                              <div className="absolute bottom-full left-0 mb-2 z-40 bg-white rounded-2xl border border-slate-200/90 shadow-[0_8px_30px_rgba(0,0,0,0.12)] p-1.5 w-56 flex flex-col gap-1 text-xs animate-in fade-in zoom-in-95">
-                                <button
-                                  type="button"
-                                  onClick={() => handleFeedback(i, "like")}
-                                  className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl text-left font-medium transition-all ${
-                                    feedbackMap[i] === "like"
-                                      ? "bg-blue-50 text-blue-600 font-semibold"
-                                      : "hover:bg-slate-50 text-slate-700"
-                                  }`}
-                                >
-                                  <svg
-                                    className={`w-4.5 h-4.5 shrink-0 transition-colors ${
-                                      feedbackMap[i] === "like" ? "text-blue-600" : "text-slate-500 group-hover:text-slate-700"
-                                    }`}
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="1.8"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                  >
-                                    <path d="M7 10v12" />
-                                    <path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2h0a3.13 3.13 0 0 1 3 3.88Z" />
-                                  </svg>
-                                  <div className="flex-1 min-w-0">
-                                    <p className="font-semibold text-slate-800 leading-tight">Suka respon</p>
-                                    <p className="text-[10px] text-slate-400 mt-0.5">Jawaban tepat & membantu</p>
-                                  </div>
-                                  {feedbackMap[i] === "like" && (
-                                    <svg className="w-4 h-4 text-blue-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                                  )}
-                                </button>
-
-                                <button
-                                  type="button"
-                                  onClick={() => handleFeedback(i, "dislike")}
-                                  className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl text-left font-medium transition-all ${
-                                    feedbackMap[i] === "dislike"
-                                      ? "bg-rose-50 text-rose-600 font-semibold"
-                                      : "hover:bg-slate-50 text-slate-700"
-                                  }`}
-                                >
-                                  <svg
-                                    className={`w-4.5 h-4.5 shrink-0 transition-colors ${
-                                      feedbackMap[i] === "dislike" ? "text-rose-600" : "text-slate-500 group-hover:text-slate-700"
-                                    }`}
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="1.8"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                  >
-                                    <path d="M17 14V2" />
-                                    <path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22h0a3.13 3.13 0 0 1-3-3.88Z" />
-                                  </svg>
-                                  <div className="flex-1 min-w-0">
-                                    <p className="font-semibold text-slate-800 leading-tight">Tidak suka respon</p>
-                                    <p className="text-[10px] text-slate-400 mt-0.5">Kurang tepat / relevan</p>
-                                  </div>
-                                  {feedbackMap[i] === "dislike" && (
-                                    <svg className="w-4 h-4 text-rose-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                                  )}
-                                </button>
-                              </div>
-                            </>
-                          )}
-                        </div>
-
-                        {/* 3. Muat lagi (Regenerate) */}
+                        {/* 2. Muat lagi (Regenerate) */}
                         <button
                           type="button"
                           onClick={() => handleRegenerate(i)}
@@ -7643,7 +7503,7 @@ function PercakapanTab({
                           </svg>
                         </button>
 
-                        {/* 4. Share */}
+                        {/* 3. Share */}
                         <button
                           type="button"
                           onClick={() => handleShareMessage(m.text)}
@@ -7657,12 +7517,11 @@ function PercakapanTab({
                           </svg>
                         </button>
 
-                        {/* 5. More (•••) */}
+                        {/* 4. More (•••) */}
                         <div className="relative">
                           <button
                             type="button"
                             onClick={() => {
-                              setFeedbackPopupIdx(null);
                               setMoreMenuIdx(moreMenuIdx === i ? null : i);
                             }}
                             title="Opsi lainnya"
