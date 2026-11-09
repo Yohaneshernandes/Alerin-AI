@@ -340,6 +340,7 @@ const SEARCH_HISTORY = [
   { id: 7, type: "proyek", title: "Metodologi Penelitian", snippet: "Proyek aktif · terakhir diperbarui hari ini", date: "Hari ini", keyword: "" },
   { id: 8, type: "proyek", title: "Skripsi Live Shopping", snippet: "Proyek aktif · terakhir diperbarui 2 hari lalu", date: "29 Agu", keyword: "Skripsi" },
   { id: 9, type: "dokumen", title: "Template BAB I Pendahuluan", snippet: "Dokumen template untuk bab pertama skripsi S1...", date: "15 Jul 2023", keyword: "" },
+  { id: 10, type: "proyek", title: "Proyek Riset Yohanes", snippet: "Proyek aktif · analisis data dan metodologi riset skripsi Yohanes", date: "Hari ini", keyword: "yohanes" },
 ];
 
 // ─── Highlight bold keyword in text ─────────────────────────────────────────
@@ -377,7 +378,7 @@ function SearchModal({
   historyItems,
 }: {
   onClose: () => void;
-  onSelect?: (title: string) => void;
+  onSelect?: (title: string, itemType?: "chat" | "dokumen" | "proyek", itemId?: string) => void;
   historyItems?: RiwayatItem[];
 }) {
   const [query, setQuery] = useState("");
@@ -404,6 +405,7 @@ function SearchModal({
     { id: "proyek", label: "Proyek" },
   ];
 
+  // 1. Data pencarian obrolan (dari riwayat obrolan pengguna)
   const chatSearchItems = (historyItems && historyItems.length > 0 ? historyItems : DEFAULT_RIWAYAT_ITEMS).map((item, idx) => ({
     id: `chat-${item.id || idx}`,
     type: "chat" as const,
@@ -413,16 +415,89 @@ function SearchModal({
     keyword: "",
   }));
 
+  // 2. Data pencarian proyek (sinkron langsung dari penyimpanan proyek pengguna & proyek bawaan)
+  const userProjects = useMemo(() => {
+    let projs: { id: string; title: string; time?: string; msgs?: ChatMsg[]; category?: string }[] = [];
+    if (typeof window !== "undefined") {
+      try {
+        const saved = localStorage.getItem("alerin_user_projects");
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            projs = parsed;
+          }
+        }
+      } catch {}
+    }
+    const defaults = [
+      {
+        id: "proj-yohanes",
+        title: "Proyek Riset Yohanes",
+        time: "Terakhir diperbarui hari ini",
+        msgs: [
+          { role: "user" as const, text: "Halo Alerin, bantu analisis data dan metodologi proyek riset skripsi Yohanes.", time: "10.00" },
+          { role: "claro" as const, text: "Halo Yohanes! Alerin siap membantu metodologi, pengolahan data, dan penyusunan skripsi proyek risetmu.", time: "10.01" },
+        ],
+      },
+      { id: "proj-4", title: "Metodologi Penelitian", time: "Terakhir diperbarui hari ini" },
+      { id: "proj-1", title: "Pekerjaan Rumah", time: "1 hari yang lalu" },
+      { id: "proj-5", title: "Skripsi Live Shopping", time: "2 hari yang lalu" },
+      { id: "proj-6", title: "Persiapan UAS", time: "3 hari yang lalu" },
+      { id: "proj-shared-2", title: "Pekerjaan kantor", time: "3 minggu yang lalu" },
+      { id: "proj-shared-1", title: "Caption", time: "1 bulan yang lalu" },
+    ];
+    const existingTitles = new Set(projs.map((p) => p.title.toLowerCase()));
+    for (const d of defaults) {
+      if (!existingTitles.has(d.title.toLowerCase())) {
+        projs.push(d);
+        existingTitles.add(d.title.toLowerCase());
+      }
+    }
+    return projs;
+  }, []);
+
+  const projectSearchItems = useMemo(() => {
+    let projChatsMap: Record<string, { title: string; msgs: ChatMsg[] }[]> = {};
+    if (typeof window !== "undefined") {
+      try {
+        const savedChats = localStorage.getItem("alerin_mobile_project_chats");
+        if (savedChats) projChatsMap = JSON.parse(savedChats);
+      } catch {}
+    }
+
+    return userProjects.map((p) => {
+      const extraChats = projChatsMap[p.id] || [];
+      const extraChatTitles = extraChats.map((c) => c.title).join(" · ");
+      const firstMsg = p.msgs?.[0]?.text;
+      let snippet = `Proyek aktif · ${p.time || "terakhir diperbarui"}`;
+      if (extraChatTitles) {
+        snippet = `Proyek aktif · ${extraChatTitles}`;
+      } else if (firstMsg) {
+        snippet = `Proyek aktif · ${firstMsg}`;
+      }
+      return {
+        id: p.id,
+        type: "proyek" as const,
+        title: p.title,
+        snippet,
+        date: p.time ? p.time.replace("Terakhir diperbarui ", "").replace(" yang lalu", "") : "Terbaru",
+        keyword: p.title,
+      };
+    });
+  }, [userProjects]);
+
   const allSearchData = [
     ...chatSearchItems,
-    ...SEARCH_HISTORY.filter((item) => item.type !== "chat"),
+    ...projectSearchItems,
+    ...SEARCH_HISTORY.filter((item) => item.type === "dokumen"),
   ];
 
   const filtered = allSearchData.filter((item) => {
     const matchFilter = filter === "semua" || item.type === filter;
-    const matchQuery = !query.trim() ||
-      item.title.toLowerCase().includes(query.toLowerCase()) ||
-      item.snippet.toLowerCase().includes(query.toLowerCase());
+    const q = query.trim().toLowerCase();
+    const matchQuery = !q ||
+      item.title.toLowerCase().includes(q) ||
+      item.snippet.toLowerCase().includes(q);
     return matchFilter && matchQuery;
   });
 
@@ -431,7 +506,7 @@ function SearchModal({
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
     );
     if (type === "proyek") return (
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/></svg>
     );
     return <ChatBubbleIcon />;
   };
@@ -453,7 +528,11 @@ function SearchModal({
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter" && query.trim()) {
-                onSelect?.(query.trim());
+                if (filtered.length > 0) {
+                  onSelect?.(filtered[0].title, filtered[0].type, filtered[0].id);
+                } else {
+                  onSelect?.(query.trim());
+                }
                 onClose();
               }
             }}
@@ -482,7 +561,7 @@ function SearchModal({
                 key={title}
                 type="button"
                 onClick={() => {
-                  onSelect?.(title);
+                  onSelect?.(title, "chat");
                   onClose();
                 }}
                 className="w-full flex items-center gap-3 px-5 py-2.5 hover:bg-slate-50 active:bg-slate-100 transition-colors text-left group cursor-pointer"
@@ -505,7 +584,7 @@ function SearchModal({
                 <button
                   key={f.id}
                   onClick={() => setFilter(f.id)}
-                  className="px-4 py-1.5 rounded-full text-xs font-semibold transition-all"
+                  className="px-4 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer"
                   style={filter === f.id
                     ? { background: "#3b82f6", color: "#fff" }
                     : { color: "#64748b", background: "transparent" }}
@@ -526,18 +605,30 @@ function SearchModal({
                   <button
                     key={item.id}
                     onClick={() => {
-                      onSelect?.(item.title);
+                      onSelect?.(item.title, item.type, item.id);
                       onClose();
                     }}
-                    className="w-full flex items-start gap-3 px-5 py-3.5 hover:bg-slate-50 transition-colors text-left group"
+                    className="w-full flex items-start gap-3 px-5 py-3.5 hover:bg-slate-50 transition-colors text-left group cursor-pointer"
                   >
                     <span className="text-slate-400 group-hover:text-slate-600 transition-colors mt-0.5 shrink-0">
                       {typeIcon(item.type)}
                     </span>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-slate-700 group-hover:text-slate-900 transition-colors truncate">
-                        <Highlight text={item.title} query={query} />
-                      </p>
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm font-semibold text-slate-700 group-hover:text-slate-900 transition-colors truncate">
+                          <Highlight text={item.title} query={query} />
+                        </p>
+                        {item.type === "proyek" && filter === "semua" && (
+                          <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-blue-50 text-blue-600 shrink-0">
+                            Proyek
+                          </span>
+                        )}
+                        {item.type === "dokumen" && filter === "semua" && (
+                          <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-amber-50 text-amber-700 shrink-0">
+                            Dokumen
+                          </span>
+                        )}
+                      </div>
                       <p className="text-xs text-slate-400 truncate mt-0.5">
                         <Highlight text={item.snippet} query={query} />
                       </p>
@@ -3355,7 +3446,16 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
         <SearchModal
           onClose={() => setSearchOpen(false)}
           historyItems={sortedHistoryList}
-          onSelect={(title) => {
+          onSelect={(title, itemType, itemId) => {
+            if (itemType === "proyek") {
+              try {
+                localStorage.setItem("alerin_open_project_id", itemId || title);
+                window.dispatchEvent(new Event("alerin_check_open_project"));
+              } catch {}
+              onTab("proyek");
+              setMobileDrawerOpen(false);
+              return;
+            }
             const found = historyList.find((h) => h.title.toLowerCase() === title.toLowerCase());
             if (found) {
               onTab("percakapan");
@@ -11185,6 +11285,20 @@ function getProjectTimestamp(p: MobileProjectItem): number {
 
 const DEFAULT_MOBILE_PROJECTS: MobileProjectItem[] = [
   {
+    id: "proj-yohanes",
+    title: "Proyek Riset Yohanes",
+    time: "Terakhir diperbarui hari ini",
+    updatedAt: 1731160000000,
+    category: "dibuat",
+    pastelBg: "bg-[#F2F4F7]",
+    iconColor: "text-neutral-900",
+    iconType: "folder",
+    msgs: [
+      { role: "user", text: "Halo Alerin, bantu analisis data dan metodologi proyek riset skripsi Yohanes.", time: "10.00" },
+      { role: "claro", text: "Halo Yohanes! Alerin siap membantu metodologi, pengolahan data, dan penyusunan skripsi proyek risetmu.", time: "10.01" },
+    ],
+  },
+  {
     id: "proj-4",
     title: "Metodologi Penelitian",
     time: "Terakhir diperbarui hari ini",
@@ -11461,6 +11575,11 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
         let filtered = parsed.filter(
           (p) => p.title !== "Pak Agik" && p.id !== "proj-2" && p.id !== "proj-3"
         );
+        // Pastikan Proyek Riset Yohanes ada
+        if (!filtered.some((p) => p.title.toLowerCase().includes("yohanes"))) {
+          const y = DEFAULT_MOBILE_PROJECTS.find((p) => p.id === "proj-yohanes");
+          if (y) filtered.unshift(y);
+        }
         // Pastikan Caption ada
         if (!filtered.some((p) => p.title.toLowerCase() === "caption")) {
           const c = DEFAULT_MOBILE_PROJECTS.find((p) => p.title.toLowerCase() === "caption");
@@ -11511,9 +11630,44 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
   const [toast, setToast] = useState<string | null>(null);
 
   // ── Project Detail & Chat Navigation States (Gambar 2 & Gambar 3) ──
-  const [selectedProject, setSelectedProject] = useState<MobileProjectItem | null>(null);
+  const [selectedProject, setSelectedProject] = useState<MobileProjectItem | null>(() => {
+    try {
+      const targetId = localStorage.getItem("alerin_open_project_id");
+      if (targetId) {
+        localStorage.removeItem("alerin_open_project_id");
+        const saved = localStorage.getItem("alerin_user_projects");
+        const list: MobileProjectItem[] = saved ? JSON.parse(saved) : DEFAULT_MOBILE_PROJECTS;
+        const found = list.find((p) => p.id === targetId || p.title.toLowerCase() === targetId.toLowerCase());
+        if (found) return found;
+      }
+    } catch {}
+    return null;
+  });
   const [selectedProjectChat, setSelectedProjectChat] = useState<ProjectChatItem | null>(null);
   const [projectSubTab, setProjectSubTab] = useState<"obrolan" | "sumber">("obrolan");
+
+  // Dengarkan sinyal pembukaan proyek langsung dari pencarian (SearchModal)
+  useEffect(() => {
+    const handleCheckOpenProject = () => {
+      try {
+        const targetId = localStorage.getItem("alerin_open_project_id");
+        if (targetId) {
+          localStorage.removeItem("alerin_open_project_id");
+          const found = projects.find(
+            (p) => p.id === targetId || p.title.toLowerCase() === targetId.toLowerCase()
+          );
+          if (found) {
+            setSelectedProject(found);
+            setProjectSubTab("obrolan");
+            setSelectedProjectChat(null);
+          }
+        }
+      } catch {}
+    };
+    handleCheckOpenProject();
+    window.addEventListener("alerin_check_open_project", handleCheckOpenProject);
+    return () => window.removeEventListener("alerin_check_open_project", handleCheckOpenProject);
+  }, [projects]);
 
   const [projectChatsMap, setProjectChatsMap] = useState<Record<string, ProjectChatItem[]>>(() => {
     try {
