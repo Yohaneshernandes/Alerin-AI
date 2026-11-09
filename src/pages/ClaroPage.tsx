@@ -11099,6 +11099,36 @@ const DEFAULT_MOBILE_PROJECTS: MobileProjectItem[] = [
     iconType: "folder",
     msgs: PROJECTS[2]?.msgs,
   },
+  {
+    id: "proj-shared-1",
+    title: "Caption",
+    time: "1 bulan yang lalu",
+    updatedAt: 1728500000000,
+    category: "dibagikan",
+    members: 2,
+    pastelBg: "bg-[#F2F4F7]",
+    iconColor: "text-neutral-900",
+    iconType: "folder",
+    msgs: [
+      { role: "user", text: "Halo tim, mari diskusikan caption kampanye media sosial terbaru.", time: "14.00" },
+      { role: "claro", text: "Siap! Kirimkan tema atau draft caption yang ingin kita optimasi bersama.", time: "14.01" },
+    ],
+  },
+  {
+    id: "proj-shared-2",
+    title: "Pekerjaan kantor",
+    time: "3 minggu yang lalu",
+    updatedAt: 1729300000000,
+    category: "dibagikan",
+    members: 9,
+    pastelBg: "bg-[#F2F4F7]",
+    iconColor: "text-neutral-900",
+    iconType: "folder",
+    msgs: [
+      { role: "user", text: "Halo tim Pekerjaan kantor, ada dokumen SOP dan laporan yang perlu ditinjau.", time: "09.00" },
+      { role: "claro", text: "Alerin siap membantu mereview dokumen dan menyusun ringkasan pekerjaan kantor untuk tim.", time: "09.02" },
+    ],
+  },
 ];
 
 function ProjectIcon({
@@ -11246,6 +11276,30 @@ const DEFAULT_PROJECT_CHATS: Record<string, ProjectChatItem[]> = {
       ],
     },
   ],
+  "proj-shared-1": [
+    {
+      id: "pchat-cap-1",
+      title: "Ide Konten & Caption Peluncuran",
+      lastSnippet: "Berikut 5 ide caption kreatif untuk promosi produk baru...",
+      time: "1 bulan lalu",
+      msgs: [
+        { role: "user", text: "Buatkan ide caption menarik untuk rilis produk baru di Instagram.", time: "14.00" },
+        { role: "claro", text: "Berikut 5 ide caption kreatif dengan hook yang kuat, storytelling singkat, dan call-to-action yang memikat calon pelanggan.", time: "14.02" },
+      ],
+    },
+  ],
+  "proj-shared-2": [
+    {
+      id: "pchat-pk-1",
+      title: "Koordinasi Laporan & SOP Tim",
+      lastSnippet: "Draft rangkuman SOP operasional kantor telah siap...",
+      time: "3 minggu lalu",
+      msgs: [
+        { role: "user", text: "Rangkum poin-poin revisi SOP operasional dan laporan mingguan tim.", time: "09.00" },
+        { role: "claro", text: "Draft rangkuman SOP operasional kantor telah siap dengan pembagian tugas anggota dan target mingguan.", time: "09.03" },
+      ],
+    },
+  ],
 };
 
 const DEFAULT_PROJECT_SOURCES: Record<string, ProjectSourceItem[]> = {
@@ -11256,6 +11310,12 @@ const DEFAULT_PROJECT_SOURCES: Record<string, ProjectSourceItem[]> = {
   "proj-4": [
     { id: "src-3", name: "Buku_Metode_Penelitian_Kuantitatif.pdf", type: "PDF", size: "3.2 MB", time: "Hari ini" },
   ],
+  "proj-shared-1": [
+    { id: "src-cap-1", name: "Brand_Guidelines_Copywriting.pdf", type: "PDF", size: "2.1 MB", time: "1 bulan yang lalu" },
+  ],
+  "proj-shared-2": [
+    { id: "src-pk-1", name: "SOP_Operasional_Kantor_2026.pdf", type: "PDF", size: "3.5 MB", time: "3 minggu yang lalu" },
+  ],
 };
 
 function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpenHistory: (msgs: ChatMsg[]) => void }) {
@@ -11265,10 +11325,20 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
       const saved = localStorage.getItem("alerin_user_projects");
       if (saved) {
         const parsed: MobileProjectItem[] = JSON.parse(saved);
-        // Hapus folder "Pak Agik" dan "Caption" jika sebelumnya tersimpan di localStorage
-        const filtered = parsed.filter(
-          (p) => p.title !== "Pak Agik" && p.title !== "Caption" && p.id !== "proj-2" && p.id !== "proj-3"
+        // Hapus folder "Pak Agik" lama dan replace dengan "Pekerjaan kantor"
+        let filtered = parsed.filter(
+          (p) => p.title !== "Pak Agik" && p.id !== "proj-2" && p.id !== "proj-3"
         );
+        // Pastikan Caption ada
+        if (!filtered.some((p) => p.title.toLowerCase() === "caption")) {
+          const c = DEFAULT_MOBILE_PROJECTS.find((p) => p.title.toLowerCase() === "caption");
+          if (c) filtered.push(c);
+        }
+        // Pastikan Pekerjaan kantor ada
+        if (!filtered.some((p) => p.title.toLowerCase() === "pekerjaan kantor")) {
+          const pk = DEFAULT_MOBILE_PROJECTS.find((p) => p.title.toLowerCase() === "pekerjaan kantor");
+          if (pk) filtered.push(pk);
+        }
         // Pastikan semua proyek menggunakan folder hitam konsisten
         const normalized = filtered.map((p) => ({
           ...p,
@@ -12327,8 +12397,8 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-neutral-400 mt-0.5 truncate">
-                    {item.time}
+                  <p className="text-xs text-neutral-500 mt-0.5 truncate font-normal">
+                    {item.time}{item.members ? ` · ${item.members} anggota` : ""}
                   </p>
                 </div>
               </div>
@@ -13197,8 +13267,8 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                           </span>
                         )}
                       </div>
-                      <p className="text-xs text-neutral-400 mt-0.5 truncate">
-                        {p.time}
+                      <p className="text-xs text-neutral-500 mt-0.5 truncate font-normal">
+                        {p.time}{p.members ? ` · ${p.members} anggota` : ""}
                       </p>
                     </div>
 
@@ -13342,7 +13412,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                       </div>
                     </div>
                     <h3 className="font-display font-700 text-base text-slate-800 mb-1 group-hover:text-blue-600 transition-colors">{p.title}</h3>
-                    <p className="text-xs text-slate-400 mb-4">{p.time}</p>
+                    <p className="text-xs text-slate-500 mb-4">{p.time}{p.members ? ` · ${p.members} anggota` : ""}</p>
                     {p.msgs && p.msgs.length > 0 && (
                       <p className="text-[11px] text-slate-500 truncate mb-3 italic">"{p.msgs[p.msgs.length - 1].text.slice(0, 60)}…"</p>
                     )}
