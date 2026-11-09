@@ -6,6 +6,43 @@ interface PdfViewerProps {
   onOpenNative?: () => void;
 }
 
+// Memuat PDF.js browser runtime secara dinamis dari CDN (ringan, cepat, dan 100% kompatibel tanpa dependensi C++ native)
+function loadPdfJsFromCdn(): Promise<any> {
+  if (typeof window === "undefined") return Promise.reject(new Error("SSR tidak didukung"));
+  if ((window as any).pdfjsLib) {
+    return Promise.resolve((window as any).pdfjsLib);
+  }
+
+  return new Promise((resolve, reject) => {
+    const existingScript = document.getElementById("pdfjs-cdn-script");
+    if (existingScript) {
+      existingScript.addEventListener("load", () => {
+        const lib = (window as any).pdfjsLib;
+        if (lib) resolve(lib);
+        else reject(new Error("PDF.js tidak ditemukan"));
+      });
+      existingScript.addEventListener("error", () => reject(new Error("Gagal mengunduh PDF.js")));
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.id = "pdfjs-cdn-script";
+    script.src = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
+    script.async = true;
+    script.onload = () => {
+      const lib = (window as any).pdfjsLib;
+      if (lib) {
+        lib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+        resolve(lib);
+      } else {
+        reject(new Error("pdfjsLib tidak terinisialisasi"));
+      }
+    };
+    script.onerror = () => reject(new Error("Gagal memuat modul pratinjau PDF"));
+    document.head.appendChild(script);
+  });
+}
+
 export default function PdfViewer({ url, fileName, onOpenNative }: PdfViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [numPages, setNumPages] = useState<number>(0);
@@ -18,7 +55,7 @@ export default function PdfViewer({ url, fileName, onOpenNative }: PdfViewerProp
   const canvasRefs = useRef<Map<number, HTMLCanvasElement>>(new Map());
   const renderTasksRef = useRef<Map<number, any>>(new Map());
 
-  // Muat dokumen PDF dengan PDF.js via dynamic import (code-splitting)
+  // Muat dokumen PDF
   useEffect(() => {
     let isCancelled = false;
 
@@ -27,14 +64,8 @@ export default function PdfViewer({ url, fileName, onOpenNative }: PdfViewerProp
         setLoading(true);
         setError(null);
 
-        const pdfjsLib = await import("pdfjs-dist");
-        const gwo = pdfjsLib.GlobalWorkerOptions || (pdfjsLib as any).default?.GlobalWorkerOptions;
-        if (gwo) {
-          gwo.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-        }
-
-        const getDocument = pdfjsLib.getDocument || (pdfjsLib as any).default?.getDocument;
-        const loadingTask = getDocument({
+        const pdfjsLib = await loadPdfJsFromCdn();
+        const loadingTask = pdfjsLib.getDocument({
           url,
           cMapUrl: "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/cmaps/",
           cMapPacked: true,
@@ -60,7 +91,6 @@ export default function PdfViewer({ url, fileName, onOpenNative }: PdfViewerProp
 
     return () => {
       isCancelled = true;
-      // Batalkan render tasks yang masih aktif
       renderTasksRef.current.forEach((task) => {
         try {
           task.cancel();
@@ -81,7 +111,6 @@ export default function PdfViewer({ url, fileName, onOpenNative }: PdfViewerProp
       if (!doc || !canvas || !container) return;
 
       try {
-        // Batalkan tugas render halaman ini jika sedang berjalan
         const existingTask = renderTasksRef.current.get(pageNum);
         if (existingTask) {
           try {
@@ -92,10 +121,9 @@ export default function PdfViewer({ url, fileName, onOpenNative }: PdfViewerProp
         const page = await doc.getPage(pageNum);
         const unscaledViewport = page.getViewport({ scale: 1 });
 
-        // Hitung lebar pas container dengan margin/padding aman (maks 760px di desktop)
+        // Hitung lebar pas container dengan margin aman (maks 760px di desktop)
         const maxAllowedWidth = Math.min(container.clientWidth - 24, 760);
         const availableWidth = Math.max(maxAllowedWidth, 280);
-        // Base fit-to-width scale
         const fitScale = (availableWidth / unscaledViewport.width) * zoomLevel;
         const viewport = page.getViewport({ scale: fitScale });
 
@@ -178,7 +206,7 @@ export default function PdfViewer({ url, fileName, onOpenNative }: PdfViewerProp
       <div className="flex-1 w-full h-full flex flex-col items-center justify-center p-6 bg-slate-50/60 text-center select-none">
         <div className="size-10 rounded-full border-3 border-blue-600 border-t-transparent animate-spin mb-3.5" />
         <p className="text-sm font-semibold text-slate-800">Menyesuaikan ukuran berkas...</p>
-        <p className="text-xs text-slate-400 mt-1">Membuat tampilan fit proporsional</p>
+        <p className="text-xs text-slate-400 mt-1">Membuat tampilan pas proporsional</p>
       </div>
     );
   }
