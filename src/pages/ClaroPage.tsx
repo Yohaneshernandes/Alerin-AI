@@ -5333,7 +5333,7 @@ function ChatInputBox({
                               setModeOpen(false);
                               setModeDropdownPos(null);
                             }}
-                            className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-2xl text-left transition-all active:scale-[0.99] cursor-pointer ${
+                            className={`w-full flex items-start gap-2.5 px-3 py-2.5 rounded-2xl text-left transition-all active:scale-[0.99] cursor-pointer ${
                               isSelected ? "bg-slate-100/70" : "hover:bg-slate-50"
                             }`}
                           >
@@ -5347,8 +5347,8 @@ function ChatInputBox({
                               </p>
                             </div>
 
-                            {/* Checkmark on the side (centang di bagian tengah) */}
-                            <div className="shrink-0 w-5 flex items-center justify-end self-center text-slate-900">
+                            {/* Checkmark on the side (di atas / sejajar judul) */}
+                            <div className="shrink-0 w-5 flex items-center justify-end self-start mt-0.5 text-slate-900">
                               {isSelected && (
                                 <svg
                                   width="16"
