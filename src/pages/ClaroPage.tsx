@@ -3963,7 +3963,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="size-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
+                <div className="size-8 rounded-xl bg-[#F2F4F7] text-neutral-900 flex items-center justify-center shrink-0">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
                   </svg>
@@ -3989,9 +3989,9 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
 
               <div className="space-y-1.5 max-h-[220px] overflow-y-auto pr-0.5">
                 {[
-                  { id: "proj-1", name: "Metodologi Penelitian", desc: "Proyek aktif · Skripsi" },
-                  { id: "proj-2", name: "Skripsi Live Shopping", desc: "Tinjauan Pustaka Bab II" },
-                  { id: "proj-3", name: "Tugas Analisis Data", desc: "Mata Kuliah Semester 6" },
+                  { id: "proj-1", name: "Metodologi Penelitian" },
+                  { id: "proj-2", name: "Skripsi Live Shopping" },
+                  { id: "proj-3", name: "Tugas Analisis Data" },
                 ].map((proj) => {
                   const isChosen = selectedProjectId === proj.id;
                   return (
@@ -4001,22 +4001,21 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
                       onClick={() => setSelectedProjectId(proj.id)}
                       className={`w-full flex items-center gap-3 p-2.5 rounded-xl border text-left transition-all ${
                         isChosen
-                          ? "border-blue-500 bg-blue-50/70"
+                          ? "border-neutral-900 bg-neutral-50/70"
                           : "border-slate-100 hover:border-slate-200 hover:bg-slate-50"
                       }`}
                     >
-                      <div className={`size-8 rounded-lg flex items-center justify-center shrink-0 ${isChosen ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-500"}`}>
+                      <div className={`size-8 rounded-lg flex items-center justify-center shrink-0 ${isChosen ? "bg-black text-white" : "bg-[#F2F4F7] text-neutral-900"}`}>
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                           <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
                         </svg>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className={`text-[13px] font-semibold leading-tight truncate ${isChosen ? "text-blue-900" : "text-slate-800"}`}>
+                        <p className={`text-[13px] font-semibold leading-tight truncate ${isChosen ? "text-neutral-900" : "text-slate-800"}`}>
                           {proj.name}
                         </p>
-                        <p className="text-[11px] text-slate-400 truncate mt-0.5">{proj.desc}</p>
                       </div>
-                      <div className={`size-4 rounded-full border flex items-center justify-center shrink-0 ${isChosen ? "border-blue-600 bg-blue-600 text-white" : "border-slate-300"}`}>
+                      <div className={`size-4 rounded-full border flex items-center justify-center shrink-0 ${isChosen ? "border-black bg-black text-white" : "border-slate-300"}`}>
                         {isChosen && (
                           <div className="size-1.5 rounded-full bg-white" />
                         )}
