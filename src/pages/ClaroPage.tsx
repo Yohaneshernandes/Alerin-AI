@@ -1026,22 +1026,68 @@ Aku juga bisa membuat dan menyusun file PDF, Excel, Word, dan PowerPoint sesuai 
 Kamu ingin mencoba Alerin membuat file Excel atau dokumen lain?`
   ],
 
-  // ── 2. KOLOM / TABEL OUTPUT (Tabel responsif banyak kolom, teks hitam & bisa digeser) ──
+  // ── 2a. KOLOM PENDEK (Tabel fit di layar HP, tanpa scroll samping) ───────────
   [
-    /\b(?:kolom|tabel)\b/i,
-    `Kalau Alerin memberikan **kolom/tabel**, tampilannya berupa tabel responsif yang rapi, warna teks hitam, dan bisa digeser ke kiri dan kanan (horizontal scroll) agar nyaman dibaca di layar HP:
+    /\b(?:kolom\s*pendek|tabel\s*pendek)\b/i,
+    `Kalau Alerin memberikan **kolom pendek**, tampilannya dibuat pas (fit) di layar tanpa perlu digeser ke samping (tidak ada scroll kanan-kiri):
+
+Contohnya:
+
+| Bab | Judul | Halaman |
+|---|---|---|
+| **BAB I** | Pendahuluan | Hal 1–15 |
+| **BAB II** | Kajian Pustaka | Hal 16–45 |
+| **BAB III** | Metodologi | Hal 46–65 |
+| **BAB IV** | Hasil Analisis | Hal 66–110 |
+| **BAB V** | Penutup | Hal 111–125 |
+
+Tabel kolom pendek di atas langsung fit 100% di layar HP dengan teks rapi tanpa scroll ke samping.`
+  ],
+
+  // ── 2b. KOLOM PANJANG (Tabel multi-kolom yang luas & bisa digeser kanan-kiri) ───
+  [
+    /\b(?:kolom\s*panjang|tabel\s*panjang)\b/i,
+    `Kalau Alerin memberikan **kolom panjang**, tampilannya berupa tabel multi-kolom yang luas dengan teks detail sehingga bisa kamu geser (scroll) ke kiri dan kanan secara leluasa:
 
 Contohnya:
 
 | Bab | Judul | Isi Utama | Bobot Nilai | Status Pengerjaan |
 |---|---|---|---|---|
-| **BAB I** | Pendahuluan | Latar belakang, rumusan masalah, tujuan, manfaat, dan batasan penelitian | 15% | Siap Direvisi |
-| **BAB II** | Kajian Pustaka | Landasan teori, penelitian terdahulu, kerangka konseptual, dan hipotesis | 25% | Sedang Dikerjakan |
-| **BAB III** | Metodologi | Desain penelitian, populasi & sampel, instrumen, prosedur pengumpulan data, teknik analisis | 20% | Draf Awal |
-| **BAB IV** | Hasil & Pembahasan | Deskripsi data, hasil uji statistik/analisis, pembahasan dikaitkan dengan teori | 30% | Belum Dimulai |
-| **BAB V** | Penutup | Kesimpulan, implikasi, keterbatasan, dan saran untuk penelitian selanjutnya | 10% | Belum Dimulai |
+| **BAB I** | Pendahuluan | Latar belakang, rumusan masalah, tujuan, manfaat, batasan | 15% | Siap Direvisi |
+| **BAB II** | Kajian Pustaka | Landasan teori, penelitian terdahulu, kerangka konseptual | 25% | Sedang Dikerjakan |
+| **BAB III** | Metodologi | Desain penelitian, populasi & sampel, teknik analisis data | 20% | Draf Awal |
+| **BAB IV** | Hasil & Pembahasan | Deskripsi data, hasil uji statistik, pembahasan teori | 30% | Belum Dimulai |
+| **BAB V** | Penutup | Kesimpulan, implikasi, keterbatasan, dan saran penelitian | 10% | Belum Dimulai |
 
-Tabel di atas memiliki banyak kolom dan teks panjang sehingga bisa kamu geser ke samping secara leluasa.`
+Tabel kolom panjang di atas memiliki 5 kolom lengkap dan teks detail sehingga bisa kamu geser (scroll) ke samping secara leluasa di layar HP.`
+  ],
+
+  // ── 2c. KOLOM / TABEL UMUM ──────────────────────────────────────────────────
+  [
+    /\b(?:kolom|tabel)\b/i,
+    `Alerin menyediakan dua format tabel responsif: **kolom pendek** (fit di layar HP tanpa scroll) dan **kolom panjang** (bisa digeser kanan-kiri):
+
+**1. Contoh Kolom Pendek (Fit di layar, tanpa scroll):**
+
+| Bab | Judul | Halaman |
+|---|---|---|
+| **BAB I** | Pendahuluan | Hal 1–15 |
+| **BAB II** | Kajian Pustaka | Hal 16–45 |
+| **BAB III** | Metodologi | Hal 46–65 |
+| **BAB IV** | Hasil Analisis | Hal 66–110 |
+| **BAB V** | Penutup | Hal 111–125 |
+
+**2. Contoh Kolom Panjang (Bisa digeser ke kiri dan kanan):**
+
+| Bab | Judul | Isi Utama | Bobot Nilai | Status Pengerjaan |
+|---|---|---|---|---|
+| **BAB I** | Pendahuluan | Latar belakang, rumusan masalah, tujuan, manfaat | 15% | Siap Direvisi |
+| **BAB II** | Kajian Pustaka | Landasan teori, kerangka konseptual, hipotesis | 25% | Sedang Dikerjakan |
+| **BAB III** | Metodologi | Desain penelitian, sampel, instrumen, analisis | 20% | Draf Awal |
+| **BAB IV** | Pembahasan | Deskripsi data dan hasil uji statistik/analisis | 30% | Belum Dimulai |
+| **BAB V** | Penutup | Kesimpulan, keterbatasan, dan rekomendasi | 10% | Belum Dimulai |
+
+Ketik **"kolom pendek"** untuk tabel yang langsung pas di layar HP, atau ketik **"kolom panjang"** jika membutuhkan tabel dengan banyak kolom!`
   ],
 
   // ── 3. LINK OUTPUT (Kartu referensi tautan resmi interaktif) ────────────────
@@ -6488,11 +6534,11 @@ function MarkdownRenderer({ text, isStreaming }: { text: string; isStreaming?: b
       elements.push(
         <div
           key={`tbl-${i}`}
-          className="my-3.5 w-full overflow-x-auto select-text"
+          className={`my-3.5 w-full ${isFitScreen ? "overflow-hidden" : "overflow-x-auto"} select-text`}
           style={{
             WebkitOverflowScrolling: "touch",
             scrollbarWidth: "none",
-            touchAction: "pan-x pan-y",
+            touchAction: isFitScreen ? "auto" : "pan-x pan-y",
           }}
         >
           <table
@@ -6510,7 +6556,7 @@ function MarkdownRenderer({ text, isStreaming }: { text: string; isStreaming?: b
                     if (colCount === 2) {
                       colWidthClass = ci === 0 ? "w-[36%] sm:w-[32%]" : "w-[64%] sm:w-[68%]";
                     } else if (colCount === 3) {
-                      colWidthClass = ci === 0 ? "w-[22%] sm:w-[20%]" : ci === 1 ? "w-[32%] sm:w-[30%]" : "w-[46%] sm:w-[50%]";
+                      colWidthClass = ci === 0 ? "w-[24%] sm:w-[22%]" : ci === 1 ? "w-[44%] sm:w-[46%]" : "w-[32%] sm:w-[32%]";
                     }
                   }
                   return (
