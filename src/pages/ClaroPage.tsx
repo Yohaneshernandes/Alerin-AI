@@ -10896,6 +10896,7 @@ interface MobileProjectItem {
   id: string;
   title: string;
   time: string;
+  updatedAt?: number;
   category: "dibuat" | "dibagikan";
   members?: number;
   pastelBg: string;
@@ -10911,6 +10912,7 @@ const DEFAULT_MOBILE_PROJECTS: MobileProjectItem[] = [
     id: "proj-1",
     title: "Pekerjaan Rumah",
     time: "1 hari yang lalu",
+    updatedAt: 1731110000000,
     category: "dibuat",
     pastelBg: "bg-[#F2F4F7]",
     iconColor: "text-neutral-900",
@@ -10924,6 +10926,7 @@ const DEFAULT_MOBILE_PROJECTS: MobileProjectItem[] = [
     id: "proj-4",
     title: "Metodologi Penelitian",
     time: "Terakhir diperbarui hari ini",
+    updatedAt: 1731150000000,
     category: "dibuat",
     pastelBg: "bg-[#F2F4F7]",
     iconColor: "text-neutral-900",
@@ -10934,6 +10937,7 @@ const DEFAULT_MOBILE_PROJECTS: MobileProjectItem[] = [
     id: "proj-5",
     title: "Skripsi Live Shopping",
     time: "2 hari yang lalu",
+    updatedAt: 1731020000000,
     category: "dibuat",
     pastelBg: "bg-[#F2F4F7]",
     iconColor: "text-neutral-900",
@@ -10944,6 +10948,7 @@ const DEFAULT_MOBILE_PROJECTS: MobileProjectItem[] = [
     id: "proj-6",
     title: "Persiapan UAS",
     time: "3 hari yang lalu",
+    updatedAt: 1730930000000,
     category: "dibuat",
     pastelBg: "bg-[#F2F4F7]",
     iconColor: "text-neutral-900",
@@ -11000,6 +11005,7 @@ type ProjectChatItem = {
   title: string;
   lastSnippet: string;
   time: string;
+  updatedAt?: number;
   msgs: ChatMsg[];
 };
 
@@ -11172,6 +11178,31 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
       localStorage.setItem("alerin_mobile_project_sources", JSON.stringify(map));
     } catch {}
   };
+
+  const bumpProjectToTop = useCallback((projId: string) => {
+    setProjects((prev) => {
+      const idx = prev.findIndex((p) => p.id === projId);
+      if (idx === -1) return prev;
+      const target: MobileProjectItem = {
+        ...prev[idx],
+        time: "Terakhir diperbarui hari ini",
+        updatedAt: Date.now(),
+      };
+      const without = prev.filter((p) => p.id !== projId);
+      const next = [target, ...without];
+      saveProjects(next);
+      return next;
+    });
+
+    setSelectedProject((prev) => {
+      if (!prev || prev.id !== projId) return prev;
+      return {
+        ...prev,
+        time: "Terakhir diperbarui hari ini",
+        updatedAt: Date.now(),
+      };
+    });
+  }, []);
 
   // Menus & Modals
   const [projectMenuOpen, setProjectMenuOpen] = useState(false);
@@ -11351,18 +11382,21 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
     const updatedChat: ProjectChatItem = {
       ...selectedProjectChat,
       lastSnippet: trimmed,
+      updatedAt: Date.now(),
       msgs: nextMsgs,
     };
     setSelectedProjectChat(updatedChat);
-    setProjectChatsMap((prev) => ({
-      ...prev,
-      [selectedProject.id]: (prev[selectedProject.id] || []).map((c) =>
-        c.id === updatedChat.id ? updatedChat : c
-      ),
-    }));
+    setProjectChatsMap((prev) => {
+      const currentList = prev[selectedProject.id] || [];
+      const nextList = [updatedChat, ...currentList.filter((c) => c.id !== updatedChat.id)];
+      const nextMap = { ...prev, [selectedProject.id]: nextList };
+      saveProjectChats(nextMap);
+      return nextMap;
+    });
+    bumpProjectToTop(selectedProject.id);
     setEditingProjBubbleIdx(null);
     setToast("Pesan berhasil diperbarui!");
-  }, [selectedProjectChat, selectedProject]);
+  }, [selectedProjectChat, selectedProject, bumpProjectToTop]);
 
   const handleProjCancelEditBubble = useCallback(() => {
     setEditingProjBubbleIdx(null);
@@ -11411,7 +11445,8 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
     const newProj: MobileProjectItem = {
       id: `proj-${Date.now()}`,
       title: trimmed,
-      time: "Baru saja",
+      time: "Terakhir diperbarui hari ini",
+      updatedAt: Date.now(),
       category: "dibuat",
       pastelBg: "bg-[#F2F4F7]",
       iconColor: "text-neutral-900",
@@ -11454,23 +11489,26 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
   const handleStartNewProjectChat = (text: string) => {
     const trimmed = text.trim();
     if (!trimmed || !selectedProject) return;
-    const newChatId = `pchat-${Date.now()}`;
+    const nowTimestamp = Date.now();
+    const newChatId = `pchat-${nowTimestamp}`;
     const userMsg: ChatMsg = { role: "user", text: trimmed, time: now() };
     const newChat: ProjectChatItem = {
       id: newChatId,
       title: trimmed.length > 25 ? trimmed.slice(0, 25) + "..." : trimmed,
       lastSnippet: trimmed,
       time: now(),
+      updatedAt: nowTimestamp,
       msgs: [userMsg],
     };
     const currentList = projectChatsMap[selectedProject.id] ?? [];
-    const nextList = [newChat, ...currentList];
+    const nextList = [newChat, ...currentList.filter((c) => c.id !== newChat.id)];
     const nextMap = { ...projectChatsMap, [selectedProject.id]: nextList };
     setProjectChatsMap(nextMap);
     saveProjectChats(nextMap);
     setSelectedProjectChat(newChat);
     setNewChatQuickText("");
     setIsGenerating(true);
+    bumpProjectToTop(selectedProject.id);
 
     setTimeout(() => {
       let aiText = `Halo! Di dalam proyek **${selectedProject.title}**, Alerin siap membantu mendiskusikan "${trimmed}". Semua catatan dan analisis kita akan tersimpan di sini.`;
@@ -11480,16 +11518,19 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
         aiText = `Tentu! Untuk tugas Pekerjaan Rumah terkait "${trimmed}", ini panduan penyelesaiannya secara bertahap:\n\n1. Identifikasi data dan variabel yang diketahui.\n2. Tentukan rumus atau landasan teori yang berlaku.\n3. Uraikan langkah pengerjaan dengan runut agar mudah dipahami dosen/guru.\n\nApakah butuh bantuan langkah hitungan lebih rinci?`;
       }
       const aiMsg: ChatMsg = { role: "claro", text: stripEmoticons(aiText), time: now() };
-      const updatedChat = {
+      const updatedChat: ProjectChatItem = {
         ...newChat,
         lastSnippet: aiText.slice(0, 48) + "...",
+        time: now(),
+        updatedAt: Date.now(),
         msgs: [userMsg, aiMsg],
       };
       setSelectedProjectChat(updatedChat);
-      const updatedList = [updatedChat, ...currentList];
+      const updatedList = [updatedChat, ...currentList.filter((c) => c.id !== updatedChat.id)];
       const updatedMap = { ...projectChatsMap, [selectedProject.id]: updatedList };
       setProjectChatsMap(updatedMap);
       saveProjectChats(updatedMap);
+      bumpProjectToTop(selectedProject.id);
       setIsGenerating(false);
     }, 5200);
   };
@@ -11497,12 +11538,14 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
   const handleSendMessageInChat = (text: string) => {
     const trimmed = text.trim();
     if (!trimmed || !selectedProject || !selectedProjectChat) return;
+    const nowTimestamp = Date.now();
     const userMsg: ChatMsg = { role: "user", text: trimmed, time: now() };
     const updatedMsgs = [...selectedProjectChat.msgs, userMsg];
     const updatedChat: ProjectChatItem = {
       ...selectedProjectChat,
       lastSnippet: trimmed,
       time: now(),
+      updatedAt: nowTimestamp,
       msgs: updatedMsgs,
     };
     setSelectedProjectChat(updatedChat);
@@ -11510,10 +11553,11 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
     setIsGenerating(true);
 
     const currentList = projectChatsMap[selectedProject.id] ?? [];
-    const nextList = currentList.map((c) => (c.id === updatedChat.id ? updatedChat : c));
+    const nextList = [updatedChat, ...currentList.filter((c) => c.id !== updatedChat.id)];
     const nextMap = { ...projectChatsMap, [selectedProject.id]: nextList };
     setProjectChatsMap(nextMap);
     saveProjectChats(nextMap);
+    bumpProjectToTop(selectedProject.id);
 
     setTimeout(() => chatEndRef.current?.scrollIntoView({ behavior: "smooth" }), 60);
 
@@ -11530,13 +11574,15 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
         ...updatedChat,
         lastSnippet: aiText.slice(0, 48) + "...",
         time: now(),
+        updatedAt: Date.now(),
         msgs: finalMsgs,
       };
       setSelectedProjectChat(finalChat);
-      const finalList = currentList.map((c) => (c.id === finalChat.id ? finalChat : c));
+      const finalList = [finalChat, ...currentList.filter((c) => c.id !== finalChat.id)];
       const finalMap = { ...projectChatsMap, [selectedProject.id]: finalList };
       setProjectChatsMap(finalMap);
       saveProjectChats(finalMap);
+      bumpProjectToTop(selectedProject.id);
       setIsGenerating(false);
       setTimeout(() => chatEndRef.current?.scrollIntoView({ behavior: "smooth" }), 60);
     }, 5200);
@@ -11585,6 +11631,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
     const nextMap = { ...projectSourcesMap, [selectedProject.id]: nextSources };
     setProjectSourcesMap(nextMap);
     saveProjectSources(nextMap);
+    bumpProjectToTop(selectedProject.id);
     setToast(`Dokumen "${file.name}" berhasil ditambahkan!`);
     e.target.value = "";
   };
@@ -11601,6 +11648,9 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
     .sort((a, b) => {
       if (a.pinned && !b.pinned) return -1;
       if (!a.pinned && b.pinned) return 1;
+      const aTime = a.updatedAt || 0;
+      const bTime = b.updatedAt || 0;
+      if (bTime !== aTime) return bTime - aTime;
       return 0;
     });
 
@@ -12756,21 +12806,23 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                   </p>
                 </div>
               ) : (
-                (projectChatsMap[selectedProject.id] ?? []).map((chat) => (
-                  <button
-                    key={chat.id}
-                    type="button"
-                    onClick={() => setSelectedProjectChat(chat)}
-                    className="w-full text-left px-2.5 py-1.5 hover:bg-neutral-50 active:bg-neutral-100/70 rounded-xl transition-colors cursor-pointer group block"
-                  >
-                    <h3 className="text-[15px] font-semibold text-neutral-900 group-hover:text-blue-600 transition-colors">
-                      {chat.title}
-                    </h3>
-                    <p className="text-[13px] text-neutral-400 mt-0.5 truncate">
-                      {chat.lastSnippet}
-                    </p>
-                  </button>
-                ))
+                [...(projectChatsMap[selectedProject.id] ?? [])]
+                  .sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0))
+                  .map((chat) => (
+                    <button
+                      key={chat.id}
+                      type="button"
+                      onClick={() => setSelectedProjectChat(chat)}
+                      className="w-full text-left px-2.5 py-1.5 hover:bg-neutral-50 active:bg-neutral-100/70 rounded-xl transition-colors cursor-pointer group block"
+                    >
+                      <h3 className="text-[15px] font-semibold text-neutral-900 group-hover:text-blue-600 transition-colors">
+                        {chat.title}
+                      </h3>
+                      <p className="text-[13px] text-neutral-400 mt-0.5 truncate">
+                        {chat.lastSnippet}
+                      </p>
+                    </button>
+                  ))
               )}
             </div>
           ) : (
@@ -13074,7 +13126,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {projects.map((p) => (
+                {filteredProjects.map((p) => (
                   <button
                     key={p.id}
                     type="button"
