@@ -12383,7 +12383,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                         <path d="M5 17h14v-2l-3-4V4h1V2H7v2h1v7l-3 4v2z" />
                       </svg>
                     )}
-                    <h3 className="font-semibold text-[15px] text-neutral-900 truncate">
+                    <h3 className="font-medium text-[15px] text-neutral-900 truncate">
                       {item.title}
                     </h3>
                     {item.members && (
@@ -12397,7 +12397,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                       </span>
                     )}
                   </div>
-                  <p className="text-[12.5px] text-neutral-700 mt-0.5 truncate font-medium">
+                  <p className="text-[12.5px] text-neutral-700 mt-0.5 truncate font-normal">
                     {item.time}{item.members ? ` · ${item.members} anggota` : ""}
                   </p>
                 </div>
@@ -13253,7 +13253,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                             <path d="M5 17h14v-2l-3-4V4h1V2H7v2h1v7l-3 4v2z" />
                           </svg>
                         )}
-                        <h3 className="font-semibold text-[15px] text-neutral-900 truncate">
+                        <h3 className="font-medium text-[15px] text-neutral-900 truncate">
                           {p.title}
                         </h3>
                         {p.members && (
@@ -13267,7 +13267,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                           </span>
                         )}
                       </div>
-                      <p className="text-[12.5px] text-neutral-700 mt-0.5 truncate font-medium">
+                      <p className="text-[12.5px] text-neutral-700 mt-0.5 truncate font-normal">
                         {p.time}{p.members ? ` · ${p.members} anggota` : ""}
                       </p>
                     </div>
