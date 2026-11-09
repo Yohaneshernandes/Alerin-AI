@@ -12858,24 +12858,6 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
                       <span>Ganti Nama Obrolan</span>
                     </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const updated = { ...selectedProjectChat, msgs: [] };
-                        setSelectedProjectChat(updated);
-                        const currentList = projectChatsMap[selectedProject.id] ?? [];
-                        const nextList = currentList.map((c) => (c.id === updated.id ? updated : c));
-                        const nextMap = { ...projectChatsMap, [selectedProject.id]: nextList };
-                        setProjectChatsMap(nextMap);
-                        saveProjectChats(nextMap);
-                        setChatMenuOpen(false);
-                        setToast("Percakapan telah dibersihkan");
-                      }}
-                      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-neutral-700 hover:bg-neutral-100 transition-colors text-left"
-                    >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
-                      <span>Bersihkan Obrolan</span>
-                    </button>
                     <div className="h-px bg-neutral-100 my-1" />
                     <button
                       type="button"
