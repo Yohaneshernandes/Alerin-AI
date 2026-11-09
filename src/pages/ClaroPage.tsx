@@ -12397,7 +12397,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-neutral-500 mt-0.5 truncate font-normal">
+                  <p className="text-[12.5px] text-neutral-700 mt-0.5 truncate font-medium">
                     {item.time}{item.members ? ` · ${item.members} anggota` : ""}
                   </p>
                 </div>
@@ -13267,7 +13267,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                           </span>
                         )}
                       </div>
-                      <p className="text-xs text-neutral-500 mt-0.5 truncate font-normal">
+                      <p className="text-[12.5px] text-neutral-700 mt-0.5 truncate font-medium">
                         {p.time}{p.members ? ` · ${p.members} anggota` : ""}
                       </p>
                     </div>
@@ -13412,7 +13412,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                       </div>
                     </div>
                     <h3 className="font-display font-700 text-base text-slate-800 mb-1 group-hover:text-blue-600 transition-colors">{p.title}</h3>
-                    <p className="text-xs text-slate-500 mb-4">{p.time}{p.members ? ` · ${p.members} anggota` : ""}</p>
+                    <p className="text-xs text-slate-600 mb-4 font-medium">{p.time}{p.members ? ` · ${p.members} anggota` : ""}</p>
                     {p.msgs && p.msgs.length > 0 && (
                       <p className="text-[11px] text-slate-500 truncate mb-3 italic">"{p.msgs[p.msgs.length - 1].text.slice(0, 60)}…"</p>
                     )}
