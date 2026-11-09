@@ -12970,8 +12970,8 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                       <h3 className="text-[15px] font-semibold text-neutral-900 group-hover:text-blue-600 transition-colors">
                         {chat.title}
                       </h3>
-                      <p className="text-[13px] text-neutral-400 mt-0.5 truncate">
-                        {chat.lastSnippet}
+                      <p className="text-[13.5px] text-neutral-800 font-normal mt-0.5 truncate leading-relaxed">
+                        {chat.lastSnippet?.replace(/\*\*/g, "")}
                       </p>
                     </button>
                   ))
