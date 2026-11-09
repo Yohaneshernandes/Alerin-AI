@@ -14,7 +14,7 @@ import FileContentPreview from "@/components/FileContentPreview";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type NavTab = "percakapan" | "fitur" | "proyek" | "progress" | "quizlab" | "profil";
-type ChatSource = { title: string; author: string; year: string; url?: string };
+type ChatSource = { title: string; author: string; year: string; url?: string; logo?: string };
 type FeatureKey = "matakuliah" | "parafrase" | "grammar" | "plagiasi" | "jurnal" | "judul" | "quizlab" | "progress" | "ppt" | "simulasi";
 type FeatureRec = { label: string; desc: string; tab?: NavTab; featureKey?: FeatureKey; icon: string; color: string };
 type ChatMsg = {
@@ -1626,6 +1626,168 @@ function getSources(userMsg: string, claroBotText: string): ChatSource[] | undef
     if (pattern.test(combined)) return sources;
   }
   return undefined;
+}
+
+function getSourceDetails(src: ChatSource, index: number) {
+  if (src.logo) {
+    return {
+      logoUrl: src.logo,
+      name: src.title,
+      fallbackBg: "bg-blue-600 text-white",
+      letter: `${index + 1}`,
+    };
+  }
+
+  const title = (src.title || "").toLowerCase();
+  const author = (src.author || "").toLowerCase();
+  const url = src.url || "";
+
+  let domain = "";
+  if (url) {
+    try {
+      if (url.startsWith("http://") || url.startsWith("https://")) {
+        domain = new URL(url).hostname;
+      }
+    } catch {}
+  }
+
+  // Detect specific academic services & publishers
+  if (title.includes("google scholar") || domain.includes("scholar.google")) {
+    return {
+      logoUrl: "https://www.google.com/s2/favicons?domain=scholar.google.com&sz=64",
+      name: "Google Scholar",
+      fallbackBg: "bg-blue-600 text-white",
+      letter: "G",
+    };
+  }
+  if (title.includes("scopus") || domain.includes("scopus.com")) {
+    return {
+      logoUrl: "https://www.google.com/s2/favicons?domain=scopus.com&sz=64",
+      name: "Scopus",
+      fallbackBg: "bg-amber-600 text-white",
+      letter: "S",
+    };
+  }
+  if (title.includes("sciencedirect") || domain.includes("sciencedirect.com") || url.includes("10.1016") || author.includes("elsevier")) {
+    return {
+      logoUrl: "https://www.google.com/s2/favicons?domain=sciencedirect.com&sz=64",
+      name: "ScienceDirect / Elsevier",
+      fallbackBg: "bg-[#FF6C00] text-white",
+      letter: "SD",
+    };
+  }
+  if (domain.includes("jstor.org") || url.includes("10.2307")) {
+    return {
+      logoUrl: "https://www.google.com/s2/favicons?domain=jstor.org&sz=64",
+      name: "JSTOR",
+      fallbackBg: "bg-[#990000] text-white",
+      letter: "J",
+    };
+  }
+  if (author.includes("kemdikbud") || title.includes("kemdikbud") || domain.includes("kemdikbud.go.id")) {
+    return {
+      logoUrl: "https://www.google.com/s2/favicons?domain=kemdikbud.go.id&sz=64",
+      name: "Kemdikbud RI",
+      fallbackBg: "bg-[#0B3B60] text-white",
+      letter: "K",
+    };
+  }
+  if (author.includes("creswell") || author.includes("hair") || domain.includes("sagepub.com")) {
+    return {
+      logoUrl: "https://www.google.com/s2/favicons?domain=sagepub.com&sz=64",
+      name: "SAGE Publishing",
+      fallbackBg: "bg-[#0072B2] text-white",
+      letter: "S",
+    };
+  }
+  if (author.includes("byrne") || domain.includes("routledge.com") || domain.includes("taylorandfrancis.com")) {
+    return {
+      logoUrl: "https://www.google.com/s2/favicons?domain=routledge.com&sz=64",
+      name: "Routledge / Taylor & Francis",
+      fallbackBg: "bg-[#004B87] text-white",
+      letter: "R",
+    };
+  }
+  if (author.includes("swales") || domain.includes("umich.edu")) {
+    return {
+      logoUrl: "https://www.google.com/s2/favicons?domain=umich.edu&sz=64",
+      name: "University Press",
+      fallbackBg: "bg-[#00274C] text-[#FFCB05]",
+      letter: "M",
+    };
+  }
+  if (author.includes("sugiyono") || title.includes("metode penelitian")) {
+    return {
+      logoUrl: "https://www.google.com/s2/favicons?domain=ui.ac.id&sz=64",
+      name: "Penerbit Akademik",
+      fallbackBg: "bg-[#1E3A8A] text-white",
+      letter: "A",
+    };
+  }
+  if (domain) {
+    return {
+      logoUrl: `https://www.google.com/s2/favicons?domain=${domain}&sz=64`,
+      name: domain,
+      fallbackBg: "bg-neutral-800 text-white",
+      letter: domain.slice(0, 1).toUpperCase(),
+    };
+  }
+
+  return {
+    logoUrl: "https://www.google.com/s2/favicons?domain=scholar.google.com&sz=64",
+    name: "Jurnal Ilmiah",
+    fallbackBg: "bg-neutral-800 text-white",
+    letter: `${index + 1}`,
+  };
+}
+
+function SourceLogoIcon({
+  source,
+  index,
+  size = "sm",
+  className = "",
+  style,
+}: {
+  source: ChatSource;
+  index: number;
+  size?: "sm" | "md";
+  className?: string;
+  style?: React.CSSProperties;
+}) {
+  const details = getSourceDetails(source, index);
+  const [imgFailed, setImgFailed] = useState(false);
+
+  const isSm = size === "sm";
+
+  return (
+    <div
+      className={`${
+        isSm
+          ? "w-4.5 h-4.5 rounded-full border border-white"
+          : "w-6 h-6 rounded-lg border border-neutral-200/90"
+      } bg-white flex items-center justify-center shrink-0 overflow-hidden shadow-xs relative ${className}`}
+      style={style}
+      title={details.name}
+    >
+      {!imgFailed && details.logoUrl ? (
+        <img
+          src={details.logoUrl}
+          alt={details.name}
+          className="w-full h-full object-contain p-0.5"
+          loading="lazy"
+          onError={() => setImgFailed(true)}
+        />
+      ) : (
+        <div
+          className={`w-full h-full ${details.fallbackBg} flex items-center justify-center ${
+            isSm ? "text-[7.5px]" : "text-[10px]"
+          } font-bold leading-none`}
+        >
+          {details.letter || index + 1}
+        </div>
+      )}
+    </div>
+  );
 }
 
 const FEATURE_REC_MAP: { pattern: RegExp; rec: FeatureRec }[] = [
@@ -7545,15 +7707,15 @@ function PercakapanTab({
                             onClick={() => setOpenSourcesIdx((prev) => (prev === i ? null : i))}
                             className="flex items-center gap-1.5 cursor-pointer select-none text-left py-1 px-2 rounded-lg hover:bg-slate-100/80 transition-colors"
                           >
-                            <div className="flex -space-x-1.5">
-                              {m.sources.slice(0, 3).map((_, si) => (
-                                <div
+                            <div className="flex -space-x-1.5 items-center">
+                              {m.sources.slice(0, 3).map((src, si) => (
+                                <SourceLogoIcon
                                   key={si}
-                                  className="w-4.5 h-4.5 rounded-full border border-white flex items-center justify-center text-[8px] font-bold text-white shadow-xs bg-black"
+                                  source={src}
+                                  index={si}
+                                  size="sm"
                                   style={{ zIndex: 3 - si }}
-                                >
-                                  {si + 1}
-                                </div>
+                                />
                               ))}
                             </div>
                             <span className={`text-xs font-semibold transition-colors ${openSourcesIdx === i ? "text-black font-bold" : "text-neutral-800 hover:text-black"}`}>
@@ -7570,10 +7732,13 @@ function PercakapanTab({
                     {m.sources && m.sources.length > 0 && openSourcesIdx === i && (
                       <div className="mt-3 flex flex-col gap-2 animate-in fade-in duration-200">
                         {m.sources.map((src, si) => (
-                          <div key={si} className="flex items-start gap-2.5 p-2.5 rounded-xl border border-slate-100 bg-slate-50/70">
-                            <div className="w-5 h-5 rounded-md flex items-center justify-center text-[9px] font-bold text-white shrink-0 mt-0.5 bg-black">
-                              {si + 1}
-                            </div>
+                          <div key={si} className="flex items-start gap-2.5 p-2.5 rounded-xl border border-slate-100 bg-slate-50/70 hover:bg-slate-50 transition-colors">
+                            <SourceLogoIcon
+                              source={src}
+                              index={si}
+                              size="md"
+                              className="mt-0.5"
+                            />
                             <div className="flex-1 min-w-0">
                               {src.url ? (
                                 <a href={src.url} target="_blank" rel="noopener noreferrer"
