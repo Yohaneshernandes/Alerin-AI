@@ -145,7 +145,7 @@ function SearchModal({ onClose }: { onClose: () => void }) {
 
   const FILTERS: { id: SearchFilter; label: string }[] = [
     { id: "semua", label: "Semua" },
-    { id: "chat", label: "Chat" },
+    { id: "chat", label: "Obrolan" },
     { id: "dokumen", label: "Dokumen" },
     { id: "proyek", label: "Proyek" },
   ];
