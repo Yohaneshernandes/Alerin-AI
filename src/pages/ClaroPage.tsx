@@ -356,15 +356,13 @@ function Highlight({ text, query }: { text: string; query: string }) {
   );
 }
 
-const RECENT_CHATS = [
-  "Tampilkan Hasil Ujian Bagus",
-  "Ngantuk Setelah Makan Siang",
-  "Simpulan Dan Prompt Figma Make",
-  "Analisis Website Skripsi",
-  "Rangkuman Email QuizLab",
-  "Kepanjangan Lucu Tempat",
-  "Tulisan Kue Ulang Tahun",
-];
+type RiwayatItem = {
+  id: string;
+  title: string;
+  time: string;
+  msgs: ChatMsg[];
+  pinned?: boolean;
+};
 
 const ChatBubbleIcon = () => (
   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round">
@@ -373,11 +371,24 @@ const ChatBubbleIcon = () => (
 );
 
 // ─── Search Modal ─────────────────────────────────────────────────────────────
-function SearchModal({ onClose, onSelect }: { onClose: () => void; onSelect?: (title: string) => void }) {
+function SearchModal({
+  onClose,
+  onSelect,
+  historyItems,
+}: {
+  onClose: () => void;
+  onSelect?: (title: string) => void;
+  historyItems?: RiwayatItem[];
+}) {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<SearchFilter>("semua");
   const inputRef = useRef<HTMLInputElement>(null);
   const hasQuery = query.trim().length > 0;
+
+  // Isi list "Obrolan terbaru" disamakan langsung dengan riwayat obrolan pengguna
+  const recentChats = (historyItems && historyItems.length > 0)
+    ? historyItems.map((h) => h.title)
+    : DEFAULT_RIWAYAT_ITEMS.map((h) => h.title);
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -393,7 +404,21 @@ function SearchModal({ onClose, onSelect }: { onClose: () => void; onSelect?: (t
     { id: "proyek", label: "Proyek" },
   ];
 
-  const filtered = SEARCH_HISTORY.filter((item) => {
+  const chatSearchItems = (historyItems && historyItems.length > 0 ? historyItems : DEFAULT_RIWAYAT_ITEMS).map((item, idx) => ({
+    id: `chat-${item.id || idx}`,
+    type: "chat" as const,
+    title: item.title,
+    snippet: item.msgs?.[0]?.text || item.title,
+    date: item.time || "Terbaru",
+    keyword: "",
+  }));
+
+  const allSearchData = [
+    ...chatSearchItems,
+    ...SEARCH_HISTORY.filter((item) => item.type !== "chat"),
+  ];
+
+  const filtered = allSearchData.filter((item) => {
     const matchFilter = filter === "semua" || item.type === filter;
     const matchQuery = !query.trim() ||
       item.title.toLowerCase().includes(query.toLowerCase()) ||
@@ -452,7 +477,7 @@ function SearchModal({ onClose, onSelect }: { onClose: () => void; onSelect?: (t
         {!hasQuery && (
           <div className="pb-3 pt-1.5 max-h-[60vh] overflow-y-auto [&::-webkit-scrollbar]:hidden" style={{ scrollbarWidth: "none" }}>
             <p className="px-5 pb-2 pt-1 text-xs font-semibold text-slate-400">Obrolan terbaru</p>
-            {RECENT_CHATS.map((title) => (
+            {recentChats.map((title) => (
               <button
                 key={title}
                 type="button"
@@ -598,14 +623,6 @@ Mau aku bantu tentukan mana yang paling cocok untuk topik penelitianmu?`, time: 
     ],
   },
 ];
-
-type RiwayatItem = {
-  id: string;
-  title: string;
-  time: string;
-  msgs: ChatMsg[];
-  pinned?: boolean;
-};
 
 const DEFAULT_RIWAYAT_ITEMS: RiwayatItem[] = [
   {
@@ -3291,6 +3308,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
       {searchOpen && (
         <SearchModal
           onClose={() => setSearchOpen(false)}
+          historyItems={sortedHistoryList}
           onSelect={(title) => {
             const found = historyList.find((h) => h.title.toLowerCase() === title.toLowerCase());
             if (found) {
