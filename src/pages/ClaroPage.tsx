@@ -6898,6 +6898,12 @@ function PercakapanTab({
   }, []);
 
   const handleBubbleTouchStart = useCallback((idx: number, e: React.TouchEvent<HTMLDivElement>) => {
+    let lastUserIdx = -1;
+    for (let k = msgs.length - 1; k >= 0; k--) {
+      if (msgs[k].role === "user") { lastUserIdx = k; break; }
+    }
+    if (idx !== lastUserIdx) return;
+
     const touch = e.touches[0];
     touchStartPosRef.current = { x: touch.clientX, y: touch.clientY };
     if (longPressTimerRef.current) clearTimeout(longPressTimerRef.current);
@@ -6911,7 +6917,7 @@ function PercakapanTab({
       setActiveUserBubbleMenuIdx(idx);
       longPressTimerRef.current = null;
     }, 450);
-  }, []);
+  }, [msgs]);
 
   const handleBubbleTouchMove = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
     if (!touchStartPosRef.current || !longPressTimerRef.current) return;
@@ -6933,6 +6939,12 @@ function PercakapanTab({
 
   const handleBubbleMouseDown = useCallback((idx: number, e: React.MouseEvent<HTMLDivElement>) => {
     if (e.button !== 0) return;
+    let lastUserIdx = -1;
+    for (let k = msgs.length - 1; k >= 0; k--) {
+      if (msgs[k].role === "user") { lastUserIdx = k; break; }
+    }
+    if (idx !== lastUserIdx) return;
+
     touchStartPosRef.current = { x: e.clientX, y: e.clientY };
     if (longPressTimerRef.current) clearTimeout(longPressTimerRef.current);
     const target = e.currentTarget;
@@ -6942,7 +6954,7 @@ function PercakapanTab({
       setActiveUserBubbleMenuIdx(idx);
       longPressTimerRef.current = null;
     }, 450);
-  }, []);
+  }, [msgs]);
 
   const handleBubbleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!touchStartPosRef.current || !longPressTimerRef.current) return;
@@ -6967,10 +6979,16 @@ function PercakapanTab({
       clearTimeout(longPressTimerRef.current);
       longPressTimerRef.current = null;
     }
+    let lastUserIdx = -1;
+    for (let k = msgs.length - 1; k >= 0; k--) {
+      if (msgs[k].role === "user") { lastUserIdx = k; break; }
+    }
+    if (idx !== lastUserIdx) return;
+
     const rect = e.currentTarget.getBoundingClientRect();
     setUserBubbleMenuPlacement(rect.top < 220 ? "bottom" : "top");
     setActiveUserBubbleMenuIdx(idx);
-  }, []);
+  }, [msgs]);
 
   const handleCopyUserMessage = useCallback((text: string) => {
     const cleanText = stripEmoticons(text);
@@ -7712,8 +7730,15 @@ function PercakapanTab({
           )}
 
           <div className="space-y-8">
-        {msgs.map((m, i) => {
-          const isLastAlerin = m.role === "claro" && !m.generating && i === msgs.length - 1;
+            {(() => {
+              const lastUserMsgIdx = msgs
+                .map((msg, idx) => (msg.role === "user" ? idx : -1))
+                .filter((idx) => idx !== -1)
+                .pop() ?? -1;
+
+              return msgs.map((m, i) => {
+                const isLastAlerin = m.role === "claro" && !m.generating && i === msgs.length - 1;
+                const isLatestUserMsg = i === lastUserMsgIdx;
 
           /* ── User message ─────────────────────────────────────── */
           if (m.role === "user") {
@@ -7826,26 +7851,28 @@ function PercakapanTab({
                   <div className="relative inline-block max-w-[80%] md:max-w-[68%]">
                     <div
                       id={`user-bubble-text-${i}`}
-                      onTouchStart={(e) => handleBubbleTouchStart(i, e)}
-                      onTouchMove={handleBubbleTouchMove}
-                      onTouchEnd={handleBubbleTouchEnd}
-                      onTouchCancel={handleBubbleTouchEnd}
-                      onMouseDown={(e) => handleBubbleMouseDown(i, e)}
-                      onMouseMove={handleBubbleMouseMove}
-                      onMouseUp={handleBubbleMouseUp}
-                      onMouseLeave={handleBubbleMouseUp}
-                      onContextMenu={(e) => handleBubbleContextMenu(i, e)}
-                      style={{ WebkitTouchCallout: "none" }}
-                      className={`rounded-2xl rounded-br-sm px-4 py-3 text-[0.9375rem] leading-relaxed text-slate-900 bg-[#EAF2FF] border border-[#BFDBFE]/80 shadow-xs claro-user-bubble select-text cursor-pointer transition-all duration-150 ${
-                        activeUserBubbleMenuIdx === i ? "ring-2 ring-blue-500 shadow-md brightness-95" : "hover:brightness-[0.98]"
+                      onTouchStart={isLatestUserMsg ? (e) => handleBubbleTouchStart(i, e) : undefined}
+                      onTouchMove={isLatestUserMsg ? handleBubbleTouchMove : undefined}
+                      onTouchEnd={isLatestUserMsg ? handleBubbleTouchEnd : undefined}
+                      onTouchCancel={isLatestUserMsg ? handleBubbleTouchEnd : undefined}
+                      onMouseDown={isLatestUserMsg ? (e) => handleBubbleMouseDown(i, e) : undefined}
+                      onMouseMove={isLatestUserMsg ? handleBubbleMouseMove : undefined}
+                      onMouseUp={isLatestUserMsg ? handleBubbleMouseUp : undefined}
+                      onMouseLeave={isLatestUserMsg ? handleBubbleMouseUp : undefined}
+                      onContextMenu={isLatestUserMsg ? (e) => handleBubbleContextMenu(i, e) : undefined}
+                      style={{ WebkitTouchCallout: isLatestUserMsg ? "none" : "default" }}
+                      className={`rounded-2xl rounded-br-sm px-4 py-3 text-[0.9375rem] leading-relaxed text-slate-900 bg-[#EAF2FF] border border-[#BFDBFE]/80 shadow-xs claro-user-bubble select-text transition-all duration-150 ${
+                        isLatestUserMsg
+                          ? `cursor-pointer ${activeUserBubbleMenuIdx === i ? "ring-2 ring-blue-500 shadow-md brightness-95" : "hover:brightness-[0.98]"}`
+                          : "cursor-default"
                       }`}
-                      title="Tahan untuk membuka menu aksi"
+                      title={isLatestUserMsg ? "Tahan untuk membuka menu aksi" : undefined}
                     >
                       {m.text}
                     </div>
 
-                    {/* Pop-up Menu Aksi Bubble Chat (Long-Press) */}
-                    {activeUserBubbleMenuIdx === i && (
+                    {/* Pop-up Menu Aksi Bubble Chat (Long-Press) - Hanya untuk pesan user terbaru */}
+                    {isLatestUserMsg && activeUserBubbleMenuIdx === i && (
                       <>
                         <div
                           className="fixed inset-0 z-40 bg-transparent"
@@ -8199,7 +8226,8 @@ function PercakapanTab({
               </div>
             </div>
           );
-        })}
+        });
+      })()}
         {typing && (
           <div className="flex flex-col gap-2 my-1">
             <div className="hidden md:flex items-center gap-2.5">
@@ -11541,6 +11569,13 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
   const projTouchStartCoordsRef = useRef<{ x: number; y: number } | null>(null);
 
   const handleProjBubbleTouchStart = useCallback((idx: number, e: React.TouchEvent<HTMLDivElement>) => {
+    const chatMsgs = selectedProjectChat?.msgs ?? [];
+    let lastUserIdx = -1;
+    for (let k = chatMsgs.length - 1; k >= 0; k--) {
+      if (chatMsgs[k].role === "user") { lastUserIdx = k; break; }
+    }
+    if (idx !== lastUserIdx) return;
+
     const touch = e.touches[0];
     projTouchStartCoordsRef.current = { x: touch.clientX, y: touch.clientY };
     if (projLongPressTimerRef.current) clearTimeout(projLongPressTimerRef.current);
@@ -11554,7 +11589,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
       setActiveProjUserBubbleIdx(idx);
       projLongPressTimerRef.current = null;
     }, 450);
-  }, []);
+  }, [selectedProjectChat]);
 
   const handleProjBubbleTouchMove = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
     if (!projTouchStartCoordsRef.current || !projLongPressTimerRef.current) return;
@@ -11576,6 +11611,13 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
 
   const handleProjBubbleMouseDown = useCallback((idx: number, e: React.MouseEvent<HTMLDivElement>) => {
     if (e.button !== 0) return;
+    const chatMsgs = selectedProjectChat?.msgs ?? [];
+    let lastUserIdx = -1;
+    for (let k = chatMsgs.length - 1; k >= 0; k--) {
+      if (chatMsgs[k].role === "user") { lastUserIdx = k; break; }
+    }
+    if (idx !== lastUserIdx) return;
+
     projTouchStartCoordsRef.current = { x: e.clientX, y: e.clientY };
     if (projLongPressTimerRef.current) clearTimeout(projLongPressTimerRef.current);
     const target = e.currentTarget;
@@ -11585,7 +11627,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
       setActiveProjUserBubbleIdx(idx);
       projLongPressTimerRef.current = null;
     }, 450);
-  }, []);
+  }, [selectedProjectChat]);
 
   const handleProjBubbleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!projTouchStartCoordsRef.current || !projLongPressTimerRef.current) return;
@@ -11610,10 +11652,17 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
       clearTimeout(projLongPressTimerRef.current);
       projLongPressTimerRef.current = null;
     }
+    const chatMsgs = selectedProjectChat?.msgs ?? [];
+    let lastUserIdx = -1;
+    for (let k = chatMsgs.length - 1; k >= 0; k--) {
+      if (chatMsgs[k].role === "user") { lastUserIdx = k; break; }
+    }
+    if (idx !== lastUserIdx) return;
+
     const rect = e.currentTarget.getBoundingClientRect();
     setProjBubblePlacement(rect.top < 220 ? "bottom" : "top");
     setActiveProjUserBubbleIdx(idx);
-  }, []);
+  }, [selectedProjectChat]);
 
   const handleProjCopyUserMessage = useCallback((text: string) => {
     const cleanText = stripEmoticons(text);
@@ -12677,8 +12726,15 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
 
           {/* Area Pesan Obrolan (Gambar 3 style) */}
           <div className="flex-1 overflow-y-auto px-4 py-4 space-y-6" style={{ scrollbarWidth: "none" }}>
-            {selectedProjectChat.msgs.map((m, idx) => {
-              if (m.role === "user") {
+            {(() => {
+              const lastProjUserIdx = selectedProjectChat.msgs
+                .map((msg, i) => (msg.role === "user" ? i : -1))
+                .filter((i) => i !== -1)
+                .pop() ?? -1;
+
+              return selectedProjectChat.msgs.map((m, idx) => {
+                const isLatestProjUser = idx === lastProjUserIdx;
+                if (m.role === "user") {
                 return (
                   <div key={idx} className="flex flex-col items-end gap-1 relative">
                     {editingProjBubbleIdx === idx ? (
@@ -12734,26 +12790,28 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                       <div className="relative inline-block max-w-[82%]">
                         <div
                           id={`proj-user-bubble-text-${idx}`}
-                          onTouchStart={(e) => handleProjBubbleTouchStart(idx, e)}
-                          onTouchMove={handleProjBubbleTouchMove}
-                          onTouchEnd={handleProjBubbleTouchEnd}
-                          onTouchCancel={handleProjBubbleTouchEnd}
-                          onMouseDown={(e) => handleProjBubbleMouseDown(idx, e)}
-                          onMouseMove={handleProjBubbleMouseMove}
-                          onMouseUp={handleProjBubbleMouseUp}
-                          onMouseLeave={handleProjBubbleMouseUp}
-                          onContextMenu={(e) => handleProjBubbleContextMenu(idx, e)}
-                          style={{ WebkitTouchCallout: "none" }}
-                          className={`rounded-2xl rounded-tr-sm px-4 py-2.5 text-[15px] leading-relaxed text-slate-900 bg-[#EAF2FF] border border-[#BFDBFE]/80 shadow-2xs select-text cursor-pointer transition-all duration-150 ${
-                            activeProjUserBubbleIdx === idx ? "ring-2 ring-blue-500 shadow-md brightness-95" : "hover:brightness-[0.98]"
+                          onTouchStart={isLatestProjUser ? (e) => handleProjBubbleTouchStart(idx, e) : undefined}
+                          onTouchMove={isLatestProjUser ? handleProjBubbleTouchMove : undefined}
+                          onTouchEnd={isLatestProjUser ? handleProjBubbleTouchEnd : undefined}
+                          onTouchCancel={isLatestProjUser ? handleProjBubbleTouchEnd : undefined}
+                          onMouseDown={isLatestProjUser ? (e) => handleProjBubbleMouseDown(idx, e) : undefined}
+                          onMouseMove={isLatestProjUser ? handleProjBubbleMouseMove : undefined}
+                          onMouseUp={isLatestProjUser ? handleProjBubbleMouseUp : undefined}
+                          onMouseLeave={isLatestProjUser ? handleProjBubbleMouseUp : undefined}
+                          onContextMenu={isLatestProjUser ? (e) => handleProjBubbleContextMenu(idx, e) : undefined}
+                          style={{ WebkitTouchCallout: isLatestProjUser ? "none" : "default" }}
+                          className={`rounded-2xl rounded-tr-sm px-4 py-2.5 text-[15px] leading-relaxed text-slate-900 bg-[#EAF2FF] border border-[#BFDBFE]/80 shadow-2xs select-text transition-all duration-150 ${
+                            isLatestProjUser
+                              ? `cursor-pointer ${activeProjUserBubbleIdx === idx ? "ring-2 ring-blue-500 shadow-md brightness-95" : "hover:brightness-[0.98]"}`
+                              : "cursor-default"
                           }`}
-                          title="Tahan untuk membuka menu aksi"
+                          title={isLatestProjUser ? "Tahan untuk membuka menu aksi" : undefined}
                         >
                           {m.text}
                         </div>
 
-                        {/* Pop-up Menu Aksi Bubble Chat (Long-Press) */}
-                        {activeProjUserBubbleIdx === idx && (
+                        {/* Pop-up Menu Aksi Bubble Chat (Long-Press) - Hanya untuk pesan user terbaru */}
+                        {isLatestProjUser && activeProjUserBubbleIdx === idx && (
                           <>
                             <div
                               className="fixed inset-0 z-40 bg-transparent"
@@ -12946,7 +13004,8 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                   </div>
                 </div>
               );
-            })}
+            });
+          })()}
 
             {isGenerating && (
               <div className="py-1">
