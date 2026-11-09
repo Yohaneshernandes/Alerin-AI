@@ -522,19 +522,6 @@ function SearchModal({ onClose, onSelect }: { onClose: () => void; onSelect?: (t
                 ))
               )}
             </div>
-
-            {/* Footer hint */}
-            <div className="px-5 py-2.5 border-t border-slate-100 flex items-center gap-4">
-              <span className="flex items-center gap-1.5 text-[11px] text-slate-400">
-                <kbd className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 font-mono text-[10px]">↑↓</kbd> navigasi
-              </span>
-              <span className="flex items-center gap-1.5 text-[11px] text-slate-400">
-                <kbd className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 font-mono text-[10px]">Enter</kbd> buka
-              </span>
-              <span className="flex items-center gap-1.5 text-[11px] text-slate-400">
-                <kbd className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 font-mono text-[10px]">Esc</kbd> tutup
-              </span>
-            </div>
           </>
         )}
       </div>
