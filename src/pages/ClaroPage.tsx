@@ -346,6 +346,80 @@ function stripEmoticons(str: string): string {
     .replace(/[ \t]{2,}/g, " ");
 }
 
+// ─── Format Markdown Bersih untuk Disalin ke Clipboard ──────────────────────
+// Merapikan teks hasil salinan agar enak dibaca di pesan chat, input, dokumen, atau WhatsApp
+export function cleanMarkdownForCopy(md: string): string {
+  if (!md) return "";
+  let text = stripEmoticons(md);
+
+  // 1. Bersihkan blok kode / files / links
+  text = text.replace(/```(?:files|links)\n([\s\S]*?)```/g, (_m, content) => content.trim());
+  text = text.replace(/```[a-zA-Z0-9_-]*\n([\s\S]*?)```/g, (_m, code) => code.trim());
+  text = text.replace(/```/g, "");
+
+  // 2. Format tabel markdown menjadi baris teks rapi
+  text = text.replace(/^\|?\s*[-:]+[-| :]*\s*\|?$/gm, "");
+  text = text.replace(/^\|(.*)\|$/gm, (_m, row) => {
+    return row.split("|").map((col: string) => col.trim()).filter(Boolean).join("  ·  ");
+  });
+
+  // 3. Bersihkan judul / heading markdown (## Judul -> Judul)
+  text = text.replace(/^#{1,6}\s+(.*)$/gm, "$1");
+
+  // 4. Bersihkan penanda tebal & miring (**teks** / *teks* / __teks__ -> teks)
+  text = text.replace(/\*\*\*(.*?)\*\*\*/g, "$1");
+  text = text.replace(/\*\*(.*?)\*\*/g, "$1");
+  text = text.replace(/__(.*?)__/g, "$1");
+  text = text.replace(/\*([^*\n]+)\*/g, "$1");
+  text = text.replace(/_([^_\n]+)_/g, "$1");
+  text = text.replace(/~~(.*?)~~/g, "$1");
+  text = text.replace(/`([^`\n]+)`/g, "$1");
+
+  // 5. Tautan markdown [Label](url) -> Label (url)
+  text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_m, label, url) => {
+    return label === url ? label : `${label} (${url})`;
+  });
+
+  // 6. Rapikan list / poin bullet (- item atau * item -> • item)
+  text = text.replace(/^[-*]\s+/gm, "• ");
+  text = text.replace(/^(\d+)\.\s*/gm, "$1. ");
+
+  // 7. Bersihkan kutipan blockquote (> teks -> teks)
+  text = text.replace(/^>\s*/gm, "");
+
+  // 8. Normalisasi jarak baris antar paragraf
+  text = text
+    .replace(/[ \t]+$/gm, "")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+
+  return text;
+}
+
+// ─── Render Pesan Pengguna (Mendukung baris baru & styling rapi) ───────────────
+function renderUserMessageContent(text: string) {
+  if (!text) return null;
+  // Parse inline bold **teks** dan *miring* jika pengguna mengirim format markdown
+  const parts = text.split(/(\*\*.*?\*\*|\*.*?\*)/g);
+  return parts.map((part, idx) => {
+    if (part.startsWith("**") && part.endsWith("**") && part.length >= 4) {
+      return (
+        <strong key={idx} className="font-semibold text-slate-950">
+          {part.slice(2, -2)}
+        </strong>
+      );
+    }
+    if (part.startsWith("*") && part.endsWith("*") && part.length >= 2) {
+      return (
+        <em key={idx} className="italic">
+          {part.slice(1, -1)}
+        </em>
+      );
+    }
+    return part;
+  });
+}
+
 // ─── Search data ─────────────────────────────────────────────────────────────
 const SEARCH_HISTORY = [
   { id: 1, type: "chat", title: "Analisis Website Skripsi", snippet: "...mbingan Skripsi Online Class Program dan membandingkannya dengan konsep sis...", date: "27 Agu", keyword: "Skripsi" },
@@ -7176,7 +7250,7 @@ function PercakapanTab({
   }, [msgs]);
 
   const handleCopyUserMessage = useCallback((text: string) => {
-    const cleanText = stripEmoticons(text);
+    const cleanText = cleanMarkdownForCopy(text);
     const fallbackCopy = () => {
       try {
         const textarea = document.createElement("textarea");
@@ -7210,20 +7284,38 @@ function PercakapanTab({
   const [selectingTextModal, setSelectingTextModal] = useState<string | null>(null);
 
   const handleCopyMessage = useCallback((text: string, idx: number) => {
-    const cleanText = stripEmoticons(text);
-    navigator.clipboard.writeText(cleanText).then(() => {
-      setCopiedIdx(idx);
-      showActionToast("Teks respon disalin!");
-      setTimeout(() => setCopiedIdx(null), 2000);
-    });
+    const cleanText = cleanMarkdownForCopy(text);
+    if (navigator?.clipboard?.writeText) {
+      navigator.clipboard.writeText(cleanText).then(() => {
+        setCopiedIdx(idx);
+        showActionToast("Teks respon disalin!");
+        setTimeout(() => setCopiedIdx(null), 2000);
+      });
+    } else {
+      try {
+        const textarea = document.createElement("textarea");
+        textarea.value = cleanText;
+        textarea.style.position = "fixed";
+        textarea.style.left = "-9999px";
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+        setCopiedIdx(idx);
+        showActionToast("Teks respon disalin!");
+        setTimeout(() => setCopiedIdx(null), 2000);
+      } catch {}
+    }
   }, [showActionToast]);
 
   const handleShareMessage = useCallback((text: string) => {
+    const cleanText = cleanMarkdownForCopy(text);
     if (navigator.share) {
-      navigator.share({ title: "Jawaban Alerin AI", text }).catch(() => {});
-    } else {
-      navigator.clipboard.writeText(text).then(() => {
-        showActionToast("Tautan respon disalin!");
+      navigator.share({ title: "Jawaban Alerin AI", text: cleanText }).catch(() => {});
+    } else if (navigator?.clipboard?.writeText) {
+      navigator.clipboard.writeText(cleanText).then(() => {
+        showActionToast("Teks respon disalin!");
       });
     }
   }, [showActionToast]);
@@ -7532,10 +7624,11 @@ function PercakapanTab({
 
   const handleShareUserMessage = useCallback((text: string) => {
     setActiveUserBubbleMenuIdx(null);
+    const cleanText = cleanMarkdownForCopy(text);
     if (typeof navigator !== "undefined" && navigator.share) {
-      navigator.share({ title: "Pesan Saya", text }).catch(() => {});
+      navigator.share({ title: "Pesan Saya", text: cleanText }).catch(() => {});
     } else {
-      navigator.clipboard?.writeText(text).then(() => {
+      navigator.clipboard?.writeText(cleanText).then(() => {
         showActionToast("Tautan / teks pesan disalin!");
       }).catch(() => {
         showActionToast("Pesan disalin!");
@@ -7545,7 +7638,7 @@ function PercakapanTab({
 
   const handleSelectBubbleText = useCallback((idx: number, text: string) => {
     setActiveUserBubbleMenuIdx(null);
-    setSelectingTextModal(text);
+    setSelectingTextModal(cleanMarkdownForCopy(text));
     setTimeout(() => {
       const el = document.getElementById(`user-bubble-text-${idx}`);
       if (el) {
@@ -8063,14 +8156,14 @@ function PercakapanTab({
                       onMouseLeave={isLatestUserMsg ? handleBubbleMouseUp : undefined}
                       onContextMenu={isLatestUserMsg ? (e) => handleBubbleContextMenu(i, e) : undefined}
                       style={{ WebkitTouchCallout: isLatestUserMsg ? "none" : "default" }}
-                      className={`rounded-2xl rounded-br-sm px-4 py-3 text-[0.9375rem] leading-relaxed text-slate-900 bg-[#EAF2FF] border border-[#BFDBFE]/80 shadow-xs claro-user-bubble select-text transition-all duration-150 ${
+                      className={`rounded-2xl rounded-br-sm px-4 py-3 text-[0.9375rem] leading-relaxed text-slate-900 bg-[#EAF2FF] border border-[#BFDBFE]/80 shadow-xs claro-user-bubble select-text transition-all duration-150 whitespace-pre-wrap break-words ${
                         isLatestUserMsg
                           ? `cursor-pointer ${activeUserBubbleMenuIdx === i ? "ring-2 ring-blue-500 shadow-md brightness-95" : "hover:brightness-[0.98]"}`
                           : "cursor-default"
                       }`}
                       title={isLatestUserMsg ? "Tahan untuk membuka menu aksi" : undefined}
                     >
-                      {m.text}
+                      {renderUserMessageContent(m.text)}
                     </div>
 
                     {/* Pop-up Menu Aksi Bubble Chat (Long-Press) - Hanya untuk pesan user terbaru */}
@@ -8643,8 +8736,9 @@ function PercakapanTab({
                     textToCopy = el.value.substring(el.selectionStart, el.selectionEnd);
                     isPartial = true;
                   }
+                  const cleanToCopy = cleanMarkdownForCopy(textToCopy);
                   if (navigator?.clipboard?.writeText) {
-                    navigator.clipboard.writeText(textToCopy).then(() => {
+                    navigator.clipboard.writeText(cleanToCopy).then(() => {
                       showActionToast(isPartial ? "Bagian teks disalin!" : "Teks berhasil disalin!");
                       setSelectingTextModal(null);
                     }).catch(() => {
@@ -11951,7 +12045,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
   }, [selectedProjectChat]);
 
   const handleProjCopyUserMessage = useCallback((text: string) => {
-    const cleanText = stripEmoticons(text);
+    const cleanText = cleanMarkdownForCopy(text);
     const fallbackCopy = () => {
       try {
         const textarea = document.createElement("textarea");
@@ -12031,10 +12125,11 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
 
   const handleProjShareUserMessage = useCallback((text: string) => {
     setActiveProjUserBubbleIdx(null);
+    const cleanText = cleanMarkdownForCopy(text);
     if (typeof navigator !== "undefined" && navigator.share) {
-      navigator.share({ title: "Pesan Saya", text }).catch(() => {});
+      navigator.share({ title: "Pesan Saya", text: cleanText }).catch(() => {});
     } else {
-      navigator.clipboard?.writeText(text).then(() => {
+      navigator.clipboard?.writeText(cleanText).then(() => {
         setToast("Tautan / teks pesan disalin!");
       });
     }
@@ -12042,7 +12137,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
 
   const handleProjSelectBubbleText = useCallback((idx: number, text: string) => {
     setActiveProjUserBubbleIdx(null);
-    setSelectingProjTextModal(text);
+    setSelectingProjTextModal(cleanMarkdownForCopy(text));
     setTimeout(() => {
       const el = document.getElementById(`proj-user-bubble-text-${idx}`);
       if (el) {
@@ -12412,17 +12507,19 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
   }, [selectedProjectChat, updateChatInStateAndStorage]);
 
   const handleProjCopyMessage = useCallback((text: string, idx: number) => {
-    navigator.clipboard?.writeText(text);
+    const cleanText = cleanMarkdownForCopy(text);
+    navigator.clipboard?.writeText(cleanText);
     setProjCopiedIdx(idx);
     setToast("Teks berhasil disalin");
     setTimeout(() => setProjCopiedIdx(null), 1800);
   }, []);
 
   const handleProjShareMessage = useCallback((text: string) => {
+    const cleanText = cleanMarkdownForCopy(text);
     if (navigator.share) {
-      navigator.share({ title: selectedProject?.title || "Alerin", text }).catch(() => {});
+      navigator.share({ title: selectedProject?.title || "Alerin", text: cleanText }).catch(() => {});
     } else {
-      navigator.clipboard?.writeText(text);
+      navigator.clipboard?.writeText(cleanText);
       setToast("Tautan / teks respon disalin!");
     }
   }, [selectedProject]);
@@ -12612,8 +12709,9 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                       textToCopy = el.value.substring(el.selectionStart, el.selectionEnd);
                       isPartial = true;
                     }
+                    const cleanToCopy = cleanMarkdownForCopy(textToCopy);
                     if (navigator?.clipboard?.writeText) {
-                      navigator.clipboard.writeText(textToCopy).then(() => {
+                      navigator.clipboard.writeText(cleanToCopy).then(() => {
                         setToast(isPartial ? "Bagian teks disalin!" : "Teks berhasil disalin!");
                         setSelectingProjTextModal(null);
                       }).catch(() => {
@@ -13324,14 +13422,14 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                           onMouseLeave={isLatestProjUser ? handleProjBubbleMouseUp : undefined}
                           onContextMenu={isLatestProjUser ? (e) => handleProjBubbleContextMenu(idx, e) : undefined}
                           style={{ WebkitTouchCallout: isLatestProjUser ? "none" : "default" }}
-                          className={`rounded-2xl rounded-tr-sm px-4 py-2.5 text-[15px] leading-relaxed text-slate-900 bg-[#EAF2FF] border border-[#BFDBFE]/80 shadow-2xs select-text transition-all duration-150 ${
+                          className={`rounded-2xl rounded-tr-sm px-4 py-2.5 text-[15px] leading-relaxed text-slate-900 bg-[#EAF2FF] border border-[#BFDBFE]/80 shadow-2xs select-text transition-all duration-150 whitespace-pre-wrap break-words ${
                             isLatestProjUser
                               ? `cursor-pointer ${activeProjUserBubbleIdx === idx ? "ring-2 ring-blue-500 shadow-md brightness-95" : "hover:brightness-[0.98]"}`
                               : "cursor-default"
                           }`}
                           title={isLatestProjUser ? "Tahan untuk membuka menu aksi" : undefined}
                         >
-                          {m.text}
+                          {renderUserMessageContent(m.text)}
                         </div>
 
                         {/* Pop-up Menu Aksi Bubble Chat (Long-Press) - Hanya untuk pesan user terbaru */}
