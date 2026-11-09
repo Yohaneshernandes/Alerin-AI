@@ -17,7 +17,7 @@ import PdfViewer from "@/components/PdfViewer";
 type NavTab = "percakapan" | "fitur" | "proyek" | "progress" | "quizlab" | "profil";
 type ChatSource = { title: string; author: string; year: string; url?: string; logo?: string };
 type FeatureKey = "matakuliah" | "parafrase" | "grammar" | "plagiasi" | "jurnal" | "judul" | "quizlab" | "progress" | "ppt" | "simulasi";
-type FeatureRec = { label: string; desc: string; tab?: NavTab; featureKey?: FeatureKey; icon: string; color: string };
+type FeatureRec = { label: string; desc: string; tab?: NavTab; featureKey?: FeatureKey; icon: string; color: string; iconSrc?: string };
 type ChatMsg = {
   role: "user" | "claro";
   text: string;
@@ -1052,10 +1052,10 @@ const FEATURES = [
 ];
 
 const SHORTCUTS = [
-  { icon: "📖", title: "Mata Kuliah", desc: "Pahami materi sulit", color: "#3b82f6", bg: "#eff6ff" },
-  { icon: "📋", title: "Tugas", desc: "Pecah jadi lebih ringan", color: "#8b5cf6", bg: "#f5f3ff" },
-  { icon: "🎓", title: "Skripsi / Tesis", desc: "Dari topik hingga sidang", color: "#059669", bg: "#ecfdf5" },
-  { icon: "💡", title: "Cari Judul", desc: "Temukan arah penelitian", color: "#d97706", bg: "#fffbeb" },
+  { icon: "📖", iconSrc: "/assets/fitur-design/3843e.svg", title: "Mata Kuliah", desc: "Pahami materi sulit", color: "#3b82f6", bg: "#eff6ff" },
+  { icon: "📋", iconSrc: "/assets/fitur-design/f0e9f.svg", title: "Tugas", desc: "Pecah jadi lebih ringan", color: "#8b5cf6", bg: "#eff6ff" },
+  { icon: "🎓", iconSrc: "/assets/fitur-design/52023.svg", title: "Skripsi / Tesis", desc: "Dari topik hingga sidang", color: "#059669", bg: "#eff6ff" },
+  { icon: "💡", iconSrc: "/assets/fitur-design/52023.svg", title: "Cari Judul", desc: "Temukan arah penelitian", color: "#d97706", bg: "#eff6ff" },
 ];
 
 const PROJECTS: { title: string; updated: string; status: string; emoji: string; msgs: ChatMsg[] }[] = [
@@ -1876,45 +1876,78 @@ function SourceLogoIcon({
 const FEATURE_REC_MAP: { pattern: RegExp; rec: FeatureRec }[] = [
   {
     pattern: /parafrase|parafrasa|perbaiki kalimat|ubah kalimat|tulis ulang|rewrite/i,
-    rec: { label: "Parafrase Otomatis", desc: "Ubah dan perbaiki kalimatmu agar lebih akademis secara instan.", tab: "fitur", featureKey: "parafrase", icon: "✍️", color: "#7c3aed" },
+    rec: { label: "Parafrase Otomatis", desc: "Ubah dan perbaiki kalimatmu agar lebih akademis secara instan.", tab: "fitur", featureKey: "parafrase", icon: "✍️", iconSrc: "/assets/fitur-design/bff8f.svg", color: "#2563eb" },
   },
   {
     pattern: /plagiarisme|plagiat|cek kesamaan|similarity/i,
-    rec: { label: "Cek Plagiarisme", desc: "Periksa tingkat kemiripan teks dengan dokumen lain secara akurat.", tab: "fitur", featureKey: "plagiasi", icon: "🔒", color: "#dc2626" },
+    rec: { label: "Cek Plagiarisme", desc: "Periksa tingkat kemiripan teks dengan dokumen lain secara akurat.", tab: "fitur", featureKey: "plagiasi", icon: "🔒", iconSrc: "/assets/fitur-design/7c197.svg", color: "#2563eb" },
   },
   {
     pattern: /grammar|tata bahasa|ejaan|typo|kata baku|eyd|bahasa inggris/i,
-    rec: { label: "Koreksi Grammar", desc: "Perbaiki tata bahasa dan ejaan teks akademismu otomatis.", tab: "fitur", featureKey: "grammar", icon: "📝", color: "#0891b2" },
+    rec: { label: "Koreksi Grammar", desc: "Perbaiki tata bahasa dan ejaan teks akademismu otomatis.", tab: "fitur", featureKey: "grammar", icon: "📝", iconSrc: "/assets/fitur-design/7c197.svg", color: "#2563eb" },
   },
   {
     pattern: /presentasi|ppt|slide|powerpoint/i,
-    rec: { label: "Buat Presentasi PPT", desc: "Generate slide presentasi akademis dari teks atau outline.", tab: "fitur", featureKey: "ppt", icon: "🖼️", color: "#dc2626" },
+    rec: { label: "Buat Presentasi PPT", desc: "Generate slide presentasi akademis dari teks atau outline.", tab: "fitur", featureKey: "ppt", icon: "🖼️", iconSrc: "/assets/fitur-design/d8964.svg", color: "#2563eb" },
   },
   {
     pattern: /simulasi|skema|diagram|flowchart|visualisasi/i,
-    rec: { label: "Simulasi & Visualisasi", desc: "Buat diagram dan visualisasi konsep akademis dengan mudah.", tab: "fitur", featureKey: "simulasi", icon: "🗺️", color: "#059669" },
+    rec: { label: "Simulasi & Visualisasi", desc: "Buat diagram dan visualisasi konsep akademis dengan mudah.", tab: "fitur", featureKey: "simulasi", icon: "🗺️", iconSrc: "/assets/fitur-design/3843e.svg", color: "#2563eb" },
   },
   {
     pattern: /jurnal|referensi|pustaka|sitasi|citation|scopus|daftar pustaka/i,
-    rec: { label: "Cari Jurnal & Referensi", desc: "Temukan jurnal ilmiah dan kelola daftar pustaka otomatis.", tab: "fitur", featureKey: "jurnal", icon: "🔍", color: "#0891b2" },
+    rec: { label: "Cari Jurnal & Referensi", desc: "Temukan jurnal ilmiah dan kelola daftar pustaka otomatis.", tab: "fitur", featureKey: "jurnal", icon: "🔍", iconSrc: "/assets/fitur-design/0a094.svg", color: "#2563eb" },
   },
   {
     pattern: /cari judul|saran judul|ide judul|generate judul|judul skripsi/i,
-    rec: { label: "Generator Judul Skripsi", desc: "Dapatkan saran judul penelitian yang relevan dan spesifik.", tab: "fitur", featureKey: "judul", icon: "💡", color: "#d97706" },
+    rec: { label: "Generator Judul Skripsi", desc: "Dapatkan saran judul penelitian yang relevan dan spesifik.", tab: "fitur", featureKey: "judul", icon: "🎓", iconSrc: "/assets/fitur-design/52023.svg", color: "#2563eb" },
+  },
+  {
+    pattern: /tesis|magister|s2/i,
+    rec: { label: "Alerin Tesis", desc: "Dukungan riset kuantitatif dan kualitatif tingkat magister.", tab: "fitur", icon: "🎖️", iconSrc: "/assets/fitur-design/79ce0.svg", color: "#2563eb" },
+  },
+  {
+    pattern: /disertasi|doktor|s3/i,
+    rec: { label: "Alerin Disertasi", desc: "Validasi novelty riset, kerangka konseptual, dan publikasi jurnal.", tab: "fitur", icon: "📜", iconSrc: "/assets/fitur-design/d8964.svg", color: "#2563eb" },
+  },
+  {
+    pattern: /mata kuliah|matkul|materi kuliah/i,
+    rec: { label: "Alerin Mata Kuliah", desc: "Jelaskan materi dan buat rangkuman serta latihan.", tab: "fitur", featureKey: "matakuliah", icon: "📖", iconSrc: "/assets/fitur-design/3843e.svg", color: "#2563eb" },
+  },
+  {
+    pattern: /tugas kuliah|tugas dosen|bikin tugas/i,
+    rec: { label: "Alerin Tugas Kuliah", desc: "Ikuti instruksi dosen dan buat tugas dengan langkah yang jelas.", tab: "fitur", icon: "📋", iconSrc: "/assets/fitur-design/f0e9f.svg", color: "#2563eb" },
   },
   {
     pattern: /quiz|latihan soal|kuis|soal latihan/i,
-    rec: { label: "QUIZLAB — Latihan Soal", desc: "Buat kuis latihan otomatis dari materi kuliahmu.", tab: "quizlab", icon: "🧪", color: "#059669" },
+    rec: { label: "QUIZLAB — Latihan Soal", desc: "Buat kuis latihan otomatis dari materi kuliahmu.", tab: "quizlab", icon: "🧪", iconSrc: "/assets/fitur-design/f0e9f.svg", color: "#2563eb" },
   },
   {
     pattern: /lacak progress|target deadline|jadwal kuliah|pantau deadline/i,
-    rec: { label: "Lacak Progress Akademik", desc: "Pantau target semester dan deadline akademikmu.", tab: "progress", icon: "📊", color: "#7c3aed" },
+    rec: { label: "Lacak Progress Akademik", desc: "Pantau target semester dan deadline akademikmu.", tab: "progress", icon: "📊", iconSrc: "/assets/fitur-design/f0e9f.svg", color: "#2563eb" },
   },
   {
     pattern: /skripsi saya|bab skripsi|progress skripsi|proyek skripsi|manajemen skripsi/i,
-    rec: { label: "Proyek Skripsi", desc: "Pantau progres bab, deadline, dan catatan skripsimu di satu tempat.", tab: "proyek", icon: "📁", color: "#2563eb" },
+    rec: { label: "Proyek Skripsi", desc: "Pantau progres bab, deadline, dan catatan skripsimu di satu tempat.", tab: "proyek", icon: "🎓", iconSrc: "/assets/fitur-design/52023.svg", color: "#2563eb" },
   },
 ];
+
+function getFeatureIconSrc(rec?: FeatureRec): string | undefined {
+  if (!rec) return undefined;
+  if (rec.iconSrc) return rec.iconSrc;
+  const l = (rec.label || "").toLowerCase();
+  const k = (rec.featureKey || "").toLowerCase();
+  if (l.includes("skripsi") || l.includes("judul") || k === "judul") return "/assets/fitur-design/52023.svg";
+  if (l.includes("jurnal") || k === "jurnal") return "/assets/fitur-design/0a094.svg";
+  if (l.includes("parafrase") || l.includes("parafrasa") || k === "parafrase") return "/assets/fitur-design/bff8f.svg";
+  if (l.includes("plagiarisme") || l.includes("grammar") || l.includes("naskah") || k === "plagiasi" || k === "grammar") return "/assets/fitur-design/7c197.svg";
+  if (l.includes("tesis")) return "/assets/fitur-design/79ce0.svg";
+  if (l.includes("disertasi") || k === "ppt") return "/assets/fitur-design/d8964.svg";
+  if (l.includes("mata kuliah") || k === "matakuliah" || k === "simulasi") return "/assets/fitur-design/3843e.svg";
+  if (l.includes("tugas") || l.includes("quiz") || l.includes("progress")) return "/assets/fitur-design/f0e9f.svg";
+  if (l.includes("chat")) return "/assets/fitur-design/17983.svg";
+  return undefined;
+}
 
 function getFeatureRec(userMsg: string): FeatureRec | undefined {
   for (const { pattern, rec } of FEATURE_REC_MAP) {
@@ -7732,7 +7765,21 @@ function PercakapanTab({
                   return (
                     <button key={s.title} onClick={() => setShortcutModal(sType)}
                       className="flex items-center gap-3 p-4 rounded-2xl bg-white border border-slate-100 hover:border-blue-200 hover:shadow-sm transition-all text-left group">
-                      <div className="w-9 h-9 rounded-xl flex items-center justify-center text-lg shrink-0" style={{ background: s.bg }}>{s.icon}</div>
+                      <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-[#eff6ff] border border-blue-100/60 overflow-hidden">
+                        {s.iconSrc ? (
+                          <img
+                            src={s.iconSrc}
+                            alt=""
+                            className={
+                              s.iconSrc.includes("52023")
+                                ? "w-[18px] h-[15px] object-contain"
+                                : "w-4 h-4 object-contain"
+                            }
+                          />
+                        ) : (
+                          <span className="text-lg">{s.icon}</span>
+                        )}
+                      </div>
                       <div>
                         <p className="text-sm font-bold text-slate-800 group-hover:text-blue-600 transition-colors">{s.title}</p>
                         <p className="text-[11px] text-slate-400">{s.desc}</p>
@@ -8328,13 +8375,30 @@ function PercakapanTab({
                     onClick={() => openFeature(m.featureRec!)}
                     className="mt-4 w-full text-left flex items-center gap-3 px-4 py-3 rounded-2xl border transition-all hover:shadow-md group"
                     style={{ background: "linear-gradient(135deg, #f8faff 0%, #fff 100%)", borderColor: "#dbeafe", boxShadow: "0 1px 6px rgba(59,130,246,0.07)" }}>
-                    <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl shrink-0"
-                      style={{ background: `${m.featureRec.color}15`, border: `1.5px solid ${m.featureRec.color}30` }}>
-                      {m.featureRec.icon}
+                    <div className="w-11 h-11 rounded-2xl bg-[#eff6ff] border border-blue-100 flex items-center justify-center shrink-0 overflow-hidden">
+                      {(() => {
+                        const iconSrc = getFeatureIconSrc(m.featureRec);
+                        if (!iconSrc) {
+                          return <span className="text-lg">{m.featureRec.icon}</span>;
+                        }
+                        if (iconSrc.includes("0a094")) {
+                          return <img src={iconSrc} alt="" className="w-full h-full object-contain" />;
+                        }
+                        if (iconSrc.includes("7c197") || iconSrc.includes("ee1b9")) {
+                          return <img src={iconSrc} alt="" className="w-[19px] h-[23px] object-contain" />;
+                        }
+                        if (iconSrc.includes("52023") || iconSrc.includes("4d2e9")) {
+                          return <img src={iconSrc} alt="" className="w-[20px] h-[17px] object-contain" />;
+                        }
+                        if (iconSrc.includes("bff8f") || iconSrc.includes("377ce")) {
+                          return <img src={iconSrc} alt="" className="w-[18px] h-[16px] object-contain" />;
+                        }
+                        return <img src={iconSrc} alt="" className="w-5 h-5 object-contain" />;
+                      })()}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5 mb-0.5">
-                        <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: m.featureRec.color }}>Fitur Alerin</span>
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600">Fitur Alerin</span>
                         <span className="text-[10px] text-slate-400">· Coba sekarang</span>
                       </div>
                       <p className="text-sm font-bold text-slate-800">{m.featureRec.label}</p>
