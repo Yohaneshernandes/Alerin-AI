@@ -11,6 +11,7 @@ import ParafraseFigmaPanel from "@/components/ParafraseFigmaPanel";
 import CariJurnalFigmaPanel from "@/components/CariJurnalFigmaPanel";
 import FiturLandingFigma from "@/components/FiturLandingFigma";
 import FileContentPreview from "@/components/FileContentPreview";
+import PdfViewer from "@/components/PdfViewer";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type NavTab = "percakapan" | "fitur" | "proyek" | "progress" | "quizlab" | "profil";
@@ -5657,30 +5658,11 @@ function ChatInputBox({
                     />
                   </div>
                 ) : isPdf ? (
-                  <div className="flex-1 w-full h-full relative bg-white flex flex-col">
-                    <iframe
-                      src={selectedPreviewItem.previewUrl}
-                      className="w-full h-full flex-1 border-0 bg-white"
-                      title={selectedPreviewItem.name}
-                      style={{ width: "100%", height: "100%", border: "none" }}
-                    />
-
-                    {/* Floating quick pill for 1-tap open in native phone viewer (bawaan HP) */}
-                    <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 pointer-events-auto">
-                      <button
-                        type="button"
-                        onClick={openInNativeViewer}
-                        className="px-4 py-2.5 rounded-full bg-slate-900/90 hover:bg-slate-900 text-white text-[13px] font-semibold shadow-lg backdrop-blur-md flex items-center gap-2 active:scale-95 transition-all cursor-pointer"
-                      >
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                          <polyline points="15 3 21 3 21 9" />
-                          <line x1="10" y1="14" x2="21" y2="3" />
-                        </svg>
-                        <span>Buka di Bawaan HP / Layar Penuh</span>
-                      </button>
-                    </div>
-                  </div>
+                  <PdfViewer
+                    url={selectedPreviewItem.previewUrl || ""}
+                    fileName={selectedPreviewItem.name}
+                    onOpenNative={openInNativeViewer}
+                  />
                 ) : selectedPreviewItem.file ? (
                   /* Document Viewer Card (PPTX, DOCX, XLSX, CSV, TXT, etc.) */
                   <div className="flex-1 w-full h-full bg-white overflow-y-auto p-4 sm:p-6 flex flex-col items-center">
