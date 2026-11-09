@@ -3943,7 +3943,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
                   onNewChat();
                   setMobileDrawerOpen(false);
                 }}
-                className="w-full h-11 px-5 py-2.5 bg-black hover:bg-neutral-800 active:scale-[0.98] text-white rounded-full shadow-sm flex items-center justify-center gap-2 font-semibold text-sm transition-all cursor-pointer"
+                className="w-full h-11 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white rounded-full shadow-md shadow-blue-600/20 flex items-center justify-center gap-2 font-semibold text-sm transition-all cursor-pointer"
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <span>Obrolan</span>
