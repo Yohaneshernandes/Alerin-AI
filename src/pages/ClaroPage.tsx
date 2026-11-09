@@ -16,6 +16,11 @@ import PdfViewer from "@/components/PdfViewer";
 // ─── Types ────────────────────────────────────────────────────────────────────
 type NavTab = "percakapan" | "fitur" | "proyek" | "progress" | "quizlab" | "profil";
 type ChatSource = { title: string; author: string; year: string; url?: string; logo?: string };
+const DEFAULT_SOURCES: ChatSource[] = [
+  { title: "Google Scholar — Portal Penelusuran Literatur Akademik Global", author: "Google Inc.", year: "2024", url: "https://scholar.google.com" },
+  { title: "SINTA: Science and Technology Index Indonesia", author: "Kemdikbudristek RI", year: "2024", url: "https://sinta.kemdikbud.go.id" },
+  { title: "Scopus: Database Abstrak dan Sitasi Ilmiah Bereputasi", author: "Elsevier", year: "2024", url: "https://www.scopus.com" },
+];
 type FeatureKey = "matakuliah" | "parafrase" | "grammar" | "plagiasi" | "jurnal" | "judul" | "quizlab" | "progress" | "ppt" | "simulasi";
 type FeatureRec = { label: string; desc: string; tab?: NavTab; featureKey?: FeatureKey; icon: string; color: string; iconSrc?: string };
 type ChatMsg = {
@@ -768,6 +773,7 @@ const DEFAULT_RIWAYAT_ITEMS: RiwayatItem[] = [
         role: "claro",
         text: "Tentu! Berikut beberapa ide judul skripsi menarik seputar kecerdasan buatan (AI) yang relevan dan aplikatif.",
         time: "10.01",
+        sources: DEFAULT_SOURCES,
       },
     ],
   },
@@ -785,6 +791,7 @@ const DEFAULT_RIWAYAT_ITEMS: RiwayatItem[] = [
         role: "claro",
         text: "Siap! Berikut rancangan kerangka terstruktur BAB I Pendahuluan untuk skripsimu.",
         time: "09.01",
+        sources: DEFAULT_SOURCES,
       },
     ],
   },
@@ -1769,26 +1776,37 @@ const SOURCE_MAP: { pattern: RegExp; sources: ChatSource[] }[] = [
   { pattern: /TAM|UTAUT|technology acceptance/i, sources: [
     { title: "Perceived Usefulness, Perceived Ease of Use, and User Acceptance of Information Technology", author: "Davis, F.D.", year: "1989", url: "https://doi.org/10.2307/249008" },
     { title: "A Unified Theory of Acceptance and Use of Technology", author: "Venkatesh et al.", year: "2003", url: "https://doi.org/10.2307/30036540" },
+    { title: "A Theoretical Extension of the Technology Acceptance Model: Four Longitudinal Field Studies", author: "Venkatesh, V., & Davis, F.D.", year: "2000", url: "https://doi.org/10.1287/mnsc.46.2.186.11926" },
   ]},
   { pattern: /live shopping|tiktok shop/i, sources: [
     { title: "Live Streaming Commerce and Consumers' Purchase Intention", author: "Sun et al.", year: "2022", url: "https://doi.org/10.1016/j.jretconser.2021.102992" },
     { title: "The Role of Live Streaming in Building Consumer Trust", author: "Wongkitrungrueng & Assarut", year: "2020", url: "https://doi.org/10.1016/j.jbusres.2018.08.032" },
+    { title: "What Drives Live-Stream Usage Intention? The Perspectives of Flow and Social Presence", author: "Chen, C.C., & Lin, Y.C.", year: "2018", url: "https://doi.org/10.1016/j.elerap.2018.05.003" },
   ]},
   { pattern: /metodologi|kuantitatif|survei|kuesioner/i, sources: [
     { title: "Research Design: Qualitative, Quantitative, and Mixed Methods", author: "Creswell, J.W.", year: "2014" },
     { title: "Metode Penelitian Pendidikan: Pendekatan Kuantitatif dan Kualitatif", author: "Sugiyono", year: "2019" },
+    { title: "Research Methods for Business: A Skill Building Approach", author: "Sekaran, U., & Bougie, R.", year: "2016", url: "https://www.wiley.com" },
   ]},
   { pattern: /jurnal|literatur|pustaka|referensi/i, sources: [
-    { title: "Scopus — Database Jurnal Internasional", author: "Elsevier", year: "2024", url: "https://www.scopus.com" },
-    { title: "Google Scholar — Mesin Pencari Akademik", author: "Google", year: "2024", url: "https://scholar.google.com" },
+    { title: "Google Scholar — Mesin Pencari Literatur Akademik", author: "Google", year: "2024", url: "https://scholar.google.com" },
+    { title: "SINTA — Science and Technology Index Indonesia", author: "Kemdikbudristek RI", year: "2024", url: "https://sinta.kemdikbud.go.id" },
+    { title: "Scopus — Database Jurnal Internasional Bereputasi", author: "Elsevier", year: "2024", url: "https://www.scopus.com" },
   ]},
   { pattern: /skripsi|penulisan ilmiah|karya tulis/i, sources: [
     { title: "Panduan Penulisan Skripsi dan Tesis", author: "Kemdikbud RI", year: "2022" },
     { title: "Academic Writing for Graduate Students", author: "Swales & Feak", year: "2012" },
+    { title: "The Craft of Research (Fourth Edition)", author: "Booth, W.C., Colomb, G.G., & Williams, J.M.", year: "2016", url: "https://press.uchicago.edu" },
   ]},
   { pattern: /SEM|SmartPLS|regresi|analisis data/i, sources: [
     { title: "Structural Equation Modeling with AMOS", author: "Byrne, B.M.", year: "2016" },
     { title: "Primer on Partial Least Squares Structural Equation Modeling", author: "Hair et al.", year: "2017" },
+    { title: "Partial Least Squares: Konsep, Teknik dan Aplikasi Menggunakan SmartPLS 3.0", author: "Ghozali, I., & Latan, H.", year: "2015" },
+  ]},
+  { pattern: /kolom|tabel/i, sources: [
+    { title: "Google Scholar — Panduan Format Penyajian Data & Tabel Akademik", author: "Google Scholar", year: "2024", url: "https://scholar.google.com" },
+    { title: "SINTA — Pedoman Penulisan dan Standardisasi Tabel Karya Ilmiah", author: "Kemdikbudristek RI", year: "2023", url: "https://sinta.kemdikbud.go.id" },
+    { title: "Scopus — Guidelines on Tabular Data and Scientific Results Presentation", author: "Elsevier", year: "2023", url: "https://www.scopus.com" },
   ]},
 ];
 
@@ -1805,7 +1823,7 @@ function getSources(userMsg: string, claroBotText: string): ChatSource[] | undef
   for (const { pattern, sources } of SOURCE_MAP) {
     if (pattern.test(combined)) return sources;
   }
-  return undefined;
+  return DEFAULT_SOURCES;
 }
 
 function getAcademicBadge(src: ChatSource, index: number) {
