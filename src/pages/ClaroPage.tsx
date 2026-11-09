@@ -8513,7 +8513,7 @@ function PercakapanTab({
         onClick={() => setSelectingTextModal(null)}
       >
         <div
-          className="w-full max-w-[420px] bg-white rounded-3xl p-5 shadow-2xl border border-slate-100 flex flex-col gap-3.5 animate-[gemini-zoom-in_0.2s_ease-out]"
+          className="w-full max-w-[440px] bg-white rounded-3xl p-5 shadow-2xl border border-slate-100 flex flex-col gap-3.5 animate-[gemini-zoom-in_0.2s_ease-out]"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex items-center justify-between">
@@ -8561,7 +8561,7 @@ function PercakapanTab({
                   target.select();
                 }
               }}
-              className="w-full max-h-[260px] min-h-[120px] p-3 text-sm leading-relaxed text-slate-800 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white select-text cursor-text resize-y font-normal"
+              className="w-full h-[225px] min-h-[180px] max-h-[380px] p-3.5 text-sm leading-relaxed text-slate-800 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white select-text cursor-text resize-y font-normal"
             />
           </div>
 
@@ -12482,7 +12482,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
           onClick={() => setSelectingProjTextModal(null)}
         >
           <div
-            className="w-full max-w-[420px] bg-white rounded-3xl p-5 shadow-2xl border border-slate-100 flex flex-col gap-3.5 animate-[gemini-zoom-in_0.2s_ease-out]"
+            className="w-full max-w-[440px] bg-white rounded-3xl p-5 shadow-2xl border border-slate-100 flex flex-col gap-3.5 animate-[gemini-zoom-in_0.2s_ease-out]"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between">
@@ -12530,7 +12530,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                     target.select();
                   }
                 }}
-                className="w-full max-h-[260px] min-h-[120px] p-3 text-sm leading-relaxed text-slate-800 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white select-text cursor-text resize-y font-normal"
+                className="w-full h-[225px] min-h-[180px] max-h-[380px] p-3.5 text-sm leading-relaxed text-slate-800 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white select-text cursor-text resize-y font-normal"
               />
             </div>
 
