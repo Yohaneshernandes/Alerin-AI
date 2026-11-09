@@ -13109,7 +13109,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                       onClick={() => setSelectedProjectChat(chat)}
                       className="w-full text-left px-2.5 py-1.5 hover:bg-neutral-50 active:bg-neutral-100/70 rounded-xl transition-colors cursor-pointer group block"
                     >
-                      <h3 className="text-[15px] font-semibold text-neutral-900 group-hover:text-blue-600 transition-colors">
+                      <h3 className="text-[15px] font-medium text-neutral-900 group-hover:text-blue-600 transition-colors">
                         {chat.title}
                       </h3>
                       <p className="text-[13.5px] text-neutral-800 font-normal mt-0.5 truncate leading-relaxed">
@@ -13159,7 +13159,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                         {src.type}
                       </div>
                       <div className="min-w-0">
-                        <p className="text-sm font-semibold text-neutral-900 truncate">{src.name}</p>
+                        <p className="text-sm font-medium text-neutral-900 truncate">{src.name}</p>
                         <p className="text-[11px] text-neutral-400">{src.size} · {src.time}</p>
                       </div>
                     </div>
