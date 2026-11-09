@@ -6633,7 +6633,7 @@ function MarkdownRenderer({ text, isStreaming }: { text: string; isStreaming?: b
       elements.push(
         <div
           key={`tbl-${i}`}
-          className={`my-3.5 w-full ${isFitScreen ? "overflow-hidden" : "overflow-x-auto"} select-text`}
+          className={`my-3.5 w-full ${isFitScreen ? "overflow-hidden" : "overflow-x-auto"} select-text rounded-xl border border-neutral-300 bg-white shadow-xs`}
           style={{
             WebkitOverflowScrolling: "touch",
             scrollbarWidth: "none",
@@ -6648,26 +6648,22 @@ function MarkdownRenderer({ text, isStreaming }: { text: string; isStreaming?: b
             }`}
           >
             <thead>
-              <tr className="border-t border-b border-neutral-300 bg-neutral-50/70">
+              <tr className="border-b border-neutral-300 bg-neutral-50/80">
                 {headers.map((h, ci) => {
                   let colWidthClass = "";
                   if (isFitScreen) {
                     if (colCount === 2) {
-                      colWidthClass = ci === 0 ? "w-[36%] sm:w-[32%]" : "w-[64%] sm:w-[68%]";
+                      colWidthClass = ci === 0 ? "w-[35%] sm:w-[32%]" : "w-[65%] sm:w-[68%]";
                     } else if (colCount === 3) {
-                      colWidthClass = ci === 0 ? "w-[24%] sm:w-[22%]" : ci === 1 ? "w-[44%] sm:w-[46%]" : "w-[32%] sm:w-[32%]";
+                      colWidthClass = ci === 0 ? "w-[22%] sm:w-[20%]" : ci === 1 ? "w-[36%] sm:w-[35%]" : "w-[42%] sm:w-[45%]";
                     }
                   }
                   return (
                     <th
                       key={ci}
-                      className={`py-2.5 sm:py-3 text-left font-semibold text-black break-words border-t border-b border-neutral-300 ${colWidthClass} ${
-                        ci === 0
-                          ? "pl-0.5 sm:pl-2 pr-1.5 sm:pr-3"
-                          : ci === colCount - 1
-                          ? "pl-1.5 sm:pl-3 pr-0.5 sm:pr-2"
-                          : "px-1.5 sm:px-3"
-                      } ${!isFitScreen ? "whitespace-nowrap px-4" : ""}`}
+                      className={`py-2.5 sm:py-3 px-2 sm:px-3 text-left font-semibold text-black break-words border-r border-neutral-200/80 last:border-r-0 ${colWidthClass} ${
+                        !isFitScreen ? "whitespace-nowrap px-4" : ""
+                      }`}
                     >
                       {renderInlineMd(cleanMdText(h))}
                     </th>
@@ -6682,18 +6678,16 @@ function MarkdownRenderer({ text, isStreaming }: { text: string; isStreaming?: b
                 return (
                   <tr
                     key={ri}
-                    className={`border-b ${isLastRow ? "border-neutral-300" : "border-neutral-200"} hover:bg-neutral-50/40 transition-colors`}
+                    className={`${!isLastRow ? "border-b border-neutral-200" : ""} hover:bg-neutral-50/40 transition-colors`}
                   >
                     {cells.map((cell, ci) => {
                       return (
                         <td
                           key={ci}
-                          className={`py-2.5 sm:py-3.5 text-black leading-snug sm:leading-relaxed align-top break-words ${isLastRow ? "border-b border-neutral-300" : ""} ${
+                          className={`py-2.5 sm:py-3.5 px-2 sm:px-3 text-black leading-snug sm:leading-relaxed align-top break-words border-r border-neutral-200/70 last:border-r-0 ${
                             ci === 0
-                              ? "pl-0.5 sm:pl-2 pr-1.5 sm:pr-3 font-semibold sm:font-medium"
-                              : ci === colCount - 1
-                              ? "pl-1.5 sm:pl-3 pr-0.5 sm:pr-2"
-                              : "px-1.5 sm:px-3"
+                              ? "font-semibold sm:font-medium text-slate-900"
+                              : "text-slate-800"
                           } ${!isFitScreen ? "min-w-[120px] px-4" : ""}`}
                         >
                           {renderInlineMd(cleanMdText(cell))}
