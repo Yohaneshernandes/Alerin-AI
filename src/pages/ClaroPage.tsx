@@ -6549,7 +6549,7 @@ function MarkdownRenderer({ text, isStreaming }: { text: string; isStreaming?: b
             }`}
           >
             <thead>
-              <tr className="border-b border-neutral-200">
+              <tr className="border-b border-neutral-300">
                 {headers.map((h, ci) => {
                   let colWidthClass = "";
                   if (isFitScreen) {
@@ -6582,7 +6582,7 @@ function MarkdownRenderer({ text, isStreaming }: { text: string; isStreaming?: b
                 return (
                   <tr
                     key={ri}
-                    className="border-b border-neutral-100 last:border-b-0 hover:bg-neutral-50/40 transition-colors"
+                    className="border-b border-neutral-200 last:border-b-0 hover:bg-neutral-50/40 transition-colors"
                   >
                     {cells.map((cell, ci) => {
                       return (
