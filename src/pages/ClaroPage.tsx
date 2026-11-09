@@ -3827,7 +3827,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
                               onClick={() => togglePinRiwayat(item.id)}
                               className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[13px] font-medium text-slate-800 hover:bg-slate-100/70 active:scale-[0.99] transition-all text-left"
                             >
-                              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-black shrink-0">
+                              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-500 shrink-0">
                                 <path d="M9 4v6l-2 4v2h10v-2l-2-4V4" />
                                 <line x1="12" y1="16" x2="12" y2="21" />
                                 <line x1="8" y1="4" x2="16" y2="4" />
