@@ -12996,7 +12996,6 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
           );
           if (found) {
             setSelectedProject(found);
-            setProjectSubTab("obrolan");
             setSelectedProjectChat(null);
           }
         }
@@ -13066,8 +13065,6 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
   const [renameProjectModal, setRenameProjectModal] = useState(false);
   const [renameProjectInput, setRenameProjectInput] = useState("");
   const [deleteProjectConfirm, setDeleteProjectConfirm] = useState(false);
-  const [manageMemoryModal, setManageMemoryModal] = useState(false);
-  const [selectedProjectMemory, setSelectedProjectMemory] = useState(true);
 
   const [renameChatModal, setRenameChatModal] = useState(false);
   const [renameChatInput, setRenameChatInput] = useState("");
@@ -14086,130 +14083,6 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
         </div>
       )}
 
-      {/* ── Modal Kelola Memori Proyek ── */}
-      {manageMemoryModal && selectedProject && (
-        <div
-          className="fixed inset-0 z-[250] flex items-center justify-center p-4 bg-black/45 backdrop-blur-xs select-none animate-[gemini-fade-in_0.15s_ease-out]"
-          onClick={() => setManageMemoryModal(false)}
-        >
-          <div
-            className="w-full max-w-[350px] bg-white rounded-3xl p-5 shadow-2xl border border-neutral-100 flex flex-col gap-4 animate-[gemini-zoom-in_0.2s_ease-out]"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-base font-bold text-neutral-900">Kelola Memori</h3>
-                <p className="text-xs text-neutral-400 mt-0.5">{selectedProject.title}</p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setManageMemoryModal(false)}
-                className="size-8 rounded-full text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 flex items-center justify-center transition-colors cursor-pointer"
-                aria-label="Tutup"
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <line x1="18" y1="6" x2="6" y2="18" />
-                  <line x1="6" y1="6" x2="18" y2="18" />
-                </svg>
-              </button>
-            </div>
-
-            <p className="text-xs text-neutral-500 leading-relaxed">
-              Atur preferensi memori Alerin untuk proyek ini:
-            </p>
-
-            <div className="flex flex-col gap-2.5">
-              {/* Opsi 1: Menggunakan memori Alerin */}
-              <button
-                type="button"
-                onClick={() => setSelectedProjectMemory(true)}
-                className={`w-full text-left p-3.5 rounded-2xl border transition-all flex items-start gap-3 cursor-pointer ${
-                  selectedProjectMemory
-                    ? "border-blue-500 bg-blue-50/60 shadow-xs ring-1 ring-blue-500/20"
-                    : "border-neutral-200 hover:border-neutral-300 hover:bg-neutral-50/70"
-                }`}
-              >
-                <div className={`size-5 rounded-full border flex items-center justify-center mt-0.5 shrink-0 transition-colors ${
-                  selectedProjectMemory ? "border-blue-600 bg-blue-600 text-white" : "border-neutral-300 bg-white"
-                }`}>
-                  {selectedProjectMemory && (
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="20 6 9 17 4 12" />
-                    </svg>
-                  )}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h4 className="text-[13.5px] font-semibold text-neutral-900 leading-snug">
-                    Menggunakan memori Alerin
-                  </h4>
-                  <p className="text-[11.5px] text-neutral-500 leading-relaxed mt-0.5">
-                    Alerin mengingat konteks diskusi dan preferensi dalam proyek ini untuk respon yang lebih akurat.
-                  </p>
-                </div>
-              </button>
-
-              {/* Opsi 2: Tidak menggunakan memori Alerin */}
-              <button
-                type="button"
-                onClick={() => setSelectedProjectMemory(false)}
-                className={`w-full text-left p-3.5 rounded-2xl border transition-all flex items-start gap-3 cursor-pointer ${
-                  !selectedProjectMemory
-                    ? "border-blue-500 bg-blue-50/60 shadow-xs ring-1 ring-blue-500/20"
-                    : "border-neutral-200 hover:border-neutral-300 hover:bg-neutral-50/70"
-                }`}
-              >
-                <div className={`size-5 rounded-full border flex items-center justify-center mt-0.5 shrink-0 transition-colors ${
-                  !selectedProjectMemory ? "border-blue-600 bg-blue-600 text-white" : "border-neutral-300 bg-white"
-                }`}>
-                  {!selectedProjectMemory && (
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="20 6 9 17 4 12" />
-                    </svg>
-                  )}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h4 className="text-[13.5px] font-semibold text-neutral-900 leading-snug">
-                    Tidak menggunakan memori Alerin
-                  </h4>
-                  <p className="text-[11.5px] text-neutral-500 leading-relaxed mt-0.5">
-                    Alerin merespon secara independen tanpa menyimpan atau membaca riwayat memori profil.
-                  </p>
-                </div>
-              </button>
-            </div>
-
-            <div className="flex items-center justify-end gap-2 pt-2 border-t border-neutral-100">
-              <button
-                type="button"
-                onClick={() => setManageMemoryModal(false)}
-                className="flex-1 px-4 py-2.5 rounded-xl text-xs font-semibold text-neutral-600 hover:bg-neutral-100 transition-colors text-center cursor-pointer"
-              >
-                Batal
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  const updated = { ...selectedProject, useMemory: selectedProjectMemory };
-                  setSelectedProject(updated);
-                  const nextProjects = projects.map((p) => (p.id === updated.id ? updated : p));
-                  setProjects(nextProjects);
-                  saveProjects(nextProjects);
-                  setManageMemoryModal(false);
-                  setToast(
-                    selectedProjectMemory
-                      ? `Memori Alerin aktif untuk proyek "${selectedProject.title}"`
-                      : `Memori Alerin dinonaktifkan untuk proyek "${selectedProject.title}"`
-                  );
-                }}
-                className="flex-1 px-4 py-2.5 rounded-xl text-xs font-bold bg-blue-600 text-white hover:bg-blue-700 transition-colors text-center cursor-pointer shadow-xs"
-              >
-                Simpan
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* ── Modal Ganti Nama Obrolan ── */}
       {renameChatModal && (
         <div className="fixed inset-0 z-[250] flex items-center justify-center p-4 bg-black/45 backdrop-blur-xs animate-[gemini-fade-in_0.15s_ease-out]" onClick={() => setRenameChatModal(false)}>
@@ -14348,7 +14221,6 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                   const target = item;
                   setActiveProjectMenu(null);
                   setSelectedProject(target);
-                  setProjectSubTab("obrolan");
                   setSelectedProjectChat(null);
                 }}
                 className="w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl hover:bg-neutral-50 active:bg-neutral-100 transition-all text-left text-[14.5px] font-medium text-neutral-800 cursor-pointer"
@@ -15028,18 +14900,6 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
                       <span>Ganti Nama Proyek</span>
                     </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSelectedProjectMemory(selectedProject.useMemory !== false);
-                        setManageMemoryModal(true);
-                        setProjectMenuOpen(false);
-                      }}
-                      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-neutral-700 hover:bg-neutral-100 transition-colors text-left cursor-pointer"
-                    >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2v20M17 5v14M7 5v14M22 10v4M2 10v4"/></svg>
-                      <span>Kelola Memori</span>
-                    </button>
                     <div className="h-px bg-neutral-100 my-1" />
                     <button
                       type="button"
@@ -15175,7 +15035,6 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                     key={p.id}
                     onClick={() => {
                       setSelectedProject(p);
-                      setProjectSubTab("obrolan");
                       setSelectedProjectChat(null);
                     }}
                     className="project-item-row w-full flex items-center gap-3.5 py-3.5 px-2 hover:bg-neutral-50 active:bg-neutral-100/70 transition-colors text-left group cursor-pointer rounded-2xl"
@@ -15307,7 +15166,6 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                     type="button"
                     onClick={() => {
                       setSelectedProject(p);
-                      setProjectSubTab("obrolan");
                       setSelectedProjectChat(null);
                     }}
                     className="rounded-2xl bg-white border border-slate-100 p-5 hover:border-blue-200 hover:shadow-md transition-all text-left group cursor-pointer"
