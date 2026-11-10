@@ -12965,7 +12965,6 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
   const [searchQuery, setSearchQuery] = useState("");
   const [newProjectOpen, setNewProjectOpen] = useState(false);
   const [projectName, setProjectName] = useState("");
-  const [memoryEnabled, setMemoryEnabled] = useState(true);
   const [toast, setToast] = useState<string | null>(null);
 
   // ── Project Detail & Chat Navigation States (Gambar 2 & Gambar 3) ──
@@ -13327,7 +13326,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
   const sourceFileInputRef = useRef<HTMLInputElement>(null);
 
   const handleCreateProject = () => {
-    const trimmed = projectName.trim().slice(0, 20);
+    const trimmed = projectName.trim().slice(0, 25);
     if (!trimmed) return;
     const newProj: MobileProjectItem = {
       id: `proj-${Date.now()}`,
@@ -13910,82 +13909,101 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
       <input ref={sourceFileInputRef} type="file" accept=".pdf,.doc,.docx,.txt" className="hidden" onChange={handleSourceUpload} />
 
       {/* ── Modal Pop-up 'Buat Proyek' ── */}
-      {newProjectOpen && (
-        <div
-          className="fixed inset-0 z-[250] flex items-center justify-center p-4 bg-black/45 backdrop-blur-xs animate-[gemini-fade-in_0.15s_ease-out]"
-          onClick={() => setNewProjectOpen(false)}
-          role="dialog"
-          aria-modal="true"
-        >
+      {newProjectOpen && (() => {
+        const userPlanInfo = (() => {
+          if (typeof window !== "undefined") {
+            try {
+              const saved = localStorage.getItem("alerin_user_package") || localStorage.getItem("alerin_user_plan");
+              if (saved) {
+                const lower = saved.toLowerCase();
+                if (lower.includes("pro")) return { label: "Pro", limit: 50 };
+                if (lower.includes("plus")) return { label: "Plus", limit: 20 };
+              }
+            } catch {}
+          }
+          return { label: "gratis", limit: 10 };
+        })();
+
+        return (
           <div
-            className="w-full max-w-[340px] bg-white rounded-3xl p-5 shadow-2xl border border-neutral-100 flex flex-col gap-4 animate-[gemini-zoom-in_0.2s_ease-out]"
-            onClick={(e) => e.stopPropagation()}
+            className="fixed inset-0 z-[250] flex items-center justify-center p-4 bg-black/45 backdrop-blur-xs animate-[gemini-fade-in_0.15s_ease-out]"
+            onClick={() => setNewProjectOpen(false)}
+            role="dialog"
+            aria-modal="true"
           >
-            <div className="flex items-center justify-between">
-              <h3 className="text-base font-bold text-neutral-900">Buat Proyek</h3>
-              <button
-                type="button"
-                onClick={() => setNewProjectOpen(false)}
-                className="size-7 rounded-full text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 flex items-center justify-center transition-colors cursor-pointer"
-                aria-label="Tutup"
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
-              </button>
-            </div>
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-xs font-semibold text-neutral-700">Nama Proyek</label>
-                <span className="text-[11px] font-medium text-neutral-400 tabular-nums">
-                  {projectName.length}/20
-                </span>
+            <div
+              className="w-full max-w-[340px] bg-white rounded-3xl p-5 shadow-2xl border border-neutral-100 flex flex-col gap-4 animate-[gemini-zoom-in_0.2s_ease-out]"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between">
+                <h3 className="text-base font-bold text-neutral-900">Buat Proyek</h3>
+                <button
+                  type="button"
+                  onClick={() => setNewProjectOpen(false)}
+                  className="size-7 rounded-full text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 flex items-center justify-center transition-colors cursor-pointer"
+                  aria-label="Tutup"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </button>
               </div>
-              <input
-                type="text"
-                value={projectName}
-                onChange={(e) => setProjectName(capitalizeWords(e.target.value.slice(0, 20)))}
-                autoCapitalize="sentences"
-                autoCorrect="on"
-                spellCheck={false}
-                maxLength={20}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && projectName.trim()) handleCreateProject();
-                  if (e.key === "Escape") setNewProjectOpen(false);
-                }}
-                placeholder="Masukkan nama proyek..."
-                autoFocus
-                className="w-full text-sm text-neutral-800 bg-neutral-50 border border-neutral-200 focus:border-blue-500 focus:bg-white focus:ring-3 focus:ring-blue-100 rounded-xl px-3.5 py-2.5 outline-none transition-all placeholder:text-neutral-400"
-              />
-            </div>
-            <div className="flex items-start justify-between gap-3 pt-1">
-              <div className="flex-1 pr-1">
-                <p className="text-[13px] font-semibold text-neutral-900 leading-snug">Kelola Memori</p>
-                <p className="text-[11px] text-neutral-500 leading-relaxed mt-0.5">Pilih apakah proyek mengambil memori profil pengguna atau tidak.</p>
+
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="block text-xs font-semibold text-neutral-700">Nama Proyek</label>
+                  <span className={`text-[11px] font-medium tabular-nums ${projectName.length >= 25 ? "text-amber-600 font-semibold" : "text-neutral-400"}`}>
+                    {projectName.length}/25
+                  </span>
+                </div>
+                <input
+                  type="text"
+                  value={projectName}
+                  onChange={(e) => setProjectName(capitalizeWords(e.target.value.slice(0, 25)))}
+                  autoCapitalize="sentences"
+                  autoCorrect="on"
+                  spellCheck={false}
+                  maxLength={25}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && projectName.trim()) handleCreateProject();
+                    if (e.key === "Escape") setNewProjectOpen(false);
+                  }}
+                  placeholder="Masukkan nama proyek..."
+                  autoFocus
+                  className="w-full text-sm text-neutral-800 bg-neutral-50 border border-neutral-200 focus:border-[#1A73E8] focus:bg-white focus:ring-3 focus:ring-blue-100 rounded-xl px-3.5 py-2.5 outline-none transition-all placeholder:text-neutral-400"
+                />
               </div>
-              <button
-                type="button"
-                role="switch"
-                aria-checked={memoryEnabled}
-                onClick={() => setMemoryEnabled((prev) => !prev)}
-                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                  memoryEnabled ? "bg-neutral-900" : "bg-neutral-200"
-                }`}
-              >
-                <span className={`pointer-events-none inline-block size-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${memoryEnabled ? "translate-x-5" : "translate-x-0"}`} />
-              </button>
-            </div>
-            <p className="text-[11px] text-neutral-500 leading-relaxed -mt-1">Setiap proyek gratis menyimpan hingga 10 riwayat.</p>
-            <div className="rounded-xl bg-neutral-50 p-2.5 border border-neutral-100">
-              <p className="text-[11px] text-neutral-600 font-medium">
-                Batas Proyek: <span className="font-bold text-neutral-800">Gratis (10)</span>, <span className="font-bold text-neutral-800">Plus (20)</span>, <span className="font-bold text-neutral-800">Pro (50)</span>
+
+              <p className="text-xs text-neutral-500 leading-relaxed -mt-1">
+                Setiap proyek {userPlanInfo.label} menyimpan hingga {userPlanInfo.limit} riwayat.
               </p>
-            </div>
-            <div className="flex items-center justify-end gap-2 pt-2 border-t border-neutral-100">
-              <button type="button" onClick={() => setNewProjectOpen(false)} className="flex-1 px-4 py-2.5 rounded-xl text-xs font-semibold text-neutral-600 hover:bg-neutral-100 transition-colors cursor-pointer text-center">Batal</button>
-              <button type="button" disabled={!projectName.trim()} onClick={handleCreateProject} className="flex-1 px-4 py-2.5 rounded-xl text-xs font-bold bg-neutral-900 hover:bg-neutral-800 text-white shadow-xs transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 text-center">Buat</button>
+
+              <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-neutral-100">
+                <button
+                  type="button"
+                  onClick={() => setNewProjectOpen(false)}
+                  className="flex-1 px-4 py-2.5 rounded-xl text-xs font-semibold text-neutral-600 hover:bg-neutral-100 active:bg-neutral-200 transition-colors cursor-pointer text-center"
+                >
+                  Batal
+                </button>
+                <button
+                  type="button"
+                  disabled={!projectName.trim()}
+                  onClick={handleCreateProject}
+                  className={`flex-1 px-4 py-2.5 rounded-xl text-xs font-bold transition-all text-center shadow-xs cursor-pointer ${
+                    projectName.trim()
+                      ? "bg-[#1A73E8] hover:bg-[#1557b0] text-white active:scale-95"
+                      : "bg-[#E2E8F0] text-[#94A3B8] cursor-not-allowed"
+                  }`}
+                >
+                  Buat
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* ── Modal Ganti Nama Proyek (gaya identik pop up riwayat) ── */}
       {renameProjectModal && (
