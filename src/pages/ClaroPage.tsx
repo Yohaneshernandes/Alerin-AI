@@ -660,7 +660,13 @@ function SearchModal({
         if (saved) {
           const parsed = JSON.parse(saved);
           if (Array.isArray(parsed) && parsed.length > 0) {
-            projs = parsed;
+            projs = parsed.filter(
+              (p: any) =>
+                p.id !== "proj-shared-1" &&
+                p.id !== "proj-shared-2" &&
+                p.title?.toLowerCase() !== "pekerjaan kantor" &&
+                p.title?.toLowerCase() !== "caption"
+            );
           }
         }
       } catch {}
@@ -679,8 +685,6 @@ function SearchModal({
       { id: "proj-1", title: "Pekerjaan Rumah", time: "1 hari yang lalu" },
       { id: "proj-5", title: "Skripsi Live Shopping", time: "2 hari yang lalu" },
       { id: "proj-6", title: "Persiapan UAS", time: "3 hari yang lalu" },
-      { id: "proj-shared-2", title: "Pekerjaan kantor", time: "3 minggu yang lalu" },
-      { id: "proj-shared-1", title: "Caption", time: "1 bulan yang lalu" },
     ];
     const existingTitles = new Set(projs.map((p) => p.title.toLowerCase()));
     for (const d of defaults) {
@@ -12744,36 +12748,6 @@ const DEFAULT_MOBILE_PROJECTS: MobileProjectItem[] = [
     iconType: "folder",
     msgs: PROJECTS[2]?.msgs,
   },
-  {
-    id: "proj-shared-2",
-    title: "Pekerjaan kantor",
-    time: "3 minggu yang lalu",
-    updatedAt: 1729300000000,
-    category: "dibagikan",
-    members: 9,
-    pastelBg: "bg-[#F2F4F7]",
-    iconColor: "text-neutral-900",
-    iconType: "folder",
-    msgs: [
-      { role: "user", text: "Halo tim Pekerjaan kantor, ada dokumen SOP dan laporan yang perlu ditinjau.", time: "09.00" },
-      { role: "claro", text: "Alerin siap membantu mereview dokumen dan menyusun ringkasan pekerjaan kantor untuk tim.", time: "09.02" },
-    ],
-  },
-  {
-    id: "proj-shared-1",
-    title: "Caption",
-    time: "1 bulan yang lalu",
-    updatedAt: 1728500000000,
-    category: "dibagikan",
-    members: 2,
-    pastelBg: "bg-[#F2F4F7]",
-    iconColor: "text-neutral-900",
-    iconType: "folder",
-    msgs: [
-      { role: "user", text: "Halo tim, mari diskusikan caption kampanye media sosial terbaru.", time: "14.00" },
-      { role: "claro", text: "Siap! Kirimkan tema atau draft caption yang ingin kita optimasi bersama.", time: "14.01" },
-    ],
-  },
 ];
 
 function ProjectIcon({
@@ -12921,30 +12895,6 @@ const DEFAULT_PROJECT_CHATS: Record<string, ProjectChatItem[]> = {
       ],
     },
   ],
-  "proj-shared-1": [
-    {
-      id: "pchat-cap-1",
-      title: "Ide Konten & Caption Peluncuran",
-      lastSnippet: "Berikut 5 ide caption kreatif untuk promosi produk baru...",
-      time: "1 bulan lalu",
-      msgs: [
-        { role: "user", text: "Buatkan ide caption menarik untuk rilis produk baru di Instagram.", time: "14.00" },
-        { role: "claro", text: "Berikut 5 ide caption kreatif dengan hook yang kuat, storytelling singkat, dan call-to-action yang memikat calon pelanggan.", time: "14.02" },
-      ],
-    },
-  ],
-  "proj-shared-2": [
-    {
-      id: "pchat-pk-1",
-      title: "Koordinasi Laporan & SOP Tim",
-      lastSnippet: "Draft rangkuman SOP operasional kantor telah siap...",
-      time: "3 minggu lalu",
-      msgs: [
-        { role: "user", text: "Rangkum poin-poin revisi SOP operasional dan laporan mingguan tim.", time: "09.00" },
-        { role: "claro", text: "Draft rangkuman SOP operasional kantor telah siap dengan pembagian tugas anggota dan target mingguan.", time: "09.03" },
-      ],
-    },
-  ],
 };
 
 const DEFAULT_PROJECT_SOURCES: Record<string, ProjectSourceItem[]> = {
@@ -12955,12 +12905,6 @@ const DEFAULT_PROJECT_SOURCES: Record<string, ProjectSourceItem[]> = {
   "proj-4": [
     { id: "src-3", name: "Buku_Metode_Penelitian_Kuantitatif.pdf", type: "PDF", size: "3.2 MB", time: "Hari ini" },
   ],
-  "proj-shared-1": [
-    { id: "src-cap-1", name: "Brand_Guidelines_Copywriting.pdf", type: "PDF", size: "2.1 MB", time: "1 bulan yang lalu" },
-  ],
-  "proj-shared-2": [
-    { id: "src-pk-1", name: "SOP_Operasional_Kantor_2026.pdf", type: "PDF", size: "3.5 MB", time: "3 minggu yang lalu" },
-  ],
 };
 
 function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpenHistory: (msgs: ChatMsg[]) => void }) {
@@ -12970,24 +12914,21 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
       const saved = localStorage.getItem("alerin_user_projects");
       if (saved) {
         const parsed: MobileProjectItem[] = JSON.parse(saved);
-        // Hapus folder "Pak Agik" lama dan replace dengan "Pekerjaan kantor"
+        // Hapus folder "Pak Agik", "Pekerjaan kantor", dan "Caption"
         let filtered = parsed.filter(
-          (p) => p.title !== "Pak Agik" && p.id !== "proj-2" && p.id !== "proj-3"
+          (p) =>
+            p.title !== "Pak Agik" &&
+            p.id !== "proj-2" &&
+            p.id !== "proj-3" &&
+            p.id !== "proj-shared-1" &&
+            p.id !== "proj-shared-2" &&
+            p.title?.toLowerCase() !== "pekerjaan kantor" &&
+            p.title?.toLowerCase() !== "caption"
         );
         // Pastikan Proyek Riset Yohanes ada
         if (!filtered.some((p) => p.title.toLowerCase().includes("yohanes"))) {
           const y = DEFAULT_MOBILE_PROJECTS.find((p) => p.id === "proj-yohanes");
           if (y) filtered.unshift(y);
-        }
-        // Pastikan Caption ada
-        if (!filtered.some((p) => p.title.toLowerCase() === "caption")) {
-          const c = DEFAULT_MOBILE_PROJECTS.find((p) => p.title.toLowerCase() === "caption");
-          if (c) filtered.push(c);
-        }
-        // Pastikan Pekerjaan kantor ada
-        if (!filtered.some((p) => p.title.toLowerCase() === "pekerjaan kantor")) {
-          const pk = DEFAULT_MOBILE_PROJECTS.find((p) => p.title.toLowerCase() === "pekerjaan kantor");
-          if (pk) filtered.push(pk);
         }
         // Pastikan semua proyek menggunakan folder hitam konsisten dan diurutkan sesuai tanggal diubah
         const normalized = filtered
@@ -13021,7 +12962,6 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
     } catch {}
   };
 
-  const [activeFilterTab, setActiveFilterTab] = useState<"semua" | "dibuat" | "dibagikan">("dibuat");
   const [searchQuery, setSearchQuery] = useState("");
   const [newProjectOpen, setNewProjectOpen] = useState(false);
   const [projectName, setProjectName] = useState("");
@@ -13809,8 +13749,6 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
 
   const filteredProjects = projects
     .filter((p) => {
-      if (activeFilterTab === "dibuat" && p.category !== "dibuat") return false;
-      if (activeFilterTab === "dibagikan" && p.category !== "dibagikan") return false;
       if (searchQuery.trim()) {
         return p.title.toLowerCase().includes(searchQuery.trim().toLowerCase());
       }
@@ -15284,43 +15222,6 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                 </svg>
               </button>
             </header>
-
-            {/* Filter / Tab Navigasi (Dibuat oleh Anda aktif secara default) */}
-            <div className="shrink-0 flex items-center gap-2 px-4 py-2 overflow-x-auto select-none" style={{ scrollbarWidth: "none" }}>
-              <button
-                type="button"
-                onClick={() => setActiveFilterTab("semua")}
-                className={`px-4 py-2 rounded-full text-sm transition-all cursor-pointer whitespace-nowrap ${
-                  activeFilterTab === "semua"
-                    ? "bg-[#F2F4F7] text-neutral-900 font-semibold"
-                    : "text-neutral-500 hover:text-neutral-900 font-medium"
-                }`}
-              >
-                Semua
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveFilterTab("dibuat")}
-                className={`px-4 py-2 rounded-full text-sm transition-all cursor-pointer whitespace-nowrap ${
-                  activeFilterTab === "dibuat"
-                    ? "bg-[#F2F4F7] text-neutral-900 font-semibold"
-                    : "text-neutral-500 hover:text-neutral-900 font-medium"
-                }`}
-              >
-                Dibuat oleh Anda
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveFilterTab("dibagikan")}
-                className={`px-4 py-2 rounded-full text-sm transition-all cursor-pointer whitespace-nowrap ${
-                  activeFilterTab === "dibagikan"
-                    ? "bg-[#F2F4F7] text-neutral-900 font-semibold"
-                    : "text-neutral-500 hover:text-neutral-900 font-medium"
-                }`}
-              >
-                Dibagikan ke...
-              </button>
-            </div>
 
             {/* Project List (scrolls smoothly behind floating search bar) */}
             <div className="flex-1 overflow-y-auto px-4 pt-2 pb-28 divide-y divide-neutral-100/60" style={{ scrollbarWidth: "none" }}>
