@@ -3751,6 +3751,18 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
     } catch {}
     return sortPinnedRiwayat(DEFAULT_RIWAYAT_ITEMS);
   });
+  const [activeHistoryId, setActiveHistoryId] = useState<string | null>(() => {
+    try {
+      const saved = localStorage.getItem("alerin_active_history_id");
+      if (saved) return saved;
+      const savedList = localStorage.getItem("alerin_mobile_riwayat");
+      if (savedList) {
+        const parsed = JSON.parse(savedList);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed[0].id;
+      }
+    } catch {}
+    return "rw-u1";
+  });
   const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState("");
@@ -3817,6 +3829,10 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
       saveRiwayatToStorage(next);
       return next;
     });
+    if (activeHistoryId === id) {
+      setActiveHistoryId(null);
+      try { localStorage.removeItem("alerin_active_history_id"); } catch {}
+    }
     showToast("Riwayat percakapan telah dihapus");
   };
 
@@ -3851,6 +3867,8 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
             ? [item, ...remaining.filter((x) => x.pinned), ...remaining.filter((x) => !x.pinned)]
             : [...remaining.filter((x) => x.pinned), item, ...remaining.filter((x) => !x.pinned)];
           saveRiwayatToStorage(next);
+          setActiveHistoryId(item.id);
+          try { localStorage.setItem("alerin_active_history_id", item.id); } catch {}
           return next;
         }
         const newItem: RiwayatItem = {
@@ -3868,6 +3886,8 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
           ...prev.filter((x) => !x.pinned),
         ];
         saveRiwayatToStorage(next);
+        setActiveHistoryId(newItem.id);
+        try { localStorage.setItem("alerin_active_history_id", newItem.id); } catch {}
         return next;
       });
     };
@@ -3943,6 +3963,8 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
             }
             const found = historyList.find((h) => h.title.toLowerCase() === title.toLowerCase());
             if (found) {
+              setActiveHistoryId(found.id);
+              try { localStorage.setItem("alerin_active_history_id", found.id); } catch {}
               onTab("percakapan");
               setMobileDrawerOpen(false);
               onOpenHistory(found.msgs);
@@ -4218,78 +4240,92 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
               <div className="pt-1">
                 <div className="text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-2 px-1">Riwayat</div>
                 <div className="space-y-1 overflow-y-auto max-h-[48vh] pr-1">
-                  {(expandedHistory ? sortedHistoryList : sortedHistoryList.slice(0, 7)).map((item) => (
-                    <div
-                      key={item.id}
-                      className="relative flex items-center justify-between rounded-xl px-1.5 py-1 hover:bg-slate-50 transition-colors group"
-                    >
-                      {editingId === item.id ? (
-                        <div className="flex items-center gap-1.5 flex-1 min-w-0 pr-1">
-                          <input
-                            type="text"
-                            maxLength={20}
-                            value={editTitle}
-                            onChange={(e) => setEditTitle(capitalizeWords(e.target.value.slice(0, 20)))}
-                            autoCapitalize="sentences"
-                            autoCorrect="on"
-                            spellCheck={false}
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter") saveRename(item.id);
-                              if (e.key === "Escape") setEditingId(null);
-                            }}
-                            autoFocus
-                            className="w-full text-[14px] text-slate-800 bg-white border border-blue-400 rounded-lg px-2 py-1 outline-none shadow-xs"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => saveRename(item.id)}
-                            aria-label="Simpan"
-                            className="size-7 rounded-lg bg-blue-600 text-white flex items-center justify-center shrink-0 hover:bg-blue-700 transition-colors"
-                          >
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setEditingId(null)}
-                            aria-label="Batal"
-                            className="size-7 rounded-lg border border-slate-200 text-slate-500 flex items-center justify-center shrink-0 hover:bg-slate-100 transition-colors"
-                          >
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                          </button>
-                        </div>
-                      ) : (
-                        <>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              onTab("percakapan");
-                              setMobileDrawerOpen(false);
-                              onOpenHistory(item.msgs);
-                            }}
-                            className="flex-1 text-left text-neutral-800 text-[15px] font-normal leading-relaxed truncate hover:text-blue-600 transition-colors pr-2 flex items-center gap-1.5"
-                          >
-                            {item.pinned && (
-                              <span title="Disematkan" className="inline-flex shrink-0 text-black">
-                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-black">
-                                  <path d="M9 4v6l-2 4v2h10v-2l-2-4V4" />
-                                  <line x1="12" y1="16" x2="12" y2="21" />
-                                  <line x1="8" y1="4" x2="16" y2="4" />
-                                </svg>
-                              </span>
-                            )}
-                            <span className="truncate">{item.title}</span>
-                          </button>
-                          
-                          {/* 3 dots menu button */}
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setMenuOpenId(menuOpenId === item.id ? null : item.id);
-                            }}
-                            aria-label={`Menu riwayat ${item.title}`}
-                            className="size-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors shrink-0"
-                          >
+                  {(expandedHistory ? sortedHistoryList : sortedHistoryList.slice(0, 7)).map((item) => {
+                    const isActive = activeHistoryId === item.id;
+                    return (
+                      <div
+                        key={item.id}
+                        className={`relative flex items-center justify-between rounded-xl px-2 py-1 transition-all group ${
+                          isActive
+                            ? "bg-slate-100/90 text-slate-900"
+                            : "hover:bg-slate-50 text-neutral-800"
+                        }`}
+                      >
+                        {editingId === item.id ? (
+                          <div className="flex items-center gap-1.5 flex-1 min-w-0 pr-1">
+                            <input
+                              type="text"
+                              maxLength={20}
+                              value={editTitle}
+                              onChange={(e) => setEditTitle(capitalizeWords(e.target.value.slice(0, 20)))}
+                              autoCapitalize="sentences"
+                              autoCorrect="on"
+                              spellCheck={false}
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") saveRename(item.id);
+                                if (e.key === "Escape") setEditingId(null);
+                              }}
+                              autoFocus
+                              className="w-full text-[14px] text-slate-800 bg-white border border-blue-400 rounded-lg px-2 py-1 outline-none shadow-xs"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => saveRename(item.id)}
+                              aria-label="Simpan"
+                              className="size-7 rounded-lg bg-blue-600 text-white flex items-center justify-center shrink-0 hover:bg-blue-700 transition-colors"
+                            >
+                              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setEditingId(null)}
+                              aria-label="Batal"
+                              className="size-7 rounded-lg border border-slate-200 text-slate-500 flex items-center justify-center shrink-0 hover:bg-slate-100 transition-colors"
+                            >
+                              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                            </button>
+                          </div>
+                        ) : (
+                          <>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setActiveHistoryId(item.id);
+                                try { localStorage.setItem("alerin_active_history_id", item.id); } catch {}
+                                onTab("percakapan");
+                                setMobileDrawerOpen(false);
+                                onOpenHistory(item.msgs);
+                              }}
+                              className={`flex-1 text-left text-[15px] leading-relaxed truncate transition-colors pr-2 flex items-center gap-1.5 ${
+                                isActive ? "text-slate-900 font-semibold" : "text-neutral-800 hover:text-blue-600 font-normal"
+                              }`}
+                            >
+                              {item.pinned && (
+                                <span title="Disematkan" className="inline-flex shrink-0 text-black">
+                                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-black">
+                                    <path d="M9 4v6l-2 4v2h10v-2l-2-4V4" />
+                                    <line x1="12" y1="16" x2="12" y2="21" />
+                                    <line x1="8" y1="4" x2="16" y2="4" />
+                                  </svg>
+                                </span>
+                              )}
+                              <span className="truncate">{item.title}</span>
+                            </button>
+                            
+                            {/* 3 dots menu button */}
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setMenuOpenId(menuOpenId === item.id ? null : item.id);
+                              }}
+                              aria-label={`Menu riwayat ${item.title}`}
+                              className={`size-7 rounded-lg flex items-center justify-center transition-colors shrink-0 ${
+                                isActive
+                                  ? "text-slate-500 hover:text-slate-800 hover:bg-slate-200/60"
+                                  : "text-slate-400 hover:text-slate-700 hover:bg-slate-200/60"
+                              }`}
+                            >
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                               <circle cx="12" cy="12" r="1.5"/>
                               <circle cx="19" cy="12" r="1.5"/>
@@ -4373,7 +4409,8 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
                         </>
                       )}
                     </div>
-                  ))}
+                  );
+                })}
                   {/* Skeleton loading matching Gambar 2 when "Lihat selengkapnya" is clicked */}
                   {isLoadingMoreHistory && (
                     <div className="space-y-3 py-2.5 px-1.5 animate-pulse">
@@ -4422,6 +4459,8 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
               <button
                 type="button"
                 onClick={() => {
+                  setActiveHistoryId(null);
+                  try { localStorage.removeItem("alerin_active_history_id"); } catch {}
                   onNewChat();
                   setMobileDrawerOpen(false);
                 }}
