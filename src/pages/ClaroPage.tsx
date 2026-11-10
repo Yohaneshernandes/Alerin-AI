@@ -4476,10 +4476,26 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
   const [renameModalItem, setRenameModalItem] = useState<{ id: string; title: string } | null>(null);
   const [renameInput, setRenameInput] = useState("");
   const [moveToProjectItem, setMoveToProjectItem] = useState<{ id: string; title: string } | null>(null);
+  const moveProjectListRef = useRef<HTMLDivElement>(null);
   const [deleteConfirmItem, setDeleteConfirmItem] = useState<{ id: string; title: string } | null>(null);
   const [selectedProjectId, setSelectedProjectId] = useState<string>("proj-1");
   const [expandedHistory, setExpandedHistory] = useState(false);
   const [isLoadingMoreHistory, setIsLoadingMoreHistory] = useState(false);
+
+  const MOVE_TO_PROJECT_FOLDERS = [
+    { id: "proj-1", name: "Metodologi Penelitian" },
+    { id: "proj-2", name: "Skripsi Live Shopping" },
+    { id: "proj-3", name: "Tugas Analisis Data" },
+    { id: "proj-4", name: "Persiapan UAS" },
+    { id: "proj-5", name: "Pekerjaan Rumah" },
+    { id: "proj-6", name: "Proyek Riset Skripsi" },
+  ];
+
+  useEffect(() => {
+    if (moveToProjectItem && moveProjectListRef.current) {
+      moveProjectListRef.current.scrollTop = 0;
+    }
+  }, [moveToProjectItem]);
 
   const sortedHistoryList = useMemo(() => {
     return sortPinnedRiwayat(historyList);
@@ -5370,7 +5386,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
       {/* Modal Pindahkan ke Proyek */}
       {moveToProjectItem && (
         <div
-          className="fixed inset-0 z-[250] flex items-center justify-center p-4 bg-black/45 backdrop-blur-xs animate-[gemini-fade-in_0.15s_ease-out]"
+          className="fixed inset-0 z-[250] flex items-center justify-center p-4 bg-black/45 backdrop-blur-xs overscroll-contain animate-[gemini-fade-in_0.15s_ease-out]"
           onClick={() => setMoveToProjectItem(null)}
         >
           <div
@@ -5398,27 +5414,26 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
               </button>
             </div>
 
-            <div>
+            <div className="min-w-0">
               <p className="text-xs text-slate-500 mb-2.5">
                 Pilih proyek tujuan untuk <span className="font-semibold text-slate-700 font-['Inter:Medium']">"{moveToProjectItem.title}"</span>:
               </p>
 
-              <div className="space-y-1.5 max-h-[193px] overflow-y-auto pr-1 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-slate-200 [&::-webkit-scrollbar-thumb]:rounded-full">
-                {[
-                  { id: "proj-1", name: "Metodologi Penelitian" },
-                  { id: "proj-2", name: "Skripsi Live Shopping" },
-                  { id: "proj-3", name: "Tugas Analisis Data" },
-                  { id: "proj-4", name: "Persiapan UAS" },
-                  { id: "proj-5", name: "Pekerjaan Rumah" },
-                  { id: "proj-6", name: "Proyek Riset Skripsi" },
-                ].map((proj) => {
+              <div
+                ref={moveProjectListRef}
+                onTouchStart={(e) => e.stopPropagation()}
+                onTouchMove={(e) => e.stopPropagation()}
+                style={{ WebkitOverflowScrolling: "touch", overscrollBehaviorY: "contain" }}
+                className="flex flex-col gap-1.5 h-[196px] max-h-[45vh] overflow-y-auto overflow-x-hidden overscroll-contain touch-pan-y py-0.5 pr-1.5 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-slate-300 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent"
+              >
+                {MOVE_TO_PROJECT_FOLDERS.map((proj) => {
                   const isChosen = selectedProjectId === proj.id;
                   return (
                     <button
                       key={proj.id}
                       type="button"
                       onClick={() => setSelectedProjectId(proj.id)}
-                      className={`w-full h-[50px] shrink-0 flex items-center gap-3 px-3 py-2 rounded-xl border text-left transition-all ${
+                      className={`w-full h-[50px] shrink-0 flex items-center gap-3 px-3 py-2 rounded-xl border text-left transition-colors ${
                         isChosen
                           ? "border-neutral-900 bg-neutral-50/70"
                           : "border-slate-100 hover:border-slate-200 hover:bg-slate-50"
@@ -5456,15 +5471,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
               <button
                 type="button"
                 onClick={() => {
-                  const targetFolders = [
-                    { id: "proj-1", name: "Metodologi Penelitian" },
-                    { id: "proj-2", name: "Skripsi Live Shopping" },
-                    { id: "proj-3", name: "Tugas Analisis Data" },
-                    { id: "proj-4", name: "Persiapan UAS" },
-                    { id: "proj-5", name: "Pekerjaan Rumah" },
-                    { id: "proj-6", name: "Proyek Riset Skripsi" },
-                  ];
-                  const target = targetFolders.find((p) => p.id === selectedProjectId);
+                  const target = MOVE_TO_PROJECT_FOLDERS.find((p) => p.id === selectedProjectId);
                   const projName = target ? target.name : "Proyek";
                   showToast(`Percakapan berhasil dipindahkan ke ${projName}`);
                   setMoveToProjectItem(null);
