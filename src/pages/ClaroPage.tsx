@@ -2466,6 +2466,28 @@ function getMessageTimestampDisplay(m: ChatMsg): string {
   return `${dateLabel}, ${timeFormatted}`;
 }
 
+// ─── Sleek Pushpin Icon ───────────────────────────────────────────────────────
+function PinIcon({ size = 16, className = "text-neutral-800 shrink-0" }: { size?: number; className?: string }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <g transform="translate(10.8 13.2) rotate(45) scale(0.88) translate(-12 -12)">
+        <path d="M12 17v5" />
+        <path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z" />
+      </g>
+    </svg>
+  );
+}
+
 // ─── Bird mascot icon ─────────────────────────────────────────────────────────
 function BirdIcon({ size = 32, color = "#3b82f6" }: { size?: number; color?: string }) {
   return (
@@ -3770,7 +3792,10 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
     } catch {}
     return "rw-u1";
   });
-  const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
+  const [activeHistoryMenu, setActiveHistoryMenu] = useState<{
+    item: RiwayatItem;
+    rect: { top: number; bottom: number; left: number; right: number };
+  } | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState("");
   const [renameModalItem, setRenameModalItem] = useState<{ id: string; title: string } | null>(null);
@@ -3866,7 +3891,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
       showToast(isPinning ? "Percakapan berhasil disematkan" : "Sematan percakapan dilepas");
       return next;
     });
-    setMenuOpenId(null);
+    setActiveHistoryMenu(null);
   };
 
   useEffect(() => {
@@ -4015,17 +4040,13 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
                 setMobileDrawerOpen(false);
                 onOpenHistory(item.msgs);
               }}
-              className={`flex-1 text-left text-[15px] leading-relaxed truncate transition-colors pr-2 flex items-center gap-1.5 font-normal ${
+              className={`flex-1 text-left text-[15px] leading-relaxed truncate transition-colors pr-2 flex items-center gap-2 font-normal ${
                 isActive ? "text-slate-900" : "text-neutral-800 hover:text-blue-600"
               }`}
             >
               {item.pinned && (
-                <span title="Disematkan" className="inline-flex shrink-0 text-black">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-black">
-                    <path d="M9 4v6l-2 4v2h10v-2l-2-4V4" />
-                    <line x1="12" y1="16" x2="12" y2="21" />
-                    <line x1="8" y1="4" x2="16" y2="4" />
-                  </svg>
+                <span title="Disematkan" className="inline-flex shrink-0 text-neutral-800">
+                  <PinIcon size={16} className="text-neutral-800" />
                 </span>
               )}
               <span className="truncate">{item.title}</span>
@@ -4036,13 +4057,28 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
-                setMenuOpenId(menuOpenId === item.id ? null : item.id);
+                if (activeHistoryMenu?.item.id === item.id) {
+                  setActiveHistoryMenu(null);
+                  return;
+                }
+                const rect = e.currentTarget.getBoundingClientRect();
+                setActiveHistoryMenu({
+                  item,
+                  rect: {
+                    top: rect.top,
+                    bottom: rect.bottom,
+                    left: rect.left,
+                    right: rect.right,
+                  },
+                });
               }}
               aria-label={`Menu riwayat ${item.title}`}
               className={`size-7 rounded-lg flex items-center justify-center transition-colors shrink-0 ${
-                isActive
-                  ? "text-slate-500 hover:text-slate-800 hover:bg-slate-200/60"
-                  : "text-slate-400 hover:text-slate-700 hover:bg-slate-200/60"
+                activeHistoryMenu?.item.id === item.id
+                  ? "text-slate-800 bg-slate-200/70"
+                  : isActive
+                    ? "text-slate-500 hover:text-slate-800 hover:bg-slate-200/60"
+                    : "text-slate-400 hover:text-slate-700 hover:bg-slate-200/60"
               }`}
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -4051,80 +4087,6 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
                 <circle cx="5" cy="12" r="1.5"/>
               </svg>
             </button>
-          </>
-        )}
-
-        {/* Dropdown Menu when 3 dots is clicked */}
-        {menuOpenId === item.id && (
-          <>
-            <div
-              className="fixed inset-0 z-[190]"
-              onClick={() => setMenuOpenId(null)}
-            />
-            <div
-              className="absolute right-0 top-8 z-[200] w-[212px] bg-white rounded-2xl border border-slate-200/90 shadow-[0_12px_36px_rgba(0,0,0,0.12),0_2px_8px_rgba(0,0,0,0.06)] p-1.5 overflow-hidden animate-[gemini-fade-in_0.15s_ease-out]"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <button
-                type="button"
-                onClick={() => {
-                  setRenameModalItem({ id: item.id, title: item.title });
-                  setRenameInput(item.title.slice(0, 25));
-                  setMenuOpenId(null);
-                }}
-                className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[13px] font-medium text-slate-800 hover:bg-slate-100/70 active:scale-[0.99] transition-all text-left"
-              >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-500 shrink-0">
-                  <path d="M12 20h9"/>
-                  <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
-                </svg>
-                <span>Ganti Nama</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  setMoveToProjectItem({ id: item.id, title: item.title });
-                  setMenuOpenId(null);
-                }}
-                className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[13px] font-medium text-slate-800 hover:bg-slate-100/70 active:scale-[0.99] transition-all text-left"
-              >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-500 shrink-0">
-                  <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
-                </svg>
-                <span className="truncate">Pindahkan ke Proyek</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => togglePinRiwayat(item.id)}
-                className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[13px] font-medium text-slate-800 hover:bg-slate-100/70 active:scale-[0.99] transition-all text-left"
-              >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-500 shrink-0">
-                  <path d="M9 4v6l-2 4v2h10v-2l-2-4V4" />
-                  <line x1="12" y1="16" x2="12" y2="21" />
-                  <line x1="8" y1="4" x2="16" y2="4" />
-                </svg>
-                <span>{item.pinned ? "Lepas Sematan" : "Sematkan"}</span>
-              </button>
-
-              <div className="h-px bg-slate-100 my-1 mx-1" />
-
-              <button
-                type="button"
-                onClick={() => {
-                  setDeleteConfirmItem({ id: item.id, title: item.title });
-                  setMenuOpenId(null);
-                }}
-                className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[13px] font-medium text-red-600 hover:bg-red-50 active:scale-[0.99] transition-all text-left"
-              >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-red-500 shrink-0">
-                  <polyline points="3 6 5 6 21 6"/>
-                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                </svg>
-                <span>Hapus</span>
-              </button>
-            </div>
           </>
         )}
       </div>
@@ -4346,15 +4308,18 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
         <div className="md:hidden fixed inset-0 z-[150]">
           <div
             className="fixed inset-0 bg-black/40 backdrop-blur-xs transition-opacity"
-            onClick={() => setMobileDrawerOpen(false)}
+            onClick={() => {
+              setActiveHistoryMenu(null);
+              setMobileDrawerOpen(false);
+            }}
           />
           <aside
-            className="fixed top-0 left-0 bottom-0 w-72 max-w-[85vw] bg-white z-[160] shadow-2xl flex flex-col justify-between py-5 px-4 overflow-y-auto"
+            className="fixed top-0 left-0 bottom-0 w-72 max-w-[85vw] bg-white z-[160] shadow-2xl flex flex-col py-5 px-4 overflow-hidden"
             style={{ animation: "drawerSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1)" }}
           >
-            <div>
+            <div className="flex flex-col flex-1 min-h-0">
               {/* Drawer Header */}
-              <div className="flex items-center justify-between mb-5">
+              <div className="shrink-0 flex items-center justify-between mb-5">
                 <div className="flex items-center gap-2.5">
                   <img src="/assets/73c1a.png" alt="Alerin" className="size-9 rounded-full object-cover shadow-sm border border-white" />
                   <span className="font-bold text-slate-900 text-lg leading-none font-sans">ALERIN</span>
@@ -4362,7 +4327,11 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
                 <div className="flex items-center gap-1">
                   <button
                     type="button"
-                    onClick={() => { setMobileDrawerOpen(false); setSearchOpen(true); }}
+                    onClick={() => {
+                      setActiveHistoryMenu(null);
+                      setMobileDrawerOpen(false);
+                      setSearchOpen(true);
+                    }}
                     aria-label="Cari percakapan"
                     className="size-8 rounded-xl flex items-center justify-center text-slate-700 hover:bg-slate-100 transition-colors"
                   >
@@ -4370,7 +4339,10 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
                   </button>
                   <button
                     type="button"
-                    onClick={() => setMobileDrawerOpen(false)}
+                    onClick={() => {
+                      setActiveHistoryMenu(null);
+                      setMobileDrawerOpen(false);
+                    }}
                     aria-label="Tutup menu"
                     className="size-8 rounded-full border border-neutral-200/80 flex items-center justify-center text-neutral-800 hover:bg-slate-100 transition-colors"
                   >
@@ -4380,10 +4352,10 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
               </div>
 
               {/* Navigation Menu */}
-              <nav className="space-y-1 mb-6">
+              <nav className="shrink-0 space-y-1 mb-6">
                 <button
                   type="button"
-                  onClick={() => { onTab("percakapan"); setMobileDrawerOpen(false); }}
+                  onClick={() => { setActiveHistoryMenu(null); onTab("percakapan"); setMobileDrawerOpen(false); }}
                   className={`w-full h-11 px-3.5 py-2.5 rounded-2xl flex items-center gap-3 transition-colors text-left ${activeTab === "percakapan" ? "bg-[#1A73E8] text-white font-bold shadow-xs shadow-[#1A73E8]/20" : "text-slate-600 hover:bg-slate-100 font-medium"}`}
                 >
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
@@ -4392,7 +4364,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
 
                 <button
                   type="button"
-                  onClick={() => { onTab("fitur"); setMobileDrawerOpen(false); }}
+                  onClick={() => { setActiveHistoryMenu(null); onTab("fitur"); setMobileDrawerOpen(false); }}
                   className={`w-full h-11 px-3.5 py-2.5 rounded-2xl flex items-center gap-3 transition-colors text-left ${activeTab === "fitur" ? "bg-[#1A73E8] text-white font-bold shadow-xs shadow-[#1A73E8]/20" : "text-slate-600 hover:bg-slate-100 font-medium"}`}
                 >
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
@@ -4401,7 +4373,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
 
                 <button
                   type="button"
-                  onClick={() => { onTab("proyek"); setMobileDrawerOpen(false); }}
+                  onClick={() => { setActiveHistoryMenu(null); onTab("proyek"); setMobileDrawerOpen(false); }}
                   className={`w-full h-11 px-3.5 py-2.5 rounded-2xl flex items-center gap-3 transition-colors text-left ${activeTab === "proyek" ? "bg-[#1A73E8] text-white font-bold shadow-xs shadow-[#1A73E8]/20" : "text-slate-600 hover:bg-slate-100 font-medium"}`}
                 >
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -4410,7 +4382,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
 
                 <button
                   type="button"
-                  onClick={() => { setCalOpen(true); setMobileDrawerOpen(false); }}
+                  onClick={() => { setActiveHistoryMenu(null); setCalOpen(true); setMobileDrawerOpen(false); }}
                   className={`w-full h-11 px-3.5 py-2.5 rounded-2xl flex items-center gap-3 transition-colors text-left ${calOpen ? "bg-[#1A73E8] text-white font-bold shadow-xs shadow-[#1A73E8]/20" : "text-slate-600 hover:bg-slate-100 font-medium"}`}
                 >
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -4423,8 +4395,11 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
                 </button>
               </nav>
 
-              {/* Disematkan & Riwayat Section */}
-              <div className="pt-1 overflow-y-auto max-h-[48vh] pr-1 space-y-4">
+              {/* Disematkan & Riwayat Section — mengisi sisa tinggi sampai tepat di atas tombol Obrolan */}
+              <div
+                onScroll={() => activeHistoryMenu && setActiveHistoryMenu(null)}
+                className="flex-1 min-h-0 pt-1 overflow-y-auto pr-1 pb-2 space-y-4"
+              >
                 {pinnedHistoryItems.length > 0 && (
                   <div>
                     <div className="text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-2 px-1">
@@ -4494,10 +4469,11 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
             </div>
 
             {/* Bottom + Obrolan button */}
-            <div className="pt-4">
+            <div className="shrink-0 pt-3">
               <button
                 type="button"
                 onClick={() => {
+                  setActiveHistoryMenu(null);
                   setActiveHistoryId(null);
                   try { localStorage.removeItem("alerin_active_history_id"); } catch {}
                   onNewChat();
@@ -4510,6 +4486,97 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
               </button>
             </div>
           </aside>
+
+          {/* Dropdown Menu titik tiga riwayat di luar <aside> dan scroll container agar tidak terpotong */}
+          {activeHistoryMenu && (() => {
+            const { item, rect } = activeHistoryMenu;
+            const estimatedHeight = 196;
+            const spaceBelow = window.innerHeight - rect.bottom;
+            const openUpward = spaceBelow < estimatedHeight && rect.top > spaceBelow;
+            const menuWidth = 212;
+            const menuLeft = Math.max(12, Math.min(rect.right - menuWidth, window.innerWidth - menuWidth - 12));
+            const menuStyle: React.CSSProperties = openUpward
+              ? {
+                  position: "fixed",
+                  bottom: `${Math.max(12, window.innerHeight - rect.top + 6)}px`,
+                  left: `${menuLeft}px`,
+                }
+              : {
+                  position: "fixed",
+                  top: `${Math.min(rect.bottom + 6, Math.max(12, window.innerHeight - estimatedHeight - 12))}px`,
+                  left: `${menuLeft}px`,
+                };
+
+            return (
+              <>
+                <div
+                  className="fixed inset-0 z-[190]"
+                  onClick={() => setActiveHistoryMenu(null)}
+                />
+                <div
+                  style={menuStyle}
+                  className="z-[200] w-[212px] bg-white rounded-2xl border border-slate-200/90 shadow-[0_12px_36px_rgba(0,0,0,0.12),0_2px_8px_rgba(0,0,0,0.06)] p-1.5 overflow-hidden animate-[gemini-fade-in_0.15s_ease-out]"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setRenameModalItem({ id: item.id, title: item.title });
+                      setRenameInput(item.title.slice(0, 25));
+                      setActiveHistoryMenu(null);
+                    }}
+                    className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[13px] font-medium text-slate-800 hover:bg-slate-100/70 active:scale-[0.99] transition-all text-left"
+                  >
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-500 shrink-0">
+                      <path d="M12 20h9"/>
+                      <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                    </svg>
+                    <span>Ganti Nama</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMoveToProjectItem({ id: item.id, title: item.title });
+                      setActiveHistoryMenu(null);
+                    }}
+                    className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[13px] font-medium text-slate-800 hover:bg-slate-100/70 active:scale-[0.99] transition-all text-left"
+                  >
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-500 shrink-0">
+                      <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                    </svg>
+                    <span className="truncate">Pindahkan ke Proyek</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => togglePinRiwayat(item.id)}
+                    className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[13px] font-medium text-slate-800 hover:bg-slate-100/70 active:scale-[0.99] transition-all text-left"
+                  >
+                    <PinIcon size={16} className="text-slate-500 shrink-0" />
+                    <span>{item.pinned ? "Lepas Sematan" : "Sematkan"}</span>
+                  </button>
+
+                  <div className="h-px bg-slate-100 my-1 mx-1" />
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setDeleteConfirmItem({ id: item.id, title: item.title });
+                      setActiveHistoryMenu(null);
+                    }}
+                    className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[13px] font-medium text-red-600 hover:bg-red-50 active:scale-[0.99] transition-all text-left"
+                  >
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-red-500 shrink-0">
+                      <polyline points="3 6 5 6 21 6"/>
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    </svg>
+                    <span>Hapus</span>
+                  </button>
+                </div>
+              </>
+            );
+          })()}
         </div>
       )}
       {notifOpen && (
@@ -13100,6 +13167,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
   const [renameProjectModal, setRenameProjectModal] = useState(false);
   const [renameProjectInput, setRenameProjectInput] = useState("");
   const [deleteProjectConfirm, setDeleteProjectConfirm] = useState(false);
+  const [projectActionTarget, setProjectActionTarget] = useState<MobileProjectItem | null>(null);
 
   const [renameChatModal, setRenameChatModal] = useState(false);
   const [renameChatInput, setRenameChatInput] = useState("");
@@ -13418,23 +13486,31 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
 
   const handleRenameProject = () => {
     const trimmed = renameProjectInput.trim().slice(0, 25);
-    if (!trimmed || !selectedProject) return;
-    const updated = projects.map((p) => (p.id === selectedProject.id ? { ...p, title: trimmed } : p));
+    const targetProj = projectActionTarget || selectedProject;
+    if (!trimmed || !targetProj) return;
+    const updated = projects.map((p) => (p.id === targetProj.id ? { ...p, title: trimmed } : p));
     setProjects(updated);
     saveProjects(updated);
-    setSelectedProject({ ...selectedProject, title: trimmed });
+    if (selectedProject?.id === targetProj.id) {
+      setSelectedProject({ ...selectedProject, title: trimmed });
+    }
     setRenameProjectModal(false);
+    setProjectActionTarget(null);
     setToast("Nama proyek berhasil diubah!");
   };
 
   const handleDeleteProject = () => {
-    if (!selectedProject) return;
-    const updated = projects.filter((p) => p.id !== selectedProject.id);
+    const targetProj = projectActionTarget || selectedProject;
+    if (!targetProj) return;
+    const updated = projects.filter((p) => p.id !== targetProj.id);
     setProjects(updated);
     saveProjects(updated);
-    setSelectedProject(null);
-    setSelectedProjectChat(null);
+    if (selectedProject?.id === targetProj.id) {
+      setSelectedProject(null);
+      setSelectedProjectChat(null);
+    }
     setDeleteProjectConfirm(false);
+    setProjectActionTarget(null);
     setToast("Proyek berhasil dihapus");
   };
 
@@ -14085,7 +14161,10 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
       {renameProjectModal && (
         <div
           className="fixed inset-0 z-[250] flex items-center justify-center p-4 bg-black/45 backdrop-blur-xs animate-[gemini-fade-in_0.15s_ease-out]"
-          onClick={() => setRenameProjectModal(false)}
+          onClick={() => {
+            setRenameProjectModal(false);
+            setProjectActionTarget(null);
+          }}
         >
           <div
             className="w-full max-w-[340px] bg-white rounded-3xl p-5 shadow-2xl border border-slate-100 flex flex-col gap-4 animate-[gemini-zoom-in_0.2s_ease-out]"
@@ -14103,7 +14182,10 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
               </div>
               <button
                 type="button"
-                onClick={() => setRenameProjectModal(false)}
+                onClick={() => {
+                  setRenameProjectModal(false);
+                  setProjectActionTarget(null);
+                }}
                 className="size-7 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center transition-colors cursor-pointer"
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -14132,7 +14214,10 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                 spellCheck={false}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && renameProjectInput.trim()) handleRenameProject();
-                  if (e.key === "Escape") setRenameProjectModal(false);
+                  if (e.key === "Escape") {
+                    setRenameProjectModal(false);
+                    setProjectActionTarget(null);
+                  }
                 }}
                 autoFocus
                 placeholder="Masukkan nama proyek..."
@@ -14143,7 +14228,10 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
             <div className="flex items-center justify-end gap-2 pt-1">
               <button
                 type="button"
-                onClick={() => setRenameProjectModal(false)}
+                onClick={() => {
+                  setRenameProjectModal(false);
+                  setProjectActionTarget(null);
+                }}
                 className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
               >
                 Batal
@@ -14163,14 +14251,29 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
 
       {/* ── Modal Konfirmasi Hapus Proyek ── */}
       {deleteProjectConfirm && (
-        <div className="fixed inset-0 z-[250] flex items-center justify-center p-4 bg-black/45 backdrop-blur-xs animate-[gemini-fade-in_0.15s_ease-out]" onClick={() => setDeleteProjectConfirm(false)}>
+        <div
+          className="fixed inset-0 z-[250] flex items-center justify-center p-4 bg-black/45 backdrop-blur-xs animate-[gemini-fade-in_0.15s_ease-out]"
+          onClick={() => {
+            setDeleteProjectConfirm(false);
+            setProjectActionTarget(null);
+          }}
+        >
           <div className="w-full max-w-[320px] bg-white rounded-3xl p-5 shadow-2xl border border-neutral-100 flex flex-col gap-3 animate-[gemini-zoom-in_0.2s_ease-out]" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-base font-bold text-neutral-900">Hapus Proyek?</h3>
             <p className="text-xs text-neutral-500 leading-relaxed">
-              Apakah kamu yakin ingin menghapus proyek "{selectedProject?.title}"? Seluruh riwayat obrolan di dalamnya akan terhapus.
+              Apakah kamu yakin ingin menghapus proyek "{projectActionTarget?.title || selectedProject?.title}"? Seluruh riwayat obrolan di dalamnya akan terhapus.
             </p>
             <div className="flex items-center justify-end gap-2 pt-2 border-t border-neutral-100">
-              <button type="button" onClick={() => setDeleteProjectConfirm(false)} className="flex-1 px-4 py-2.5 rounded-xl text-xs font-semibold text-neutral-600 hover:bg-neutral-100 text-center">Batal</button>
+              <button
+                type="button"
+                onClick={() => {
+                  setDeleteProjectConfirm(false);
+                  setProjectActionTarget(null);
+                }}
+                className="flex-1 px-4 py-2.5 rounded-xl text-xs font-semibold text-neutral-600 hover:bg-neutral-100 text-center"
+              >
+                Batal
+              </button>
               <button type="button" onClick={handleDeleteProject} className="flex-1 px-4 py-2.5 rounded-xl text-xs font-bold bg-red-600 text-white text-center hover:bg-red-700">Hapus</button>
             </div>
           </div>
@@ -14304,10 +14407,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                 <div className="flex-1 min-w-0 pr-1">
                   <div className="flex items-center gap-2">
                     {item.pinned && (
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="text-neutral-900 shrink-0">
-                        <line x1="12" y1="17" x2="12" y2="22" />
-                        <path d="M5 17h14v-2l-3-4V4h1V2H7v2h1v7l-3 4v2z" />
-                      </svg>
+                      <PinIcon size={16} className="text-neutral-800 shrink-0" />
                     )}
                     <h3 className="font-medium text-[15px] text-neutral-900 truncate">
                       {item.title}
@@ -14366,8 +14466,8 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                 onClick={() => {
                   const target = item;
                   setActiveProjectMenu(null);
-                  setSelectedProject(target);
-                  setRenameProjectInput(target.title);
+                  setProjectActionTarget(target);
+                  setRenameProjectInput(target.title.slice(0, 25));
                   setRenameProjectModal(true);
                 }}
                 className="w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl hover:bg-neutral-50 active:bg-neutral-100 transition-all text-left text-[14.5px] font-medium text-neutral-800 cursor-pointer"
@@ -14389,10 +14489,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                 }}
                 className="w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl hover:bg-neutral-50 active:bg-neutral-100 transition-all text-left text-[14.5px] font-medium text-neutral-800 cursor-pointer"
               >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-neutral-800 shrink-0">
-                  <line x1="12" y1="17" x2="12" y2="22" />
-                  <path d="M5 17h14v-2l-3-4V4h1V2H7v2h1v7l-3 4v2z" />
-                </svg>
+                <PinIcon size={20} className="text-neutral-800 shrink-0" />
                 <span>{item.pinned ? "Lepas sematan" : "Sematkan"}</span>
               </button>
 
@@ -14420,7 +14517,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                 onClick={() => {
                   const target = item;
                   setActiveProjectMenu(null);
-                  setSelectedProject(target);
+                  setProjectActionTarget(target);
                   setDeleteProjectConfirm(true);
                 }}
                 className="w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl hover:bg-rose-50 active:bg-rose-100/70 transition-all text-left text-[14.5px] font-medium text-rose-600 cursor-pointer"
@@ -14477,10 +14574,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
             label: item.pinned ? "Lepas sematan" : "Sematkan",
             danger: false,
             icon: (
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-neutral-800 shrink-0">
-                <line x1="12" y1="17" x2="12" y2="22" />
-                <path d="M5 17h14v-2l-3-4V4h1V2H7v2h1v7l-3 4v2z" />
-              </svg>
+              <PinIcon size={20} className="text-neutral-800 shrink-0" />
             ),
             onClick: () => {
               setActiveProjectChatMenu(null);
@@ -14541,10 +14635,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5">
                     {item.pinned && (
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="text-neutral-900 shrink-0">
-                        <line x1="12" y1="17" x2="12" y2="22" />
-                        <path d="M5 17h14v-2l-3-4V4h1V2H7v2h1v7l-3 4v2z" />
-                      </svg>
+                      <PinIcon size={16} className="text-neutral-800 shrink-0" />
                     )}
                     <h3 className="text-[15px] font-medium text-neutral-900 truncate">
                       {item.title}
@@ -15172,7 +15263,8 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                     <button
                       type="button"
                       onClick={() => {
-                        setRenameProjectInput(selectedProject.title);
+                        setProjectActionTarget(selectedProject);
+                        setRenameProjectInput(selectedProject.title.slice(0, 25));
                         setRenameProjectModal(true);
                         setProjectMenuOpen(false);
                       }}
@@ -15185,6 +15277,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                     <button
                       type="button"
                       onClick={() => {
+                        setProjectActionTarget(selectedProject);
                         setDeleteProjectConfirm(true);
                         setProjectMenuOpen(false);
                       }}
@@ -15232,10 +15325,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5">
                         {chat.pinned && (
-                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="text-neutral-900 shrink-0">
-                            <line x1="12" y1="17" x2="12" y2="22" />
-                            <path d="M5 17h14v-2l-3-4V4h1V2H7v2h1v7l-3 4v2z" />
-                          </svg>
+                          <PinIcon size={16} className="text-neutral-800 shrink-0" />
                         )}
                         <h3 className="text-[15px] font-medium text-neutral-900 group-hover:text-blue-600 transition-colors truncate">
                           {chat.title}
@@ -15379,10 +15469,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                     <div className="flex-1 min-w-0 pr-1">
                       <div className="flex items-center gap-2">
                         {p.pinned && (
-                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="text-neutral-900 shrink-0">
-                            <line x1="12" y1="17" x2="12" y2="22" />
-                            <path d="M5 17h14v-2l-3-4V4h1V2H7v2h1v7l-3 4v2z" />
-                          </svg>
+                          <PinIcon size={16} className="text-neutral-800 shrink-0" />
                         )}
                         <h3 className="font-medium text-[15px] text-neutral-900 truncate">
                           {p.title}
@@ -15508,10 +15595,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                       </div>
                       <div className="flex items-center gap-1.5">
                         {p.pinned && (
-                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="text-neutral-900 shrink-0">
-                            <line x1="12" y1="17" x2="12" y2="22" />
-                            <path d="M5 17h14v-2l-3-4V4h1V2H7v2h1v7l-3 4v2z" />
-                          </svg>
+                          <PinIcon size={16} className="text-neutral-800 shrink-0" />
                         )}
                         <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600">Aktif</span>
                         <div
