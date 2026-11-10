@@ -13975,9 +13975,11 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                 />
               </div>
 
-              <p className="text-xs text-neutral-500 leading-relaxed -mt-1">
-                Setiap proyek {userPlanInfo.label} menyimpan hingga {userPlanInfo.limit} riwayat.
-              </p>
+              <div className="rounded-xl bg-neutral-50 px-3.5 py-2.5 border border-neutral-100">
+                <p className="text-xs text-neutral-600 leading-relaxed">
+                  Setiap proyek {userPlanInfo.label} menyimpan hingga {userPlanInfo.limit} riwayat.
+                </p>
+              </div>
 
               <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-neutral-100">
                 <button
