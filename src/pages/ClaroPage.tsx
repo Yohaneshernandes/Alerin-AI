@@ -190,12 +190,13 @@ const IMAGE_KEYWORDS = [
 
 function isImageRequest(text: string): boolean {
   const lower = text.toLowerCase().trim();
-  // Cegah bentrok jika pengguna secara spesifik meminta visualisasi data / grafik / chart, bagan, rumus, output code, file, link, atau kolom/tabel
+  // Cegah bentrok jika pengguna secara spesifik meminta visualisasi data / grafik / chart, bagan, rumus, output code, file, ppt/powerpoint, link, atau kolom/tabel
   if (
     /\b(?:visualisasi\s*data|visualisasi|grafik|chart|bar\s*chart|line\s*chart|pie\s*chart|donut\s*chart|kpi)\b/i.test(lower) ||
     /\b(?:bagan|diagram|flowchart|mindmap|mind\s*map|alur proses|struktur organisasi)\b/i.test(lower) ||
     /\b(?:rumus|formula|matematika|persamaan|kalkulasi|pythagoras|turunan|integral)\b/i.test(lower) ||
-    /^(?:output\s+code|ouput\s+code|code|kode|koding|coding|output\s+link|ouput\s+link|link|tautan|url|output\s+file|ouput\s+file|file|dokumen|output\s+kolom|ouput\s+kolom|kolom|tabel)(?:\s+saja)?$/i.test(lower)
+    /\b(?:file|files|dokumen|lampiran|ppt|pptx|powerpoint|excel|word|pdf)\b/i.test(lower) ||
+    /^(?:output\s+code|ouput\s+code|code|kode|koding|coding|output\s+link|ouput\s+link|link|tautan|url|output\s+file|ouput\s+file|file|dokumen|ppt|pptx|powerpoint|output\s+kolom|ouput\s+kolom|kolom|tabel)(?:\s+saja)?$/i.test(lower)
   ) {
     if (!/\b(?:buatkan\s+gambar|generate\s+gambar|bikin\s+gambar|foto\s+saja|output\s+foto|ouput\s+foto|tampilkan\s+foto)\b/i.test(lower)) {
       return false;
@@ -468,8 +469,23 @@ export function cleanMarkdownForCopy(md: string): string {
     ].join("\n");
   });
 
-  // 1. Bersihkan blok kode / files / links
-  text = text.replace(/```(?:files|links)\n([\s\S]*?)```/g, (_m, content) => content.trim());
+  // Bersihkan blok lampiran file agar saat disalin rapi berbentuk poin-poin
+  text = text.replace(/```(?:files|file|lampiran)[\r\n]+([\s\S]*?)```/g, (_m, content) => {
+    return content
+      .trim()
+      .split("\n")
+      .map((line) => {
+        const parts = line.split("|").map((p) => p.trim());
+        if (parts.length >= 2) {
+          return `• ${parts[0]} (${parts[1]})`;
+        }
+        return line;
+      })
+      .join("\n");
+  });
+
+  // 1. Bersihkan blok kode / links
+  text = text.replace(/```(?:links)\n([\s\S]*?)```/g, (_m, content) => content.trim());
   text = text.replace(/```[a-zA-Z0-9_-]*\n([\s\S]*?)```/g, (_m, code) => code.trim());
   text = text.replace(/```/g, "");
 
@@ -1540,9 +1556,9 @@ $$\\boxed{f'(x) = 6x + 5}$$
 Jadi, kamu butuh rumus apa? Aku bisa buatkan dalam format pecahan, akar, integral, sigma, matriks, atau format lainnya!`
   ],
 
-  // ── 1. FILE OUTPUT (Pilihan format file lampiran: PDF, Excel, Word) ───────────
+  // ── 1. FILE OUTPUT (Pilihan format file lampiran: PDF, Excel, Word, PowerPoint) ───
   [
-    /\b(?:file|files|dokumen|lampiran|unduh\s*file|download\s*file)\b/i,
+    /\b(?:file|files|dokumen|lampiran|unduh\s*file|download\s*file|ppt|pptx|powerpoint)\b/i,
     `Kalau Alerin memberikan **file/dokumen**, tampilannya seperti lampiran file di bawah ini yang bisa langsung kamu buka atau unduh:
 
 Contohnya:
@@ -1551,11 +1567,12 @@ Contohnya:
 Laporan Data Mahasiswa.pdf | PDF · 2 halaman | pdf | Selesai | Download PDF
 Data Mahasiswa.xlsx | Excel · 6 kolom | xlsx | Selesai | Download Excel
 Panduan Dashboard Akademik.docx | Word · 4 halaman | docx | Selesai | Download Word
+Slide Presentasi Sidang.pptx | PowerPoint · 10 slide | ppt | Selesai | Download PPTX
 \`\`\`
 
 Aku juga bisa membuat dan menyusun file PDF, Excel, Word, dan PowerPoint sesuai topik riset atau tugas kuliahmu!
 
-Kamu ingin mencoba Alerin membuat file Excel atau dokumen lain?`
+Kamu ingin mencoba Alerin membuat file Excel, PowerPoint, atau dokumen lain?`
   ],
 
   // ── 2a. KOLOM PENDEK (Tabel fit di layar HP, tanpa scroll samping) ───────────
@@ -1729,6 +1746,16 @@ Laporan_Rekapitulasi.pdf | PDF · 3 halaman siap cetak | pdf | Selesai | Downloa
 \`\`\`
 
 File siap dibuka di Microsoft Excel atau Google Sheets. Mau Alerin tambahkan kolom atau data lainnya?`],
+
+  [/buat file ppt|contoh ppt|file ppt|file pptx|powerpoint|slide presentasi|slide sidang/i, `Tentu! Ini contoh lampiran file **PowerPoint (PPTX)** untuk presentasi sidang atau laporan penelitian yang bisa langsung kamu unduh:
+
+\`\`\`files
+Slide Presentasi Sidang.pptx | PowerPoint · 10 slide | ppt | Selesai | Download PPTX
+Panduan Sidang Skripsi.docx | Word · 4 halaman | docx | Selesai | Download Word
+Ringkasan Eksekutif.pdf | PDF · 2 halaman | pdf | Selesai | Download PDF
+\`\`\`
+
+File presentasi sudah memuat struktur lengkap: Latar Belakang, Rumusan Masalah, Teori, Metodologi, Hasil Penelitian, hingga Kesimpulan & Saran. Mau Alerin sesuaikan tema dan jumlah slidenya?`],
 
   [/contoh kode|tampilan kode|output code|contoh programming|blok kode|contoh html|contoh javascript/i, `Kalau Alerin memberikan **kode/programming**, tampilannya seperti blok kode yang bisa di-scroll horizontal, disalin, dan dibaca dengan syntax highlighting.
 
@@ -2164,7 +2191,7 @@ const SUGGESTION_MAP: { pattern: RegExp; suggestions: string[] }[] = [
   { pattern: /skripsi|tesis|penelitian/i, suggestions: ["Cek kerangka penelitianku", "Saran topik yang feasible", "Timeline skripsi realistis"] },
   { pattern: /ai|kecerdasan buatan|machine learning/i, suggestions: ["Aplikasi AI di bidang akademik", "Etika penggunaan AI untuk skripsi", "Referensi AI terbaru (2023-2024)"] },
   { pattern: /python|kode|coding|program|javascript|sql|database|api|web|react|frontend|backend/i, suggestions: ["Tambahkan error handling", "Jelaskan kode ini baris per baris", "Buat unit test untuk fungsi ini"] },
-  { pattern: /ngasih file|output.*file|lampiran|contoh dokumen|buat file excel|contoh file/i, suggestions: ["Coba buat file Excel dengan banyak kolom", "Buatkan dokumen Panduan PDF & Word", "Tampilkan referensi website UI/UX"] },
+  { pattern: /ngasih file|output.*file|lampiran|contoh dokumen|buat file excel|contoh file|\b(?:file|files|dokumen|pptx?|powerpoint)\b/i, suggestions: ["Coba buat file PowerPoint (.pptx)", "Coba buat file Excel dengan banyak kolom", "Buatkan dokumen Panduan PDF & Word"] },
   { pattern: /kolom|tabel/i, suggestions: ["Tambah kolom deadline & bobot", "Ubah format tabel jadi Excel", "Jelaskan isi setiap kolom"] },
   { pattern: /referensi website|referensi ui|link referensi/i, suggestions: ["Buka Figma Community untuk UI Kit", "Cari inspirasi di Dribbble", "Buatkan ringkasan struktur dashboard"] },
 ];
@@ -7328,6 +7355,9 @@ function FileAttachmentCard({ items }: { items: FileAttachmentItem[] }) {
       if (item.name.endsWith(".csv") || item.name.endsWith(".xlsx")) {
         content = "No,NIM,Nama Mahasiswa,Program Studi,Status\n1,00123,Andi Pratama,Sistem Informasi,Aktif\n2,00124,Siti Amelia,Informatika,Aktif\n3,00125,Budi Santoso,Manajemen,Aktif\n4,00126,Dewi Lestari,Akuntansi,Aktif\n5,00127,Rian Hidayat,Ilmu Komunikasi,Aktif\n";
         mime = "text/csv;charset=utf-8;";
+      } else if (item.name.endsWith(".pptx") || item.name.endsWith(".ppt")) {
+        content = `Presentasi: ${item.name}\nDeskripsi: ${item.meta}\nDibuat oleh: Alerin AI\nTanggal: ${new Date().toLocaleDateString("id-ID")}\n\nStruktur Slide Presentasi:\n1. Judul Penelitian & Identitas\n2. Latar Belakang & Urgensi Masalah\n3. Rumusan Masalah & Tujuan Penelitian\n4. Tinjauan Pustaka & Kerangka Konseptual\n5. Metodologi Penelitian & Desain Riset\n6. Populasi, Sampel, & Teknik Pengumpulan Data\n7. Hasil Analisis Data & Pengujian Hipotesis\n8. Pembahasan & Temuan Kunci\n9. Kesimpulan & Implikasi Manajerial\n10. Keterbatasan & Saran Penelitian Lanjutan`;
+        mime = "text/plain;charset=utf-8;";
       }
       const blob = new Blob([content], { type: mime });
       const url = URL.createObjectURL(blob);
