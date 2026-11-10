@@ -4197,7 +4197,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
                 <button
                   type="button"
                   onClick={() => { onTab("percakapan"); setMobileDrawerOpen(false); }}
-                  className={`w-full h-11 px-3.5 py-2.5 rounded-2xl flex items-center gap-3 transition-colors text-left ${activeTab === "percakapan" ? "bg-blue-600 text-white font-bold shadow-xs shadow-blue-500/20" : "text-slate-600 hover:bg-slate-100 font-medium"}`}
+                  className={`w-full h-11 px-3.5 py-2.5 rounded-2xl flex items-center gap-3 transition-colors text-left ${activeTab === "percakapan" ? "bg-[#1A73E8] text-white font-bold shadow-xs shadow-[#1A73E8]/20" : "text-slate-600 hover:bg-slate-100 font-medium"}`}
                 >
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                   <span className="text-base">Percakapan</span>
@@ -4206,7 +4206,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
                 <button
                   type="button"
                   onClick={() => { onTab("fitur"); setMobileDrawerOpen(false); }}
-                  className={`w-full h-11 px-3.5 py-2.5 rounded-2xl flex items-center gap-3 transition-colors text-left ${activeTab === "fitur" ? "bg-blue-600 text-white font-bold shadow-xs shadow-blue-500/20" : "text-slate-600 hover:bg-slate-100 font-medium"}`}
+                  className={`w-full h-11 px-3.5 py-2.5 rounded-2xl flex items-center gap-3 transition-colors text-left ${activeTab === "fitur" ? "bg-[#1A73E8] text-white font-bold shadow-xs shadow-[#1A73E8]/20" : "text-slate-600 hover:bg-slate-100 font-medium"}`}
                 >
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
                   <span className="text-base">Semua Fitur</span>
@@ -4215,7 +4215,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
                 <button
                   type="button"
                   onClick={() => { onTab("proyek"); setMobileDrawerOpen(false); }}
-                  className={`w-full h-11 px-3.5 py-2.5 rounded-2xl flex items-center gap-3 transition-colors text-left ${activeTab === "proyek" ? "bg-blue-600 text-white font-bold shadow-xs shadow-blue-500/20" : "text-slate-600 hover:bg-slate-100 font-medium"}`}
+                  className={`w-full h-11 px-3.5 py-2.5 rounded-2xl flex items-center gap-3 transition-colors text-left ${activeTab === "proyek" ? "bg-[#1A73E8] text-white font-bold shadow-xs shadow-[#1A73E8]/20" : "text-slate-600 hover:bg-slate-100 font-medium"}`}
                 >
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                   <span className="text-base">Proyek Saya</span>
@@ -4224,7 +4224,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
                 <button
                   type="button"
                   onClick={() => { setCalOpen(true); setMobileDrawerOpen(false); }}
-                  className={`w-full h-11 px-3.5 py-2.5 rounded-2xl flex items-center gap-3 transition-colors text-left ${calOpen ? "bg-blue-600 text-white font-bold shadow-xs shadow-blue-500/20" : "text-slate-600 hover:bg-slate-100 font-medium"}`}
+                  className={`w-full h-11 px-3.5 py-2.5 rounded-2xl flex items-center gap-3 transition-colors text-left ${calOpen ? "bg-[#1A73E8] text-white font-bold shadow-xs shadow-[#1A73E8]/20" : "text-slate-600 hover:bg-slate-100 font-medium"}`}
                 >
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <rect x="3" y="4" width="18" height="18" rx="2" />
@@ -4464,7 +4464,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
                   onNewChat();
                   setMobileDrawerOpen(false);
                 }}
-                className="w-full h-11 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white rounded-full shadow-md shadow-blue-600/20 flex items-center justify-center gap-2 font-semibold text-sm transition-all cursor-pointer"
+                className="w-full h-11 px-5 py-2.5 bg-[#1A73E8] hover:bg-[#1557b0] active:scale-[0.98] text-white rounded-full shadow-md shadow-[#1A73E8]/25 flex items-center justify-center gap-2 font-semibold text-sm transition-all cursor-pointer"
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <span>Obrolan</span>
@@ -4779,7 +4779,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
               <div className="flex items-center gap-1.5">
                 <button onClick={onNewChat}
                   className="flex-1 flex items-center justify-center gap-1.5 h-8 rounded-xl border-0 text-xs font-bold text-white whitespace-nowrap transition-all hover:opacity-90"
-                  style={{ backgroundColor: "#347CEA" }}>
+                  style={{ backgroundColor: "#1A73E8" }}>
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                   Baru
                 </button>
@@ -4810,7 +4810,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
                 {NAV.map((n) => (
                   <button key={n.id} onClick={() => onTab(n.id)}
                     className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm transition-all text-left"
-                    style={activeTab === n.id ? { background: "#2563eb", color: "#fff", fontWeight: 700 } : { color: "#475569", fontWeight: 500 }}>
+                    style={activeTab === n.id ? { background: "#1A73E8", color: "#fff", fontWeight: 700 } : { color: "#475569", fontWeight: 500 }}>
                     <span style={{ color: activeTab === n.id ? "#fff" : "#64748b" }}>{n.icon}</span>
                     {n.label}
                   </button>
@@ -4857,7 +4857,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
                 {NAV.map((n) => (
                   <button key={n.id} onClick={() => onTab(n.id)} title={n.label}
                     className="w-9 h-9 flex items-center justify-center rounded-xl transition-all"
-                    style={activeTab === n.id ? { background: "#2563eb", color: "#fff" } : { color: "#64748b" }}>
+                    style={activeTab === n.id ? { background: "#1A73E8", color: "#fff" } : { color: "#64748b" }}>
                     <span className="text-base leading-none">{n.icon}</span>
                   </button>
                 ))}
