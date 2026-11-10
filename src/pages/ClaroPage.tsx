@@ -12842,6 +12842,7 @@ type ProjectChatItem = {
   lastSnippet: string;
   time: string;
   updatedAt?: number;
+  pinned?: boolean;
   msgs: ChatMsg[];
 };
 
@@ -13103,10 +13104,17 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
   const [renameChatModal, setRenameChatModal] = useState(false);
   const [renameChatInput, setRenameChatInput] = useState("");
   const [deleteChatConfirm, setDeleteChatConfirm] = useState(false);
+  const [chatActionTarget, setChatActionTarget] = useState<ProjectChatItem | null>(null);
 
   // Popup menu titik tiga pada item proyek (sesuai Gambar 2)
   const [activeProjectMenu, setActiveProjectMenu] = useState<{
     item: MobileProjectItem;
+    rect: { top: number; left: number; width: number; height: number };
+  } | null>(null);
+
+  // Popup menu titik tiga pada item obrolan di dalam proyek
+  const [activeProjectChatMenu, setActiveProjectChatMenu] = useState<{
+    item: ProjectChatItem;
     rect: { top: number; left: number; width: number; height: number };
   } | null>(null);
 
@@ -13125,6 +13133,29 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
       navigator.clipboard.writeText(`${window.location.origin}/proyek/${target.id}`);
     }
     setToast(`Tautan proyek "${target.title}" berhasil disalin!`);
+  };
+
+  const handleTogglePinProjectChat = (target: ProjectChatItem) => {
+    if (!selectedProject) return;
+    const isNowPinned = !target.pinned;
+    const updatedTarget: ProjectChatItem = { ...target, pinned: isNowPinned };
+    const currentList = projectChatsMap[selectedProject.id] ?? [];
+    const nextList = currentList.map((c) => (c.id === target.id ? updatedTarget : c));
+    const nextMap = { ...projectChatsMap, [selectedProject.id]: nextList };
+    setProjectChatsMap(nextMap);
+    saveProjectChats(nextMap);
+    if (selectedProjectChat?.id === target.id) {
+      setSelectedProjectChat(updatedTarget);
+    }
+    setToast(isNowPinned ? `Obrolan "${target.title}" disematkan` : `Sematan obrolan "${target.title}" dilepas`);
+  };
+
+  const handleShareProjectChat = (target: ProjectChatItem) => {
+    const shareUrl = `${window.location.origin}/proyek/${selectedProject?.id || "detail"}/${target.id}`;
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(shareUrl).catch(() => {});
+    }
+    setToast(`Tautan obrolan "${target.title}" berhasil disalin!`);
   };
 
   // Quick chat input on Gambar 2
@@ -13731,27 +13762,35 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
 
   const handleRenameChat = () => {
     const trimmed = renameChatInput.trim().slice(0, 25);
-    if (!trimmed || !selectedProject || !selectedProjectChat) return;
-    const updatedChat = { ...selectedProjectChat, title: trimmed };
-    setSelectedProjectChat(updatedChat);
+    const targetChat = chatActionTarget || selectedProjectChat;
+    if (!trimmed || !selectedProject || !targetChat) return;
+    const updatedChat = { ...targetChat, title: trimmed };
+    if (selectedProjectChat?.id === targetChat.id) {
+      setSelectedProjectChat(updatedChat);
+    }
     const currentList = projectChatsMap[selectedProject.id] ?? [];
     const nextList = currentList.map((c) => (c.id === updatedChat.id ? updatedChat : c));
     const nextMap = { ...projectChatsMap, [selectedProject.id]: nextList };
     setProjectChatsMap(nextMap);
     saveProjectChats(nextMap);
     setRenameChatModal(false);
+    setChatActionTarget(null);
     setToast("Nama obrolan berhasil diubah!");
   };
 
   const handleDeleteChat = () => {
-    if (!selectedProject || !selectedProjectChat) return;
+    const targetChat = chatActionTarget || selectedProjectChat;
+    if (!selectedProject || !targetChat) return;
     const currentList = projectChatsMap[selectedProject.id] ?? [];
-    const nextList = currentList.filter((c) => c.id !== selectedProjectChat.id);
+    const nextList = currentList.filter((c) => c.id !== targetChat.id);
     const nextMap = { ...projectChatsMap, [selectedProject.id]: nextList };
     setProjectChatsMap(nextMap);
     saveProjectChats(nextMap);
-    setSelectedProjectChat(null);
+    if (selectedProjectChat?.id === targetChat.id) {
+      setSelectedProjectChat(null);
+    }
     setDeleteChatConfirm(false);
+    setChatActionTarget(null);
     setToast("Obrolan berhasil dihapus");
   };
 
@@ -14140,7 +14179,13 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
 
       {/* ── Modal Ganti Nama Obrolan ── */}
       {renameChatModal && (
-        <div className="fixed inset-0 z-[250] flex items-center justify-center p-4 bg-black/45 backdrop-blur-xs animate-[gemini-fade-in_0.15s_ease-out]" onClick={() => setRenameChatModal(false)}>
+        <div
+          className="fixed inset-0 z-[250] flex items-center justify-center p-4 bg-black/45 backdrop-blur-xs animate-[gemini-fade-in_0.15s_ease-out]"
+          onClick={() => {
+            setRenameChatModal(false);
+            setChatActionTarget(null);
+          }}
+        >
           <div className="w-full max-w-[340px] bg-white rounded-3xl p-5 shadow-2xl border border-neutral-100 flex flex-col gap-4 animate-[gemini-zoom-in_0.2s_ease-out]" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between">
               <h3 className="text-base font-bold text-neutral-900">Ganti Nama Obrolan</h3>
@@ -14158,13 +14203,25 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
               spellCheck={false}
               onKeyDown={(e) => {
                 if (e.key === "Enter" && renameChatInput.trim()) handleRenameChat();
-                if (e.key === "Escape") setRenameChatModal(false);
+                if (e.key === "Escape") {
+                  setRenameChatModal(false);
+                  setChatActionTarget(null);
+                }
               }}
               autoFocus
               className="w-full text-sm text-neutral-800 bg-neutral-50 border border-neutral-200 focus:border-blue-500 focus:bg-white rounded-xl px-3.5 py-2.5 outline-none"
             />
             <div className="flex items-center justify-end gap-2 pt-2 border-t border-neutral-100">
-              <button type="button" onClick={() => setRenameChatModal(false)} className="flex-1 px-4 py-2.5 rounded-xl text-xs font-semibold text-neutral-600 hover:bg-neutral-100 text-center">Batal</button>
+              <button
+                type="button"
+                onClick={() => {
+                  setRenameChatModal(false);
+                  setChatActionTarget(null);
+                }}
+                className="flex-1 px-4 py-2.5 rounded-xl text-xs font-semibold text-neutral-600 hover:bg-neutral-100 text-center"
+              >
+                Batal
+              </button>
               <button type="button" disabled={!renameChatInput.trim()} onClick={handleRenameChat} className="flex-1 px-4 py-2.5 rounded-xl text-xs font-bold bg-blue-600 text-white text-center hover:bg-blue-700">Simpan</button>
             </div>
           </div>
@@ -14173,14 +14230,29 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
 
       {/* ── Modal Konfirmasi Hapus Obrolan ── */}
       {deleteChatConfirm && (
-        <div className="fixed inset-0 z-[250] flex items-center justify-center p-4 bg-black/45 backdrop-blur-xs animate-[gemini-fade-in_0.15s_ease-out]" onClick={() => setDeleteChatConfirm(false)}>
+        <div
+          className="fixed inset-0 z-[250] flex items-center justify-center p-4 bg-black/45 backdrop-blur-xs animate-[gemini-fade-in_0.15s_ease-out]"
+          onClick={() => {
+            setDeleteChatConfirm(false);
+            setChatActionTarget(null);
+          }}
+        >
           <div className="w-full max-w-[320px] bg-white rounded-3xl p-5 shadow-2xl border border-neutral-100 flex flex-col gap-3 animate-[gemini-zoom-in_0.2s_ease-out]" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-base font-bold text-neutral-900">Hapus Obrolan?</h3>
             <p className="text-xs text-neutral-500 leading-relaxed">
-              Apakah kamu yakin ingin menghapus sesi obrolan "{selectedProjectChat?.title}"?
+              Apakah kamu yakin ingin menghapus sesi obrolan "{chatActionTarget?.title || selectedProjectChat?.title}"?
             </p>
             <div className="flex items-center justify-end gap-2 pt-2 border-t border-neutral-100">
-              <button type="button" onClick={() => setDeleteChatConfirm(false)} className="flex-1 px-4 py-2.5 rounded-xl text-xs font-semibold text-neutral-600 hover:bg-neutral-100 text-center">Batal</button>
+              <button
+                type="button"
+                onClick={() => {
+                  setDeleteChatConfirm(false);
+                  setChatActionTarget(null);
+                }}
+                className="flex-1 px-4 py-2.5 rounded-xl text-xs font-semibold text-neutral-600 hover:bg-neutral-100 text-center"
+              >
+                Batal
+              </button>
               <button type="button" onClick={handleDeleteChat} className="flex-1 px-4 py-2.5 rounded-xl text-xs font-bold bg-red-600 text-white text-center hover:bg-red-700">Hapus</button>
             </div>
           </div>
@@ -14364,6 +14436,157 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
         );
       })()}
 
+      {/* ── Modal Popup Menu Titik Tiga Item Obrolan di Dalam Proyek ── */}
+      {activeProjectChatMenu && (() => {
+        const { item, rect } = activeProjectChatMenu;
+        const menuHeight = 216;
+        const gap = 8;
+        const spaceBelow = window.innerHeight - (rect.top + rect.height);
+        const showAbove = spaceBelow < menuHeight + 20;
+
+        const menuTop = showAbove
+          ? Math.max(16, rect.top - gap - menuHeight)
+          : (rect.height > 0
+              ? Math.min(rect.top + rect.height + gap, window.innerHeight - menuHeight - 16)
+              : Math.min(rect.top, window.innerHeight - menuHeight - 16));
+
+        const menuWidth = Math.min(rect.width > 0 ? rect.width : 275, 275);
+        const preferredLeft = rect.width > 480 ? rect.left + rect.width - menuWidth : rect.left;
+        const menuLeft = Math.max(16, Math.min(preferredLeft, window.innerWidth - menuWidth - 16));
+
+        const chatMenuActions = [
+          {
+            key: "rename",
+            label: "Ganti nama",
+            danger: false,
+            icon: (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-neutral-800 shrink-0">
+                <path d="M12 20h9" />
+                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+              </svg>
+            ),
+            onClick: () => {
+              setActiveProjectChatMenu(null);
+              setChatActionTarget(item);
+              setRenameChatInput(item.title.slice(0, 25));
+              setRenameChatModal(true);
+            },
+          },
+          {
+            key: "pin",
+            label: item.pinned ? "Lepas sematan" : "Sematkan",
+            danger: false,
+            icon: (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-neutral-800 shrink-0">
+                <line x1="12" y1="17" x2="12" y2="22" />
+                <path d="M5 17h14v-2l-3-4V4h1V2H7v2h1v7l-3 4v2z" />
+              </svg>
+            ),
+            onClick: () => {
+              setActiveProjectChatMenu(null);
+              handleTogglePinProjectChat(item);
+            },
+          },
+          {
+            key: "share",
+            label: "Bagikan",
+            danger: false,
+            icon: (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-neutral-800 shrink-0">
+                <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+                <polyline points="16 6 12 2 8 6" />
+                <line x1="12" y1="2" x2="12" y2="15" />
+              </svg>
+            ),
+            onClick: () => {
+              setActiveProjectChatMenu(null);
+              handleShareProjectChat(item);
+            },
+          },
+          {
+            key: "delete",
+            label: "Hapus",
+            danger: true,
+            icon: (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-rose-600 shrink-0">
+                <polyline points="3 6 5 6 21 6" />
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+              </svg>
+            ),
+            onClick: () => {
+              setActiveProjectChatMenu(null);
+              setChatActionTarget(item);
+              setDeleteChatConfirm(true);
+            },
+          },
+        ];
+
+        return (
+          <div
+            className="fixed inset-0 z-[250] bg-black/40 backdrop-blur-xs select-none animate-[gemini-fade-in_0.15s_ease-out]"
+            onClick={() => setActiveProjectChatMenu(null)}
+          >
+            {rect.height > 0 && (
+              <div
+                style={{
+                  position: "fixed",
+                  top: `${rect.top}px`,
+                  left: `${rect.left}px`,
+                  width: `${rect.width}px`,
+                  height: `${rect.height}px`,
+                }}
+                className="bg-white rounded-2xl px-2.5 py-2 flex items-center gap-2 shadow-xl border border-neutral-100/90 z-30 animate-[gemini-zoom-in_0.15s_ease-out]"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-1.5">
+                    {item.pinned && (
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="text-neutral-900 shrink-0">
+                        <line x1="12" y1="17" x2="12" y2="22" />
+                        <path d="M5 17h14v-2l-3-4V4h1V2H7v2h1v7l-3 4v2z" />
+                      </svg>
+                    )}
+                    <h3 className="text-[15px] font-medium text-neutral-900 truncate">
+                      {item.title}
+                    </h3>
+                  </div>
+                  <p className="text-[13.5px] text-neutral-800 font-normal mt-0.5 truncate leading-relaxed">
+                    {item.lastSnippet?.replace(/\*\*/g, "")}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            <div
+              style={{
+                position: "fixed",
+                top: `${menuTop}px`,
+                left: `${menuLeft}px`,
+                width: `${menuWidth}px`,
+              }}
+              className="bg-white rounded-[24px] p-2 shadow-2xl border border-neutral-100/90 flex flex-col divide-y divide-neutral-100/60 z-30 animate-[gemini-zoom-in_0.18s_ease-out]"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {chatMenuActions.map((action) => (
+                <button
+                  key={action.key}
+                  type="button"
+                  onClick={action.onClick}
+                  className={`w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl transition-all text-left text-[14.5px] font-medium cursor-pointer ${
+                    action.danger
+                      ? "hover:bg-rose-50 active:bg-rose-100/70 text-rose-600"
+                      : "hover:bg-neutral-50 active:bg-neutral-100 text-neutral-800"
+                  }`}
+                >
+                  {action.icon}
+                  <span>{action.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+      })()}
+
       {/* ═══════════════════════════════════════════════════════════════════════
           SCREEN 3: GAMBAR 3 — DETAIL CHAT PERCAKAPAN PROYEK
          ═══════════════════════════════════════════════════════════════════════ */}
@@ -14415,7 +14638,8 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                     <button
                       type="button"
                       onClick={() => {
-                        setRenameChatInput(selectedProjectChat.title.slice(0, 20));
+                        setChatActionTarget(selectedProjectChat);
+                        setRenameChatInput(selectedProjectChat.title.slice(0, 25));
                         setRenameChatModal(true);
                         setChatMenuOpen(false);
                       }}
@@ -14428,6 +14652,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                     <button
                       type="button"
                       onClick={() => {
+                        setChatActionTarget(selectedProjectChat);
                         setDeleteChatConfirm(true);
                         setChatMenuOpen(false);
                       }}
@@ -14907,6 +15132,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
               onClick={() => {
                 setSelectedProject(null);
                 setProjectMenuOpen(false);
+                setActiveProjectChatMenu(null);
               }}
               aria-label="Kembali ke daftar proyek"
               className="size-11 rounded-full border border-neutral-200/90 bg-white flex items-center justify-center text-neutral-800 hover:bg-neutral-50 active:scale-95 transition-all shadow-2xs cursor-pointer"
@@ -14974,7 +15200,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
           </header>
 
           {/* Obrolan List */}
-          <div className="flex-1 overflow-y-auto px-4 pt-3 pb-4 space-y-4" style={{ scrollbarWidth: "none" }}>
+          <div className="flex-1 overflow-y-auto px-4 pt-3 pb-4 space-y-3" style={{ scrollbarWidth: "none" }}>
             {(projectChatsMap[selectedProject.id] ?? []).length === 0 ? (
               <div className="py-20 text-center px-4">
                 <p className="text-sm font-semibold text-neutral-800 mb-1">Belum ada obrolan</p>
@@ -14984,21 +15210,68 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
               </div>
             ) : (
               [...(projectChatsMap[selectedProject.id] ?? [])]
-                .sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0))
+                .sort((a, b) => {
+                  if (a.pinned && !b.pinned) return -1;
+                  if (!a.pinned && b.pinned) return 1;
+                  return (b.updatedAt || 0) - (a.updatedAt || 0);
+                })
                 .map((chat) => (
-                  <button
+                  <div
                     key={chat.id}
-                    type="button"
+                    role="button"
+                    tabIndex={0}
                     onClick={() => setSelectedProjectChat(chat)}
-                    className="w-full text-left px-2.5 py-1.5 hover:bg-neutral-50 active:bg-neutral-100/70 rounded-xl transition-colors cursor-pointer group block"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        setSelectedProjectChat(chat);
+                      }
+                    }}
+                    className="project-chat-row w-full flex items-center justify-between gap-2 text-left px-2.5 py-2 hover:bg-neutral-50 active:bg-neutral-100/70 rounded-xl transition-colors cursor-pointer group"
                   >
-                    <h3 className="text-[15px] font-medium text-neutral-900 group-hover:text-blue-600 transition-colors">
-                      {chat.title}
-                    </h3>
-                    <p className="text-[13.5px] text-neutral-800 font-normal mt-0.5 truncate leading-relaxed">
-                      {chat.lastSnippet?.replace(/\*\*/g, "")}
-                    </p>
-                  </button>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        {chat.pinned && (
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="text-neutral-900 shrink-0">
+                            <line x1="12" y1="17" x2="12" y2="22" />
+                            <path d="M5 17h14v-2l-3-4V4h1V2H7v2h1v7l-3 4v2z" />
+                          </svg>
+                        )}
+                        <h3 className="text-[15px] font-medium text-neutral-900 group-hover:text-blue-600 transition-colors truncate">
+                          {chat.title}
+                        </h3>
+                      </div>
+                      <p className="text-[13.5px] text-neutral-800 font-normal mt-0.5 truncate leading-relaxed">
+                        {chat.lastSnippet?.replace(/\*\*/g, "")}
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const row = e.currentTarget.closest(".project-chat-row") as HTMLElement | null;
+                        const rect = row ? row.getBoundingClientRect() : e.currentTarget.getBoundingClientRect();
+                        setActiveProjectChatMenu({
+                          item: chat,
+                          rect: {
+                            top: rect.top,
+                            left: rect.left,
+                            width: rect.width,
+                            height: rect.height,
+                          },
+                        });
+                      }}
+                      aria-label={`Menu obrolan ${chat.title}`}
+                      className="size-8 rounded-full flex items-center justify-center text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 active:scale-90 transition-all shrink-0 cursor-pointer"
+                    >
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                        <circle cx="5" cy="12" r="2" />
+                        <circle cx="12" cy="12" r="2" />
+                        <circle cx="19" cy="12" r="2" />
+                      </svg>
+                    </button>
+                  </div>
                 ))
             )}
           </div>
