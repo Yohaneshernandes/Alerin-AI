@@ -416,6 +416,53 @@ export function cleanMarkdownForCopy(md: string): string {
     return content.trim();
   });
 
+  // Bersihkan kartu visualisasi data untuk salinan teks rapi
+  text = text.replace(/```(?:chart:bar|barchart)[\s\S]*?```/g, () => {
+    return [
+      "Pertumbuhan Pengguna Aplikasi:",
+      "• Januari: 120",
+      "• Februari: 180",
+      "• Maret: 250",
+      "• April: 310",
+      "• Mei: 420",
+      "• Juni: 560",
+    ].join("\n");
+  });
+
+  text = text.replace(/```(?:chart:line|linechart)[\s\S]*?```/g, () => {
+    return "Tren Penjualan 2026: Penjualan tertinggi mencapai Rp35 juta pada bulan Juni.";
+  });
+
+  text = text.replace(/```(?:chart:pie|chart:donut|piechart)[\s\S]*?```/g, () => {
+    return [
+      "Distribusi Pengguna Berdasarkan Perangkat:",
+      "• Mobile: 650 (65%)",
+      "• Desktop: 280 (28%)",
+      "• Tablet: 70 (7%)",
+    ].join("\n");
+  });
+
+  text = text.replace(/```(?:chart:comparison|comparison)[\s\S]*?```/g, () => {
+    return [
+      "Target vs Realisasi Penjualan:",
+      "• Januari: Target Rp20 jt | Realisasi Rp18 jt",
+      "• Februari: Target Rp25 jt | Realisasi Rp28 jt",
+      "• Maret: Target Rp30 jt | Realisasi Rp27 jt",
+      "• April: Target Rp35 jt | Realisasi Rp40 jt",
+      "• Mei: Target Rp40 jt | Realisasi Rp45 jt",
+    ].join("\n");
+  });
+
+  text = text.replace(/```(?:chart:kpi|kpi)[\s\S]*?```/g, () => {
+    return [
+      "Ringkasan KPI Bisnis:",
+      "• Total pengguna: 1.250 (+18,5%)",
+      "• Total transaksi: 845 (+12,2%)",
+      "• Conversion rate: 6,8% (+2,1%)",
+      "• Pendapatan: Rp45 jt (+15,4%)",
+    ].join("\n");
+  });
+
   // 1. Bersihkan blok kode / files / links
   text = text.replace(/```(?:files|links)\n([\s\S]*?)```/g, (_m, content) => content.trim());
   text = text.replace(/```[a-zA-Z0-9_-]*\n([\s\S]*?)```/g, (_m, code) => code.trim());
@@ -1294,6 +1341,54 @@ const QUIZ_QUESTIONS = [
 ];
 
 const AI_RESPONSES: [RegExp, string][] = [
+  // ── 00. VISUALISASI DATA (Grafik Batang, Garis, Lingkaran, Perbandingan, KPI) ───
+  [
+    /\b(?:visualisasi\s*data|grafik|chart|bar\s*chart|line\s*chart|pie\s*chart|donut\s*chart|kpi)\b/i,
+    `Siap! Aku contohkan beberapa jenis **visualisasi data** yang bisa aku tampilkan langsung di percakapan, mulai dari grafik batang, garis, lingkaran, hingga perbandingan data.
+
+### 1. Grafik batang (Bar Chart)
+Contoh data jumlah pengguna aplikasi selama 6 bulan.
+
+\`\`\`chart:bar
+\`\`\`
+
+### 2. Grafik garis (Line Chart)
+Contoh perkembangan performa penjualan.
+
+\`\`\`chart:line
+\`\`\`
+
+### 3. Grafik lingkaran (Pie Chart)
+Contoh distribusi pengunjung berdasarkan perangkat.
+
+\`\`\`chart:pie
+\`\`\`
+
+### 4. Grafik perbandingan
+Contoh perbandingan target dan realisasi penjualan.
+
+\`\`\`chart:comparison
+\`\`\`
+
+### 5. Ringkasan KPI
+
+\`\`\`chart:kpi
+\`\`\`
+
+### 6. Visualisasi tabel data
+
+| Bulan | Pengguna | Transaksi | Pendapatan |
+| :--- | :---: | :---: | :---: |
+| Januari | 120 | 80 | Rp12 jt |
+| Februari | 180 | 110 | Rp18 jt |
+| Maret | 250 | 160 | Rp25 jt |
+| April | 310 | 210 | Rp32 jt |
+| Mei | 420 | 280 | Rp38 jt |
+| Juni | 560 | 390 | Rp45 jt |
+
+Kamu butuh visualisasi data seperti apa? Ceritakan data atau metrik yang ingin kamu tampilkan, nanti aku buatkan dalam grafik atau tabel yang paling sesuai!`
+  ],
+
   // ── 0a. BAGAN OUTPUT (Diagram Alur, Hierarki, Proses, Mind Map, Timeline) ───
   [
     /\b(?:bagan|diagram|flowchart|mindmap|mind\s*map|alur proses|struktur organisasi)\b/i,
@@ -2047,6 +2142,7 @@ Semakin spesifik pertanyaanmu, semakin tepat dan berguna jawaban yang bisa aku b
 }
 
 const SUGGESTION_MAP: { pattern: RegExp; suggestions: string[] }[] = [
+  { pattern: /visualisasi\s*data|grafik|chart|bar\s*chart|line\s*chart|pie\s*chart|donut\s*chart|kpi/i, suggestions: ["Buatkan grafik pertumbuhan penjualan kuartal ini", "Buatkan visualisasi perbandingan target vs realisasi", "Tampilkan ringkasan metrik KPI bisnis"] },
   { pattern: /bagan|diagram|flowchart|mindmap|mind\s*map|alur proses|struktur organisasi/i, suggestions: ["Buatkan bagan alur pendaftaran mahasiswa baru", "Buatkan mind map rencana penelitian skripsi", "Buatkan timeline pengerjaan skripsi 6 bulan"] },
   { pattern: /rumus|formula|matematika|persamaan|kalkulasi|pythagoras|turunan|integral/i, suggestions: ["Contoh rumus turunan dan integral", "Cara menghitung rumus Pythagoras", "Buatkan rumus dalam bentuk tabel"] },
   { pattern: /TAM|UTAUT|technology acceptance/i, suggestions: ["Jelaskan konstruk TAM lebih detail", "Contoh kuesioner TAM siap pakai", "Bandingkan TAM dengan UTAUT2"] },
@@ -2071,6 +2167,11 @@ const SUGGESTION_MAP: { pattern: RegExp; suggestions: string[] }[] = [
 const DEFAULT_SUGGESTIONS = ["Lanjutkan penjelasannya lebih detail", "Berikan contoh konkret", "Apa yang harus kulakukan selanjutnya?"];
 
 const SOURCE_MAP: { pattern: RegExp; sources: ChatSource[] }[] = [
+  { pattern: /visualisasi\s*data|grafik|chart|bar\s*chart|line\s*chart|pie\s*chart|donut\s*chart|kpi/i, sources: [
+    { title: "The Visual Display of Quantitative Information", author: "Tufte, E.R.", year: "2020", url: "https://scholar.google.com" },
+    { title: "Data Visualization: A Practical Introduction", author: "Healy, K.", year: "2019", url: "https://scholar.google.com" },
+    { title: "Information Dashboard Design: Displaying Data at a Glance", author: "Few, S.", year: "2021", url: "https://www.scopus.com" },
+  ]},
   { pattern: /bagan|diagram|flowchart|mindmap|mind\s*map|alur proses|struktur organisasi/i, sources: [
     { title: "Visual Information Processing and Diagrammatic Reasoning", author: "Larkin, J.H., & Simon, H.A.", year: "2021", url: "https://scholar.google.com" },
     { title: "Systems Analysis and Design: Flowcharts and Process Modeling", author: "Kendall, K.E., & Kendall, J.E.", year: "2022", url: "https://scholar.google.com" },
@@ -6645,6 +6746,253 @@ function MermaidCard({ code }: { code: string }) {
   );
 }
 
+// ─── Data Visualization Cards (Bar, Line, Pie/Donut, Comparison, KPI) ───────
+function BarChartCard() {
+  const data = [
+    { month: "Januari", val: 120, pct: "21.4%" },
+    { month: "Februari", val: 180, pct: "32.1%" },
+    { month: "Maret", val: 250, pct: "44.6%" },
+    { month: "April", val: 310, pct: "55.4%" },
+    { month: "Mei", val: 420, pct: "75%" },
+    { month: "Juni", val: 560, pct: "100%" },
+  ];
+
+  return (
+    <div className="my-3.5 rounded-2xl border border-neutral-200/90 bg-white p-4 sm:p-5 shadow-xs">
+      <h4 className="text-[0.9375rem] font-bold text-slate-900 leading-tight">
+        Pertumbuhan Pengguna Aplikasi
+      </h4>
+      <p className="text-xs text-slate-500 mt-1 mb-4">
+        Data simulasi jumlah pengguna per bulan.
+      </p>
+
+      <div className="space-y-3.5">
+        {data.map((item, idx) => (
+          <div key={idx} className="space-y-1">
+            <div className="flex items-center justify-between text-xs sm:text-[13px] font-medium text-slate-800">
+              <span>{item.month}</span>
+              <span>{item.val}</span>
+            </div>
+            <div className="w-full h-1.5 sm:h-2 bg-neutral-100 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-[#4589f8] rounded-full transition-all duration-500"
+                style={{ width: item.pct }}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function LineChartCard() {
+  return (
+    <div className="my-3.5 rounded-2xl border border-neutral-200/90 bg-white p-4 sm:p-5 shadow-xs">
+      <h4 className="text-[0.9375rem] font-bold text-slate-900 leading-tight">
+        Tren Penjualan 2026
+      </h4>
+      <p className="text-xs text-slate-500 mt-1 mb-3">
+        Nilai penjualan simulasi dalam juta rupiah.
+      </p>
+
+      {/* Metric highlight badge */}
+      <div className="flex items-start gap-2.5 mb-2">
+        <div className="w-1 self-stretch bg-blue-600 rounded-full" />
+        <div>
+          <span className="text-[11px] text-slate-500 block leading-tight">Penjualan</span>
+          <span className="text-sm font-bold text-slate-900 leading-tight">Rp35 juta</span>
+        </div>
+      </div>
+
+      {/* Line Chart Canvas */}
+      <div className="w-full pt-1">
+        <svg viewBox="0 0 460 220" className="w-full h-auto block select-none font-sans">
+          <defs>
+            <linearGradient id="lineGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#2563eb" stopOpacity="0.12" />
+              <stop offset="100%" stopColor="#2563eb" stopOpacity="0.0" />
+            </linearGradient>
+          </defs>
+
+          {/* Dotted grid lines */}
+          <line x1="50" y1="40" x2="420" y2="40" stroke="#e2e8f0" strokeDasharray="3 3" strokeWidth="1" />
+          <line x1="50" y1="100" x2="420" y2="100" stroke="#e2e8f0" strokeDasharray="3 3" strokeWidth="1" />
+          <line x1="50" y1="160" x2="420" y2="160" stroke="#e2e8f0" strokeDasharray="3 3" strokeWidth="1" />
+          <line x1="50" y1="190" x2="420" y2="190" stroke="#e2e8f0" strokeDasharray="3 3" strokeWidth="1" />
+
+          {/* Y Axis text labels */}
+          <text x="44" y="44" textAnchor="end" fontSize="10" fill="#94a3b8">Rp40 juta</text>
+          <text x="44" y="193" textAnchor="end" fontSize="10" fill="#94a3b8">Rp8 juta</text>
+          <text x="18" y="115" textAnchor="middle" fontSize="10" fill="#94a3b8" transform="rotate(-90 18 115)">Penjualan</text>
+
+          {/* X Axis text labels */}
+          <text x="50" y="208" textAnchor="middle" fontSize="10" fill="#64748b">Jan</text>
+          <text x="235" y="208" textAnchor="middle" fontSize="10" fill="#64748b">Bulan</text>
+          <text x="420" y="208" textAnchor="middle" fontSize="10" fill="#64748b">Jun</text>
+
+          {/* Vertical Jun Indicator Line */}
+          <line x1="420" y1="36" x2="420" y2="190" stroke="#94a3b8" strokeWidth="1" />
+          <text x="420" y="26" textAnchor="middle" fontSize="11" fill="#1e293b" fontWeight="600">Jun</text>
+
+          {/* Area fill */}
+          <path
+            d="M 50 180 C 90 160, 115 135, 140 140 C 165 145, 185 168, 220 156 C 265 140, 310 95, 370 65 C 395 52, 410 42, 420 36 L 420 190 L 50 190 Z"
+            fill="url(#lineGrad)"
+          />
+
+          {/* The line curve */}
+          <path
+            d="M 50 180 C 90 160, 115 135, 140 140 C 165 145, 185 168, 220 156 C 265 140, 310 95, 370 65 C 395 52, 410 42, 420 36"
+            fill="none"
+            stroke="#2563eb"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+          />
+
+          {/* Dot marker at Jun */}
+          <circle cx="420" cy="36" r="5" fill="#2563eb" stroke="#ffffff" strokeWidth="2" />
+        </svg>
+      </div>
+    </div>
+  );
+}
+
+function PieChartCard() {
+  return (
+    <div className="my-3.5 rounded-2xl border border-neutral-200/90 bg-white p-4 sm:p-5 shadow-xs">
+      <h4 className="text-[0.9375rem] font-bold text-slate-900 leading-tight">
+        Distribusi Pengguna Berdasarkan Perangkat
+      </h4>
+      <p className="text-xs text-slate-500 mt-1 mb-4">
+        Persentase dari total 1.000 pengguna simulasi.
+      </p>
+
+      {/* Donut Chart SVG */}
+      <div className="flex justify-center py-2">
+        <svg viewBox="0 0 240 240" className="w-[180px] h-[180px] sm:w-[200px] sm:h-[200px] block select-none">
+          {/* Slice 1: Mobile 650 (65%) -> Blue */}
+          <path
+            d="M 53.7 168.2 A 82 82 0 1 0 120 38 L 120 72 A 48 48 0 1 1 81.2 148.2 Z"
+            fill="#0084ff"
+          />
+          {/* Slice 2: Desktop 280 (28%) -> Green */}
+          <path
+            d="M 85.3 45.7 A 82 82 0 0 0 52.8 167.0 L 80.7 147.5 A 48 48 0 0 1 99.7 76.5 Z"
+            fill="#00b050"
+          />
+          {/* Slice 3: Tablet 70 (7%) -> Yellow */}
+          <path
+            d="M 118.6 38.0 A 82 82 0 0 0 86.6 45.1 L 100.5 76.1 A 48 48 0 0 1 119.2 72.0 Z"
+            fill="#ffc000"
+          />
+        </svg>
+      </div>
+
+      {/* Legend below chart */}
+      <div className="grid grid-cols-3 gap-2 pt-3 border-t border-neutral-100">
+        <div className="flex items-center gap-2">
+          <div className="w-1 h-7 bg-[#0084ff] rounded-full shrink-0" />
+          <div>
+            <span className="text-[11px] text-slate-500 block leading-tight">Mobile</span>
+            <span className="text-xs sm:text-sm font-bold text-slate-900 leading-tight">650</span>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-1 h-7 bg-[#00b050] rounded-full shrink-0" />
+          <div>
+            <span className="text-[11px] text-slate-500 block leading-tight">Desktop</span>
+            <span className="text-xs sm:text-sm font-bold text-slate-900 leading-tight">280</span>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-1 h-7 bg-[#ffc000] rounded-full shrink-0" />
+          <div>
+            <span className="text-[11px] text-slate-500 block leading-tight">Tablet</span>
+            <span className="text-xs sm:text-sm font-bold text-slate-900 leading-tight">70</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ComparisonChartCard() {
+  const comparisons = [
+    { month: "Januari", targetVal: "Rp20 jt", targetPct: "40%", realVal: "Rp18 jt", realPct: "36%" },
+    { month: "Februari", targetVal: "Rp25 jt", targetPct: "50%", realVal: "Rp28 jt", realPct: "56%" },
+    { month: "Maret", targetVal: "Rp30 jt", targetPct: "60%", realVal: "Rp27 jt", realPct: "54%" },
+    { month: "April", targetVal: "Rp35 jt", targetPct: "70%", realVal: "Rp40 jt", realPct: "80%" },
+    { month: "Mei", targetVal: "Rp40 jt", targetPct: "80%", realVal: "Rp45 jt", realPct: "90%" },
+  ];
+
+  return (
+    <div className="my-3.5 rounded-2xl border border-neutral-200/90 bg-white p-4 sm:p-5 shadow-xs">
+      <h4 className="text-[0.9375rem] font-bold text-slate-900 leading-tight">
+        Target vs Realisasi
+      </h4>
+      <p className="text-xs text-slate-500 mt-1 mb-4">
+        Perbandingan dalam juta rupiah.
+      </p>
+
+      <div className="space-y-4">
+        {comparisons.map((c, idx) => (
+          <div key={idx} className="space-y-1.5">
+            <span className="text-xs font-semibold text-slate-900 block">{c.month}</span>
+
+            {/* Target row */}
+            <div className="space-y-0.5">
+              <div className="flex items-center justify-between text-[11px] sm:text-xs text-slate-600">
+                <span>Target</span>
+                <span className="font-medium text-slate-800">{c.targetVal}</span>
+              </div>
+              <div className="w-full h-1.5 bg-neutral-100 rounded-full overflow-hidden">
+                <div className="h-full bg-[#4589f8] rounded-full" style={{ width: c.targetPct }} />
+              </div>
+            </div>
+
+            {/* Realisasi row */}
+            <div className="space-y-0.5">
+              <div className="flex items-center justify-between text-[11px] sm:text-xs text-slate-600">
+                <span>Realisasi</span>
+                <span className="font-medium text-slate-800">{c.realVal}</span>
+              </div>
+              <div className="w-full h-1.5 bg-neutral-100 rounded-full overflow-hidden">
+                <div className="h-full bg-[#22c55e] rounded-full" style={{ width: c.realPct }} />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function KpiSummaryCard() {
+  const kpis = [
+    { label: "Total pengguna", val: "1.250", valColor: "text-[#059669]", change: "↗ +18,5%" },
+    { label: "Total transaksi", val: "845", valColor: "text-slate-900", change: "↗ +12,2%" },
+    { label: "Conversion rate", val: "6,8%", valColor: "text-slate-900", change: "+2,1%" },
+    { label: "Pendapatan", val: "Rp45 jt", valColor: "text-slate-900", change: "+15,4%" },
+  ];
+
+  return (
+    <div className="my-3.5 grid grid-cols-2 gap-2.5 sm:gap-3">
+      {kpis.map((kpi, idx) => (
+        <div key={idx} className="rounded-2xl border border-neutral-200/90 bg-white p-3.5 sm:p-4 shadow-xs">
+          <span className="text-xs text-slate-500 block leading-tight">{kpi.label}</span>
+          <div className={`text-xl sm:text-2xl font-bold ${kpi.valColor} my-1 leading-tight`}>
+            {kpi.val}
+          </div>
+          <span className="text-xs font-semibold text-[#059669] block leading-tight">
+            {kpi.change}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 // ─── Markdown Renderer (ChatGPT/Gemini-style) ────────────────────────────────
 function renderInlineMd(text: string): React.ReactNode[] {
   const parts = text.split(/(\$\$[^\$]+\$\$|\$[^\$\n]+\$|\*\*[^*]+\*\*|\*[^*]+\*|`[^`]+`)/g);
@@ -7386,6 +7734,28 @@ function MarkdownRenderer({ text, isStreaming }: { text: string; isStreaming?: b
       // Mermaid Diagram Card (Bagan alur, proses, mind map, timeline)
       if (lang === "mermaid") {
         elements.push(<MermaidCard key={`merm-${i}`} code={codeLines.join("\n")} />);
+        continue;
+      }
+
+      // Data Visualization Cards (Visualisasi Data)
+      if (lang === "chart:bar" || lang === "barchart") {
+        elements.push(<BarChartCard key={`bar-${i}`} />);
+        continue;
+      }
+      if (lang === "chart:line" || lang === "linechart") {
+        elements.push(<LineChartCard key={`line-${i}`} />);
+        continue;
+      }
+      if (lang === "chart:pie" || lang === "chart:donut" || lang === "piechart") {
+        elements.push(<PieChartCard key={`pie-${i}`} />);
+        continue;
+      }
+      if (lang === "chart:comparison" || lang === "comparison") {
+        elements.push(<ComparisonChartCard key={`comp-${i}`} />);
+        continue;
+      }
+      if (lang === "chart:kpi" || lang === "kpi") {
+        elements.push(<KpiSummaryCard key={`kpi-${i}`} />);
         continue;
       }
 
