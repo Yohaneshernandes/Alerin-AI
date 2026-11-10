@@ -12983,7 +12983,6 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
     return null;
   });
   const [selectedProjectChat, setSelectedProjectChat] = useState<ProjectChatItem | null>(null);
-  const [projectSubTab, setProjectSubTab] = useState<"obrolan" | "sumber">("obrolan");
 
   // Dengarkan sinyal pembukaan proyek langsung dari pencarian (SearchModal)
   useEffect(() => {
@@ -15059,118 +15058,35 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
             </div>
           </header>
 
-          {/* Subtab Bar: Obrolan (active capsule) & Sumber */}
-          <div className="shrink-0 flex items-center gap-2 px-4 pt-3 pb-2 select-none">
-            <button
-              type="button"
-              onClick={() => setProjectSubTab("obrolan")}
-              className={`px-4 py-2 rounded-full text-sm transition-all cursor-pointer whitespace-nowrap ${
-                projectSubTab === "obrolan"
-                  ? "bg-[#F2F4F7] text-neutral-900 font-semibold"
-                  : "text-neutral-500 hover:text-neutral-900 font-medium"
-              }`}
-            >
-              Obrolan
-            </button>
-            <button
-              type="button"
-              onClick={() => setProjectSubTab("sumber")}
-              className={`px-4 py-2 rounded-full text-sm transition-all cursor-pointer whitespace-nowrap ${
-                projectSubTab === "sumber"
-                  ? "bg-[#F2F4F7] text-neutral-900 font-semibold"
-                  : "text-neutral-500 hover:text-neutral-900 font-medium"
-              }`}
-            >
-              Sumber
-            </button>
-          </div>
-
-          {/* Content: Obrolan List or Sumber List */}
-          {projectSubTab === "obrolan" ? (
-            <div className="flex-1 overflow-y-auto px-4 pt-2 pb-4 space-y-4" style={{ scrollbarWidth: "none" }}>
-              {(projectChatsMap[selectedProject.id] ?? []).length === 0 ? (
-                <div className="py-20 text-center px-4">
-                  <p className="text-sm font-semibold text-neutral-800 mb-1">Belum ada obrolan</p>
-                  <p className="text-xs text-neutral-400 max-w-xs mx-auto">
-                    Kirim pesan melalui kolom di bawah untuk memulai percakapan baru di proyek {selectedProject.title}.
-                  </p>
-                </div>
-              ) : (
-                [...(projectChatsMap[selectedProject.id] ?? [])]
-                  .sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0))
-                  .map((chat) => (
-                    <button
-                      key={chat.id}
-                      type="button"
-                      onClick={() => setSelectedProjectChat(chat)}
-                      className="w-full text-left px-2.5 py-1.5 hover:bg-neutral-50 active:bg-neutral-100/70 rounded-xl transition-colors cursor-pointer group block"
-                    >
-                      <h3 className="text-[15px] font-medium text-neutral-900 group-hover:text-blue-600 transition-colors">
-                        {chat.title}
-                      </h3>
-                      <p className="text-[13.5px] text-neutral-800 font-normal mt-0.5 truncate leading-relaxed">
-                        {chat.lastSnippet?.replace(/\*\*/g, "")}
-                      </p>
-                    </button>
-                  ))
-              )}
-            </div>
-          ) : (
-            /* Sumber Tab */
-            <div className="flex-1 overflow-y-auto px-4 pt-2 pb-4 space-y-3" style={{ scrollbarWidth: "none" }}>
-              <div className="flex items-center justify-between pb-2 border-b border-neutral-100">
-                <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wider">Dokumen Referensi</p>
-                <button
-                  type="button"
-                  onClick={() => sourceFileInputRef.current?.click()}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-600 text-white text-xs font-bold hover:bg-blue-700 transition-colors cursor-pointer"
-                >
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                  <span>Tambah Sumber</span>
-                </button>
+          {/* Obrolan List */}
+          <div className="flex-1 overflow-y-auto px-4 pt-3 pb-4 space-y-4" style={{ scrollbarWidth: "none" }}>
+            {(projectChatsMap[selectedProject.id] ?? []).length === 0 ? (
+              <div className="py-20 text-center px-4">
+                <p className="text-sm font-semibold text-neutral-800 mb-1">Belum ada obrolan</p>
+                <p className="text-xs text-neutral-400 max-w-xs mx-auto">
+                  Kirim pesan melalui kolom di bawah untuk memulai percakapan baru di proyek {selectedProject.title}.
+                </p>
               </div>
-
-              {(projectSourcesMap[selectedProject.id] ?? []).length === 0 ? (
-                <div className="py-16 text-center px-4">
-                  <div className="size-12 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-400 mx-auto mb-2.5">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                  </div>
-                  <p className="text-sm font-semibold text-neutral-800 mb-0.5">Belum ada dokumen sumber</p>
-                  <p className="text-xs text-neutral-400 max-w-xs mx-auto mb-3">
-                    Unggah modul, artikel jurnal, atau file tugas untuk dijadikan konteks AI di proyek ini.
-                  </p>
+            ) : (
+              [...(projectChatsMap[selectedProject.id] ?? [])]
+                .sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0))
+                .map((chat) => (
                   <button
+                    key={chat.id}
                     type="button"
-                    onClick={() => sourceFileInputRef.current?.click()}
-                    className="px-4 py-2 rounded-xl text-xs font-semibold bg-neutral-100 hover:bg-neutral-200 text-neutral-800 transition-colors"
+                    onClick={() => setSelectedProjectChat(chat)}
+                    className="w-full text-left px-2.5 py-1.5 hover:bg-neutral-50 active:bg-neutral-100/70 rounded-xl transition-colors cursor-pointer group block"
                   >
-                    Unggah Dokumen
+                    <h3 className="text-[15px] font-medium text-neutral-900 group-hover:text-blue-600 transition-colors">
+                      {chat.title}
+                    </h3>
+                    <p className="text-[13.5px] text-neutral-800 font-normal mt-0.5 truncate leading-relaxed">
+                      {chat.lastSnippet?.replace(/\*\*/g, "")}
+                    </p>
                   </button>
-                </div>
-              ) : (
-                (projectSourcesMap[selectedProject.id] ?? []).map((src) => (
-                  <div key={src.id} className="flex items-center justify-between p-3 rounded-2xl border border-neutral-200/90 bg-white hover:bg-neutral-50 transition-colors">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="size-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xs shrink-0">
-                        {src.type}
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-sm font-medium text-neutral-900 truncate">{src.name}</p>
-                        <p className="text-[11px] text-neutral-400">{src.size} · {src.time}</p>
-                      </div>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => setToast(`Membuka dokumen ${src.name}`)}
-                      className="size-8 rounded-full flex items-center justify-center text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100"
-                    >
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-                    </button>
-                  </div>
                 ))
-              )}
-            </div>
-          )}
+            )}
+          </div>
 
           {/* Bottom Chat Input matching Gambar 2 / Alerin Chat */}
           <div className="shrink-0 bg-white z-20">
