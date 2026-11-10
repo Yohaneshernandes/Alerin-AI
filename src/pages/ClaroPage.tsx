@@ -4749,12 +4749,64 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
     };
   }, []);
 
-  const NAV: { id: NavTab; label: string; icon: React.ReactNode }[] = [
-    { id: "percakapan", label: "Percakapan", icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> },
-    { id: "fitur", label: "Semua Fitur", icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> },
-    { id: "proyek", label: "Proyek Saya", icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> },
-    { id: "profil", label: "Profil", icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> },
-    { id: "quizlab", label: "QUIZLAB", icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg> },
+  const SIDEBAR_NAV_ITEMS: {
+    id: string;
+    label: string;
+    active: boolean;
+    onClick: () => void;
+    icon: React.ReactNode;
+  }[] = [
+    {
+      id: "percakapan",
+      label: "Percakapan",
+      active: activeTab === "percakapan",
+      onClick: () => onTab("percakapan"),
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+        </svg>
+      ),
+    },
+    {
+      id: "fitur",
+      label: "Semua Fitur",
+      active: activeTab === "fitur",
+      onClick: () => onTab("fitur"),
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="3" y="3" width="7" height="7" rx="1" />
+          <rect x="14" y="3" width="7" height="7" rx="1" />
+          <rect x="14" y="14" width="7" height="7" rx="1" />
+          <rect x="3" y="14" width="7" height="7" rx="1" />
+        </svg>
+      ),
+    },
+    {
+      id: "proyek",
+      label: "Proyek Saya",
+      active: activeTab === "proyek",
+      onClick: () => onTab("proyek"),
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+          <polyline points="14 2 14 8 20 8" />
+        </svg>
+      ),
+    },
+    {
+      id: "kalender",
+      label: "Kalender",
+      active: calOpen,
+      onClick: () => setCalOpen(true),
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2" />
+          <line x1="16" y1="2" x2="16" y2="6" />
+          <line x1="8" y1="2" x2="8" y2="6" />
+          <line x1="3" y1="10" x2="21" y2="10" />
+        </svg>
+      ),
+    },
   ];
 
   const renderHistoryItem = (item: RiwayatItem) => {
@@ -4863,6 +4915,173 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
           </>
         )}
       </div>
+    );
+  };
+
+  const renderSidebarPanel = (isMobileDrawer: boolean) => {
+    const closeDrawer = () => {
+      if (isMobileDrawer) setMobileDrawerOpen(false);
+    };
+    const handleCollapseOrClose = () => {
+      setActiveHistoryMenu(null);
+      if (isMobileDrawer) setMobileDrawerOpen(false);
+      else setSidebarOpen(false);
+    };
+
+    return (
+      <>
+        <div className="flex flex-col flex-1 min-h-0">
+          {/* Drawer / Sidebar Header */}
+          <div className="shrink-0 flex items-center justify-between mb-5">
+            <div className="flex items-center gap-2.5">
+              <img src="/assets/73c1a.png" alt="Alerin" className="size-9 rounded-full object-cover shadow-sm border border-white" />
+              <span className="font-bold text-slate-900 text-lg leading-none font-sans">ALERIN</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveHistoryMenu(null);
+                  closeDrawer();
+                  setSearchOpen(true);
+                }}
+                aria-label="Cari percakapan"
+                className="size-8 rounded-xl flex items-center justify-center text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+              </button>
+              <button
+                type="button"
+                onClick={handleCollapseOrClose}
+                aria-label={isMobileDrawer ? "Tutup menu" : "Ciutkan sidebar"}
+                title={isMobileDrawer ? "Tutup menu" : "Ciutkan sidebar"}
+                className="size-8 rounded-full border border-neutral-200/80 flex items-center justify-center text-neutral-800 hover:bg-slate-100 transition-colors cursor-pointer"
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                  <line x1="9" y1="3" x2="9" y2="21" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          {/* Navigation Menu */}
+          <nav className="shrink-0 space-y-1 mb-6">
+            {SIDEBAR_NAV_ITEMS.map((nav) => (
+              <button
+                key={nav.id}
+                type="button"
+                onClick={() => {
+                  setActiveHistoryMenu(null);
+                  nav.onClick();
+                  closeDrawer();
+                }}
+                className={`w-full h-11 px-3.5 py-2.5 rounded-2xl flex items-center gap-3 transition-colors text-left cursor-pointer ${
+                  nav.active
+                    ? "bg-[#1A73E8] text-white font-bold shadow-xs shadow-[#1A73E8]/20"
+                    : "text-slate-600 hover:bg-slate-100 font-medium"
+                }`}
+              >
+                {nav.icon}
+                <span className="text-base">{nav.label}</span>
+              </button>
+            ))}
+          </nav>
+
+          {/* Disematkan & Riwayat Section — mengisi sisa tinggi sampai tepat di atas tombol Obrolan */}
+          <div
+            onScroll={() => activeHistoryMenu && setActiveHistoryMenu(null)}
+            className="flex-1 min-h-0 pt-1 overflow-y-auto pr-1 pb-2 space-y-4"
+          >
+            {pinnedHistoryItems.length > 0 && (
+              <div>
+                <div className="text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-2 px-1">
+                  Disematkan
+                </div>
+                <div className="space-y-1">
+                  {pinnedHistoryItems.map(renderHistoryItem)}
+                </div>
+              </div>
+            )}
+
+            <div>
+              <div className="text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-2 px-1">
+                Riwayat
+              </div>
+              <div className="space-y-1">
+                {unpinnedHistoryItems.length > 0 ? (
+                  (expandedHistory ? unpinnedHistoryItems : unpinnedHistoryItems.slice(0, 7)).map(
+                    renderHistoryItem
+                  )
+                ) : (
+                  <p className="px-2 py-1 text-xs text-slate-400">Belum ada riwayat lainnya</p>
+                )}
+
+                {isLoadingMoreHistory && (
+                  <div className="space-y-3 py-2.5 px-1.5 animate-pulse">
+                    <div className="h-2.5 w-[68%] rounded-sm bg-neutral-200" />
+                    <div className="h-2.5 w-[36%] rounded-sm bg-neutral-200" />
+                    <div className="h-2.5 w-[56%] rounded-sm bg-neutral-200" />
+                  </div>
+                )}
+
+                {unpinnedHistoryItems.length > 7 && !isLoadingMoreHistory && (
+                  <div className="pt-1.5 pb-1 px-1">
+                    <button
+                      type="button"
+                      onClick={handleToggleExpandHistory}
+                      className="flex items-center justify-between w-full text-left text-neutral-500 hover:text-blue-600 text-[13px] font-medium transition-colors py-1 px-1 cursor-pointer group"
+                    >
+                      <span>
+                        {expandedHistory ? "Tampilkan lebih sedikit" : "Lihat selengkapnya"}
+                      </span>
+                      <svg
+                        width="13"
+                        height="13"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className={`ml-auto text-neutral-400 group-hover:text-blue-600 transition-transform duration-200 ${
+                          expandedHistory ? "rotate-180" : ""
+                        }`}
+                      >
+                        <path d="M6 9l6 6 6-6" />
+                      </svg>
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom + Obrolan button */}
+        <div className="shrink-0 pt-3">
+          <button
+            type="button"
+            onClick={() => {
+              setActiveHistoryMenu(null);
+              setActiveHistoryId(null);
+              try { localStorage.removeItem("alerin_active_history_id"); } catch {}
+              onNewChat();
+              closeDrawer();
+            }}
+            className="w-full h-11 px-5 py-2.5 bg-[#1A73E8] hover:bg-[#1557b0] active:scale-[0.98] text-white rounded-full shadow-md shadow-[#1A73E8]/25 flex items-center justify-center gap-2 font-semibold text-sm transition-all cursor-pointer"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            <span>Obrolan</span>
+          </button>
+        </div>
+      </>
     );
   };
 
@@ -5092,284 +5311,117 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
             className="fixed top-0 left-0 bottom-0 w-72 max-w-[85vw] bg-white z-[160] shadow-2xl flex flex-col py-5 px-4 overflow-hidden"
             style={{ animation: "drawerSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1)" }}
           >
-            <div className="flex flex-col flex-1 min-h-0">
-              {/* Drawer Header */}
-              <div className="shrink-0 flex items-center justify-between mb-5">
-                <div className="flex items-center gap-2.5">
-                  <img src="/assets/73c1a.png" alt="Alerin" className="size-9 rounded-full object-cover shadow-sm border border-white" />
-                  <span className="font-bold text-slate-900 text-lg leading-none font-sans">ALERIN</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setActiveHistoryMenu(null);
-                      setMobileDrawerOpen(false);
-                      setSearchOpen(true);
-                    }}
-                    aria-label="Cari percakapan"
-                    className="size-8 rounded-xl flex items-center justify-center text-slate-700 hover:bg-slate-100 transition-colors"
-                  >
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setActiveHistoryMenu(null);
-                      setMobileDrawerOpen(false);
-                    }}
-                    aria-label="Tutup menu"
-                    className="size-8 rounded-full border border-neutral-200/80 flex items-center justify-center text-neutral-800 hover:bg-slate-100 transition-colors"
-                  >
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
-                  </button>
-                </div>
-              </div>
+            {renderSidebarPanel(true)}
+          </aside>
+        </div>
+      )}
 
-              {/* Navigation Menu */}
-              <nav className="shrink-0 space-y-1 mb-6">
-                <button
-                  type="button"
-                  onClick={() => { setActiveHistoryMenu(null); onTab("percakapan"); setMobileDrawerOpen(false); }}
-                  className={`w-full h-11 px-3.5 py-2.5 rounded-2xl flex items-center gap-3 transition-colors text-left ${activeTab === "percakapan" ? "bg-[#1A73E8] text-white font-bold shadow-xs shadow-[#1A73E8]/20" : "text-slate-600 hover:bg-slate-100 font-medium"}`}
-                >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                  <span className="text-base">Percakapan</span>
-                </button>
+      {/* Dropdown Menu titik tiga riwayat di luar <aside> dan scroll container agar tidak terpotong (Mobile & Desktop) */}
+      {activeHistoryMenu && (() => {
+        const { item, rect } = activeHistoryMenu;
+        const estimatedHeight = 196;
+        const spaceBelow = window.innerHeight - rect.bottom;
+        const openUpward = spaceBelow < estimatedHeight && rect.top > spaceBelow;
+        const menuWidth = 212;
+        const menuLeft = Math.max(12, Math.min(rect.right - menuWidth, window.innerWidth - menuWidth - 12));
+        const menuStyle: React.CSSProperties = openUpward
+          ? {
+              position: "fixed",
+              bottom: `${Math.max(12, window.innerHeight - rect.top + 6)}px`,
+              left: `${menuLeft}px`,
+            }
+          : {
+              position: "fixed",
+              top: `${Math.min(rect.bottom + 6, Math.max(12, window.innerHeight - estimatedHeight - 12))}px`,
+              left: `${menuLeft}px`,
+            };
 
-                <button
-                  type="button"
-                  onClick={() => { setActiveHistoryMenu(null); onTab("fitur"); setMobileDrawerOpen(false); }}
-                  className={`w-full h-11 px-3.5 py-2.5 rounded-2xl flex items-center gap-3 transition-colors text-left ${activeTab === "fitur" ? "bg-[#1A73E8] text-white font-bold shadow-xs shadow-[#1A73E8]/20" : "text-slate-600 hover:bg-slate-100 font-medium"}`}
-                >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
-                  <span className="text-base">Semua Fitur</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => { setActiveHistoryMenu(null); onTab("proyek"); setMobileDrawerOpen(false); }}
-                  className={`w-full h-11 px-3.5 py-2.5 rounded-2xl flex items-center gap-3 transition-colors text-left ${activeTab === "proyek" ? "bg-[#1A73E8] text-white font-bold shadow-xs shadow-[#1A73E8]/20" : "text-slate-600 hover:bg-slate-100 font-medium"}`}
-                >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                  <span className="text-base">Proyek Saya</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => { setActiveHistoryMenu(null); setCalOpen(true); setMobileDrawerOpen(false); }}
-                  className={`w-full h-11 px-3.5 py-2.5 rounded-2xl flex items-center gap-3 transition-colors text-left ${calOpen ? "bg-[#1A73E8] text-white font-bold shadow-xs shadow-[#1A73E8]/20" : "text-slate-600 hover:bg-slate-100 font-medium"}`}
-                >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="3" y="4" width="18" height="18" rx="2" />
-                    <line x1="16" y1="2" x2="16" y2="6" />
-                    <line x1="8" y1="2" x2="8" y2="6" />
-                    <line x1="3" y1="10" x2="21" y2="10" />
-                  </svg>
-                  <span className="text-base">Kalender</span>
-                </button>
-              </nav>
-
-              {/* Disematkan & Riwayat Section — mengisi sisa tinggi sampai tepat di atas tombol Obrolan */}
-              <div
-                onScroll={() => activeHistoryMenu && setActiveHistoryMenu(null)}
-                className="flex-1 min-h-0 pt-1 overflow-y-auto pr-1 pb-2 space-y-4"
-              >
-                {pinnedHistoryItems.length > 0 && (
-                  <div>
-                    <div className="text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-2 px-1">
-                      Disematkan
-                    </div>
-                    <div className="space-y-1">
-                      {pinnedHistoryItems.map(renderHistoryItem)}
-                    </div>
-                  </div>
-                )}
-
-                <div>
-                  <div className="text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-2 px-1">
-                    Riwayat
-                  </div>
-                  <div className="space-y-1">
-                    {unpinnedHistoryItems.length > 0 ? (
-                      (expandedHistory ? unpinnedHistoryItems : unpinnedHistoryItems.slice(0, 7)).map(
-                        renderHistoryItem
-                      )
-                    ) : (
-                      <p className="px-2 py-1 text-xs text-slate-400">Belum ada riwayat lainnya</p>
-                    )}
-
-                    {/* Skeleton loading matching Gambar 2 when "Lihat selengkapnya" is clicked */}
-                    {isLoadingMoreHistory && (
-                      <div className="space-y-3 py-2.5 px-1.5 animate-pulse">
-                        <div className="h-2.5 w-[68%] rounded-sm bg-neutral-200" />
-                        <div className="h-2.5 w-[36%] rounded-sm bg-neutral-200" />
-                        <div className="h-2.5 w-[56%] rounded-sm bg-neutral-200" />
-                      </div>
-                    )}
-
-                    {unpinnedHistoryItems.length > 7 && !isLoadingMoreHistory && (
-                      <div className="pt-1.5 pb-1 px-1">
-                        <button
-                          type="button"
-                          onClick={handleToggleExpandHistory}
-                          className="flex items-center justify-between w-full text-left text-neutral-500 hover:text-blue-600 text-[13px] font-medium transition-colors py-1 px-1 cursor-pointer group"
-                        >
-                          <span>
-                            {expandedHistory
-                              ? "Tampilkan lebih sedikit"
-                              : "Lihat selengkapnya"}
-                          </span>
-                          <svg
-                            width="13"
-                            height="13"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2.2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            className={`ml-auto text-neutral-400 group-hover:text-blue-600 transition-transform duration-200 ${
-                              expandedHistory ? "rotate-180" : ""
-                            }`}
-                          >
-                            <path d="M6 9l6 6 6-6" />
-                          </svg>
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Bottom + Obrolan button */}
-            <div className="shrink-0 pt-3">
+        return (
+          <>
+            <div
+              className="fixed inset-0 z-[190]"
+              onClick={() => setActiveHistoryMenu(null)}
+            />
+            <div
+              style={menuStyle}
+              className="z-[200] w-[212px] bg-white rounded-2xl border border-slate-200/90 shadow-[0_12px_36px_rgba(0,0,0,0.12),0_2px_8px_rgba(0,0,0,0.06)] p-1.5 overflow-hidden animate-[gemini-fade-in_0.15s_ease-out]"
+              onClick={(e) => e.stopPropagation()}
+            >
               <button
                 type="button"
                 onClick={() => {
+                  setRenameModalItem({ id: item.id, title: item.title });
+                  setRenameInput(item.title.slice(0, 25));
                   setActiveHistoryMenu(null);
-                  setActiveHistoryId(null);
-                  try { localStorage.removeItem("alerin_active_history_id"); } catch {}
-                  onNewChat();
-                  setMobileDrawerOpen(false);
                 }}
-                className="w-full h-11 px-5 py-2.5 bg-[#1A73E8] hover:bg-[#1557b0] active:scale-[0.98] text-white rounded-full shadow-md shadow-[#1A73E8]/25 flex items-center justify-center gap-2 font-semibold text-sm transition-all cursor-pointer"
+                className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[13px] font-medium text-slate-800 hover:bg-slate-100/70 active:scale-[0.99] transition-all text-left"
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                <span>Obrolan</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-500 shrink-0">
+                  <path d="M12 20h9"/>
+                  <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                </svg>
+                <span>Ganti Nama</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setMoveToProjectItem({ id: item.id, title: item.title });
+                  setActiveHistoryMenu(null);
+                }}
+                className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[13px] font-medium text-slate-800 hover:bg-slate-100/70 active:scale-[0.99] transition-all text-left"
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-500 shrink-0">
+                  <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                </svg>
+                <span className="truncate">Pindahkan ke Proyek</span>
+              </button>
+
+              {(() => {
+                const isPinLimitReached =
+                  !item.pinned && pinnedHistoryItems.length >= MAX_PINNED_RIWAYAT;
+                return (
+                  <button
+                    type="button"
+                    onClick={() => togglePinRiwayat(item.id)}
+                    className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[13px] font-medium hover:bg-slate-100/70 active:scale-[0.99] transition-all text-left ${
+                      isPinLimitReached ? "text-slate-400" : "text-slate-800"
+                    }`}
+                  >
+                    <PinIcon
+                      size={16}
+                      className={`shrink-0 ${isPinLimitReached ? "text-slate-400" : "text-slate-500"}`}
+                    />
+                    <span>{item.pinned ? "Lepas Sematan" : "Sematkan"}</span>
+                    {isPinLimitReached && (
+                      <span className="ml-auto text-[11px] font-normal text-slate-400">
+                        Maks {MAX_PINNED_RIWAYAT}
+                      </span>
+                    )}
+                  </button>
+                );
+              })()}
+
+              <div className="h-px bg-slate-100 my-1 mx-1" />
+
+              <button
+                type="button"
+                onClick={() => {
+                  setDeleteConfirmItem({ id: item.id, title: item.title });
+                  setActiveHistoryMenu(null);
+                }}
+                className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[13px] font-medium text-red-600 hover:bg-red-50 active:scale-[0.99] transition-all text-left"
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-red-500 shrink-0">
+                  <polyline points="3 6 5 6 21 6"/>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                </svg>
+                <span>Hapus</span>
               </button>
             </div>
-          </aside>
-
-          {/* Dropdown Menu titik tiga riwayat di luar <aside> dan scroll container agar tidak terpotong */}
-          {activeHistoryMenu && (() => {
-            const { item, rect } = activeHistoryMenu;
-            const estimatedHeight = 196;
-            const spaceBelow = window.innerHeight - rect.bottom;
-            const openUpward = spaceBelow < estimatedHeight && rect.top > spaceBelow;
-            const menuWidth = 212;
-            const menuLeft = Math.max(12, Math.min(rect.right - menuWidth, window.innerWidth - menuWidth - 12));
-            const menuStyle: React.CSSProperties = openUpward
-              ? {
-                  position: "fixed",
-                  bottom: `${Math.max(12, window.innerHeight - rect.top + 6)}px`,
-                  left: `${menuLeft}px`,
-                }
-              : {
-                  position: "fixed",
-                  top: `${Math.min(rect.bottom + 6, Math.max(12, window.innerHeight - estimatedHeight - 12))}px`,
-                  left: `${menuLeft}px`,
-                };
-
-            return (
-              <>
-                <div
-                  className="fixed inset-0 z-[190]"
-                  onClick={() => setActiveHistoryMenu(null)}
-                />
-                <div
-                  style={menuStyle}
-                  className="z-[200] w-[212px] bg-white rounded-2xl border border-slate-200/90 shadow-[0_12px_36px_rgba(0,0,0,0.12),0_2px_8px_rgba(0,0,0,0.06)] p-1.5 overflow-hidden animate-[gemini-fade-in_0.15s_ease-out]"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setRenameModalItem({ id: item.id, title: item.title });
-                      setRenameInput(item.title.slice(0, 25));
-                      setActiveHistoryMenu(null);
-                    }}
-                    className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[13px] font-medium text-slate-800 hover:bg-slate-100/70 active:scale-[0.99] transition-all text-left"
-                  >
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-500 shrink-0">
-                      <path d="M12 20h9"/>
-                      <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
-                    </svg>
-                    <span>Ganti Nama</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setMoveToProjectItem({ id: item.id, title: item.title });
-                      setActiveHistoryMenu(null);
-                    }}
-                    className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[13px] font-medium text-slate-800 hover:bg-slate-100/70 active:scale-[0.99] transition-all text-left"
-                  >
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-500 shrink-0">
-                      <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
-                    </svg>
-                    <span className="truncate">Pindahkan ke Proyek</span>
-                  </button>
-
-                  {(() => {
-                    const isPinLimitReached =
-                      !item.pinned && pinnedHistoryItems.length >= MAX_PINNED_RIWAYAT;
-                    return (
-                      <button
-                        type="button"
-                        onClick={() => togglePinRiwayat(item.id)}
-                        className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[13px] font-medium hover:bg-slate-100/70 active:scale-[0.99] transition-all text-left ${
-                          isPinLimitReached ? "text-slate-400" : "text-slate-800"
-                        }`}
-                      >
-                        <PinIcon
-                          size={16}
-                          className={`shrink-0 ${isPinLimitReached ? "text-slate-400" : "text-slate-500"}`}
-                        />
-                        <span>{item.pinned ? "Lepas Sematan" : "Sematkan"}</span>
-                        {isPinLimitReached && (
-                          <span className="ml-auto text-[11px] font-normal text-slate-400">
-                            Maks {MAX_PINNED_RIWAYAT}
-                          </span>
-                        )}
-                      </button>
-                    );
-                  })()}
-
-                  <div className="h-px bg-slate-100 my-1 mx-1" />
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setDeleteConfirmItem({ id: item.id, title: item.title });
-                      setActiveHistoryMenu(null);
-                    }}
-                    className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[13px] font-medium text-red-600 hover:bg-red-50 active:scale-[0.99] transition-all text-left"
-                  >
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-red-500 shrink-0">
-                      <polyline points="3 6 5 6 21 6"/>
-                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                    </svg>
-                    <span>Hapus</span>
-                  </button>
-                </div>
-              </>
-            );
-          })()}
-        </div>
-      )}
+          </>
+        );
+      })()}
       {notifOpen && (
         <NotifPanel
           onClose={() => setNotifOpen(false)}
@@ -5629,145 +5681,71 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
       )}
 
       <div className="flex flex-1 min-h-0">
-        {/* Left sidebar — desktop only, collapses to icon rail */}
+        {/* Left sidebar — desktop only, disamakan tampilannya dengan mobile drawer & bisa diciutkan */}
         <aside className="hidden md:flex shrink-0 border-r border-slate-100 flex-col bg-white overflow-hidden"
-          style={{ width: sidebarOpen ? 220 : 56, transition: "width 0.28s cubic-bezier(0.4,0,0.2,1)", minWidth: 0 }}>
-
-          {/* Logo / Branding */}
-          <div className="shrink-0 px-2 pt-3 pb-2 border-b border-slate-100">
-            {sidebarOpen ? (
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2.5 px-1">
-                  <img src="/assets/73c1a.png" alt="Alerin" className="h-8 w-8 shrink-0 rounded-full object-cover" />
-                  <div className="min-w-0">
-                    <p className="font-display font-700 text-sm text-slate-900 leading-none">Alerin</p>
-                    <div className="flex items-center gap-1 mt-0.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
-                      <span className="text-[10px] text-slate-400 truncate">Asisten kampusmu</span>
-                    </div>
-                  </div>
-                </div>
-                <button onClick={() => setSidebarOpen(false)} title="Tutup sidebar"
-                  className="w-7 h-7 shrink-0 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
-                </button>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center gap-2">
-                <button onClick={() => setSidebarOpen(true)} title="Buka sidebar">
-                  <img src="/assets/73c1a.png" alt="Alerin" className="h-8 w-8 rounded-full object-cover" />
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* Action row: Baru + Cari */}
-          <div className="px-2 pt-2 pb-1 shrink-0">
-            {sidebarOpen ? (
-              <div className="flex items-center gap-1.5">
-                <button onClick={onNewChat}
-                  className="flex-1 flex items-center justify-center gap-1.5 h-8 rounded-xl border-0 text-xs font-bold text-white whitespace-nowrap transition-all hover:opacity-90"
-                  style={{ backgroundColor: "#1A73E8" }}>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                  Baru
-                </button>
-                <button onClick={() => setSearchOpen(true)} title="Cari percakapan"
-                  className="w-8 h-8 flex items-center justify-center rounded-xl text-slate-500 border border-slate-200 bg-slate-50 hover:bg-white hover:border-blue-300 hover:text-blue-600 transition-all">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                </button>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center gap-2">
-                <button onClick={onNewChat} title="Chat baru"
-                  className="w-9 h-9 flex items-center justify-center rounded-xl text-white transition-all hover:opacity-90"
-                  style={{ background: "linear-gradient(135deg,#3b82f6,#6366f1)" }}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                </button>
-                <button onClick={() => setSearchOpen(true)} title="Cari percakapan"
-                  className="w-9 h-9 flex items-center justify-center rounded-xl text-slate-400 border border-slate-200 bg-slate-50 hover:bg-white hover:border-blue-300 hover:text-blue-600 transition-all">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* Nav items */}
+          style={{ width: sidebarOpen ? 272 : 60, transition: "width 0.28s cubic-bezier(0.4,0,0.2,1)", minWidth: 0 }}>
           {sidebarOpen ? (
-            <>
-              <nav className="px-2 space-y-0.5 mb-2 mt-1">
-                {NAV.map((n) => (
-                  <button key={n.id} onClick={() => onTab(n.id)}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm transition-all text-left"
-                    style={activeTab === n.id ? { background: "#1A73E8", color: "#fff", fontWeight: 700 } : { color: "#475569", fontWeight: 500 }}>
-                    <span style={{ color: activeTab === n.id ? "#fff" : "#64748b" }}>{n.icon}</span>
-                    {n.label}
-                  </button>
-                ))}
-              </nav>
-              <div className="px-4 mb-2 overflow-y-auto flex-1">
-                <div className="flex items-center gap-1.5 mb-2">
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Terakhir Dibuka</span>
-                </div>
-                <div className="space-y-1">
-                  {RECENT.map((r) => (
-                    <button key={r.label} onClick={() => { onTab("percakapan"); onOpenHistory(r.msgs); }}
-                      className="w-full text-left px-2 py-1.5 rounded-lg hover:bg-slate-100 transition-colors group">
-                      <p className="text-xs font-medium text-slate-700 truncate group-hover:text-blue-600 transition-colors">{r.label}</p>
-                      <p className="text-[10px] text-slate-400">{r.time}</p>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Bottom section: hint + profile/actions */}
-              <div className="mt-auto shrink-0 px-2 pb-3 space-y-2">
-                <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-3">
-                  <div className="flex items-center gap-1.5 mb-1">
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                    <span className="text-[10px] font-bold text-emerald-700">Pendamping, bukan joki</span>
-                  </div>
-                  <p className="text-[10px] text-emerald-600 leading-relaxed">Alerin membantu kamu memahami dan memperbaiki pekerjaanmu sendiri.</p>
-                </div>
-                {/* Upgrade */}
-                <button onClick={() => setUpgradeOpen(true)}
-                  className="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-bold text-white hover:opacity-90 transition-opacity"
-                  style={{ background: "#111827" }}>
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                  Upgrade Alerin
-                </button>
-              </div>
-            </>
+            <div className="flex flex-col flex-1 min-h-0 py-5 px-4">
+              {renderSidebarPanel(false)}
+            </div>
           ) : (
-            /* Icon rail when collapsed */
-            <>
-              <nav className="flex flex-col items-center gap-1 px-1.5 pt-1 flex-1">
-                {NAV.map((n) => (
-                  <button key={n.id} onClick={() => onTab(n.id)} title={n.label}
-                    className="w-9 h-9 flex items-center justify-center rounded-xl transition-all"
-                    style={activeTab === n.id ? { background: "#1A73E8", color: "#fff" } : { color: "#64748b" }}>
-                    <span className="text-base leading-none">{n.icon}</span>
+            <div className="flex flex-col items-center flex-1 py-4 px-1.5 gap-3">
+              <button
+                type="button"
+                onClick={() => setSidebarOpen(true)}
+                title="Buka sidebar"
+                className="size-9 rounded-full overflow-hidden border border-white shadow-xs hover:opacity-90 transition-opacity cursor-pointer"
+              >
+                <img src="/assets/73c1a.png" alt="Alerin" className="size-full object-cover" />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setSearchOpen(true)}
+                title="Cari percakapan"
+                className="size-9 rounded-xl flex items-center justify-center text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+              </button>
+
+              <nav className="flex flex-col items-center gap-1.5 flex-1">
+                {SIDEBAR_NAV_ITEMS.map((nav) => (
+                  <button
+                    key={nav.id}
+                    type="button"
+                    onClick={nav.onClick}
+                    title={nav.label}
+                    className={`size-10 flex items-center justify-center rounded-2xl transition-colors cursor-pointer ${
+                      nav.active
+                        ? "bg-[#1A73E8] text-white shadow-xs shadow-[#1A73E8]/20"
+                        : "text-slate-600 hover:bg-slate-100"
+                    }`}
+                  >
+                    {nav.icon}
                   </button>
                 ))}
               </nav>
-              {/* Bottom icons collapsed */}
-              <div className="shrink-0 flex flex-col items-center gap-2 px-1.5 pb-3 pt-2 border-t border-slate-100">
-                <button onClick={() => setUpgradeOpen(true)} title="Upgrade Alerin"
-                  className="w-9 h-9 flex items-center justify-center rounded-xl text-white hover:opacity-90 transition-opacity"
-                  style={{ background: "#111827" }}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                </button>
-                <button onClick={() => setNotifOpen(o => !o)} title="Notifikasi"
-                  className="relative w-9 h-9 flex items-center justify-center rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-                  <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-red-500 border border-white" />
-                </button>
-                <button onClick={() => setCalOpen(true)} title="Kalender"
-                  className="w-9 h-9 flex items-center justify-center rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                </button>
-              </div>
-            </>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveHistoryMenu(null);
+                  setActiveHistoryId(null);
+                  try { localStorage.removeItem("alerin_active_history_id"); } catch {}
+                  onNewChat();
+                }}
+                title="Obrolan baru"
+                className="size-10 rounded-full bg-[#1A73E8] hover:bg-[#1557b0] text-white shadow-md shadow-[#1A73E8]/25 flex items-center justify-center transition-all cursor-pointer"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+              </button>
+            </div>
           )}
         </aside>
 
