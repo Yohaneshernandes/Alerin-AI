@@ -22,7 +22,18 @@ const DEFAULT_SOURCES: ChatSource[] = [
   { title: "SINTA: Science and Technology Index Indonesia", author: "Kemdikbudristek RI", year: "2024", url: "https://sinta.kemdikbud.go.id" },
   { title: "Scopus: Database Abstrak dan Sitasi Ilmiah Bereputasi", author: "Elsevier", year: "2024", url: "https://www.scopus.com" },
 ];
-type FeatureKey = "matakuliah" | "parafrase" | "grammar" | "plagiasi" | "jurnal" | "judul" | "quizlab" | "progress" | "ppt" | "simulasi";
+type FeatureKey =
+  | "chat"
+  | "jurnal"
+  | "skripsi"
+  | "tesis"
+  | "disertasi"
+  | "matakuliah"
+  | "tugas"
+  | "parafrase"
+  | "grammar"
+  | "plagiasi"
+  | "judul";
 type FeatureRec = { label: string; desc: string; tab?: NavTab; featureKey?: FeatureKey; icon: string; color: string; iconSrc?: string };
 type ChatMsg = {
   role: "user" | "claro";
@@ -2706,62 +2717,130 @@ function SourceLogoIcon({
   );
 }
 
+// 9 Fitur Resmi dari "Semua Fitur" (disinkronkan dengan FiturLandingFigma)
+const OFFICIAL_FEATURES: Record<
+  "chat" | "jurnal" | "skripsi" | "tesis" | "disertasi" | "matakuliah" | "tugas" | "parafrase" | "ceknaskah",
+  FeatureRec
+> = {
+  chat: {
+    label: "Alerin Chat",
+    desc: "AI asisten untuk riset akademik dan diskusi topik.",
+    tab: "percakapan",
+    featureKey: "chat",
+    icon: "💬",
+    iconSrc: "/assets/fitur-design/17983.svg",
+    color: "#2563eb",
+  },
+  jurnal: {
+    label: "Alerin Jurnal",
+    desc: "Temukan referensi akademik terindeks Scopus & Sinta.",
+    tab: "fitur",
+    featureKey: "jurnal",
+    icon: "🔍",
+    iconSrc: "/assets/fitur-design/0a094.svg",
+    color: "#2563eb",
+  },
+  skripsi: {
+    label: "Alerin Skripsi",
+    desc: "Dapatkan arahan sesuai tahap penelitian dan revisi kamu.",
+    tab: "fitur",
+    featureKey: "skripsi",
+    icon: "🎓",
+    iconSrc: "/assets/fitur-design/52023.svg",
+    color: "#2563eb",
+  },
+  tesis: {
+    label: "Alerin Tesis",
+    desc: "Dukungan riset kuantitatif dan kualitatif tingkat magister.",
+    tab: "fitur",
+    featureKey: "tesis",
+    icon: "🎖️",
+    iconSrc: "/assets/fitur-design/79ce0.svg",
+    color: "#2563eb",
+  },
+  disertasi: {
+    label: "Alerin Disertasi",
+    desc: "Validasi novelty riset, kerangka konseptual, dan publikasi jurnal.",
+    tab: "fitur",
+    featureKey: "disertasi",
+    icon: "📜",
+    iconSrc: "/assets/fitur-design/d8964.svg",
+    color: "#2563eb",
+  },
+  matakuliah: {
+    label: "Alerin Mata Kuliah",
+    desc: "Jelaskan materi dan buat rangkuman serta latihan.",
+    tab: "fitur",
+    featureKey: "matakuliah",
+    icon: "📖",
+    iconSrc: "/assets/fitur-design/3843e.svg",
+    color: "#2563eb",
+  },
+  tugas: {
+    label: "Alerin Tugas Kuliah",
+    desc: "Ikuti instruksi dosen dan buat tugas dengan langkah yang jelas.",
+    tab: "fitur",
+    featureKey: "tugas",
+    icon: "📋",
+    iconSrc: "/assets/fitur-design/f0e9f.svg",
+    color: "#2563eb",
+  },
+  parafrase: {
+    label: "Alerin Parafrase",
+    desc: "Ubah teks skripsi otomatis dengan pilihan gaya & intensitas.",
+    tab: "fitur",
+    featureKey: "parafrase",
+    icon: "✍️",
+    iconSrc: "/assets/fitur-design/bff8f.svg",
+    color: "#2563eb",
+  },
+  ceknaskah: {
+    label: "Alerin Cek Naskah",
+    desc: "Periksa ejaan, tata bahasa, dan gaya akademik tulisanmu.",
+    tab: "fitur",
+    featureKey: "grammar",
+    icon: "📝",
+    iconSrc: "/assets/fitur-design/7c197.svg",
+    color: "#2563eb",
+  },
+};
+
 const FEATURE_REC_MAP: { pattern: RegExp; rec: FeatureRec }[] = [
   {
     pattern: /parafrase|parafrasa|perbaiki kalimat|ubah kalimat|tulis ulang|rewrite/i,
-    rec: { label: "Alerin Parafrase", desc: "Ubah dan perbaiki kalimatmu agar lebih akademis secara instan.", tab: "fitur", featureKey: "parafrase", icon: "✍️", iconSrc: "/assets/fitur-design/bff8f.svg", color: "#2563eb" },
+    rec: OFFICIAL_FEATURES.parafrase,
   },
   {
-    pattern: /plagiarisme|plagiat|cek kesamaan|similarity/i,
-    rec: { label: "Cek Plagiarisme", desc: "Periksa tingkat kemiripan teks dengan dokumen lain secara akurat.", tab: "fitur", featureKey: "plagiasi", icon: "🔒", iconSrc: "/assets/fitur-design/7c197.svg", color: "#2563eb" },
+    pattern: /cek naskah|plagiarisme|plagiat|cek kesamaan|similarity|grammar|tata bahasa|ejaan|typo|kata baku|eyd|cek kalimat|pemeriksaan/i,
+    rec: OFFICIAL_FEATURES.ceknaskah,
   },
   {
-    pattern: /grammar|tata bahasa|ejaan|typo|kata baku|eyd|bahasa inggris/i,
-    rec: { label: "Koreksi Grammar", desc: "Perbaiki tata bahasa dan ejaan teks akademismu otomatis.", tab: "fitur", featureKey: "grammar", icon: "📝", iconSrc: "/assets/fitur-design/7c197.svg", color: "#2563eb" },
-  },
-  {
-    pattern: /presentasi|ppt|slide|powerpoint/i,
-    rec: { label: "Buat Presentasi PPT", desc: "Generate slide presentasi akademis dari teks atau outline.", tab: "fitur", featureKey: "ppt", icon: "🖼️", iconSrc: "/assets/fitur-design/d8964.svg", color: "#2563eb" },
-  },
-  {
-    pattern: /simulasi|skema|diagram|flowchart|visualisasi/i,
-    rec: { label: "Simulasi & Visualisasi", desc: "Buat diagram dan visualisasi konsep akademis dengan mudah.", tab: "fitur", featureKey: "simulasi", icon: "🗺️", iconSrc: "/assets/fitur-design/3843e.svg", color: "#2563eb" },
-  },
-  {
-    pattern: /jurnal|referensi|pustaka|sitasi|citation|scopus|daftar pustaka/i,
-    rec: { label: "Cari Jurnal & Referensi", desc: "Temukan jurnal ilmiah dan kelola daftar pustaka otomatis.", tab: "fitur", featureKey: "jurnal", icon: "🔍", iconSrc: "/assets/fitur-design/0a094.svg", color: "#2563eb" },
-  },
-  {
-    pattern: /cari judul|saran judul|ide judul|generate judul|judul skripsi/i,
-    rec: { label: "Generator Judul Skripsi", desc: "Dapatkan saran judul penelitian yang relevan dan spesifik.", tab: "fitur", featureKey: "judul", icon: "🎓", iconSrc: "/assets/fitur-design/52023.svg", color: "#2563eb" },
+    pattern: /jurnal|referensi|pustaka|sitasi|citation|scopus|sinta|daftar pustaka/i,
+    rec: OFFICIAL_FEATURES.jurnal,
   },
   {
     pattern: /tesis|magister|s2/i,
-    rec: { label: "Alerin Tesis", desc: "Dukungan riset kuantitatif dan kualitatif tingkat magister.", tab: "fitur", icon: "🎖️", iconSrc: "/assets/fitur-design/79ce0.svg", color: "#2563eb" },
+    rec: OFFICIAL_FEATURES.tesis,
   },
   {
-    pattern: /disertasi|doktor|s3/i,
-    rec: { label: "Alerin Disertasi", desc: "Validasi novelty riset, kerangka konseptual, dan publikasi jurnal.", tab: "fitur", icon: "📜", iconSrc: "/assets/fitur-design/d8964.svg", color: "#2563eb" },
+    pattern: /disertasi|doktor|s3|novelty/i,
+    rec: OFFICIAL_FEATURES.disertasi,
   },
   {
-    pattern: /mata kuliah|matkul|materi kuliah/i,
-    rec: { label: "Alerin Mata Kuliah", desc: "Jelaskan materi dan buat rangkuman serta latihan.", tab: "fitur", featureKey: "matakuliah", icon: "📖", iconSrc: "/assets/fitur-design/3843e.svg", color: "#2563eb" },
+    pattern: /skripsi|cari judul|saran judul|ide judul|rumusan masalah|hipotesis|metodologi|kuantitatif|kualitatif|sampel|kuesioner|sem|smartpls|spss|regresi/i,
+    rec: OFFICIAL_FEATURES.skripsi,
   },
   {
-    pattern: /tugas kuliah|tugas dosen|bikin tugas/i,
-    rec: { label: "Alerin Tugas Kuliah", desc: "Ikuti instruksi dosen dan buat tugas dengan langkah yang jelas.", tab: "fitur", icon: "📋", iconSrc: "/assets/fitur-design/f0e9f.svg", color: "#2563eb" },
+    pattern: /tugas|pr|essay|esai|makalah|laporan|presentasi|ppt|slide|powerpoint/i,
+    rec: OFFICIAL_FEATURES.tugas,
   },
   {
-    pattern: /quiz|latihan soal|kuis|soal latihan/i,
-    rec: { label: "QUIZLAB — Latihan Soal", desc: "Buat kuis latihan otomatis dari materi kuliahmu.", tab: "quizlab", icon: "🧪", iconSrc: "/assets/fitur-design/f0e9f.svg", color: "#2563eb" },
+    pattern: /mata kuliah|matkul|materi|kuliah|uas|uts|ujian|kuis|rumus|formula|matematika/i,
+    rec: OFFICIAL_FEATURES.matakuliah,
   },
   {
-    pattern: /lacak progress|target deadline|jadwal kuliah|pantau deadline/i,
-    rec: { label: "Lacak Progress Akademik", desc: "Pantau target semester dan deadline akademikmu.", tab: "progress", icon: "📊", iconSrc: "/assets/fitur-design/f0e9f.svg", color: "#2563eb" },
-  },
-  {
-    pattern: /skripsi saya|bab skripsi|progress skripsi|proyek skripsi|manajemen skripsi/i,
-    rec: { label: "Proyek Skripsi", desc: "Pantau progres bab, deadline, dan catatan skripsimu di satu tempat.", tab: "proyek", icon: "🎓", iconSrc: "/assets/fitur-design/52023.svg", color: "#2563eb" },
+    pattern: /visualisasi|grafik|chart|kpi|bagan|diagram|flowchart|mind\s*map|info\s*grafi[sk]|infografi[sk]|penulisan|tulisan|kolom|tabel|code|kode|koding|file|dokumen/i,
+    rec: OFFICIAL_FEATURES.chat,
   },
 ];
 
@@ -2770,15 +2849,15 @@ function getFeatureIconSrc(rec?: FeatureRec): string | undefined {
   if (rec.iconSrc) return rec.iconSrc;
   const l = (rec.label || "").toLowerCase();
   const k = (rec.featureKey || "").toLowerCase();
-  if (l.includes("skripsi") || l.includes("judul") || k === "judul") return "/assets/fitur-design/52023.svg";
   if (l.includes("jurnal") || k === "jurnal") return "/assets/fitur-design/0a094.svg";
+  if (l.includes("skripsi") || k === "skripsi" || k === "judul") return "/assets/fitur-design/52023.svg";
+  if (l.includes("tesis") || k === "tesis") return "/assets/fitur-design/79ce0.svg";
+  if (l.includes("disertasi") || k === "disertasi") return "/assets/fitur-design/d8964.svg";
+  if (l.includes("mata kuliah") || k === "matakuliah") return "/assets/fitur-design/3843e.svg";
+  if (l.includes("tugas") || k === "tugas") return "/assets/fitur-design/f0e9f.svg";
   if (l.includes("parafrase") || l.includes("parafrasa") || k === "parafrase") return "/assets/fitur-design/bff8f.svg";
-  if (l.includes("plagiarisme") || l.includes("grammar") || l.includes("naskah") || k === "plagiasi" || k === "grammar") return "/assets/fitur-design/7c197.svg";
-  if (l.includes("tesis")) return "/assets/fitur-design/79ce0.svg";
-  if (l.includes("disertasi") || k === "ppt") return "/assets/fitur-design/d8964.svg";
-  if (l.includes("mata kuliah") || k === "matakuliah" || k === "simulasi") return "/assets/fitur-design/3843e.svg";
-  if (l.includes("tugas") || l.includes("quiz") || l.includes("progress")) return "/assets/fitur-design/f0e9f.svg";
-  if (l.includes("chat")) return "/assets/fitur-design/17983.svg";
+  if (l.includes("cek naskah") || l.includes("grammar") || k === "grammar" || k === "plagiasi") return "/assets/fitur-design/7c197.svg";
+  if (l.includes("chat") || k === "chat") return "/assets/fitur-design/17983.svg";
   return undefined;
 }
 
@@ -13507,13 +13586,20 @@ function PlagiasPanel({ onBack }: { onBack: () => void }) {
   );
 }
 
+function resolveFeatureShortcut(key?: FeatureKey): ShortcutType | null {
+  if (key === "matakuliah") return "mata-kuliah";
+  if (key === "tugas") return "tugas";
+  if (key === "skripsi" || key === "tesis" || key === "disertasi") return "skripsi";
+  return null;
+}
+
 function FiturTab({ onChat, openFeatureKey, onFeatureOpened }: { onChat: (prompt?: string, draft?: string) => void; openFeatureKey?: FeatureKey; onFeatureOpened?: () => void }) {
   const [showParafrase, setShowParafrase] = useState(openFeatureKey === "parafrase");
   const [showGrammar, setShowGrammar] = useState(openFeatureKey === "grammar");
   const [showPlagiasi, setShowPlagiasi] = useState(openFeatureKey === "plagiasi");
   const [showJurnal, setShowJurnal] = useState(openFeatureKey === "jurnal");
   const [showCariJudul, setShowCariJudul] = useState(openFeatureKey === "judul");
-  const [shortcutModal, setShortcutModal] = useState<ShortcutType | null>(openFeatureKey === "matakuliah" ? "mata-kuliah" : null);
+  const [shortcutModal, setShortcutModal] = useState<ShortcutType | null>(() => resolveFeatureShortcut(openFeatureKey));
 
   useEffect(() => {
     if (!openFeatureKey) return;
@@ -13522,7 +13608,8 @@ function FiturTab({ onChat, openFeatureKey, onFeatureOpened }: { onChat: (prompt
     setShowPlagiasi(openFeatureKey === "plagiasi");
     setShowJurnal(openFeatureKey === "jurnal");
     setShowCariJudul(openFeatureKey === "judul");
-    if (openFeatureKey === "matakuliah") setShortcutModal("mata-kuliah");
+    const shortcut = resolveFeatureShortcut(openFeatureKey);
+    if (shortcut) setShortcutModal(shortcut);
     onFeatureOpened?.();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [openFeatureKey]);
@@ -20893,6 +20980,11 @@ export default function AlerinPage() {
   };
 
   const goToFeature = (rec: FeatureRec) => {
+    if (rec.featureKey === "chat") {
+      if (tab !== "percakapan") setTab("percakapan");
+      else setTab("fitur");
+      return;
+    }
     if (rec.featureKey) setPendingFeature(rec.featureKey);
     if (rec.tab) setTab(rec.tab);
   };
