@@ -183,18 +183,23 @@ function translateInterfaceNode(root: Node, language: "id" | "en") {
 
 // ─── Image generation ─────────────────────────────────────────────────────────
 const IMAGE_KEYWORDS = [
-  "gambar", "ilustrasi", "foto", "visualisasi", "buat gambar", "generate gambar",
+  "gambar", "ilustrasi", "foto", "buat gambar", "generate gambar",
   "buatkan gambar", "bikin gambar", "tampilkan gambar", "render", "desain gambar",
   "tunjukkan gambar", "photo", "image", "foto saja", "output foto", "ouput foto"
 ];
 
 function isImageRequest(text: string): boolean {
   const lower = text.toLowerCase().trim();
-  // Cegah bentrok jika pengguna secara spesifik meminta output code, file, link, atau kolom/tabel
+  // Cegah bentrok jika pengguna secara spesifik meminta visualisasi data / grafik / chart, bagan, rumus, output code, file, link, atau kolom/tabel
   if (
+    /\b(?:visualisasi\s*data|visualisasi|grafik|chart|bar\s*chart|line\s*chart|pie\s*chart|donut\s*chart|kpi)\b/i.test(lower) ||
+    /\b(?:bagan|diagram|flowchart|mindmap|mind\s*map|alur proses|struktur organisasi)\b/i.test(lower) ||
+    /\b(?:rumus|formula|matematika|persamaan|kalkulasi|pythagoras|turunan|integral)\b/i.test(lower) ||
     /^(?:output\s+code|ouput\s+code|code|kode|koding|coding|output\s+link|ouput\s+link|link|tautan|url|output\s+file|ouput\s+file|file|dokumen|output\s+kolom|ouput\s+kolom|kolom|tabel)(?:\s+saja)?$/i.test(lower)
   ) {
-    return false;
+    if (!/\b(?:buatkan\s+gambar|generate\s+gambar|bikin\s+gambar|foto\s+saja|output\s+foto|ouput\s+foto|tampilkan\s+foto)\b/i.test(lower)) {
+      return false;
+    }
   }
   return IMAGE_KEYWORDS.some(k => lower.includes(k));
 }
@@ -1343,7 +1348,7 @@ const QUIZ_QUESTIONS = [
 const AI_RESPONSES: [RegExp, string][] = [
   // ── 00. VISUALISASI DATA (Grafik Batang, Garis, Lingkaran, Perbandingan, KPI) ───
   [
-    /\b(?:visualisasi\s*data|grafik|chart|bar\s*chart|line\s*chart|pie\s*chart|donut\s*chart|kpi)\b/i,
+    /\b(?:visualisasi\s*data|visualisasi|grafik|chart|bar\s*chart|line\s*chart|pie\s*chart|donut\s*chart|kpi)\b/i,
     `Siap! Aku contohkan beberapa jenis **visualisasi data** yang bisa aku tampilkan langsung di percakapan, mulai dari grafik batang, garis, lingkaran, hingga perbandingan data.
 
 ### 1. Grafik batang (Bar Chart)
@@ -2142,7 +2147,7 @@ Semakin spesifik pertanyaanmu, semakin tepat dan berguna jawaban yang bisa aku b
 }
 
 const SUGGESTION_MAP: { pattern: RegExp; suggestions: string[] }[] = [
-  { pattern: /visualisasi\s*data|grafik|chart|bar\s*chart|line\s*chart|pie\s*chart|donut\s*chart|kpi/i, suggestions: ["Buatkan grafik pertumbuhan penjualan kuartal ini", "Buatkan visualisasi perbandingan target vs realisasi", "Tampilkan ringkasan metrik KPI bisnis"] },
+  { pattern: /visualisasi\s*data|visualisasi|grafik|chart|bar\s*chart|line\s*chart|pie\s*chart|donut\s*chart|kpi/i, suggestions: ["Buatkan grafik pertumbuhan penjualan kuartal ini", "Buatkan visualisasi perbandingan target vs realisasi", "Tampilkan ringkasan metrik KPI bisnis"] },
   { pattern: /bagan|diagram|flowchart|mindmap|mind\s*map|alur proses|struktur organisasi/i, suggestions: ["Buatkan bagan alur pendaftaran mahasiswa baru", "Buatkan mind map rencana penelitian skripsi", "Buatkan timeline pengerjaan skripsi 6 bulan"] },
   { pattern: /rumus|formula|matematika|persamaan|kalkulasi|pythagoras|turunan|integral/i, suggestions: ["Contoh rumus turunan dan integral", "Cara menghitung rumus Pythagoras", "Buatkan rumus dalam bentuk tabel"] },
   { pattern: /TAM|UTAUT|technology acceptance/i, suggestions: ["Jelaskan konstruk TAM lebih detail", "Contoh kuesioner TAM siap pakai", "Bandingkan TAM dengan UTAUT2"] },
@@ -2167,7 +2172,7 @@ const SUGGESTION_MAP: { pattern: RegExp; suggestions: string[] }[] = [
 const DEFAULT_SUGGESTIONS = ["Lanjutkan penjelasannya lebih detail", "Berikan contoh konkret", "Apa yang harus kulakukan selanjutnya?"];
 
 const SOURCE_MAP: { pattern: RegExp; sources: ChatSource[] }[] = [
-  { pattern: /visualisasi\s*data|grafik|chart|bar\s*chart|line\s*chart|pie\s*chart|donut\s*chart|kpi/i, sources: [
+  { pattern: /visualisasi\s*data|visualisasi|grafik|chart|bar\s*chart|line\s*chart|pie\s*chart|donut\s*chart|kpi/i, sources: [
     { title: "The Visual Display of Quantitative Information", author: "Tufte, E.R.", year: "2020", url: "https://scholar.google.com" },
     { title: "Data Visualization: A Practical Introduction", author: "Healy, K.", year: "2019", url: "https://scholar.google.com" },
     { title: "Information Dashboard Design: Displaying Data at a Glance", author: "Few, S.", year: "2021", url: "https://www.scopus.com" },
