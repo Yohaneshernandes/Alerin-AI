@@ -2623,6 +2623,157 @@ function PinIcon({ size = 16, className = "text-neutral-800 shrink-0" }: { size?
   );
 }
 
+// ─── Shared Modal Pilih & Salin Teks ─────────────────────────────────────────
+function SelectTextModal({
+  text,
+  onClose,
+  onCopied,
+}: {
+  text: string | null;
+  onClose: () => void;
+  onCopied: (message: string) => void;
+}) {
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+
+  useEffect(() => {
+    if (text === null) return;
+    const selectAllText = () => {
+      const el = textareaRef.current;
+      if (!el) return;
+      el.focus();
+      el.select();
+      try {
+        el.setSelectionRange(0, el.value.length);
+      } catch {}
+    };
+    const rafId = window.requestAnimationFrame(selectAllText);
+    const timerId = window.setTimeout(selectAllText, 60);
+    return () => {
+      window.cancelAnimationFrame(rafId);
+      window.clearTimeout(timerId);
+    };
+  }, [text]);
+
+  if (text === null) return null;
+
+  const handleCopy = () => {
+    const el = textareaRef.current;
+    let textToCopy = text || "";
+    let isPartial = false;
+    if (el && el.selectionStart !== el.selectionEnd && (el.selectionStart !== 0 || el.selectionEnd !== el.value.length)) {
+      textToCopy = el.value.substring(el.selectionStart, el.selectionEnd);
+      isPartial = true;
+    }
+    const cleanToCopy = cleanMarkdownForCopy(textToCopy);
+    if (navigator?.clipboard?.writeText) {
+      navigator.clipboard.writeText(cleanToCopy).then(() => {
+        onCopied(isPartial ? "Bagian teks disalin!" : "Teks berhasil disalin!");
+        onClose();
+      }).catch(() => {
+        onCopied("Teks disalin!");
+        onClose();
+      });
+    } else {
+      onCopied("Teks disalin!");
+      onClose();
+    }
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-[270] flex items-center justify-center p-4 bg-black/45 backdrop-blur-xs animate-[gemini-fade-in_0.15s_ease-out]"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-[440px] bg-white rounded-3xl p-5 shadow-2xl border border-slate-100 flex flex-col gap-3.5 animate-[gemini-zoom-in_0.2s_ease-out]"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center gap-2.5">
+          <div className="size-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="4" y1="7" x2="4" y2="4"/>
+              <line x1="4" y1="4" x2="7" y2="4"/>
+              <line x1="20" y1="7" x2="20" y2="4"/>
+              <line x1="20" y1="4" x2="17" y2="4"/>
+              <line x1="4" y1="17" x2="4" y2="20"/>
+              <line x1="4" y1="20" x2="7" y2="20"/>
+              <line x1="20" y1="17" x2="20" y2="20"/>
+              <line x1="20" y1="20" x2="17" y2="20"/>
+              <line x1="9" y1="9" x2="15" y2="9"/>
+              <line x1="12" y1="9" x2="12" y2="15"/>
+              <line x1="9" y1="15" x2="15" y2="15"/>
+            </svg>
+          </div>
+          <div>
+            <h3 className="text-base font-bold text-slate-900 leading-tight">Pilih Teks</h3>
+            <p className="text-[11px] text-slate-500">Sorot bagian teks atau salin semua teks di bawah</p>
+          </div>
+        </div>
+
+        <div className="relative">
+          <textarea
+            ref={textareaRef}
+            autoFocus
+            readOnly
+            value={text}
+            onClick={(e) => {
+              const target = e.currentTarget;
+              if (target.selectionStart === target.selectionEnd) {
+                target.select();
+              }
+            }}
+            className="w-full h-[225px] min-h-[180px] max-h-[380px] p-3.5 text-sm leading-relaxed text-slate-900 bg-white border-2 border-[#1A73E8] rounded-2xl ring-2 ring-[#1A73E8]/20 focus:outline-none focus:ring-2 focus:ring-[#1A73E8] selection:bg-[#BCE3FA] selection:text-slate-900 select-text cursor-text resize-y font-normal"
+          />
+        </div>
+
+        <div className="flex items-center justify-between gap-2 pt-1 border-t border-slate-100">
+          <button
+            type="button"
+            onClick={() => {
+              const el = textareaRef.current;
+              if (el) {
+                el.focus();
+                el.select();
+                try {
+                  el.setSelectionRange(0, el.value.length);
+                } catch {}
+              }
+            }}
+            className="px-3 py-2 text-xs font-medium text-blue-600 hover:bg-blue-50 active:bg-blue-100 rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer"
+          >
+            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <path d="M9 3v18"/>
+            </svg>
+            Pilih Semua
+          </button>
+
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-3.5 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 active:bg-slate-200 rounded-xl transition-colors cursor-pointer"
+            >
+              Tutup
+            </button>
+            <button
+              type="button"
+              onClick={handleCopy}
+              className="px-4 py-2 text-xs font-semibold text-white bg-[#1A73E8] hover:bg-[#1557b0] active:bg-[#134c9a] rounded-xl transition-colors shadow-xs flex items-center gap-1.5 cursor-pointer"
+            >
+              <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+              </svg>
+              Salin
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Bird mascot icon ─────────────────────────────────────────────────────────
 function BirdIcon({ size = 32, color = "#3b82f6" }: { size?: number; color?: string }) {
   return (
@@ -9305,21 +9456,9 @@ function PercakapanTab({
     setEditingBubbleIdx(null);
   }, []);
 
-  const handleSelectBubbleText = useCallback((idx: number, text: string) => {
+  const handleSelectBubbleText = useCallback((_idx: number, text: string) => {
     setActiveUserBubbleMenuIdx(null);
     setSelectingTextModal(cleanMarkdownForCopy(text));
-    setTimeout(() => {
-      const el = document.getElementById(`user-bubble-text-${idx}`);
-      if (el) {
-        try {
-          const selection = window.getSelection();
-          const range = document.createRange();
-          range.selectNodeContents(el);
-          selection?.removeAllRanges();
-          selection?.addRange(range);
-        } catch (e) {}
-      }
-    }, 80);
   }, []);
 
   const sendWithFile = useCallback((text: string, file: { name: string; type: string; size: string; previewUrl?: string }, allFiles?: { name: string; type: string; size: string; previewUrl?: string }[]) => {
@@ -10291,128 +10430,11 @@ function PercakapanTab({
     )}
 
     {/* Modal Pilih & Salin Teks */}
-    {selectingTextModal !== null && (
-      <div
-        className="fixed inset-0 z-[270] flex items-center justify-center p-4 bg-black/45 backdrop-blur-xs animate-[gemini-fade-in_0.15s_ease-out]"
-        onClick={() => setSelectingTextModal(null)}
-      >
-        <div
-          className="w-full max-w-[440px] bg-white rounded-3xl p-5 shadow-2xl border border-slate-100 flex flex-col gap-3.5 animate-[gemini-zoom-in_0.2s_ease-out]"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <div className="size-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="4" y1="7" x2="4" y2="4"/>
-                  <line x1="4" y1="4" x2="7" y2="4"/>
-                  <line x1="20" y1="7" x2="20" y2="4"/>
-                  <line x1="20" y1="4" x2="17" y2="4"/>
-                  <line x1="4" y1="17" x2="4" y2="20"/>
-                  <line x1="4" y1="20" x2="7" y2="20"/>
-                  <line x1="20" y1="17" x2="20" y2="20"/>
-                  <line x1="20" y1="20" x2="17" y2="20"/>
-                  <line x1="9" y1="9" x2="15" y2="9"/>
-                  <line x1="12" y1="9" x2="12" y2="15"/>
-                  <line x1="9" y1="15" x2="15" y2="15"/>
-                </svg>
-              </div>
-              <div>
-                <h3 className="text-base font-bold text-slate-900 leading-tight">Pilih Teks</h3>
-                <p className="text-[11px] text-slate-500">Sorot bagian teks atau salin semua teks di bawah</p>
-              </div>
-            </div>
-            <button
-              type="button"
-              onClick={() => setSelectingTextModal(null)}
-              className="size-7 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center transition-colors cursor-pointer"
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-            </button>
-          </div>
-
-          <div className="relative">
-            <textarea
-              id="select-text-modal-area"
-              readOnly
-              value={selectingTextModal}
-              onClick={(e) => {
-                const target = e.currentTarget;
-                if (target.selectionStart === target.selectionEnd) {
-                  target.select();
-                }
-              }}
-              className="w-full h-[225px] min-h-[180px] max-h-[380px] p-3.5 text-sm leading-relaxed text-slate-800 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white select-text cursor-text resize-y font-normal"
-            />
-          </div>
-
-          <div className="flex items-center justify-between gap-2 pt-1 border-t border-slate-100">
-            <button
-              type="button"
-              onClick={() => {
-                const el = document.getElementById("select-text-modal-area") as HTMLTextAreaElement | null;
-                if (el) {
-                  el.focus();
-                  el.select();
-                }
-              }}
-              className="px-3 py-2 text-xs font-medium text-blue-600 hover:bg-blue-50 active:bg-blue-100 rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer"
-            >
-              <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="3" y="3" width="18" height="18" rx="2"/>
-                <path d="M9 3v18"/>
-              </svg>
-              Pilih Semua
-            </button>
-
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setSelectingTextModal(null)}
-                className="px-3.5 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 active:bg-slate-200 rounded-xl transition-colors cursor-pointer"
-              >
-                Tutup
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  const el = document.getElementById("select-text-modal-area") as HTMLTextAreaElement | null;
-                  let textToCopy = selectingTextModal || "";
-                  let isPartial = false;
-                  if (el && el.selectionStart !== el.selectionEnd) {
-                    textToCopy = el.value.substring(el.selectionStart, el.selectionEnd);
-                    isPartial = true;
-                  }
-                  const cleanToCopy = cleanMarkdownForCopy(textToCopy);
-                  if (navigator?.clipboard?.writeText) {
-                    navigator.clipboard.writeText(cleanToCopy).then(() => {
-                      showActionToast(isPartial ? "Bagian teks disalin!" : "Teks berhasil disalin!");
-                      setSelectingTextModal(null);
-                    }).catch(() => {
-                      showActionToast("Teks disalin!");
-                      setSelectingTextModal(null);
-                    });
-                  } else {
-                    showActionToast("Teks disalin!");
-                    setSelectingTextModal(null);
-                  }
-                }}
-                className="px-4 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 rounded-xl transition-colors shadow-xs flex items-center gap-1.5 cursor-pointer"
-              >
-                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-                </svg>
-                Salin
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    )}
+    <SelectTextModal
+      text={selectingTextModal}
+      onClose={() => setSelectingTextModal(null)}
+      onCopied={showActionToast}
+    />
 
     {/* Floating Action Feedback Toast */}
     {actionToast && (
@@ -13736,21 +13758,9 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
     setToast("Pesan dimuat ke kolom chat");
   }, []);
 
-  const handleProjSelectBubbleText = useCallback((idx: number, text: string) => {
+  const handleProjSelectBubbleText = useCallback((_idx: number, text: string) => {
     setActiveProjUserBubbleIdx(null);
     setSelectingProjTextModal(cleanMarkdownForCopy(text));
-    setTimeout(() => {
-      const el = document.getElementById(`proj-user-bubble-text-${idx}`);
-      if (el) {
-        try {
-          const selection = window.getSelection();
-          const range = document.createRange();
-          range.selectNodeContents(el);
-          selection?.removeAllRanges();
-          selection?.addRange(range);
-        } catch (e) {}
-      }
-    }, 80);
   }, []);
 
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -14270,128 +14280,11 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
       )}
 
       {/* Modal Pilih & Salin Teks Proyek */}
-      {selectingProjTextModal !== null && (
-        <div
-          className="fixed inset-0 z-[270] flex items-center justify-center p-4 bg-black/45 backdrop-blur-xs animate-[gemini-fade-in_0.15s_ease-out]"
-          onClick={() => setSelectingProjTextModal(null)}
-        >
-          <div
-            className="w-full max-w-[440px] bg-white rounded-3xl p-5 shadow-2xl border border-slate-100 flex flex-col gap-3.5 animate-[gemini-zoom-in_0.2s_ease-out]"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                <div className="size-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="4" y1="7" x2="4" y2="4"/>
-                    <line x1="4" y1="4" x2="7" y2="4"/>
-                    <line x1="20" y1="7" x2="20" y2="4"/>
-                    <line x1="20" y1="4" x2="17" y2="4"/>
-                    <line x1="4" y1="17" x2="4" y2="20"/>
-                    <line x1="4" y1="20" x2="7" y2="20"/>
-                    <line x1="20" y1="17" x2="20" y2="20"/>
-                    <line x1="20" y1="20" x2="17" y2="20"/>
-                    <line x1="9" y1="9" x2="15" y2="9"/>
-                    <line x1="12" y1="9" x2="12" y2="15"/>
-                    <line x1="9" y1="15" x2="15" y2="15"/>
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="text-base font-bold text-slate-900 leading-tight">Pilih Teks</h3>
-                  <p className="text-[11px] text-slate-500">Sorot bagian teks atau salin semua teks di bawah</p>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => setSelectingProjTextModal(null)}
-                className="size-7 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center transition-colors cursor-pointer"
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <line x1="18" y1="6" x2="6" y2="18" />
-                  <line x1="6" y1="6" x2="18" y2="18" />
-                </svg>
-              </button>
-            </div>
-
-            <div className="relative">
-              <textarea
-                id="select-proj-text-modal-area"
-                readOnly
-                value={selectingProjTextModal}
-                onClick={(e) => {
-                  const target = e.currentTarget;
-                  if (target.selectionStart === target.selectionEnd) {
-                    target.select();
-                  }
-                }}
-                className="w-full h-[225px] min-h-[180px] max-h-[380px] p-3.5 text-sm leading-relaxed text-slate-800 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white select-text cursor-text resize-y font-normal"
-              />
-            </div>
-
-            <div className="flex items-center justify-between gap-2 pt-1 border-t border-slate-100">
-              <button
-                type="button"
-                onClick={() => {
-                  const el = document.getElementById("select-proj-text-modal-area") as HTMLTextAreaElement | null;
-                  if (el) {
-                    el.focus();
-                    el.select();
-                  }
-                }}
-                className="px-3 py-2 text-xs font-medium text-blue-600 hover:bg-blue-50 active:bg-blue-100 rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer"
-              >
-                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="3" y="3" width="18" height="18" rx="2"/>
-                  <path d="M9 3v18"/>
-                </svg>
-                Pilih Semua
-              </button>
-
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => setSelectingProjTextModal(null)}
-                  className="px-3.5 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 active:bg-slate-200 rounded-xl transition-colors cursor-pointer"
-                >
-                  Tutup
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    const el = document.getElementById("select-proj-text-modal-area") as HTMLTextAreaElement | null;
-                    let textToCopy = selectingProjTextModal || "";
-                    let isPartial = false;
-                    if (el && el.selectionStart !== el.selectionEnd) {
-                      textToCopy = el.value.substring(el.selectionStart, el.selectionEnd);
-                      isPartial = true;
-                    }
-                    const cleanToCopy = cleanMarkdownForCopy(textToCopy);
-                    if (navigator?.clipboard?.writeText) {
-                      navigator.clipboard.writeText(cleanToCopy).then(() => {
-                        setToast(isPartial ? "Bagian teks disalin!" : "Teks berhasil disalin!");
-                        setSelectingProjTextModal(null);
-                      }).catch(() => {
-                        setToast("Teks disalin!");
-                        setSelectingProjTextModal(null);
-                      });
-                    } else {
-                      setToast("Teks disalin!");
-                      setSelectingProjTextModal(null);
-                    }
-                  }}
-                  className="px-4 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 rounded-xl transition-colors shadow-xs flex items-center gap-1.5 cursor-pointer"
-                >
-                  <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-                  </svg>
-                  Salin
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <SelectTextModal
+        text={selectingProjTextModal}
+        onClose={() => setSelectingProjTextModal(null)}
+        onCopied={setToast}
+      />
 
       {/* Hidden file input for source documents */}
       <input ref={sourceFileInputRef} type="file" accept=".pdf,.doc,.docx,.txt" className="hidden" onChange={handleSourceUpload} />
