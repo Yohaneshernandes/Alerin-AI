@@ -487,10 +487,12 @@ export function cleanMarkdownForCopy(md: string): string {
       .join("\n");
   });
 
-  // 1. Bersihkan blok kode / links
+  // 1. Bersihkan blok kode / links / penulisan
   text = text.replace(/```(?:links)\n([\s\S]*?)```/g, (_m, content) => content.trim());
   text = text.replace(/```[a-zA-Z0-9_-]*\n([\s\S]*?)```/g, (_m, code) => code.trim());
   text = text.replace(/```/g, "");
+  text = text.replace(/\^\^([^\n]+)\^\^/g, "$1");
+  text = text.replace(/\[\[([^|\]]+)\|[^\]]+\]\]/g, "$1");
 
   // Bersihkan notasi KaTeX / LaTeX untuk salin teks yang rapi dan mudah dibaca
   text = text.replace(/\\boxed\{([^}]+)\}/g, "[$1]");
@@ -1697,6 +1699,138 @@ console.log(\`Halo \${mahasiswa.nama}, selamat belajar!\`);
 Kamu bisa langsung menyalin kode di atas menggunakan tombol salin di pojok kanan atas setiap blok kode.`
   ],
 
+  // ── 5a. PENULISAN GAYA KASUAL (TikTok / Caption Sosial Media) ──────────────
+  [
+    /\b(?:penulisan\s+gaya\s+kasual|caption\s+tiktok|kasual\s+untuk\s+tiktok)\b/i,
+    `Siap! Berikut contoh **output penulisan** bergaya santai untuk caption TikTok yang siap kamu salin atau edit langsung:
+
+# Opsi 2: Lebih santai untuk TikTok
+^^CONTOH OUTPUT PENULISAN · GAYA KASUAL^^
+
+\`\`\`penulisan
+Skripsi, jurnal, desain, coding, sampai kebutuhan kuliah lainnya?
+
+Nggak perlu bingung cari layanan ke mana-mana!
+
+Di **Alerin**, kamu bisa konsultasikan berbagai kebutuhan akademik dan kreatif bersama asisten cerdas yang siap mendampingi.
+
+Mulai dari pendampingan, pembahasan materi, editing format, hingga layanan teknis lainnya.
+
+Yuk, cari tahu layanan yang sesuai dengan kebutuhanmu!
+
+#Alerin #Mahasiswa #KonsultasiSkripsi #LayananAkademik
+\`\`\`
+
+Kamu bisa langsung menyalin, mengedit, atau membagikan caption di atas dengan satu klik.`
+  ],
+
+  // ── 5b. PENULISAN FORMAT AKADEMIK ──────────────────────────────────────────
+  [
+    /\b(?:penulisan\s+format\s+akademik|output\s+akademik)\b/i,
+    `Siap! Berikut contoh **output penulisan** dalam format akademik yang terstruktur:
+
+# Draf Abstrak Penelitian: Pengaruh Live Commerce Terhadap Impulse Buying
+^^CONTOH OUTPUT PENULISAN · DOKUMEN AKADEMIK^^
+
+\`\`\`penulisan
+# Pengaruh Interaktivitas Live Commerce terhadap Perilaku Impulse Buying Mahasiswa
+
+## Latar Belakang & Tujuan
+
+Perkembangan fitur live streaming commerce pada platform digital telah mengubah pola interaksi antara penjual dan konsumen secara real-time. Penelitian ini bertujuan untuk menganalisis pengaruh interaktivitas siaran langsung dan kredibilitas streamer terhadap perilaku pembelian impulsif di kalangan mahasiswa.
+
+## Metode Penelitian
+
+Penelitian ini menggunakan pendekatan kuantitatif dengan metode survei melalui kuesioner daring yang disebarkan kepada 150 responden aktif pengguna platform live commerce. Analisis data dilakukan menggunakan teknik Partial Least Squares Structural Equation Modeling (PLS-SEM).
+
+## Hasil & Implikasi
+
+Hasil analisis menunjukkan bahwa interaktivitas real-time dan kepercayaan terhadap penyiar berpengaruh positif serta signifikan terhadap dorongan pembelian impulsif. Temuan ini memberikan implikasi praktis bagi pelaku usaha digital dalam merancang strategi komunikasi siaran langsung yang persuasif.
+\`\`\`
+
+Output penulisan di atas dapat kamu edit atau sesuaikan langsung dengan variabel penelitianmu di Alerin.`
+  ],
+
+  // ── 5c. PENULISAN PRAKTIS (Email Resmi & SOP) ──────────────────────────────
+  [
+    /\b(?:draft\s+email\s+resmi|penulisan\s+praktis|contoh\s+sop)\b/i,
+    `Siap! Berikut contoh **output penulisan** praktis untuk draf email resmi pengajuan bimbingan skripsi:
+
+# Email Permohonan Jadwal Bimbingan Skripsi
+^^CONTOH OUTPUT PENULISAN · DOKUMEN PRAKTIS^^
+
+\`\`\`penulisan
+# Subjek: Permohonan Jadwal Bimbingan Revisi BAB III Skripsi
+
+Kepada Yth. Bapak/Ibu Dosen Pembimbing,
+Di tempat.
+
+Dengan hormat,
+Saya yang bertanda tangan di bawah ini:
+
+- Nama: Mahasiswa Tingkat Akhir
+- Program Studi: Manajemen / Sistem Informasi
+- Judul: Analisis Dampak Adopsi AI terhadap Produktivitas Belajar Mahasiswa
+
+Melalui pesan ini, saya bermaksud mengajukan permohonan jadwal konsultasi dan bimbingan terkait penyempurnaan draf revisi BAB III (Metodologi Penelitian).
+
+Besar harapan saya dapat memperoleh arahan dari Bapak/Ibu sesuai waktu yang tersedia pada minggu ini. Atas perhatian dan bimbingan Bapak/Ibu, saya ucapkan terima kasih.
+
+Hormat saya,
+Mahasiswa Bimbingan
+\`\`\`
+
+Kamu dapat langsung menekan ikon pensil di kanan atas kartu untuk menyesuaikan nama dan detailnya.`
+  ],
+
+  // ── 5. PENULISAN OUTPUT (Writing Output Card terstruktur sesuai Alerin) ────
+  [
+    /\b(?:output\s+penulisan|contoh\s+penulisan|writing\s+output|penulisan|tulisan)\b/i,
+    `Siap! Aku buatkan contoh **output penulisan** seperti ketika Alerin menghasilkan dokumen yang rapi, terstruktur, dan siap digunakan.
+
+# Laporan Penggunaan Teknologi AI dalam Dunia Pendidikan
+^^CONTOH OUTPUT PENULISAN · DOKUMEN FORMAL^^
+
+\`\`\`penulisan
+# Laporan Penggunaan Teknologi AI dalam Dunia Pendidikan
+
+## 1. Pendahuluan
+
+Perkembangan teknologi Artificial Intelligence (AI) telah membawa perubahan signifikan dalam berbagai sektor, termasuk dunia pendidikan. Teknologi ini memungkinkan proses pembelajaran menjadi lebih interaktif, efisien, dan mudah diakses oleh berbagai kalangan.
+
+## 2. Tujuan
+
+Penggunaan teknologi AI dalam pendidikan bertujuan untuk:
+
+- Membantu siswa memahami materi pembelajaran.
+- Mempermudah tenaga pendidik dalam menyusun materi.
+- Meningkatkan efisiensi proses evaluasi pembelajaran.
+- Memberikan pengalaman belajar yang lebih personal.
+
+## 3. Manfaat Teknologi AI
+
+AI dapat membantu proses pendidikan melalui beberapa penerapan, seperti tutor virtual, pemeriksaan tata bahasa, analisis hasil pembelajaran, dan pembuatan materi secara otomatis.
+
+## 4. Tantangan
+
+Meskipun memiliki banyak manfaat, penerapan AI juga menghadapi sejumlah tantangan, seperti ketergantungan teknologi, risiko informasi yang tidak akurat, serta perlindungan data pribadi.
+
+## 5. Kesimpulan
+
+Teknologi AI memiliki potensi besar untuk meningkatkan kualitas pendidikan. Namun, penggunaannya harus disertai pengawasan, literasi digital, dan kebijakan yang tepat agar dapat memberikan manfaat secara optimal.
+\`\`\`
+
+## Jenis output penulisan yang bisa aku hasilkan:
+
+1. [[Formal|blue]] Laporan, proposal, makalah, dan surat resmi.
+2. [[Profesional|green]] Business plan, dokumen perusahaan, dan laporan kerja.
+3. [[Akademik|purple]] Skripsi, jurnal, esai, dan penelitian.
+4. [[Kasual|orange]] Artikel, blog, caption, dan storytelling.
+5. [[Praktis|gray]] Email, memo, SOP, dan dokumentasi.
+
+Output penulisan juga bisa dibuat sebagai dokumen yang dapat diedit langsung di Alerin.`
+  ],
+
   [/panduan dashboard|dokumen akademik|contoh dokumen|file pdf dan word|file docx|lampiran dokumen|download pdf/i, `Contoh dokumen: **Panduan Dashboard Akademik**
 
 Dokumen berisi:
@@ -2184,6 +2318,7 @@ const SUGGESTION_MAP: { pattern: RegExp; suggestions: string[] }[] = [
   { pattern: /visualisasi\s*data|visualisasi|grafik|chart|bar\s*chart|line\s*chart|pie\s*chart|donut\s*chart|kpi/i, suggestions: ["Buatkan grafik pertumbuhan penjualan kuartal ini", "Buatkan visualisasi perbandingan target vs realisasi", "Tampilkan ringkasan metrik KPI bisnis"] },
   { pattern: /bagan|diagram|flowchart|mindmap|mind\s*map|alur proses|struktur organisasi/i, suggestions: ["Buatkan bagan alur pendaftaran mahasiswa baru", "Buatkan mind map rencana penelitian skripsi", "Buatkan timeline pengerjaan skripsi 6 bulan"] },
   { pattern: /rumus|formula|matematika|persamaan|kalkulasi|pythagoras|turunan|integral/i, suggestions: ["Contoh rumus turunan dan integral", "Cara menghitung rumus Pythagoras", "Buatkan rumus dalam bentuk tabel"] },
+  { pattern: /\b(?:output\s+penulisan|contoh\s+penulisan|writing\s+output|penulisan|tulisan)\b/i, suggestions: ["Buatkan penulisan gaya Kasual untuk TikTok", "Buatkan penulisan format Akademik", "Buatkan draft email resmi & SOP"] },
   { pattern: /TAM|UTAUT|technology acceptance/i, suggestions: ["Jelaskan konstruk TAM lebih detail", "Contoh kuesioner TAM siap pakai", "Bandingkan TAM dengan UTAUT2"] },
   { pattern: /metodologi|kuantitatif|kualitatif|survei|sampel/i, suggestions: ["Berapa minimal sampel yang valid?", "Perbedaan validitas & reliabilitas", "Teknik sampling mana yang cocok?"] },
   { pattern: /rumusan masalah|hipotesis/i, suggestions: ["Bantu kembangkan hipotesisnya", "Saran variabel penelitian tambahan", "Cek apakah rumusannya sudah tajam"] },
@@ -7172,7 +7307,7 @@ function KpiSummaryCard() {
 
 // ─── Markdown Renderer (ChatGPT/Gemini-style) ────────────────────────────────
 function renderInlineMd(text: string): React.ReactNode[] {
-  const parts = text.split(/(\$\$[^\$]+\$\$|\$[^\$\n]+\$|\*\*[^*]+\*\*|\*[^*]+\*|`[^`]+`)/g);
+  const parts = text.split(/(\$\$[^\$]+\$\$|\$[^\$\n]+\$|\*\*[^*]+\*\*|\*[^*]+\*|`[^`]+`|\[\[[^\[\]\n]+\|[^\[\]\n]+\]\])/g);
   return parts.map((part, i) => {
     if (part.startsWith("$$") && part.endsWith("$$") && part.length > 4)
       return <MathBlock key={i} math={part.slice(2, -2).trim()} />;
@@ -7184,6 +7319,24 @@ function renderInlineMd(text: string): React.ReactNode[] {
       return <em key={i} className="italic text-black">{part.slice(1, -1)}</em>;
     if (part.startsWith("`") && part.endsWith("`"))
       return <code key={i} className="bg-slate-100 text-slate-800 px-1.5 py-0.5 rounded text-[0.82em] font-mono">{part.slice(1, -1)}</code>;
+    if (part.startsWith("[[") && part.endsWith("]]") && part.includes("|")) {
+      const [badgeLabel, badgeTone] = part.slice(2, -2).split("|");
+      const toneCls: Record<string, string> = {
+        blue: "bg-[#E8F1FD] text-[#1D4ED8]",
+        green: "bg-[#E6F6EC] text-[#15803D]",
+        purple: "bg-[#F1EAFE] text-[#6D28D9]",
+        orange: "bg-[#FCEEE8] text-[#C2410C]",
+        gray: "bg-[#EEF0F3] text-[#475569]",
+      };
+      return (
+        <span
+          key={i}
+          className={`inline-flex items-center px-2 py-0.5 rounded-md text-[12px] font-medium mr-1.5 align-baseline ${toneCls[badgeTone] || toneCls.gray}`}
+        >
+          {badgeLabel}
+        </span>
+      );
+    }
     return part;
   });
 }
@@ -7842,6 +7995,164 @@ function ReferenceLinksCard({ items }: { items: ReferenceLinkItem[] }) {
   );
 }
 
+// ─── Penulisan Output Card (Dokumen Penulisan Interaktif) ──────────────────────
+function PenulisanOutputCard({ content, isStreaming }: { content: string; isStreaming?: boolean }) {
+  const [copied, setCopied] = React.useState(false);
+  const [shared, setShared] = React.useState(false);
+  const [isEditing, setIsEditing] = React.useState(false);
+  const [editedText, setEditedText] = React.useState(content);
+  const [draftText, setDraftText] = React.useState(content);
+
+  React.useEffect(() => {
+    if (!isEditing) {
+      setEditedText(content);
+      setDraftText(content);
+    }
+  }, [content, isEditing]);
+
+  const plainOutput = useMemo(() => cleanMarkdownForCopy(editedText), [editedText]);
+
+  const handleCopy = () => {
+    navigator.clipboard?.writeText(plainOutput).catch(() => {});
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1800);
+  };
+
+  const handleShare = () => {
+    if (typeof navigator !== "undefined" && navigator.share) {
+      navigator.share({ title: "Penulisan — Alerin", text: plainOutput }).catch(() => {});
+    } else {
+      navigator.clipboard?.writeText(plainOutput).catch(() => {});
+      setShared(true);
+      setTimeout(() => setShared(false), 1800);
+    }
+  };
+
+  return (
+    <div className="my-3.5 rounded-2xl border border-neutral-200/90 bg-white overflow-hidden shadow-[0_1px_4px_rgba(0,0,0,0.04)]">
+      <div className="flex items-center justify-between px-4 py-2.5 border-b border-neutral-100 bg-neutral-50/40">
+        <div className="flex items-center gap-2 text-neutral-500">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="16" y1="13" x2="8" y2="13" />
+            <line x1="16" y1="17" x2="8" y2="17" />
+          </svg>
+          <span className="text-[13px] font-medium text-neutral-600">Penulisan</span>
+        </div>
+
+        <div className="flex items-center gap-1">
+          {!isStreaming && (
+            <button
+              type="button"
+              onClick={() => {
+                if (isEditing) {
+                  setIsEditing(false);
+                } else {
+                  setDraftText(editedText);
+                  setIsEditing(true);
+                }
+              }}
+              title={isEditing ? "Tutup editor" : "Edit dokumen"}
+              aria-label={isEditing ? "Tutup editor" : "Edit dokumen"}
+              className={`size-7 rounded-lg flex items-center justify-center transition-colors cursor-pointer ${
+                isEditing ? "bg-blue-50 text-blue-600" : "text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100"
+              }`}
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 20h9" />
+                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+              </svg>
+            </button>
+          )}
+
+          <button
+            type="button"
+            onClick={handleCopy}
+            title="Salin tulisan"
+            aria-label="Salin tulisan"
+            className={`size-7 rounded-lg flex items-center justify-center transition-colors cursor-pointer ${
+              copied ? "text-emerald-600 bg-emerald-50" : "text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100"
+            }`}
+          >
+            {copied ? (
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            ) : (
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+              </svg>
+            )}
+          </button>
+
+          <button
+            type="button"
+            onClick={handleShare}
+            title="Bagikan tulisan"
+            aria-label="Bagikan tulisan"
+            className={`size-7 rounded-lg flex items-center justify-center transition-colors cursor-pointer ${
+              shared ? "text-blue-600 bg-blue-50" : "text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100"
+            }`}
+          >
+            {shared ? (
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            ) : (
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="18" cy="5" r="3" />
+                <circle cx="6" cy="12" r="3" />
+                <circle cx="18" cy="19" r="3" />
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+              </svg>
+            )}
+          </button>
+        </div>
+      </div>
+
+      <div className="px-4 py-4 sm:px-5 sm:py-5">
+        {isEditing ? (
+          <div className="space-y-3">
+            <textarea
+              value={draftText}
+              onChange={(e) => setDraftText(e.target.value)}
+              rows={12}
+              className="w-full rounded-xl border border-neutral-200 bg-neutral-50/70 focus:bg-white focus:border-[#1A73E8] focus:ring-2 focus:ring-blue-100 p-3 text-[0.9rem] text-slate-800 leading-relaxed outline-none resize-y"
+            />
+            <div className="flex items-center justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setDraftText(editedText);
+                  setIsEditing(false);
+                }}
+                className="px-3.5 py-1.5 rounded-xl text-xs font-semibold text-neutral-600 hover:bg-neutral-100 transition-colors cursor-pointer"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setEditedText(draftText);
+                  setIsEditing(false);
+                }}
+                className="px-3.5 py-1.5 rounded-xl text-xs font-bold text-white bg-[#1A73E8] hover:bg-[#1557b0] transition-colors cursor-pointer"
+              >
+                Simpan Perubahan
+              </button>
+            </div>
+          </div>
+        ) : (
+          <MarkdownRenderer text={editedText} isStreaming={isStreaming} compact />
+        )}
+      </div>
+    </div>
+  );
+}
+
 function cleanMdText(text: string): string {
   // Hapus strip/garis pemisah (em-dash ' — ' atau ' – ') agar output jawaban bebas dari tanda garis
   return text
@@ -7859,7 +8170,7 @@ function StreamingCursor({ noMargin }: { noMargin?: boolean }) {
   );
 }
 
-function MarkdownRenderer({ text, isStreaming }: { text: string; isStreaming?: boolean }) {
+function MarkdownRenderer({ text, isStreaming, compact }: { text: string; isStreaming?: boolean; compact?: boolean }) {
   const cleanText = stripEmoticons(text);
   if (!cleanText.trim()) {
     if (isStreaming) {
@@ -7888,7 +8199,7 @@ function MarkdownRenderer({ text, isStreaming }: { text: string; isStreaming?: b
     // Blank line → skip
     if (!line) { i++; continue; }
 
-    // Code block or Special Cards (files / links / visual diagrams)
+    // Code block or Special Cards (files / links / visual diagrams / penulisan)
     if (line.startsWith("```")) {
       const lang = line.slice(3).trim().toLowerCase();
       i++;
@@ -7897,7 +8208,21 @@ function MarkdownRenderer({ text, isStreaming }: { text: string; isStreaming?: b
         codeLines.push(lines[i]);
         i++;
       }
+      const hasClosingFence = i < lines.length && lines[i].trim().startsWith("```");
       i++; // skip closing ```
+
+      // Penulisan Output Card (Writing Canvas style)
+      if (!compact && (lang === "penulisan" || lang === "writing" || lang === "tulisan")) {
+        elements.push(
+          <PenulisanOutputCard
+            key={`pen-${i}`}
+            content={codeLines.join("\n")}
+            isStreaming={Boolean(isStreaming && !hasClosingFence)}
+          />
+        );
+        if (isStreaming && !hasClosingFence) cursorRendered = true;
+        continue;
+      }
 
       // Pythagoras Visual Diagram Card
       if (lang === "visual:pythagoras" || lang === "pythagoras" || lang === "diagram:pythagoras") {
@@ -8039,6 +8364,19 @@ function MarkdownRenderer({ text, isStreaming }: { text: string; isStreaming?: b
       continue;
     }
 
+    // Eyebrow sub-caption ^^...^^
+    if (line.startsWith("^^") && line.endsWith("^^") && line.length > 4) {
+      const isLast = i === lastNonEmptyLineIdx;
+      if (isStreaming && isLast) cursorRendered = true;
+      elements.push(
+        <p key={`cap-${i}`} className="text-[11px] font-semibold uppercase tracking-[0.06em] text-slate-400 -mt-1.5 mb-2.5">
+          {line.slice(2, -2)}
+          {isStreaming && isLast && <StreamingCursor />}
+        </p>
+      );
+      i++; continue;
+    }
+
     // Headings
     const h1m = line.match(/^#\s+(.+)/);
     const h2m = line.match(/^##\s+(.+)/);
@@ -8046,9 +8384,13 @@ function MarkdownRenderer({ text, isStreaming }: { text: string; isStreaming?: b
     const boldOnly = /^\*\*[^*]+\*\*$/.test(line);
     if (h1m || h2m || h3m || boldOnly) {
       const content = cleanMdText(h1m ? h1m[1] : h2m ? h2m[1] : h3m ? h3m[1] : line.slice(2, -2));
-      const cls = h1m
-        ? "text-[1.0625rem] font-bold text-slate-900 mt-7 mb-3 leading-snug"
-        : "text-[0.9375rem] font-semibold text-slate-800 mt-6 mb-2.5 leading-snug";
+      const cls = compact
+        ? h1m
+          ? "text-[1.1rem] font-bold text-slate-900 mt-0 mb-3.5 leading-snug"
+          : "text-[0.95rem] font-bold text-slate-900 mt-4 mb-1.5 leading-snug"
+        : h1m
+          ? "text-[1.1rem] font-bold text-slate-900 mt-6 mb-2.5 leading-snug"
+          : "text-[0.9375rem] font-semibold text-slate-800 mt-6 mb-2.5 leading-snug";
       const isLast = i === lastNonEmptyLineIdx;
       if (isStreaming && isLast) cursorRendered = true;
       elements.push(
