@@ -1128,7 +1128,7 @@ Banyak peneliti sekarang memilih *mixed methods* — menggabungkan keduanya:
 2. **Sequential Exploratory** — mulai kualitatif untuk membangun instrumen, lalu kuantitatif untuk validasi
 3. **Concurrent Triangulation** — keduanya berjalan paralel dan hasilnya dibandingkan
 
-Mau aku bantu tentukan mana yang paling cocok untuk topik penelitianmu?`, time: "11:31" },
+Mau Alerin bantu tentukan mana yang paling cocok untuk topik penelitianmu?`, time: "11:31" },
     ],
   },
   {
@@ -1414,7 +1414,7 @@ Kirimkan poin-poin kesimpulan atau kutipan penting kepada peserta FGD untuk mema
       },
       {
         role: "claro",
-        text: `Aku sudah lihat rincian penggunaan memori di MacBook kamu. Berikut langkah-langkah membersihkan RAM dan disk space yang aman:
+        text: `Alerin sudah lihat rincian penggunaan memori di MacBook kamu. Berikut langkah-langkah membersihkan RAM dan disk space yang aman:
 
 ### 1. Hapus Cache Pengguna yang Menumpuk:
 Buka **Finder** > tekan \`Cmd + Shift + G\` > ketik \`~/Library/Caches\` > hapus cache aplikasi browser dan dev tools yang membengkak.
@@ -1563,7 +1563,7 @@ Kamu sedang mempertimbangkan pendekatan mana untuk penelitianmu saat ini?`
 \`\`\`infografis:ai-pendidikan
 \`\`\`
 
-## Jenis info grafis yang bisa aku buatkan:
+## Jenis info grafis yang bisa Alerin buatkan:
 
 1. [[Statistik|blue]] Ringkasan angka kunci, proporsi survei, dan persentase data.
 2. [[Alur & Proses|green]] Tahapan langkah kerja, roadmap skripsi, dan panduan SOP.
@@ -1571,13 +1571,13 @@ Kamu sedang mempertimbangkan pendekatan mana untuk penelitianmu saat ini?`
 4. [[Timeline|orange]] Linimasa proyek, jadwal riset, atau perkembangan tahapan.
 5. [[Ringkasan Materi|gray]] Intisari jurnal, makalah, atau bahan presentasi.
 
-Kamu ingin dibuatkan **info grafis** untuk topik atau data apa? Tulis topikmu di sini, nanti langsung aku buatkan!`
+Kamu ingin dibuatkan **info grafis** untuk topik atau data apa? Tulis topikmu di sini, nanti langsung Alerin buatkan!`
   ],
 
   // ── 00. VISUALISASI DATA (Grafik Batang, Garis, Lingkaran, Perbandingan, KPI) ───
   [
     /\b(?:visualisasi\s*data|visualisasi|grafik|chart|bar\s*chart|line\s*chart|pie\s*chart|donut\s*chart|kpi)\b/i,
-    `Siap! Aku contohkan beberapa jenis **visualisasi data** yang bisa aku tampilkan langsung di percakapan, mulai dari grafik batang, garis, lingkaran, hingga perbandingan data.
+    `Siap! Alerin contohkan beberapa jenis **visualisasi data** yang bisa Alerin tampilkan langsung di percakapan, mulai dari grafik batang, garis, lingkaran, hingga perbandingan data.
 
 ### 1. Grafik batang (Bar Chart)
 Contoh data jumlah pengguna aplikasi selama 6 bulan.
@@ -1619,13 +1619,13 @@ Contoh perbandingan target dan realisasi penjualan.
 | Mei | 420 | 280 | Rp38 jt |
 | Juni | 560 | 390 | Rp45 jt |
 
-Kamu butuh visualisasi data seperti apa? Ceritakan data atau metrik yang ingin kamu tampilkan, nanti aku buatkan dalam grafik atau tabel yang paling sesuai!`
+Kamu butuh visualisasi data seperti apa? Ceritakan data atau metrik yang ingin kamu tampilkan, nanti Alerin buatkan dalam grafik atau tabel yang paling sesuai!`
   ],
 
   // ── 0a. BAGAN OUTPUT (Diagram Alur, Hierarki, Proses, Mind Map, Timeline) ───
   [
     /\b(?:bagan|diagram|flowchart|mindmap|mind\s*map|alur proses|struktur organisasi)\b/i,
-    `Bisa! Aku bisa membuat beberapa jenis **bagan (diagram)**, mulai dari bagan organisasi, alur proses, hierarki, sampai diagram sistem.
+    `Bisa! Alerin bisa membuat beberapa jenis **bagan (diagram)**, mulai dari bagan organisasi, alur proses, hierarki, sampai diagram sistem.
 
 Berikut contoh output-nya.
 
@@ -1695,7 +1695,7 @@ timeline
     Minggu 6 : Launching
 \`\`\`
 
-### Jenis bagan yang bisa aku buat:
+### Jenis bagan yang bisa Alerin buat:
 
 | Jenis | Fungsi |
 | :--- | :--- |
@@ -1705,13 +1705,13 @@ timeline
 | Mind map | Pemetaan ide & brainstorming konsep |
 | Timeline | Garis waktu proyek & tahapan jadwal |
 
-Kamu ingin membuat bagan untuk topik apa? Ceritakan alur atau konsepnya, nanti aku bantu gambarkan bagannya secara visual!`
+Kamu ingin membuat bagan untuk topik apa? Ceritakan alur atau konsepnya, nanti Alerin bantu gambarkan bagannya secara visual!`
   ],
 
   // ── 0. RUMUS OUTPUT (Notasi Rumus Matematika, Pecahan, Variabel & Visual) ────
   [
     /\b(?:rumus|formula|matematika|persamaan kuadrat|pythagoras|turunan fungsi|hitung rumus)\b/i,
-    `Bisa! Aku bisa menampilkan rumus matematika dalam beberapa format, mulai dari rumus biasa, notasi matematika profesional, sampai rumus dengan penjelasan langkah demi langkah.
+    `Bisa! Alerin bisa menampilkan rumus matematika dalam beberapa format, mulai dari rumus biasa, notasi matematika profesional, sampai rumus dengan penjelasan langkah demi langkah.
 
 ### 1. Rumus matematika biasa
 Rumus luas lingkaran:
@@ -1765,7 +1765,7 @@ $$\\boxed{f'(x) = 6x + 5}$$
 \`\`\`visual:pythagoras
 \`\`\`
 
-Jadi, kamu butuh rumus apa? Aku bisa buatkan dalam format pecahan, akar, integral, sigma, matriks, atau format lainnya!`
+Jadi, kamu butuh rumus apa? Alerin bisa buatkan dalam format pecahan, akar, integral, sigma, matriks, atau format lainnya!`
   ],
 
   // ── 1. FILE OUTPUT (Pilihan format file lampiran: PDF, Excel, Word, PowerPoint) ───
@@ -1782,7 +1782,7 @@ Panduan Dashboard Akademik.docx | Word · 4 halaman | docx | Selesai | Download 
 Slide Presentasi Sidang.pptx | PowerPoint · 10 slide | ppt | Selesai | Download PPTX
 \`\`\`
 
-Aku juga bisa membuat dan menyusun file PDF, Excel, Word, dan PowerPoint sesuai topik riset atau tugas kuliahmu!
+Alerin juga bisa membuat dan menyusun file PDF, Excel, Word, dan PowerPoint sesuai topik riset atau tugas kuliahmu!
 
 Kamu ingin mencoba Alerin membuat file Excel, PowerPoint, atau dokumen lain?`
   ],
@@ -1989,7 +1989,7 @@ Kamu dapat langsung menekan ikon pensil di kanan atas kartu untuk menyesuaikan n
   // ── 5. PENULISAN OUTPUT (Writing Output Card terstruktur sesuai Alerin) ────
   [
     /\b(?:output\s+penulisan|contoh\s+penulisan|writing\s+output|penulisan|tulisan)\b/i,
-    `Siap! Aku buatkan contoh **output penulisan** seperti ketika Alerin menghasilkan dokumen yang rapi, terstruktur, dan siap digunakan.
+    `Siap! Alerin buatkan contoh **output penulisan** untuk menghasilkan dokumen yang rapi, terstruktur, dan siap digunakan.
 
 # Laporan Penggunaan Teknologi AI dalam Dunia Pendidikan
 ^^CONTOH OUTPUT PENULISAN · DOKUMEN FORMAL^^
@@ -2023,7 +2023,7 @@ Meskipun memiliki banyak manfaat, penerapan AI juga menghadapi sejumlah tantanga
 Teknologi AI memiliki potensi besar untuk meningkatkan kualitas pendidikan. Namun, penggunaannya harus disertai pengawasan, literasi digital, dan kebijakan yang tepat agar dapat memberikan manfaat secara optimal.
 \`\`\`
 
-## Jenis output penulisan yang bisa aku hasilkan:
+## Jenis output penulisan yang bisa Alerin hasilkan:
 
 1. [[Formal|blue]] Laporan, proposal, makalah, dan surat resmi.
 2. [[Profesional|green]] Business plan, dokumen perusahaan, dan laporan kerja.
@@ -2134,7 +2134,7 @@ Jadi:
 - Bisa disalin sekaligus.
 - Bisa menggunakan horizontal scroll jika baris terlalu panjang.
 
-Kalau kode sangat panjang, aku juga bisa memberikannya sebagai file .html, .js, .tsx, atau .zip.`],
+Kalau kode sangat panjang, Alerin juga bisa memberikannya sebagai file .html, .js, .tsx, atau .zip.`],
 
   [/kolom sayang|bukan list|buatkan tabel|tabel penelitian|contoh tabel|tabel mahasiswa/i, `OHH maksudmu tabel dengan banyak kolom sungguhan, bukan daftar vertikal.
 
@@ -2277,9 +2277,9 @@ Banyak peneliti sekarang memilih *mixed methods* — menggabungkan keduanya. Mis
 2. **Sequential Exploratory:** mulai kualitatif untuk membangun instrumen, lalu kuantitatif untuk validasi
 3. **Concurrent Triangulation:** keduanya berjalan paralel dan hasilnya dibandingkan
 
-Mau aku bantu tentukan mana yang paling cocok untuk topik penelitianmu?`],
+Mau Alerin bantu tentukan mana yang paling cocok untuk topik penelitianmu?`],
 
-  [/skripsi|tesis|penelitian/i, `Tentu, aku siap mendampingi perjalanan skripsimu dari awal hingga sidang. Berikut panduan lengkapnya.
+  [/skripsi|tesis|penelitian/i, `Tentu, Alerin siap mendampingi perjalanan skripsimu dari awal hingga sidang. Berikut panduan lengkapnya.
 
 ## Struktur Skripsi yang Benar
 
@@ -2310,7 +2310,7 @@ Latar belakang adalah kesan pertama yang dinilai dosen pembimbing. Gunakan struk
 - **Bulan 7–8:** Analisis data, penulisan BAB IV dan V
 - **Bulan 9:** Revisi final, persiapan sidang
 
-Ceritakan topik penelitianmu dan di mana kamu sekarang dalam proses pengerjaannya — aku akan bantu yang paling dibutuhkan!`],
+Ceritakan topik penelitianmu dan di mana kamu sekarang dalam proses pengerjaannya — Alerin akan bantu yang paling dibutuhkan!`],
 
   [/judul|topik/i, `Menemukan judul skripsi yang kuat adalah langkah pertama yang sangat menentukan. Mari kita bahas secara menyeluruh.
 
@@ -2348,7 +2348,7 @@ Atau untuk penelitian kualitatif:
 3. **Baca 5–10 jurnal terbaru** — lihat celah penelitian (*research gap*) yang bisa kamu isi
 4. **Konsultasikan ke dosen** — pastikan topikmu sesuai dengan bidang pembimbingmu
 
-Ceritakan minat dan bidang studimu — aku bantu rumuskan 3–5 kandidat judul yang kuat!`],
+Ceritakan minat dan bidang studimu — Alerin bantu rumuskan 3–5 kandidat judul yang kuat!`],
 
   [/metode|metodologi/i, `Metodologi penelitian adalah jantung dari skripsimu — menentukan bagaimana kamu mengumpulkan dan menganalisis data untuk menjawab rumusan masalah.
 
@@ -2391,7 +2391,7 @@ Sebelum analisis utama, kamu wajib membuktikan instrumenmu valid dan reliabel:
 3. **AVE (Average Variance Extracted)** — nilai > 0,50 menunjukkan *convergent validity* yang baik
 4. **Discriminant Validity** — nilai AVE harus lebih besar dari kuadrat korelasi antar konstruk
 
-Bagikan topik dan rumusan masalahmu, aku bantu tentukan metode dan teknik analisis yang paling tepat!`],
+Bagikan topik dan rumusan masalahmu, Alerin bantu tentukan metode dan teknik analisis yang paling tepat!`],
 
   [/tugas|pr|essay/i, `Baik! Mari kita buat tugasmu lebih terstruktur dan mudah dikerjakan dengan framework yang terbukti efektif.
 
@@ -2430,7 +2430,7 @@ Setiap tugas akademik — baik essay, laporan, makalah, atau studi kasus — bis
 - Kalimat terlalu panjang — idealnya satu kalimat maksimal 25–30 kata
 - Tidak menjawab pertanyaan soal secara langsung
 
-Bagikan instruksi tugasmu atau pertanyaan esainya, aku bantu buat outline dan draf pertamanya!`],
+Bagikan instruksi tugasmu atau pertanyaan esainya, Alerin bantu buat outline dan draf pertamanya!`],
 
   [/jurnal|referensi|sumber/i, `Mencari dan menggunakan jurnal akademik dengan tepat adalah keterampilan paling penting dalam penelitian. Berikut panduan lengkapnya.
 
@@ -2469,11 +2469,11 @@ Format yang paling umum digunakan di Indonesia:
 - **H-Index penulis** — menunjukkan produktivitas dan sitasi sang peneliti
 - **Peer-reviewed** — pastikan artikel sudah melalui proses review sejawat
 
-Sebutkan topik penelitianmu — aku rekomendasikan 5–10 jurnal paling relevan yang bisa kamu gunakan!`],
+Sebutkan topik penelitianmu — Alerin rekomendasikan 5–10 jurnal paling relevan yang bisa kamu gunakan!`],
 
-  [/halo|hai|hi|hello/i, `Halo! Senang bertemu kamu di sini. Aku **Alerin**, asisten akademik AI yang dirancang khusus untuk membantu mahasiswa Indonesia menghadapi tantangan dunia perkuliahan.
+  [/halo|hai|hi|hello/i, `Halo! Senang bertemu kamu di sini. **Alerin** adalah asisten akademik AI yang dirancang khusus untuk membantu mahasiswa Indonesia menghadapi tantangan dunia perkuliahan.
 
-## Yang Bisa Aku Bantu
+## Yang Bisa Alerin Bantu
 
 - **Skripsi & Tesis** — dari menentukan topik, menulis setiap bab, hingga persiapan sidang
 - **Tugas & Essay** — membuat outline, memperkuat argumen, dan memperbaiki tulisanmu
@@ -2482,9 +2482,9 @@ Sebutkan topik penelitianmu — aku rekomendasikan 5–10 jurnal paling relevan 
 - **Persiapan Ujian** — merangkum materi, membuat catatan, dan latihan soal
 - **Parafrase & Plagiarisme** — membantu kamu menulis ulang dengan bahasa sendiri
 
-## Cara Mendapatkan Hasil Terbaik dari Aku
+## Cara Mendapatkan Hasil Terbaik dari Alerin
 
-1. **Semakin detail pertanyaanmu, semakin baik jawabanku** — ceritakan konteks, jurusan, semester, dan apa yang sudah kamu coba
+1. **Semakin detail pertanyaanmu, semakin baik jawaban Alerin** — ceritakan konteks, jurusan, semester, dan apa yang sudah kamu coba
 2. **Gunakan kategori di bawah** — pilih "Metodologi", "Penulisan", atau topik lain untuk jawaban yang lebih terarah
 3. **Tindak lanjuti** — jangan ragu untuk meminta penjelasan lebih lanjut atau contoh konkret
 
@@ -2496,11 +2496,11 @@ function getAIResponse(msg: string): string {
   for (const [pattern, resp] of AI_RESPONSES) {
     if (pattern.test(msg) || pattern.test(cleanMsg)) return stripEmoticons(resp);
   }
-  return stripEmoticons(`Pertanyaan yang menarik! Izinkan aku memberikan jawaban yang terstruktur dan komprehensif.
+  return stripEmoticons(`Pertanyaan yang menarik! Izinkan Alerin memberikan jawaban yang terstruktur dan komprehensif.
 
 ## Pemahaman Awal
 
-Sebelum aku menjawab lebih mendalam, ada beberapa hal yang perlu kamu pahami terkait topik ini. Setiap pertanyaan akademik biasanya memiliki beberapa dimensi yang perlu dijawab secara bertahap — mulai dari konsep dasar, penerapannya, hingga implikasi praktisnya dalam konteks penelitian atau pembelajaran.
+Sebelum Alerin menjawab lebih mendalam, ada beberapa hal yang perlu kamu pahami terkait topik ini. Setiap pertanyaan akademik biasanya memiliki beberapa dimensi yang perlu dijawab secara bertahap — mulai dari konsep dasar, penerapannya, hingga implikasi praktisnya dalam konteks penelitian atau pembelajaran.
 
 ## Yang Perlu Kamu Pertimbangkan
 
@@ -2512,9 +2512,9 @@ Sebelum aku menjawab lebih mendalam, ada beberapa hal yang perlu kamu pahami ter
 
 1. Ceritakan lebih detail tentang pertanyaanmu — latar belakang masalah, bidang studi, dan apa yang sudah kamu coba cari sebelumnya
 2. Jika ini berkaitan dengan penelitian, sebutkan metode dan variabel yang kamu gunakan
-3. Bagikan draf atau tulisanmu jika ada, aku bantu perbaiki dan perkuat argumennya
+3. Bagikan draf atau tulisanmu jika ada, Alerin bantu perbaiki dan perkuat argumennya
 
-Semakin spesifik pertanyaanmu, semakin tepat dan berguna jawaban yang bisa aku berikan. Yuk, ceritakan lebih lanjut!`);
+Semakin spesifik pertanyaanmu, semakin tepat dan berguna jawaban yang bisa Alerin berikan. Yuk, ceritakan lebih lanjut!`);
 }
 
 const SUGGESTION_MAP: { pattern: RegExp; suggestions: string[] }[] = [
@@ -10076,9 +10076,9 @@ function PercakapanTab({
       setTyping(false);
       let reply = "";
       if (photoFiles.length > 1) {
-        reply = `Aku sudah melihat ${photoFiles.length} foto yang kamu unggah. Ada yang ingin kamu tanyakan atau minta aku analisis dari foto-foto ini?`;
+        reply = `Alerin sudah melihat ${photoFiles.length} foto yang kamu unggah. Ada yang ingin kamu tanyakan atau minta Alerin analisis dari foto-foto ini?`;
       } else if (photoFiles.length === 1) {
-        reply = `Aku sudah melihat foto yang kamu unggah (${file.name}). Ada yang ingin kamu tanyakan atau ingin aku analisis dari foto ini?`;
+        reply = `Alerin sudah melihat foto yang kamu unggah (${file.name}). Ada yang ingin kamu tanyakan atau ingin Alerin analisis dari foto ini?`;
       } else {
         reply = files.length > 1
           ? `Oke, saya sudah menerima ${files.length} file dokumen. Saya akan membantu menganalisisnya. Apa yang ingin kamu ketahui dari file-file ini?`
