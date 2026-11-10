@@ -193,8 +193,9 @@ const IMAGE_KEYWORDS = [
 
 function isImageRequest(text: string): boolean {
   const lower = text.toLowerCase().trim();
-  // Cegah bentrok jika pengguna secara spesifik meminta visualisasi data / grafik / chart, bagan, rumus, output code, file, ppt/powerpoint, link, atau kolom/tabel
+  // Cegah bentrok jika pengguna secara spesifik meminta info grafis, visualisasi data / grafik / chart, bagan, rumus, output code, file, ppt/powerpoint, link, atau kolom/tabel
   if (
+    /\b(?:info\s*grafi[sk]|infografi[sk]|infographic)\b/i.test(lower) ||
     /\b(?:visualisasi\s*data|visualisasi|grafik|chart|bar\s*chart|line\s*chart|pie\s*chart|donut\s*chart|kpi)\b/i.test(lower) ||
     /\b(?:bagan|diagram|flowchart|mindmap|mind\s*map|alur proses|struktur organisasi)\b/i.test(lower) ||
     /\b(?:rumus|formula|matematika|persamaan|kalkulasi|pythagoras|turunan|integral)\b/i.test(lower) ||
@@ -356,11 +357,176 @@ function stripEmoticons(str: string): string {
     .replace(/[ \t]{2,}/g, " ");
 }
 
+// ─── Data Preset & Formatter untuk Output Infografis ─────────────────────────
+type InfographicTone = "blue" | "emerald" | "violet";
+
+interface InfographicPreset {
+  id: string;
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+  heroStats: { value: string; label: string; tone: InfographicTone }[];
+  breakdownTitle: string;
+  breakdownItems: { label: string; pct: number; detail: string; color: string }[];
+  stepsTitle: string;
+  steps: { title: string; desc: string }[];
+  goodTitle: string;
+  goodPoints: string[];
+  avoidTitle: string;
+  avoidPoints: string[];
+  takeaway: string;
+  sourceNote: string;
+}
+
+const INFOGRAPHIC_PRESETS: Record<string, InfographicPreset> = {
+  "ai-pendidikan": {
+    id: "ai-pendidikan",
+    eyebrow: "INFOGRAFIS EDUKASI · TREN 2026",
+    title: "Pemanfaatan AI di Pendidikan Tinggi",
+    subtitle: "Ringkasan visual adopsi, proporsi penggunaan, dan etika pemanfaatan AI bagi mahasiswa.",
+    heroStats: [
+      { value: "78%", label: "Mahasiswa Pakai AI", tone: "blue" },
+      { value: "2,4x", label: "Lebih Cepat Cari Literatur", tone: "emerald" },
+      { value: "64%", label: "Wajib Cek Fakta Ulang", tone: "violet" },
+    ],
+    breakdownTitle: "Proporsi Kebutuhan Akademik",
+    breakdownItems: [
+      { label: "Eksplorasi Ide & Literatur", pct: 42, detail: "42%", color: "#1A73E8" },
+      { label: "Penyusunan Kerangka & Parafrase", pct: 33, detail: "33%", color: "#0EA5E9" },
+      { label: "Analisis Data & Ringkasan", pct: 25, detail: "25%", color: "#7C3AED" },
+    ],
+    stepsTitle: "4 Langkah Riset Berbantu AI yang Efektif",
+    steps: [
+      { title: "Rumuskan Prompt Spesifik", desc: "Sertakan topik, metode, dan batasan tahun referensi agar hasil relevan." },
+      { title: "Verifikasi Sumber Asli", desc: "Cocokkan kutipan ke Google Scholar, SINTA, atau jurnal Scopus primer." },
+      { title: "Olahan Kritis & Parafrase", desc: "Sesuaikan argumen dengan suara tulisanmu dan konteks penelitian." },
+      { title: "Finalisasi Etika Akademik", desc: "Lakukan cek kemiripan teks dan rapikan sitasi sesuai pedoman kampus." },
+    ],
+    goodTitle: "Praktik Dianjurkan",
+    goodPoints: [
+      "Jadikan AI mitra brainstorming dan penyusun kerangka.",
+      "Selalu validasi data statistik dari publikasi resmi.",
+    ],
+    avoidTitle: "Hal yang Dihindari",
+    avoidPoints: [
+      "Salin-tempel mentah tanpa membaca referensi primer.",
+      "Menggunakan kutipan fiktif yang tidak terverifikasi.",
+    ],
+    takeaway: "AI mempercepat proses riset hingga 2,4x lipat jika dipadukan dengan verifikasi kritis mahasiswa.",
+    sourceNote: "Sumber: Ringkasan Studi Literasi Digital 2026 · Alerin Visual",
+  },
+  "skripsi": {
+    id: "skripsi",
+    eyebrow: "INFOGRAFIS AKADEMIK · ROADMAP",
+    title: "Alur Penyusunan Skripsi hingga Sidang",
+    subtitle: "Panduan visual 4 fase utama penyusunan tugas akhir agar progres terukur dan tepat waktu.",
+    heroStats: [
+      { value: "5 Bab", label: "Struktur Standar", tone: "blue" },
+      { value: "4-6 Bln", label: "Estimasi Ideal", tone: "emerald" },
+      { value: "Min. 20", label: "Referensi Jurnal", tone: "violet" },
+    ],
+    breakdownTitle: "Distribusi Bobot Waktu Pengerjaan",
+    breakdownItems: [
+      { label: "Judul, BAB I & Kajian Pustaka (BAB II)", pct: 30, detail: "30%", color: "#1A73E8" },
+      { label: "Metodologi & Pengumpulan Data (BAB III)", pct: 35, detail: "35%", color: "#059669" },
+      { label: "Analisis Hasil & Revisi Sidang (BAB IV-V)", pct: 35, detail: "35%", color: "#7C3AED" },
+    ],
+    stepsTitle: "4 Fase Utama Menuju Lulus",
+    steps: [
+      { title: "Fase 1: Penetapan Topik & Gap Riset", desc: "Kunci 3 masalah utama dan minimal 10 jurnal 5 tahun terakhir." },
+      { title: "Fase 2: Proposal & Seminar Proposal", desc: "Matangkan definisi operasional variabel dan teknik sampling." },
+      { title: "Fase 3: Lapangan & Pengolahan Data", desc: "Uji validitas-reliabilitas, olah data statistik atau coding kualitatif." },
+      { title: "Fase 4: Pembahasan & Sidang Akhir", desc: "Sinkronkan kesimpulan dengan rumusan masalah lalu siapkan slide." },
+    ],
+    goodTitle: "Kunci Cepat Selesai",
+    goodPoints: [
+      "Jadwalkan bimbingan rutin tiap 2 minggu dengan target bab.",
+      "Simpan catatan revisi dosen secara berurutan.",
+    ],
+    avoidTitle: "Penyebab Terhambat",
+    avoidPoints: [
+      "Ganti judul berkali-kali setelah pengumpulan data.",
+      "Menunda pengolahan data dan penulisan daftar pustaka.",
+    ],
+    takeaway: "Konsistensi menulis target mingguan kecil jauh lebih efektif daripada mengebut satu bab sekaligus.",
+    sourceNote: "Sumber: Panduan Manajemen Tugas Akhir · Alerin Visual",
+  },
+  "kualitatif-kuantitatif": {
+    id: "kualitatif-kuantitatif",
+    eyebrow: "INFOGRAFIS METODOLOGI · PERBANDINGAN",
+    title: "Penelitian Kualitatif vs Kuantitatif",
+    subtitle: "Perbandingan cepat fokus penelitian, teknik data, ukuran sampel, dan instrumen analisis.",
+    heroStats: [
+      { value: "2", label: "Pendekatan Utama", tone: "blue" },
+      { value: "30+", label: "Sampel Kuantitatif", tone: "emerald" },
+      { value: "5-15", label: "Informan Kualitatif", tone: "violet" },
+    ],
+    breakdownTitle: "Karakteristik Pengolahan Data",
+    breakdownItems: [
+      { label: "Kuantitatif: Statistik & Uji Hipotesis", pct: 50, detail: "50%", color: "#1A73E8" },
+      { label: "Kualitatif: Narasi, Tema & Triangulasi", pct: 50, detail: "50%", color: "#7C3AED" },
+    ],
+    stepsTitle: "4 Perbedaan Kunci untuk Memilih Metode",
+    steps: [
+      { title: "Tujuan Utama", desc: "Kuantitatif menguji pengaruh/hubungan angka; kualitatif menggali makna fenomena." },
+      { title: "Instrumen Penelitian", desc: "Kuantitatif pakai kuesioner skala Likert; kualitatif pakai pedoman wawancara." },
+      { title: "Jumlah Partisipan", desc: "Kuantitatif butuh responden representatif besar; kualitatif fokus kedalaman info." },
+      { title: "Alat Analisis", desc: "Kuantitatif memakai SPSS/SmartPLS/R; kualitatif memakai NVivo atau coding tematik." },
+    ],
+    goodTitle: "Pilih Kuantitatif Jika",
+    goodPoints: [
+      "Ingin mengukur pengaruh antarvariabel secara objektif.",
+      "Sudah punya teori dan hipotesis awal yang jelas.",
+    ],
+    avoidTitle: "Pilih Kualitatif Jika",
+    avoidPoints: [
+      "Topik masih baru dan butuh eksplorasi pengalaman mendalam.",
+      "Fokus pada proses sosial, budaya, atau studi kasus spesifik.",
+    ],
+    takeaway: "Sesuaikan metode dengan rumusan masalahmu — bukan semata ikut tren atau menghindari hitung-hitungan.",
+    sourceNote: "Sumber: Metodologi Penelitian Akademik (Creswell & Sugiyono) · Alerin Visual",
+  },
+};
+
+function getInfographicPreset(variant?: string): InfographicPreset {
+  const key = (variant || "").trim().toLowerCase();
+  return INFOGRAPHIC_PRESETS[key] || INFOGRAPHIC_PRESETS["ai-pendidikan"];
+}
+
+function formatInfographicAsText(preset: InfographicPreset): string {
+  return [
+    `${preset.title} (${preset.eyebrow})`,
+    preset.subtitle,
+    "",
+    "Sorotan Utama:",
+    ...preset.heroStats.map((s) => `• ${s.value}: ${s.label}`),
+    "",
+    `${preset.breakdownTitle}:`,
+    ...preset.breakdownItems.map((b) => `• ${b.label}: ${b.detail}`),
+    "",
+    `${preset.stepsTitle}:`,
+    ...preset.steps.map((st, idx) => `${idx + 1}. ${st.title}: ${st.desc}`),
+    "",
+    `${preset.goodTitle}:`,
+    ...preset.goodPoints.map((p) => `• ${p}`),
+    "",
+    `${preset.avoidTitle}:`,
+    ...preset.avoidPoints.map((p) => `• ${p}`),
+    "",
+    `Intisari: ${preset.takeaway}`,
+  ].join("\n");
+}
+
 // ─── Format Markdown Bersih untuk Disalin ke Clipboard ──────────────────────
 // Merapikan teks hasil salinan agar enak dibaca di pesan chat, input, dokumen, atau WhatsApp
 export function cleanMarkdownForCopy(md: string): string {
   if (!md) return "";
   let text = stripEmoticons(md);
+
+  // Bersihkan blok infografis menjadi ringkasan teks terstruktur
+  text = text.replace(/```(?:infografis|infographic)(?::([a-z0-9-]+))?[\s\S]*?```/gi, (_m, variant) => {
+    return formatInfographicAsText(getInfographicPreset(variant));
+  });
 
   // Bersihkan kartu visual pythagoras untuk salinan teks rapi
   text = text.replace(/```(?:visual:pythagoras|pythagoras)[\s\S]*?```/g, () => {
@@ -1371,6 +1537,43 @@ const QUIZ_QUESTIONS = [
 ];
 
 const AI_RESPONSES: [RegExp, string][] = [
+  // ── 00-infografis. INFO GRAFIS OUTPUT ─────────────────────────────────────
+  [
+    /(?:\b(?:info\s*grafi[sk]|infografi[sk]|infographic)\b(?=.*\b(?:skripsi|tesis|tugas\s+akhir|sidang)\b)|\b(?:skripsi|tesis|tugas\s+akhir|sidang)\b(?=.*\b(?:info\s*grafi[sk]|infografi[sk]|infographic)\b))/i,
+    `Siap! Berikut **info grafis alur penyusunan skripsi** agar kamu bisa melihat tahapan, pembagian waktu, dan hal penting dari awal hingga sidang:
+
+\`\`\`infografis:skripsi
+\`\`\`
+
+Ingin infografis ini disesuaikan dengan jadwal target bimbingan atau jumlah bab penelitianmu?`
+  ],
+  [
+    /(?:\b(?:info\s*grafi[sk]|infografi[sk]|infographic)\b(?=.*\b(?:kualitatif|kuantitatif|perbandingan\s+metode)\b)|\b(?:kualitatif|kuantitatif|perbandingan\s+metode)\b(?=.*\b(?:info\s*grafi[sk]|infografi[sk]|infographic)\b))/i,
+    `Berikut **info grafis perbandingan metode kualitatif vs kuantitatif** yang merangkum fokus riset, instrumen, ukuran sampel, dan analisisnya:
+
+\`\`\`infografis:kualitatif-kuantitatif
+\`\`\`
+
+Kamu sedang mempertimbangkan pendekatan mana untuk penelitianmu saat ini?`
+  ],
+  [
+    /\b(?:info\s*grafi[sk]|infografi[sk]|infographic)\b/i,
+    `Bisa! Berikut contoh output **info grafis** dari Alerin yang menyajikan sorotan angka, proporsi data, alur langkah, dan intisari dalam satu poster visual yang ringkas.
+
+\`\`\`infografis:ai-pendidikan
+\`\`\`
+
+## Jenis info grafis yang bisa aku buatkan:
+
+1. [[Statistik|blue]] Ringkasan angka kunci, proporsi survei, dan persentase data.
+2. [[Alur & Proses|green]] Tahapan langkah kerja, roadmap skripsi, dan panduan SOP.
+3. [[Perbandingan|purple]] Komparasi dua metode, fitur, atau pro dan kontra secara seimbang.
+4. [[Timeline|orange]] Linimasa proyek, jadwal riset, atau perkembangan tahapan.
+5. [[Ringkasan Materi|gray]] Intisari jurnal, makalah, atau bahan presentasi.
+
+Kamu ingin dibuatkan **info grafis** untuk topik atau data apa? Tulis topikmu di sini, nanti langsung aku buatkan!`
+  ],
+
   // ── 00. VISUALISASI DATA (Grafik Batang, Garis, Lingkaran, Perbandingan, KPI) ───
   [
     /\b(?:visualisasi\s*data|visualisasi|grafik|chart|bar\s*chart|line\s*chart|pie\s*chart|donut\s*chart|kpi)\b/i,
@@ -2315,6 +2518,7 @@ Semakin spesifik pertanyaanmu, semakin tepat dan berguna jawaban yang bisa aku b
 }
 
 const SUGGESTION_MAP: { pattern: RegExp; suggestions: string[] }[] = [
+  { pattern: /info\s*grafi[sk]|infografi[sk]|infographic/i, suggestions: ["Buatkan infografis proses penyusunan skripsi", "Buatkan infografis perbandingan metode kualitatif vs kuantitatif", "Buatkan infografis pemanfaatan AI mahasiswa"] },
   { pattern: /visualisasi\s*data|visualisasi|grafik|chart|bar\s*chart|line\s*chart|pie\s*chart|donut\s*chart|kpi/i, suggestions: ["Buatkan grafik pertumbuhan penjualan kuartal ini", "Buatkan visualisasi perbandingan target vs realisasi", "Tampilkan ringkasan metrik KPI bisnis"] },
   { pattern: /bagan|diagram|flowchart|mindmap|mind\s*map|alur proses|struktur organisasi/i, suggestions: ["Buatkan bagan alur pendaftaran mahasiswa baru", "Buatkan mind map rencana penelitian skripsi", "Buatkan timeline pengerjaan skripsi 6 bulan"] },
   { pattern: /rumus|formula|matematika|persamaan|kalkulasi|pythagoras|turunan|integral/i, suggestions: ["Contoh rumus turunan dan integral", "Cara menghitung rumus Pythagoras", "Buatkan rumus dalam bentuk tabel"] },
@@ -2341,6 +2545,11 @@ const SUGGESTION_MAP: { pattern: RegExp; suggestions: string[] }[] = [
 const DEFAULT_SUGGESTIONS = ["Lanjutkan penjelasannya lebih detail", "Berikan contoh konkret", "Apa yang harus kulakukan selanjutnya?"];
 
 const SOURCE_MAP: { pattern: RegExp; sources: ChatSource[] }[] = [
+  { pattern: /info\s*grafi[sk]|infografi[sk]|infographic/i, sources: [
+    { title: "Cool Infographics: Effective Communication with Data Visualization", author: "Krum, R.", year: "2020", url: "https://scholar.google.com" },
+    { title: "Storytelling with Data: A Data Visualization Guide", author: "Knaflic, C.N.", year: "2021", url: "https://scholar.google.com" },
+    { title: "Visual Communication & Information Design Principles", author: "Cairo, A.", year: "2022", url: "https://www.scopus.com" },
+  ]},
   { pattern: /visualisasi\s*data|visualisasi|grafik|chart|bar\s*chart|line\s*chart|pie\s*chart|donut\s*chart|kpi/i, sources: [
     { title: "The Visual Display of Quantitative Information", author: "Tufte, E.R.", year: "2020", url: "https://scholar.google.com" },
     { title: "Data Visualization: A Practical Introduction", author: "Healy, K.", year: "2019", url: "https://scholar.google.com" },
@@ -8481,6 +8690,269 @@ function PenulisanOutputCard({ content, isStreaming }: { content: string; isStre
   );
 }
 
+// ─── Infographic Output Card (Poster Infografis Interaktif) ───────────────────
+function InfographicOutputCard({ variant }: { variant?: string }) {
+  const preset = useMemo(() => getInfographicPreset(variant), [variant]);
+  const [copied, setCopied] = React.useState(false);
+  const [shared, setShared] = React.useState(false);
+
+  const plainOutput = useMemo(() => formatInfographicAsText(preset), [preset]);
+
+  const handleCopy = () => {
+    navigator.clipboard?.writeText(plainOutput).catch(() => {});
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1800);
+  };
+
+  const handleShare = () => {
+    if (typeof navigator !== "undefined" && navigator.share) {
+      navigator.share({ title: `${preset.title} — Alerin`, text: plainOutput }).catch(() => {});
+    } else {
+      navigator.clipboard?.writeText(plainOutput).catch(() => {});
+      setShared(true);
+      setTimeout(() => setShared(false), 1800);
+    }
+  };
+
+  const statToneClass: Record<InfographicTone, string> = {
+    blue: "text-[#1A73E8]",
+    emerald: "text-[#059669]",
+    violet: "text-[#7C3AED]",
+  };
+
+  return (
+    <div className="my-3.5 rounded-2xl border border-neutral-200/90 bg-white overflow-hidden shadow-[0_2px_12px_rgba(15,23,42,0.05)] animate-in fade-in duration-300">
+      {/* Toolbar atas kartu infografis */}
+      <div className="flex items-center justify-between px-4 py-2.5 border-b border-neutral-100 bg-neutral-50/50">
+        <div className="flex items-center gap-2">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" className="text-[#1A73E8] shrink-0">
+            <rect x="3" y="3" width="18" height="18" rx="2.5" />
+            <line x1="8" y1="17" x2="8" y2="11" />
+            <line x1="12" y1="17" x2="12" y2="7" />
+            <line x1="16" y1="17" x2="16" y2="13" />
+          </svg>
+          <span className="text-[13px] font-medium text-neutral-700">Infografis</span>
+          <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#EAF2FF] text-[#1A73E8]">
+            Visual Ringkas
+          </span>
+        </div>
+
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
+            onClick={handleCopy}
+            title="Salin ringkasan infografis"
+            aria-label="Salin ringkasan infografis"
+            className={`size-7 rounded-lg flex items-center justify-center transition-colors cursor-pointer ${
+              copied ? "text-emerald-600 bg-emerald-50" : "text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100"
+            }`}
+          >
+            {copied ? (
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            ) : (
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+              </svg>
+            )}
+          </button>
+
+          <button
+            type="button"
+            onClick={handleShare}
+            title="Bagikan infografis"
+            aria-label="Bagikan infografis"
+            className={`size-7 rounded-lg flex items-center justify-center transition-colors cursor-pointer ${
+              shared ? "text-blue-600 bg-blue-50" : "text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100"
+            }`}
+          >
+            {shared ? (
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            ) : (
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="18" cy="5" r="3" />
+                <circle cx="6" cy="12" r="3" />
+                <circle cx="18" cy="19" r="3" />
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+              </svg>
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* Hero Poster Banner */}
+      <div className="bg-gradient-to-br from-[#1A73E8] via-[#2563EB] to-[#1E40AF] text-white px-4 py-4 sm:px-5 sm:py-5 relative overflow-hidden">
+        <div className="pointer-events-none absolute -right-8 -top-8 size-28 rounded-full bg-white/10" />
+        <div className="pointer-events-none absolute right-10 -bottom-10 size-20 rounded-full bg-white/10" />
+        <span className="inline-block text-[10px] font-bold tracking-wider uppercase px-2.5 py-0.5 rounded-full bg-white/15 text-blue-50 border border-white/20 mb-2">
+          {preset.eyebrow}
+        </span>
+        <h3 className="text-base sm:text-lg font-extrabold leading-snug tracking-tight text-white">
+          {preset.title}
+        </h3>
+        <p className="text-xs text-blue-100/95 mt-1 leading-relaxed max-w-[92%]">
+          {preset.subtitle}
+        </p>
+      </div>
+
+      {/* 1. Sorotan Angka Utama (3 KPI Cards) */}
+      <div className="px-4 pt-4 sm:px-5">
+        <div className="grid grid-cols-3 gap-2">
+          {preset.heroStats.map((st, idx) => (
+            <div
+              key={idx}
+              className="rounded-xl border border-slate-200/80 bg-slate-50/75 px-2.5 py-2.5 text-center"
+            >
+              <div className={`text-base sm:text-xl font-extrabold tracking-tight leading-tight ${statToneClass[st.tone]}`}>
+                {st.value}
+              </div>
+              <div className="text-[11px] font-medium text-slate-600 leading-tight mt-1">
+                {st.label}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* 2. Proporsi Visual */}
+      <div className="px-4 pt-4 sm:px-5">
+        <div className="rounded-xl border border-slate-200/80 bg-white p-3.5">
+          <div className="flex items-center gap-1.5 mb-2.5">
+            <span className="size-2 rounded-full bg-[#1A73E8]" />
+            <span className="text-[11px] font-bold uppercase tracking-wide text-slate-700">
+              {preset.breakdownTitle}
+            </span>
+          </div>
+
+          <div className="h-2.5 w-full rounded-full overflow-hidden flex gap-0.5 bg-slate-100 mb-3">
+            {preset.breakdownItems.map((item, idx) => (
+              <div
+                key={idx}
+                style={{ width: `${item.pct}%`, backgroundColor: item.color }}
+                className="h-full first:rounded-l-full last:rounded-r-full transition-all duration-500"
+              />
+            ))}
+          </div>
+
+          <div className="space-y-2">
+            {preset.breakdownItems.map((item, idx) => (
+              <div key={idx} className="space-y-1">
+                <div className="flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="size-2 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
+                    <span className="text-slate-700 font-medium truncate">{item.label}</span>
+                  </div>
+                  <span className="font-bold text-slate-900 ml-2 shrink-0">{item.detail}</span>
+                </div>
+                <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                  <div
+                    className="h-full rounded-full transition-all duration-500"
+                    style={{ width: `${item.pct}%`, backgroundColor: item.color }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* 3. Alur / Langkah Kunci */}
+      <div className="px-4 pt-4 sm:px-5">
+        <div className="flex items-center gap-1.5 mb-2.5">
+          <span className="size-2 rounded-full bg-[#0EA5E9]" />
+          <span className="text-[11px] font-bold uppercase tracking-wide text-slate-700">
+            {preset.stepsTitle}
+          </span>
+        </div>
+        <div className="space-y-2">
+          {preset.steps.map((st, idx) => (
+            <div
+              key={idx}
+              className="flex items-start gap-3 rounded-xl bg-slate-50/80 border border-slate-200/70 px-3 py-2.5"
+            >
+              <div className="size-6 rounded-full bg-[#1A73E8] text-white text-[11px] font-bold flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
+                {idx + 1}
+              </div>
+              <div className="min-w-0">
+                <div className="text-xs sm:text-[13px] font-bold text-slate-900 leading-snug">
+                  {st.title}
+                </div>
+                <p className="text-[11.5px] sm:text-xs text-slate-600 leading-relaxed mt-0.5">
+                  {st.desc}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* 4. Perbandingan Praktik (Dianjurkan vs Hindari) */}
+      <div className="px-4 pt-4 sm:px-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <div className="rounded-xl bg-emerald-50/75 border border-emerald-200/80 p-3">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-800 mb-1.5">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+              <span>{preset.goodTitle}</span>
+            </div>
+            <ul className="space-y-1">
+              {preset.goodPoints.map((pt, idx) => (
+                <li key={idx} className="text-[11.5px] text-emerald-950/90 leading-snug flex items-start gap-1.5">
+                  <span className="mt-1.5 size-1 rounded-full bg-emerald-600 shrink-0" />
+                  <span>{pt}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="rounded-xl bg-rose-50/65 border border-rose-200/80 p-3">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-rose-800 mb-1.5">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="15" y1="9" x2="9" y2="15" />
+                <line x1="9" y1="9" x2="15" y2="15" />
+              </svg>
+              <span>{preset.avoidTitle}</span>
+            </div>
+            <ul className="space-y-1">
+              {preset.avoidPoints.map((pt, idx) => (
+                <li key={idx} className="text-[11.5px] text-rose-950/90 leading-snug flex items-start gap-1.5">
+                  <span className="mt-1.5 size-1 rounded-full bg-rose-600 shrink-0" />
+                  <span>{pt}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer Intisari & Sumber */}
+      <div className="mt-4 px-4 py-3 bg-[#EAF2FF]/80 border-t border-blue-100 sm:px-5">
+        <div className="flex items-start gap-2">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#1A73E8] shrink-0 mt-0.5">
+            <path d="M9 18h6" />
+            <path d="M10 22h4" />
+            <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14" />
+          </svg>
+          <div>
+            <p className="text-xs font-medium text-slate-800 leading-relaxed">
+              <span className="font-bold text-[#1A73E8]">Intisari: </span>
+              {preset.takeaway}
+            </p>
+            <p className="text-[10px] text-slate-500 mt-1">{preset.sourceNote}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function cleanMdText(text: string): string {
   // Hapus strip/garis pemisah (em-dash ' — ' atau ' – ') agar output jawaban bebas dari tanda garis
   return text
@@ -8538,6 +9010,13 @@ function MarkdownRenderer({ text, isStreaming, compact }: { text: string; isStre
       }
       const hasClosingFence = i < lines.length && lines[i].trim().startsWith("```");
       i++; // skip closing ```
+
+      // Infographic Output Card (Poster Infografis Visual)
+      if (!compact && (lang === "infografis" || lang === "infographic" || lang.startsWith("infografis:") || lang.startsWith("infographic:"))) {
+        const variant = lang.includes(":") ? lang.split(":")[1] : undefined;
+        elements.push(<InfographicOutputCard key={`info-${i}`} variant={variant} />);
+        continue;
+      }
 
       // Penulisan Output Card (Writing Canvas style)
       if (!compact && (lang === "penulisan" || lang === "writing" || lang === "tulisan")) {
