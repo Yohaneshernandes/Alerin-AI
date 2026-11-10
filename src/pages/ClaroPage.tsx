@@ -366,6 +366,56 @@ export function cleanMarkdownForCopy(md: string): string {
     ].join("\n");
   });
 
+  // Bersihkan kartu visual bagan hierarki untuk salinan teks rapi
+  text = text.replace(/```(?:hierarchy:organisasi|hierarchy|organisasi)[\s\S]*?```/g, () => {
+    return [
+      "Contoh Struktur Organisasi Perusahaan:",
+      "[ Direktur Utama ]",
+      "       ↓",
+      "• Manager Marketing",
+      "• Manager Operasional",
+      "• Manager Teknologi",
+    ].join("\n");
+  });
+
+  // Bersihkan blok diagram Mermaid untuk salinan teks rapi
+  text = text.replace(/```mermaid([\s\S]*?)```/g, (_m, content) => {
+    if (/Masukkan Email/i.test(content)) {
+      return [
+        "Alur Proses Login Aplikasi:",
+        "1. Mulai",
+        "2. Masukkan Email dan Password",
+        "3. Validasi Data?",
+        "   - Ya: Masuk Dashboard -> Selesai",
+        "   - Tidak: Tampilkan Pesan Error -> Ulangi input email/password",
+      ].join("\n");
+    }
+    if (/Pilih Produk/i.test(content)) {
+      return "Alur Proses Pembelian: Pengguna -> Pilih Produk -> Keranjang -> Pembayaran -> Verifikasi -> Pesanan Diproses -> Produk Dikirim";
+    }
+    if (/Digital Marketing/i.test(content)) {
+      return [
+        "Mind Map Digital Marketing:",
+        "• SEO: Konten, Backlink, Keyword",
+        "• Social Media: Instagram, TikTok, Facebook",
+        "• Advertising: Google Ads, Meta Ads",
+        "• Analytics: Conversion, Traffic",
+      ].join("\n");
+    }
+    if (/Timeline/i.test(content)) {
+      return [
+        "Timeline Pengembangan Produk:",
+        "• Minggu 1: Research",
+        "• Minggu 2: Wireframe",
+        "• Minggu 3: UI Design",
+        "• Minggu 4: Development",
+        "• Minggu 5: Testing",
+        "• Minggu 6: Launching",
+      ].join("\n");
+    }
+    return content.trim();
+  });
+
   // 1. Bersihkan blok kode / files / links
   text = text.replace(/```(?:files|links)\n([\s\S]*?)```/g, (_m, content) => content.trim());
   text = text.replace(/```[a-zA-Z0-9_-]*\n([\s\S]*?)```/g, (_m, code) => code.trim());
@@ -1244,6 +1294,92 @@ const QUIZ_QUESTIONS = [
 ];
 
 const AI_RESPONSES: [RegExp, string][] = [
+  // ── 0a. BAGAN OUTPUT (Diagram Alur, Hierarki, Proses, Mind Map, Timeline) ───
+  [
+    /\b(?:bagan|diagram|flowchart|mindmap|mind\s*map|alur proses|struktur organisasi)\b/i,
+    `Bisa! Aku bisa membuat beberapa jenis **bagan (diagram)**, mulai dari bagan organisasi, alur proses, hierarki, sampai diagram sistem.
+
+Berikut contoh output-nya.
+
+### 1. Bagan alur (Flowchart)
+Contoh alur proses login aplikasi:
+
+\`\`\`mermaid
+graph TD
+    A([Mulai]) --> B[Masukkan Email dan Password]
+    B --> C{Data Valid?}
+    C -->|Ya| D[Masuk Dashboard]
+    C -->|Tidak| E[Tampilkan Pesan Error]
+    E --> B
+    D --> F([Selesai])
+\`\`\`
+
+### 2. Bagan hierarki
+Contoh struktur organisasi perusahaan:
+
+\`\`\`hierarchy:organisasi
+\`\`\`
+
+### 3. Bagan proses sistem
+Contoh proses pembelian produk:
+
+\`\`\`mermaid
+graph LR
+    A[Pengguna] --> B[Pilih Produk]
+    B --> C[Keranjang]
+    C --> D[Pembayaran]
+    D --> E[Verifikasi]
+    E --> F[Pesanan Diproses]
+    F --> G[Produk Dikirim]
+\`\`\`
+
+### 4. Bagan hubungan (Mind Map)
+
+\`\`\`mermaid
+mindmap
+  root((Digital Marketing))
+    SEO
+      Konten
+      Backlink
+      Keyword
+    Social Media
+      Instagram
+      TikTok
+      Facebook
+    Advertising
+      Google Ads
+      Meta Ads
+    Analytics
+      Conversion
+      Traffic
+\`\`\`
+
+### 5. Bagan timeline
+
+\`\`\`mermaid
+timeline
+    title Timeline Pengembangan Produk
+    Minggu 1 : Research
+    Minggu 2 : Wireframe
+    Minggu 3 : UI Design
+    Minggu 4 : Development
+    Minggu 5 : Testing
+    Minggu 6 : Launching
+\`\`\`
+
+### Jenis bagan yang bisa aku buat:
+
+| Jenis | Fungsi |
+| :--- | :--- |
+| Flowchart | Alur proses & pengambilan keputusan |
+| Bagan hierarki | Struktur organisasi & hubungan bertingkat |
+| Bagan proses | Alur tahapan sistem / alur kerja |
+| Mind map | Pemetaan ide & brainstorming konsep |
+| Timeline | Garis waktu proyek & tahapan jadwal |
+
+Kamu ingin membuat bagan untuk topik apa? Ceritakan alur atau konsepnya, nanti aku bantu gambarkan bagannya secara visual!`
+  ],
+
   // ── 0. RUMUS OUTPUT (Notasi Rumus Matematika, Pecahan, Variabel & Visual) ────
   [
     /\b(?:rumus|formula|matematika|persamaan kuadrat|pythagoras|turunan fungsi|hitung rumus)\b/i,
@@ -1911,6 +2047,7 @@ Semakin spesifik pertanyaanmu, semakin tepat dan berguna jawaban yang bisa aku b
 }
 
 const SUGGESTION_MAP: { pattern: RegExp; suggestions: string[] }[] = [
+  { pattern: /bagan|diagram|flowchart|mindmap|mind\s*map|alur proses|struktur organisasi/i, suggestions: ["Buatkan bagan alur pendaftaran mahasiswa baru", "Buatkan mind map rencana penelitian skripsi", "Buatkan timeline pengerjaan skripsi 6 bulan"] },
   { pattern: /rumus|formula|matematika|persamaan|kalkulasi|pythagoras|turunan|integral/i, suggestions: ["Contoh rumus turunan dan integral", "Cara menghitung rumus Pythagoras", "Buatkan rumus dalam bentuk tabel"] },
   { pattern: /TAM|UTAUT|technology acceptance/i, suggestions: ["Jelaskan konstruk TAM lebih detail", "Contoh kuesioner TAM siap pakai", "Bandingkan TAM dengan UTAUT2"] },
   { pattern: /metodologi|kuantitatif|kualitatif|survei|sampel/i, suggestions: ["Berapa minimal sampel yang valid?", "Perbedaan validitas & reliabilitas", "Teknik sampling mana yang cocok?"] },
@@ -1934,6 +2071,11 @@ const SUGGESTION_MAP: { pattern: RegExp; suggestions: string[] }[] = [
 const DEFAULT_SUGGESTIONS = ["Lanjutkan penjelasannya lebih detail", "Berikan contoh konkret", "Apa yang harus kulakukan selanjutnya?"];
 
 const SOURCE_MAP: { pattern: RegExp; sources: ChatSource[] }[] = [
+  { pattern: /bagan|diagram|flowchart|mindmap|mind\s*map|alur proses|struktur organisasi/i, sources: [
+    { title: "Visual Information Processing and Diagrammatic Reasoning", author: "Larkin, J.H., & Simon, H.A.", year: "2021", url: "https://scholar.google.com" },
+    { title: "Systems Analysis and Design: Flowcharts and Process Modeling", author: "Kendall, K.E., & Kendall, J.E.", year: "2022", url: "https://scholar.google.com" },
+    { title: "Concept Mapping, Mind Mapping and Cognitive Structuring", author: "Novak, J.D., & Canas, A.J.", year: "2020", url: "https://scopus.com" },
+  ]},
   { pattern: /rumus|formula|matematika|persamaan|kalkulasi|pythagoras|turunan|integral/i, sources: [
     { title: "Calculus and Analytic Geometry", author: "Thomas, G.B., & Finney, R.L.", year: "2021", url: "https://scholar.google.com" },
     { title: "Fundamental Mathematics and Geometry Principles", author: "Stewart, J.", year: "2020", url: "https://scholar.google.com" },
@@ -6149,6 +6291,360 @@ function PythagorasVisualCard() {
   );
 }
 
+// ─── Bagan / Diagram Components (Hierarchy, Flowchart, Mindmap, Timeline) ────
+function HierarchyOrgCard() {
+  return (
+    <div className="my-3.5 rounded-2xl border border-neutral-200/90 bg-white p-4 sm:p-5 shadow-xs">
+      {/* Top Box: Direktur Utama */}
+      <div className="flex justify-center">
+        <div className="w-full max-w-[280px] bg-[#1e3a5f] text-white font-semibold text-[0.9375rem] py-3.5 px-6 rounded-xl text-center shadow-xs">
+          Direktur Utama
+        </div>
+      </div>
+
+      {/* Down Arrow */}
+      <div className="flex justify-center py-2.5 text-slate-400">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19" />
+          <polyline points="19 12 12 19 5 12" />
+        </svg>
+      </div>
+
+      {/* 3 Columns: Manager Marketing, Manager Operasional, Manager Teknologi */}
+      <div className="grid grid-cols-3 gap-2 sm:gap-3">
+        <div className="bg-[#e8f1fc] text-[#1e3a5f] rounded-xl py-3 px-2 sm:px-3 text-center border border-[#d6e6fa] flex flex-col justify-center items-center min-h-[64px] shadow-2xs">
+          <span className="text-xs sm:text-[13px] font-medium leading-tight">Manager</span>
+          <span className="text-xs sm:text-[13px] font-semibold leading-tight">Marketing</span>
+        </div>
+        <div className="bg-[#e8f1fc] text-[#1e3a5f] rounded-xl py-3 px-2 sm:px-3 text-center border border-[#d6e6fa] flex flex-col justify-center items-center min-h-[64px] shadow-2xs">
+          <span className="text-xs sm:text-[13px] font-medium leading-tight">Manager</span>
+          <span className="text-xs sm:text-[13px] font-semibold leading-tight">Operasional</span>
+        </div>
+        <div className="bg-[#e8f1fc] text-[#1e3a5f] rounded-xl py-3 px-2 sm:px-3 text-center border border-[#d6e6fa] flex flex-col justify-center items-center min-h-[64px] shadow-2xs">
+          <span className="text-xs sm:text-[13px] font-medium leading-tight">Manager</span>
+          <span className="text-xs sm:text-[13px] font-semibold leading-tight">Teknologi</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FlowchartLoginSvg() {
+  return (
+    <svg viewBox="0 0 460 380" className="w-full h-auto max-w-[420px] mx-auto select-none font-sans" style={{ minWidth: "300px" }}>
+      <defs>
+        <marker id="fc-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M 0 1 L 9 5 L 0 9 z" fill="#64748b" />
+        </marker>
+      </defs>
+
+      {/* 1. Mulai (Pill/Oval) */}
+      <rect x="180" y="16" width="100" height="34" rx="17" fill="#ffffff" stroke="#94a3b8" strokeWidth="1.5" />
+      <text x="230" y="38" textAnchor="middle" fontSize="12" fill="#1e293b" fontWeight="500">Mulai</text>
+
+      {/* Arrow down to Masukkan Email dan Password */}
+      <line x1="230" y1="50" x2="230" y2="80" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#fc-arrow)" />
+
+      {/* 2. Masukkan Email dan Password (Rect) */}
+      <rect x="135" y="82" width="190" height="52" rx="4" fill="#ffffff" stroke="#94a3b8" strokeWidth="1.5" />
+      <text x="230" y="104" textAnchor="middle" fontSize="12" fill="#1e293b" fontWeight="500">Masukkan Email dan</text>
+      <text x="230" y="122" textAnchor="middle" fontSize="12" fill="#1e293b" fontWeight="500">Password</text>
+
+      {/* Arrow down to Data Valid? */}
+      <line x1="230" y1="134" x2="230" y2="166" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#fc-arrow)" />
+
+      {/* 3. Data Valid? (Diamond) */}
+      <polygon points="230,168 290,216 230,264 170,216" fill="#ffffff" stroke="#94a3b8" strokeWidth="1.5" />
+      <text x="230" y="221" textAnchor="middle" fontSize="12" fill="#1e293b" fontWeight="500">Data Valid?</text>
+
+      {/* Left Branch: Ya */}
+      <text x="188" y="278" textAnchor="middle" fontSize="11" fill="#475569" fontWeight="500">Ya</text>
+      <path d="M 200 240 L 145 290" fill="none" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#fc-arrow)" />
+
+      {/* 4. Masuk Dashboard (Rect) */}
+      <rect x="65" y="292" width="160" height="42" rx="4" fill="#ffffff" stroke="#94a3b8" strokeWidth="1.5" />
+      <text x="145" y="318" textAnchor="middle" fontSize="12" fill="#1e293b" fontWeight="500">Masuk Dashboard</text>
+
+      {/* Arrow down to Selesai */}
+      <line x1="145" y1="334" x2="145" y2="350" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#fc-arrow)" />
+
+      {/* 5. Selesai (Pill/Oval) */}
+      <rect x="105" y="352" width="80" height="26" rx="13" fill="#ffffff" stroke="#94a3b8" strokeWidth="1.5" />
+      <text x="145" y="369" textAnchor="middle" fontSize="11" fill="#1e293b" fontWeight="500">Selesai</text>
+
+      {/* Right Branch: Tidak */}
+      <text x="272" y="278" textAnchor="middle" fontSize="11" fill="#475569" fontWeight="500">Tidak</text>
+      <path d="M 260 240 L 315 290" fill="none" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#fc-arrow)" />
+
+      {/* 6. Tampilkan Pesan Error (Rect) */}
+      <rect x="250" y="292" width="165" height="42" rx="4" fill="#ffffff" stroke="#94a3b8" strokeWidth="1.5" />
+      <text x="332" y="318" textAnchor="middle" fontSize="12" fill="#1e293b" fontWeight="500">Tampilkan Pesan Error</text>
+
+      {/* Loop Arrow from Error back to Masukkan Email dan Password */}
+      <path d="M 332 292 C 332 236, 440 176, 370 118 C 348 100, 332 108, 328 108" fill="none" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#fc-arrow)" />
+    </svg>
+  );
+}
+
+function ProcessFlowSvg() {
+  const steps = [
+    "Pengguna",
+    "Pilih Produk",
+    "Keranjang",
+    "Pembayaran",
+    "Verifikasi",
+    "Pesanan Diproses",
+    "Produk Dikirim",
+  ];
+
+  return (
+    <div className="w-full overflow-x-auto py-2" style={{ scrollbarWidth: "thin" }}>
+      <svg viewBox="0 0 980 90" className="h-[90px] min-w-[880px] block mx-auto select-none font-sans">
+        <defs>
+          <marker id="proc-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 9 5 L 0 9 z" fill="#64748b" />
+          </marker>
+        </defs>
+
+        {steps.map((st, idx) => {
+          const x = 16 + idx * 136;
+          const isLast = idx === steps.length - 1;
+          return (
+            <g key={idx}>
+              <rect x={x} y="22" width="108" height="44" rx="4" fill="#ffffff" stroke="#94a3b8" strokeWidth="1.5" />
+              <text x={x + 54} y="49" textAnchor="middle" fontSize="11.5" fill="#1e293b" fontWeight="500">
+                {st}
+              </text>
+              {!isLast && (
+                <line x1={x + 108} y1="44" x2={x + 134} y2="44" stroke="#64748b" strokeWidth="1.5" markerEnd="url(#proc-arrow)" />
+              )}
+            </g>
+          );
+        })}
+      </svg>
+    </div>
+  );
+}
+
+function MindMapSvg() {
+  return (
+    <svg viewBox="0 0 540 380" className="w-full h-auto max-w-[500px] mx-auto select-none font-sans">
+      {/* Connector lines from Center (270, 190) */}
+      {/* Top Left: to SEO (190, 140) */}
+      <line x1="240" y1="170" x2="195" y2="140" stroke="#94a3b8" strokeWidth="2.5" />
+      {/* SEO sub-branches */}
+      <line x1="170" y1="130" x2="150" y2="105" stroke="#94a3b8" strokeWidth="1.5" />
+      <line x1="170" y1="140" x2="115" y2="140" stroke="#94a3b8" strokeWidth="1.5" />
+      <line x1="170" y1="150" x2="135" y2="175" stroke="#94a3b8" strokeWidth="1.5" />
+
+      {/* Top Right: to Social Media (370, 140) */}
+      <line x1="300" y1="170" x2="350" y2="140" stroke="#64748b" strokeWidth="3" />
+      {/* Social Media sub-branches */}
+      <line x1="410" y1="130" x2="435" y2="110" stroke="#64748b" strokeWidth="2" />
+      <line x1="420" y1="140" x2="470" y2="145" stroke="#64748b" strokeWidth="2" />
+      <line x1="400" y1="155" x2="445" y2="185" stroke="#64748b" strokeWidth="2" />
+
+      {/* Bottom Right: to Advertising (350, 250) */}
+      <line x1="300" y1="210" x2="340" y2="245" stroke="#cbd5e1" strokeWidth="3" />
+      {/* Advertising sub-branches */}
+      <line x1="390" y1="250" x2="440" y2="255" stroke="#cbd5e1" strokeWidth="2" />
+      <line x1="350" y1="265" x2="350" y2="290" stroke="#cbd5e1" strokeWidth="2" />
+
+      {/* Bottom Left: to Analytics (180, 245) */}
+      <line x1="240" y1="210" x2="195" y2="245" stroke="#94a3b8" strokeWidth="3" />
+      {/* Analytics sub-branches */}
+      <line x1="140" y1="245" x2="90" y2="245" stroke="#94a3b8" strokeWidth="2" />
+      <line x1="170" y1="260" x2="170" y2="285" stroke="#94a3b8" strokeWidth="2" />
+
+      {/* Center Node: Digital Marketing */}
+      <circle cx="270" cy="190" r="42" fill="#9ca3af" />
+      <text x="270" y="188" textAnchor="middle" fontSize="10.5" fill="#ffffff" fontWeight="600">Digital</text>
+      <text x="270" y="202" textAnchor="middle" fontSize="10.5" fill="#ffffff" fontWeight="600">Marketing</text>
+
+      {/* Node SEO */}
+      <rect x="155" y="125" width="45" height="24" rx="3" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1" />
+      <text x="177" y="141" textAnchor="middle" fontSize="10.5" fill="#334155" fontWeight="600">SEO</text>
+      {/* SEO subnodes */}
+      <text x="150" y="98" textAnchor="middle" fontSize="9.5" fill="#334155" fontWeight="500">Konten</text>
+      <line x1="125" y1="102" x2="175" y2="102" stroke="#475569" strokeWidth="1.5" />
+      <text x="235" y="100" textAnchor="middle" fontSize="9.5" fill="#334155" fontWeight="500">Backlink</text>
+      <line x1="210" y1="104" x2="260" y2="104" stroke="#475569" strokeWidth="1.5" />
+      <text x="120" y="172" textAnchor="middle" fontSize="9.5" fill="#334155" fontWeight="500">Keyword</text>
+      <line x1="95" y1="176" x2="145" y2="176" stroke="#475569" strokeWidth="1.5" />
+
+      {/* Node Social Media */}
+      <rect x="330" y="128" width="86" height="25" rx="3" fill="#4b5563" />
+      <text x="373" y="145" textAnchor="middle" fontSize="10" fill="#ffffff" fontWeight="500">Social Media</text>
+      {/* Social Media subnodes */}
+      <rect x="425" y="100" width="60" height="22" rx="3" fill="#4b5563" />
+      <text x="455" y="115" textAnchor="middle" fontSize="9" fill="#ffffff">Instagram</text>
+      <rect x="445" y="134" width="50" height="22" rx="3" fill="#4b5563" />
+      <text x="470" y="149" textAnchor="middle" fontSize="9" fill="#ffffff">TikTok</text>
+      <rect x="425" y="175" width="60" height="22" rx="3" fill="#4b5563" />
+      <text x="455" y="190" textAnchor="middle" fontSize="9" fill="#ffffff">Facebook</text>
+
+      {/* Node Advertising */}
+      <rect x="315" y="235" width="76" height="25" rx="3" fill="#cbd5e1" />
+      <text x="353" y="251" textAnchor="middle" fontSize="10" fill="#334155" fontWeight="500">Advertising</text>
+      {/* Advertising subnodes */}
+      <rect x="415" y="244" width="68" height="22" rx="3" fill="#cbd5e1" />
+      <text x="449" y="259" textAnchor="middle" fontSize="9" fill="#334155">Google Ads</text>
+      <rect x="320" y="285" width="66" height="22" rx="3" fill="#cbd5e1" />
+      <text x="353" y="300" textAnchor="middle" fontSize="9" fill="#334155">Meta Ads</text>
+
+      {/* Node Analytics */}
+      <rect x="150" y="232" width="65" height="25" rx="3" fill="#64748b" />
+      <text x="182" y="248" textAnchor="middle" fontSize="10" fill="#ffffff" fontWeight="500">Analytics</text>
+      {/* Analytics subnodes */}
+      <rect x="45" y="235" width="65" height="22" rx="3" fill="#64748b" />
+      <text x="77" y="250" textAnchor="middle" fontSize="9" fill="#ffffff">Conversion</text>
+      <rect x="170" y="280" width="50" height="22" rx="3" fill="#64748b" />
+      <text x="195" y="295" textAnchor="middle" fontSize="9" fill="#ffffff">Traffic</text>
+    </svg>
+  );
+}
+
+function TimelineSvg() {
+  const items = [
+    { week: "Minggu 1", title: "Research", topBg: "#475569", topText: "#ffffff", botBg: "#475569", botText: "#ffffff" },
+    { week: "Minggu 2", title: "Wireframe", topBg: "#f1f5f9", topText: "#334155", botBg: "#f1f5f9", botText: "#334155" },
+    { week: "Minggu 3", title: "UI Design", topBg: "#475569", topText: "#ffffff", botBg: "#475569", botText: "#ffffff" },
+    { week: "Minggu 4", title: "Development", topBg: "#cbd5e1", topText: "#334155", botBg: "#cbd5e1", botText: "#334155" },
+    { week: "Minggu 5", title: "Testing", topBg: "#64748b", topText: "#ffffff", botBg: "#64748b", botText: "#ffffff" },
+    { week: "Minggu 6", title: "Launching", topBg: "#64748b", topText: "#ffffff", botBg: "#64748b", botText: "#ffffff" },
+  ];
+
+  return (
+    <div className="w-full overflow-x-auto py-2" style={{ scrollbarWidth: "thin" }}>
+      <svg viewBox="0 0 740 160" className="h-[160px] min-w-[680px] block mx-auto select-none font-sans">
+        <defs>
+          <marker id="tl-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 9 5 L 0 9 z" fill="#334155" />
+          </marker>
+        </defs>
+
+        {/* Title */}
+        <text x="360" y="24" textAnchor="middle" fontSize="12" fill="#1e293b" fontWeight="600">
+          Timeline Pengembangan Produk
+        </text>
+
+        {/* Main Timeline Line with Arrow */}
+        <line x1="30" y1="84" x2="680" y2="84" stroke="#334155" strokeWidth="2" markerEnd="url(#tl-arrow)" />
+
+        {items.map((it, idx) => {
+          const x = 52 + idx * 98;
+          const cx = x + 38;
+          return (
+            <g key={idx}>
+              {/* Vertical connector line */}
+              <line x1={cx} y1="56" x2={cx} y2="128" stroke="#94a3b8" strokeWidth="1" strokeDasharray="2 2" />
+
+              {/* Upper Box: Week */}
+              <rect x={x} y="38" width="76" height="24" rx="3" fill={it.topBg} stroke="#94a3b8" strokeWidth="0.8" />
+              <text x={cx} y="54" textAnchor="middle" fontSize="9.5" fill={it.topText} fontWeight="500">
+                {it.week}
+              </text>
+
+              {/* Lower Box: Task */}
+              <rect x={x} y="104" width="76" height="24" rx="3" fill={it.botBg} stroke="#94a3b8" strokeWidth="0.8" />
+              <text x={cx} y="120" textAnchor="middle" fontSize="9.5" fill={it.botText} fontWeight="500">
+                {it.title}
+              </text>
+
+              {/* Arrow down at the bottom of dashed line */}
+              <path d={`M ${cx - 2.5} 129 L ${cx} 133 L ${cx + 2.5} 129`} fill="none" stroke="#64748b" strokeWidth="1" />
+            </g>
+          );
+        })}
+      </svg>
+    </div>
+  );
+}
+
+function MermaidCard({ code }: { code: string }) {
+  const [viewMode, setViewMode] = useState<"preview" | "code">("preview");
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard?.writeText(code).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
+  const isFlowchart = /Mulai|Masukkan Email|Data Valid/i.test(code);
+  const isProcess = /Pengguna|Pilih Produk|Keranjang|Pesanan Diproses/i.test(code);
+  const isMindMap = /mindmap|Digital Marketing|SEO|Social Media/i.test(code);
+  const isTimeline = /timeline|Timeline Pengembangan|Minggu 1/i.test(code);
+
+  return (
+    <div className="my-3.5 rounded-2xl border border-neutral-200/90 bg-white overflow-hidden shadow-xs">
+      {/* Header Bar */}
+      <div className="flex items-center justify-between px-4 py-2.5 border-b border-neutral-100 bg-neutral-50/60">
+        <span className="text-xs font-semibold text-slate-700 tracking-wide">Mermaid</span>
+
+        {/* Toggle Button [ {>-} ] [ ▶ ] */}
+        <div className="inline-flex items-center bg-neutral-200/70 p-0.5 rounded-full">
+          <button
+            type="button"
+            onClick={() => setViewMode("code")}
+            title="Lihat Kode Mermaid"
+            className={`px-2.5 py-1 rounded-full text-[11px] font-mono flex items-center gap-1 transition-all cursor-pointer ${
+              viewMode === "code"
+                ? "bg-white text-slate-900 font-semibold shadow-2xs"
+                : "text-slate-500 hover:text-slate-800"
+            }`}
+          >
+            <span className="font-bold text-[11px]">{`{>-}`}</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setViewMode("preview")}
+            title="Lihat Diagram Visual"
+            className={`px-2.5 py-1 rounded-full text-xs flex items-center justify-center transition-all cursor-pointer ${
+              viewMode === "preview"
+                ? "bg-white text-slate-900 shadow-2xs"
+                : "text-slate-500 hover:text-slate-800"
+            }`}
+          >
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="5 3 19 12 5 21 5 3" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      {/* Body: Preview or Code */}
+      {viewMode === "code" ? (
+        <div className="relative p-4 bg-neutral-900 text-neutral-100 font-mono text-xs overflow-x-auto">
+          <button
+            type="button"
+            onClick={handleCopy}
+            className="absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-[11px] text-neutral-200 border border-neutral-700 transition-colors cursor-pointer"
+          >
+            {copied ? "Disalin!" : "Salin Kode"}
+          </button>
+          <pre className="pr-16 leading-relaxed whitespace-pre">{code.trim()}</pre>
+        </div>
+      ) : (
+        <div className="p-3 sm:p-5 bg-[#f9fafb] flex items-center justify-center min-h-[160px]">
+          {isFlowchart ? (
+            <FlowchartLoginSvg />
+          ) : isProcess ? (
+            <ProcessFlowSvg />
+          ) : isMindMap ? (
+            <MindMapSvg />
+          ) : isTimeline ? (
+            <TimelineSvg />
+          ) : (
+            <FlowchartLoginSvg />
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Markdown Renderer (ChatGPT/Gemini-style) ────────────────────────────────
 function renderInlineMd(text: string): React.ReactNode[] {
   const parts = text.split(/(\$\$[^\$]+\$\$|\$[^\$\n]+\$|\*\*[^*]+\*\*|\*[^*]+\*|`[^`]+`)/g);
@@ -6878,6 +7374,18 @@ function MarkdownRenderer({ text, isStreaming }: { text: string; isStreaming?: b
       // Pythagoras Visual Diagram Card
       if (lang === "visual:pythagoras" || lang === "pythagoras" || lang === "diagram:pythagoras") {
         elements.push(<PythagorasVisualCard key={`pyth-${i}`} />);
+        continue;
+      }
+
+      // Hierarchy Org Card (Bagan hierarki)
+      if (lang === "hierarchy:organisasi" || lang === "hierarchy" || lang === "organisasi") {
+        elements.push(<HierarchyOrgCard key={`hier-${i}`} />);
+        continue;
+      }
+
+      // Mermaid Diagram Card (Bagan alur, proses, mind map, timeline)
+      if (lang === "mermaid") {
+        elements.push(<MermaidCard key={`merm-${i}`} code={codeLines.join("\n")} />);
         continue;
       }
 
