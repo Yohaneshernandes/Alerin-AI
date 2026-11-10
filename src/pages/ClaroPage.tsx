@@ -5084,11 +5084,8 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
               >
                 {pinnedHistoryItems.length > 0 && (
                   <div>
-                    <div className="flex items-center justify-between text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-2 px-1">
-                      <span>Disematkan</span>
-                      <span className="text-[11px] font-medium text-zinc-400">
-                        {pinnedHistoryItems.length}/{MAX_PINNED_RIWAYAT}
-                      </span>
+                    <div className="text-zinc-500 text-xs font-semibold uppercase tracking-wider mb-2 px-1">
+                      Disematkan
                     </div>
                     <div className="space-y-1">
                       {pinnedHistoryItems.map(renderHistoryItem)}
