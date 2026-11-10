@@ -6788,7 +6788,7 @@ function MarkdownRenderer({ text, isStreaming }: { text: string; isStreaming?: b
                   return (
                     <th
                       key={ci}
-                      className={`py-2.5 sm:py-3 px-2 sm:px-3 text-left font-semibold text-black break-words border-r border-neutral-200/80 last:border-r-0 ${colWidthClass} ${
+                      className={`py-2.5 sm:py-3 px-2 sm:px-3 text-center align-middle font-semibold text-black break-words border-r border-neutral-200/80 last:border-r-0 ${colWidthClass} ${
                         !isFitScreen ? "whitespace-nowrap px-4" : ""
                       }`}
                     >

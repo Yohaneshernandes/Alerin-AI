@@ -2723,7 +2723,7 @@ function MarkdownRenderer({ text }: { text: string }) {
                     }
                   }
                   return (
-                    <th key={ci} className={`py-2.5 sm:py-3 text-left font-semibold text-slate-700 border-b border-slate-200 break-words ${colWidthClass} ${ci === 0 ? "pl-2 pr-1.5 sm:px-4" : ci === colCount - 1 ? "pl-1.5 pr-2 sm:px-4" : "px-1.5 sm:px-4"}`}>
+                    <th key={ci} className={`py-2.5 sm:py-3 text-center align-middle font-semibold text-slate-700 border-b border-slate-200 break-words ${colWidthClass} ${ci === 0 ? "pl-2 pr-1.5 sm:px-4" : ci === colCount - 1 ? "pl-1.5 pr-2 sm:px-4" : "px-1.5 sm:px-4"}`}>
                       {renderInlineMd(h)}
                     </th>
                   );
