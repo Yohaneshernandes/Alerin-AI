@@ -4475,7 +4475,7 @@ function AddTargetModal({ onClose, onToast }: { onClose: () => void; onToast: (m
 
 const ShellDrawerContext = createContext<() => void>(() => {});
 
-function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { children: React.ReactNode; activeTab: NavTab; onTab: (t: NavTab) => void; onOpenHistory: (msgs: ChatMsg[]) => void; onNewChat: () => void }) {
+function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActiveChat = false }: { children: React.ReactNode; activeTab: NavTab; onTab: (t: NavTab) => void; onOpenHistory: (msgs: ChatMsg[]) => void; onNewChat: () => void; hasActiveChat?: boolean }) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [upgradeOpen, setUpgradeOpen] = useState(false);
@@ -4534,18 +4534,14 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
     } catch {}
     return sortPinnedRiwayat(DEFAULT_RIWAYAT_ITEMS);
   });
-  const [activeHistoryId, setActiveHistoryId] = useState<string | null>(() => {
-    try {
-      const saved = localStorage.getItem("alerin_active_history_id");
-      if (saved) return saved;
-      const savedList = localStorage.getItem("alerin_mobile_riwayat");
-      if (savedList) {
-        const parsed = JSON.parse(savedList);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed[0].id;
-      }
-    } catch {}
-    return "rw-u1";
-  });
+  const [activeHistoryId, setActiveHistoryId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!hasActiveChat && activeHistoryId !== null) {
+      setActiveHistoryId(null);
+      try { localStorage.removeItem("alerin_active_history_id"); } catch {}
+    }
+  }, [hasActiveChat, activeHistoryId]);
   const [activeHistoryMenu, setActiveHistoryMenu] = useState<{
     item: RiwayatItem;
     rect: { top: number; bottom: number; left: number; right: number };
@@ -4762,7 +4758,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
   ];
 
   const renderHistoryItem = (item: RiwayatItem) => {
-    const isActive = activeHistoryId === item.id;
+    const isActive = Boolean(hasActiveChat && activeHistoryId === item.id);
     return (
       <div
         key={item.id}
@@ -4915,6 +4911,8 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
                 saveRiwayatToStorage(next);
                 return next;
               });
+              setActiveHistoryId(newItem.id);
+              try { localStorage.setItem("alerin_active_history_id", newItem.id); } catch {}
               onTab("percakapan");
               setMobileDrawerOpen(false);
               onOpenHistory(newMsgs);
@@ -9707,6 +9705,7 @@ function PercakapanTab({
   pendingDraft,
   onPendingPromptConsumed,
   onPendingDraftConsumed,
+  onChatModeChange,
 }: {
   onFeatureClick: (f: string) => void;
   onTab: (t: NavTab) => void;
@@ -9716,11 +9715,16 @@ function PercakapanTab({
   pendingDraft?: string;
   onPendingPromptConsumed?: () => void;
   onPendingDraftConsumed?: () => void;
+  onChatModeChange?: (active: boolean) => void;
 }) {
   const [msgs, setMsgs] = useState<ChatMsg[]>(initialMsgs ?? []);
   const [input, setInput] = useState(pendingDraft ?? "");
   const [typing, setTyping] = useState(false);
   const [chatMode, setChatMode] = useState((initialMsgs ?? []).length > 0 || Boolean(pendingDraft));
+
+  useEffect(() => {
+    onChatModeChange?.(msgs.length > 0);
+  }, [msgs.length, onChatModeChange]);
   const [activeCategory, setActiveCategory] = useState<CategoryKey | null>(null);
   const [shortcutModal, setShortcutModal] = useState<ShortcutType | null>(null);
   const [chatImagePreview, setChatImagePreview] = useState<string | null>(null);
@@ -20960,6 +20964,7 @@ export default function AlerinPage() {
   const [tab, setTab] = useState<NavTab>("percakapan");
   const [historyMsgs, setHistoryMsgs] = useState<ChatMsg[] | undefined>(undefined);
   const [historyKey, setHistoryKey] = useState(0);
+  const [hasActiveChat, setHasActiveChat] = useState(false);
   const [pendingPrompt, setPendingPrompt] = useState<string | undefined>(undefined);
   const [pendingDraft, setPendingDraft] = useState<string | undefined>(undefined);
   const [pendingFeature, setPendingFeature] = useState<FeatureKey | undefined>(undefined);
@@ -20968,6 +20973,7 @@ export default function AlerinPage() {
   const openHistory = (msgs: ChatMsg[]) => {
     setHistoryMsgs(msgs);
     setHistoryKey(k => k + 1);
+    setHasActiveChat(msgs.length > 0);
     setTab("percakapan");
   };
 
@@ -20976,6 +20982,7 @@ export default function AlerinPage() {
     setPendingDraft(draft);
     setHistoryMsgs(undefined);
     setHistoryKey(k => k + 1);
+    setHasActiveChat(Boolean(prompt));
     setTab("percakapan");
   };
 
@@ -20990,7 +20997,26 @@ export default function AlerinPage() {
   };
 
   return (
-    <Shell activeTab={tab} onTab={(t) => { setTab(t); if (t === "percakapan") { setHistoryMsgs(undefined); setHistoryKey(k => k + 1); } if (t !== "fitur") setPendingFeature(undefined); }} onOpenHistory={openHistory} onNewChat={() => { setHistoryMsgs(undefined); setHistoryKey(k => k + 1); setTab("percakapan"); }}>
+    <Shell
+      activeTab={tab}
+      hasActiveChat={tab === "percakapan" && hasActiveChat}
+      onTab={(t) => {
+        setTab(t);
+        if (t === "percakapan") {
+          setHistoryMsgs(undefined);
+          setHistoryKey(k => k + 1);
+          setHasActiveChat(false);
+        }
+        if (t !== "fitur") setPendingFeature(undefined);
+      }}
+      onOpenHistory={openHistory}
+      onNewChat={() => {
+        setHistoryMsgs(undefined);
+        setHistoryKey(k => k + 1);
+        setHasActiveChat(false);
+        setTab("percakapan");
+      }}
+    >
       {tab === "percakapan" && (
         <PercakapanTab
           key={historyKey}
@@ -21002,6 +21028,7 @@ export default function AlerinPage() {
           pendingDraft={pendingDraft}
           onPendingPromptConsumed={() => setPendingPrompt(undefined)}
           onPendingDraftConsumed={() => setPendingDraft(undefined)}
+          onChatModeChange={setHasActiveChat}
         />
       )}
       {tab === "fitur" && <FiturTab onChat={goToChat} openFeatureKey={pendingFeature} onFeatureOpened={() => setPendingFeature(undefined)} />}
