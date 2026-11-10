@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo, useLayoutEffect, createContext, useContext } from "react";
 import { createPortal } from "react-dom";
 import { Link } from "react-router";
+import katex from "katex";
 import maskotImg from "@/imports/Animasi_Maskot_Buku_31_Agu_2026.png";
 import owlGradImg from "@/imports/image-6.png";
 import claroIconImg from "@/imports/image-2.png";
@@ -352,10 +353,35 @@ export function cleanMarkdownForCopy(md: string): string {
   if (!md) return "";
   let text = stripEmoticons(md);
 
+  // Bersihkan kartu visual pythagoras untuk salinan teks rapi
+  text = text.replace(/```(?:visual:pythagoras|pythagoras)[\s\S]*?```/g, () => {
+    return [
+      "Contoh: Teorema Pythagoras",
+      "a² + b² = c²",
+      "",
+      "Misalnya:",
+      "a = 3,  b = 4",
+      "c = √(3² + 4²)",
+      "c = √25 = 5",
+    ].join("\n");
+  });
+
   // 1. Bersihkan blok kode / files / links
   text = text.replace(/```(?:files|links)\n([\s\S]*?)```/g, (_m, content) => content.trim());
   text = text.replace(/```[a-zA-Z0-9_-]*\n([\s\S]*?)```/g, (_m, code) => code.trim());
   text = text.replace(/```/g, "");
+
+  // Bersihkan notasi KaTeX / LaTeX untuk salin teks yang rapi dan mudah dibaca
+  text = text.replace(/\\boxed\{([^}]+)\}/g, "[$1]");
+  text = text.replace(/\\frac\{([^}]+)\}\{([^}]+)\}/g, "($1) / ($2)");
+  text = text.replace(/\\sqrt\{([^}]+)\}/g, "√($1)");
+  text = text.replace(/\\pi\b/g, "π");
+  text = text.replace(/\\times\b/g, "×");
+  text = text.replace(/\\pm\b/g, "±");
+  text = text.replace(/\\text\{([^}]+)\}/g, "$1");
+  text = text.replace(/\\quad\b/g, "  ");
+  text = text.replace(/\$\$([\s\S]*?)\$\$/g, "$1");
+  text = text.replace(/\$([^$\n]+)\$/g, "$1");
 
   // 2. Format tabel markdown menjadi baris teks rapi
   text = text.replace(/^\|?\s*[-:]+[-| :]*\s*\|?$/gm, "");
@@ -1218,6 +1244,66 @@ const QUIZ_QUESTIONS = [
 ];
 
 const AI_RESPONSES: [RegExp, string][] = [
+  // ── 0. RUMUS OUTPUT (Notasi Rumus Matematika, Pecahan, Variabel & Visual) ────
+  [
+    /\b(?:rumus|formula|matematika|persamaan kuadrat|pythagoras|turunan fungsi|hitung rumus)\b/i,
+    `Bisa! Aku bisa menampilkan rumus matematika dalam beberapa format, mulai dari rumus biasa, notasi matematika profesional, sampai rumus dengan penjelasan langkah demi langkah.
+
+### 1. Rumus matematika biasa
+Rumus luas lingkaran:
+
+$$L = \\pi \\times r^2$$
+
+Keterangan:
+• $L$ = Luas lingkaran
+• $\\pi = 3{,}14$
+• $r$ = Jari-jari
+
+### 2. Rumus dengan pecahan
+Rumus persamaan kuadrat:
+
+$$x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$$
+
+### 3. Rumus panjang dengan banyak variabel
+Rumus menghitung BMI:
+
+$$\\text{BMI} = \\frac{\\text{Berat Badan (kg)}}{(\\text{Tinggi Badan (m)})^2}$$
+
+Contoh perhitungan:
+
+$$\\text{BMI} = \\frac{60}{1.70^2}$$
+
+$$\\text{BMI} = \\frac{60}{2.89}$$
+
+$$\\boxed{\\text{BMI} = 20.76}$$
+
+### 4. Rumus matematika bertingkat
+Contoh turunan fungsi:
+
+$$f(x) = 3x^2 + 5x - 7$$
+
+$$f'(x) = \\frac{d}{dx}(3x^2 + 5x - 7)$$
+
+$$\\boxed{f'(x) = 6x + 5}$$
+
+### 5. Rumus dalam tabel
+
+| Jenis | Rumus |
+| :--- | ---: |
+| Luas persegi | $L = s^2$ |
+| Keliling persegi | $K = 4s$ |
+| Luas segitiga | $L = \\frac{1}{2}at$ |
+| Luas lingkaran | $L = \\pi r^2$ |
+| Kecepatan | $v = \\frac{s}{t}$ |
+
+### 6. Rumus dengan penjelasan visual
+
+\`\`\`visual:pythagoras
+\`\`\`
+
+Jadi, kamu butuh rumus apa? Aku bisa buatkan dalam format pecahan, akar, integral, sigma, matriks, atau format lainnya!`
+  ],
+
   // ── 1. FILE OUTPUT (Pilihan format file lampiran: PDF, Excel, Word) ───────────
   [
     /\b(?:file|files|dokumen|lampiran|unduh\s*file|download\s*file)\b/i,
@@ -1825,6 +1911,7 @@ Semakin spesifik pertanyaanmu, semakin tepat dan berguna jawaban yang bisa aku b
 }
 
 const SUGGESTION_MAP: { pattern: RegExp; suggestions: string[] }[] = [
+  { pattern: /rumus|formula|matematika|persamaan|kalkulasi|pythagoras|turunan|integral/i, suggestions: ["Contoh rumus turunan dan integral", "Cara menghitung rumus Pythagoras", "Buatkan rumus dalam bentuk tabel"] },
   { pattern: /TAM|UTAUT|technology acceptance/i, suggestions: ["Jelaskan konstruk TAM lebih detail", "Contoh kuesioner TAM siap pakai", "Bandingkan TAM dengan UTAUT2"] },
   { pattern: /metodologi|kuantitatif|kualitatif|survei|sampel/i, suggestions: ["Berapa minimal sampel yang valid?", "Perbedaan validitas & reliabilitas", "Teknik sampling mana yang cocok?"] },
   { pattern: /rumusan masalah|hipotesis/i, suggestions: ["Bantu kembangkan hipotesisnya", "Saran variabel penelitian tambahan", "Cek apakah rumusannya sudah tajam"] },
@@ -1847,6 +1934,11 @@ const SUGGESTION_MAP: { pattern: RegExp; suggestions: string[] }[] = [
 const DEFAULT_SUGGESTIONS = ["Lanjutkan penjelasannya lebih detail", "Berikan contoh konkret", "Apa yang harus kulakukan selanjutnya?"];
 
 const SOURCE_MAP: { pattern: RegExp; sources: ChatSource[] }[] = [
+  { pattern: /rumus|formula|matematika|persamaan|kalkulasi|pythagoras|turunan|integral/i, sources: [
+    { title: "Calculus and Analytic Geometry", author: "Thomas, G.B., & Finney, R.L.", year: "2021", url: "https://scholar.google.com" },
+    { title: "Fundamental Mathematics and Geometry Principles", author: "Stewart, J.", year: "2020", url: "https://scholar.google.com" },
+    { title: "Mathematical Methods for Science and Engineering", author: "Riley, K.F., Hobson, M.P., & Bence, S.J.", year: "2022", url: "https://www.scopus.com" },
+  ]},
   { pattern: /TAM|UTAUT|technology acceptance/i, sources: [
     { title: "Perceived Usefulness, Perceived Ease of Use, and User Acceptance of Information Technology", author: "Davis, F.D.", year: "1989", url: "https://doi.org/10.2307/249008" },
     { title: "A Unified Theory of Acceptance and Use of Technology", author: "Venkatesh et al.", year: "2003", url: "https://doi.org/10.2307/30036540" },
@@ -5927,10 +6019,144 @@ function ChatInputBox({
   );
 }
 
+// ─── Math Components (KaTeX) ─────────────────────────────────────────────────
+function MathInline({ math }: { math: string }) {
+  const html = useMemo(() => {
+    try {
+      return katex.renderToString(math, {
+        displayMode: false,
+        throwOnError: false,
+      });
+    } catch {
+      return math;
+    }
+  }, [math]);
+
+  return (
+    <span
+      className="inline-block px-0.5 select-text align-baseline font-serif"
+      dangerouslySetInnerHTML={{ __html: html }}
+    />
+  );
+}
+
+function MathBlock({ math }: { math: string }) {
+  const html = useMemo(() => {
+    try {
+      return katex.renderToString(math, {
+        displayMode: true,
+        throwOnError: false,
+      });
+    } catch {
+      return math;
+    }
+  }, [math]);
+
+  return (
+    <div
+      className="my-3 py-1 overflow-x-auto text-center select-text"
+      style={{ scrollbarWidth: "none", WebkitOverflowScrolling: "touch" }}
+      dangerouslySetInnerHTML={{ __html: html }}
+    />
+  );
+}
+
+function PythagorasVisualCard() {
+  return (
+    <div className="my-4 rounded-2xl border border-neutral-200/90 bg-white p-4 sm:p-5 shadow-xs">
+      <p className="font-semibold text-slate-900 text-[0.9375rem] mb-2">
+        Contoh: Teorema Pythagoras
+      </p>
+      <MathBlock math="a^2 + b^2 = c^2" />
+
+      {/* Visual Diagram Box */}
+      <div className="my-3 rounded-xl border border-neutral-200/80 bg-white overflow-hidden shadow-2xs">
+        <svg
+          viewBox="0 0 500 240"
+          className="w-full h-auto block max-w-full"
+          style={{ maxHeight: "280px" }}
+        >
+          {/* Upper canvas */}
+          <rect width="500" height="182" fill="#ffffff" />
+
+          {/* Right triangle: Vertices (120, 35) [A], (360, 150) [B], (120, 150) [Right angle] */}
+          <polygon
+            points="120,35 360,150 120,150"
+            fill="#f0fdfa"
+            stroke="#0d9488"
+            strokeWidth="2.5"
+            strokeLinejoin="round"
+          />
+
+          {/* Right angle marker at (120, 150) */}
+          <path
+            d="M 120 134 L 136 134 L 136 150"
+            fill="none"
+            stroke="#0d9488"
+            strokeWidth="1.75"
+          />
+          <text x="142" y="146" fill="#64748b" fontSize="11" fontFamily="sans-serif">
+            90°
+          </text>
+
+          {/* Vertex A and B markers */}
+          <text x="127" y="52" fill="#0d9488" fontSize="11" fontWeight="600" fontFamily="sans-serif">
+            A
+          </text>
+          <text x="344" y="146" fill="#0d9488" fontSize="11" fontWeight="600" fontFamily="sans-serif">
+            B
+          </text>
+
+          {/* Side labels a, b, c */}
+          <text x="96" y="98" fill="#c2410c" fontSize="16" fontWeight="bold" fontFamily="sans-serif" textAnchor="middle">
+            a
+          </text>
+          <text x="240" y="170" fill="#c2410c" fontSize="16" fontWeight="bold" fontFamily="sans-serif" textAnchor="middle">
+            b
+          </text>
+          <text x="242" y="86" fill="#c2410c" fontSize="16" fontWeight="bold" fontFamily="sans-serif" textAnchor="middle">
+            c
+          </text>
+
+          {/* Hypotenuse label & pointer */}
+          <line x1="258" y1="84" x2="330" y2="90" stroke="#94a3b8" strokeWidth="1" strokeDasharray="3 2" />
+          <text x="336" y="93" fill="#64748b" fontSize="11" fontFamily="sans-serif">
+            hypotenuse
+          </text>
+
+          {/* Lower Banner Strip */}
+          <rect x="0" y="182" width="500" height="58" fill="#e6f7f5" />
+          <line x1="0" y1="182" x2="500" y2="182" stroke="#ccfbf1" strokeWidth="1" />
+          <text x="250" y="206" fill="#0f766e" fontSize="15" fontWeight="bold" fontFamily="sans-serif" textAnchor="middle">
+            a² + b² = c²
+          </text>
+          <text x="250" y="224" fill="#047857" fontSize="10.5" fontFamily="sans-serif" textAnchor="middle">
+            a, b = legs · c = hypotenuse (longest side, opposite 90°)
+          </text>
+          <text x="488" y="200" fill="#94a3b8" fontSize="7.5" fontFamily="sans-serif" textAnchor="end" letterSpacing="0.5">
+            CALCULATORS LABS
+          </text>
+        </svg>
+      </div>
+
+      <p className="text-slate-700 text-[0.9375rem] mt-3.5 mb-1 font-normal">
+        Misalnya:
+      </p>
+      <MathBlock math="a = 3, \quad b = 4" />
+      <MathBlock math="c = \sqrt{3^2 + 4^2}" />
+      <MathBlock math="c = \sqrt{25} = \boxed{5}" />
+    </div>
+  );
+}
+
 // ─── Markdown Renderer (ChatGPT/Gemini-style) ────────────────────────────────
 function renderInlineMd(text: string): React.ReactNode[] {
-  const parts = text.split(/(\*\*[^*]+\*\*|\*[^*]+\*|`[^`]+`)/g);
+  const parts = text.split(/(\$\$[^\$]+\$\$|\$[^\$\n]+\$|\*\*[^*]+\*\*|\*[^*]+\*|`[^`]+`)/g);
   return parts.map((part, i) => {
+    if (part.startsWith("$$") && part.endsWith("$$") && part.length > 4)
+      return <MathBlock key={i} math={part.slice(2, -2).trim()} />;
+    if (part.startsWith("$") && part.endsWith("$") && part.length > 2)
+      return <MathInline key={i} math={part.slice(1, -1).trim()} />;
     if (part.startsWith("**") && part.endsWith("**"))
       return <strong key={i} className="font-semibold text-black">{part.slice(2, -2)}</strong>;
     if (part.startsWith("*") && part.endsWith("*"))
@@ -6638,7 +6864,7 @@ function MarkdownRenderer({ text, isStreaming }: { text: string; isStreaming?: b
     // Blank line → skip
     if (!line) { i++; continue; }
 
-    // Code block or Special Cards (files / links)
+    // Code block or Special Cards (files / links / visual diagrams)
     if (line.startsWith("```")) {
       const lang = line.slice(3).trim().toLowerCase();
       i++;
@@ -6648,6 +6874,12 @@ function MarkdownRenderer({ text, isStreaming }: { text: string; isStreaming?: b
         i++;
       }
       i++; // skip closing ```
+
+      // Pythagoras Visual Diagram Card
+      if (lang === "visual:pythagoras" || lang === "pythagoras" || lang === "diagram:pythagoras") {
+        elements.push(<PythagorasVisualCard key={`pyth-${i}`} />);
+        continue;
+      }
 
       // Files Attachment Card (Gambar 1 & Gambar 2)
       if (lang === "files" || lang === "file" || lang === "lampiran") {
@@ -6721,6 +6953,34 @@ function MarkdownRenderer({ text, isStreaming }: { text: string; isStreaming?: b
       i++; continue;
     }
 
+    // Display Math block: $$...$$ atau \[...\]
+    if (line.startsWith("$$") || line.startsWith("\\[")) {
+      const isBracket = line.startsWith("\\[");
+      let mathStr = "";
+      if ((isBracket && line.endsWith("\\]")) || (!isBracket && line.endsWith("$$") && line.length > 4)) {
+        mathStr = isBracket ? line.slice(2, -2).trim() : line.slice(2, -2).trim();
+        i++;
+      } else {
+        i++;
+        const mathLines: string[] = [];
+        const endTag = isBracket ? "\\]" : "$$";
+        while (i < lines.length && !lines[i].trim().endsWith(endTag)) {
+          mathLines.push(lines[i]);
+          i++;
+        }
+        if (i < lines.length) {
+          const lastLine = lines[i].trim();
+          if (lastLine !== endTag) {
+            mathLines.push(lastLine.replace(new RegExp(`${endTag.replace('\\', '\\\\')}$`), ""));
+          }
+          i++;
+        }
+        mathStr = mathLines.join("\n").trim();
+      }
+      elements.push(<MathBlock key={`mathblk-${i}`} math={mathStr} />);
+      continue;
+    }
+
     // Headings
     const h1m = line.match(/^#\s+(.+)/);
     const h2m = line.match(/^##\s+(.+)/);
@@ -6751,11 +7011,21 @@ function MarkdownRenderer({ text, isStreaming }: { text: string; isStreaming?: b
       }
       const parseRow = (r: string) => r.replace(/^\||\|$/g, "").split("|").map(c => c.trim());
       const isSep = (r: string) => /^\|[-| :]+\|$/.test(r);
+      const sepLine = tableLines.find(r => isSep(r));
       const rows = tableLines.filter(r => !isSep(r));
       const headers = rows[0] ? parseRow(rows[0]) : [];
       const body = rows.slice(1);
       const colCount = Math.max(headers.length, ...body.map(r => parseRow(r).length));
       const isFitScreen = colCount <= 3;
+      const colAligns = sepLine
+        ? parseRow(sepLine).map(col => {
+            const left = col.startsWith(":");
+            const right = col.endsWith(":");
+            if (left && right) return "text-center";
+            if (right) return "text-right";
+            return "text-left";
+          })
+        : [];
 
       elements.push(
         <div
@@ -6780,7 +7050,7 @@ function MarkdownRenderer({ text, isStreaming }: { text: string; isStreaming?: b
                   let colWidthClass = "";
                   if (isFitScreen) {
                     if (colCount === 2) {
-                      colWidthClass = ci === 0 ? "w-[35%] sm:w-[32%]" : "w-[65%] sm:w-[68%]";
+                      colWidthClass = ci === 0 ? "w-[44%] sm:w-[40%]" : "w-[56%] sm:w-[60%]";
                     } else if (colCount === 3) {
                       colWidthClass = ci === 0 ? "w-[22%] sm:w-[20%]" : ci === 1 ? "w-[36%] sm:w-[35%]" : "w-[42%] sm:w-[45%]";
                     }
@@ -6808,10 +7078,11 @@ function MarkdownRenderer({ text, isStreaming }: { text: string; isStreaming?: b
                     className={`${!isLastRow ? "border-b border-neutral-200" : ""} hover:bg-neutral-50/40 transition-colors`}
                   >
                     {cells.map((cell, ci) => {
+                      const cellAlign = colAligns[ci] || "text-left";
                       return (
                         <td
                           key={ci}
-                          className={`py-2.5 sm:py-3.5 px-2 sm:px-3 text-black leading-snug sm:leading-relaxed align-top break-words border-r border-neutral-200/70 last:border-r-0 ${
+                          className={`py-2.5 sm:py-3.5 px-2 sm:px-3 text-black leading-snug sm:leading-relaxed align-top break-words ${cellAlign} border-r border-neutral-200/70 last:border-r-0 ${
                             ci === 0
                               ? "font-semibold sm:font-medium text-slate-900"
                               : "text-slate-800"
