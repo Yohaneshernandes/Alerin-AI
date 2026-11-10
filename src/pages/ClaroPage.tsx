@@ -2774,6 +2774,183 @@ function SelectTextModal({
   );
 }
 
+// ─── Shared User Bubble Long-Press Hook & Action Menu ────────────────────────
+function useUserBubbleLongPress(getRoleAt: (idx: number) => string | undefined) {
+  const [activeIdx, setActiveIdx] = useState<number | null>(null);
+  const [placement, setPlacement] = useState<"top" | "bottom">("top");
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const startPosRef = useRef<{ x: number; y: number } | null>(null);
+  const getRoleRef = useRef(getRoleAt);
+  getRoleRef.current = getRoleAt;
+
+  const clearTimer = useCallback(() => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+  }, []);
+
+  useEffect(() => clearTimer, [clearTimer]);
+
+  const openMenuForTarget = useCallback((idx: number, target: HTMLDivElement, vibrate = false) => {
+    if (vibrate && typeof navigator !== "undefined" && navigator.vibrate) {
+      try { navigator.vibrate(40); } catch (_) {}
+    }
+    const rect = target.getBoundingClientRect();
+    setPlacement(rect.top < 220 ? "bottom" : "top");
+    setActiveIdx(idx);
+    timerRef.current = null;
+  }, []);
+
+  const getBubbleInteractionProps = useCallback((idx: number) => ({
+    onTouchStart: (e: React.TouchEvent<HTMLDivElement>) => {
+      if (getRoleRef.current(idx) !== "user") return;
+      const touch = e.touches[0];
+      startPosRef.current = { x: touch.clientX, y: touch.clientY };
+      clearTimer();
+      const target = e.currentTarget;
+      timerRef.current = setTimeout(() => openMenuForTarget(idx, target, true), 450);
+    },
+    onTouchMove: (e: React.TouchEvent<HTMLDivElement>) => {
+      if (!startPosRef.current || !timerRef.current) return;
+      const touch = e.touches[0];
+      const dx = Math.abs(touch.clientX - startPosRef.current.x);
+      const dy = Math.abs(touch.clientY - startPosRef.current.y);
+      if (dx > 10 || dy > 10) clearTimer();
+    },
+    onTouchEnd: clearTimer,
+    onTouchCancel: clearTimer,
+    onMouseDown: (e: React.MouseEvent<HTMLDivElement>) => {
+      if (e.button !== 0 || getRoleRef.current(idx) !== "user") return;
+      startPosRef.current = { x: e.clientX, y: e.clientY };
+      clearTimer();
+      const target = e.currentTarget;
+      timerRef.current = setTimeout(() => openMenuForTarget(idx, target, false), 450);
+    },
+    onMouseMove: (e: React.MouseEvent<HTMLDivElement>) => {
+      if (!startPosRef.current || !timerRef.current) return;
+      const dx = Math.abs(e.clientX - startPosRef.current.x);
+      const dy = Math.abs(e.clientY - startPosRef.current.y);
+      if (dx > 8 || dy > 8) clearTimer();
+    },
+    onMouseUp: clearTimer,
+    onMouseLeave: clearTimer,
+    onContextMenu: (e: React.MouseEvent<HTMLDivElement>) => {
+      e.preventDefault();
+      clearTimer();
+      if (getRoleRef.current(idx) !== "user") return;
+      openMenuForTarget(idx, e.currentTarget, false);
+    },
+  }), [clearTimer, openMenuForTarget]);
+
+  return { activeIdx, setActiveIdx, placement, getBubbleInteractionProps };
+}
+
+function UserBubbleActionMenu({
+  open,
+  placement,
+  showEdit,
+  onClose,
+  onCopy,
+  onEdit,
+  onSelectText,
+}: {
+  open: boolean;
+  placement: "top" | "bottom";
+  showEdit: boolean;
+  onClose: () => void;
+  onCopy: () => void;
+  onEdit: () => void;
+  onSelectText: () => void;
+}) {
+  if (!open) return null;
+
+  return (
+    <>
+      <div
+        className="fixed inset-0 z-40 bg-transparent"
+        onClick={onClose}
+        onTouchStart={onClose}
+      />
+      <div
+        className={`absolute right-0 z-50 bg-white rounded-2xl border border-slate-200/90 shadow-[0_12px_36px_rgba(0,0,0,0.18)] p-1.5 w-44 flex flex-col gap-0.5 text-xs animate-in fade-in zoom-in-95 ${
+          placement === "bottom" ? "top-full mt-2" : "bottom-full mb-2"
+        }`}
+        onClick={(e) => e.stopPropagation()}
+        onPointerDown={(e) => e.stopPropagation()}
+        onTouchStart={(e) => e.stopPropagation()}
+        onTouchEnd={(e) => e.stopPropagation()}
+        onMouseDown={(e) => e.stopPropagation()}
+      >
+        {/* 1. Salin */}
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onCopy();
+          }}
+          onPointerDown={(e) => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
+          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left font-medium text-slate-700 hover:bg-slate-100/90 active:bg-slate-100 transition-colors cursor-pointer"
+        >
+          <svg className="w-4 h-4 text-slate-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+          </svg>
+          <span>Salin</span>
+        </button>
+
+        {/* 2. Edit (Hanya untuk bubble user terbaru) */}
+        {showEdit && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onEdit();
+            }}
+            onPointerDown={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.stopPropagation()}
+            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left font-medium text-slate-700 hover:bg-slate-100/90 active:bg-slate-100 transition-colors cursor-pointer"
+          >
+            <svg className="w-4 h-4 text-slate-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 20h9"/>
+              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+            </svg>
+            <span>Edit</span>
+          </button>
+        )}
+
+        {/* 3. Pilih teks */}
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onSelectText();
+          }}
+          onPointerDown={(e) => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
+          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left font-medium text-slate-700 hover:bg-slate-100/90 active:bg-slate-100 transition-colors cursor-pointer"
+        >
+          <svg className="w-4 h-4 text-slate-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="4" y1="7" x2="4" y2="4"/>
+            <line x1="4" y1="4" x2="7" y2="4"/>
+            <line x1="20" y1="7" x2="20" y2="4"/>
+            <line x1="20" y1="4" x2="17" y2="4"/>
+            <line x1="4" y1="17" x2="4" y2="20"/>
+            <line x1="4" y1="20" x2="7" y2="20"/>
+            <line x1="20" y1="17" x2="20" y2="20"/>
+            <line x1="20" y1="20" x2="17" y2="20"/>
+            <line x1="9" y1="9" x2="15" y2="9"/>
+            <line x1="12" y1="9" x2="12" y2="15"/>
+            <line x1="9" y1="15" x2="15" y2="15"/>
+          </svg>
+          <span>Pilih teks</span>
+        </button>
+      </div>
+    </>
+  );
+}
+
 // ─── Bird mascot icon ─────────────────────────────────────────────────────────
 function BirdIcon({ size = 32, color = "#3b82f6" }: { size?: number; color?: string }) {
   return (
@@ -8979,109 +9156,18 @@ function PercakapanTab({
   const [copiedIdx, setCopiedIdx] = useState<number | null>(null);
   const [actionToast, setActionToast] = useState<string | null>(null);
 
-  // User Bubble Long-Press Menu States (Salin, Edit, Pilih teks)
-  const [activeUserBubbleMenuIdx, setActiveUserBubbleMenuIdx] = useState<number | null>(null);
-  const [userBubbleMenuPlacement, setUserBubbleMenuPlacement] = useState<"top" | "bottom">("top");
-  const longPressTimerRef = useRef<any>(null);
-  const touchStartPosRef = useRef<{ x: number; y: number } | null>(null);
-
   const showActionToast = useCallback((msg: string) => {
     setActionToast(msg);
     setTimeout(() => setActionToast(null), 2200);
   }, []);
 
-  const handleBubbleTouchStart = useCallback((idx: number, e: React.TouchEvent<HTMLDivElement>) => {
-    let lastUserIdx = -1;
-    for (let k = msgs.length - 1; k >= 0; k--) {
-      if (msgs[k].role === "user") { lastUserIdx = k; break; }
-    }
-    if (idx !== lastUserIdx) return;
-
-    const touch = e.touches[0];
-    touchStartPosRef.current = { x: touch.clientX, y: touch.clientY };
-    if (longPressTimerRef.current) clearTimeout(longPressTimerRef.current);
-    const target = e.currentTarget;
-    longPressTimerRef.current = setTimeout(() => {
-      if (typeof navigator !== "undefined" && navigator.vibrate) {
-        try { navigator.vibrate(40); } catch (_) {}
-      }
-      const rect = target.getBoundingClientRect();
-      setUserBubbleMenuPlacement(rect.top < 220 ? "bottom" : "top");
-      setActiveUserBubbleMenuIdx(idx);
-      longPressTimerRef.current = null;
-    }, 450);
-  }, [msgs]);
-
-  const handleBubbleTouchMove = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
-    if (!touchStartPosRef.current || !longPressTimerRef.current) return;
-    const touch = e.touches[0];
-    const dx = Math.abs(touch.clientX - touchStartPosRef.current.x);
-    const dy = Math.abs(touch.clientY - touchStartPosRef.current.y);
-    if (dx > 10 || dy > 10) {
-      clearTimeout(longPressTimerRef.current);
-      longPressTimerRef.current = null;
-    }
-  }, []);
-
-  const handleBubbleTouchEnd = useCallback(() => {
-    if (longPressTimerRef.current) {
-      clearTimeout(longPressTimerRef.current);
-      longPressTimerRef.current = null;
-    }
-  }, []);
-
-  const handleBubbleMouseDown = useCallback((idx: number, e: React.MouseEvent<HTMLDivElement>) => {
-    if (e.button !== 0) return;
-    let lastUserIdx = -1;
-    for (let k = msgs.length - 1; k >= 0; k--) {
-      if (msgs[k].role === "user") { lastUserIdx = k; break; }
-    }
-    if (idx !== lastUserIdx) return;
-
-    touchStartPosRef.current = { x: e.clientX, y: e.clientY };
-    if (longPressTimerRef.current) clearTimeout(longPressTimerRef.current);
-    const target = e.currentTarget;
-    longPressTimerRef.current = setTimeout(() => {
-      const rect = target.getBoundingClientRect();
-      setUserBubbleMenuPlacement(rect.top < 220 ? "bottom" : "top");
-      setActiveUserBubbleMenuIdx(idx);
-      longPressTimerRef.current = null;
-    }, 450);
-  }, [msgs]);
-
-  const handleBubbleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    if (!touchStartPosRef.current || !longPressTimerRef.current) return;
-    const dx = Math.abs(e.clientX - touchStartPosRef.current.x);
-    const dy = Math.abs(e.clientY - touchStartPosRef.current.y);
-    if (dx > 8 || dy > 8) {
-      clearTimeout(longPressTimerRef.current);
-      longPressTimerRef.current = null;
-    }
-  }, []);
-
-  const handleBubbleMouseUp = useCallback(() => {
-    if (longPressTimerRef.current) {
-      clearTimeout(longPressTimerRef.current);
-      longPressTimerRef.current = null;
-    }
-  }, []);
-
-  const handleBubbleContextMenu = useCallback((idx: number, e: React.MouseEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    if (longPressTimerRef.current) {
-      clearTimeout(longPressTimerRef.current);
-      longPressTimerRef.current = null;
-    }
-    let lastUserIdx = -1;
-    for (let k = msgs.length - 1; k >= 0; k--) {
-      if (msgs[k].role === "user") { lastUserIdx = k; break; }
-    }
-    if (idx !== lastUserIdx) return;
-
-    const rect = e.currentTarget.getBoundingClientRect();
-    setUserBubbleMenuPlacement(rect.top < 220 ? "bottom" : "top");
-    setActiveUserBubbleMenuIdx(idx);
-  }, [msgs]);
+  // User Bubble Long-Press Menu (Salin, Edit [hanya bubble terbaru], Pilih teks)
+  const {
+    activeIdx: activeUserBubbleMenuIdx,
+    setActiveIdx: setActiveUserBubbleMenuIdx,
+    placement: userBubbleMenuPlacement,
+    getBubbleInteractionProps,
+  } = useUserBubbleLongPress((idx) => msgs[idx]?.role);
 
   const handleCopyUserMessage = useCallback((text: string) => {
     const cleanText = cleanMarkdownForCopy(text);
@@ -9954,109 +10040,26 @@ function PercakapanTab({
                   <div className="relative inline-block max-w-[80%] md:max-w-[68%]">
                     <div
                       id={`user-bubble-text-${i}`}
-                      onTouchStart={isLatestUserMsg ? (e) => handleBubbleTouchStart(i, e) : undefined}
-                      onTouchMove={isLatestUserMsg ? handleBubbleTouchMove : undefined}
-                      onTouchEnd={isLatestUserMsg ? handleBubbleTouchEnd : undefined}
-                      onTouchCancel={isLatestUserMsg ? handleBubbleTouchEnd : undefined}
-                      onMouseDown={isLatestUserMsg ? (e) => handleBubbleMouseDown(i, e) : undefined}
-                      onMouseMove={isLatestUserMsg ? handleBubbleMouseMove : undefined}
-                      onMouseUp={isLatestUserMsg ? handleBubbleMouseUp : undefined}
-                      onMouseLeave={isLatestUserMsg ? handleBubbleMouseUp : undefined}
-                      onContextMenu={isLatestUserMsg ? (e) => handleBubbleContextMenu(i, e) : undefined}
-                      style={{ WebkitTouchCallout: isLatestUserMsg ? "none" : "default" }}
-                      className={`rounded-2xl rounded-br-sm px-4 py-3 text-[0.9375rem] leading-relaxed text-slate-900 bg-[#EAF2FF] border border-[#BFDBFE]/80 shadow-xs claro-user-bubble select-text transition-all duration-150 whitespace-pre-wrap break-words ${
-                        isLatestUserMsg
-                          ? `cursor-pointer ${activeUserBubbleMenuIdx === i ? "ring-2 ring-blue-500 shadow-md brightness-95" : "hover:brightness-[0.98]"}`
-                          : "cursor-default"
+                      {...getBubbleInteractionProps(i)}
+                      style={{ WebkitTouchCallout: "none" }}
+                      className={`rounded-2xl rounded-br-sm px-4 py-3 text-[0.9375rem] leading-relaxed text-slate-900 bg-[#EAF2FF] border border-[#BFDBFE]/80 shadow-xs claro-user-bubble select-text transition-all duration-150 whitespace-pre-wrap break-words cursor-pointer ${
+                        activeUserBubbleMenuIdx === i ? "ring-2 ring-blue-500 shadow-md brightness-95" : "hover:brightness-[0.98]"
                       }`}
-                      title={isLatestUserMsg ? "Tahan untuk membuka menu aksi" : undefined}
+                      title="Tahan untuk membuka menu aksi"
                     >
                       {renderUserMessageContent(m.text)}
                     </div>
 
-                    {/* Pop-up Menu Aksi Bubble Chat (Long-Press) - Hanya untuk pesan user terbaru */}
-                    {isLatestUserMsg && activeUserBubbleMenuIdx === i && (
-                      <>
-                        <div
-                          className="fixed inset-0 z-40 bg-transparent"
-                          onClick={() => setActiveUserBubbleMenuIdx(null)}
-                          onTouchStart={() => setActiveUserBubbleMenuIdx(null)}
-                        />
-                        <div
-                          className={`absolute right-0 z-50 bg-white rounded-2xl border border-slate-200/90 shadow-[0_12px_36px_rgba(0,0,0,0.18)] p-1.5 w-44 flex flex-col gap-0.5 text-xs animate-in fade-in zoom-in-95 ${
-                            userBubbleMenuPlacement === "bottom" ? "top-full mt-2" : "bottom-full mb-2"
-                          }`}
-                          onClick={(e) => e.stopPropagation()}
-                          onPointerDown={(e) => e.stopPropagation()}
-                          onTouchStart={(e) => e.stopPropagation()}
-                          onTouchEnd={(e) => e.stopPropagation()}
-                          onMouseDown={(e) => e.stopPropagation()}
-                        >
-                          {/* 1. Salin */}
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleCopyUserMessage(m.text);
-                            }}
-                            onPointerDown={(e) => e.stopPropagation()}
-                            onMouseDown={(e) => e.stopPropagation()}
-                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left font-medium text-slate-700 hover:bg-slate-100/90 active:bg-slate-100 transition-colors cursor-pointer"
-                          >
-                            <svg className="w-4 h-4 text-slate-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                              <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-                              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-                            </svg>
-                            <span>Salin</span>
-                          </button>
-
-                          {/* 2. Edit */}
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleStartEditBubble(i, m.text);
-                            }}
-                            onPointerDown={(e) => e.stopPropagation()}
-                            onMouseDown={(e) => e.stopPropagation()}
-                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left font-medium text-slate-700 hover:bg-slate-100/90 active:bg-slate-100 transition-colors cursor-pointer"
-                          >
-                            <svg className="w-4 h-4 text-slate-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                              <path d="M12 20h9"/>
-                              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
-                            </svg>
-                            <span>Edit</span>
-                          </button>
-
-                          {/* 3. Pilih teks */}
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleSelectBubbleText(i, m.text);
-                            }}
-                            onPointerDown={(e) => e.stopPropagation()}
-                            onMouseDown={(e) => e.stopPropagation()}
-                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left font-medium text-slate-700 hover:bg-slate-100/90 active:bg-slate-100 transition-colors cursor-pointer"
-                          >
-                            <svg className="w-4 h-4 text-slate-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                              <line x1="4" y1="7" x2="4" y2="4"/>
-                              <line x1="4" y1="4" x2="7" y2="4"/>
-                              <line x1="20" y1="7" x2="20" y2="4"/>
-                              <line x1="20" y1="4" x2="17" y2="4"/>
-                              <line x1="4" y1="17" x2="4" y2="20"/>
-                              <line x1="4" y1="20" x2="7" y2="20"/>
-                              <line x1="20" y1="17" x2="20" y2="20"/>
-                              <line x1="20" y1="20" x2="17" y2="20"/>
-                              <line x1="9" y1="9" x2="15" y2="9"/>
-                              <line x1="12" y1="9" x2="12" y2="15"/>
-                              <line x1="9" y1="15" x2="15" y2="15"/>
-                            </svg>
-                            <span>Pilih teks</span>
-                          </button>
-                        </div>
-                      </>
-                    )}
+                    {/* Pop-up Menu Aksi Bubble Chat (Long-Press): Salin & Pilih teks untuk semua bubble, + Edit hanya untuk terbaru */}
+                    <UserBubbleActionMenu
+                      open={activeUserBubbleMenuIdx === i}
+                      placement={userBubbleMenuPlacement}
+                      showEdit={isLatestUserMsg}
+                      onClose={() => setActiveUserBubbleMenuIdx(null)}
+                      onCopy={() => handleCopyUserMessage(m.text)}
+                      onEdit={() => handleStartEditBubble(i, m.text)}
+                      onSelectText={() => handleSelectBubbleText(i, m.text)}
+                    />
                   </div>
                 )}
                 <p className="text-[10px] text-slate-400 pr-1">{m.time}</p>
@@ -13577,107 +13580,13 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
     };
   }, []);
 
-  // User Bubble Long-Press Menu States in Project Chat
-  const [activeProjUserBubbleIdx, setActiveProjUserBubbleIdx] = useState<number | null>(null);
-  const [projBubblePlacement, setProjBubblePlacement] = useState<"top" | "bottom">("top");
-  const projLongPressTimerRef = useRef<any>(null);
-  const projTouchStartCoordsRef = useRef<{ x: number; y: number } | null>(null);
-
-  const handleProjBubbleTouchStart = useCallback((idx: number, e: React.TouchEvent<HTMLDivElement>) => {
-    const chatMsgs = selectedProjectChat?.msgs ?? [];
-    let lastUserIdx = -1;
-    for (let k = chatMsgs.length - 1; k >= 0; k--) {
-      if (chatMsgs[k].role === "user") { lastUserIdx = k; break; }
-    }
-    if (idx !== lastUserIdx) return;
-
-    const touch = e.touches[0];
-    projTouchStartCoordsRef.current = { x: touch.clientX, y: touch.clientY };
-    if (projLongPressTimerRef.current) clearTimeout(projLongPressTimerRef.current);
-    const target = e.currentTarget;
-    projLongPressTimerRef.current = setTimeout(() => {
-      if (typeof navigator !== "undefined" && navigator.vibrate) {
-        try { navigator.vibrate(40); } catch (_) {}
-      }
-      const rect = target.getBoundingClientRect();
-      setProjBubblePlacement(rect.top < 220 ? "bottom" : "top");
-      setActiveProjUserBubbleIdx(idx);
-      projLongPressTimerRef.current = null;
-    }, 450);
-  }, [selectedProjectChat]);
-
-  const handleProjBubbleTouchMove = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
-    if (!projTouchStartCoordsRef.current || !projLongPressTimerRef.current) return;
-    const touch = e.touches[0];
-    const dx = Math.abs(touch.clientX - projTouchStartCoordsRef.current.x);
-    const dy = Math.abs(touch.clientY - projTouchStartCoordsRef.current.y);
-    if (dx > 10 || dy > 10) {
-      clearTimeout(projLongPressTimerRef.current);
-      projLongPressTimerRef.current = null;
-    }
-  }, []);
-
-  const handleProjBubbleTouchEnd = useCallback(() => {
-    if (projLongPressTimerRef.current) {
-      clearTimeout(projLongPressTimerRef.current);
-      projLongPressTimerRef.current = null;
-    }
-  }, []);
-
-  const handleProjBubbleMouseDown = useCallback((idx: number, e: React.MouseEvent<HTMLDivElement>) => {
-    if (e.button !== 0) return;
-    const chatMsgs = selectedProjectChat?.msgs ?? [];
-    let lastUserIdx = -1;
-    for (let k = chatMsgs.length - 1; k >= 0; k--) {
-      if (chatMsgs[k].role === "user") { lastUserIdx = k; break; }
-    }
-    if (idx !== lastUserIdx) return;
-
-    projTouchStartCoordsRef.current = { x: e.clientX, y: e.clientY };
-    if (projLongPressTimerRef.current) clearTimeout(projLongPressTimerRef.current);
-    const target = e.currentTarget;
-    projLongPressTimerRef.current = setTimeout(() => {
-      const rect = target.getBoundingClientRect();
-      setProjBubblePlacement(rect.top < 220 ? "bottom" : "top");
-      setActiveProjUserBubbleIdx(idx);
-      projLongPressTimerRef.current = null;
-    }, 450);
-  }, [selectedProjectChat]);
-
-  const handleProjBubbleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    if (!projTouchStartCoordsRef.current || !projLongPressTimerRef.current) return;
-    const dx = Math.abs(e.clientX - projTouchStartCoordsRef.current.x);
-    const dy = Math.abs(e.clientY - projTouchStartCoordsRef.current.y);
-    if (dx > 8 || dy > 8) {
-      clearTimeout(projLongPressTimerRef.current);
-      projLongPressTimerRef.current = null;
-    }
-  }, []);
-
-  const handleProjBubbleMouseUp = useCallback(() => {
-    if (projLongPressTimerRef.current) {
-      clearTimeout(projLongPressTimerRef.current);
-      projLongPressTimerRef.current = null;
-    }
-  }, []);
-
-  const handleProjBubbleContextMenu = useCallback((idx: number, e: React.MouseEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    if (projLongPressTimerRef.current) {
-      clearTimeout(projLongPressTimerRef.current);
-      projLongPressTimerRef.current = null;
-    }
-    const chatMsgs = selectedProjectChat?.msgs ?? [];
-    let lastUserIdx = -1;
-    for (let k = chatMsgs.length - 1; k >= 0; k--) {
-      if (chatMsgs[k].role === "user") { lastUserIdx = k; break; }
-    }
-    if (idx !== lastUserIdx) return;
-
-    const rect = e.currentTarget.getBoundingClientRect();
-    setProjBubblePlacement(rect.top < 220 ? "bottom" : "top");
-    setActiveProjUserBubbleIdx(idx);
-  }, [selectedProjectChat]);
+  // User Bubble Long-Press Menu in Project Chat (Salin, Edit [hanya bubble terbaru], Pilih teks)
+  const {
+    activeIdx: activeProjUserBubbleIdx,
+    setActiveIdx: setActiveProjUserBubbleIdx,
+    placement: projBubblePlacement,
+    getBubbleInteractionProps: getProjBubbleInteractionProps,
+  } = useUserBubbleLongPress((idx) => selectedProjectChat?.msgs?.[idx]?.role);
 
   const handleProjCopyUserMessage = useCallback((text: string) => {
     const cleanText = cleanMarkdownForCopy(text);
@@ -15022,109 +14931,26 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                       <div className="relative inline-block max-w-[82%]">
                         <div
                           id={`proj-user-bubble-text-${idx}`}
-                          onTouchStart={isLatestProjUser ? (e) => handleProjBubbleTouchStart(idx, e) : undefined}
-                          onTouchMove={isLatestProjUser ? handleProjBubbleTouchMove : undefined}
-                          onTouchEnd={isLatestProjUser ? handleProjBubbleTouchEnd : undefined}
-                          onTouchCancel={isLatestProjUser ? handleProjBubbleTouchEnd : undefined}
-                          onMouseDown={isLatestProjUser ? (e) => handleProjBubbleMouseDown(idx, e) : undefined}
-                          onMouseMove={isLatestProjUser ? handleProjBubbleMouseMove : undefined}
-                          onMouseUp={isLatestProjUser ? handleProjBubbleMouseUp : undefined}
-                          onMouseLeave={isLatestProjUser ? handleProjBubbleMouseUp : undefined}
-                          onContextMenu={isLatestProjUser ? (e) => handleProjBubbleContextMenu(idx, e) : undefined}
-                          style={{ WebkitTouchCallout: isLatestProjUser ? "none" : "default" }}
-                          className={`rounded-2xl rounded-tr-sm px-4 py-2.5 text-[15px] leading-relaxed text-slate-900 bg-[#EAF2FF] border border-[#BFDBFE]/80 shadow-2xs select-text transition-all duration-150 whitespace-pre-wrap break-words ${
-                            isLatestProjUser
-                              ? `cursor-pointer ${activeProjUserBubbleIdx === idx ? "ring-2 ring-blue-500 shadow-md brightness-95" : "hover:brightness-[0.98]"}`
-                              : "cursor-default"
+                          {...getProjBubbleInteractionProps(idx)}
+                          style={{ WebkitTouchCallout: "none" }}
+                          className={`rounded-2xl rounded-tr-sm px-4 py-2.5 text-[15px] leading-relaxed text-slate-900 bg-[#EAF2FF] border border-[#BFDBFE]/80 shadow-2xs select-text transition-all duration-150 whitespace-pre-wrap break-words cursor-pointer ${
+                            activeProjUserBubbleIdx === idx ? "ring-2 ring-blue-500 shadow-md brightness-95" : "hover:brightness-[0.98]"
                           }`}
-                          title={isLatestProjUser ? "Tahan untuk membuka menu aksi" : undefined}
+                          title="Tahan untuk membuka menu aksi"
                         >
                           {renderUserMessageContent(m.text)}
                         </div>
 
-                        {/* Pop-up Menu Aksi Bubble Chat (Long-Press) - Hanya untuk pesan user terbaru */}
-                        {isLatestProjUser && activeProjUserBubbleIdx === idx && (
-                          <>
-                            <div
-                              className="fixed inset-0 z-40 bg-transparent"
-                              onClick={() => setActiveProjUserBubbleIdx(null)}
-                              onTouchStart={() => setActiveProjUserBubbleIdx(null)}
-                            />
-                            <div
-                              className={`absolute right-0 z-50 bg-white rounded-2xl border border-slate-200/90 shadow-[0_12px_36px_rgba(0,0,0,0.18)] p-1.5 w-44 flex flex-col gap-0.5 text-xs animate-in fade-in zoom-in-95 ${
-                                projBubblePlacement === "bottom" ? "top-full mt-2" : "bottom-full mb-2"
-                              }`}
-                              onClick={(e) => e.stopPropagation()}
-                              onPointerDown={(e) => e.stopPropagation()}
-                              onTouchStart={(e) => e.stopPropagation()}
-                              onTouchEnd={(e) => e.stopPropagation()}
-                              onMouseDown={(e) => e.stopPropagation()}
-                            >
-                              {/* 1. Salin */}
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleProjCopyUserMessage(m.text);
-                                }}
-                                onPointerDown={(e) => e.stopPropagation()}
-                                onMouseDown={(e) => e.stopPropagation()}
-                                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left font-medium text-slate-700 hover:bg-slate-100/90 active:bg-slate-100 transition-colors cursor-pointer"
-                              >
-                                <svg className="w-4 h-4 text-slate-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-                                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-                                </svg>
-                                <span>Salin</span>
-                              </button>
-
-                              {/* 2. Edit */}
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleProjStartEditBubble(idx, m.text);
-                                }}
-                                onPointerDown={(e) => e.stopPropagation()}
-                                onMouseDown={(e) => e.stopPropagation()}
-                                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left font-medium text-slate-700 hover:bg-slate-100/90 active:bg-slate-100 transition-colors cursor-pointer"
-                              >
-                                <svg className="w-4 h-4 text-slate-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                                  <path d="M12 20h9"/>
-                                  <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
-                                </svg>
-                                <span>Edit</span>
-                              </button>
-
-                              {/* 3. Pilih teks */}
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleProjSelectBubbleText(idx, m.text);
-                                }}
-                                onPointerDown={(e) => e.stopPropagation()}
-                                onMouseDown={(e) => e.stopPropagation()}
-                                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left font-medium text-slate-700 hover:bg-slate-100/90 active:bg-slate-100 transition-colors cursor-pointer"
-                              >
-                                <svg className="w-4 h-4 text-slate-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                                  <line x1="4" y1="7" x2="4" y2="4"/>
-                                  <line x1="4" y1="4" x2="7" y2="4"/>
-                                  <line x1="20" y1="7" x2="20" y2="4"/>
-                                  <line x1="20" y1="4" x2="17" y2="4"/>
-                                  <line x1="4" y1="17" x2="4" y2="20"/>
-                                  <line x1="4" y1="20" x2="7" y2="20"/>
-                                  <line x1="20" y1="17" x2="20" y2="20"/>
-                                  <line x1="20" y1="20" x2="17" y2="20"/>
-                                  <line x1="9" y1="9" x2="15" y2="9"/>
-                                  <line x1="12" y1="9" x2="12" y2="15"/>
-                                  <line x1="9" y1="15" x2="15" y2="15"/>
-                                </svg>
-                                <span>Pilih teks</span>
-                              </button>
-                            </div>
-                          </>
-                        )}
+                        {/* Pop-up Menu Aksi Bubble Chat (Long-Press): Salin & Pilih teks untuk semua bubble, + Edit hanya untuk terbaru */}
+                        <UserBubbleActionMenu
+                          open={activeProjUserBubbleIdx === idx}
+                          placement={projBubblePlacement}
+                          showEdit={isLatestProjUser}
+                          onClose={() => setActiveProjUserBubbleIdx(null)}
+                          onCopy={() => handleProjCopyUserMessage(m.text)}
+                          onEdit={() => handleProjStartEditBubble(idx, m.text)}
+                          onSelectText={() => handleProjSelectBubbleText(idx, m.text)}
+                        />
                       </div>
                     )}
                     <span className="text-[10px] text-neutral-400 pr-1">{m.time}</span>
