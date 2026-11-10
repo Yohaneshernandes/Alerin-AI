@@ -1028,7 +1028,7 @@ function SourceLogoIcon({
 const FEATURE_REC_MAP: { pattern: RegExp; rec: FeatureRec }[] = [
   {
     pattern: /parafrase|parafrasa|perbaiki kalimat|ubah kalimat|tulis ulang|rewrite/i,
-    rec: { label: "Parafrase Otomatis", desc: "Ubah dan perbaiki kalimatmu agar lebih akademis secara instan.", tab: "fitur", featureKey: "parafrase", icon: "✍️", color: "#7c3aed" },
+    rec: { label: "Alerin Parafrase", desc: "Ubah dan perbaiki kalimatmu agar lebih akademis secara instan.", tab: "fitur", featureKey: "parafrase", icon: "✍️", color: "#7c3aed" },
   },
   {
     pattern: /plagiarisme|plagiat|cek kesamaan|similarity/i,
