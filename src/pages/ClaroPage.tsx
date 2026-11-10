@@ -13892,6 +13892,47 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
     e.target.value = "";
   };
 
+  const getAnchoredPopupStyle = (
+    rect: { top: number; left: number; width: number; height: number },
+    estimatedHeight: number,
+    alignRightOnWide = false
+  ): React.CSSProperties => {
+    const gap = 8;
+    const spaceBelow = window.innerHeight - (rect.top + rect.height);
+    const spaceAbove = rect.top;
+    const showAbove = spaceBelow < estimatedHeight + 20 && spaceAbove > spaceBelow;
+    const menuWidth = Math.min(rect.width > 0 ? rect.width : 275, 275);
+    const preferredLeft = alignRightOnWide && rect.width > 480 ? rect.left + rect.width - menuWidth : rect.left;
+    const menuLeft = Math.max(16, Math.min(preferredLeft, window.innerWidth - menuWidth - 16));
+
+    if (showAbove) {
+      const bottomOffset = rect.height > 0
+        ? window.innerHeight - rect.top + gap
+        : window.innerHeight - (rect.top - 42) + gap;
+      return {
+        position: "fixed",
+        bottom: `${Math.max(16, bottomOffset)}px`,
+        left: `${menuLeft}px`,
+        width: `${menuWidth}px`,
+        maxHeight: `${Math.max(160, spaceAbove - gap - 16)}px`,
+        overflowY: "auto",
+      };
+    }
+
+    const topOffset = rect.height > 0
+      ? Math.min(rect.top + rect.height + gap, Math.max(16, window.innerHeight - estimatedHeight - 16))
+      : Math.min(rect.top, Math.max(16, window.innerHeight - estimatedHeight - 16));
+
+    return {
+      position: "fixed",
+      top: `${topOffset}px`,
+      left: `${menuLeft}px`,
+      width: `${menuWidth}px`,
+      maxHeight: `${Math.max(160, window.innerHeight - topOffset - 16)}px`,
+      overflowY: "auto",
+    };
+  };
+
   const filteredProjects = projects
     .filter((p) => {
       if (searchQuery.trim()) {
@@ -14365,20 +14406,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
       {/* ── Modal Popup Menu Titik Tiga Item Proyek (sesuai Gambar 2) ── */}
       {activeProjectMenu && (() => {
         const { item, rect } = activeProjectMenu;
-        const menuHeight = 255;
-        const gap = 8;
-        const spaceBelow = window.innerHeight - (rect.top + rect.height);
-        const showAbove = spaceBelow < menuHeight + 20;
-
-        const menuTop = showAbove
-          ? Math.max(16, rect.top - gap - menuHeight)
-          : (rect.height > 0
-              ? Math.min(rect.top + rect.height + gap, window.innerHeight - menuHeight - 16)
-              : Math.min(rect.top, window.innerHeight - menuHeight - 16));
-
-        // Lebar menu popup sekitar 275px atau selebar kartu, rata kiri sesuai Gambar 2
-        const menuWidth = Math.min(rect.width > 0 ? rect.width : 275, 275);
-        const menuLeft = Math.max(16, Math.min(rect.left, window.innerWidth - menuWidth - 16));
+        const menuStyle = getAnchoredPopupStyle(rect, 280);
 
         return (
           <div
@@ -14430,14 +14458,9 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
               </div>
             )}
 
-            {/* 2. Menu Pop-up Card tetap mengikut di dekat folder */}
+            {/* 2. Menu Pop-up Card tetap mengikut di dekat folder tanpa menutupi item */}
             <div
-              style={{
-                position: "fixed",
-                top: `${menuTop}px`,
-                left: `${menuLeft}px`,
-                width: `${menuWidth}px`,
-              }}
+              style={menuStyle}
               className="bg-white rounded-[24px] p-2 shadow-2xl border border-neutral-100/90 flex flex-col divide-y divide-neutral-100/60 z-30 animate-[gemini-zoom-in_0.18s_ease-out]"
               onClick={(e) => e.stopPropagation()}
             >
@@ -14536,20 +14559,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
       {/* ── Modal Popup Menu Titik Tiga Item Obrolan di Dalam Proyek ── */}
       {activeProjectChatMenu && (() => {
         const { item, rect } = activeProjectChatMenu;
-        const menuHeight = 216;
-        const gap = 8;
-        const spaceBelow = window.innerHeight - (rect.top + rect.height);
-        const showAbove = spaceBelow < menuHeight + 20;
-
-        const menuTop = showAbove
-          ? Math.max(16, rect.top - gap - menuHeight)
-          : (rect.height > 0
-              ? Math.min(rect.top + rect.height + gap, window.innerHeight - menuHeight - 16)
-              : Math.min(rect.top, window.innerHeight - menuHeight - 16));
-
-        const menuWidth = Math.min(rect.width > 0 ? rect.width : 275, 275);
-        const preferredLeft = rect.width > 480 ? rect.left + rect.width - menuWidth : rect.left;
-        const menuLeft = Math.max(16, Math.min(preferredLeft, window.innerWidth - menuWidth - 16));
+        const menuStyle = getAnchoredPopupStyle(rect, 230, true);
 
         const chatMenuActions = [
           {
@@ -14649,12 +14659,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
             )}
 
             <div
-              style={{
-                position: "fixed",
-                top: `${menuTop}px`,
-                left: `${menuLeft}px`,
-                width: `${menuWidth}px`,
-              }}
+              style={menuStyle}
               className="bg-white rounded-[24px] p-2 shadow-2xl border border-neutral-100/90 flex flex-col divide-y divide-neutral-100/60 z-30 animate-[gemini-zoom-in_0.18s_ease-out]"
               onClick={(e) => e.stopPropagation()}
             >
