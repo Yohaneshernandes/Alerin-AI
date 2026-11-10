@@ -8486,7 +8486,7 @@ function PercakapanTab({
   const [copiedIdx, setCopiedIdx] = useState<number | null>(null);
   const [actionToast, setActionToast] = useState<string | null>(null);
 
-  // User Bubble Long-Press Menu States (Salin, Edit, Bagikan, Pilih teks)
+  // User Bubble Long-Press Menu States (Salin, Edit, Pilih teks)
   const [activeUserBubbleMenuIdx, setActiveUserBubbleMenuIdx] = useState<number | null>(null);
   const [userBubbleMenuPlacement, setUserBubbleMenuPlacement] = useState<"top" | "bottom">("top");
   const longPressTimerRef = useRef<any>(null);
@@ -8962,20 +8962,6 @@ function PercakapanTab({
   const handleCancelEditBubble = useCallback(() => {
     setEditingBubbleIdx(null);
   }, []);
-
-  const handleShareUserMessage = useCallback((text: string) => {
-    setActiveUserBubbleMenuIdx(null);
-    const cleanText = cleanMarkdownForCopy(text);
-    if (typeof navigator !== "undefined" && navigator.share) {
-      navigator.share({ title: "Pesan Saya", text: cleanText }).catch(() => {});
-    } else {
-      navigator.clipboard?.writeText(cleanText).then(() => {
-        showActionToast("Tautan / teks pesan disalin!");
-      }).catch(() => {
-        showActionToast("Pesan disalin!");
-      });
-    }
-  }, [showActionToast]);
 
   const handleSelectBubbleText = useCallback((idx: number, text: string) => {
     setActiveUserBubbleMenuIdx(null);
@@ -9561,26 +9547,7 @@ function PercakapanTab({
                             <span>Edit</span>
                           </button>
 
-                          {/* 3. Bagikan */}
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleShareUserMessage(m.text);
-                            }}
-                            onPointerDown={(e) => e.stopPropagation()}
-                            onMouseDown={(e) => e.stopPropagation()}
-                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left font-medium text-slate-700 hover:bg-slate-100/90 active:bg-slate-100 transition-colors cursor-pointer"
-                          >
-                            <svg className="w-4 h-4 text-slate-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                              <path d="M4 12v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-6" />
-                              <polyline points="16 6 12 2 8 6" />
-                              <line x1="12" y1="2" x2="12" y2="15" />
-                            </svg>
-                            <span>Bagikan</span>
-                          </button>
-
-                          {/* 4. Pilih teks */}
+                          {/* 3. Pilih teks */}
                           <button
                             type="button"
                             onClick={(e) => {
@@ -13427,18 +13394,6 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
     setToast("Pesan dimuat ke kolom chat");
   }, []);
 
-  const handleProjShareUserMessage = useCallback((text: string) => {
-    setActiveProjUserBubbleIdx(null);
-    const cleanText = cleanMarkdownForCopy(text);
-    if (typeof navigator !== "undefined" && navigator.share) {
-      navigator.share({ title: "Pesan Saya", text: cleanText }).catch(() => {});
-    } else {
-      navigator.clipboard?.writeText(cleanText).then(() => {
-        setToast("Tautan / teks pesan disalin!");
-      });
-    }
-  }, []);
-
   const handleProjSelectBubbleText = useCallback((idx: number, text: string) => {
     setActiveProjUserBubbleIdx(null);
     setSelectingProjTextModal(cleanMarkdownForCopy(text));
@@ -14906,26 +14861,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                                 <span>Edit</span>
                               </button>
 
-                              {/* 3. Bagikan */}
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleProjShareUserMessage(m.text);
-                                }}
-                                onPointerDown={(e) => e.stopPropagation()}
-                                onMouseDown={(e) => e.stopPropagation()}
-                                className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left font-medium text-slate-700 hover:bg-slate-100/90 active:bg-slate-100 transition-colors cursor-pointer"
-                              >
-                                <svg className="w-4 h-4 text-slate-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                                  <path d="M4 12v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-6" />
-                                  <polyline points="16 6 12 2 8 6" />
-                                  <line x1="12" y1="2" x2="12" y2="15" />
-                                </svg>
-                                <span>Bagikan</span>
-                              </button>
-
-                              {/* 4. Pilih teks */}
+                              {/* 3. Pilih teks */}
                               <button
                                 type="button"
                                 onClick={(e) => {
