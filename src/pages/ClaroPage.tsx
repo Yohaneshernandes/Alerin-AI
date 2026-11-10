@@ -4300,8 +4300,8 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat }: { child
                                 setMobileDrawerOpen(false);
                                 onOpenHistory(item.msgs);
                               }}
-                              className={`flex-1 text-left text-[15px] leading-relaxed truncate transition-colors pr-2 flex items-center gap-1.5 ${
-                                isActive ? "text-slate-900 font-semibold" : "text-neutral-800 hover:text-blue-600 font-normal"
+                              className={`flex-1 text-left text-[15px] leading-relaxed truncate transition-colors pr-2 flex items-center gap-1.5 font-normal ${
+                                isActive ? "text-slate-900" : "text-neutral-800 hover:text-blue-600"
                               }`}
                             >
                               {item.pinned && (
