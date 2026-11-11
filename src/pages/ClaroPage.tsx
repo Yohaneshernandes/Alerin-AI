@@ -15720,12 +15720,14 @@ function ProyekTab({
                       <line x1="12" y1="8" x2="12" y2="12" />
                       <line x1="12" y1="16" x2="12.01" y2="16" />
                     </svg>
-                    <p className="text-xs text-blue-950 leading-relaxed font-medium">
-                      Batas maksimal {userPlanInfo.maxFolders} proyek untuk Akun {userPlanInfo.label} sudah tercapai, sehingga tidak bisa membuat proyek baru lagi.{" "}
-                      <span className="font-normal text-blue-900/80">
+                    <div className="flex flex-col gap-1">
+                      <p className="text-xs text-blue-950 leading-relaxed font-medium">
+                        Batas maksimal {userPlanInfo.maxFolders} proyek untuk Akun {userPlanInfo.label} sudah tercapai, sehingga tidak bisa membuat proyek baru lagi.
+                      </p>
+                      <p className="text-xs leading-relaxed font-normal text-blue-900/80">
                         Upgrade paket untuk meningkatkan batas pembuatan proyek
-                      </span>
-                    </p>
+                      </p>
+                    </div>
                   </div>
                   <button
                     type="button"
