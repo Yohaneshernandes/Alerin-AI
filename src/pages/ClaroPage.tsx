@@ -15218,16 +15218,16 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
               </div>
 
               {isFolderLimitReached ? (
-                <div className="rounded-xl bg-amber-50/90 px-3.5 py-3 border border-amber-200/90 flex flex-col gap-2.5">
+                <div className="rounded-xl bg-[#EAF2FF]/90 px-3.5 py-3 border border-blue-200 flex flex-col gap-2.5">
                   <div className="flex items-start gap-2">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="text-amber-600 shrink-0 mt-0.5">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="text-[#1A73E8] shrink-0 mt-0.5">
                       <circle cx="12" cy="12" r="10" />
                       <line x1="12" y1="8" x2="12" y2="12" />
                       <line x1="12" y1="16" x2="12.01" y2="16" />
                     </svg>
-                    <p className="text-xs text-amber-900 leading-relaxed font-medium">
+                    <p className="text-xs text-blue-950 leading-relaxed font-medium">
                       Batas maksimal {userPlanInfo.maxFolders} folder proyek untuk Akun {userPlanInfo.label} sudah tercapai, sehingga tidak bisa membuat folder baru lagi.{" "}
-                      <span className="font-normal text-amber-800">
+                      <span className="font-normal text-blue-900/80">
                         Upgrade paket untuk membuat folder proyek tanpa batas.
                       </span>
                     </p>
