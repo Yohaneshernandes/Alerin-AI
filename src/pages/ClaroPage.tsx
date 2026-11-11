@@ -15014,7 +15014,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                   width: `${rect.width}px`,
                   height: `${rect.height}px`,
                 }}
-                className="bg-white rounded-[24px] px-2.5 py-3.5 flex items-center gap-3.5 shadow-xl border border-neutral-100/90 z-30 animate-[gemini-zoom-in_0.15s_ease-out]"
+                className="bg-white rounded-[24px] md:rounded-2xl px-2.5 md:px-5 py-3.5 md:py-5 flex items-center gap-3.5 shadow-xl border border-neutral-100/90 md:border-blue-200 z-30 animate-[gemini-zoom-in_0.15s_ease-out]"
                 onClick={(e) => e.stopPropagation()}
               >
                 <div
@@ -15949,11 +15949,11 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
             </div>
           </header>
 
-          {/* Project List */}
-          <div className="relative z-10 flex-1 overflow-y-auto px-4 md:px-8 pt-2 pb-28 md:pb-10" style={{ scrollbarWidth: "none" }}>
-            <div className="max-w-4xl mx-auto w-full divide-y divide-neutral-100/60 md:divide-slate-200/50">
-              {filteredProjects.length === 0 ? (
-                /* Empty State */
+          {/* Project List (Mobile: vertical divided list · Desktop: multi-column card grid ala Semua Fitur) */}
+          <div className="relative z-10 flex-1 overflow-y-auto px-4 md:px-8 pt-2 md:pt-3 pb-28 md:pb-10" style={{ scrollbarWidth: "none" }}>
+            {filteredProjects.length === 0 ? (
+              <div className="max-w-4xl mx-auto w-full">
+                {/* Empty State */}
                 <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
                   <div className="size-16 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-400 mb-3.5">
                     <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -15980,15 +15980,17 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                     <span>Buat Proyek Baru</span>
                   </button>
                 </div>
-              ) : (
-                filteredProjects.map((p) => (
+              </div>
+            ) : (
+              <div className="max-w-[1020px] mx-auto w-full divide-y divide-neutral-100/60 md:divide-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-3.5 lg:gap-4">
+                {filteredProjects.map((p) => (
                   <div
                     key={p.id}
                     onClick={() => {
                       setSelectedProject(p);
                       setSelectedProjectChat(null);
                     }}
-                    className="project-item-row w-full flex items-center gap-3.5 py-3.5 px-2 md:px-3 hover:bg-neutral-50 md:hover:bg-white/80 active:bg-neutral-100/70 transition-colors text-left group cursor-pointer rounded-2xl"
+                    className="project-item-row w-full flex items-center gap-3.5 py-3.5 px-2 hover:bg-neutral-50 active:bg-neutral-100/70 transition-all text-left group cursor-pointer rounded-2xl md:bg-white md:border md:border-[#e2e8f0] md:p-5 md:min-h-[104px] md:shadow-[0_0_20px_2px_rgba(37,99,235,0.1)] md:hover:-translate-y-0.5 md:hover:border-blue-200 md:hover:bg-white md:hover:shadow-[0_10px_26px_rgba(37,99,235,0.14)]"
                   >
                     {/* Pastel rounded square icon: shape abu-abu, line folder hitam */}
                     <div
@@ -16004,7 +16006,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                         {p.pinned && (
                           <PinIcon size={16} className="text-neutral-800 shrink-0" />
                         )}
-                        <h3 className="font-medium text-[15px] text-neutral-900 truncate">
+                        <h3 className="font-medium md:font-bold text-[15px] text-neutral-900 truncate">
                           {p.title}
                         </h3>
                         {p.members && (
@@ -16050,9 +16052,9 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                       </svg>
                     </button>
                   </div>
-                ))
-              )}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Floating Search Bar (Capsule at bottom — mobile only; di desktop pindah ke header kanan) */}
