@@ -10339,9 +10339,9 @@ function PercakapanTab({
         zIndex: 0,
       }} />
 
-      {/* Mobile Chat Vertical Scrollbar Indicator (Garis scroll abu-abu di samping kanan - otomatis hilang saat diam) */}
+      {/* Chat Vertical Scrollbar Indicator — tampil di pinggir kanan saat di-scroll (mobile & desktop) & otomatis hilang saat diam */}
       <div
-        className={`absolute top-16 bottom-3.5 right-[2.5px] w-[3px] pointer-events-none z-30 md:hidden transition-opacity duration-300 ease-out ${
+        className={`absolute top-16 bottom-3.5 right-[2.5px] w-[3px] pointer-events-none z-30 transition-opacity duration-300 ease-out ${
           scrollMetrics.show && scrollMetrics.isScrolling ? "opacity-95" : "opacity-0"
         }`}
         aria-hidden="true"
@@ -10362,7 +10362,7 @@ function PercakapanTab({
         onWheel={handleWheel}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
-        className="flex-1 overflow-y-auto relative z-10 pb-4"
+        className="flex-1 overflow-y-auto relative z-10 pb-4 [&::-webkit-scrollbar]:hidden"
         style={{ scrollbarWidth: "none" }}
       >
         <div className="max-w-5xl mx-auto px-4 md:px-6 pt-20 md:pt-[84px] pb-6">
