@@ -17332,6 +17332,20 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
     const normalizedTime = `${match[1]}.${match[2]}`;
     const targetDate = selected ?? today;
     const key = editingAgenda ? editingAgenda.key : toKey(targetDate);
+
+    const hasSameTimeOnDay = getEventsForKey(key).some((ev) => {
+      if (editingAgenda && ev.source === editingAgenda.source && ev.sourceIndex === editingAgenda.index) {
+        return false;
+      }
+      const evMatch = ev.time.match(/([01]?\d|2[0-3])\s*[.:]\s*([0-5]\d)/);
+      if (!evMatch) return false;
+      return `${evMatch[1].padStart(2, "0")}.${evMatch[2]}` === normalizedTime;
+    });
+    if (hasSameTimeOnDay) {
+      showCalNotice(`Sudah ada agenda pada pukul ${match[1]}:${match[2]} di hari yang sama`, "error");
+      return;
+    }
+
     const savedItem = {
       label: trimmed,
       time: normalizedTime,
@@ -17882,11 +17896,6 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                       </svg>
                       <span>{ev.time.replace(".", ":")} WIB</span>
                     </span>
-                    {ev.reminder && (
-                      <span className="px-2 py-0.5 rounded-full bg-white/80 text-blue-700 text-[10px] font-semibold shrink-0">
-                        {ev.reminderOffset || "Pengingat"}
-                      </span>
-                    )}
                   </div>
 
                   <div className="opacity-70 flex items-center gap-1 shrink-0">
