@@ -15230,7 +15230,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                   width: `${rect.width}px`,
                   height: `${rect.height}px`,
                 }}
-                className="bg-white rounded-2xl px-2.5 py-2 flex items-center gap-2 shadow-xl border border-neutral-100/90 z-30 animate-[gemini-zoom-in_0.15s_ease-out]"
+                className="bg-white rounded-2xl px-2.5 md:px-5 py-2 md:py-4 flex items-center gap-2 shadow-xl border border-neutral-100/90 md:border-blue-200 z-30 animate-[gemini-zoom-in_0.15s_ease-out]"
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="flex-1 min-w-0">
@@ -15238,11 +15238,11 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                     {item.pinned && (
                       <PinIcon size={16} className="text-neutral-800 shrink-0" />
                     )}
-                    <h3 className="text-[15px] font-medium text-neutral-900 truncate">
+                    <h3 className="text-[15px] font-medium md:font-bold text-neutral-900 truncate">
                       {item.title}
                     </h3>
                   </div>
-                  <p className="text-[13.5px] text-neutral-800 font-normal mt-0.5 truncate leading-relaxed">
+                  <p className="text-[13.5px] text-neutral-800 md:text-slate-500 font-normal mt-0.5 truncate leading-relaxed">
                     {item.lastSnippet?.replace(/\*\*/g, "")}
                   </p>
                 </div>
@@ -15806,9 +15806,9 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
             </div>
           </header>
 
-          {/* Obrolan List */}
-          <div className="relative z-10 flex-1 overflow-y-auto px-4 md:px-8 pt-3 pb-4" style={{ scrollbarWidth: "none" }}>
-            <div className="max-w-4xl mx-auto w-full space-y-3">
+          {/* Obrolan List (Mobile: baris teks · Desktop: kartu shape putih serasi) */}
+          <div className="relative z-10 flex-1 overflow-y-auto px-4 md:px-7 pt-3 md:pt-5 pb-4" style={{ scrollbarWidth: "none" }}>
+            <div className="max-w-4xl mx-auto w-full space-y-3 md:space-y-3.5">
             {(projectChatsMap[selectedProject.id] ?? []).length === 0 ? (
               <div className="py-20 text-center px-4">
                 <p className="text-sm font-semibold text-neutral-800 mb-1">Belum ada obrolan</p>
@@ -15835,18 +15835,18 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                         setSelectedProjectChat(chat);
                       }
                     }}
-                    className="project-chat-row w-full flex items-center justify-between gap-2 text-left px-2.5 py-2 hover:bg-neutral-50 md:hover:bg-white/80 active:bg-neutral-100/70 rounded-xl transition-colors cursor-pointer group"
+                    className="project-chat-row w-full flex items-center justify-between gap-2 text-left px-2.5 py-2 hover:bg-neutral-50 active:bg-neutral-100/70 rounded-xl md:rounded-2xl md:bg-white md:border md:border-[#e2e8f0] md:px-5 md:py-4 md:shadow-[0_0_20px_2px_rgba(37,99,235,0.08)] md:hover:-translate-y-0.5 md:hover:border-blue-200 md:hover:bg-white md:hover:shadow-[0_10px_26px_rgba(37,99,235,0.12)] transition-all cursor-pointer group"
                   >
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5">
                         {chat.pinned && (
                           <PinIcon size={16} className="text-neutral-800 shrink-0" />
                         )}
-                        <h3 className="text-[15px] font-medium text-neutral-900 group-hover:text-blue-600 transition-colors truncate">
+                        <h3 className="text-[15px] font-medium md:font-bold text-neutral-900 group-hover:text-blue-600 transition-colors truncate">
                           {chat.title}
                         </h3>
                       </div>
-                      <p className="text-[13.5px] text-neutral-800 font-normal mt-0.5 truncate leading-relaxed">
+                      <p className="text-[13.5px] text-neutral-800 md:text-slate-500 font-normal mt-0.5 truncate leading-relaxed">
                         {chat.lastSnippet?.replace(/\*\*/g, "")}
                       </p>
                     </div>
