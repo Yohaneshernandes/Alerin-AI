@@ -16978,6 +16978,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
   const [googleConnected, setGoogleConnected] = useState(false);
   const [addingAgenda, setAddingAgenda] = useState(false);
   const [slideSeq, setSlideSeq] = useState(0);
+  const [slideDirection, setSlideDirection] = useState<"forward" | "back">("forward");
   const [outgoingView, setOutgoingView] = useState<"calendar" | "add" | null>(null);
   const slideTimerRef = useRef<number | null>(null);
   const calNoticeTimerRef = useRef<number | null>(null);
@@ -17027,13 +17028,14 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
     return {};
   });
 
-  const switchDesktopView = useCallback((nextAdding: boolean) => {
+  const switchDesktopView = useCallback((nextAdding: boolean, direction: "forward" | "back" = "forward") => {
     setReminderMenuOpen(false);
     setTimePickerOpen(false);
     setDeleteAgendaConfirm(null);
     setAddingAgenda((prevAdding) => {
       if (prevAdding === nextAdding) return prevAdding;
       if (slideTimerRef.current) window.clearTimeout(slideTimerRef.current);
+      setSlideDirection(direction);
       setOutgoingView(prevAdding ? "add" : "calendar");
       setSlideSeq((s) => s + 1);
       slideTimerRef.current = window.setTimeout(() => {
@@ -17316,7 +17318,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
         <div className="flex items-start gap-3">
           <button
             type="button"
-            onClick={() => switchDesktopView(false)}
+            onClick={() => switchDesktopView(false, "back")}
             aria-label="Kembali ke kalender"
             className="size-8 mt-0.5 bg-slate-50 hover:bg-slate-100 rounded-lg outline outline-1 outline-offset-[-1px] outline-slate-200 flex items-center justify-center text-slate-500 cursor-pointer transition-colors shrink-0"
           >
@@ -17900,7 +17902,11 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
             <div
               key={`out-${slideSeq}`}
               className="pointer-events-none absolute inset-x-0 top-0 z-10 bg-white"
-              style={{ animation: "calendarSlideOutToLeft 0.34s cubic-bezier(0.22, 1, 0.36, 1) forwards" }}
+              style={{
+                animation: `${
+                  slideDirection === "back" ? "calendarSlideOutToRight" : "calendarSlideOutToLeft"
+                } 0.34s cubic-bezier(0.22, 1, 0.36, 1) forwards`,
+              }}
             >
               {outgoingView === "calendar" ? desktopCalendarPanel : desktopAddAgendaPanel}
             </div>
@@ -17911,7 +17917,11 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
             className="relative z-20 bg-white"
             style={
               slideSeq > 0
-                ? { animation: "calendarSlideInFromRight 0.34s cubic-bezier(0.22, 1, 0.36, 1) both" }
+                ? {
+                    animation: `${
+                      slideDirection === "back" ? "calendarSlideInFromLeft" : "calendarSlideInFromRight"
+                    } 0.34s cubic-bezier(0.22, 1, 0.36, 1) both`,
+                  }
                 : undefined
             }
           >
