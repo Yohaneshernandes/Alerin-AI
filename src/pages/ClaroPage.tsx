@@ -16982,6 +16982,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
   const slideTimerRef = useRef<number | null>(null);
   const titleInputRef = useRef<HTMLInputElement | null>(null);
   const reminderBtnRef = useRef<HTMLButtonElement | null>(null);
+  const timeFieldRef = useRef<HTMLDivElement | null>(null);
   const [agendaTitle, setAgendaTitle] = useState("");
   const [agendaTime, setAgendaTime] = useState("");
   const [agendaNotes, setAgendaNotes] = useState("");
@@ -16989,6 +16990,10 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
   const [agendaReminderOffset, setAgendaReminderOffset] = useState("30 menit sebelumnya");
   const [reminderMenuOpen, setReminderMenuOpen] = useState(false);
   const [reminderMenuPos, setReminderMenuPos] = useState<{ bottom: number; right: number; width: number } | null>(null);
+  const [timePickerOpen, setTimePickerOpen] = useState(false);
+  const [timePickerPos, setTimePickerPos] = useState<{ top: number; left: number } | null>(null);
+  const [pickerHour, setPickerHour] = useState(10);
+  const [pickerMinute, setPickerMinute] = useState(0);
   const [customEvents, setCustomEvents] = useState<Record<string, { label: string; time: string; color: string; notes?: string; reminder?: boolean; reminderOffset?: string }[]>>(() => {
     try {
       const saved = localStorage.getItem("alerin_calendar_events");
@@ -16999,6 +17004,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
 
   const switchDesktopView = useCallback((nextAdding: boolean) => {
     setReminderMenuOpen(false);
+    setTimePickerOpen(false);
     setAddingAgenda((prevAdding) => {
       if (prevAdding === nextAdding) return prevAdding;
       if (slideTimerRef.current) window.clearTimeout(slideTimerRef.current);
@@ -17029,14 +17035,15 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        if (reminderMenuOpen) setReminderMenuOpen(false);
+        if (timePickerOpen) setTimePickerOpen(false);
+        else if (reminderMenuOpen) setReminderMenuOpen(false);
         else if (addingAgenda) switchDesktopView(false);
         else onClose();
       }
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [addingAgenda, reminderMenuOpen, switchDesktopView, onClose]);
+  }, [addingAgenda, reminderMenuOpen, timePickerOpen, switchDesktopView, onClose]);
 
   const year = cursor.getFullYear();
   const month = cursor.getMonth();
@@ -17096,6 +17103,8 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
       return;
     }
     if (digits.length <= 2) {
+      const parsedH = parseInt(digits, 10);
+      if (!Number.isNaN(parsedH)) setPickerHour(Math.min(23, parsedH));
       if (/[.:]$/.test(raw) && raw.length >= agendaTime.length) {
         setAgendaTime(`${digits.padStart(2, "0")} . `);
       } else {
@@ -17103,7 +17112,41 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
       }
       return;
     }
-    setAgendaTime(`${digits.slice(0, 2)} . ${digits.slice(2, 4)}`);
+    const hhStr = digits.slice(0, 2);
+    const mmStr = digits.slice(2, 4);
+    const parsedH = parseInt(hhStr, 10);
+    const parsedM = parseInt(mmStr.padEnd(2, "0"), 10);
+    if (!Number.isNaN(parsedH)) setPickerHour(Math.min(23, parsedH));
+    if (!Number.isNaN(parsedM)) setPickerMinute(Math.min(59, parsedM));
+    setAgendaTime(`${hhStr} . ${mmStr}`);
+  };
+
+  const openTimePicker = () => {
+    setReminderMenuOpen(false);
+    const parsed = agendaTime.trim().match(/^([01]?\d|2[0-3])(?:\s*[.:]\s*([0-5]\d))?$/);
+    if (parsed) {
+      setPickerHour(parseInt(parsed[1], 10));
+      setPickerMinute(parsed[2] ? parseInt(parsed[2], 10) : 0);
+    } else {
+      setPickerHour(10);
+      setPickerMinute(0);
+    }
+    const rect = timeFieldRef.current?.getBoundingClientRect();
+    if (rect) {
+      setTimePickerPos({
+        top: Math.min(rect.bottom + 6, Math.max(12, window.innerHeight - 280)),
+        left: rect.left,
+      });
+    }
+    setTimePickerOpen(true);
+  };
+
+  const applyPickerTime = (nextHour: number, nextMinute: number) => {
+    const wrappedH = ((nextHour % 24) + 24) % 24;
+    const wrappedM = ((nextMinute % 60) + 60) % 60;
+    setPickerHour(wrappedH);
+    setPickerMinute(wrappedM);
+    setAgendaTime(`${String(wrappedH).padStart(2, "0")} . ${String(wrappedM).padStart(2, "0")}`);
   };
 
   const openAddAgendaModal = () => {
@@ -17113,6 +17156,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
     setAgendaReminder(false);
     setAgendaReminderOffset("30 menit sebelumnya");
     setReminderMenuOpen(false);
+    setTimePickerOpen(false);
     switchDesktopView(true);
   };
 
@@ -17201,7 +17245,10 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
 
       {/* Form Body */}
       <div
-        onScroll={() => reminderMenuOpen && setReminderMenuOpen(false)}
+        onScroll={() => {
+          if (reminderMenuOpen) setReminderMenuOpen(false);
+          if (timePickerOpen) setTimePickerOpen(false);
+        }}
         className="px-6 py-4 bg-slate-50 flex flex-col gap-3.5 overflow-y-auto"
       >
         {/* Judul Agenda */}
@@ -17265,12 +17312,19 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
               <span className="text-slate-900">Waktu Kegiatan</span>
               <span className="text-rose-500">*</span>
             </label>
-            <div className="relative flex items-center bg-white rounded-xl outline outline-1 outline-offset-[-1px] outline-slate-200 focus-within:outline-[#1A73E8] transition-colors">
+            <div
+              ref={timeFieldRef}
+              onClick={openTimePicker}
+              className={`relative flex items-center bg-white rounded-xl outline outline-1 outline-offset-[-1px] transition-colors cursor-pointer ${
+                timePickerOpen ? "outline-[#1A73E8] ring-2 ring-[#1A73E8]/15" : "outline-slate-200 focus-within:outline-[#1A73E8]"
+              }`}
+            >
               <input
                 type="text"
                 inputMode="numeric"
                 maxLength={7}
                 value={agendaTime}
+                onFocus={openTimePicker}
                 onKeyDown={(e) => {
                   const allowedKeys = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab", "Home", "End", "Enter"];
                   if (allowedKeys.includes(e.key) || e.ctrlKey || e.metaKey) return;
@@ -17280,9 +17334,18 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                 }}
                 onChange={(e) => handleAgendaTimeChange(e.target.value)}
                 placeholder="-- . --"
-                className="w-full pl-3.5 pr-9 py-2.5 bg-transparent text-slate-900 text-sm font-medium placeholder:text-slate-400 leading-5 outline-none"
+                className="w-full pl-3.5 pr-9 py-2.5 bg-transparent text-slate-900 text-sm font-medium placeholder:text-slate-400 leading-5 outline-none cursor-pointer"
               />
-              <div className="absolute right-1.5 size-8 flex items-center justify-center text-slate-400 hover:text-slate-600">
+              <button
+                type="button"
+                aria-label="Pilih jam kegiatan"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (timePickerOpen) setTimePickerOpen(false);
+                  else openTimePicker();
+                }}
+                className="absolute right-1.5 size-8 flex items-center justify-center text-slate-400 hover:text-slate-600 cursor-pointer rounded-lg"
+              >
                 <svg
                   width="15"
                   height="15"
@@ -17292,26 +17355,11 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                   strokeWidth="1.9"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  className="pointer-events-none"
                 >
                   <circle cx="12" cy="12" r="10" />
                   <polyline points="12 6 12 12 16 14" />
                 </svg>
-                <input
-                  type="time"
-                  aria-label="Pilih jam kegiatan"
-                  onClick={(e) => {
-                    try { (e.currentTarget as HTMLInputElement).showPicker?.(); } catch {}
-                  }}
-                  onChange={(e) => {
-                    if (e.target.value) {
-                      const [hh, mm] = e.target.value.split(":");
-                      if (hh && mm) setAgendaTime(`${hh} . ${mm}`);
-                    }
-                  }}
-                  className="opacity-0 absolute inset-0 w-full h-full cursor-pointer"
-                />
-              </div>
+              </button>
             </div>
           </div>
         </div>
@@ -17696,6 +17744,97 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
             {addingAgenda ? desktopAddAgendaPanel : desktopCalendarPanel}
           </div>
         </div>
+
+        {timePickerOpen && timePickerPos && typeof document !== "undefined" && createPortal(
+          <>
+            <div
+              className="fixed inset-0 z-[255]"
+              onClick={(e) => {
+                e.stopPropagation();
+                setTimePickerOpen(false);
+              }}
+            />
+            <div
+              style={{
+                position: "fixed",
+                top: `${timePickerPos.top}px`,
+                left: `${timePickerPos.left}px`,
+              }}
+              onClick={(e) => e.stopPropagation()}
+              className="z-[260] bg-white rounded-2xl border border-slate-200/90 shadow-[0_14px_38px_rgba(15,23,42,0.14),0_4px_12px_rgba(15,23,42,0.06)] px-3 py-2.5 flex items-center gap-1 font-['Plus_Jakarta_Sans'] select-none animate-[gemini-fade-in_0.12s_ease-out]"
+            >
+              {[
+                {
+                  key: "hour",
+                  value: pickerHour,
+                  mod: 24,
+                  onPick: (nextVal: number) => applyPickerTime(nextVal, pickerMinute),
+                },
+                {
+                  key: "minute",
+                  value: pickerMinute,
+                  mod: 60,
+                  onPick: (nextVal: number) => applyPickerTime(pickerHour, nextVal),
+                },
+              ].map((col, colIdx) => (
+                <React.Fragment key={col.key}>
+                  {colIdx === 1 && (
+                    <span className="text-slate-900 font-bold text-sm leading-none px-0.5 self-center">.</span>
+                  )}
+                  <div
+                    onWheel={(e) => {
+                      e.preventDefault();
+                      col.onPick(col.value + (e.deltaY > 0 ? 1 : -1));
+                    }}
+                    className="flex flex-col items-center gap-0.5"
+                  >
+                    <button
+                      type="button"
+                      aria-label={`Kurangi ${col.key}`}
+                      onClick={() => col.onPick(col.value - 1)}
+                      className="w-10 h-6 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 flex items-center justify-center cursor-pointer transition-colors"
+                    >
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M18 15l-6-6-6 6" />
+                      </svg>
+                    </button>
+
+                    {[-3, -2, -1, 0, 1, 2, 3].map((offset) => {
+                      const val = (col.value + offset + col.mod) % col.mod;
+                      const isCenter = offset === 0;
+                      return (
+                        <button
+                          key={offset}
+                          type="button"
+                          onClick={() => col.onPick(val)}
+                          className={`w-10 rounded-lg text-xs flex items-center justify-center cursor-pointer transition-colors ${
+                            isCenter
+                              ? "h-7 bg-blue-600 text-white font-bold shadow-xs"
+                              : "h-6 text-slate-600 hover:bg-slate-100 hover:text-slate-900 font-medium"
+                          }`}
+                        >
+                          {String(val).padStart(2, "0")}
+                        </button>
+                      );
+                    })}
+
+                    <button
+                      type="button"
+                      aria-label={`Tambah ${col.key}`}
+                      onClick={() => col.onPick(col.value + 1)}
+                      className="w-10 h-6 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 flex items-center justify-center cursor-pointer transition-colors"
+                    >
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M6 9l6 6 6-6" />
+                      </svg>
+                    </button>
+                  </div>
+                </React.Fragment>
+              ))}
+            </div>
+          </>,
+          document.body
+        )}
 
         {agendaReminder && reminderMenuOpen && reminderMenuPos && typeof document !== "undefined" && createPortal(
           <>
