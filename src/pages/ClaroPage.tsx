@@ -16686,8 +16686,8 @@ function ProyekTab({
             backgroundSize: "24px 24px",
             zIndex: 0,
           }} />
-          {/* Header Detail Proyek: Mobile terpusat · Desktop rata kiri-kanan penuh seperti ChatGPT */}
-          <header className="shrink-0 bg-white md:bg-white/80 md:backdrop-blur-md relative z-20 border-b border-neutral-200 md:border-slate-200">
+          {/* Header Detail Proyek: Mobile tanpa garis pembatas · Desktop dengan garis pembatas rata kiri-kanan */}
+          <header className="shrink-0 bg-white md:bg-white/80 md:backdrop-blur-md relative z-20 border-b-0 md:border-b md:border-slate-200">
             <div className="w-full flex items-center justify-between md:justify-start md:gap-3 px-4 md:px-6 pt-3 pb-3">
             <button
               type="button"
