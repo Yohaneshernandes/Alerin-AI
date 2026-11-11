@@ -14625,6 +14625,38 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
       return 0;
     });
 
+  const renderProjectSearchBox = (containerClass: string) => (
+    <div className={containerClass}>
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-neutral-400 shrink-0">
+        <circle cx="11" cy="11" r="8" />
+        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+      </svg>
+      <input
+        type="text"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(capitalizeWords(e.target.value))}
+        autoCapitalize="sentences"
+        autoCorrect="on"
+        spellCheck={false}
+        placeholder="Cari proyek"
+        className="flex-1 min-w-0 bg-transparent text-sm text-neutral-900 placeholder:text-neutral-400 outline-none"
+      />
+      {searchQuery && (
+        <button
+          type="button"
+          onClick={() => setSearchQuery("")}
+          className="size-5 rounded-full text-neutral-400 hover:text-neutral-600 flex items-center justify-center cursor-pointer shrink-0"
+          aria-label="Hapus pencarian"
+        >
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      )}
+    </div>
+  );
+
   return (
     <div className="flex-1 flex flex-col h-full bg-white relative overflow-hidden select-none">
       {toast && <Toast msg={toast} onDone={() => setToast(null)} />}
@@ -15896,23 +15928,29 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                 <span className="hidden md:inline">Proyek Saya</span>
               </h1>
 
-              <button
-                type="button"
-                onClick={() => setNewProjectOpen(true)}
-                aria-label="Buat proyek baru"
-                title="Buat proyek baru"
-                className="size-11 rounded-full border border-neutral-200/90 bg-white flex items-center justify-center text-neutral-900 hover:bg-neutral-50 active:scale-95 transition-all shadow-2xs cursor-pointer"
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="12" y1="5" x2="12" y2="19" />
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
-              </button>
+              <div className="flex items-center gap-2.5 md:gap-3">
+                {/* Search input desktop: tepat di kiri tombol tambah '+' */}
+                {renderProjectSearchBox(
+                  "hidden md:flex h-11 w-64 lg:w-72 rounded-full border border-neutral-200/90 bg-white/95 backdrop-blur-md px-4 items-center gap-2.5 shadow-2xs focus-within:border-blue-300 focus-within:ring-3 focus-within:ring-blue-100/60 transition-all"
+                )}
+                <button
+                  type="button"
+                  onClick={() => setNewProjectOpen(true)}
+                  aria-label="Buat proyek baru"
+                  title="Buat proyek baru"
+                  className="size-11 rounded-full border border-neutral-200/90 bg-white flex items-center justify-center text-neutral-900 hover:bg-neutral-50 active:scale-95 transition-all shadow-2xs cursor-pointer shrink-0"
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                  </svg>
+                </button>
+              </div>
             </div>
           </header>
 
-          {/* Project List (scrolls smoothly behind floating search bar) */}
-          <div className="relative z-10 flex-1 overflow-y-auto px-4 md:px-8 pt-2 pb-28" style={{ scrollbarWidth: "none" }}>
+          {/* Project List */}
+          <div className="relative z-10 flex-1 overflow-y-auto px-4 md:px-8 pt-2 pb-28 md:pb-10" style={{ scrollbarWidth: "none" }}>
             <div className="max-w-4xl mx-auto w-full divide-y divide-neutral-100/60 md:divide-slate-200/50">
               {filteredProjects.length === 0 ? (
                 /* Empty State */
@@ -16017,37 +16055,11 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
             </div>
           </div>
 
-          {/* Floating Search Bar (Capsule at bottom — mobile & desktop) */}
-          <div className="fixed md:absolute bottom-5 inset-x-4 md:inset-x-8 z-30 flex justify-center pointer-events-none">
-            <div className="pointer-events-auto w-full max-w-md md:max-w-lg rounded-full border border-neutral-200/90 bg-white/95 backdrop-blur-md px-4 py-3 flex items-center gap-3 shadow-xs md:shadow-[0_8px_30px_rgba(0,0,0,0.06)]">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-neutral-400 shrink-0">
-                <circle cx="11" cy="11" r="8" />
-                <line x1="21" y1="21" x2="16.65" y2="16.65" />
-              </svg>
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(capitalizeWords(e.target.value))}
-                autoCapitalize="sentences"
-                autoCorrect="on"
-                spellCheck={false}
-                placeholder="Cari proyek"
-                className="flex-1 bg-transparent text-sm text-neutral-900 placeholder:text-neutral-400 outline-none"
-              />
-              {searchQuery && (
-                <button
-                  type="button"
-                  onClick={() => setSearchQuery("")}
-                  className="size-5 rounded-full text-neutral-400 hover:text-neutral-600 flex items-center justify-center cursor-pointer"
-                  aria-label="Hapus pencarian"
-                >
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <line x1="18" y1="6" x2="6" y2="18" />
-                    <line x1="6" y1="6" x2="18" y2="18" />
-                  </svg>
-                </button>
-              )}
-            </div>
+          {/* Floating Search Bar (Capsule at bottom — mobile only; di desktop pindah ke header kanan) */}
+          <div className="md:hidden fixed bottom-5 inset-x-4 z-30 flex justify-center pointer-events-none">
+            {renderProjectSearchBox(
+              "pointer-events-auto w-full max-w-md rounded-full border border-neutral-200/90 bg-white/95 backdrop-blur-md px-4 py-3 flex items-center gap-3 shadow-xs"
+            )}
           </div>
         </div>
       )}
