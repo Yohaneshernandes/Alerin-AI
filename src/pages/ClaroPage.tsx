@@ -15248,7 +15248,8 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
       {selectedProject && selectedProjectChat ? (
         <div className="flex-1 flex flex-col h-full overflow-hidden bg-white">
           {/* Header Gambar 3: [<]  🎓 [Judul Proyek]  [...] */}
-          <header className="shrink-0 flex items-center justify-between px-4 pt-3 pb-2.5 bg-white z-20 border-b border-neutral-100">
+          <header className="shrink-0 bg-white z-20 border-b border-neutral-100">
+            <div className="max-w-4xl mx-auto w-full flex items-center justify-between px-4 md:px-8 pt-3 pb-2.5">
             <button
               type="button"
               onClick={() => {
@@ -15320,10 +15321,12 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                 </>
               )}
             </div>
+            </div>
           </header>
 
           {/* Area Pesan Obrolan (Gambar 3 style) */}
-          <div className="flex-1 overflow-y-auto px-4 py-4 space-y-6" style={{ scrollbarWidth: "none" }}>
+          <div className="flex-1 overflow-y-auto px-4 md:px-8 py-4" style={{ scrollbarWidth: "none" }}>
+            <div className="max-w-4xl mx-auto w-full space-y-6">
             {(() => {
               const lastProjUserIdx = selectedProjectChat.msgs
                 .map((msg, i) => (msg.role === "user" ? i : -1))
@@ -15654,10 +15657,12 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
               </div>
             )}
             <div ref={chatEndRef} />
+            </div>
           </div>
 
           {/* Bottom Chat Input matching Gambar 2 / Alerin Chat */}
           <div className="shrink-0 bg-white z-20">
+            <div className="max-w-4xl mx-auto w-full">
             <ChatInputBox
               input={chatInputText}
               setInput={setChatInputText}
@@ -15671,6 +15676,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
               loading={isGenerating}
               onStop={handleProjStop}
             />
+            </div>
           </div>
         </div>
       ) : selectedProject ? (
@@ -15679,7 +15685,8 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
            ═══════════════════════════════════════════════════════════════════════ */
         <div className="flex-1 flex flex-col h-full overflow-hidden bg-white">
           {/* Header Gambar 2: [<]  🎓 [Judul Proyek]  [...] */}
-          <header className="shrink-0 flex items-center justify-between px-4 pt-3 pb-2.5 bg-white z-20 border-b border-neutral-100">
+          <header className="shrink-0 bg-white z-20 border-b border-neutral-100">
+            <div className="max-w-4xl mx-auto w-full flex items-center justify-between px-4 md:px-8 pt-3 pb-2.5">
             <button
               type="button"
               onClick={() => {
@@ -15752,10 +15759,12 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                 </>
               )}
             </div>
+            </div>
           </header>
 
           {/* Obrolan List */}
-          <div className="flex-1 overflow-y-auto px-4 pt-3 pb-4 space-y-3" style={{ scrollbarWidth: "none" }}>
+          <div className="flex-1 overflow-y-auto px-4 md:px-8 pt-3 pb-4" style={{ scrollbarWidth: "none" }}>
+            <div className="max-w-4xl mx-auto w-full space-y-3">
             {(projectChatsMap[selectedProject.id] ?? []).length === 0 ? (
               <div className="py-20 text-center px-4">
                 <p className="text-sm font-semibold text-neutral-800 mb-1">Belum ada obrolan</p>
@@ -15826,10 +15835,12 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                   </div>
                 ))
             )}
+            </div>
           </div>
 
           {/* Bottom Chat Input matching Gambar 2 / Alerin Chat */}
           <div className="shrink-0 bg-white z-20">
+            <div className="max-w-4xl mx-auto w-full">
             <ChatInputBox
               input={newChatQuickText}
               setInput={setNewChatQuickText}
@@ -15841,35 +15852,37 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
               setActiveCategory={() => {}}
               hideTopSuggestions
             />
+            </div>
           </div>
         </div>
       ) : (
         /* ═══════════════════════════════════════════════════════════════════════
-            SCREEN 1: GAMBAR 1 — DAFTAR PROYEK (Halaman Utama Proyek)
+            SCREEN 1: DAFTAR PROYEK — Tampilan mobile terpadu & adaptif untuk desktop
            ═══════════════════════════════════════════════════════════════════════ */
-        <>
-          {/* Mobile View */}
-          <div className="md:hidden flex-1 flex flex-col h-full overflow-hidden bg-white">
-            {/* Header: Tombol hamburger kiri, judul 'Proyek' tengah, tombol '+' kanan */}
-            <header className="shrink-0 flex items-center justify-between px-4 pt-3 pb-2 bg-white z-20">
+        <div className="relative flex-1 flex flex-col h-full overflow-hidden bg-white">
+          {/* Header: Mobile [hamburger | Proyek | +] · Desktop [Proyek Saya | +] */}
+          <header className="shrink-0 bg-white z-20">
+            <div className="max-w-4xl mx-auto w-full flex items-center justify-between px-4 md:px-8 pt-3 md:pt-7 pb-2 md:pb-4">
               <button
                 type="button"
                 onClick={openDrawer}
                 aria-label="Menu navigasi"
-                className="size-11 rounded-full border border-neutral-200/90 bg-white flex flex-col items-center justify-center gap-1.5 hover:bg-neutral-50 active:scale-95 transition-all shadow-2xs cursor-pointer"
+                className="md:hidden size-11 rounded-full border border-neutral-200/90 bg-white flex flex-col items-center justify-center gap-1.5 hover:bg-neutral-50 active:scale-95 transition-all shadow-2xs cursor-pointer"
               >
                 <span className="w-4.5 h-[2px] bg-neutral-900 rounded-full" />
                 <span className="w-4.5 h-[2px] bg-neutral-900 rounded-full" />
               </button>
 
-              <h1 className="text-[17px] font-bold text-neutral-900 tracking-tight">
-                Proyek
+              <h1 className="text-[17px] md:text-[22px] font-bold text-neutral-900 tracking-tight">
+                <span className="md:hidden">Proyek</span>
+                <span className="hidden md:inline">Proyek Saya</span>
               </h1>
 
               <button
                 type="button"
                 onClick={() => setNewProjectOpen(true)}
                 aria-label="Buat proyek baru"
+                title="Buat proyek baru"
                 className="size-11 rounded-full border border-neutral-200/90 bg-white flex items-center justify-center text-neutral-900 hover:bg-neutral-50 active:scale-95 transition-all shadow-2xs cursor-pointer"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -15877,10 +15890,12 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                   <line x1="5" y1="12" x2="19" y2="12" />
                 </svg>
               </button>
-            </header>
+            </div>
+          </header>
 
-            {/* Project List (scrolls smoothly behind floating search bar) */}
-            <div className="flex-1 overflow-y-auto px-4 pt-2 pb-28 divide-y divide-neutral-100/60" style={{ scrollbarWidth: "none" }}>
+          {/* Project List (scrolls smoothly behind floating search bar) */}
+          <div className="flex-1 overflow-y-auto px-4 md:px-8 pt-2 pb-28" style={{ scrollbarWidth: "none" }}>
+            <div className="max-w-4xl mx-auto w-full divide-y divide-neutral-100/60">
               {filteredProjects.length === 0 ? (
                 /* Empty State */
                 <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
@@ -15917,7 +15932,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                       setSelectedProject(p);
                       setSelectedProjectChat(null);
                     }}
-                    className="project-item-row w-full flex items-center gap-3.5 py-3.5 px-2 hover:bg-neutral-50 active:bg-neutral-100/70 transition-colors text-left group cursor-pointer rounded-2xl"
+                    className="project-item-row w-full flex items-center gap-3.5 py-3.5 px-2 md:px-3 hover:bg-neutral-50 active:bg-neutral-100/70 transition-colors text-left group cursor-pointer rounded-2xl"
                   >
                     {/* Pastel rounded square icon: shape abu-abu, line folder hitam */}
                     <div
@@ -15982,128 +15997,41 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                 ))
               )}
             </div>
-
-            {/* Floating Search Bar (Capsule at bottom) */}
-            <div className="fixed bottom-5 left-4 right-4 z-30 max-w-md mx-auto pointer-events-auto">
-              <div className="rounded-full border border-neutral-200/90 bg-white/95 backdrop-blur-md px-4 py-3 flex items-center gap-3 shadow-xs">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-neutral-400 shrink-0">
-                  <circle cx="11" cy="11" r="8" />
-                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                </svg>
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(capitalizeWords(e.target.value))}
-                  autoCapitalize="sentences"
-                  autoCorrect="on"
-                  spellCheck={false}
-                  placeholder="Cari proyek"
-                  className="flex-1 bg-transparent text-sm text-neutral-900 placeholder:text-neutral-400 outline-none"
-                />
-                {searchQuery && (
-                  <button
-                    type="button"
-                    onClick={() => setSearchQuery("")}
-                    className="size-5 rounded-full text-neutral-400 hover:text-neutral-600 flex items-center justify-center cursor-pointer"
-                    aria-label="Hapus pencarian"
-                  >
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                      <line x1="18" y1="6" x2="6" y2="18" />
-                      <line x1="6" y1="6" x2="18" y2="18" />
-                    </svg>
-                  </button>
-                )}
-              </div>
-            </div>
           </div>
 
-          {/* ── Desktop View (kept for screens >= md) ── */}
-          <div className="hidden md:flex flex-1 flex-col overflow-hidden">
-            <div className="flex-1 overflow-y-auto px-6 lg:px-8 py-6">
-              <div className="flex items-start justify-between mb-6">
-                <div>
-                  <h2 className="font-display font-800 text-2xl text-slate-900 mb-1">Proyek Saya</h2>
-                  <p className="text-slate-500 text-sm">Simpan percakapan penting dan lanjutkan tanpa mengulang konteks.</p>
-                </div>
+          {/* Floating Search Bar (Capsule at bottom — mobile & desktop) */}
+          <div className="fixed md:absolute bottom-5 inset-x-4 md:inset-x-8 z-30 flex justify-center pointer-events-none">
+            <div className="pointer-events-auto w-full max-w-md md:max-w-lg rounded-full border border-neutral-200/90 bg-white/95 backdrop-blur-md px-4 py-3 flex items-center gap-3 shadow-xs md:shadow-[0_8px_30px_rgba(0,0,0,0.06)]">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-neutral-400 shrink-0">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(capitalizeWords(e.target.value))}
+                autoCapitalize="sentences"
+                autoCorrect="on"
+                spellCheck={false}
+                placeholder="Cari proyek"
+                className="flex-1 bg-transparent text-sm text-neutral-900 placeholder:text-neutral-400 outline-none"
+              />
+              {searchQuery && (
                 <button
                   type="button"
-                  onClick={() => setNewProjectOpen(true)}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90 shadow-sm cursor-pointer"
-                  style={{ background: "linear-gradient(135deg,#3b82f6,#6366f1)" }}
+                  onClick={() => setSearchQuery("")}
+                  className="size-5 rounded-full text-neutral-400 hover:text-neutral-600 flex items-center justify-center cursor-pointer"
+                  aria-label="Hapus pencarian"
                 >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                  <span>Proyek baru</span>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
                 </button>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {filteredProjects.map((p) => (
-                  <button
-                    key={p.id}
-                    type="button"
-                    onClick={() => {
-                      setSelectedProject(p);
-                      setSelectedProjectChat(null);
-                    }}
-                    className="rounded-2xl bg-white border border-slate-100 p-5 hover:border-blue-200 hover:shadow-md transition-all text-left group cursor-pointer"
-                    style={{ boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}
-                  >
-                    <div className="flex items-start justify-between mb-4">
-                      <div
-                        className="size-10 rounded-xl flex items-center justify-center bg-[#F2F4F7] text-neutral-900"
-                        style={{ backgroundColor: "#F2F4F7", color: "#111827" }}
-                      >
-                        <ProjectIcon type="folder" />
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        {p.pinned && (
-                          <PinIcon size={16} className="text-neutral-800 shrink-0" />
-                        )}
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600">Aktif</span>
-                        <div
-                          role="button"
-                          tabIndex={0}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            const btn = e.currentTarget;
-                            const btnRect = btn.getBoundingClientRect();
-                            const popupWidth = 275;
-                            const left = Math.max(16, Math.min(btnRect.right - popupWidth, window.innerWidth - popupWidth - 16));
-                            setActiveProjectMenu({
-                              item: p,
-                              rect: {
-                                top: btnRect.bottom + 6,
-                                left: left,
-                                width: popupWidth,
-                                height: 0,
-                              },
-                            });
-                          }}
-                          aria-label={`Menu proyek ${p.title}`}
-                          className="size-7 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
-                        >
-                          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-                            <circle cx="5" cy="12" r="2" />
-                            <circle cx="12" cy="12" r="2" />
-                            <circle cx="19" cy="12" r="2" />
-                          </svg>
-                        </div>
-                      </div>
-                    </div>
-                    <h3 className="font-display font-700 text-base text-slate-800 mb-1 group-hover:text-blue-600 transition-colors">{p.title}</h3>
-                    <p className="text-xs text-slate-500 mb-4">{p.time}{p.members ? ` · ${p.members} anggota` : ""}</p>
-                    {p.msgs && p.msgs.length > 0 && (
-                      <p className="text-[11px] text-slate-500 truncate mb-3 italic">"{p.msgs[p.msgs.length - 1].text.slice(0, 60)}…"</p>
-                    )}
-                    <div className="flex items-center gap-1.5 text-xs font-semibold text-blue-600 group-hover:text-blue-700 transition-colors">
-                      Buka obrolan & sumber <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                    </div>
-                  </button>
-                ))}
-              </div>
+              )}
             </div>
           </div>
-        </>
+        </div>
       )}
     </div>
   );
