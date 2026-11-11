@@ -16963,154 +16963,478 @@ const CAL_EVENTS: Record<string, { label: string; time: string; color: string }[
 };
 
 function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m: string) => void }) {
-  const today = new Date(2026, 7, 31); // Aug 31 2026
-  const [cursor, setCursor] = useState(new Date(today.getFullYear(), today.getMonth(), 1));
-  const [selected, setSelected] = useState<Date | null>(null);
+  const today = useMemo(() => new Date(), []);
+  const [cursor, setCursor] = useState(() => new Date(today.getFullYear(), today.getMonth(), 1));
+  const [selected, setSelected] = useState<Date | null>(() => new Date(today.getFullYear(), today.getMonth(), today.getDate()));
+  const [googleConnected, setGoogleConnected] = useState(false);
+  const [addingAgenda, setAddingAgenda] = useState(false);
+  const [agendaTitle, setAgendaTitle] = useState("");
+  const [agendaTime, setAgendaTime] = useState("10.00");
+  const [customEvents, setCustomEvents] = useState<Record<string, { label: string; time: string; color: string }[]>>(() => {
+    try {
+      const saved = localStorage.getItem("alerin_calendar_events");
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return {};
+  });
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [onClose]);
 
   const year = cursor.getFullYear();
   const month = cursor.getMonth();
   const monthNames = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
   const dayNames = ["Min","Sen","Sel","Rab","Kam","Jum","Sab"];
+  const desktopDayNames = ["MIN","SEN","SEL","RAB","KAM","JUM","SAB"];
 
   const firstDay = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const prevMonthDays = new Date(year, month, 0).getDate();
   const cells: (number | null)[] = [...Array(firstDay).fill(null), ...Array.from({ length: daysInMonth }, (_, i) => i + 1)];
   while (cells.length % 7 !== 0) cells.push(null);
 
+  const leadingDesktopCells = Array.from({ length: firstDay }, (_, i) => ({
+    day: prevMonthDays - firstDay + 1 + i,
+    offset: -1 as const,
+  }));
+  const currentDesktopCells = Array.from({ length: daysInMonth }, (_, i) => ({
+    day: i + 1,
+    offset: 0 as const,
+  }));
+  const desktopTotalBeforeTrail = leadingDesktopCells.length + currentDesktopCells.length;
+  const trailingCount = (7 - (desktopTotalBeforeTrail % 7)) % 7;
+  const trailingDesktopCells = Array.from({ length: trailingCount }, (_, i) => ({
+    day: i + 1,
+    offset: 1 as const,
+  }));
+  const desktopCells = [...leadingDesktopCells, ...currentDesktopCells, ...trailingDesktopCells];
+
   const toKey = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+  const getEventsForKey = (key: string) => [...(CAL_EVENTS[key] ?? []), ...(customEvents[key] ?? [])];
   const isToday = (d: number) => d === today.getDate() && month === today.getMonth() && year === today.getFullYear();
   const isSelected = (d: number) => selected?.getDate() === d && selected?.getMonth() === month && selected?.getFullYear() === year;
   const cellKey = (d: number) => toKey(new Date(year, month, d));
   const selectedKey = selected ? toKey(selected) : null;
-  const selectedEvents = selectedKey ? (CAL_EVENTS[selectedKey] ?? []) : [];
+  const selectedEvents = selectedKey ? getEventsForKey(selectedKey) : [];
+
+  const handleSaveAgenda = () => {
+    const trimmed = agendaTitle.trim();
+    if (!trimmed) return;
+    const targetDate = selected ?? today;
+    const key = toKey(targetDate);
+    const nextMap = {
+      ...customEvents,
+      [key]: [...(customEvents[key] ?? []), { label: trimmed, time: agendaTime.trim() || "10.00", color: "#2563eb" }],
+    };
+    setCustomEvents(nextMap);
+    try { localStorage.setItem("alerin_calendar_events", JSON.stringify(nextMap)); } catch {}
+    setAgendaTitle("");
+    setAddingAgenda(false);
+    onToast(`Agenda "${trimmed}" ditambahkan!`);
+  };
 
   return (
-    <div className="fixed inset-0 z-[150] flex items-start justify-center overflow-y-auto py-8 px-4"
-      style={{ background: "rgba(0,0,0,0.4)", backdropFilter: "blur(4px)" }}
-      onClick={onClose}>
-      <div className="w-full max-w-xl mx-auto"
-        onClick={e => e.stopPropagation()}>
-
-        {/* Calendar card */}
-        <div className="bg-white rounded-3xl overflow-hidden" style={{ boxShadow: "0 24px 80px rgba(0,0,0,0.18)" }}>
-          {/* Header */}
-          <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-slate-100">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    <div
+      className="fixed inset-0 z-[200] overflow-y-auto bg-slate-950/45 backdrop-blur-xs animate-[gemini-fade-in_0.15s_ease-out]"
+      onClick={onClose}
+    >
+      {/* ── DESKTOP POPUP (desain Alerin Kalender 660px) ── */}
+      <div className="hidden md:flex min-h-full items-center justify-center p-4">
+        <div
+          className="w-[660px] max-w-[660px] max-h-[90vh] overflow-y-auto p-6 bg-white rounded-3xl shadow-[0px_24px_50px_-12px_rgba(19,27,46,0.22)] flex flex-col gap-3.5 font-['Plus_Jakarta_Sans']"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Top Header */}
+          <div className="flex items-start justify-between pb-1 gap-3">
+            <div className="flex flex-col items-start">
+              <div className="flex items-center gap-2">
+                <div className="size-7 bg-blue-100 rounded-lg flex items-center justify-center shrink-0 text-blue-600">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" />
+                    <line x1="16" y1="2" x2="16" y2="6" />
+                    <line x1="8" y1="2" x2="8" y2="6" />
+                    <line x1="3" y1="10" x2="21" y2="10" />
+                  </svg>
+                </div>
+                <h2 className="text-slate-900 text-lg font-bold leading-6">Alerin Kalender</h2>
+                <span className="px-2 py-0.5 bg-zinc-900 rounded-full text-white text-xs font-semibold leading-4 tracking-tight">
+                  {year}
+                </span>
               </div>
-              <div>
-                <p className="font-display font-800 text-base text-slate-900">{monthNames[month]} {year}</p>
-                <p className="text-[11px] text-slate-400">Kalender Akademik Alerin</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-1">
-              <button onClick={() => setCursor(new Date(year, month - 1, 1))}
-                className="w-8 h-8 rounded-xl flex items-center justify-center hover:bg-slate-100 transition-colors text-slate-500">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 18l-6-6 6-6"/></svg>
-              </button>
-              <button onClick={() => setCursor(new Date(today.getFullYear(), today.getMonth(), 1))}
-                className="px-3 py-1 rounded-lg text-xs font-bold text-blue-600 hover:bg-blue-50 transition-colors">
-                Hari ini
-              </button>
-              <button onClick={() => setCursor(new Date(year, month + 1, 1))}
-                className="w-8 h-8 rounded-xl flex items-center justify-center hover:bg-slate-100 transition-colors text-slate-500">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18l6-6-6-6"/></svg>
-              </button>
-              <button onClick={onClose} className="ml-2 w-8 h-8 rounded-xl flex items-center justify-center hover:bg-slate-100 transition-colors text-slate-400">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-              </button>
-            </div>
-          </div>
-
-          {/* Day labels */}
-          <div className="grid grid-cols-7 px-4 pt-3 pb-1">
-            {dayNames.map(d => (
-              <div key={d} className="text-center text-[11px] font-bold text-slate-400 py-1">{d}</div>
-            ))}
-          </div>
-
-          {/* Date cells */}
-          <div className="grid grid-cols-7 px-4 pb-4 gap-y-1">
-            {cells.map((d, i) => {
-              if (!d) return <div key={i} />;
-              const key = cellKey(d);
-              const events = CAL_EVENTS[key] ?? [];
-              const hasEvents = events.length > 0;
-              const todayCell = isToday(d);
-              const sel = isSelected(d);
-              return (
-                <button key={i} onClick={() => setSelected(sel ? null : new Date(year, month, d))}
-                  className="flex flex-col items-center py-1.5 px-1 rounded-xl transition-all"
-                  style={sel ? { background: "#3b82f6" } : todayCell ? { background: "#eff6ff" } : {}}>
-                  <span className="text-sm font-semibold leading-none mb-1"
-                    style={{ color: sel ? "#fff" : todayCell ? "#2563eb" : "#334155" }}>{d}</span>
-                  {hasEvents ? (
-                    <div className="flex gap-0.5 flex-wrap justify-center">
-                      {events.slice(0,3).map((ev, ei) => (
-                        <span key={ei} className="w-1.5 h-1.5 rounded-full" style={{ background: sel ? "#fff" : ev.color }} />
-                      ))}
-                    </div>
-                  ) : <div className="h-2" />}
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Selected day events */}
-          {selected && (
-            <div className="border-t border-slate-100 px-6 py-4">
-              <p className="text-xs font-bold text-slate-500 mb-3">
-                {selected.toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long" })}
+              <p className="pt-0.5 text-gray-500 text-xs font-normal leading-5">
+                Atur jadwal bimbingan dan pantau aktivitas akademikmu.
               </p>
-              {selectedEvents.length === 0 ? (
-                <div className="flex items-center gap-3 py-3">
-                  <div className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                  </div>
-                  <p className="text-sm text-slate-400">Tidak ada jadwal di hari ini</p>
-                  <button onClick={() => { onClose(); onToast("Silakan tambah target baru!"); }}
-                    className="ml-auto text-xs font-bold text-blue-600 hover:text-blue-700">+ Tambah</button>
+            </div>
+
+            <div className="flex items-center gap-2.5 shrink-0">
+              <button
+                type="button"
+                onClick={() => {
+                  if (googleConnected) {
+                    onToast("Google Kalender sudah terhubung.");
+                    return;
+                  }
+                  onToast("Menghubungkan ke Google Kalender…");
+                  setTimeout(() => {
+                    setGoogleConnected(true);
+                    onToast("Berhasil! Google Kalender terhubung ✓");
+                  }, 1100);
+                }}
+                className="h-8 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 active:scale-[0.99] rounded-[10px] outline outline-1 outline-offset-[-1px] outline-slate-200 flex items-center gap-1.5 cursor-pointer transition-all"
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true">
+                  <path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z" />
+                  <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96H1.29v3.09C3.26 21.3 7.31 24 12 24z" />
+                  <path fill="#FBBC05" d="M5.27 14.29c-.25-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.98-3.09z" />
+                  <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.98 3.09c.95-2.85 3.6-4.96 6.73-4.96z" />
+                </svg>
+                <span className="text-slate-900 text-xs font-semibold leading-4">
+                  {googleConnected ? "Google Kalender Terhubung" : "Hubungkan Google Kalender"}
+                </span>
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round" className="text-gray-700">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                  <polyline points="15 3 21 3 21 9" />
+                  <line x1="10" y1="14" x2="21" y2="3" />
+                </svg>
+              </button>
+
+              <button
+                type="button"
+                onClick={onClose}
+                aria-label="Tutup kalender"
+                className="size-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-gray-700 cursor-pointer transition-colors"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          {/* Inner Calendar Box */}
+          <div className="p-5 bg-slate-50 rounded-2xl outline outline-1 outline-offset-[-1px] outline-slate-200 flex flex-col gap-3.5">
+            {/* Month Bar */}
+            <div className="flex items-center justify-between">
+              <div className="text-slate-900 text-base font-bold leading-6">
+                {monthNames[month]} {year}
+              </div>
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => setCursor(new Date(year, month - 1, 1))}
+                  aria-label="Bulan sebelumnya"
+                  className="size-7 bg-blue-100/25 hover:bg-blue-100/70 rounded-lg flex items-center justify-center text-gray-700 cursor-pointer transition-colors"
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M15 18l-6-6 6-6" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCursor(new Date(today.getFullYear(), today.getMonth(), 1));
+                    setSelected(new Date(today.getFullYear(), today.getMonth(), today.getDate()));
+                  }}
+                  className="h-7 px-2.5 py-0.5 bg-blue-100 hover:bg-blue-200/70 rounded-md flex items-center justify-center text-blue-600 text-xs font-semibold leading-4 tracking-tight cursor-pointer transition-colors"
+                >
+                  Hari Ini
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setCursor(new Date(year, month + 1, 1))}
+                  aria-label="Bulan berikutnya"
+                  className="size-7 bg-blue-100/25 hover:bg-blue-100/70 rounded-lg flex items-center justify-center text-gray-700 cursor-pointer transition-colors"
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M9 18l6-6-6-6" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            {/* Weekday Header */}
+            <div className="grid grid-cols-7">
+              {desktopDayNames.map((d) => (
+                <div key={d} className="text-center text-gray-500 text-xs font-semibold uppercase leading-4 tracking-tight">
+                  {d}
                 </div>
-              ) : (
-                <div className="space-y-2">
-                  {selectedEvents.map((ev, ei) => (
-                    <div key={ei} className="flex items-center gap-3 p-3 rounded-xl" style={{ background: ev.color + "12" }}>
-                      <div className="w-1 h-10 rounded-full shrink-0" style={{ background: ev.color }} />
-                      <div className="flex-1">
-                        <p className="text-sm font-bold text-slate-800">{ev.label}</p>
-                        <p className="text-xs text-slate-400 flex items-center gap-1 mt-0.5">
-                          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                          {ev.time}
-                        </p>
-                      </div>
-                      <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: ev.color }} />
+              ))}
+            </div>
+
+            {/* Dates Grid */}
+            <div className="grid grid-cols-7 gap-y-0.5">
+              {desktopCells.map((cell, idx) => {
+                const cellDate = new Date(year, month + cell.offset, cell.day);
+                const key = toKey(cellDate);
+                const events = getEventsForKey(key);
+                const isSunday = idx % 7 === 0;
+                const isCellCurrentMonth = cell.offset === 0;
+                const isCellSelected =
+                  selected?.getDate() === cellDate.getDate() &&
+                  selected?.getMonth() === cellDate.getMonth() &&
+                  selected?.getFullYear() === cellDate.getFullYear();
+                const isCellToday =
+                  today.getDate() === cellDate.getDate() &&
+                  today.getMonth() === cellDate.getMonth() &&
+                  today.getFullYear() === cellDate.getFullYear();
+
+                return (
+                  <button
+                    key={`${cell.offset}-${cell.day}-${idx}`}
+                    type="button"
+                    onClick={() => {
+                      if (cell.offset !== 0) {
+                        setCursor(new Date(cellDate.getFullYear(), cellDate.getMonth(), 1));
+                      }
+                      setSelected(cellDate);
+                    }}
+                    className={`relative h-10 rounded-xl flex flex-col items-center justify-center text-sm transition-all cursor-pointer ${
+                      isCellSelected
+                        ? "bg-blue-600 text-white font-bold shadow-xs"
+                        : isCellToday
+                          ? "bg-blue-100/80 text-blue-600 font-bold"
+                          : !isCellCurrentMonth
+                            ? "text-gray-500/40 font-medium hover:bg-slate-200/50"
+                            : isSunday
+                              ? "text-red-700 font-medium hover:bg-slate-200/60"
+                              : "text-gray-700 font-medium hover:bg-slate-200/60"
+                    }`}
+                  >
+                    <span className="leading-5">{cell.day}</span>
+                    {events.length > 0 && (
+                      <span className="absolute bottom-1 flex gap-0.5">
+                        {events.slice(0, 3).map((ev, ei) => (
+                          <span
+                            key={ei}
+                            className="size-1 rounded-full"
+                            style={{ background: isCellSelected ? "#ffffff" : ev.color }}
+                          />
+                        ))}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Agenda detail for selected date if present */}
+          {selected && selectedEvents.length > 0 && (
+            <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3 space-y-2">
+              <div className="flex items-center justify-between">
+                <p className="text-xs font-bold text-slate-600">
+                  Agenda · {selected.toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long" })}
+                </p>
+                <span className="text-[11px] font-semibold text-blue-600">{selectedEvents.length} jadwal</span>
+              </div>
+              <div className="space-y-1.5">
+                {selectedEvents.map((ev, ei) => (
+                  <div key={ei} className="flex items-center gap-2.5 px-3 py-2 rounded-xl" style={{ background: ev.color + "12" }}>
+                    <span className="w-1 h-7 rounded-full shrink-0" style={{ background: ev.color }} />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-bold text-slate-800 truncate">{ev.label}</p>
+                      <p className="text-[11px] text-slate-500">{ev.time} WIB</p>
                     </div>
-                  ))}
-                </div>
-              )}
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 
-          {/* Footer: Google Calendar integration */}
-          <div className="border-t border-slate-100 px-6 py-4 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              {/* Google Calendar G logo */}
-              <div className="w-7 h-7 rounded-lg overflow-hidden flex items-center justify-center border border-slate-200 bg-white shrink-0">
-                <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M12 11.2v2.8h4.4c-.4 2.2-2.3 3.8-4.4 3.8-2.7 0-4.8-2.2-4.8-4.8s2.1-4.8 4.8-4.8c1.2 0 2.4.5 3.2 1.3l2.1-2.1C15.7 5.6 13.9 4.8 12 4.8 7.6 4.8 4 8.4 4 12s3.6 7.2 8 7.2c6.6 0 8.2-6.2 7.5-8.2L12 11.2z"/></svg>
+          {/* Inline quick add form when Tambah Agenda Baru clicked */}
+          {addingAgenda ? (
+            <div className="rounded-2xl border border-blue-200 bg-blue-50/50 p-3.5 flex flex-col gap-2.5">
+              <div className="flex items-center justify-between">
+                <p className="text-xs font-bold text-slate-800">
+                  Tambah Agenda · {(selected ?? today).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setAddingAgenda(false)}
+                  className="text-xs font-medium text-slate-500 hover:text-slate-700 cursor-pointer"
+                >
+                  Batal
+                </button>
               </div>
-              <div>
-                <p className="text-xs font-bold text-slate-700">Google Kalender</p>
-                <p className="text-[10px] text-slate-400">Sinkronkan deadline otomatis</p>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={agendaTitle}
+                  onChange={(e) => setAgendaTitle(capitalizeWords(e.target.value))}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && agendaTitle.trim()) handleSaveAgenda();
+                  }}
+                  placeholder="Contoh: Bimbingan BAB II dengan Dosen..."
+                  autoFocus
+                  className="flex-1 px-3 py-2 rounded-xl border border-slate-200 bg-white text-xs text-slate-800 outline-none focus:border-blue-500"
+                />
+                <input
+                  type="text"
+                  value={agendaTime}
+                  onChange={(e) => setAgendaTime(e.target.value)}
+                  placeholder="10.00"
+                  className="w-20 px-2.5 py-2 rounded-xl border border-slate-200 bg-white text-xs text-slate-800 text-center outline-none focus:border-blue-500"
+                />
+                <button
+                  type="button"
+                  disabled={!agendaTitle.trim()}
+                  onClick={handleSaveAgenda}
+                  className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:opacity-45 text-white text-xs font-semibold cursor-pointer transition-colors"
+                >
+                  Simpan
+                </button>
               </div>
             </div>
+          ) : (
             <button
-              onClick={() => { onToast("Menghubungkan ke Google Kalender…"); setTimeout(() => onToast("Berhasil! Deadline tersinkron ✓"), 1800); }}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-white transition-all hover:opacity-90"
-              style={{ background: "linear-gradient(135deg,#4285F4,#0F9D58)" }}>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-              Integrasi Google Kalender
+              type="button"
+              onClick={() => setAddingAgenda(true)}
+              className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 active:scale-[0.99] rounded-2xl shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] flex items-center justify-center gap-2 text-white text-base font-semibold leading-6 cursor-pointer transition-all"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="9" />
+                <line x1="12" y1="8" x2="12" y2="16" />
+                <line x1="8" y1="12" x2="16" y2="12" />
+              </svg>
+              <span>Tambah Agenda Baru</span>
             </button>
+          )}
+        </div>
+      </div>
+
+      {/* ── MOBILE POPUP (dipertahankan sesuai desain mobile existing) ── */}
+      <div
+        className="flex md:hidden items-start justify-center py-8 px-4"
+        onClick={onClose}
+      >
+        <div className="w-full max-w-xl mx-auto" onClick={e => e.stopPropagation()}>
+          {/* Calendar card */}
+          <div className="bg-white rounded-3xl overflow-hidden" style={{ boxShadow: "0 24px 80px rgba(0,0,0,0.18)" }}>
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-slate-100">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                </div>
+                <div>
+                  <p className="font-display font-800 text-base text-slate-900">{monthNames[month]} {year}</p>
+                  <p className="text-[11px] text-slate-400">Kalender Akademik Alerin</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-1">
+                <button onClick={() => setCursor(new Date(year, month - 1, 1))}
+                  className="w-8 h-8 rounded-xl flex items-center justify-center hover:bg-slate-100 transition-colors text-slate-500">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 18l-6-6 6-6"/></svg>
+                </button>
+                <button onClick={() => setCursor(new Date(today.getFullYear(), today.getMonth(), 1))}
+                  className="px-3 py-1 rounded-lg text-xs font-bold text-blue-600 hover:bg-blue-50 transition-colors">
+                  Hari ini
+                </button>
+                <button onClick={() => setCursor(new Date(year, month + 1, 1))}
+                  className="w-8 h-8 rounded-xl flex items-center justify-center hover:bg-slate-100 transition-colors text-slate-500">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18l6-6-6-6"/></svg>
+                </button>
+                <button onClick={onClose} className="ml-2 w-8 h-8 rounded-xl flex items-center justify-center hover:bg-slate-100 transition-colors text-slate-400">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+              </div>
+            </div>
+
+            {/* Day labels */}
+            <div className="grid grid-cols-7 px-4 pt-3 pb-1">
+              {dayNames.map(d => (
+                <div key={d} className="text-center text-[11px] font-bold text-slate-400 py-1">{d}</div>
+              ))}
+            </div>
+
+            {/* Date cells */}
+            <div className="grid grid-cols-7 px-4 pb-4 gap-y-1">
+              {cells.map((d, i) => {
+                if (!d) return <div key={i} />;
+                const key = cellKey(d);
+                const events = getEventsForKey(key);
+                const hasEvents = events.length > 0;
+                const todayCell = isToday(d);
+                const sel = isSelected(d);
+                return (
+                  <button key={i} onClick={() => setSelected(sel ? null : new Date(year, month, d))}
+                    className="flex flex-col items-center py-1.5 px-1 rounded-xl transition-all"
+                    style={sel ? { background: "#3b82f6" } : todayCell ? { background: "#eff6ff" } : {}}>
+                    <span className="text-sm font-semibold leading-none mb-1"
+                      style={{ color: sel ? "#fff" : todayCell ? "#2563eb" : "#334155" }}>{d}</span>
+                    {hasEvents ? (
+                      <div className="flex gap-0.5 flex-wrap justify-center">
+                        {events.slice(0,3).map((ev, ei) => (
+                          <span key={ei} className="w-1.5 h-1.5 rounded-full" style={{ background: sel ? "#fff" : ev.color }} />
+                        ))}
+                      </div>
+                    ) : <div className="h-2" />}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Selected day events */}
+            {selected && (
+              <div className="border-t border-slate-100 px-6 py-4">
+                <p className="text-xs font-bold text-slate-500 mb-3">
+                  {selected.toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long" })}
+                </p>
+                {selectedEvents.length === 0 ? (
+                  <div className="flex items-center gap-3 py-3">
+                    <div className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    </div>
+                    <p className="text-sm text-slate-400">Tidak ada jadwal di hari ini</p>
+                    <button onClick={() => { onClose(); onToast("Silakan tambah target baru!"); }}
+                      className="ml-auto text-xs font-bold text-blue-600 hover:text-blue-700">+ Tambah</button>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {selectedEvents.map((ev, ei) => (
+                      <div key={ei} className="flex items-center gap-3 p-3 rounded-xl" style={{ background: ev.color + "12" }}>
+                        <div className="w-1 h-10 rounded-full shrink-0" style={{ background: ev.color }} />
+                        <div className="flex-1">
+                          <p className="text-sm font-bold text-slate-800">{ev.label}</p>
+                          <p className="text-xs text-slate-400 flex items-center gap-1 mt-0.5">
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            {ev.time}
+                          </p>
+                        </div>
+                        <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: ev.color }} />
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Footer: Google Calendar integration */}
+            <div className="border-t border-slate-100 px-6 py-4 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                {/* Google Calendar G logo */}
+                <div className="w-7 h-7 rounded-lg overflow-hidden flex items-center justify-center border border-slate-200 bg-white shrink-0">
+                  <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M12 11.2v2.8h4.4c-.4 2.2-2.3 3.8-4.4 3.8-2.7 0-4.8-2.2-4.8-4.8s2.1-4.8 4.8-4.8c1.2 0 2.4.5 3.2 1.3l2.1-2.1C15.7 5.6 13.9 4.8 12 4.8 7.6 4.8 4 8.4 4 12s3.6 7.2 8 7.2c6.6 0 8.2-6.2 7.5-8.2L12 11.2z"/></svg>
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-slate-700">Google Kalender</p>
+                  <p className="text-[10px] text-slate-400">Sinkronkan deadline otomatis</p>
+                </div>
+              </div>
+              <button
+                onClick={() => { onToast("Menghubungkan ke Google Kalender…"); setTimeout(() => onToast("Berhasil! Deadline tersinkron ✓"), 1800); }}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-white transition-all hover:opacity-90"
+                style={{ background: "linear-gradient(135deg,#4285F4,#0F9D58)" }}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                Integrasi Google Kalender
+              </button>
+            </div>
           </div>
         </div>
       </div>
