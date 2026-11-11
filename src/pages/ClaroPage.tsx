@@ -58,6 +58,12 @@ type ChatMsg = {
   featureRec?: FeatureRec;
 };
 type SearchFilter = "semua" | "chat" | "dokumen" | "proyek";
+type SharedChatPreviewData = {
+  id: string;
+  title: string;
+  msgs: ChatMsg[];
+  shareUrl: string;
+};
 
 // ─── Auto-Capitalize Awal Kalimat untuk Seluruh Input Teks & Pop-up ───────────
 export function capitalizeWords(str: string): string {
@@ -5139,26 +5145,30 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
 
   useEffect(() => {
     const handleAddHistory = (e: Event) => {
-      const detail = (e as CustomEvent<{ title: string; query: string }>).detail;
+      const detail = (e as CustomEvent<{ title: string; query: string; msgs?: ChatMsg[] }>).detail;
       if (!detail?.title) return;
+      const customMsgs = detail.msgs && detail.msgs.length > 0 ? detail.msgs : undefined;
       setHistoryList((prev) => {
         const existingIdx = prev.findIndex((item) => item.title.toLowerCase() === detail.title.toLowerCase());
         if (existingIdx >= 0) {
           const item = prev[existingIdx];
+          const nextItem: RiwayatItem = customMsgs
+            ? { ...item, time: "Baru saja", msgs: customMsgs }
+            : item;
           const remaining = prev.filter((_, i) => i !== existingIdx);
-          const next = item.pinned
-            ? [item, ...remaining.filter((x) => x.pinned), ...remaining.filter((x) => !x.pinned)]
-            : [...remaining.filter((x) => x.pinned), item, ...remaining.filter((x) => !x.pinned)];
+          const next = nextItem.pinned
+            ? [nextItem, ...remaining.filter((x) => x.pinned), ...remaining.filter((x) => !x.pinned)]
+            : [...remaining.filter((x) => x.pinned), nextItem, ...remaining.filter((x) => !x.pinned)];
           saveRiwayatToStorage(next);
-          setActiveHistoryId(item.id);
-          try { localStorage.setItem("alerin_active_history_id", item.id); } catch {}
+          setActiveHistoryId(nextItem.id);
+          try { localStorage.setItem("alerin_active_history_id", nextItem.id); } catch {}
           return next;
         }
         const newItem: RiwayatItem = {
           id: `rw-${Date.now()}`,
           title: detail.title,
           time: "Baru saja",
-          msgs: [
+          msgs: customMsgs ?? [
             { role: "user", text: detail.query, time: now() },
             { role: "claro", text: getAIResponse(detail.query), time: now() },
           ],
@@ -10354,6 +10364,199 @@ function ShortcutModal({ type, onClose, onSubmit }: { type: ShortcutType; onClos
   );
 }
 
+/** Read-only shared chat preview screen with bottom "Mulai Obrolan" CTA. */
+function SharedChatPreviewView({
+  preview,
+  onBack,
+  onStartChat,
+}: {
+  preview: SharedChatPreviewData;
+  onBack: () => void;
+  onStartChat: () => void;
+}) {
+  const [linkCopied, setLinkCopied] = useState(false);
+  const [previewImgUrl, setPreviewImgUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && !previewImgUrl) onBack();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [onBack, previewImgUrl]);
+
+  const handleCopyShareUrl = () => {
+    if (navigator?.clipboard?.writeText) {
+      navigator.clipboard.writeText(preview.shareUrl).catch(() => {});
+    }
+    setLinkCopied(true);
+    setTimeout(() => setLinkCopied(false), 1800);
+  };
+
+  return (
+    <div className="fixed inset-0 z-[240] flex flex-col claro-chat-bg select-text">
+      {/* Decorative dot grid overlay — desktop only */}
+      <div
+        className="hidden md:block absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage: "radial-gradient(circle, rgba(59,130,246,0.035) 1px, transparent 1px)",
+          backgroundSize: "24px 24px",
+          zIndex: 0,
+        }}
+      />
+
+      {/* Header Preview Chat */}
+      <header className="shrink-0 bg-white md:bg-white/85 md:backdrop-blur-md relative z-20 border-b border-neutral-200 md:border-slate-200">
+        <div className="max-w-4xl mx-auto w-full flex items-center justify-between gap-2.5 px-4 md:px-6 py-3">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <button
+              type="button"
+              onClick={onBack}
+              aria-label="Kembali"
+              className="size-10 md:size-9 rounded-full border border-neutral-200/90 md:border-transparent bg-white md:bg-transparent flex items-center justify-center text-neutral-800 hover:bg-neutral-50 md:hover:bg-slate-100/80 active:scale-95 transition-all shadow-2xs md:shadow-none cursor-pointer shrink-0"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="m15 18-6-6 6-6" />
+              </svg>
+            </button>
+            <img
+              src="/assets/73c1a.png"
+              alt="Alerin"
+              className="size-7 rounded-full object-cover border border-slate-200 shrink-0 hidden sm:block"
+            />
+            <div className="min-w-0 flex items-center gap-2">
+              <h1 className="text-[15px] md:text-base font-bold text-slate-900 truncate">
+                {preview.title}
+              </h1>
+              <span className="shrink-0 inline-flex items-center px-2 py-0.5 rounded-full bg-[#EAF2FF] text-[#1A73E8] text-[10px] font-semibold">
+                Pratinjau
+              </span>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleCopyShareUrl}
+            className="shrink-0 h-9 px-3.5 rounded-full border border-slate-200 bg-white hover:bg-slate-50 active:scale-95 text-xs font-medium text-slate-700 flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs"
+          >
+            {linkCopied ? (
+              <>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+                <span className="text-emerald-700 font-semibold">Tersalin</span>
+              </>
+            ) : (
+              <>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+                </svg>
+                <span className="hidden sm:inline">Salin Tautan</span>
+                <span className="sm:hidden">Salin</span>
+              </>
+            )}
+          </button>
+        </div>
+      </header>
+
+      {/* Isi: Murni Preview Percakapan */}
+      <div className="relative z-10 flex-1 overflow-y-auto px-4 md:px-8 py-5 modal-custom-scrollbar">
+        <div className="max-w-3xl mx-auto w-full space-y-6 pb-4">
+          {preview.msgs.map((m, idx) => {
+            if (m.role === "user") {
+              return (
+                <div key={idx} className="flex flex-col items-end gap-1">
+                  {m.fileCards && m.fileCards.length > 0 ? (
+                    <div className="flex flex-wrap justify-end gap-2 mb-1 max-w-[280px] md:max-w-[360px]">
+                      {m.fileCards.map((fc, fIdx) =>
+                        fc.previewUrl ? (
+                          <div
+                            key={fIdx}
+                            onClick={() => setPreviewImgUrl(fc.previewUrl ?? null)}
+                            className={`cursor-pointer relative rounded-2xl overflow-hidden border border-slate-200/40 shadow-xs ${
+                              m.fileCards && m.fileCards.length === 1 ? "w-full max-w-[200px] h-36" : "w-[120px] h-28"
+                            }`}
+                          >
+                            <img src={fc.previewUrl} alt={fc.name} className="w-full h-full object-cover" />
+                          </div>
+                        ) : (
+                          <div key={fIdx} className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-slate-800 text-white text-xs">
+                            <span className="font-semibold truncate max-w-[160px]">{fc.name}</span>
+                          </div>
+                        )
+                      )}
+                    </div>
+                  ) : m.fileCard && m.fileCard.previewUrl ? (
+                    <div
+                      onClick={() => setPreviewImgUrl(m.fileCard?.previewUrl ?? null)}
+                      className="cursor-pointer rounded-2xl overflow-hidden mb-1 border border-slate-200/40 shadow-xs max-w-[200px]"
+                    >
+                      <img src={m.fileCard.previewUrl} alt={m.fileCard.name} className="w-full h-36 object-cover" />
+                    </div>
+                  ) : null}
+
+                  {m.text && (
+                    <div className="rounded-2xl rounded-br-sm px-4 py-2.5 text-[0.9375rem] leading-relaxed text-slate-900 bg-[#EAF2FF] border border-[#BFDBFE]/80 shadow-xs max-w-[85%] md:max-w-[75%] whitespace-pre-wrap break-words">
+                      {renderUserMessageContent(m.text)}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+
+            return (
+              <div key={idx} className="flex flex-col gap-3">
+                {m.imageUrl ? (
+                  <div className="flex flex-col gap-3">
+                    <ImageResultBubble
+                      imageUrl={m.imageUrl}
+                      prompt={m.imagePrompt ?? ""}
+                      orientation={m.imageOrientation}
+                      onPreview={(url) => setPreviewImgUrl(url)}
+                    />
+                    {m.text && <MarkdownRenderer text={m.text} />}
+                  </div>
+                ) : m.paraphrase ? (
+                  <div className="flex flex-col gap-4">
+                    <MarkdownRenderer text={m.text} />
+                    <ParaphraseBubble original={m.paraphrase.original} versions={m.paraphrase.versions} />
+                  </div>
+                ) : (
+                  <MarkdownRenderer text={m.text} />
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Bottom CTA: Button Mulai Obrolan */}
+      <div className="shrink-0 bg-white/95 md:bg-white/90 backdrop-blur-md relative z-20 border-t border-slate-200/80 px-4 py-3.5 md:py-4">
+        <div className="max-w-3xl mx-auto w-full flex justify-center">
+          <button
+            type="button"
+            onClick={onStartChat}
+            className="w-full sm:w-auto sm:min-w-[260px] px-8 py-3 rounded-full bg-[#1A73E8] hover:bg-[#1557b0] active:scale-[0.98] text-white text-sm font-semibold flex items-center justify-center gap-2 shadow-[0_6px_18px_rgba(26,115,232,0.28)] transition-all cursor-pointer"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+            </svg>
+            <span>Mulai Obrolan</span>
+          </button>
+        </div>
+      </div>
+
+      <ImageLightboxModal
+        imageUrl={previewImgUrl}
+        alt="Pratinjau foto obrolan"
+        zIndexClass="z-[290]"
+        onClose={() => setPreviewImgUrl(null)}
+      />
+    </div>
+  );
+}
+
 // ─── TAB: Percakapan (Chat) ───────────────────────────────────────────────────
 function PercakapanTab({
   onFeatureClick,
@@ -14456,7 +14659,15 @@ const DEFAULT_PROJECT_SOURCES: Record<string, ProjectSourceItem[]> = {
   ],
 };
 
-function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpenHistory: (msgs: ChatMsg[]) => void }) {
+function ProyekTab({
+  onTab,
+  onOpenHistory,
+  onOpenSharedChat,
+}: {
+  onTab: (t: NavTab) => void;
+  onOpenHistory: (msgs: ChatMsg[]) => void;
+  onOpenSharedChat?: (preview: SharedChatPreviewData) => void;
+}) {
   const openDrawer = useContext(ShellDrawerContext);
   const [projects, setProjects] = useState<MobileProjectItem[]>(() => {
     try {
@@ -14668,6 +14879,15 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
     const shareUrl = `${window.location.origin}/proyek/${selectedProject?.id || "detail"}/${target.id}`;
     if (navigator.clipboard) {
       navigator.clipboard.writeText(shareUrl).catch(() => {});
+    }
+    if (onOpenSharedChat) {
+      onOpenSharedChat({
+        id: target.id,
+        title: target.title,
+        msgs: target.msgs,
+        shareUrl,
+      });
+      return;
     }
     setToast(`Tautan obrolan "${target.title}" berhasil disalin!`);
   };
@@ -16019,6 +16239,22 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                 <>
                   <div className="fixed inset-0 z-[190]" onClick={() => setChatMenuOpen(false)} />
                   <div className="absolute right-0 top-12 z-[200] w-[190px] bg-white rounded-2xl border border-neutral-200 shadow-xl p-1.5 animate-[gemini-fade-in_0.15s_ease-out]">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setChatMenuOpen(false);
+                        handleShareProjectChat(selectedProjectChat);
+                      }}
+                      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-neutral-700 hover:bg-neutral-100 transition-colors text-left"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+                        <polyline points="16 6 12 2 8 6" />
+                        <line x1="12" y1="2" x2="12" y2="15" />
+                      </svg>
+                      <span>Bagikan Obrolan</span>
+                    </button>
+                    <div className="h-px bg-neutral-100 my-1" />
                     <button
                       type="button"
                       onClick={() => {
@@ -21432,12 +21668,28 @@ export default function AlerinPage() {
   const [pendingDraft, setPendingDraft] = useState<string | undefined>(undefined);
   const [pendingFeature, setPendingFeature] = useState<FeatureKey | undefined>(undefined);
   const [registerOpen, setRegisterOpen] = useState(false);
+  const [sharedPreview, setSharedPreview] = useState<SharedChatPreviewData | null>(null);
 
   const openHistory = (msgs: ChatMsg[]) => {
     setHistoryMsgs(msgs);
     setHistoryKey(k => k + 1);
     setHasActiveChat(msgs.length > 0);
     setTab("percakapan");
+  };
+
+  const handleStartFromSharedPreview = (preview: SharedChatPreviewData) => {
+    const clonedMsgs: ChatMsg[] = preview.msgs.map((msg) => ({ ...msg }));
+    openHistory(clonedMsgs);
+    window.dispatchEvent(
+      new CustomEvent("alerin-add-history", {
+        detail: {
+          title: preview.title,
+          query: clonedMsgs[0]?.text || preview.title,
+          msgs: clonedMsgs,
+        },
+      })
+    );
+    setSharedPreview(null);
   };
 
   const goToChat = (prompt?: string, draft?: string) => {
@@ -21495,10 +21747,17 @@ export default function AlerinPage() {
         />
       )}
       {tab === "fitur" && <FiturTab onChat={goToChat} openFeatureKey={pendingFeature} onFeatureOpened={() => setPendingFeature(undefined)} />}
-      {tab === "proyek" && <ProyekTab onTab={setTab} onOpenHistory={openHistory} />}
+      {tab === "proyek" && <ProyekTab onTab={setTab} onOpenHistory={openHistory} onOpenSharedChat={setSharedPreview} />}
       {tab === "progress" && <ProgressTab />}
       {tab === "quizlab" && <QuizlabTab onTab={setTab} />}
       {tab === "profil" && <ProfilTab onTab={setTab} onRegister={() => setRegisterOpen(true)} />}
+      {sharedPreview && (
+        <SharedChatPreviewView
+          preview={sharedPreview}
+          onBack={() => setSharedPreview(null)}
+          onStartChat={() => handleStartFromSharedPreview(sharedPreview)}
+        />
+      )}
       {registerOpen && (
         <RegisterErrorBoundary>
         <RegisterModal
