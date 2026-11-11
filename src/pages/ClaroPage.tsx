@@ -5749,46 +5749,61 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
 
         {/* Main content */}
         <main className="relative flex-1 min-w-0 overflow-hidden flex flex-col">
-          {/* Floating top-right profile bar — desktop only, stays floating above scrolled content */}
-          <div
-            className={`hidden md:flex items-center gap-2 px-2.5 py-1.5 rounded-full backdrop-blur-md border transition-colors absolute top-3.5 right-6 z-40 ${
-              isDarkTheme
-                ? "bg-slate-800/85 border-slate-700/80 shadow-[0_6px_22px_rgba(0,0,0,0.35)]"
-                : "bg-white/90 border-slate-200/85 shadow-[0_4px_20px_rgba(15,23,42,0.08)]"
-            }`}
-          >
-            <button
-              ref={profileBtnRef}
-              type="button"
-              onClick={() => {
-                const pillEl = profileBtnRef.current?.parentElement ?? profileBtnRef.current;
-                const rect = pillEl?.getBoundingClientRect();
-                if (rect) setProfileMenuPos({ top: rect.bottom + 8, right: Math.max(12, window.innerWidth - rect.right) });
-                setProfileMenuOpen(o => !o);
-              }}
-              className="flex items-center gap-2.5 pl-0.5 pr-1 text-left hover:opacity-85 transition-opacity cursor-pointer"
-            >
-              <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0"
-                style={{ background: "linear-gradient(135deg,#f59e0b,#d97706)" }}>RA</div>
-              <div className="min-w-0 leading-tight">
-                <p className="text-xs font-semibold text-slate-800 whitespace-nowrap">Raka Aditya</p>
-                <p className="text-[10px] text-slate-400 whitespace-nowrap">Premium · Sem 6</p>
-              </div>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400 ml-0.5 shrink-0">
-                <polyline points="6 9 12 15 18 9" />
-              </svg>
-            </button>
-            <div className={`w-px h-5 shrink-0 ${isDarkTheme ? "bg-slate-700" : "bg-slate-200/80"}`} />
+          {/* Floating top-right Upgrade & profile bar — desktop only, stays floating above scrolled content */}
+          <div className="hidden md:flex items-center gap-2.5 absolute top-3.5 right-6 z-40">
             <button
               type="button"
-              onClick={() => setNotifOpen(o => !o)}
-              title="Notifikasi"
-              aria-label="Notifikasi"
-              className="relative w-8 h-8 flex items-center justify-center rounded-full text-slate-500 hover:text-slate-800 hover:bg-slate-100/80 transition-colors shrink-0 cursor-pointer"
+              onClick={() => setUpgradeOpen(true)}
+              className={`h-[46px] px-4 rounded-full backdrop-blur-md border flex items-center gap-1.5 transition-colors shrink-0 cursor-pointer ${
+                isDarkTheme
+                  ? "bg-slate-800/85 border-slate-700/80 hover:bg-slate-700/90 shadow-[0_6px_22px_rgba(0,0,0,0.35)] text-blue-400"
+                  : "bg-white/90 border-slate-200/85 hover:bg-blue-50/70 shadow-[0_4px_20px_rgba(15,23,42,0.08)] text-blue-600"
+              }`}
             >
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-              <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-red-500 border border-white" />
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              <span className="text-sm font-semibold leading-5">Upgrade</span>
             </button>
+
+            <div
+              className={`flex items-center gap-2 px-2.5 py-1.5 rounded-full backdrop-blur-md border transition-colors ${
+                isDarkTheme
+                  ? "bg-slate-800/85 border-slate-700/80 shadow-[0_6px_22px_rgba(0,0,0,0.35)]"
+                  : "bg-white/90 border-slate-200/85 shadow-[0_4px_20px_rgba(15,23,42,0.08)]"
+              }`}
+            >
+              <button
+                ref={profileBtnRef}
+                type="button"
+                onClick={() => {
+                  const pillEl = profileBtnRef.current?.parentElement ?? profileBtnRef.current;
+                  const rect = pillEl?.getBoundingClientRect();
+                  if (rect) setProfileMenuPos({ top: rect.bottom + 8, right: Math.max(12, window.innerWidth - rect.right) });
+                  setProfileMenuOpen(o => !o);
+                }}
+                className="flex items-center gap-2.5 pl-0.5 pr-1 text-left hover:opacity-85 transition-opacity cursor-pointer"
+              >
+                <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0"
+                  style={{ background: "linear-gradient(135deg,#f59e0b,#d97706)" }}>RA</div>
+                <div className="min-w-0 leading-tight">
+                  <p className="text-xs font-semibold text-slate-800 whitespace-nowrap">Raka Aditya</p>
+                  <p className="text-[10px] text-slate-400 whitespace-nowrap">Premium · Sem 6</p>
+                </div>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400 ml-0.5 shrink-0">
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </button>
+              <div className={`w-px h-5 shrink-0 ${isDarkTheme ? "bg-slate-700" : "bg-slate-200/80"}`} />
+              <button
+                type="button"
+                onClick={() => setNotifOpen(o => !o)}
+                title="Notifikasi"
+                aria-label="Notifikasi"
+                className="relative w-8 h-8 flex items-center justify-center rounded-full text-slate-500 hover:text-slate-800 hover:bg-slate-100/80 transition-colors shrink-0 cursor-pointer"
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-red-500 border border-white" />
+              </button>
+            </div>
           </div>
           {children}
         </main>
@@ -5895,7 +5910,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
 // ─── Content header ───────────────────────────────────────────────────────────
 function ContentHeader({ title, subtitle }: { title: string; subtitle?: string }) {
   return (
-    <div className="shrink-0 px-4 md:px-8 md:pr-[272px] py-3 md:py-4 border-b border-slate-100 flex items-start justify-between">
+    <div className="shrink-0 px-4 md:px-8 md:pr-[392px] py-3 md:py-4 border-b border-slate-100 flex items-start justify-between">
       <div>
         <p className="text-sm font-bold text-slate-800">{title}</p>
         {subtitle && <p className="text-xs text-slate-400 mt-0.5">{subtitle}</p>}
@@ -11057,7 +11072,7 @@ function ParafrasePanel({ onBack }: { onBack: () => void }) {
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
       {/* Header */}
-      <div className="px-4 md:px-8 md:pr-[272px] py-4 border-b border-slate-100 flex items-center gap-3" style={{ background: "rgba(255,255,255,0.9)", backdropFilter: "blur(12px)" }}>
+      <div className="px-4 md:px-8 md:pr-[392px] py-4 border-b border-slate-100 flex items-center gap-3" style={{ background: "rgba(255,255,255,0.9)", backdropFilter: "blur(12px)" }}>
         <button onClick={onBack} className="w-8 h-8 rounded-xl flex items-center justify-center hover:bg-slate-100 transition-colors text-slate-500">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
         </button>
@@ -11472,7 +11487,7 @@ function GramEditorScreen({ onDone, onBack }: { onDone: () => void; onBack: () =
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
       {/* Header */}
-      <div className="shrink-0 px-4 md:px-6 md:pr-[272px] py-3 border-b border-slate-100 flex items-center gap-3 flex-wrap" style={{ background: "rgba(255,255,255,0.95)", backdropFilter: "blur(12px)" }}>
+      <div className="shrink-0 px-4 md:px-6 md:pr-[392px] py-3 border-b border-slate-100 flex items-center gap-3 flex-wrap" style={{ background: "rgba(255,255,255,0.95)", backdropFilter: "blur(12px)" }}>
         <button onClick={onBack} className="w-8 h-8 rounded-xl flex items-center justify-center hover:bg-slate-100 transition-colors text-slate-500 shrink-0">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
         </button>
@@ -12549,7 +12564,7 @@ function CariJudulPanel({ onBack }: { onBack: () => void }) {
     return (
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top bar */}
-        <div className="shrink-0 flex items-center gap-3 px-4 md:px-6 md:pr-[272px] py-3 border-b border-slate-100 bg-white">
+        <div className="shrink-0 flex items-center gap-3 px-4 md:px-6 md:pr-[392px] py-3 border-b border-slate-100 bg-white">
           <button onClick={() => setShowOutline(false)}
             className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
@@ -12648,7 +12663,7 @@ function CariJudulPanel({ onBack }: { onBack: () => void }) {
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
       {/* Top bar */}
-      <div className="shrink-0 flex items-center gap-3 px-4 md:px-6 md:pr-[272px] py-3 border-b border-slate-100 bg-white">
+      <div className="shrink-0 flex items-center gap-3 px-4 md:px-6 md:pr-[392px] py-3 border-b border-slate-100 bg-white">
         <button onClick={onBack} className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
         </button>
@@ -15231,7 +15246,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
       {selectedProject && selectedProjectChat ? (
         <div className="flex-1 flex flex-col h-full overflow-hidden bg-white">
           {/* Header Gambar 3: [<]  🎓 [Judul Proyek]  [...] */}
-          <header className="shrink-0 flex items-center justify-between px-4 md:pr-[272px] pt-3 pb-2.5 bg-white z-20 border-b border-neutral-100">
+          <header className="shrink-0 flex items-center justify-between px-4 md:pr-[392px] pt-3 pb-2.5 bg-white z-20 border-b border-neutral-100">
             <button
               type="button"
               onClick={() => {
@@ -15662,7 +15677,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
            ═══════════════════════════════════════════════════════════════════════ */
         <div className="flex-1 flex flex-col h-full overflow-hidden bg-white">
           {/* Header Gambar 2: [<]  🎓 [Judul Proyek]  [...] */}
-          <header className="shrink-0 flex items-center justify-between px-4 md:pr-[272px] pt-3 pb-2.5 bg-white z-20 border-b border-neutral-100">
+          <header className="shrink-0 flex items-center justify-between px-4 md:pr-[392px] pt-3 pb-2.5 bg-white z-20 border-b border-neutral-100">
             <button
               type="button"
               onClick={() => {
