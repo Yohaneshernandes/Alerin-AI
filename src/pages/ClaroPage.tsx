@@ -10238,19 +10238,19 @@ function PercakapanTab({
           zIndex: 0,
         }} />
         <div className="flex-1 overflow-y-auto relative z-10 flex flex-col px-6 pt-16 pb-6">
-          <div className="my-auto mx-auto w-full max-w-[680px]">
-            <div className="w-full bg-white rounded-2xl shadow-[0px_1px_3px_0px_rgba(59,130,246,0.04),0px_2px_16px_0px_rgba(59,130,246,0.06)] border border-blue-200/40 px-10 lg:px-14 py-14 lg:py-[68px] flex items-center justify-center gap-10 lg:gap-14">
+          <div className="my-auto mx-auto w-full max-w-[720px]">
+            <div className="w-full bg-white rounded-2xl shadow-[0px_1px_3px_0px_rgba(59,130,246,0.04),0px_2px_16px_0px_rgba(59,130,246,0.06)] border border-blue-200/40 px-10 lg:px-14 py-14 lg:py-[68px] flex items-center justify-center gap-10 lg:gap-12">
               <img
                 src="/assets/alerin-logo-only.png"
                 alt="Alerin"
                 className="h-24 lg:h-28 w-auto object-contain shrink-0"
               />
-              <div className="min-w-0 max-w-[330px] text-left">
-                <h2 className="text-slate-900 text-xl lg:text-[22px] font-normal leading-snug">
+              <div className="min-w-0 max-w-[390px] text-left">
+                <h2 className="text-slate-900 text-2xl lg:text-[26px] font-normal leading-snug">
                   Tanya apa saja tentang kuliah.{" "}
                   <span className="block text-blue-500 font-bold">Alerin bantu sampai jelas.</span>
                 </h2>
-                <p className="mt-2.5 text-slate-500 text-xs lg:text-[13px] font-normal leading-relaxed">
+                <p className="mt-3 text-slate-500 text-sm lg:text-[15px] font-normal leading-relaxed">
                   Mulai dari materi, tugas, jurnal, hingga skripsi semua dalam satu ruang yang memahami perjalanan kuliahmu.
                 </p>
               </div>
