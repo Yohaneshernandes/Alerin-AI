@@ -5533,7 +5533,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                 }`}
               >
                 {nav.icon}
-                <span className="text-base">{nav.label}</span>
+                <span className="text-base">{isMobileDrawer && nav.id === "percakapan" ? "Obrolan" : nav.label}</span>
               </button>
             ))}
           </nav>
