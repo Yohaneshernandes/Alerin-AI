@@ -16969,8 +16969,10 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
   const [googleConnected, setGoogleConnected] = useState(false);
   const [addingAgenda, setAddingAgenda] = useState(false);
   const [agendaTitle, setAgendaTitle] = useState("");
-  const [agendaTime, setAgendaTime] = useState("10.00");
-  const [customEvents, setCustomEvents] = useState<Record<string, { label: string; time: string; color: string }[]>>(() => {
+  const [agendaTime, setAgendaTime] = useState("");
+  const [agendaNotes, setAgendaNotes] = useState("");
+  const [agendaReminder, setAgendaReminder] = useState(false);
+  const [customEvents, setCustomEvents] = useState<Record<string, { label: string; time: string; color: string; notes?: string; reminder?: boolean }[]>>(() => {
     try {
       const saved = localStorage.getItem("alerin_calendar_events");
       if (saved) return JSON.parse(saved);
@@ -16980,11 +16982,14 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") {
+        if (addingAgenda) setAddingAgenda(false);
+        else onClose();
+      }
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [onClose]);
+  }, [addingAgenda, onClose]);
 
   const year = cursor.getFullYear();
   const month = cursor.getMonth();
@@ -17015,36 +17020,307 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
   const desktopCells = [...leadingDesktopCells, ...currentDesktopCells, ...trailingDesktopCells];
 
   const toKey = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
-  const getEventsForKey = (key: string) => [...(CAL_EVENTS[key] ?? []), ...(customEvents[key] ?? [])];
+  const getEventsForKey = (key: string): { label: string; time: string; color: string; notes?: string; reminder?: boolean }[] => [
+    ...(CAL_EVENTS[key] ?? []),
+    ...(customEvents[key] ?? []),
+  ];
   const isToday = (d: number) => d === today.getDate() && month === today.getMonth() && year === today.getFullYear();
   const isSelected = (d: number) => selected?.getDate() === d && selected?.getMonth() === month && selected?.getFullYear() === year;
   const cellKey = (d: number) => toKey(new Date(year, month, d));
   const selectedKey = selected ? toKey(selected) : null;
   const selectedEvents = selectedKey ? getEventsForKey(selectedKey) : [];
 
+  const openAddAgendaModal = () => {
+    setAgendaTitle("");
+    setAgendaTime("");
+    setAgendaNotes("");
+    setAgendaReminder(false);
+    setAddingAgenda(true);
+  };
+
   const handleSaveAgenda = () => {
     const trimmed = agendaTitle.trim();
-    if (!trimmed) return;
+    const trimmedTime = agendaTime.trim();
+    if (!trimmed) {
+      onToast("Harap isi Judul Agenda terlebih dahulu.");
+      return;
+    }
+    if (!trimmedTime) {
+      onToast("Harap isi Waktu Kegiatan terlebih dahulu.");
+      return;
+    }
     const targetDate = selected ?? today;
     const key = toKey(targetDate);
     const nextMap = {
       ...customEvents,
-      [key]: [...(customEvents[key] ?? []), { label: trimmed, time: agendaTime.trim() || "10.00", color: "#2563eb" }],
+      [key]: [
+        ...(customEvents[key] ?? []),
+        {
+          label: trimmed,
+          time: trimmedTime,
+          color: "#2563eb",
+          ...(agendaNotes.trim() ? { notes: agendaNotes.trim() } : {}),
+          ...(agendaReminder ? { reminder: true } : {}),
+        },
+      ],
     };
     setCustomEvents(nextMap);
     try { localStorage.setItem("alerin_calendar_events", JSON.stringify(nextMap)); } catch {}
     setAgendaTitle("");
+    setAgendaTime("");
+    setAgendaNotes("");
+    setAgendaReminder(false);
     setAddingAgenda(false);
     onToast(`Agenda "${trimmed}" ditambahkan!`);
   };
+
+  const activeDateForForm = selected ?? today;
+  const activeDateInputValue = toKey(activeDateForForm);
+  const formattedActivityDate = activeDateForForm.toLocaleDateString("id-ID", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
 
   return (
     <div
       className="fixed inset-0 z-[200] overflow-y-auto bg-slate-950/45 backdrop-blur-xs animate-[gemini-fade-in_0.15s_ease-out]"
       onClick={onClose}
     >
-      {/* ── DESKTOP POPUP (desain Alerin Kalender 660px) ── */}
+      {/* ── DESKTOP POPUP (desain Alerin Kalender 660px & Pop-up Tambah Agenda) ── */}
       <div className="hidden md:flex min-h-full items-center justify-center p-4">
+        {addingAgenda ? (
+          <div
+            className="w-[660px] max-w-[660px] max-h-[90vh] bg-white rounded-3xl shadow-[0px_24px_50px_-12px_rgba(19,27,46,0.22)] flex flex-col overflow-hidden font-['Plus_Jakarta_Sans']"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header Tambah Agenda */}
+            <div className="px-6 py-3 bg-white border-b border-slate-200 flex items-start justify-between gap-3 shrink-0">
+              <div className="flex items-start gap-3">
+                <button
+                  type="button"
+                  onClick={() => setAddingAgenda(false)}
+                  aria-label="Kembali ke kalender"
+                  className="size-8 mt-0.5 bg-slate-50 hover:bg-slate-100 rounded-lg outline outline-1 outline-offset-[-1px] outline-slate-200 flex items-center justify-center text-slate-500 cursor-pointer transition-colors shrink-0"
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12" />
+                    <polyline points="12 19 5 12 12 5" />
+                  </svg>
+                </button>
+                <div className="flex flex-col gap-0.5">
+                  <h2 className="text-slate-900 text-base font-bold leading-6">Tambah Agenda</h2>
+                  <p className="text-gray-500 text-xs font-normal leading-4">
+                    Jadwalkan agenda baru pada kalender terpilih
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={onClose}
+                aria-label="Tutup pop-up agenda"
+                className="size-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-gray-700 cursor-pointer transition-colors shrink-0"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Form Body */}
+            <div className="px-6 py-4 bg-slate-50 flex flex-col gap-3.5 overflow-y-auto">
+              {/* Judul Agenda */}
+              <div className="flex flex-col gap-1.5">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-semibold leading-4">
+                    <span className="text-slate-900">Judul Agenda </span>
+                    <span className="text-rose-500">*</span>
+                  </label>
+                  <span className="text-gray-500 text-[10px] font-light font-['JetBrains_Mono'] leading-4">
+                    {agendaTitle.length}/50
+                  </span>
+                </div>
+                <input
+                  type="text"
+                  maxLength={50}
+                  value={agendaTitle}
+                  onChange={(e) => setAgendaTitle(capitalizeWords(e.target.value.slice(0, 50)))}
+                  autoCapitalize="sentences"
+                  placeholder="Contoh: Diskusi Evaluasi Mingguan"
+                  autoFocus
+                  className="w-full px-3.5 py-2.5 bg-white rounded-xl outline outline-1 outline-offset-[-1px] outline-slate-200 focus:outline-[#1A73E8] text-sm text-slate-900 placeholder:text-slate-400 font-normal transition-colors"
+                />
+              </div>
+
+              {/* Row: Tanggal Kegiatan & Waktu Kegiatan */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-slate-900 text-xs font-semibold leading-4">
+                    Tanggal Kegiatan
+                  </label>
+                  <div className="relative flex items-center bg-slate-50 hover:bg-white rounded-xl outline outline-1 outline-offset-[-1px] outline-slate-200 focus-within:outline-[#1A73E8] transition-colors">
+                    <svg
+                      width="15"
+                      height="15"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.9"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="text-slate-400 absolute left-3 pointer-events-none shrink-0"
+                    >
+                      <rect x="3" y="4" width="18" height="18" rx="2" />
+                      <line x1="16" y1="2" x2="16" y2="6" />
+                      <line x1="8" y1="2" x2="8" y2="6" />
+                      <line x1="3" y1="10" x2="21" y2="10" />
+                    </svg>
+                    <span className="w-full pl-9 pr-3 py-2.5 text-slate-900 text-sm font-medium leading-5 truncate select-none">
+                      {formattedActivityDate}
+                    </span>
+                    <input
+                      type="date"
+                      value={activeDateInputValue}
+                      onClick={(e) => {
+                        try { (e.currentTarget as HTMLInputElement).showPicker?.(); } catch {}
+                      }}
+                      onChange={(e) => {
+                        if (!e.target.value) return;
+                        const [yy, mm, dd] = e.target.value.split("-").map(Number);
+                        if (yy && mm && dd) {
+                          const picked = new Date(yy, mm - 1, dd);
+                          setSelected(picked);
+                          setCursor(new Date(yy, mm - 1, 1));
+                        }
+                      }}
+                      aria-label="Pilih tanggal kegiatan"
+                      className="opacity-0 absolute inset-0 w-full h-full cursor-pointer"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-semibold leading-4">
+                    <span className="text-slate-900">Waktu Kegiatan</span>
+                    <span className="text-rose-500">*</span>
+                  </label>
+                  <div className="relative flex items-center bg-white rounded-xl outline outline-1 outline-offset-[-1px] outline-slate-200 focus-within:outline-[#1A73E8] transition-colors">
+                    <input
+                      type="text"
+                      maxLength={10}
+                      value={agendaTime}
+                      onChange={(e) => setAgendaTime(e.target.value)}
+                      placeholder="-- . --"
+                      className="w-full pl-3.5 pr-9 py-2.5 bg-transparent text-slate-900 text-sm font-medium placeholder:text-slate-400 leading-5 outline-none"
+                    />
+                    <div className="absolute right-1.5 size-8 flex items-center justify-center text-slate-400 hover:text-slate-600">
+                      <svg
+                        width="15"
+                        height="15"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.9"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="pointer-events-none"
+                      >
+                        <circle cx="12" cy="12" r="10" />
+                        <polyline points="12 6 12 12 16 14" />
+                      </svg>
+                      <input
+                        type="time"
+                        aria-label="Pilih jam kegiatan"
+                        onClick={(e) => {
+                          try { (e.currentTarget as HTMLInputElement).showPicker?.(); } catch {}
+                        }}
+                        onChange={(e) => {
+                          if (e.target.value) setAgendaTime(e.target.value.replace(":", "."));
+                        }}
+                        className="opacity-0 absolute inset-0 w-full h-full cursor-pointer"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Catatan */}
+              <div className="flex flex-col gap-1.5">
+                <div className="flex items-center justify-between">
+                  <label className="text-slate-900 text-xs font-semibold leading-4">Catatan</label>
+                  <span className="text-gray-500 text-[10px] font-light font-['JetBrains_Mono'] leading-4">
+                    {agendaNotes.length}/300
+                  </span>
+                </div>
+                <textarea
+                  maxLength={300}
+                  value={agendaNotes}
+                  onChange={(e) => setAgendaNotes(capitalizeWords(e.target.value.slice(0, 300)))}
+                  autoCapitalize="sentences"
+                  placeholder="Tuliskan catatan tambahan..."
+                  rows={3}
+                  className="w-full px-3.5 py-3 bg-white rounded-xl outline outline-1 outline-offset-[-1px] outline-slate-200 focus:outline-[#1A73E8] text-sm text-slate-900 placeholder:text-slate-400 leading-5 resize-none outline-none font-normal transition-colors"
+                />
+              </div>
+
+              {/* Aktifkan Pengingat Card */}
+              <div className="p-3.5 bg-white rounded-xl outline outline-1 outline-offset-[-1px] outline-slate-200 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="size-9 bg-blue-50 rounded-lg outline outline-1 outline-offset-[-1px] outline-blue-100/50 flex items-center justify-center text-blue-600 shrink-0">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                      <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                    </svg>
+                  </div>
+                  <div className="flex flex-col min-w-0">
+                    <span className="text-slate-800 text-xs font-bold leading-4">Aktifkan Pengingat</span>
+                    <span className="text-gray-500 text-xs font-normal leading-4 truncate">
+                      Kirim notifikasi sebelum agenda dimulai
+                    </span>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={agendaReminder}
+                  aria-label="Aktifkan pengingat"
+                  onClick={() => setAgendaReminder((v) => !v)}
+                  className={`w-10 h-5 rounded-full relative transition-colors cursor-pointer shrink-0 ${
+                    agendaReminder ? "bg-blue-600" : "bg-slate-200"
+                  }`}
+                >
+                  <span
+                    className={`size-4 top-[2px] absolute bg-white rounded-full border transition-all ${
+                      agendaReminder ? "left-[22px] border-blue-600" : "left-[2px] border-slate-300"
+                    }`}
+                  />
+                </button>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="h-16 px-6 bg-white border-t border-slate-200 flex items-center justify-end gap-3 shrink-0">
+              <button
+                type="button"
+                onClick={() => setAddingAgenda(false)}
+                className="h-9 px-5 py-2 bg-slate-50 hover:bg-slate-100 rounded-[10px] outline outline-1 outline-offset-[-1px] outline-slate-200 text-slate-600 text-xs font-semibold leading-4 cursor-pointer transition-colors"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveAgenda}
+                className="h-9 px-6 py-2 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] rounded-[10px] text-white text-xs font-semibold leading-4 cursor-pointer transition-all flex items-center justify-center"
+              >
+                Simpan Agenda
+              </button>
+            </div>
+          </div>
+        ) : (
         <div
           className="w-[660px] max-w-[660px] max-h-[90vh] overflow-y-auto p-6 bg-white rounded-3xl shadow-[0px_24px_50px_-12px_rgba(19,27,46,0.22)] flex flex-col gap-3.5 font-['Plus_Jakarta_Sans']"
           onClick={(e) => e.stopPropagation()}
@@ -17239,73 +17515,36 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                     <span className="w-1 h-7 rounded-full shrink-0" style={{ background: ev.color }} />
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-bold text-slate-800 truncate">{ev.label}</p>
-                      <p className="text-[11px] text-slate-500">{ev.time} WIB</p>
+                      <p className="text-[11px] text-slate-500">
+                        {ev.time} WIB{ev.notes ? ` · ${ev.notes}` : ""}
+                      </p>
                     </div>
+                    {ev.reminder && (
+                      <span className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 text-[10px] font-semibold shrink-0">
+                        Pengingat
+                      </span>
+                    )}
                   </div>
                 ))}
               </div>
             </div>
           )}
 
-          {/* Inline quick add form when Tambah Agenda Baru clicked */}
-          {addingAgenda ? (
-            <div className="rounded-2xl border border-blue-200 bg-blue-50/50 p-3.5 flex flex-col gap-2.5">
-              <div className="flex items-center justify-between">
-                <p className="text-xs font-bold text-slate-800">
-                  Tambah Agenda · {(selected ?? today).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}
-                </p>
-                <button
-                  type="button"
-                  onClick={() => setAddingAgenda(false)}
-                  className="text-xs font-medium text-slate-500 hover:text-slate-700 cursor-pointer"
-                >
-                  Batal
-                </button>
-              </div>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={agendaTitle}
-                  onChange={(e) => setAgendaTitle(capitalizeWords(e.target.value))}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && agendaTitle.trim()) handleSaveAgenda();
-                  }}
-                  placeholder="Contoh: Bimbingan BAB II dengan Dosen..."
-                  autoFocus
-                  className="flex-1 px-3 py-2 rounded-xl border border-slate-200 bg-white text-xs text-slate-800 outline-none focus:border-blue-500"
-                />
-                <input
-                  type="text"
-                  value={agendaTime}
-                  onChange={(e) => setAgendaTime(e.target.value)}
-                  placeholder="10.00"
-                  className="w-20 px-2.5 py-2 rounded-xl border border-slate-200 bg-white text-xs text-slate-800 text-center outline-none focus:border-blue-500"
-                />
-                <button
-                  type="button"
-                  disabled={!agendaTitle.trim()}
-                  onClick={handleSaveAgenda}
-                  className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:opacity-45 text-white text-xs font-semibold cursor-pointer transition-colors"
-                >
-                  Simpan
-                </button>
-              </div>
-            </div>
-          ) : (
-            <button
-              type="button"
-              onClick={() => setAddingAgenda(true)}
-              className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 active:scale-[0.99] rounded-2xl shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] flex items-center justify-center gap-2 text-white text-base font-semibold leading-6 cursor-pointer transition-all"
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="9" />
-                <line x1="12" y1="8" x2="12" y2="16" />
-                <line x1="8" y1="12" x2="16" y2="12" />
-              </svg>
-              <span>Tambah Agenda Baru</span>
-            </button>
-          )}
+          {/* Button Tambah Agenda Baru */}
+          <button
+            type="button"
+            onClick={openAddAgendaModal}
+            className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 active:scale-[0.99] rounded-2xl shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] flex items-center justify-center gap-2 text-white text-base font-semibold leading-6 cursor-pointer transition-all"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="9" />
+              <line x1="12" y1="8" x2="12" y2="16" />
+              <line x1="8" y1="12" x2="16" y2="12" />
+            </svg>
+            <span>Tambah Agenda Baru</span>
+          </button>
         </div>
+        )}
       </div>
 
       {/* ── MOBILE POPUP (dipertahankan sesuai desain mobile existing) ── */}
