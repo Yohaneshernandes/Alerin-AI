@@ -5306,7 +5306,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
     {
       id: "percakapan",
       label: "Percakapan",
-      active: activeTab === "percakapan",
+      active: !calOpen && activeTab === "percakapan",
       onClick: () => onTab("percakapan"),
       icon: (
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -5317,7 +5317,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
     {
       id: "fitur",
       label: "Semua Fitur",
-      active: activeTab === "fitur",
+      active: !calOpen && activeTab === "fitur",
       onClick: () => onTab("fitur"),
       icon: (
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -5331,7 +5331,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
     {
       id: "proyek",
       label: "Proyek Saya",
-      active: activeTab === "proyek",
+      active: !calOpen && activeTab === "proyek",
       onClick: () => onTab("proyek"),
       icon: (
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
