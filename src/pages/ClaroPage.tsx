@@ -665,6 +665,16 @@ function formatClassProgramAsText(): string {
   ].join("\n");
 }
 
+const CLASS_PROGRAM_TABLE_MD = `| Fitur | Silver | Gold | Complete | Platinum | Diamond | Reguler |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| Judul, Topik & Variabel | ✓ | - | ✓ | - | - | Konsultasi |
+| Outline & Tinjauan Pustaka | - | ✓ | ✓ | - | - | Konsultasi |
+| Olah Data & Pembahasan | - | - | ✓ | ✓ | - | Konsultasi |
+| Slide PPT & Latihan Sidang | - | - | - | - | ✓ | By Request |
+| Durasi Bimbingan | 1 Bln | 2 Bln | 3 Bln | 2 Bln | 14 Hr | 14 Hr |
+| Diskon Promo | 25% | 40% | 50% | 40% | 17% | 8% |
+| Harga | 299rb | 499rb | 1,01jt | 459rb | 249rb | 229rb |`;
+
 // ─── Format Markdown Bersih untuk Disalin ke Clipboard ──────────────────────
 // Merapikan teks hasil salinan agar enak dibaca di pesan chat, input, dokumen, atau WhatsApp
 export function cleanMarkdownForCopy(md: string): string {
@@ -1737,6 +1747,10 @@ Kamu ingin dibuatkan **info grafis** untuk topik atau data apa? Tulis topikmu di
 \`\`\`paket-class:diamond
 \`\`\`
 
+# Tabel perbandingan Class Program
+
+${CLASS_PROGRAM_TABLE_MD}
+
 # Rekomendasi paket sesuai kebutuhan persiapan sidang
 
 1. **Fokus PowerPoint & latihan presentasi (Paling cocok):** **Paket Diamond (Rp249.000 · 14 Hari)** dirancang khusus untuk pendampingan penyusunan slide PPT sempro/sidang serta simulasi presentasi.
@@ -1755,6 +1769,10 @@ Kapan jadwal seminar proposal atau sidang skripsimu berlangsung agar Alerin bant
 
 \`\`\`paket-class
 \`\`\`
+
+# Tabel perbandingan Class Program
+
+${CLASS_PROGRAM_TABLE_MD}
 
 # Panduan memilih paket sesuai tahap skripsimu
 
@@ -1779,6 +1797,10 @@ Berikut pilihan paket **Class Program Alerin** yang tersedia:
 
 \`\`\`paket-class
 \`\`\`
+
+# Tabel perbandingan Class Program
+
+${CLASS_PROGRAM_TABLE_MD}
 
 # Rekomendasi paket sesuai tahap skripsimu
 
@@ -9493,40 +9515,6 @@ function InfographicOutputCard({ variant }: { variant?: string }) {
 }
 
 // ─── Class Program Packages Output Card (Rekomendasi Paket Interaktif) ─────────
-const CLASS_PROGRAM_COMPARISON_ROWS: {
-  feature: string;
-  values: Record<string, string>;
-}[] = [
-  {
-    feature: "Judul, Topik & Variabel",
-    values: { silver: "✓", gold: "-", platinum: "-", diamond: "-", complete: "✓", reguler: "Konsultasi" },
-  },
-  {
-    feature: "Outline & Tinjauan Pustaka",
-    values: { silver: "-", gold: "✓", platinum: "-", diamond: "-", complete: "✓", reguler: "Konsultasi" },
-  },
-  {
-    feature: "Olah Data & Pembahasan",
-    values: { silver: "-", gold: "-", platinum: "✓", diamond: "-", complete: "✓", reguler: "Konsultasi" },
-  },
-  {
-    feature: "Slide PPT & Latihan Sidang",
-    values: { silver: "-", gold: "-", platinum: "-", diamond: "✓", complete: "-", reguler: "By Request" },
-  },
-  {
-    feature: "Durasi Bimbingan",
-    values: { silver: "1 Bln", gold: "2 Bln", platinum: "2 Bln", diamond: "14 Hr", complete: "3 Bln", reguler: "14 Hr" },
-  },
-  {
-    feature: "Diskon Promo",
-    values: { silver: "25%", gold: "40%", platinum: "40%", diamond: "17%", complete: "50%", reguler: "8%" },
-  },
-  {
-    feature: "Harga",
-    values: { silver: "299rb", gold: "499rb", platinum: "459rb", diamond: "249rb", complete: "1,01jt", reguler: "229rb" },
-  },
-];
-
 function formatPackageHeadingName(name: string): string {
   if (name === "KONSULTASI REGULER") return "Konsultasi Reguler";
   return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
@@ -9583,15 +9571,6 @@ function ClassProgramPackagesCard({ featuredId }: { featuredId?: string }) {
     }
     return featuredPkg.features;
   }, [featuredPkg]);
-
-  const orderedComparisonPkgs = useMemo(
-    () => [
-      ...secondaryPackages.slice(0, 2),
-      featuredPkg,
-      ...secondaryPackages.slice(2),
-    ],
-    [featuredPkg, secondaryPackages]
-  );
 
   const cleanDuration = featuredPkg.duration.replace("*", "");
   const cleanOriginal = featuredPkg.originalPrice.replace("*", "");
@@ -9696,47 +9675,6 @@ function ClassProgramPackagesCard({ featuredId }: { featuredId?: string }) {
             </button>
           );
         })}
-      </div>
-
-      {/* 3. Tabel Perbandingan Paket (minimalis & dapat digeser horizontal) */}
-      <div className="mt-6">
-        <h3 className="text-[1.05rem] sm:text-[1.1rem] font-bold text-slate-900 leading-snug mb-2">
-          Tabel perbandingan Class Program
-        </h3>
-
-        <div
-          className="w-full overflow-x-auto select-text"
-          style={{ WebkitOverflowScrolling: "touch", scrollbarWidth: "none", touchAction: "pan-x pan-y" }}
-        >
-          <table className="w-max min-w-full border-collapse text-left text-[13px] sm:text-[14px]">
-            <thead>
-              <tr className="border-b border-slate-200">
-                <th className="py-2.5 pr-4 font-semibold text-slate-900 whitespace-nowrap">
-                  Fitur
-                </th>
-                {orderedComparisonPkgs.map((pkg) => (
-                  <th key={pkg.id} className="py-2.5 px-3.5 font-semibold text-slate-900 whitespace-nowrap">
-                    {pkg.id === "reguler" ? "Reguler" : formatPackageHeadingName(pkg.name)}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {CLASS_PROGRAM_COMPARISON_ROWS.map((row, ri) => (
-                <tr key={ri} className="border-b border-slate-100 last:border-b-0">
-                  <td className="py-2.5 pr-4 font-normal text-slate-900 min-w-[140px]">
-                    {row.feature}
-                  </td>
-                  {orderedComparisonPkgs.map((pkg) => (
-                    <td key={pkg.id} className="py-2.5 px-3.5 text-slate-800 whitespace-nowrap">
-                      {row.values[pkg.id] ?? "-"}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
       </div>
 
       {/* Modal Detail Paket */}
