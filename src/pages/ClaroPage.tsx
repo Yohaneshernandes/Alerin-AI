@@ -15253,9 +15253,9 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
             backgroundSize: "24px 24px",
             zIndex: 0,
           }} />
-          {/* Header Gambar 3: [<]  🎓 [Judul Proyek]  [...] */}
+          {/* Header Proyek Chat: Mobile terpusat · Desktop rata kiri-kanan penuh seperti ChatGPT */}
           <header className="shrink-0 bg-white md:bg-white/80 md:backdrop-blur-md relative z-20 border-b border-neutral-100 md:border-slate-200/60">
-            <div className="max-w-4xl mx-auto w-full flex items-center justify-between px-4 md:px-8 pt-3 pb-2.5">
+            <div className="w-full flex items-center justify-between md:justify-start md:gap-3 px-4 md:px-6 pt-3 pb-2.5">
             <button
               type="button"
               onClick={() => {
@@ -15263,28 +15263,28 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                 setChatMenuOpen(false);
               }}
               aria-label="Kembali ke proyek"
-              className="size-11 rounded-full border border-neutral-200/90 bg-white flex items-center justify-center text-neutral-800 hover:bg-neutral-50 active:scale-95 transition-all shadow-2xs cursor-pointer"
+              className="size-11 md:size-9 rounded-full border border-neutral-200/90 md:border-transparent bg-white md:bg-transparent flex items-center justify-center text-neutral-800 hover:bg-neutral-50 md:hover:bg-slate-100/80 active:scale-95 transition-all shadow-2xs md:shadow-none cursor-pointer shrink-0"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="m15 18-6-6 6-6" />
               </svg>
             </button>
 
-            <div className="flex items-center gap-2 max-w-[210px]">
+            <div className="flex items-center gap-2 max-w-[210px] md:max-w-[420px]">
               <span className="shrink-0 flex items-center text-neutral-900" style={{ color: "#111827" }}>
                 <ProjectIcon type={selectedProject.iconType || "folder"} fill="white" />
               </span>
-              <h2 className="text-[17px] font-bold text-neutral-900 truncate">
+              <h2 className="text-[17px] md:text-[15px] font-bold md:font-semibold text-neutral-900 truncate">
                 {selectedProject.title}
               </h2>
             </div>
 
-            <div className="relative">
+            <div className="relative md:ml-auto shrink-0">
               <button
                 type="button"
                 onClick={() => setChatMenuOpen((prev) => !prev)}
                 aria-label="Opsi obrolan"
-                className="size-11 rounded-full border border-neutral-200/90 bg-white flex items-center justify-center text-neutral-800 hover:bg-neutral-50 active:scale-95 transition-all shadow-2xs cursor-pointer"
+                className="size-11 md:size-9 rounded-full border border-neutral-200/90 md:border-transparent bg-white md:bg-transparent flex items-center justify-center text-neutral-800 hover:bg-neutral-50 md:hover:bg-slate-100/80 active:scale-95 transition-all shadow-2xs md:shadow-none cursor-pointer"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                   <circle cx="12" cy="12" r="1.5" />
@@ -15696,9 +15696,9 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
             backgroundSize: "24px 24px",
             zIndex: 0,
           }} />
-          {/* Header Gambar 2: [<]  🎓 [Judul Proyek]  [...] */}
+          {/* Header Detail Proyek: Mobile terpusat · Desktop rata kiri-kanan penuh seperti ChatGPT */}
           <header className="shrink-0 bg-white md:bg-white/80 md:backdrop-blur-md relative z-20 border-b border-neutral-100 md:border-slate-200/60">
-            <div className="max-w-4xl mx-auto w-full flex items-center justify-between px-4 md:px-8 pt-3 pb-2.5">
+            <div className="w-full flex items-center justify-between md:justify-start md:gap-3 px-4 md:px-6 pt-3 pb-2.5">
             <button
               type="button"
               onClick={() => {
@@ -15707,28 +15707,28 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                 setActiveProjectChatMenu(null);
               }}
               aria-label="Kembali ke daftar proyek"
-              className="size-11 rounded-full border border-neutral-200/90 bg-white flex items-center justify-center text-neutral-800 hover:bg-neutral-50 active:scale-95 transition-all shadow-2xs cursor-pointer"
+              className="size-11 md:size-9 rounded-full border border-neutral-200/90 md:border-transparent bg-white md:bg-transparent flex items-center justify-center text-neutral-800 hover:bg-neutral-50 md:hover:bg-slate-100/80 active:scale-95 transition-all shadow-2xs md:shadow-none cursor-pointer shrink-0"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="m15 18-6-6 6-6" />
               </svg>
             </button>
 
-            <div className="flex items-center gap-2 max-w-[210px]">
+            <div className="flex items-center gap-2 max-w-[210px] md:max-w-[420px]">
               <span className="shrink-0 flex items-center text-neutral-900" style={{ color: "#111827" }}>
                 <ProjectIcon type={selectedProject.iconType || "folder"} fill="white" />
               </span>
-              <h1 className="text-[17px] font-bold text-neutral-900 truncate">
+              <h1 className="text-[17px] md:text-[15px] font-bold md:font-semibold text-neutral-900 truncate">
                 {selectedProject.title}
               </h1>
             </div>
 
-            <div className="relative">
+            <div className="relative md:ml-auto shrink-0">
               <button
                 type="button"
                 onClick={() => setProjectMenuOpen((prev) => !prev)}
                 aria-label="Menu proyek"
-                className="size-11 rounded-full border border-neutral-200/90 bg-white flex items-center justify-center text-neutral-800 hover:bg-neutral-50 active:scale-95 transition-all shadow-2xs cursor-pointer"
+                className="size-11 md:size-9 rounded-full border border-neutral-200/90 md:border-transparent bg-white md:bg-transparent flex items-center justify-center text-neutral-800 hover:bg-neutral-50 md:hover:bg-slate-100/80 active:scale-95 transition-all shadow-2xs md:shadow-none cursor-pointer"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                   <circle cx="12" cy="12" r="1.5" />
@@ -15878,9 +15878,9 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
             backgroundSize: "24px 24px",
             zIndex: 0,
           }} />
-          {/* Header: Mobile [hamburger | Proyek | +] · Desktop [Proyek Saya | +] */}
+          {/* Header: Mobile [hamburger | Proyek | +] · Desktop full-width [Proyek Saya | +] */}
           <header className="shrink-0 bg-white md:bg-transparent relative z-20">
-            <div className="max-w-4xl mx-auto w-full flex items-center justify-between px-4 md:px-8 pt-3 md:pt-7 pb-2 md:pb-4">
+            <div className="w-full flex items-center justify-between px-4 md:px-7 pt-3 md:pt-5 pb-2 md:pb-3">
               <button
                 type="button"
                 onClick={openDrawer}
