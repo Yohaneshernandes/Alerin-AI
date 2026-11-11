@@ -14930,8 +14930,42 @@ function ProyekTab({
   };
 
   const handleShareProject = (target: MobileProjectItem) => {
+    const shareUrl = `${window.location.origin}/proyek/${target.id}`;
     if (navigator.clipboard) {
-      navigator.clipboard.writeText(`${window.location.origin}/proyek/${target.id}`);
+      navigator.clipboard.writeText(shareUrl).catch(() => {});
+    }
+    if (onOpenSharedChat) {
+      const folderChats = [...(projectChatsMap[target.id] ?? [])].sort((a, b) => {
+        if (a.pinned && !b.pinned) return -1;
+        if (!a.pinned && b.pinned) return 1;
+        return (b.updatedAt || 0) - (a.updatedAt || 0);
+      });
+      const chatWithMsgs = folderChats.find((c) => c.msgs && c.msgs.length > 0);
+      const previewMsgs: ChatMsg[] =
+        chatWithMsgs
+          ? chatWithMsgs.msgs
+          : target.msgs && target.msgs.length > 0
+            ? target.msgs
+            : [
+                {
+                  role: "user",
+                  text: `Halo Alerin, mari bahas proyek ${target.title}.`,
+                  time: now(),
+                },
+                {
+                  role: "claro",
+                  text: `Halo! Ini adalah pratinjau obrolan untuk proyek **${target.title}**. Klik **Mulai Obrolan** di bawah untuk melanjutkan diskusi bersama Alerin.`,
+                  time: now(),
+                },
+              ];
+
+      onOpenSharedChat({
+        id: target.id,
+        title: target.title,
+        msgs: previewMsgs,
+        shareUrl,
+      });
+      return;
     }
     setToast(`Tautan proyek "${target.title}" berhasil disalin!`);
   };
@@ -16733,6 +16767,22 @@ function ProyekTab({
                 <>
                   <div className="fixed inset-0 z-[190]" onClick={() => setProjectMenuOpen(false)} />
                   <div className="absolute right-0 top-12 z-[200] w-[190px] bg-white rounded-2xl border border-neutral-200 shadow-xl p-1.5 animate-[gemini-fade-in_0.15s_ease-out]">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setProjectMenuOpen(false);
+                        handleShareProject(selectedProject);
+                      }}
+                      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-neutral-700 hover:bg-neutral-100 transition-colors text-left"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+                        <polyline points="16 6 12 2 8 6" />
+                        <line x1="12" y1="2" x2="12" y2="15" />
+                      </svg>
+                      <span>Bagikan Proyek</span>
+                    </button>
+                    <div className="h-px bg-neutral-100 my-1" />
                     <button
                       type="button"
                       onClick={() => {
