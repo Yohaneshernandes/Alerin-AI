@@ -16980,6 +16980,13 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
   const [slideSeq, setSlideSeq] = useState(0);
   const [outgoingView, setOutgoingView] = useState<"calendar" | "add" | null>(null);
   const slideTimerRef = useRef<number | null>(null);
+  const calNoticeTimerRef = useRef<number | null>(null);
+  const googleTimerRef = useRef<number | null>(null);
+  const [calNotice, setCalNotice] = useState<{
+    id: number;
+    text: string;
+    tone: "success" | "info" | "error";
+  } | null>(null);
   const titleInputRef = useRef<HTMLInputElement | null>(null);
   const reminderBtnRef = useRef<HTMLButtonElement | null>(null);
   const timeFieldRef = useRef<HTMLDivElement | null>(null);
@@ -16999,6 +17006,12 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
     source: "preset" | "custom";
     index: number;
   } | null>(null);
+  const [deleteAgendaConfirm, setDeleteAgendaConfirm] = useState<{
+    key: string;
+    label: string;
+    source: "preset" | "custom";
+    sourceIndex: number;
+  } | null>(null);
   const [hiddenPresetMap, setHiddenPresetMap] = useState<Record<string, number[]>>(() => {
     try {
       const saved = localStorage.getItem("alerin_calendar_hidden_presets");
@@ -17017,6 +17030,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
   const switchDesktopView = useCallback((nextAdding: boolean) => {
     setReminderMenuOpen(false);
     setTimePickerOpen(false);
+    setDeleteAgendaConfirm(null);
     setAddingAgenda((prevAdding) => {
       if (prevAdding === nextAdding) return prevAdding;
       if (slideTimerRef.current) window.clearTimeout(slideTimerRef.current);
@@ -17030,9 +17044,20 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
     });
   }, []);
 
+  const showCalNotice = useCallback((text: string, tone: "success" | "info" | "error" = "success") => {
+    if (calNoticeTimerRef.current) window.clearTimeout(calNoticeTimerRef.current);
+    setCalNotice({ id: Date.now(), text, tone });
+    calNoticeTimerRef.current = window.setTimeout(() => {
+      setCalNotice(null);
+      calNoticeTimerRef.current = null;
+    }, 3000);
+  }, []);
+
   useEffect(() => {
     return () => {
       if (slideTimerRef.current) window.clearTimeout(slideTimerRef.current);
+      if (calNoticeTimerRef.current) window.clearTimeout(calNoticeTimerRef.current);
+      if (googleTimerRef.current) window.clearTimeout(googleTimerRef.current);
     };
   }, []);
 
@@ -17047,7 +17072,8 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        if (timePickerOpen) setTimePickerOpen(false);
+        if (deleteAgendaConfirm) setDeleteAgendaConfirm(null);
+        else if (timePickerOpen) setTimePickerOpen(false);
         else if (reminderMenuOpen) setReminderMenuOpen(false);
         else if (addingAgenda) switchDesktopView(false);
         else onClose();
@@ -17055,7 +17081,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [addingAgenda, reminderMenuOpen, timePickerOpen, switchDesktopView, onClose]);
+  }, [deleteAgendaConfirm, addingAgenda, reminderMenuOpen, timePickerOpen, switchDesktopView, onClose]);
 
   const year = cursor.getFullYear();
   const month = cursor.getMonth();
@@ -17212,18 +17238,24 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
       setHiddenPresetMap(nextHidden);
       try { localStorage.setItem("alerin_calendar_hidden_presets", JSON.stringify(nextHidden)); } catch {}
     }
-    onToast("Agenda dihapus.");
+    showCalNotice("Agenda berhasil dihapus", "success");
+  };
+
+  const confirmDeleteAgenda = () => {
+    if (!deleteAgendaConfirm) return;
+    handleDeleteAgenda(deleteAgendaConfirm.key, deleteAgendaConfirm.source, deleteAgendaConfirm.sourceIndex);
+    setDeleteAgendaConfirm(null);
   };
 
   const handleSaveAgenda = () => {
     const trimmed = agendaTitle.trim();
     const match = agendaTime.trim().match(/^([01]\d|2[0-3])\s*[.:]\s*([0-5]\d)$/);
     if (!trimmed) {
-      onToast("Harap isi Judul Agenda terlebih dahulu.");
+      showCalNotice("Harap isi Judul Agenda terlebih dahulu", "error");
       return;
     }
     if (!match) {
-      onToast("Masukkan Waktu Kegiatan dengan format jam valid (contoh: 10 . 00).");
+      showCalNotice("Masukkan Waktu Kegiatan yang valid (contoh: 10 . 00)", "error");
       return;
     }
     const normalizedTime = `${match[1]}.${match[2]}`;
@@ -17266,7 +17298,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
     setReminderMenuOpen(false);
     setTimePickerOpen(false);
     switchDesktopView(false);
-    onToast(wasEditing ? `Agenda "${trimmed}" diperbarui!` : `Agenda "${trimmed}" ditambahkan!`);
+    showCalNotice(wasEditing ? "Agenda berhasil diperbarui" : "Agenda baru berhasil ditambahkan", "success");
   };
 
   const activeDateForForm = selected ?? today;
@@ -17590,13 +17622,15 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
               type="button"
               onClick={() => {
                 if (googleConnected) {
-                  onToast("Google Kalender sudah terhubung.");
+                  showCalNotice("Google Kalender sudah terhubung", "success");
                   return;
                 }
-                onToast("Menghubungkan ke Google Kalender…");
-                setTimeout(() => {
+                showCalNotice("Menghubungkan ke Google Kalender…", "info");
+                if (googleTimerRef.current) window.clearTimeout(googleTimerRef.current);
+                googleTimerRef.current = window.setTimeout(() => {
                   setGoogleConnected(true);
-                  onToast("Berhasil! Google Kalender terhubung ✓");
+                  googleTimerRef.current = null;
+                  showCalNotice("Google Kalender berhasil terhubung", "success");
                 }, 1100);
               }}
               className="h-8 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 active:scale-[0.99] rounded-[10px] outline outline-1 outline-offset-[-1px] outline-slate-200 flex items-center gap-[5px] cursor-pointer transition-all"
@@ -17799,7 +17833,14 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                     </button>
                     <button
                       type="button"
-                      onClick={() => handleDeleteAgenda(selectedKey, ev.source, ev.sourceIndex)}
+                      onClick={() =>
+                        setDeleteAgendaConfirm({
+                          key: selectedKey,
+                          label: ev.label,
+                          source: ev.source,
+                          sourceIndex: ev.sourceIndex,
+                        })
+                      }
                       aria-label="Hapus agenda"
                       title="Hapus agenda"
                       className="size-6 rounded-lg hover:bg-rose-100 text-gray-700 hover:text-rose-600 flex items-center justify-center cursor-pointer transition-colors"
@@ -17844,7 +17885,10 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
   return (
     <div
       className="fixed inset-0 z-[200] overflow-y-auto bg-slate-950/45 backdrop-blur-xs animate-[gemini-fade-in_0.15s_ease-out]"
-      onClick={onClose}
+      onClick={() => {
+        if (deleteAgendaConfirm) setDeleteAgendaConfirm(null);
+        else onClose();
+      }}
     >
       {/* ── DESKTOP POPUP (desain Alerin Kalender 660px & Pop-up Tambah Agenda dengan animasi slide kanan ke kiri) ── */}
       <div className="hidden md:flex min-h-full items-center justify-center p-4">
@@ -17873,6 +17917,80 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
           >
             {addingAgenda ? desktopAddAgendaPanel : desktopCalendarPanel}
           </div>
+
+          {/* Pop-up Konfirmasi Hapus Agenda (Desktop) */}
+          {deleteAgendaConfirm && (
+            <div
+              className="absolute inset-0 z-30 flex items-center justify-center p-4"
+              onClick={() => setDeleteAgendaConfirm(null)}
+            >
+              <div
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="delete-agenda-title"
+                onClick={(e) => e.stopPropagation()}
+                className="relative w-96 max-w-[calc(100%-32px)] px-6 py-4 bg-white rounded-2xl border border-zinc-200 shadow-[0px_22.71739px_45.43478px_0px_rgba(2,6,23,0.35)] flex flex-col justify-start items-center gap-3.5 animate-[gemini-zoom-in_0.16s_ease-out]"
+              >
+                <button
+                  type="button"
+                  onClick={() => setDeleteAgendaConfirm(null)}
+                  aria-label="Tutup"
+                  className="size-7 right-2.5 top-2 absolute rounded-full inline-flex justify-center items-center text-neutral-400 hover:text-neutral-600 hover:bg-slate-100 transition-colors cursor-pointer"
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </button>
+
+                <div className="self-stretch flex justify-start items-start">
+                  <div className="size-11 bg-blue-100 rounded-2xl shadow-[0px_0.9086957px_1.8173914px_0px_rgba(0,0,0,0.05)] border border-blue-200/70 flex justify-center items-center shrink-0">
+                    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="3 6 5 6 21 6" />
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                      <line x1="10" y1="11" x2="10" y2="17" />
+                      <line x1="14" y1="11" x2="14" y2="17" />
+                    </svg>
+                  </div>
+                  <div className="pl-3.5 pt-0.5 flex flex-col justify-start items-start flex-1 min-w-0 pr-6">
+                    <h3
+                      id="delete-agenda-title"
+                      className="h-10 flex items-center text-neutral-900 text-base font-bold leading-6"
+                    >
+                      Hapus Agenda?
+                    </h3>
+                  </div>
+                </div>
+
+                <div className="self-stretch flex flex-col justify-start items-start">
+                  <p className="self-stretch text-zinc-500 text-xs font-normal leading-5">
+                    Apakah kamu yakin ingin menghapus Agenda{" "}
+                    <span className="text-zinc-600 font-semibold">
+                      “{deleteAgendaConfirm.label}”
+                    </span>
+                    ? Tindakan ini tidak dapat dibatalkan.
+                  </p>
+                </div>
+
+                <div className="self-stretch flex justify-end items-center gap-2.5">
+                  <button
+                    type="button"
+                    onClick={() => setDeleteAgendaConfirm(null)}
+                    className="h-8 px-5 bg-slate-50 hover:bg-slate-100 rounded-lg border border-slate-200 inline-flex justify-center items-center text-slate-600 text-xs font-semibold leading-4 cursor-pointer transition-colors"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    type="button"
+                    onClick={confirmDeleteAgenda}
+                    className="h-8 px-5 bg-blue-600 hover:bg-blue-700 active:scale-[0.99] rounded-lg shadow-[0px_0.9086957px_1.8173914px_0px_rgba(0,0,0,0.05)] inline-flex justify-center items-center text-white text-xs font-semibold leading-5 cursor-pointer transition-all"
+                  >
+                    Ya, Hapus
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {timePickerOpen && timePickerPos && typeof document !== "undefined" && createPortal(
@@ -18007,6 +18125,44 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
               })}
             </div>
           </>,
+          document.body
+        )}
+
+        {calNotice && typeof document !== "undefined" && createPortal(
+          <div
+            key={calNotice.id}
+            role="status"
+            aria-live="polite"
+            onClick={(e) => {
+              e.stopPropagation();
+              setCalNotice(null);
+            }}
+            className="hidden md:flex fixed top-5 right-5 z-[310] bg-white rounded-2xl border border-slate-200/75 shadow-[0_14px_34px_-6px_rgba(15,23,42,0.18),0_4px_12px_-2px_rgba(15,23,42,0.06)] pl-3 pr-5 py-2.5 items-center gap-3 font-['Plus_Jakarta_Sans'] cursor-pointer select-none animate-[gemini-fade-in_0.18s_ease-out]"
+          >
+            <span
+              className={`size-8 rounded-full flex items-center justify-center shrink-0 text-white ${
+                calNotice.tone === "error" ? "bg-rose-500" : "bg-blue-600"
+              }`}
+            >
+              {calNotice.tone === "error" ? (
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <line x1="12" y1="8" x2="12" y2="12" />
+                  <line x1="12" y1="16" x2="12.01" y2="16" />
+                </svg>
+              ) : calNotice.tone === "info" ? (
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" className="animate-spin" aria-hidden="true">
+                  <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                </svg>
+              ) : (
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              )}
+            </span>
+            <span className="text-neutral-900 text-[13px] font-semibold leading-5 tracking-[-0.01em] whitespace-nowrap">
+              {calNotice.text}
+            </span>
+          </div>,
           document.body
         )}
       </div>
