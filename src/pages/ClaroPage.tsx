@@ -3306,8 +3306,35 @@ function SelectTextModal({
   onCopied: (message: string) => void;
 }) {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const [allSelected, setAllSelected] = useState(false);
+
+  useEffect(() => {
+    setAllSelected(false);
+  }, [text]);
 
   if (text === null) return null;
+
+  const syncAllSelectedState = (el: HTMLTextAreaElement) => {
+    setAllSelected(el.value.length > 0 && el.selectionStart === 0 && el.selectionEnd === el.value.length);
+  };
+
+  const handleToggleSelectAll = () => {
+    const el = textareaRef.current;
+    if (!el) return;
+    const isCurrentlyAll =
+      allSelected || (el.value.length > 0 && el.selectionStart === 0 && el.selectionEnd === el.value.length);
+    if (isCurrentlyAll) {
+      try { el.setSelectionRange(0, 0); } catch {}
+      el.blur();
+      try { window.getSelection()?.removeAllRanges(); } catch {}
+      setAllSelected(false);
+    } else {
+      el.focus();
+      el.select();
+      try { el.setSelectionRange(0, el.value.length); } catch {}
+      setAllSelected(true);
+    }
+  };
 
   const handleCopy = () => {
     const el = textareaRef.current;
@@ -3368,24 +3395,22 @@ function SelectTextModal({
             ref={textareaRef}
             readOnly
             value={text}
-            className="w-full h-[225px] min-h-[180px] max-h-[380px] p-3 text-sm leading-relaxed text-slate-900 bg-transparent border-2 border-transparent rounded-2xl focus:bg-white focus:border-[#1A73E8] focus:ring-2 focus:ring-[#1A73E8]/20 focus:outline-none selection:bg-[#BCE3FA] selection:text-slate-900 select-text cursor-text resize-none font-normal transition-all"
+            onSelect={(e) => syncAllSelectedState(e.currentTarget)}
+            onMouseUp={(e) => syncAllSelectedState(e.currentTarget)}
+            onKeyUp={(e) => syncAllSelectedState(e.currentTarget)}
+            className="w-full h-[225px] min-h-[180px] max-h-[380px] p-3.5 text-sm leading-relaxed text-slate-900 bg-white border-2 border-[#1A73E8] rounded-2xl ring-2 ring-[#1A73E8]/20 focus:outline-none focus:ring-2 focus:ring-[#1A73E8] selection:bg-[#BCE3FA] selection:text-slate-900 select-text cursor-text resize-none font-normal transition-all"
           />
         </div>
 
         <div className="flex items-center justify-between gap-2 pt-1 border-t border-slate-100">
           <button
             type="button"
-            onClick={() => {
-              const el = textareaRef.current;
-              if (el) {
-                el.focus();
-                el.select();
-                try {
-                  el.setSelectionRange(0, el.value.length);
-                } catch {}
-              }
-            }}
-            className="px-3 py-2 text-xs font-medium text-blue-600 hover:bg-blue-50 active:bg-blue-100 rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer"
+            onClick={handleToggleSelectAll}
+            className={`px-3 py-2 text-xs font-medium rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer ${
+              allSelected
+                ? "bg-blue-50 text-blue-700 hover:bg-blue-100 active:bg-blue-200"
+                : "text-blue-600 hover:bg-blue-50 active:bg-blue-100"
+            }`}
           >
             <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="3" width="18" height="18" rx="2"/>
