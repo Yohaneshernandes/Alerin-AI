@@ -6098,8 +6098,7 @@ function ChatInputBox({
   const mobileTextareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
-  const activeCat = CATEGORIES.find((c) => c.id === activeCategory) ?? null;
-  const currentSuggestions = (activeCategory && CATEGORY_SUGGESTIONS[activeCategory as CategoryKey]) ? CATEGORY_SUGGESTIONS[activeCategory as CategoryKey] : PROMPT_SUGGESTIONS;;
+  const currentSuggestions = (activeCategory && CATEGORY_SUGGESTIONS[activeCategory as CategoryKey]) ? CATEGORY_SUGGESTIONS[activeCategory as CategoryKey] : PROMPT_SUGGESTIONS;
   const [activeMode, setActiveMode] = useState<ModeKey>("luma");
   const [reasoningLevel, setReasoningLevel] = useState("Otomatis");
   const [modeOpen, setModeOpen] = useState(false);
@@ -6123,7 +6122,8 @@ function ChatInputBox({
 
   // Deteksi jika teks sudah banyak / scrollable untuk memunculkan tombol perbesar (expand)
   useEffect(() => {
-    const el = mobileTextareaRef.current || textareaRef.current;
+    const isDesktop = typeof window !== "undefined" && window.innerWidth >= 768;
+    const el = (isDesktop ? textareaRef.current : mobileTextareaRef.current) || textareaRef.current || mobileTextareaRef.current;
     if (!el) {
       setCanExpand(input.length > 80 || input.split("\n").length >= 4);
       return;
@@ -6340,18 +6340,9 @@ function ChatInputBox({
     };
   }, [modeOpen, uploadMenuOpen]);
 
-  // Auto-resize textarea to expand upwards up to 8 lines, then scroll
+  // Auto-resize textarea to expand upwards up to 8 lines, then scroll (seragam desktop & mobile)
   useEffect(() => {
-    const resizeDesktop = (el: HTMLTextAreaElement | null) => {
-      if (!el) return;
-      el.style.height = "auto";
-      const maxHeight = 8 * 24 + 24; // 8 lines (~216px)
-      const nextHeight = Math.min(el.scrollHeight, maxHeight);
-      el.style.height = `${Math.max(nextHeight, 58)}px`;
-      el.style.overflowY = el.scrollHeight > maxHeight ? "auto" : "hidden";
-    };
-
-    const resizeMobile = (el: HTMLTextAreaElement | null) => {
+    const resizeTextarea = (el: HTMLTextAreaElement | null) => {
       if (!el) return;
       el.style.height = "auto";
       const maxHeight = 8 * 24 + 16; // 8 lines (~208px)
@@ -6360,8 +6351,8 @@ function ChatInputBox({
       el.style.overflowY = el.scrollHeight > maxHeight ? "auto" : "hidden";
     };
 
-    resizeDesktop(textareaRef.current);
-    resizeMobile(mobileTextareaRef.current);
+    resizeTextarea(textareaRef.current);
+    resizeTextarea(mobileTextareaRef.current);
   }, [input]);
 
   // Voice dictation
@@ -6434,8 +6425,8 @@ function ChatInputBox({
 
   return (
     <div className={mobileFloat
-      ? "fixed md:relative bottom-4 md:bottom-auto left-3 right-3 md:left-auto md:right-auto md:mx-6 md:mb-4 z-[60] md:z-auto pt-1 px-3 pb-2 md:pt-2 md:pb-2 rounded-2xl"
-      : "shrink-0 px-3 md:px-6 pb-2 md:pb-4 pt-0 md:pt-2 md:border-t md:border-slate-200/60"}
+      ? "fixed md:relative bottom-4 md:bottom-auto left-3 right-3 md:left-auto md:right-auto md:mx-6 md:mb-4 z-[60] md:z-auto pt-1 px-3 pb-2 md:pt-1 md:pb-2 rounded-2xl"
+      : "shrink-0 px-3 md:px-6 pb-2 md:pb-3 pt-0"}
       style={mobileFloat
         ? { background: "rgba(255,255,255,0.88)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.92)", boxShadow: "0 8px 32px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.06)" } as React.CSSProperties
         : {}}>
@@ -6460,8 +6451,8 @@ function ChatInputBox({
         </div>
       )}
 
-      {/* Input card with Glass styling on mobile */}
-      <div ref={cardContainerRef} className="rounded-2xl border overflow-visible mb-1 md:mb-2 relative claro-glass-card"
+      {/* Input card with Glass styling */}
+      <div ref={cardContainerRef} className="rounded-2xl border overflow-visible mb-1 relative claro-glass-card"
         style={{
           borderColor: listening ? "#3b82f6" : mobileFloat ? "transparent" : undefined,
           boxShadow: listening
@@ -6582,7 +6573,7 @@ function ChatInputBox({
           rows={1}
           className="md:hidden w-full px-4 pt-3 pb-1 text-[15px] text-slate-800 placeholder-slate-400 resize-none outline-none leading-relaxed rounded-t-2xl bg-transparent min-h-[38px]"
         />
-        {/* Desktop textarea: placeholder (Enter keyboard langsung kirim) */}
+        {/* Desktop textarea: seragam dengan mobile (Enter keyboard tetap langsung kirim) */}
         <textarea
           ref={textareaRef}
           value={input}
@@ -6591,9 +6582,9 @@ function ChatInputBox({
           autoCorrect="on"
           spellCheck={false}
           onKeyDown={handleDesktopKey}
-          placeholder={listening ? "Berbicara sekarang…" : (activeCat?.placeholder ?? "Diskusi dengan Alerin tentang materi, tugas, jurnal, skripsi, atau kebutuhan kuliah lainnya...")}
-          rows={2}
-          className="hidden md:block w-full px-4 pt-3.5 pb-2 text-[15px] text-slate-800 placeholder-slate-400 resize-none outline-none leading-relaxed rounded-t-2xl bg-transparent min-h-[58px]"
+          placeholder={listening ? "Berbicara sekarang…" : "Diskusi dengan Alerin"}
+          rows={1}
+          className="hidden md:block w-full px-4 pt-3 pb-1 text-[15px] text-slate-800 placeholder-slate-400 resize-none outline-none leading-relaxed rounded-t-2xl bg-transparent min-h-[38px]"
         />
         {/* Bottom row inside card */}
         <div className="flex items-center px-3 pb-2.5 pt-1 gap-2">
@@ -6795,28 +6786,6 @@ function ChatInputBox({
                 </>,
                 document.body
               )}
-            </div>
-
-            {/* Divider */}
-            <div className="hidden md:block w-px h-4 bg-slate-200 shrink-0 mx-0.5" />
-
-            {/* Category chips — inline scrollable (desktop only) */}
-            <div className="hidden md:flex items-center gap-1.5 shrink-0">
-              {CATEGORIES.map((cat) => {
-                const isActive = activeCategory === cat.id;
-                return (
-                  <button
-                    key={cat.id}
-                    onClick={() => setActiveCategory(isActive ? null : (cat.id as CategoryKey))}
-                    className="shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-full border text-xs font-semibold transition-all whitespace-nowrap"
-                    style={isActive
-                      ? { background: "#2563eb", color: "#fff", borderColor: "#2563eb" }
-                      : { background: "transparent", color: "#64748b", borderColor: "#e2e8f0" }}>
-                    <span style={{ color: isActive ? "#fff" : "#64748b" }}>{cat.icon}</span>
-                    {cat.label}
-                  </button>
-                );
-              })}
             </div>
           </div>
 
