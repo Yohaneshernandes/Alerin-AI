@@ -16994,6 +16994,18 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
   const [timePickerPos, setTimePickerPos] = useState<{ top: number; left: number } | null>(null);
   const [pickerHour, setPickerHour] = useState(10);
   const [pickerMinute, setPickerMinute] = useState(0);
+  const [editingAgenda, setEditingAgenda] = useState<{
+    key: string;
+    source: "preset" | "custom";
+    index: number;
+  } | null>(null);
+  const [hiddenPresetMap, setHiddenPresetMap] = useState<Record<string, number[]>>(() => {
+    try {
+      const saved = localStorage.getItem("alerin_calendar_hidden_presets");
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return {};
+  });
   const [customEvents, setCustomEvents] = useState<Record<string, { label: string; time: string; color: string; notes?: string; reminder?: boolean; reminderOffset?: string }[]>>(() => {
     try {
       const saved = localStorage.getItem("alerin_calendar_events");
@@ -17074,10 +17086,18 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
   const desktopCells = [...leadingDesktopCells, ...currentDesktopCells, ...trailingDesktopCells];
 
   const toKey = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
-  const getEventsForKey = (key: string): { label: string; time: string; color: string; notes?: string; reminder?: boolean; reminderOffset?: string }[] => [
-    ...(CAL_EVENTS[key] ?? []),
-    ...(customEvents[key] ?? []),
-  ];
+  const getEventsForKey = (key: string): { label: string; time: string; color: string; notes?: string; reminder?: boolean; reminderOffset?: string; source: "preset" | "custom"; sourceIndex: number }[] => {
+    const hiddenSet = new Set(hiddenPresetMap[key] ?? []);
+    const presets = (CAL_EVENTS[key] ?? [])
+      .map((ev, idx) => ({ ...ev, source: "preset" as const, sourceIndex: idx }))
+      .filter((item) => !hiddenSet.has(item.sourceIndex));
+    const customs = (customEvents[key] ?? []).map((ev, idx) => ({
+      ...ev,
+      source: "custom" as const,
+      sourceIndex: idx,
+    }));
+    return [...presets, ...customs];
+  };
   const isToday = (d: number) => d === today.getDate() && month === today.getMonth() && year === today.getFullYear();
   const isSelected = (d: number) => selected?.getDate() === d && selected?.getMonth() === month && selected?.getFullYear() === year;
   const cellKey = (d: number) => toKey(new Date(year, month, d));
@@ -17150,6 +17170,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
   };
 
   const openAddAgendaModal = () => {
+    setEditingAgenda(null);
     setAgendaTitle("");
     setAgendaTime("");
     setAgendaNotes("");
@@ -17158,6 +17179,40 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
     setReminderMenuOpen(false);
     setTimePickerOpen(false);
     switchDesktopView(true);
+  };
+
+  const openEditAgendaModal = (
+    key: string,
+    ev: { label: string; time: string; notes?: string; reminder?: boolean; reminderOffset?: string; source: "preset" | "custom"; sourceIndex: number }
+  ) => {
+    setEditingAgenda({ key, source: ev.source, index: ev.sourceIndex });
+    setAgendaTitle(ev.label.slice(0, 50));
+    const tMatch = ev.time.match(/([01]?\d|2[0-3])[.:](\d{2})/);
+    setAgendaTime(tMatch ? `${tMatch[1].padStart(2, "0")} . ${tMatch[2]}` : "");
+    setAgendaNotes((ev.notes || "").slice(0, 300));
+    setAgendaReminder(Boolean(ev.reminder));
+    setAgendaReminderOffset(ev.reminderOffset || "30 menit sebelumnya");
+    setReminderMenuOpen(false);
+    setTimePickerOpen(false);
+    switchDesktopView(true);
+  };
+
+  const handleDeleteAgenda = (key: string, source: "preset" | "custom", sourceIndex: number) => {
+    if (source === "custom") {
+      const nextList = (customEvents[key] ?? []).filter((_, i) => i !== sourceIndex);
+      const nextMap = { ...customEvents, [key]: nextList };
+      if (nextList.length === 0) delete nextMap[key];
+      setCustomEvents(nextMap);
+      try { localStorage.setItem("alerin_calendar_events", JSON.stringify(nextMap)); } catch {}
+    } else {
+      const nextHidden = {
+        ...hiddenPresetMap,
+        [key]: Array.from(new Set([...(hiddenPresetMap[key] ?? []), sourceIndex])),
+      };
+      setHiddenPresetMap(nextHidden);
+      try { localStorage.setItem("alerin_calendar_hidden_presets", JSON.stringify(nextHidden)); } catch {}
+    }
+    onToast("Agenda dihapus.");
   };
 
   const handleSaveAgenda = () => {
@@ -17173,29 +17228,45 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
     }
     const normalizedTime = `${match[1]}.${match[2]}`;
     const targetDate = selected ?? today;
-    const key = toKey(targetDate);
-    const nextMap = {
-      ...customEvents,
-      [key]: [
-        ...(customEvents[key] ?? []),
-        {
-          label: trimmed,
-          time: normalizedTime,
-          color: "#2563eb",
-          ...(agendaNotes.trim() ? { notes: agendaNotes.trim() } : {}),
-          ...(agendaReminder ? { reminder: true, reminderOffset: agendaReminderOffset } : {}),
-        },
-      ],
+    const key = editingAgenda ? editingAgenda.key : toKey(targetDate);
+    const savedItem = {
+      label: trimmed,
+      time: normalizedTime,
+      color: "#2563eb",
+      ...(agendaNotes.trim() ? { notes: agendaNotes.trim() } : {}),
+      ...(agendaReminder ? { reminder: true, reminderOffset: agendaReminderOffset } : {}),
     };
+
+    let nextMap = { ...customEvents };
+    if (editingAgenda && editingAgenda.source === "custom") {
+      const list = [...(nextMap[key] ?? [])];
+      if (list[editingAgenda.index]) list[editingAgenda.index] = savedItem;
+      else list.push(savedItem);
+      nextMap[key] = list;
+    } else {
+      if (editingAgenda && editingAgenda.source === "preset") {
+        const nextHidden = {
+          ...hiddenPresetMap,
+          [key]: Array.from(new Set([...(hiddenPresetMap[key] ?? []), editingAgenda.index])),
+        };
+        setHiddenPresetMap(nextHidden);
+        try { localStorage.setItem("alerin_calendar_hidden_presets", JSON.stringify(nextHidden)); } catch {}
+      }
+      nextMap[key] = [...(nextMap[key] ?? []), savedItem];
+    }
+
     setCustomEvents(nextMap);
     try { localStorage.setItem("alerin_calendar_events", JSON.stringify(nextMap)); } catch {}
+    const wasEditing = Boolean(editingAgenda);
+    setEditingAgenda(null);
     setAgendaTitle("");
     setAgendaTime("");
     setAgendaNotes("");
     setAgendaReminder(false);
     setReminderMenuOpen(false);
+    setTimePickerOpen(false);
     switchDesktopView(false);
-    onToast(`Agenda "${trimmed}" ditambahkan!`);
+    onToast(wasEditing ? `Agenda "${trimmed}" diperbarui!` : `Agenda "${trimmed}" ditambahkan!`);
   };
 
   const activeDateForForm = selected ?? today;
@@ -17489,205 +17560,262 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
   );
 
   const desktopCalendarPanel = (
-    <div className="w-full max-h-[90vh] overflow-y-auto p-6 bg-white flex flex-col gap-3.5">
-      {/* Top Header */}
-      <div className="flex items-start justify-between pb-1 gap-3">
-        <div className="flex flex-col items-start">
-          <div className="flex items-center gap-2">
-            <div className="size-7 bg-blue-100 rounded-lg flex items-center justify-center shrink-0 text-blue-600">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <div className="w-full max-h-[90vh] bg-white flex flex-col">
+      {/* Top Header + Inner Calendar Box */}
+      <div className={`px-6 pt-6 flex flex-col gap-3.5 shrink-0 ${selected && selectedEvents.length > 0 ? "pb-3" : "pb-3.5"}`}>
+        {/* Top Header */}
+        <div className="flex items-start justify-between pb-1 gap-3">
+          <div className="flex flex-col items-start">
+            <div className="flex items-center gap-2">
+              <div className="size-7 bg-blue-100 rounded-lg flex items-center justify-center shrink-0 text-blue-600">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" />
+                  <line x1="16" y1="2" x2="16" y2="6" />
+                  <line x1="8" y1="2" x2="8" y2="6" />
+                  <line x1="3" y1="10" x2="21" y2="10" />
+                </svg>
+              </div>
+              <h2 className="text-slate-900 text-lg font-bold leading-6">Alerin Kalender</h2>
+              <span className="px-2 py-0.5 bg-zinc-900 rounded-full text-white text-xs font-semibold leading-4 tracking-tight">
+                {year}
+              </span>
+            </div>
+            <p className="pt-0.5 text-gray-500 text-xs font-normal leading-5">
+              Atur jadwal bimbingan dan pantau aktivitas akademikmu.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2.5 shrink-0">
+            <button
+              type="button"
+              onClick={() => {
+                if (googleConnected) {
+                  onToast("Google Kalender sudah terhubung.");
+                  return;
+                }
+                onToast("Menghubungkan ke Google Kalender…");
+                setTimeout(() => {
+                  setGoogleConnected(true);
+                  onToast("Berhasil! Google Kalender terhubung ✓");
+                }, 1100);
+              }}
+              className="h-8 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 active:scale-[0.99] rounded-[10px] outline outline-1 outline-offset-[-1px] outline-slate-200 flex items-center gap-[5px] cursor-pointer transition-all"
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z" />
+                <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96H1.29v3.09C3.26 21.3 7.31 24 12 24z" />
+                <path fill="#FBBC05" d="M5.27 14.29c-.25-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.98-3.09z" />
+                <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.98 3.09c.95-2.85 3.6-4.96 6.73-4.96z" />
+              </svg>
+              <span className="text-slate-900 text-xs font-semibold leading-4">
+                {googleConnected ? "Google Kalender Terhubung" : "Hubungkan Google Kalender"}
+              </span>
+              {googleConnected ? (
+                <span className="size-1.5 bg-blue-600 rounded-full shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]" />
+              ) : (
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round" className="text-gray-700">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                  <polyline points="15 3 21 3 21 9" />
+                  <line x1="10" y1="14" x2="21" y2="3" />
+                </svg>
+              )}
+            </button>
+
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Tutup kalender"
+              className="size-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-gray-700 cursor-pointer transition-colors"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        {/* Inner Calendar Box */}
+        <div className="p-5 bg-slate-50 rounded-2xl outline outline-1 outline-offset-[-1px] outline-slate-200 flex flex-col gap-3.5">
+          {/* Month Bar */}
+          <div className="flex items-center justify-between">
+            <div className="text-slate-900 text-base font-bold leading-6">
+              {monthNames[month]} {year}
+            </div>
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => setCursor(new Date(year, month - 1, 1))}
+                aria-label="Bulan sebelumnya"
+                className="size-7 bg-blue-100/30 hover:bg-blue-100/70 rounded-lg flex items-center justify-center text-gray-700 cursor-pointer transition-colors"
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M15 18l-6-6 6-6" />
+                </svg>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setCursor(new Date(today.getFullYear(), today.getMonth(), 1));
+                  setSelected(new Date(today.getFullYear(), today.getMonth(), today.getDate()));
+                }}
+                className="h-7 px-2.5 py-0.5 bg-blue-100 hover:bg-blue-200/70 rounded-md flex items-center justify-center text-blue-600 text-xs font-semibold leading-4 tracking-tight cursor-pointer transition-colors"
+              >
+                Hari Ini
+              </button>
+              <button
+                type="button"
+                onClick={() => setCursor(new Date(year, month + 1, 1))}
+                aria-label="Bulan berikutnya"
+                className="size-7 bg-blue-100/30 hover:bg-blue-100/70 rounded-lg flex items-center justify-center text-gray-700 cursor-pointer transition-colors"
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M9 18l6-6-6-6" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          {/* Weekday Header */}
+          <div className="grid grid-cols-7">
+            {desktopDayNames.map((d) => (
+              <div key={d} className="text-center text-gray-500 text-xs font-semibold uppercase leading-4 tracking-tight">
+                {d}
+              </div>
+            ))}
+          </div>
+
+          {/* Dates Grid */}
+          <div className="grid grid-cols-7 gap-y-0.5">
+            {desktopCells.map((cell, idx) => {
+              const cellDate = new Date(year, month + cell.offset, cell.day);
+              const key = toKey(cellDate);
+              const events = getEventsForKey(key);
+              const isSunday = idx % 7 === 0;
+              const isCellCurrentMonth = cell.offset === 0;
+              const isCellSelected =
+                selected?.getDate() === cellDate.getDate() &&
+                selected?.getMonth() === cellDate.getMonth() &&
+                selected?.getFullYear() === cellDate.getFullYear();
+              const isCellToday =
+                today.getDate() === cellDate.getDate() &&
+                today.getMonth() === cellDate.getMonth() &&
+                today.getFullYear() === cellDate.getFullYear();
+
+              return (
+                <button
+                  key={`${cell.offset}-${cell.day}-${idx}`}
+                  type="button"
+                  onClick={() => {
+                    if (cell.offset !== 0) {
+                      setCursor(new Date(cellDate.getFullYear(), cellDate.getMonth(), 1));
+                    }
+                    setSelected(cellDate);
+                  }}
+                  className={`relative h-10 rounded-xl flex flex-col items-center justify-center text-sm transition-all cursor-pointer ${
+                    isCellSelected
+                      ? "bg-blue-600 text-white font-bold shadow-xs"
+                      : isCellToday
+                        ? "bg-blue-100 text-blue-600 font-bold"
+                        : !isCellCurrentMonth
+                          ? "text-gray-500/40 font-medium hover:bg-slate-200/50"
+                          : isSunday
+                            ? "text-red-700 font-medium hover:bg-slate-200/60"
+                            : "text-gray-700 font-medium hover:bg-slate-200/60"
+                  }`}
+                >
+                  <span className={events.length > 0 ? "leading-4" : "leading-5"}>{cell.day}</span>
+                  {events.length > 0 && (
+                    <span
+                      className={`mt-0.5 size-1.5 rounded-full ${
+                        isCellSelected ? "bg-indigo-100" : "bg-blue-600"
+                      }`}
+                    />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* Agenda Section (sesuai rancangan pop-up kalender dengan daftar agenda di bawahnya) */}
+      {selected && selectedKey && selectedEvents.length > 0 && (
+        <div className="border-t border-slate-200 px-6 pt-2.5 pb-3.5 flex flex-col gap-2.5">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 min-w-0">
+              <svg width="14" height="15" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
                 <rect x="3" y="4" width="18" height="18" rx="2" />
                 <line x1="16" y1="2" x2="16" y2="6" />
                 <line x1="8" y1="2" x2="8" y2="6" />
                 <line x1="3" y1="10" x2="21" y2="10" />
               </svg>
+              <span className="text-slate-900 text-sm font-bold leading-6 truncate">
+                Agenda {selected.toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
+              </span>
             </div>
-            <h2 className="text-slate-900 text-lg font-bold leading-6">Alerin Kalender</h2>
-            <span className="px-2 py-0.5 bg-zinc-900 rounded-full text-white text-xs font-semibold leading-4 tracking-tight">
-              {year}
+            <span className="px-2.5 py-0.5 bg-blue-100 rounded-full text-blue-600 text-[10px] font-semibold leading-4 tracking-tight shrink-0">
+              {selectedEvents.length} Agenda
             </span>
           </div>
-          <p className="pt-0.5 text-gray-500 text-xs font-normal leading-5">
-            Atur jadwal bimbingan dan pantau aktivitas akademikmu.
-          </p>
-        </div>
 
-        <div className="flex items-center gap-2.5 shrink-0">
-          <button
-            type="button"
-            onClick={() => {
-              if (googleConnected) {
-                onToast("Google Kalender sudah terhubung.");
-                return;
-              }
-              onToast("Menghubungkan ke Google Kalender…");
-              setTimeout(() => {
-                setGoogleConnected(true);
-                onToast("Berhasil! Google Kalender terhubung ✓");
-              }, 1100);
-            }}
-            className="h-8 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 active:scale-[0.99] rounded-[10px] outline outline-1 outline-offset-[-1px] outline-slate-200 flex items-center gap-1.5 cursor-pointer transition-all"
-          >
-            <svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true">
-              <path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z" />
-              <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96H1.29v3.09C3.26 21.3 7.31 24 12 24z" />
-              <path fill="#FBBC05" d="M5.27 14.29c-.25-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.98-3.09z" />
-              <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.98 3.09c.95-2.85 3.6-4.96 6.73-4.96z" />
-            </svg>
-            <span className="text-slate-900 text-xs font-semibold leading-4">
-              {googleConnected ? "Google Kalender Terhubung" : "Hubungkan Google Kalender"}
-            </span>
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round" className="text-gray-700">
-              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-              <polyline points="15 3 21 3 21 9" />
-              <line x1="10" y1="14" x2="21" y2="3" />
-            </svg>
-          </button>
-
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Tutup kalender"
-            className="size-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-gray-700 cursor-pointer transition-colors"
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
-          </button>
-        </div>
-      </div>
-
-      {/* Inner Calendar Box */}
-      <div className="p-5 bg-slate-50 rounded-2xl outline outline-1 outline-offset-[-1px] outline-slate-200 flex flex-col gap-3.5">
-        {/* Month Bar */}
-        <div className="flex items-center justify-between">
-          <div className="text-slate-900 text-base font-bold leading-6">
-            {monthNames[month]} {year}
-          </div>
-          <div className="flex items-center gap-1.5">
-            <button
-              type="button"
-              onClick={() => setCursor(new Date(year, month - 1, 1))}
-              aria-label="Bulan sebelumnya"
-              className="size-7 bg-blue-100/25 hover:bg-blue-100/70 rounded-lg flex items-center justify-center text-gray-700 cursor-pointer transition-colors"
-            >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M15 18l-6-6 6-6" />
-              </svg>
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setCursor(new Date(today.getFullYear(), today.getMonth(), 1));
-                setSelected(new Date(today.getFullYear(), today.getMonth(), today.getDate()));
-              }}
-              className="h-7 px-2.5 py-0.5 bg-blue-100 hover:bg-blue-200/70 rounded-md flex items-center justify-center text-blue-600 text-xs font-semibold leading-4 tracking-tight cursor-pointer transition-colors"
-            >
-              Hari Ini
-            </button>
-            <button
-              type="button"
-              onClick={() => setCursor(new Date(year, month + 1, 1))}
-              aria-label="Bulan berikutnya"
-              className="size-7 bg-blue-100/25 hover:bg-blue-100/70 rounded-lg flex items-center justify-center text-gray-700 cursor-pointer transition-colors"
-            >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M9 18l6-6-6-6" />
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        {/* Weekday Header */}
-        <div className="grid grid-cols-7">
-          {desktopDayNames.map((d) => (
-            <div key={d} className="text-center text-gray-500 text-xs font-semibold uppercase leading-4 tracking-tight">
-              {d}
-            </div>
-          ))}
-        </div>
-
-        {/* Dates Grid */}
-        <div className="grid grid-cols-7 gap-y-0.5">
-          {desktopCells.map((cell, idx) => {
-            const cellDate = new Date(year, month + cell.offset, cell.day);
-            const key = toKey(cellDate);
-            const events = getEventsForKey(key);
-            const isSunday = idx % 7 === 0;
-            const isCellCurrentMonth = cell.offset === 0;
-            const isCellSelected =
-              selected?.getDate() === cellDate.getDate() &&
-              selected?.getMonth() === cellDate.getMonth() &&
-              selected?.getFullYear() === cellDate.getFullYear();
-            const isCellToday =
-              today.getDate() === cellDate.getDate() &&
-              today.getMonth() === cellDate.getMonth() &&
-              today.getFullYear() === cellDate.getFullYear();
-
-            return (
-              <button
-                key={`${cell.offset}-${cell.day}-${idx}`}
-                type="button"
-                onClick={() => {
-                  if (cell.offset !== 0) {
-                    setCursor(new Date(cellDate.getFullYear(), cellDate.getMonth(), 1));
-                  }
-                  setSelected(cellDate);
-                }}
-                className={`relative h-10 rounded-xl flex flex-col items-center justify-center text-sm transition-all cursor-pointer ${
-                  isCellSelected
-                    ? "bg-blue-600 text-white font-bold shadow-xs"
-                    : isCellToday
-                      ? "bg-blue-100/80 text-blue-600 font-bold"
-                      : !isCellCurrentMonth
-                        ? "text-gray-500/40 font-medium hover:bg-slate-200/50"
-                        : isSunday
-                          ? "text-red-700 font-medium hover:bg-slate-200/60"
-                          : "text-gray-700 font-medium hover:bg-slate-200/60"
-                }`}
-              >
-                <span className="leading-5">{cell.day}</span>
-                {events.length > 0 && (
-                  <span className="absolute bottom-1 flex gap-0.5">
-                    {events.slice(0, 3).map((ev, ei) => (
-                      <span
-                        key={ei}
-                        className="size-1 rounded-full"
-                        style={{ background: isCellSelected ? "#ffffff" : ev.color }}
-                      />
-                    ))}
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Agenda detail for selected date if present */}
-      {selected && selectedEvents.length > 0 && (
-        <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3 space-y-2">
-          <div className="flex items-center justify-between">
-            <p className="text-xs font-bold text-slate-600">
-              Agenda · {selected.toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long" })}
-            </p>
-            <span className="text-[11px] font-semibold text-blue-600">{selectedEvents.length} jadwal</span>
-          </div>
-          <div className="space-y-1.5">
+          <div className="calendar-agenda-scrollbar max-h-[126px] overflow-y-auto flex flex-col gap-2.5 pr-2">
             {selectedEvents.map((ev, ei) => (
-              <div key={ei} className="flex items-center gap-2.5 px-3 py-2 rounded-xl" style={{ background: ev.color + "12" }}>
-                <span className="w-1 h-7 rounded-full shrink-0" style={{ background: ev.color }} />
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs font-bold text-slate-800 truncate">{ev.label}</p>
-                  <p className="text-[11px] text-slate-500">
-                    {ev.time} WIB{ev.notes ? ` · ${ev.notes}` : ""}
-                  </p>
+              <div
+                key={`${ev.source}-${ev.sourceIndex}-${ei}`}
+                className="px-3.5 py-2.5 bg-blue-100/80 rounded-xl flex flex-col gap-2 shrink-0"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex items-center gap-3 min-w-0 flex-1 flex-wrap">
+                    <span className="text-slate-900 text-sm font-semibold leading-5 truncate">
+                      {ev.label}
+                    </span>
+                    <span className="flex items-center gap-[5px] text-gray-700 text-xs font-medium leading-5 shrink-0">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                        <circle cx="12" cy="12" r="10" />
+                        <polyline points="12 6 12 12 16 14" />
+                      </svg>
+                      <span>{ev.time.replace(".", ":")} WIB</span>
+                    </span>
+                    {ev.reminder && (
+                      <span className="px-2 py-0.5 rounded-full bg-white/80 text-blue-700 text-[10px] font-semibold shrink-0">
+                        {ev.reminderOffset || "Pengingat"}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="opacity-70 flex items-center gap-1 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => openEditAgendaModal(selectedKey, ev)}
+                      aria-label="Edit agenda"
+                      title="Edit agenda"
+                      className="size-6 rounded-lg hover:bg-blue-200/70 text-gray-700 flex items-center justify-center cursor-pointer transition-colors"
+                    >
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M12 20h9" />
+                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                      </svg>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteAgenda(selectedKey, ev.source, ev.sourceIndex)}
+                      aria-label="Hapus agenda"
+                      title="Hapus agenda"
+                      className="size-6 rounded-lg hover:bg-rose-100 text-gray-700 hover:text-rose-600 flex items-center justify-center cursor-pointer transition-colors"
+                    >
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="3 6 5 6 21 6" />
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
-                {ev.reminder && (
-                  <span className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 text-[10px] font-semibold shrink-0">
-                    {ev.reminderOffset || "Pengingat"}
-                  </span>
+
+                {ev.notes && (
+                  <div className="w-full px-2.5 py-1.5 bg-white rounded-lg text-gray-500 text-xs font-normal leading-5">
+                    {ev.notes}
+                  </div>
                 )}
               </div>
             ))}
@@ -17695,19 +17823,21 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
         </div>
       )}
 
-      {/* Button Tambah Agenda Baru */}
-      <button
-        type="button"
-        onClick={openAddAgendaModal}
-        className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 active:scale-[0.99] rounded-2xl shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] flex items-center justify-center gap-2 text-white text-base font-semibold leading-6 cursor-pointer transition-all"
-      >
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="12" cy="12" r="9" />
-          <line x1="12" y1="8" x2="12" y2="16" />
-          <line x1="8" y1="12" x2="16" y2="12" />
-        </svg>
-        <span>Tambah Agenda Baru</span>
-      </button>
+      {/* Bottom CTA Bar */}
+      <div className={`px-6 shrink-0 ${selected && selectedEvents.length > 0 ? "border-t border-slate-200 pt-3.5 pb-4 rounded-bl-3xl rounded-br-3xl" : "pb-6 pt-0"}`}>
+        <button
+          type="button"
+          onClick={openAddAgendaModal}
+          className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 active:scale-[0.99] rounded-2xl shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] flex items-center justify-center gap-2 text-white text-base font-semibold leading-6 cursor-pointer transition-all"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="9" />
+            <line x1="12" y1="8" x2="12" y2="16" />
+            <line x1="8" y1="12" x2="16" y2="12" />
+          </svg>
+          <span>Tambah Agenda Baru</span>
+        </button>
+      </div>
     </div>
   );
 

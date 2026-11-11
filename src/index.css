@@ -767,3 +767,20 @@ body {
     transform: translateX(-100%);
   }
 }
+
+.calendar-agenda-scrollbar {
+  scrollbar-width: thin !important;
+  scrollbar-color: #2563eb #d4d4d8 !important;
+}
+.calendar-agenda-scrollbar::-webkit-scrollbar {
+  width: 3px !important;
+  display: block !important;
+}
+.calendar-agenda-scrollbar::-webkit-scrollbar-track {
+  background: #d4d4d8 !important;
+  border-radius: 2px !important;
+}
+.calendar-agenda-scrollbar::-webkit-scrollbar-thumb {
+  background: #2563eb !important;
+  border-radius: 2px !important;
+}
