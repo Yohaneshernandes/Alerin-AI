@@ -15896,8 +15896,8 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
             zIndex: 0,
           }} />
           {/* Header Proyek Chat: Mobile terpusat · Desktop rata kiri-kanan penuh seperti ChatGPT */}
-          <header className="shrink-0 bg-white md:bg-white/80 md:backdrop-blur-md relative z-20 border-b border-neutral-100 md:border-slate-200/60">
-            <div className="w-full flex items-center justify-between md:justify-start md:gap-3 px-4 md:px-6 pt-3 pb-2.5">
+          <header className="shrink-0 bg-white md:bg-white/80 md:backdrop-blur-md relative z-20 border-b border-neutral-200 md:border-slate-200">
+            <div className="w-full flex items-center justify-between md:justify-start md:gap-3 px-4 md:px-6 pt-3 pb-3">
             <button
               type="button"
               onClick={() => {
@@ -16340,8 +16340,8 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
             zIndex: 0,
           }} />
           {/* Header Detail Proyek: Mobile terpusat · Desktop rata kiri-kanan penuh seperti ChatGPT */}
-          <header className="shrink-0 bg-white md:bg-white/80 md:backdrop-blur-md relative z-20 border-b border-neutral-100 md:border-slate-200/60">
-            <div className="w-full flex items-center justify-between md:justify-start md:gap-3 px-4 md:px-6 pt-3 pb-2.5">
+          <header className="shrink-0 bg-white md:bg-white/80 md:backdrop-blur-md relative z-20 border-b border-neutral-200 md:border-slate-200">
+            <div className="w-full flex items-center justify-between md:justify-start md:gap-3 px-4 md:px-6 pt-3 pb-3">
             <button
               type="button"
               onClick={() => {
