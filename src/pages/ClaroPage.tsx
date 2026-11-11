@@ -59,11 +59,19 @@ type ChatMsg = {
   featureRec?: FeatureRec;
 };
 type SearchFilter = "semua" | "chat" | "dokumen" | "proyek";
+type SharedFolderChatEntry = {
+  id: string;
+  title: string;
+  snippet?: string;
+  msgs: ChatMsg[];
+};
 type SharedChatPreviewData = {
   id: string;
   title: string;
   msgs: ChatMsg[];
   shareUrl: string;
+  folderChats?: SharedFolderChatEntry[];
+  ctaLabel?: string;
 };
 
 // ─── Auto-Capitalize Awal Kalimat untuk Seluruh Input Teks & Pop-up ───────────
@@ -10440,7 +10448,7 @@ function ShortcutModal({ type, onClose, onSubmit }: { type: ShortcutType; onClos
   );
 }
 
-/** Read-only shared chat preview screen with bottom "Mulai Obrolan" CTA. */
+/** Read-only shared chat (or project folder list) preview screen. */
 function SharedChatPreviewView({
   preview,
   onBack,
@@ -10448,18 +10456,36 @@ function SharedChatPreviewView({
 }: {
   preview: SharedChatPreviewData;
   onBack: () => void;
-  onStartChat: () => void;
+  onStartChat: (selected?: { title: string; msgs: ChatMsg[] }) => void;
 }) {
   const [linkCopied, setLinkCopied] = useState(false);
   const [previewImgUrl, setPreviewImgUrl] = useState<string | null>(null);
+  const [activeFolderChat, setActiveFolderChat] = useState<SharedFolderChatEntry | null>(null);
+
+  useEffect(() => {
+    setActiveFolderChat(null);
+  }, [preview.id]);
+
+  const hasFolderList = Boolean(preview.folderChats && preview.folderChats.length > 0);
+  const isShowingFolderList = hasFolderList && !activeFolderChat;
+  const displayedTitle = activeFolderChat ? activeFolderChat.title : preview.title;
+  const displayedMsgs = activeFolderChat ? activeFolderChat.msgs : preview.msgs;
+
+  const handleHeaderBack = useCallback(() => {
+    if (activeFolderChat) {
+      setActiveFolderChat(null);
+      return;
+    }
+    onBack();
+  }, [activeFolderChat, onBack]);
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && !previewImgUrl) onBack();
+      if (e.key === "Escape" && !previewImgUrl) handleHeaderBack();
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [onBack, previewImgUrl]);
+  }, [handleHeaderBack, previewImgUrl]);
 
   const handleCopyShareUrl = () => {
     if (navigator?.clipboard?.writeText) {
@@ -10481,13 +10507,13 @@ function SharedChatPreviewView({
         }}
       />
 
-      {/* Header Preview Chat */}
+      {/* Header Preview Chat / Folder */}
       <header className="shrink-0 bg-white md:bg-white/85 md:backdrop-blur-md relative z-20 border-b border-neutral-200 md:border-slate-200">
         <div className="max-w-4xl mx-auto w-full flex items-center justify-between gap-2.5 px-4 md:px-6 py-3">
           <div className="flex items-center gap-2.5 min-w-0">
             <button
               type="button"
-              onClick={onBack}
+              onClick={handleHeaderBack}
               aria-label="Kembali"
               className="size-10 md:size-9 rounded-full border border-neutral-200/90 md:border-transparent bg-white md:bg-transparent flex items-center justify-center text-neutral-800 hover:bg-neutral-50 md:hover:bg-slate-100/80 active:scale-95 transition-all shadow-2xs md:shadow-none cursor-pointer shrink-0"
             >
@@ -10495,14 +10521,22 @@ function SharedChatPreviewView({
                 <path d="m15 18-6-6 6-6" />
               </svg>
             </button>
-            <img
-              src="/assets/73c1a.png"
-              alt="Alerin"
-              className="size-7 rounded-full object-cover border border-slate-200 shrink-0 hidden sm:block"
-            />
+            {isShowingFolderList ? (
+              <span className="size-8 rounded-lg bg-[#F2F4F7] text-neutral-900 flex items-center justify-center shrink-0">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+                </svg>
+              </span>
+            ) : (
+              <img
+                src="/assets/73c1a.png"
+                alt="Alerin"
+                className="size-7 rounded-full object-cover border border-slate-200 shrink-0 hidden sm:block"
+              />
+            )}
             <div className="min-w-0 flex items-center gap-2">
               <h1 className="text-[15px] md:text-base font-bold text-slate-900 truncate">
-                {preview.title}
+                {displayedTitle}
               </h1>
               <span className="shrink-0 inline-flex items-center px-2 py-0.5 rounded-full bg-[#EAF2FF] text-[#1A73E8] text-[10px] font-semibold">
                 Pratinjau
@@ -10536,10 +10570,67 @@ function SharedChatPreviewView({
         </div>
       </header>
 
-      {/* Isi: Murni Preview Percakapan */}
+      {/* Isi: Folder List (jika folder proyek) atau Preview Percakapan */}
       <div className="relative z-10 flex-1 overflow-y-auto px-4 md:px-8 py-5 modal-custom-scrollbar">
+        {isShowingFolderList && preview.folderChats ? (
+          <div className="max-w-3xl mx-auto w-full space-y-3 pb-4">
+            <div className="flex items-center justify-between gap-2 px-1">
+              <p className="text-xs font-semibold text-slate-500">
+                Pilih obrolan dalam folder untuk melihat pratinjau
+              </p>
+              <span className="shrink-0 px-2.5 py-0.5 rounded-full bg-[#EAF2FF] text-[#1A73E8] text-[11px] font-semibold">
+                {preview.folderChats.length} Obrolan
+              </span>
+            </div>
+            <div className="space-y-2.5">
+              {preview.folderChats.map((chatItem) => {
+                const previewSnippet =
+                  chatItem.snippet ||
+                  chatItem.msgs.find((m) => m.text)?.text ||
+                  "Ketuk untuk melihat pratinjau percakapan";
+                return (
+                  <button
+                    key={chatItem.id}
+                    type="button"
+                    onClick={() => setActiveFolderChat(chatItem)}
+                    className="w-full flex items-center justify-between gap-3 p-3.5 sm:p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs hover:border-blue-300 hover:bg-blue-50/20 active:scale-[0.99] transition-all text-left cursor-pointer group"
+                  >
+                    <div className="flex items-center gap-3.5 min-w-0">
+                      <span className="size-10 rounded-xl bg-[#F2F4F7] group-hover:bg-[#EAF2FF] text-neutral-800 group-hover:text-[#1A73E8] flex items-center justify-center shrink-0 transition-colors">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                        </svg>
+                      </span>
+                      <div className="min-w-0">
+                        <p className="text-[14.5px] font-semibold text-slate-900 group-hover:text-[#1A73E8] truncate transition-colors">
+                          {chatItem.title}
+                        </p>
+                        <p className="text-xs text-slate-500 truncate mt-0.5">
+                          {previewSnippet}
+                        </p>
+                      </div>
+                    </div>
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="text-slate-400 group-hover:text-[#1A73E8] group-hover:translate-x-0.5 transition-all shrink-0"
+                    >
+                      <polyline points="9 18 15 12 9 6" />
+                    </svg>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        ) : (
         <div className="max-w-3xl mx-auto w-full space-y-6 pb-4">
-          {preview.msgs.map((m, idx) => {
+          {displayedMsgs.map((m, idx) => {
             if (m.role === "user") {
               return (
                 <div key={idx} className="flex flex-col items-end gap-1">
@@ -10605,23 +10696,32 @@ function SharedChatPreviewView({
             );
           })}
         </div>
+        )}
       </div>
 
-      {/* Bottom CTA: Button Mulai Obrolan */}
-      <div className="shrink-0 bg-white/95 md:bg-white/90 backdrop-blur-md relative z-20 border-t border-slate-200/80 px-4 py-3.5 md:py-4">
-        <div className="max-w-3xl mx-auto w-full flex justify-center">
-          <button
-            type="button"
-            onClick={onStartChat}
-            className="w-full sm:w-auto sm:min-w-[260px] px-8 py-3 rounded-full bg-[#1A73E8] hover:bg-[#1557b0] active:scale-[0.98] text-white text-sm font-semibold flex items-center justify-center gap-2 shadow-[0_6px_18px_rgba(26,115,232,0.28)] transition-all cursor-pointer"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-            </svg>
-            <span>Mulai Obrolan</span>
-          </button>
+      {/* Bottom CTA: tampil saat pratinjau obrolan terbuka */}
+      {!isShowingFolderList && (
+        <div className="shrink-0 bg-white/95 md:bg-white/90 backdrop-blur-md relative z-20 border-t border-slate-200/80 px-4 py-3.5 md:py-4">
+          <div className="max-w-3xl mx-auto w-full flex justify-center">
+            <button
+              type="button"
+              onClick={() =>
+                onStartChat(
+                  activeFolderChat
+                    ? { title: activeFolderChat.title, msgs: activeFolderChat.msgs }
+                    : undefined
+                )
+              }
+              className="w-full sm:w-auto sm:min-w-[260px] px-8 py-3 rounded-full bg-[#1A73E8] hover:bg-[#1557b0] active:scale-[0.98] text-white text-sm font-semibold flex items-center justify-center gap-2 shadow-[0_6px_18px_rgba(26,115,232,0.28)] transition-all cursor-pointer"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+              </svg>
+              <span>{preview.ctaLabel || (hasFolderList ? "Lanjutkan Obrolan" : "Mulai Obrolan")}</span>
+            </button>
+          </div>
         </div>
-      </div>
+      )}
 
       <ImageLightboxModal
         imageUrl={previewImgUrl}
@@ -14935,35 +15035,58 @@ function ProyekTab({
       navigator.clipboard.writeText(shareUrl).catch(() => {});
     }
     if (onOpenSharedChat) {
-      const folderChats = [...(projectChatsMap[target.id] ?? [])].sort((a, b) => {
+      const sortedChats = [...(projectChatsMap[target.id] ?? [])].sort((a, b) => {
         if (a.pinned && !b.pinned) return -1;
         if (!a.pinned && b.pinned) return 1;
         return (b.updatedAt || 0) - (a.updatedAt || 0);
       });
-      const chatWithMsgs = folderChats.find((c) => c.msgs && c.msgs.length > 0);
-      const previewMsgs: ChatMsg[] =
-        chatWithMsgs
-          ? chatWithMsgs.msgs
-          : target.msgs && target.msgs.length > 0
-            ? target.msgs
-            : [
-                {
-                  role: "user",
-                  text: `Halo Alerin, mari bahas proyek ${target.title}.`,
-                  time: now(),
-                },
-                {
-                  role: "claro",
-                  text: `Halo! Ini adalah pratinjau obrolan untuk proyek **${target.title}**. Klik **Mulai Obrolan** di bawah untuk melanjutkan diskusi bersama Alerin.`,
-                  time: now(),
-                },
-              ];
+
+      const defaultFallbackMsgs: ChatMsg[] =
+        target.msgs && target.msgs.length > 0
+          ? target.msgs
+          : [
+              {
+                role: "user",
+                text: `Halo Alerin, mari bahas proyek ${target.title}.`,
+                time: now(),
+              },
+              {
+                role: "claro",
+                text: `Halo! Ini adalah pratinjau obrolan untuk proyek **${target.title}**. Klik **Lanjutkan Obrolan** di bawah untuk melanjutkan diskusi bersama Alerin.`,
+                time: now(),
+              },
+            ];
+
+      const folderEntries: SharedFolderChatEntry[] =
+        sortedChats.length > 0
+          ? sortedChats.map((c) => ({
+              id: c.id,
+              title: c.title,
+              snippet: c.lastSnippet,
+              msgs:
+                c.msgs && c.msgs.length > 0
+                  ? c.msgs
+                  : [
+                      { role: "user", text: c.title, time: now() },
+                      { role: "claro", text: getAIResponse(c.title), time: now() },
+                    ],
+            }))
+          : [
+              {
+                id: target.id,
+                title: target.title,
+                snippet: defaultFallbackMsgs[0]?.text,
+                msgs: defaultFallbackMsgs,
+              },
+            ];
 
       onOpenSharedChat({
         id: target.id,
         title: target.title,
-        msgs: previewMsgs,
+        msgs: folderEntries[0].msgs,
         shareUrl,
+        folderChats: folderEntries,
+        ctaLabel: "Lanjutkan Obrolan",
       });
       return;
     }
@@ -23007,14 +23130,19 @@ export default function AlerinPage() {
     setTab("percakapan");
   };
 
-  const handleStartFromSharedPreview = (preview: SharedChatPreviewData) => {
-    const clonedMsgs: ChatMsg[] = preview.msgs.map((msg) => ({ ...msg }));
+  const handleStartFromSharedPreview = (
+    preview: SharedChatPreviewData,
+    selected?: { title: string; msgs: ChatMsg[] }
+  ) => {
+    const chosenMsgs = selected?.msgs ?? preview.msgs;
+    const chosenTitle = selected?.title ?? preview.title;
+    const clonedMsgs: ChatMsg[] = chosenMsgs.map((msg) => ({ ...msg }));
     openHistory(clonedMsgs);
     window.dispatchEvent(
       new CustomEvent("alerin-add-history", {
         detail: {
-          title: preview.title,
-          query: clonedMsgs[0]?.text || preview.title,
+          title: chosenTitle,
+          query: clonedMsgs[0]?.text || chosenTitle,
           msgs: clonedMsgs,
         },
       })
@@ -23085,7 +23213,7 @@ export default function AlerinPage() {
         <SharedChatPreviewView
           preview={sharedPreview}
           onBack={() => setSharedPreview(null)}
-          onStartChat={() => handleStartFromSharedPreview(sharedPreview)}
+          onStartChat={(chosen) => handleStartFromSharedPreview(sharedPreview, chosen)}
         />
       )}
       {registerOpen && (
