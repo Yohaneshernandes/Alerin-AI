@@ -15246,9 +15246,15 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
           SCREEN 3: GAMBAR 3 — DETAIL CHAT PERCAKAPAN PROYEK
          ═══════════════════════════════════════════════════════════════════════ */}
       {selectedProject && selectedProjectChat ? (
-        <div className="flex-1 flex flex-col h-full overflow-hidden bg-white">
+        <div className="relative flex-1 flex flex-col h-full overflow-hidden claro-chat-bg">
+          {/* Decorative dot grid overlay — desktop only */}
+          <div className="hidden md:block absolute inset-0 pointer-events-none" style={{
+            backgroundImage: "radial-gradient(circle, rgba(59,130,246,0.035) 1px, transparent 1px)",
+            backgroundSize: "24px 24px",
+            zIndex: 0,
+          }} />
           {/* Header Gambar 3: [<]  🎓 [Judul Proyek]  [...] */}
-          <header className="shrink-0 bg-white z-20 border-b border-neutral-100">
+          <header className="shrink-0 bg-white md:bg-white/80 md:backdrop-blur-md relative z-20 border-b border-neutral-100 md:border-slate-200/60">
             <div className="max-w-4xl mx-auto w-full flex items-center justify-between px-4 md:px-8 pt-3 pb-2.5">
             <button
               type="button"
@@ -15325,7 +15331,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
           </header>
 
           {/* Area Pesan Obrolan (Gambar 3 style) */}
-          <div className="flex-1 overflow-y-auto px-4 md:px-8 py-4" style={{ scrollbarWidth: "none" }}>
+          <div className="relative z-10 flex-1 overflow-y-auto px-4 md:px-8 py-4" style={{ scrollbarWidth: "none" }}>
             <div className="max-w-4xl mx-auto w-full space-y-6">
             {(() => {
               const lastProjUserIdx = selectedProjectChat.msgs
@@ -15661,7 +15667,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
           </div>
 
           {/* Bottom Chat Input matching Gambar 2 / Alerin Chat */}
-          <div className="shrink-0 bg-white z-20">
+          <div className="shrink-0 bg-white md:bg-transparent relative z-20">
             <div className="max-w-4xl mx-auto w-full">
             <ChatInputBox
               input={chatInputText}
@@ -15683,9 +15689,15 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
         /* ═══════════════════════════════════════════════════════════════════════
             SCREEN 2: GAMBAR 2 — DETAIL PROYEK (OBROLAN & SUMBER)
            ═══════════════════════════════════════════════════════════════════════ */
-        <div className="flex-1 flex flex-col h-full overflow-hidden bg-white">
+        <div className="relative flex-1 flex flex-col h-full overflow-hidden claro-chat-bg">
+          {/* Decorative dot grid overlay — desktop only */}
+          <div className="hidden md:block absolute inset-0 pointer-events-none" style={{
+            backgroundImage: "radial-gradient(circle, rgba(59,130,246,0.035) 1px, transparent 1px)",
+            backgroundSize: "24px 24px",
+            zIndex: 0,
+          }} />
           {/* Header Gambar 2: [<]  🎓 [Judul Proyek]  [...] */}
-          <header className="shrink-0 bg-white z-20 border-b border-neutral-100">
+          <header className="shrink-0 bg-white md:bg-white/80 md:backdrop-blur-md relative z-20 border-b border-neutral-100 md:border-slate-200/60">
             <div className="max-w-4xl mx-auto w-full flex items-center justify-between px-4 md:px-8 pt-3 pb-2.5">
             <button
               type="button"
@@ -15763,7 +15775,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
           </header>
 
           {/* Obrolan List */}
-          <div className="flex-1 overflow-y-auto px-4 md:px-8 pt-3 pb-4" style={{ scrollbarWidth: "none" }}>
+          <div className="relative z-10 flex-1 overflow-y-auto px-4 md:px-8 pt-3 pb-4" style={{ scrollbarWidth: "none" }}>
             <div className="max-w-4xl mx-auto w-full space-y-3">
             {(projectChatsMap[selectedProject.id] ?? []).length === 0 ? (
               <div className="py-20 text-center px-4">
@@ -15791,7 +15803,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                         setSelectedProjectChat(chat);
                       }
                     }}
-                    className="project-chat-row w-full flex items-center justify-between gap-2 text-left px-2.5 py-2 hover:bg-neutral-50 active:bg-neutral-100/70 rounded-xl transition-colors cursor-pointer group"
+                    className="project-chat-row w-full flex items-center justify-between gap-2 text-left px-2.5 py-2 hover:bg-neutral-50 md:hover:bg-white/80 active:bg-neutral-100/70 rounded-xl transition-colors cursor-pointer group"
                   >
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5">
@@ -15839,7 +15851,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
           </div>
 
           {/* Bottom Chat Input matching Gambar 2 / Alerin Chat */}
-          <div className="shrink-0 bg-white z-20">
+          <div className="shrink-0 bg-white md:bg-transparent relative z-20">
             <div className="max-w-4xl mx-auto w-full">
             <ChatInputBox
               input={newChatQuickText}
@@ -15859,9 +15871,15 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
         /* ═══════════════════════════════════════════════════════════════════════
             SCREEN 1: DAFTAR PROYEK — Tampilan mobile terpadu & adaptif untuk desktop
            ═══════════════════════════════════════════════════════════════════════ */
-        <div className="relative flex-1 flex flex-col h-full overflow-hidden bg-white">
+        <div className="relative flex-1 flex flex-col h-full overflow-hidden claro-chat-bg">
+          {/* Decorative dot grid overlay — desktop only (sama seperti background Alerin Chat awal desktop) */}
+          <div className="hidden md:block absolute inset-0 pointer-events-none" style={{
+            backgroundImage: "radial-gradient(circle, rgba(59,130,246,0.035) 1px, transparent 1px)",
+            backgroundSize: "24px 24px",
+            zIndex: 0,
+          }} />
           {/* Header: Mobile [hamburger | Proyek | +] · Desktop [Proyek Saya | +] */}
-          <header className="shrink-0 bg-white z-20">
+          <header className="shrink-0 bg-white md:bg-transparent relative z-20">
             <div className="max-w-4xl mx-auto w-full flex items-center justify-between px-4 md:px-8 pt-3 md:pt-7 pb-2 md:pb-4">
               <button
                 type="button"
@@ -15894,8 +15912,8 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
           </header>
 
           {/* Project List (scrolls smoothly behind floating search bar) */}
-          <div className="flex-1 overflow-y-auto px-4 md:px-8 pt-2 pb-28" style={{ scrollbarWidth: "none" }}>
-            <div className="max-w-4xl mx-auto w-full divide-y divide-neutral-100/60">
+          <div className="relative z-10 flex-1 overflow-y-auto px-4 md:px-8 pt-2 pb-28" style={{ scrollbarWidth: "none" }}>
+            <div className="max-w-4xl mx-auto w-full divide-y divide-neutral-100/60 md:divide-slate-200/50">
               {filteredProjects.length === 0 ? (
                 /* Empty State */
                 <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
@@ -15932,7 +15950,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                       setSelectedProject(p);
                       setSelectedProjectChat(null);
                     }}
-                    className="project-item-row w-full flex items-center gap-3.5 py-3.5 px-2 md:px-3 hover:bg-neutral-50 active:bg-neutral-100/70 transition-colors text-left group cursor-pointer rounded-2xl"
+                    className="project-item-row w-full flex items-center gap-3.5 py-3.5 px-2 md:px-3 hover:bg-neutral-50 md:hover:bg-white/80 active:bg-neutral-100/70 transition-colors text-left group cursor-pointer rounded-2xl"
                   >
                     {/* Pastel rounded square icon: shape abu-abu, line folder hitam */}
                     <div
