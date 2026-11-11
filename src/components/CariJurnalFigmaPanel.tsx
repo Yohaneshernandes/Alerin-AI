@@ -13415,7 +13415,7 @@ export default function CariJurnalFigmaPanel({
           </div>
         </header>
 
-        <main id="alrin-main-scroll-container" onScroll={handleMobileScroll} className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden px-4 pb-28 pt-7 md:px-7 md:pb-7 md:pt-16">
+        <main id="alrin-main-scroll-container" onScroll={handleMobileScroll} className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden px-4 pb-28 pt-7 md:p-7">
           {mobileSearchStage === "loading" && view === "home" && (
             <div className="fixed inset-x-0 bottom-[68px] top-[65px] z-[305] flex flex-col items-center justify-center overflow-hidden bg-[#f4f7fb] px-6 md:hidden">
               <SearchLoader />

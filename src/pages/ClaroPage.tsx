@@ -5749,7 +5749,8 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
 
         {/* Main content */}
         <main className="relative flex-1 min-w-0 overflow-hidden flex flex-col">
-          {/* Floating top-right Upgrade & profile bar — desktop only, stays floating above scrolled content */}
+          {/* Floating top-right Upgrade & profile bar — desktop only (tersembunyi di Semua Fitur & Proyek Saya) */}
+          {activeTab !== "fitur" && activeTab !== "proyek" && (
           <div className="hidden md:flex items-center gap-2.5 absolute top-3.5 right-6 z-40">
             <button
               type="button"
@@ -5805,6 +5806,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
               </button>
             </div>
           </div>
+          )}
           {children}
         </main>
       </div>
@@ -11072,7 +11074,7 @@ function ParafrasePanel({ onBack }: { onBack: () => void }) {
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
       {/* Header */}
-      <div className="px-4 md:px-8 md:pr-[392px] py-4 border-b border-slate-100 flex items-center gap-3" style={{ background: "rgba(255,255,255,0.9)", backdropFilter: "blur(12px)" }}>
+      <div className="px-4 md:px-8 py-4 border-b border-slate-100 flex items-center gap-3" style={{ background: "rgba(255,255,255,0.9)", backdropFilter: "blur(12px)" }}>
         <button onClick={onBack} className="w-8 h-8 rounded-xl flex items-center justify-center hover:bg-slate-100 transition-colors text-slate-500">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
         </button>
@@ -11487,7 +11489,7 @@ function GramEditorScreen({ onDone, onBack }: { onDone: () => void; onBack: () =
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
       {/* Header */}
-      <div className="shrink-0 px-4 md:px-6 md:pr-[392px] py-3 border-b border-slate-100 flex items-center gap-3 flex-wrap" style={{ background: "rgba(255,255,255,0.95)", backdropFilter: "blur(12px)" }}>
+      <div className="shrink-0 px-4 md:px-6 py-3 border-b border-slate-100 flex items-center gap-3 flex-wrap" style={{ background: "rgba(255,255,255,0.95)", backdropFilter: "blur(12px)" }}>
         <button onClick={onBack} className="w-8 h-8 rounded-xl flex items-center justify-center hover:bg-slate-100 transition-colors text-slate-500 shrink-0">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
         </button>
@@ -12564,7 +12566,7 @@ function CariJudulPanel({ onBack }: { onBack: () => void }) {
     return (
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top bar */}
-        <div className="shrink-0 flex items-center gap-3 px-4 md:px-6 md:pr-[392px] py-3 border-b border-slate-100 bg-white">
+        <div className="shrink-0 flex items-center gap-3 px-4 md:px-6 py-3 border-b border-slate-100 bg-white">
           <button onClick={() => setShowOutline(false)}
             className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
@@ -12663,7 +12665,7 @@ function CariJudulPanel({ onBack }: { onBack: () => void }) {
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
       {/* Top bar */}
-      <div className="shrink-0 flex items-center gap-3 px-4 md:px-6 md:pr-[392px] py-3 border-b border-slate-100 bg-white">
+      <div className="shrink-0 flex items-center gap-3 px-4 md:px-6 py-3 border-b border-slate-100 bg-white">
         <button onClick={onBack} className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
         </button>
@@ -13123,7 +13125,7 @@ function CariJurnalPanel({ onBack }: { onBack: () => void }) {
   // ── Search screen ──────────────────────────────────────────────────────────
   if (screen === "search") return (
     <div className="flex-1 flex flex-col overflow-hidden">
-      <div className="flex-1 overflow-y-auto px-4 md:px-8 py-4 md:pt-16 md:pb-6">
+      <div className="flex-1 overflow-y-auto px-4 md:px-8 py-4 md:py-6">
         <div className="flex items-center gap-3 mb-6">
           <button onClick={onBack} className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
@@ -13253,7 +13255,7 @@ function CariJurnalPanel({ onBack }: { onBack: () => void }) {
   // ── Results screen ─────────────────────────────────────────────────────────
   if (screen === "results") return (
     <div className="flex-1 flex flex-col overflow-hidden">
-      <div className="flex-1 overflow-y-auto px-4 md:px-8 py-4 md:pt-16 md:pb-6">
+      <div className="flex-1 overflow-y-auto px-4 md:px-8 py-4 md:py-6">
         {/* Header */}
         <div className="flex items-center gap-3 mb-5">
           <button onClick={() => setScreen("search")} className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
@@ -13363,7 +13365,7 @@ function CariJurnalPanel({ onBack }: { onBack: () => void }) {
   // ── Detail screen ──────────────────────────────────────────────────────────
   if (screen === "detail" && selected) return (
     <div className="flex-1 flex flex-col overflow-hidden">
-      <div className="flex-1 overflow-y-auto px-4 md:px-8 py-4 md:pt-16 md:pb-6">
+      <div className="flex-1 overflow-y-auto px-4 md:px-8 py-4 md:py-6">
         <div className="flex items-center gap-3 mb-5">
           <button onClick={() => setScreen("results")} className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
@@ -15246,7 +15248,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
       {selectedProject && selectedProjectChat ? (
         <div className="flex-1 flex flex-col h-full overflow-hidden bg-white">
           {/* Header Gambar 3: [<]  🎓 [Judul Proyek]  [...] */}
-          <header className="shrink-0 flex items-center justify-between px-4 md:pr-[392px] pt-3 pb-2.5 bg-white z-20 border-b border-neutral-100">
+          <header className="shrink-0 flex items-center justify-between px-4 pt-3 pb-2.5 bg-white z-20 border-b border-neutral-100">
             <button
               type="button"
               onClick={() => {
@@ -15677,7 +15679,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
            ═══════════════════════════════════════════════════════════════════════ */
         <div className="flex-1 flex flex-col h-full overflow-hidden bg-white">
           {/* Header Gambar 2: [<]  🎓 [Judul Proyek]  [...] */}
-          <header className="shrink-0 flex items-center justify-between px-4 md:pr-[392px] pt-3 pb-2.5 bg-white z-20 border-b border-neutral-100">
+          <header className="shrink-0 flex items-center justify-between px-4 pt-3 pb-2.5 bg-white z-20 border-b border-neutral-100">
             <button
               type="button"
               onClick={() => {
@@ -16017,7 +16019,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
 
           {/* ── Desktop View (kept for screens >= md) ── */}
           <div className="hidden md:flex flex-1 flex-col overflow-hidden">
-            <div className="flex-1 overflow-y-auto px-6 lg:px-8 pt-16 pb-6">
+            <div className="flex-1 overflow-y-auto px-6 lg:px-8 py-6">
               <div className="flex items-start justify-between mb-6">
                 <div>
                   <h2 className="font-display font-800 text-2xl text-slate-900 mb-1">Proyek Saya</h2>

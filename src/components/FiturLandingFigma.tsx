@@ -105,7 +105,7 @@ export default function FiturLandingFigma({
 
   return (
     <div className="-mb-24 flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden bg-[#f5f8fe] md:mb-0">
-      <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-28 pt-20 md:px-8 md:pt-16 md:pb-6">
+      <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-28 pt-20 md:px-8 md:py-6">
         <div className="mx-auto max-w-[1020px]">
           <div className="relative block md:flex md:items-start md:justify-between md:gap-5">
             <div className="w-full md:w-auto">
