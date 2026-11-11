@@ -15721,9 +15721,9 @@ function ProyekTab({
                       <line x1="12" y1="16" x2="12.01" y2="16" />
                     </svg>
                     <p className="text-xs text-blue-950 leading-relaxed font-medium">
-                      Batas maksimal {userPlanInfo.maxFolders} folder proyek untuk Akun {userPlanInfo.label} sudah tercapai, sehingga tidak bisa membuat folder baru lagi.{" "}
+                      Batas maksimal {userPlanInfo.maxFolders} proyek untuk Akun {userPlanInfo.label} sudah tercapai, sehingga tidak bisa membuat proyek baru lagi.{" "}
                       <span className="font-normal text-blue-900/80">
-                        Upgrade paket untuk membuat folder proyek tanpa batas.
+                        Upgrade paket untuk meningkatkan batas pembuatan proyek
                       </span>
                     </p>
                   </div>
