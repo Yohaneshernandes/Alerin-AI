@@ -528,11 +528,141 @@ function formatInfographicAsText(preset: InfographicPreset): string {
   ].join("\n");
 }
 
+interface ClassProgramPkg {
+  id: string;
+  name: string;
+  price: string;
+  duration: string;
+  originalPrice: string;
+  discountLabel: string;
+  stageTag: string;
+  category: "skripsi" | "sidang" | "reguler";
+  popular?: boolean;
+  summary: string;
+  features: string[];
+}
+
+const CLASS_PROGRAM_PACKAGES: ClassProgramPkg[] = [
+  {
+    id: "silver",
+    name: "SILVER",
+    price: "Rp299.000",
+    duration: "1 Bulan*",
+    originalPrice: "Rp398.650*",
+    discountLabel: "Dapatkan Diskon 25%",
+    stageTag: "Tahap Awal",
+    category: "skripsi",
+    summary: "Cocok untuk mahasiswa yang baru memulai skripsi dan membutuhkan arahan fondasi penelitian.",
+    features: [
+      "Bimbingan Topik Penelitian",
+      "Bimbingan Variabel Penelitian",
+      "Bimbingan Objek Penelitian",
+    ],
+  },
+  {
+    id: "gold",
+    name: "GOLD",
+    price: "Rp499.000",
+    duration: "2 Bulan*",
+    originalPrice: "Rp831.600*",
+    discountLabel: "Dapatkan Diskon 40%",
+    stageTag: "Proposal Awal",
+    category: "skripsi",
+    summary: "Ideal untuk menyusun proposal awal mulai dari outline, latar belakang, hingga kajian pustaka.",
+    features: [
+      "Bimbingan Outline Skripsi",
+      "Bimbingan Latar Belakang Skripsi",
+      "Bimbingan Kajian/Tinjauan Pustaka",
+    ],
+  },
+  {
+    id: "platinum",
+    name: "PLATINUM",
+    price: "Rp459.000",
+    duration: "2 Bulan*",
+    originalPrice: "Rp765.000*",
+    discountLabel: "Dapatkan Diskon 40%",
+    stageTag: "Olah Data & Hasil",
+    category: "skripsi",
+    summary: "Dirancang untuk pendampingan pengolahan data, pembahasan hasil, dan penyusunan kesimpulan.",
+    features: [
+      "Bimbingan Olah Data Penelitian",
+      "Bimbingan Pembahasan dan Hasil Penelitian",
+      "Bimbingan Kesimpulan Skripsi",
+    ],
+  },
+  {
+    id: "diamond",
+    name: "DIAMOND",
+    price: "Rp249.000",
+    duration: "14 Hari*",
+    originalPrice: "Rp300.000*",
+    discountLabel: "Dapatkan Diskon 17%",
+    stageTag: "Persiapan Sidang",
+    category: "sidang",
+    summary: "Paket intensif persiapan seminar proposal dan sidang skripsi termasuk slide presentasi.",
+    features: [
+      "Bimbingan Penyusunan PowerPoint Seminar Proposal dan Sidang Skripsi",
+      "Bimbingan Presentasi Proposal dan Skripsi",
+    ],
+  },
+  {
+    id: "complete",
+    name: "COMPLETE",
+    price: "Rp1.010.000",
+    duration: "3 Bulan*",
+    originalPrice: "Rp2.020.000*",
+    discountLabel: "Dapatkan Diskon 50%",
+    stageTag: "Paling Lengkap",
+    category: "skripsi",
+    popular: true,
+    summary: "Pendampingan menyeluruh dari judul, proposal skripsi, hingga olah data penelitian.",
+    features: [
+      "Bimbingan Judul Skripsi",
+      "Bimbingan Proposal Skripsi",
+      "Bimbingan Olah Data Penelitian",
+    ],
+  },
+  {
+    id: "reguler",
+    name: "KONSULTASI REGULER",
+    price: "Rp229.000",
+    duration: "14 Hari*",
+    originalPrice: "Rp248.900*",
+    discountLabel: "Dapatkan Diskon 8%",
+    stageTag: "By Request",
+    category: "reguler",
+    summary: "Sesi konsultasi fleksibel untuk judul, Bab 1–5, dan topik pembahasan sesuai kebutuhanmu.",
+    features: [
+      "Konsultasi Judul Skripsi",
+      "Konsultasi Bab 1-5 Skripsi",
+      "Topik Pembahasan By Request",
+    ],
+  },
+];
+
+function formatClassProgramAsText(): string {
+  return [
+    "Rekomendasi Paket Class Program Alerin",
+    "",
+    ...CLASS_PROGRAM_PACKAGES.flatMap((pkg) => [
+      `${pkg.name} — ${pkg.price} (${pkg.duration}, normal ${pkg.originalPrice} · ${pkg.discountLabel})`,
+      ...pkg.features.map((f) => `• ${f}`),
+      "",
+    ]),
+  ].join("\n");
+}
+
 // ─── Format Markdown Bersih untuk Disalin ke Clipboard ──────────────────────
 // Merapikan teks hasil salinan agar enak dibaca di pesan chat, input, dokumen, atau WhatsApp
 export function cleanMarkdownForCopy(md: string): string {
   if (!md) return "";
   let text = stripEmoticons(md);
+
+  // Bersihkan blok paket class program menjadi ringkasan teks terstruktur
+  text = text.replace(/```(?:paket-class|paket|classprogram)[\s\S]*?```/gi, () => {
+    return formatClassProgramAsText();
+  });
 
   // Bersihkan blok infografis menjadi ringkasan teks terstruktur
   text = text.replace(/```(?:infografis|infographic)(?::([a-z0-9-]+))?[\s\S]*?```/gi, (_m, variant) => {
@@ -1585,6 +1715,54 @@ Kamu sedang mempertimbangkan pendekatan mana untuk penelitianmu saat ini?`
 Kamu ingin dibuatkan **info grafis** untuk topik atau data apa? Tulis topikmu di sini, nanti langsung Alerin buatkan!`
   ],
 
+  // ── 00-paket. REKOMENDASI PAKET CLASS PROGRAM ────────────────────────────
+  [
+    /\b(?:paket\b(?=.*(?:sidang|presentasi|ppt|diamond))|(?:sidang|presentasi)\b(?=.*\bpaket\b))/i,
+    `Untuk tahap **persiapan seminar proposal maupun sidang skripsi**, paket yang paling tepat dari **Class Program Alerin** adalah:
+
+- **Diamond (Rp249.000 · 14 Hari — Diskon 17%):** Dirancang khusus mendampingi penyusunan PowerPoint seminar proposal & sidang skripsi sekaligus latihan presentasinya.
+- **Konsultasi Reguler (Rp229.000 · 14 Hari — Diskon 8%):** Alternatif pendampingan cepat jika kamu hanya ingin mematangkan sesi tanya jawab pada bab tertentu (*by request*).
+
+\`\`\`paket-class
+\`\`\`
+
+Kamu sudah menjadwalkan seminar proposal atau sidang di minggu ini?`
+  ],
+  [
+    /\b(?:bandingkan\s+paket|gold.*platinum|pilih\s+paket.*progres|memilih\s+paket)\b/i,
+    `Berikut panduan singkat membedakan paket **Class Program Alerin** berdasarkan tahap penyusunan skripsimu:
+
+- **Baru mulai (judul & variabel):** Pilih **Silver (Rp299.000 · 1 Bulan)** untuk bimbingan topik, variabel, dan objek penelitian.
+- **Menyusun proposal (BAB I–II):** Pilih **Gold (Rp499.000 · 2 Bulan)** untuk pendampingan outline, latar belakang, dan tinjauan pustaka.
+- **Olah data & hasil (BAB IV–V):** Pilih **Platinum (Rp459.000 · 2 Bulan)** agar analisis data, pembahasan, dan kesimpulan tersusun tepat.
+- **Pendampingan penuh dari awal sampai olah data:** Pilih **Complete (Rp1.010.000 · 3 Bulan — Diskon 50%)** karena mencakup judul, proposal, dan olah data sekaligus.
+
+\`\`\`paket-class
+\`\`\`
+
+Kamu saat ini sedang fokus di bagian mana?`
+  ],
+  [
+    /\b(?:paket(?:\s+(?:class|program|bimbingan|belajar|skripsi|alerin))?|class\s*program)\b/i,
+    `Tentu! Alerin rangkumkan pilihan paket **Class Program** yang dirancang menyesuaikan tahap penyusunan skripsi dan kebutuhan bimbinganmu saat ini:
+
+## Penjelasan Paket Class Program
+
+- **Silver (Rp299.000 · 1 Bulan):** Cocok untuk mahasiswa yang baru memulai riset dan butuh arahan menentukan topik, variabel, serta objek penelitian.
+- **Gold (Rp499.000 · 2 Bulan):** Pas untuk tahap penyusunan proposal awal agar outline skripsi, latar belakang, dan kajian pustaka tersusun kuat.
+- **Platinum (Rp459.000 · 2 Bulan):** Fokus pada tahap pengolahan data penelitian, penyusunan pembahasan dan hasil, hingga penarikan kesimpulan skripsi.
+- **Diamond (Rp249.000 · 14 Hari):** Paket intensif persiapan seminar proposal dan sidang skripsi, meliputi pembuatan PowerPoint serta bimbingan presentasi.
+- **Complete (Rp1.010.000 · 3 Bulan):** Program paling menyeluruh dengan diskon 50% untuk pendampingan dari judul, proposal skripsi, sampai olah data penelitian.
+- **Konsultasi Reguler (Rp229.000 · 14 Hari):** Pilihan fleksibel untuk konsultasi judul, Bab 1–5 skripsi, serta topik pembahasan *by request*.
+
+## Rekomendasi Paket Class Program
+
+\`\`\`paket-class
+\`\`\`
+
+Ceritakan sedang berada di tahap mana saat ini (mencari judul, menulis proposal, olah data, atau persiapan sidang) agar Alerin bantu pilih paket yang paling tepat!`
+  ],
+
   // ── 00. VISUALISASI DATA (Grafik Batang, Garis, Lingkaran, Perbandingan, KPI) ───
   [
     /\b(?:visualisasi\s*data|visualisasi|grafik|chart|bar\s*chart|line\s*chart|pie\s*chart|donut\s*chart|kpi)\b/i,
@@ -2529,6 +2707,7 @@ Semakin spesifik pertanyaanmu, semakin tepat dan berguna jawaban yang bisa Aleri
 }
 
 const SUGGESTION_MAP: { pattern: RegExp; suggestions: string[] }[] = [
+  { pattern: /\b(?:paket|class\s*program)\b/i, suggestions: ["Paket mana yang cocok untuk persiapan sidang?", "Bandingkan paket Gold, Platinum, dan Complete", "Cara memilih paket sesuai progres skripsiku"] },
   { pattern: /info\s*grafi[sk]|infografi[sk]|infographic/i, suggestions: ["Buatkan infografis proses penyusunan skripsi", "Buatkan infografis perbandingan metode kualitatif vs kuantitatif", "Buatkan infografis pemanfaatan AI mahasiswa"] },
   { pattern: /visualisasi\s*data|visualisasi|grafik|chart|bar\s*chart|line\s*chart|pie\s*chart|donut\s*chart|kpi/i, suggestions: ["Buatkan grafik pertumbuhan penjualan kuartal ini", "Buatkan visualisasi perbandingan target vs realisasi", "Tampilkan ringkasan metrik KPI bisnis"] },
   { pattern: /bagan|diagram|flowchart|mindmap|mind\s*map|alur proses|struktur organisasi/i, suggestions: ["Buatkan bagan alur pendaftaran mahasiswa baru", "Buatkan mind map rencana penelitian skripsi", "Buatkan timeline pengerjaan skripsi 6 bulan"] },
@@ -2556,6 +2735,11 @@ const SUGGESTION_MAP: { pattern: RegExp; suggestions: string[] }[] = [
 const DEFAULT_SUGGESTIONS = ["Lanjutkan penjelasannya lebih detail", "Berikan contoh konkret", "Apa yang harus kulakukan selanjutnya?"];
 
 const SOURCE_MAP: { pattern: RegExp; sources: ChatSource[] }[] = [
+  { pattern: /\b(?:paket|class\s*program)\b/i, sources: [
+    { title: "Katalog Resmi Class Program & Bimbingan Skripsi Alerin", author: "Alerin Academic", year: "2026" },
+    { title: "Panduan Tahapan Penyusunan Skripsi, Olah Data & Sidang", author: "Tim Mentor Alerin", year: "2026" },
+    { title: "The Craft of Research (Fourth Edition)", author: "Booth, W.C., Colomb, G.G., & Williams, J.M.", year: "2016", url: "https://press.uchicago.edu" },
+  ]},
   { pattern: /info\s*grafi[sk]|infografi[sk]|infographic/i, sources: [
     { title: "Cool Infographics: Effective Communication with Data Visualization", author: "Krum, R.", year: "2020", url: "https://scholar.google.com" },
     { title: "Storytelling with Data: A Data Visualization Guide", author: "Knaflic, C.N.", year: "2021", url: "https://scholar.google.com" },
@@ -2827,7 +3011,7 @@ const FEATURE_REC_MAP: { pattern: RegExp; rec: FeatureRec }[] = [
     rec: OFFICIAL_FEATURES.disertasi,
   },
   {
-    pattern: /skripsi|cari judul|saran judul|ide judul|rumusan masalah|hipotesis|metodologi|kuantitatif|kualitatif|sampel|kuesioner|sem|smartpls|spss|regresi/i,
+    pattern: /\b(?:paket|class\s*program)\b|skripsi|cari judul|saran judul|ide judul|rumusan masalah|hipotesis|metodologi|kuantitatif|kualitatif|sampel|kuesioner|sem|smartpls|spss|regresi/i,
     rec: OFFICIAL_FEATURES.skripsi,
   },
   {
@@ -8992,6 +9176,257 @@ function InfographicOutputCard({ variant }: { variant?: string }) {
   );
 }
 
+// ─── Class Program Packages Output Card (Rekomendasi Paket Interaktif) ─────────
+function ClassProgramPackagesCard() {
+  const [filter, setFilter] = useState<"semua" | "skripsi" | "sidang" | "reguler">("semua");
+  const [selectedPkg, setSelectedPkg] = useState<ClassProgramPkg | null>(null);
+  const [copied, setCopied] = useState(false);
+  const [enrolledName, setEnrolledName] = useState<string | null>(null);
+
+  const visiblePackages = useMemo(() => {
+    if (filter === "semua") return CLASS_PROGRAM_PACKAGES;
+    return CLASS_PROGRAM_PACKAGES.filter((p) => p.category === filter);
+  }, [filter]);
+
+  const handleCopyAll = () => {
+    navigator.clipboard?.writeText(formatClassProgramAsText()).catch(() => {});
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1800);
+  };
+
+  return (
+    <div className="my-3.5 rounded-2xl border border-neutral-200/90 bg-white overflow-hidden shadow-[0_2px_14px_rgba(37,99,235,0.06)] animate-in fade-in duration-300">
+      {/* Toolbar atas kartu rekomendasi paket */}
+      <div className="flex items-center justify-between px-4 py-2.5 border-b border-slate-100 bg-slate-50/70 gap-2">
+        <div className="flex items-center gap-2 min-w-0">
+          <span className="size-6 rounded-lg bg-[#EAF2FF] text-[#1A73E8] flex items-center justify-center shrink-0">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+              <path d="M6 12v5c3 3 9 3 12 0v-5" />
+            </svg>
+          </span>
+          <span className="text-[13px] font-semibold text-slate-800 truncate">Rekomendasi Paket</span>
+          <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-[#EAF2FF] text-[#1A73E8] shrink-0">
+            Class Program
+          </span>
+        </div>
+
+        <button
+          type="button"
+          onClick={handleCopyAll}
+          title="Salin daftar paket"
+          aria-label="Salin daftar paket"
+          className={`size-7 rounded-lg flex items-center justify-center transition-colors cursor-pointer shrink-0 ${
+            copied ? "text-emerald-600 bg-emerald-50" : "text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100"
+          }`}
+        >
+          {copied ? (
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+          ) : (
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+            </svg>
+          )}
+        </button>
+      </div>
+
+      {/* Filter Pills */}
+      <div className="px-4 pt-3 pb-1 flex items-center gap-1.5 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
+        {[
+          { id: "semua" as const, label: "Semua Paket (6)" },
+          { id: "skripsi" as const, label: "Bimbingan Skripsi" },
+          { id: "sidang" as const, label: "Persiapan Sidang" },
+          { id: "reguler" as const, label: "Konsultasi" },
+        ].map((tab) => {
+          const active = filter === tab.id;
+          return (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => setFilter(tab.id)}
+              className={`shrink-0 px-3 py-1 rounded-full text-[11px] font-semibold transition-all cursor-pointer border ${
+                active
+                  ? "bg-[#1A73E8] text-white border-[#1A73E8] shadow-2xs"
+                  : "bg-white text-slate-600 border-slate-200 hover:border-blue-200 hover:text-[#1A73E8]"
+              }`}
+            >
+              {tab.label}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Grid Kartu Paket (Mobile 1 col · Tablet 2 col · Desktop 3 col) */}
+      <div className="p-3.5 sm:p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 bg-gradient-to-b from-white via-[#FAFBFD] to-[#F5F8FE]">
+        {visiblePackages.map((pkg) => (
+          <div
+            key={pkg.id}
+            className={`rounded-2xl border p-4 flex flex-col justify-between transition-all ${
+              pkg.popular
+                ? "bg-gradient-to-b from-[#F4F8FF] to-white border-[#93C5FD] shadow-[0_6px_22px_rgba(37,99,235,0.11)]"
+                : "bg-white border-slate-200/85 shadow-[0_1px_6px_rgba(15,23,42,0.04)] hover:border-blue-300/80 hover:shadow-[0_6px_18px_rgba(37,99,235,0.09)]"
+            }`}
+          >
+            <div>
+              {/* Top Tier Pill + Stage Tag */}
+              <div className="flex items-center justify-between gap-2 mb-3">
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-[10.5px] font-bold tracking-wide uppercase text-white bg-gradient-to-r from-[#1A73E8] to-[#1E40AF] shadow-2xs">
+                  {pkg.name}
+                </span>
+                <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0 ${
+                  pkg.popular ? "bg-[#EAF2FF] text-[#1A73E8]" : "bg-slate-100 text-slate-600"
+                }`}>
+                  {pkg.stageTag}
+                </span>
+              </div>
+
+              {/* Harga, Durasi & Diskon */}
+              <div className="mb-3">
+                <p className="text-xl font-extrabold text-slate-900 tracking-tight leading-none">
+                  {pkg.price}
+                </p>
+                <div className="flex items-center gap-2 mt-1.5 text-xs">
+                  <span className="font-semibold text-slate-700">{pkg.duration}</span>
+                  <span className="line-through font-semibold text-rose-500">{pkg.originalPrice}</span>
+                </div>
+                <div className="mt-2">
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-lg bg-[#EAF2FF] border border-blue-100 text-[#1A73E8] text-[11px] font-bold">
+                    {pkg.discountLabel}
+                  </span>
+                </div>
+              </div>
+
+              <div className="h-px bg-slate-100 my-3" />
+
+              {/* Daftar Fitur */}
+              <ul className="space-y-2">
+                {pkg.features.map((feat, idx) => (
+                  <li key={idx} className="flex items-start gap-2 text-xs text-slate-700 leading-snug">
+                    <span className="size-4 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                    </span>
+                    <span>{feat}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => {
+                setEnrolledName(null);
+                setSelectedPkg(pkg);
+              }}
+              className="mt-4 w-full py-2 px-3 rounded-xl bg-[#1A73E8] hover:bg-[#1557b0] active:scale-[0.98] text-white text-xs font-semibold transition-all cursor-pointer shadow-2xs"
+            >
+              Detail Paket
+            </button>
+          </div>
+        ))}
+      </div>
+
+      {/* Footer note */}
+      <div className="px-4 py-2.5 bg-[#EAF2FF]/70 border-t border-blue-100 flex items-center justify-between gap-2 text-[11px] text-slate-600">
+        <span>*Harga promo &amp; masa bimbingan berlaku sejak aktivasi Class Program.</span>
+      </div>
+
+      {/* Modal Detail Paket */}
+      {selectedPkg && typeof document !== "undefined" && createPortal(
+        <div
+          className="fixed inset-0 z-[260] flex items-center justify-center p-4 bg-black/45 backdrop-blur-xs animate-[gemini-fade-in_0.15s_ease-out]"
+          role="dialog"
+          aria-modal="true"
+          onClick={() => setSelectedPkg(null)}
+        >
+          <div
+            className="w-full max-w-[380px] bg-white rounded-3xl p-5 shadow-2xl border border-slate-100 flex flex-col gap-4 animate-[gemini-zoom-in_0.2s_ease-out]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold tracking-wide uppercase text-white bg-gradient-to-r from-[#1A73E8] to-[#1E40AF]">
+                  {selectedPkg.name}
+                </span>
+                <div className="flex items-baseline gap-2 mt-2.5">
+                  <span className="text-2xl font-extrabold text-slate-900">{selectedPkg.price}</span>
+                  <span className="text-xs font-medium text-slate-500">/ {selectedPkg.duration}</span>
+                </div>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="text-xs line-through font-semibold text-rose-500">{selectedPkg.originalPrice}</span>
+                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-[#EAF2FF] text-[#1A73E8]">
+                    {selectedPkg.discountLabel}
+                  </span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedPkg(null)}
+                aria-label="Tutup detail paket"
+                className="size-8 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-colors cursor-pointer shrink-0"
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="rounded-2xl bg-slate-50 border border-slate-100 p-3.5">
+              <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">Cocok Untuk</p>
+              <p className="text-xs text-slate-700 leading-relaxed">{selectedPkg.summary}</p>
+            </div>
+
+            <div>
+              <p className="text-xs font-bold text-slate-800 mb-2">Yang Kamu Dapatkan:</p>
+              <ul className="space-y-2">
+                {selectedPkg.features.map((feat, idx) => (
+                  <li key={idx} className="flex items-start gap-2 text-xs text-slate-700 leading-snug">
+                    <span className="size-4 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                    </span>
+                    <span>{feat}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {enrolledName === selectedPkg.name && (
+              <div className="rounded-xl bg-emerald-50 border border-emerald-200 px-3.5 py-2.5 text-xs font-medium text-emerald-800">
+                Pilihan paket <strong>{selectedPkg.name}</strong> dicatat! Konsultan Class Program Alerin siap membantu pendaftaranmu.
+              </div>
+            )}
+
+            <div className="flex items-center gap-2 pt-1 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={() => setSelectedPkg(null)}
+                className="flex-1 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+              >
+                Tutup
+              </button>
+              <button
+                type="button"
+                onClick={() => setEnrolledName(selectedPkg.name)}
+                className="flex-1 py-2.5 rounded-xl text-xs font-bold text-white bg-[#1A73E8] hover:bg-[#1557b0] active:scale-[0.99] transition-all cursor-pointer shadow-xs"
+              >
+                Pilih Paket Ini
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+    </div>
+  );
+}
+
 function cleanMdText(text: string): string {
   // Hapus strip/garis pemisah (em-dash ' — ' atau ' – ') agar output jawaban bebas dari tanda garis
   return text
@@ -9049,6 +9484,14 @@ function MarkdownRenderer({ text, isStreaming, compact }: { text: string; isStre
       }
       const hasClosingFence = i < lines.length && lines[i].trim().startsWith("```");
       i++; // skip closing ```
+
+      // Class Program Package Recommendation Card
+      if (!compact && (lang === "paket-class" || lang === "paket" || lang === "classprogram")) {
+        if (hasClosingFence || !isStreaming) {
+          elements.push(<ClassProgramPackagesCard key={`pkg-${i}`} />);
+        }
+        continue;
+      }
 
       // Infographic Output Card (Poster Infografis Visual)
       if (!compact && (lang === "infografis" || lang === "infographic" || lang.startsWith("infografis:") || lang.startsWith("infographic:"))) {
