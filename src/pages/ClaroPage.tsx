@@ -10510,16 +10510,11 @@ function PercakapanTab({
             );
           }
 
-          /* ── Alerin message ────────────────────────────────────── */
+          /* ── Alerin message — tampilan desktop disamakan dengan mobile ── */
           return (
             <div key={i} className="flex flex-col gap-3">
-              {/* Avatar row — desktop only */}
-              <div className="hidden md:flex items-center gap-2.5">
-                <span className="text-[11px] font-bold text-blue-500 uppercase tracking-wider">Alerin</span>
-              </div>
-
               {/* Content */}
-              <div className="pl-1.5 md:pl-9">
+              <div className="pl-1.5">
                 {m.generating && m.imagePrompt ? (
                   <ImageGeneratingBubble
                     prompt={m.imagePrompt}
@@ -10777,10 +10772,7 @@ function PercakapanTab({
       })()}
         {typing && (
           <div className="flex flex-col gap-2 my-1">
-            <div className="hidden md:flex items-center gap-2.5">
-              <span className="text-[11px] font-bold text-blue-500 uppercase tracking-wider">Alerin</span>
-            </div>
-            <div className="pl-1 md:pl-9">
+            <div className="pl-1">
               <GeminiBlueLoadingPill />
             </div>
           </div>
