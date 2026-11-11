@@ -672,7 +672,7 @@ export function cleanMarkdownForCopy(md: string): string {
   let text = stripEmoticons(md);
 
   // Bersihkan blok paket class program menjadi ringkasan teks terstruktur
-  text = text.replace(/```(?:paket-class|paket|classprogram)[\s\S]*?```/gi, () => {
+  text = text.replace(/```(?:paket-class|paket|classprogram)(?::[a-z0-9-]+)?[\s\S]*?```/gi, () => {
     return formatClassProgramAsText();
   });
 
@@ -1730,49 +1730,68 @@ Kamu ingin dibuatkan **info grafis** untuk topik atau data apa? Tulis topikmu di
   // ── 00-paket. REKOMENDASI PAKET CLASS PROGRAM ────────────────────────────
   [
     /\b(?:paket\b(?=.*(?:sidang|presentasi|ppt|diamond))|(?:sidang|presentasi)\b(?=.*\bpaket\b))/i,
-    `Untuk tahap **persiapan seminar proposal maupun sidang skripsi**, paket yang paling tepat dari **Class Program Alerin** adalah:
+    `Kalau kamu sedang mempersiapkan **seminar proposal maupun sidang skripsi**, Alerin rekomendasikan pilihan **Paket Class Program** terbaik untuk tahap presentasi dan sidang, lengkap dengan perbandingan fitur dan harganya.
 
-- **Diamond (Rp249.000 · 14 Hari — Diskon 17%):** Dirancang khusus mendampingi penyusunan PowerPoint seminar proposal & sidang skripsi sekaligus latihan presentasinya.
-- **Konsultasi Reguler (Rp229.000 · 14 Hari — Diskon 8%):** Alternatif pendampingan cepat jika kamu hanya ingin mematangkan sesi tanya jawab pada bab tertentu (*by request*).
+# Rekomendasi paket Class Program (Persiapan Sidang)
 
-\`\`\`paket-class
+\`\`\`paket-class:diamond
 \`\`\`
 
-Kamu sudah menjadwalkan seminar proposal atau sidang di minggu ini?`
+# Rekomendasi paket sesuai kebutuhan persiapan sidang
+
+1. **Fokus PowerPoint & latihan presentasi (Paling cocok):** **Paket Diamond (Rp249.000 · 14 Hari)** dirancang khusus untuk pendampingan penyusunan slide PPT sempro/sidang serta simulasi presentasi.
+2. **Konsultasi materi sidang per bab:** **Konsultasi Reguler (Rp229.000 · 14 Hari)** cocok jika kamu ingin mematangkan sesi tanya jawab atau revisi bab tertentu *by request*.
+3. **Jika masih butuh perbaikan olah data sebelum sidang:** **Paket Platinum (Rp459.000 · 2 Bulan)** membantu merapikan analisis data, pembahasan hasil, dan kesimpulan.
+
+*Harga promo, diskon, dan masa bimbingan Class Program berlaku sejak tanggal aktivasi paket.*
+
+Kapan jadwal seminar proposal atau sidang skripsimu berlangsung agar Alerin bantu susunkan persiapan yang paling pas?`
   ],
   [
     /\b(?:bandingkan\s+paket|gold.*platinum|pilih\s+paket.*progres|memilih\s+paket)\b/i,
-    `Berikut panduan singkat membedakan paket **Class Program Alerin** berdasarkan tahap penyusunan skripsimu:
+    `Berikut perbandingan lengkap seluruh **Paket Class Program Alerin** beserta harga, fitur bimbingan, keunggulan masing-masing paket, dan panduan memilihnya sesuai progres skripsimu.
 
-- **Baru mulai (judul & variabel):** Pilih **Silver (Rp299.000 · 1 Bulan)** untuk bimbingan topik, variabel, dan objek penelitian.
-- **Menyusun proposal (BAB I–II):** Pilih **Gold (Rp499.000 · 2 Bulan)** untuk pendampingan outline, latar belakang, dan tinjauan pustaka.
-- **Olah data & hasil (BAB IV–V):** Pilih **Platinum (Rp459.000 · 2 Bulan)** agar analisis data, pembahasan, dan kesimpulan tersusun tepat.
-- **Pendampingan penuh dari awal sampai olah data:** Pilih **Complete (Rp1.010.000 · 3 Bulan — Diskon 50%)** karena mencakup judul, proposal, dan olah data sekaligus.
+# Rekomendasi paket Class Program
 
 \`\`\`paket-class
 \`\`\`
 
-Kamu saat ini sedang fokus di bagian mana?`
+# Panduan memilih paket sesuai tahap skripsimu
+
+1. **Baru mulai mencari judul & variabel:** **Paket Silver (Rp299.000 · 1 Bulan)** membantu menentukan topik, variabel, dan objek penelitian yang kuat.
+2. **Menyusun proposal (BAB I-II):** **Paket Gold (Rp499.000 · 2 Bulan)** mendampingi pembuatan outline, latar belakang masalah, dan tinjauan pustaka.
+3. **Olah data & pembahasan (BAB IV-V):** **Paket Platinum (Rp459.000 · 2 Bulan)** berfokus pada pengolahan data, interpretasi hasil, dan kesimpulan.
+4. **Persiapan sempro & sidang:** **Paket Diamond (Rp249.000 · 14 Hari)** menyiapkan PowerPoint presentasi serta latihan penyampaian materi di hadapan penguji.
+5. **Pendampingan penuh paling hemat (Diskon 50%):** **Paket Complete (Rp1.010.000 · 3 Bulan)** mencakup bimbingan judul, proposal, hingga olah data sekaligus.
+6. **Konsultasi fleksibel sesuai kebutuhan:** **Konsultasi Reguler (Rp229.000 · 14 Hari)** melayani konsultasi judul, Bab 1-5, dan topik *by request*.
+
+*Semua harga promo dan masa bimbingan Class Program berlaku sejak aktivasi paket.*
+
+Saat ini skripsimu sedang berada di bagian mana? Ceritakan agar Alerin bantu pilihkan paket terbaik.`
   ],
   [
     /\b(?:paket(?:\s+(?:class|program|bimbingan|belajar|skripsi|alerin))?|class\s*program)\b/i,
-    `Tentu! Alerin rangkumkan pilihan paket **Class Program** yang dirancang menyesuaikan tahap penyusunan skripsi dan kebutuhan bimbinganmu saat ini:
+    `Kalau kamu membutuhkan **rekomendasi paket Class Program**, Alerin bisa menyajikannya dalam bentuk rincian kartu paket dan tabel perbandingan lengkap dengan harga, fitur bimbingan, durasi, serta rekomendasi paket terbaik untuk tahap skripsimu.
 
-## Penjelasan Paket Class Program
+Berikut pilihan paket **Class Program Alerin** yang tersedia:
 
-- **Silver (Rp299.000 · 1 Bulan):** Cocok untuk mahasiswa yang baru memulai riset dan butuh arahan menentukan topik, variabel, serta objek penelitian.
-- **Gold (Rp499.000 · 2 Bulan):** Pas untuk tahap penyusunan proposal awal agar outline skripsi, latar belakang, dan kajian pustaka tersusun kuat.
-- **Platinum (Rp459.000 · 2 Bulan):** Fokus pada tahap pengolahan data penelitian, penyusunan pembahasan dan hasil, hingga penarikan kesimpulan skripsi.
-- **Diamond (Rp249.000 · 14 Hari):** Paket intensif persiapan seminar proposal dan sidang skripsi, meliputi pembuatan PowerPoint serta bimbingan presentasi.
-- **Complete (Rp1.010.000 · 3 Bulan):** Program paling menyeluruh dengan diskon 50% untuk pendampingan dari judul, proposal skripsi, sampai olah data penelitian.
-- **Konsultasi Reguler (Rp229.000 · 14 Hari):** Pilihan fleksibel untuk konsultasi judul, Bab 1–5 skripsi, serta topik pembahasan *by request*.
-
-## Rekomendasi Paket Class Program
+# Pilihan paket Class Program
 
 \`\`\`paket-class
 \`\`\`
 
-Ceritakan sedang berada di tahap mana saat ini (mencari judul, menulis proposal, olah data, atau persiapan sidang) agar Alerin bantu pilih paket yang paling tepat!`
+# Rekomendasi paket sesuai tahap skripsimu
+
+1. **Tahap awal & penentuan topik:** **Paket Silver (Rp299.000 · 1 Bulan)** cocok untuk bimbingan topik, variabel, dan objek penelitian.
+2. **Penyusunan proposal (BAB I-II):** **Paket Gold (Rp499.000 · 2 Bulan)** pas untuk menyusun outline, latar belakang, dan tinjauan pustaka.
+3. **Olah data & hasil (BAB IV-V):** **Paket Platinum (Rp459.000 · 2 Bulan)** fokus pada pengolahan data, pembahasan hasil, dan kesimpulan.
+4. **Persiapan sempro & sidang:** **Paket Diamond (Rp249.000 · 14 Hari)** membantu penyusunan slide PowerPoint serta latihan presentasi.
+5. **Paket terbaik (Paling lengkap & hemat 50%):** **Paket Complete (Rp1.010.000 · 3 Bulan)** mencakup pendampingan judul, proposal, dan olah data dalam satu program.
+6. **Konsultasi fleksibel:** **Konsultasi Reguler (Rp229.000 · 14 Hari)** untuk konsultasi judul, Bab 1-5, atau pembahasan *by request*.
+
+*Harga promo, persentase diskon, dan masa bimbingan berlaku sejak tanggal aktivasi Class Program Alerin.*
+
+Kalau mau, beri tahu Alerin sedang berada di **tahap skripsi mana** sekarang (cari judul, proposal, olah data, atau persiapan sidang) agar Alerin bantu pilihkan **paket Class Program** yang paling tepat untukmu.`
   ],
 
   // ── 00. VISUALISASI DATA (Grafik Batang, Garis, Lingkaran, Perbandingan, KPI) ───
@@ -9474,162 +9493,250 @@ function InfographicOutputCard({ variant }: { variant?: string }) {
 }
 
 // ─── Class Program Packages Output Card (Rekomendasi Paket Interaktif) ─────────
-function ClassProgramPackagesCard() {
-  const [filter, setFilter] = useState<"semua" | "skripsi" | "sidang" | "reguler">("semua");
+const CLASS_PROGRAM_COMPARISON_ROWS: {
+  feature: string;
+  values: Record<string, string>;
+}[] = [
+  {
+    feature: "Judul, Topik & Variabel",
+    values: { silver: "✓", gold: "-", platinum: "-", diamond: "-", complete: "✓", reguler: "Konsultasi" },
+  },
+  {
+    feature: "Outline & Tinjauan Pustaka",
+    values: { silver: "-", gold: "✓", platinum: "-", diamond: "-", complete: "✓", reguler: "Konsultasi" },
+  },
+  {
+    feature: "Olah Data & Pembahasan",
+    values: { silver: "-", gold: "-", platinum: "✓", diamond: "-", complete: "✓", reguler: "Konsultasi" },
+  },
+  {
+    feature: "Slide PPT & Latihan Sidang",
+    values: { silver: "-", gold: "-", platinum: "-", diamond: "✓", complete: "-", reguler: "By Request" },
+  },
+  {
+    feature: "Durasi Bimbingan",
+    values: { silver: "1 Bln", gold: "2 Bln", platinum: "2 Bln", diamond: "14 Hr", complete: "3 Bln", reguler: "14 Hr" },
+  },
+  {
+    feature: "Diskon Promo",
+    values: { silver: "25%", gold: "40%", platinum: "40%", diamond: "17%", complete: "50%", reguler: "8%" },
+  },
+  {
+    feature: "Harga",
+    values: { silver: "299rb", gold: "499rb", platinum: "459rb", diamond: "249rb", complete: "1,01jt", reguler: "229rb" },
+  },
+];
+
+function formatPackageHeadingName(name: string): string {
+  if (name === "KONSULTASI REGULER") return "Konsultasi Reguler";
+  return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+}
+
+function getPackageBottomTagStyle(id: string): { label: string; className: string } {
+  switch (id) {
+    case "platinum":
+      return { label: "Olah Data", className: "bg-blue-100 text-blue-700" };
+    case "diamond":
+      return { label: "Persiapan Sidang", className: "bg-blue-100 text-blue-700" };
+    case "complete":
+      return { label: "Paling Lengkap", className: "bg-emerald-100 text-emerald-700" };
+    case "gold":
+      return { label: "Proposal Awal", className: "bg-slate-100 text-slate-700" };
+    case "reguler":
+      return { label: "Ekonomis · By Request", className: "bg-slate-100 text-slate-700" };
+    default:
+      return { label: "Tahap Awal", className: "bg-slate-100 text-slate-700" };
+  }
+}
+
+function ClassProgramPackagesCard({ featuredId }: { featuredId?: string }) {
   const [selectedPkg, setSelectedPkg] = useState<ClassProgramPkg | null>(null);
-  const [copied, setCopied] = useState(false);
   const [enrolledName, setEnrolledName] = useState<string | null>(null);
 
-  const visiblePackages = useMemo(() => {
-    if (filter === "semua") return CLASS_PROGRAM_PACKAGES;
-    return CLASS_PROGRAM_PACKAGES.filter((p) => p.category === filter);
-  }, [filter]);
+  const featuredPkg = useMemo(() => {
+    if (featuredId) {
+      const matched = CLASS_PROGRAM_PACKAGES.find((p) => p.id === featuredId.toLowerCase());
+      if (matched) return matched;
+    }
+    return CLASS_PROGRAM_PACKAGES.find((p) => p.popular) ?? CLASS_PROGRAM_PACKAGES[0];
+  }, [featuredId]);
 
-  const handleCopyAll = () => {
-    navigator.clipboard?.writeText(formatClassProgramAsText()).catch(() => {});
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1800);
-  };
+  const secondaryPackages = useMemo(
+    () => CLASS_PROGRAM_PACKAGES.filter((p) => p.id !== featuredPkg.id),
+    [featuredPkg]
+  );
+
+  const featuredHighlights = useMemo(() => {
+    if (featuredPkg.id === "complete") {
+      return [
+        ...featuredPkg.features,
+        "Pendampingan terstruktur 3 bulan penuh",
+        "Hemat 50% dibanding ambil paket terpisah",
+      ];
+    }
+    if (featuredPkg.id === "diamond") {
+      return [
+        ...featuredPkg.features,
+        "Review kesiapan materi menghadapi penguji",
+        "Masa intensif 14 hari menjelang sidang",
+      ];
+    }
+    return featuredPkg.features;
+  }, [featuredPkg]);
+
+  const orderedComparisonPkgs = useMemo(
+    () => [
+      ...secondaryPackages.slice(0, 2),
+      featuredPkg,
+      ...secondaryPackages.slice(2),
+    ],
+    [featuredPkg, secondaryPackages]
+  );
+
+  const cleanDuration = featuredPkg.duration.replace("*", "");
+  const cleanOriginal = featuredPkg.originalPrice.replace("*", "");
 
   return (
-    <div className="my-3.5 rounded-2xl border border-neutral-200/90 bg-white overflow-hidden shadow-[0_2px_14px_rgba(37,99,235,0.06)] animate-in fade-in duration-300">
-      {/* Toolbar atas kartu rekomendasi paket */}
-      <div className="flex items-center justify-between px-4 py-2.5 border-b border-slate-100 bg-slate-50/70 gap-2">
-        <div className="flex items-center gap-2 min-w-0">
-          <span className="size-6 rounded-lg bg-[#EAF2FF] text-[#1A73E8] flex items-center justify-center shrink-0">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-              <path d="M6 12v5c3 3 9 3 12 0v-5" />
-            </svg>
-          </span>
-          <span className="text-[13px] font-semibold text-slate-800 truncate">Rekomendasi Paket</span>
-          <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-[#EAF2FF] text-[#1A73E8] shrink-0">
-            Class Program
-          </span>
-        </div>
+    <div className="my-3 w-full max-w-full animate-in fade-in duration-300">
+      {/* 1. Featured Package Card (Paling direkomendasikan) */}
+      <div className="rounded-2xl border border-slate-200/90 bg-white p-4 sm:p-5 shadow-[0_1px_4px_rgba(15,23,42,0.03)]">
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-[11px] font-semibold leading-4">
+          Paling direkomendasikan
+        </span>
+
+        <h3 className="text-[15px] sm:text-base font-bold text-slate-900 leading-6 mt-2">
+          Paket {formatPackageHeadingName(featuredPkg.name)}
+        </h3>
+
+        <p className="text-[28px] sm:text-[30px] font-bold text-emerald-700 tracking-tight leading-tight mt-1">
+          {featuredPkg.price}
+        </p>
+
+        <p className="text-xs text-slate-500 leading-5 mt-1">
+          / {cleanDuration} · Normal {cleanOriginal} · {featuredPkg.discountLabel}
+        </p>
+
+        <p className="text-[13.5px] sm:text-sm text-slate-800 leading-snug mt-2.5">
+          {featuredPkg.summary}
+        </p>
+
+        <div className="my-3.5 border-t border-slate-100" />
+
+        <ul className="space-y-1.5">
+          {featuredHighlights.map((feat, idx) => (
+            <li key={idx} className="flex items-start gap-2.5 text-[13.5px] sm:text-sm text-slate-900 leading-snug">
+              <span className="size-1.5 rounded-full bg-slate-900 shrink-0 mt-[7px]" />
+              <span>{feat}</span>
+            </li>
+          ))}
+        </ul>
 
         <button
           type="button"
-          onClick={handleCopyAll}
-          title="Salin daftar paket"
-          aria-label="Salin daftar paket"
-          className={`size-7 rounded-lg flex items-center justify-center transition-colors cursor-pointer shrink-0 ${
-            copied ? "text-emerald-600 bg-emerald-50" : "text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100"
-          }`}
+          onClick={() => {
+            setEnrolledName(null);
+            setSelectedPkg(featuredPkg);
+          }}
+          className="mt-4 w-full py-2.5 px-4 rounded-full bg-neutral-900 hover:bg-neutral-800 active:scale-[0.99] text-white text-xs sm:text-[13px] font-semibold leading-5 cursor-pointer transition-all text-center"
         >
-          {copied ? (
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
-          ) : (
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-            </svg>
-          )}
+          Lihat detail paket
         </button>
       </div>
 
-      {/* Filter Pills */}
-      <div className="px-4 pt-3 pb-1 flex items-center gap-1.5 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
-        {[
-          { id: "semua" as const, label: "Semua Paket (6)" },
-          { id: "skripsi" as const, label: "Bimbingan Skripsi" },
-          { id: "sidang" as const, label: "Persiapan Sidang" },
-          { id: "reguler" as const, label: "Konsultasi" },
-        ].map((tab) => {
-          const active = filter === tab.id;
+      {/* 2. Grid 2 Kolom Paket Lainnya */}
+      <div className="mt-3 grid grid-cols-2 gap-2.5 sm:gap-3">
+        {secondaryPackages.map((pkg, idx) => {
+          const badge = getPackageBottomTagStyle(pkg.id);
+          const isLastOddCard = secondaryPackages.length % 2 === 1 && idx === secondaryPackages.length - 1;
           return (
             <button
-              key={tab.id}
-              type="button"
-              onClick={() => setFilter(tab.id)}
-              className={`shrink-0 px-3 py-1 rounded-full text-[11px] font-semibold transition-all cursor-pointer border ${
-                active
-                  ? "bg-[#1A73E8] text-white border-[#1A73E8] shadow-2xs"
-                  : "bg-white text-slate-600 border-slate-200 hover:border-blue-200 hover:text-[#1A73E8]"
-              }`}
-            >
-              {tab.label}
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Grid Kartu Paket (Mobile 1 col · Tablet 2 col · Desktop 3 col) */}
-      <div className="p-3.5 sm:p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 bg-gradient-to-b from-white via-[#FAFBFD] to-[#F5F8FE]">
-        {visiblePackages.map((pkg) => (
-          <div
-            key={pkg.id}
-            className={`rounded-2xl border p-4 flex flex-col justify-between transition-all ${
-              pkg.popular
-                ? "bg-gradient-to-b from-[#F4F8FF] to-white border-[#93C5FD] shadow-[0_6px_22px_rgba(37,99,235,0.11)]"
-                : "bg-white border-slate-200/85 shadow-[0_1px_6px_rgba(15,23,42,0.04)] hover:border-blue-300/80 hover:shadow-[0_6px_18px_rgba(37,99,235,0.09)]"
-            }`}
-          >
-            <div>
-              {/* Top Tier Pill + Stage Tag */}
-              <div className="flex items-center justify-between gap-2 mb-3">
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-[10.5px] font-bold tracking-wide uppercase text-white bg-gradient-to-r from-[#1A73E8] to-[#1E40AF] shadow-2xs">
-                  {pkg.name}
-                </span>
-                <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0 ${
-                  pkg.popular ? "bg-[#EAF2FF] text-[#1A73E8]" : "bg-slate-100 text-slate-600"
-                }`}>
-                  {pkg.stageTag}
-                </span>
-              </div>
-
-              {/* Harga, Durasi & Diskon */}
-              <div className="mb-3">
-                <p className="text-xl font-extrabold text-slate-900 tracking-tight leading-none">
-                  {pkg.price}
-                </p>
-                <div className="flex items-center gap-2 mt-1.5 text-xs">
-                  <span className="font-semibold text-slate-700">{pkg.duration}</span>
-                  <span className="line-through font-semibold text-rose-500">{pkg.originalPrice}</span>
-                </div>
-                <div className="mt-2">
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-lg bg-[#EAF2FF] border border-blue-100 text-[#1A73E8] text-[11px] font-bold">
-                    {pkg.discountLabel}
-                  </span>
-                </div>
-              </div>
-
-              <div className="h-px bg-slate-100 my-3" />
-
-              {/* Daftar Fitur */}
-              <ul className="space-y-2">
-                {pkg.features.map((feat, idx) => (
-                  <li key={idx} className="flex items-start gap-2 text-xs text-slate-700 leading-snug">
-                    <span className="size-4 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5">
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="20 6 9 17 4 12" />
-                      </svg>
-                    </span>
-                    <span>{feat}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <button
+              key={pkg.id}
               type="button"
               onClick={() => {
                 setEnrolledName(null);
                 setSelectedPkg(pkg);
               }}
-              className="mt-4 w-full py-2 px-3 rounded-xl bg-[#1A73E8] hover:bg-[#1557b0] active:scale-[0.98] text-white text-xs font-semibold transition-all cursor-pointer shadow-2xs"
+              className={`rounded-2xl border border-slate-200/90 bg-white p-3.5 sm:p-4 flex flex-col justify-between text-left hover:border-slate-300 hover:shadow-xs active:scale-[0.99] transition-all cursor-pointer ${
+                isLastOddCard ? "col-span-2" : ""
+              }`}
             >
-              Detail Paket
+              <div>
+                <h4 className="text-[13.5px] sm:text-[15px] font-bold text-slate-900 leading-5">
+                  {formatPackageHeadingName(pkg.name)}
+                </h4>
+
+                <p className="text-xl sm:text-[22px] font-bold text-slate-900 tracking-tight leading-tight mt-1 whitespace-nowrap">
+                  {pkg.price}
+                </p>
+
+                <p className="text-[11px] sm:text-xs text-slate-500 leading-4 mt-1">
+                  / {pkg.duration.replace("*", "")} · {pkg.discountLabel.replace("Dapatkan ", "")}
+                </p>
+
+                <ul className="mt-3 space-y-1.5">
+                  {pkg.features.map((feat, fi) => (
+                    <li key={fi} className="flex items-start gap-2 text-xs sm:text-[13px] text-slate-800 leading-snug">
+                      <span className="size-1 rounded-full bg-slate-900 shrink-0 mt-[6px]" />
+                      <span>{feat}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="mt-3 pt-1 flex items-center justify-between gap-2">
+                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold leading-4 ${badge.className}`}>
+                  {badge.label}
+                </span>
+                {isLastOddCard && (
+                  <span className="text-[11px] font-semibold text-slate-500">
+                    Lihat detail →
+                  </span>
+                )}
+              </div>
             </button>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
-      {/* Footer note */}
-      <div className="px-4 py-2.5 bg-[#EAF2FF]/70 border-t border-blue-100 flex items-center justify-between gap-2 text-[11px] text-slate-600">
-        <span>*Harga promo &amp; masa bimbingan berlaku sejak aktivasi Class Program.</span>
+      {/* 3. Tabel Perbandingan Paket (minimalis & dapat digeser horizontal) */}
+      <div className="mt-6">
+        <h3 className="text-[1.05rem] sm:text-[1.1rem] font-bold text-slate-900 leading-snug mb-2">
+          Tabel perbandingan Class Program
+        </h3>
+
+        <div
+          className="w-full overflow-x-auto select-text"
+          style={{ WebkitOverflowScrolling: "touch", scrollbarWidth: "none", touchAction: "pan-x pan-y" }}
+        >
+          <table className="w-max min-w-full border-collapse text-left text-[13px] sm:text-[14px]">
+            <thead>
+              <tr className="border-b border-slate-200">
+                <th className="py-2.5 pr-4 font-semibold text-slate-900 whitespace-nowrap">
+                  Fitur
+                </th>
+                {orderedComparisonPkgs.map((pkg) => (
+                  <th key={pkg.id} className="py-2.5 px-3.5 font-semibold text-slate-900 whitespace-nowrap">
+                    {pkg.id === "reguler" ? "Reguler" : formatPackageHeadingName(pkg.name)}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {CLASS_PROGRAM_COMPARISON_ROWS.map((row, ri) => (
+                <tr key={ri} className="border-b border-slate-100 last:border-b-0">
+                  <td className="py-2.5 pr-4 font-normal text-slate-900 min-w-[140px]">
+                    {row.feature}
+                  </td>
+                  {orderedComparisonPkgs.map((pkg) => (
+                    <td key={pkg.id} className="py-2.5 px-3.5 text-slate-800 whitespace-nowrap">
+                      {row.values[pkg.id] ?? "-"}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Modal Detail Paket */}
@@ -9783,9 +9890,10 @@ function MarkdownRenderer({ text, isStreaming, compact }: { text: string; isStre
       i++; // skip closing ```
 
       // Class Program Package Recommendation Card
-      if (!compact && (lang === "paket-class" || lang === "paket" || lang === "classprogram")) {
+      if (!compact && (lang === "paket-class" || lang.startsWith("paket-class:") || lang === "paket" || lang === "classprogram")) {
         if (hasClosingFence || !isStreaming) {
-          elements.push(<ClassProgramPackagesCard key={`pkg-${i}`} />);
+          const featuredId = lang.includes(":") ? lang.split(":")[1] : undefined;
+          elements.push(<ClassProgramPackagesCard key={`pkg-${i}`} featuredId={featuredId} />);
         }
         continue;
       }
