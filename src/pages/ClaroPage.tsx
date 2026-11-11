@@ -1128,7 +1128,7 @@ function SearchModal({
               className="w-full flex items-center justify-between px-5 pb-2 pt-1 text-xs font-semibold text-slate-400 hover:text-slate-600 transition-colors cursor-pointer select-none text-left"
               title="Klik untuk melihat simulasi tampilan kosong obrolan"
             >
-              <span>Obrolan terbaru</span>
+              <span>Riwayat pencarian</span>
             </button>
             {showRecentChats && recentChats.length > 0 ? (
               recentChats.map((title) => (
