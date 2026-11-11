@@ -15949,8 +15949,8 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
             </div>
           </header>
 
-          {/* Project List (Mobile: vertical divided list · Desktop: multi-column card grid ala Semua Fitur) */}
-          <div className="relative z-10 flex-1 overflow-y-auto px-4 md:px-8 pt-2 md:pt-3 pb-28 md:pb-10" style={{ scrollbarWidth: "none" }}>
+          {/* Project List (Mobile: vertical divided list · Desktop: multi-column card grid lurus sejajar header) */}
+          <div className="relative z-10 flex-1 overflow-y-auto px-4 md:px-7 pt-2 md:pt-3 pb-28 md:pb-10" style={{ scrollbarWidth: "none" }}>
             {filteredProjects.length === 0 ? (
               <div className="max-w-4xl mx-auto w-full">
                 {/* Empty State */}
@@ -15982,7 +15982,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                 </div>
               </div>
             ) : (
-              <div className="max-w-[1020px] mx-auto w-full divide-y divide-neutral-100/60 md:divide-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-3.5 lg:gap-4">
+              <div className="w-full divide-y divide-neutral-100/60 md:divide-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-4">
                 {filteredProjects.map((p) => (
                   <div
                     key={p.id}
