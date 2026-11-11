@@ -16962,6 +16962,15 @@ const CAL_EVENTS: Record<string, { label: string; time: string; color: string }[
   "2026-09-20": [{ label: "Simulasi Sidang Internal", time: "10.00", color: "#d97706" }],
 };
 
+const AGENDA_REMINDER_OPTIONS = [
+  "30 menit sebelumnya",
+  "1 jam sebelumnya",
+  "6 jam sebelumnya",
+  "1 hari sebelumnya",
+  "2 hari sebelumnya",
+  "3 hari sebelumnya",
+];
+
 function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m: string) => void }) {
   const today = useMemo(() => new Date(), []);
   const [cursor, setCursor] = useState(() => new Date(today.getFullYear(), today.getMonth(), 1));
@@ -16972,11 +16981,15 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
   const [outgoingView, setOutgoingView] = useState<"calendar" | "add" | null>(null);
   const slideTimerRef = useRef<number | null>(null);
   const titleInputRef = useRef<HTMLInputElement | null>(null);
+  const reminderBtnRef = useRef<HTMLButtonElement | null>(null);
   const [agendaTitle, setAgendaTitle] = useState("");
   const [agendaTime, setAgendaTime] = useState("");
   const [agendaNotes, setAgendaNotes] = useState("");
   const [agendaReminder, setAgendaReminder] = useState(false);
-  const [customEvents, setCustomEvents] = useState<Record<string, { label: string; time: string; color: string; notes?: string; reminder?: boolean }[]>>(() => {
+  const [agendaReminderOffset, setAgendaReminderOffset] = useState("30 menit sebelumnya");
+  const [reminderMenuOpen, setReminderMenuOpen] = useState(false);
+  const [reminderMenuPos, setReminderMenuPos] = useState<{ bottom: number; right: number; width: number } | null>(null);
+  const [customEvents, setCustomEvents] = useState<Record<string, { label: string; time: string; color: string; notes?: string; reminder?: boolean; reminderOffset?: string }[]>>(() => {
     try {
       const saved = localStorage.getItem("alerin_calendar_events");
       if (saved) return JSON.parse(saved);
@@ -16985,6 +16998,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
   });
 
   const switchDesktopView = useCallback((nextAdding: boolean) => {
+    setReminderMenuOpen(false);
     setAddingAgenda((prevAdding) => {
       if (prevAdding === nextAdding) return prevAdding;
       if (slideTimerRef.current) window.clearTimeout(slideTimerRef.current);
@@ -17015,13 +17029,14 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        if (addingAgenda) switchDesktopView(false);
+        if (reminderMenuOpen) setReminderMenuOpen(false);
+        else if (addingAgenda) switchDesktopView(false);
         else onClose();
       }
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [addingAgenda, switchDesktopView, onClose]);
+  }, [addingAgenda, reminderMenuOpen, switchDesktopView, onClose]);
 
   const year = cursor.getFullYear();
   const month = cursor.getMonth();
@@ -17052,7 +17067,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
   const desktopCells = [...leadingDesktopCells, ...currentDesktopCells, ...trailingDesktopCells];
 
   const toKey = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
-  const getEventsForKey = (key: string): { label: string; time: string; color: string; notes?: string; reminder?: boolean }[] => [
+  const getEventsForKey = (key: string): { label: string; time: string; color: string; notes?: string; reminder?: boolean; reminderOffset?: string }[] => [
     ...(CAL_EVENTS[key] ?? []),
     ...(customEvents[key] ?? []),
   ];
@@ -17062,25 +17077,57 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
   const selectedKey = selected ? toKey(selected) : null;
   const selectedEvents = selectedKey ? getEventsForKey(selectedKey) : [];
 
+  const handleAgendaTimeChange = (raw: string) => {
+    const prevDigits = agendaTime.replace(/\D/g, "");
+    let digits = raw.replace(/\D/g, "").slice(0, 4);
+
+    if (prevDigits === "" && digits.length === 1 && parseInt(digits[0], 10) > 2) {
+      digits = `0${digits}`;
+    } else if (digits.length >= 2) {
+      const hh = parseInt(digits.slice(0, 2), 10);
+      if (hh > 23) digits = `23${digits.slice(2)}`;
+    }
+    if (digits.length >= 3 && parseInt(digits[2], 10) > 5) {
+      digits = `${digits.slice(0, 2)}5${digits.slice(3)}`;
+    }
+
+    if (digits.length === 0) {
+      setAgendaTime("");
+      return;
+    }
+    if (digits.length <= 2) {
+      if (/[.:]$/.test(raw) && raw.length >= agendaTime.length) {
+        setAgendaTime(`${digits.padStart(2, "0")} . `);
+      } else {
+        setAgendaTime(digits);
+      }
+      return;
+    }
+    setAgendaTime(`${digits.slice(0, 2)} . ${digits.slice(2, 4)}`);
+  };
+
   const openAddAgendaModal = () => {
     setAgendaTitle("");
     setAgendaTime("");
     setAgendaNotes("");
     setAgendaReminder(false);
+    setAgendaReminderOffset("30 menit sebelumnya");
+    setReminderMenuOpen(false);
     switchDesktopView(true);
   };
 
   const handleSaveAgenda = () => {
     const trimmed = agendaTitle.trim();
-    const trimmedTime = agendaTime.trim();
+    const match = agendaTime.trim().match(/^([01]\d|2[0-3])\s*[.:]\s*([0-5]\d)$/);
     if (!trimmed) {
       onToast("Harap isi Judul Agenda terlebih dahulu.");
       return;
     }
-    if (!trimmedTime) {
-      onToast("Harap isi Waktu Kegiatan terlebih dahulu.");
+    if (!match) {
+      onToast("Masukkan Waktu Kegiatan dengan format jam valid (contoh: 10 . 00).");
       return;
     }
+    const normalizedTime = `${match[1]}.${match[2]}`;
     const targetDate = selected ?? today;
     const key = toKey(targetDate);
     const nextMap = {
@@ -17089,10 +17136,10 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
         ...(customEvents[key] ?? []),
         {
           label: trimmed,
-          time: trimmedTime,
+          time: normalizedTime,
           color: "#2563eb",
           ...(agendaNotes.trim() ? { notes: agendaNotes.trim() } : {}),
-          ...(agendaReminder ? { reminder: true } : {}),
+          ...(agendaReminder ? { reminder: true, reminderOffset: agendaReminderOffset } : {}),
         },
       ],
     };
@@ -17102,6 +17149,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
     setAgendaTime("");
     setAgendaNotes("");
     setAgendaReminder(false);
+    setReminderMenuOpen(false);
     switchDesktopView(false);
     onToast(`Agenda "${trimmed}" ditambahkan!`);
   };
@@ -17152,7 +17200,10 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
       </div>
 
       {/* Form Body */}
-      <div className="px-6 py-4 bg-slate-50 flex flex-col gap-3.5 overflow-y-auto">
+      <div
+        onScroll={() => reminderMenuOpen && setReminderMenuOpen(false)}
+        className="px-6 py-4 bg-slate-50 flex flex-col gap-3.5 overflow-y-auto"
+      >
         {/* Judul Agenda */}
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center justify-between">
@@ -17217,9 +17268,17 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
             <div className="relative flex items-center bg-white rounded-xl outline outline-1 outline-offset-[-1px] outline-slate-200 focus-within:outline-[#1A73E8] transition-colors">
               <input
                 type="text"
-                maxLength={10}
+                inputMode="numeric"
+                maxLength={7}
                 value={agendaTime}
-                onChange={(e) => setAgendaTime(e.target.value)}
+                onKeyDown={(e) => {
+                  const allowedKeys = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab", "Home", "End", "Enter"];
+                  if (allowedKeys.includes(e.key) || e.ctrlKey || e.metaKey) return;
+                  if (!/^[0-9.:]$/.test(e.key)) {
+                    e.preventDefault();
+                  }
+                }}
+                onChange={(e) => handleAgendaTimeChange(e.target.value)}
                 placeholder="-- . --"
                 className="w-full pl-3.5 pr-9 py-2.5 bg-transparent text-slate-900 text-sm font-medium placeholder:text-slate-400 leading-5 outline-none"
               />
@@ -17245,7 +17304,10 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                     try { (e.currentTarget as HTMLInputElement).showPicker?.(); } catch {}
                   }}
                   onChange={(e) => {
-                    if (e.target.value) setAgendaTime(e.target.value.replace(":", "."));
+                    if (e.target.value) {
+                      const [hh, mm] = e.target.value.split(":");
+                      if (hh && mm) setAgendaTime(`${hh} . ${mm}`);
+                    }
                   }}
                   className="opacity-0 absolute inset-0 w-full h-full cursor-pointer"
                 />
@@ -17274,38 +17336,87 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
         </div>
 
         {/* Aktifkan Pengingat Card */}
-        <div className="p-3.5 bg-white rounded-xl outline outline-1 outline-offset-[-1px] outline-slate-200 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="size-9 bg-blue-50 rounded-lg outline outline-1 outline-offset-[-1px] outline-blue-100/50 flex items-center justify-center text-blue-600 shrink-0">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-              </svg>
+        <div className="p-3.5 bg-white rounded-xl outline outline-1 outline-offset-[-1px] outline-slate-200 flex flex-col transition-all">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="size-9 bg-blue-50 rounded-lg outline outline-1 outline-offset-[-1px] outline-blue-100/50 flex items-center justify-center text-blue-600 shrink-0">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                </svg>
+              </div>
+              <div className="flex flex-col min-w-0">
+                <span className="text-slate-800 text-xs font-bold leading-4">Aktifkan Pengingat</span>
+                <span className="text-gray-500 text-xs font-normal leading-4 truncate">
+                  Kirim notifikasi sebelum agenda dimulai
+                </span>
+              </div>
             </div>
-            <div className="flex flex-col min-w-0">
-              <span className="text-slate-800 text-xs font-bold leading-4">Aktifkan Pengingat</span>
-              <span className="text-gray-500 text-xs font-normal leading-4 truncate">
-                Kirim notifikasi sebelum agenda dimulai
-              </span>
-            </div>
+
+            <button
+              type="button"
+              role="switch"
+              aria-checked={agendaReminder}
+              aria-label="Aktifkan pengingat"
+              onClick={() => {
+                setAgendaReminder((v) => {
+                  const next = !v;
+                  if (!next) setReminderMenuOpen(false);
+                  return next;
+                });
+              }}
+              className={`w-10 h-5 rounded-full relative transition-colors cursor-pointer shrink-0 ${
+                agendaReminder ? "bg-blue-600" : "bg-slate-200"
+              }`}
+            >
+              <span
+                className={`size-4 top-[2px] absolute bg-white rounded-full border transition-all ${
+                  agendaReminder ? "left-[22px] border-blue-600" : "left-[2px] border-slate-300"
+                }`}
+              />
+            </button>
           </div>
 
-          <button
-            type="button"
-            role="switch"
-            aria-checked={agendaReminder}
-            aria-label="Aktifkan pengingat"
-            onClick={() => setAgendaReminder((v) => !v)}
-            className={`w-10 h-5 rounded-full relative transition-colors cursor-pointer shrink-0 ${
-              agendaReminder ? "bg-blue-600" : "bg-slate-200"
-            }`}
-          >
-            <span
-              className={`size-4 top-[2px] absolute bg-white rounded-full border transition-all ${
-                agendaReminder ? "left-[22px] border-blue-600" : "left-[2px] border-slate-300"
-              }`}
-            />
-          </button>
+          {agendaReminder && (
+            <div className="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between gap-3">
+              <span className="text-gray-500 text-xs font-medium leading-4">Beri tahu saya:</span>
+              <button
+                ref={reminderBtnRef}
+                type="button"
+                onClick={() => {
+                  if (reminderMenuOpen) {
+                    setReminderMenuOpen(false);
+                    return;
+                  }
+                  const rect = reminderBtnRef.current?.getBoundingClientRect();
+                  if (rect) {
+                    setReminderMenuPos({
+                      bottom: window.innerHeight - rect.top + 6,
+                      right: Math.max(12, window.innerWidth - rect.right),
+                      width: Math.max(176, rect.width),
+                    });
+                  }
+                  setReminderMenuOpen(true);
+                }}
+                className="h-8 px-3 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200 flex items-center gap-2 text-xs font-medium text-slate-800 cursor-pointer transition-colors"
+              >
+                <span>{agendaReminderOffset}</span>
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className={`text-slate-500 transition-transform ${reminderMenuOpen ? "rotate-180" : ""}`}
+                >
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -17527,7 +17638,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                 </div>
                 {ev.reminder && (
                   <span className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 text-[10px] font-semibold shrink-0">
-                    Pengingat
+                    {ev.reminderOffset || "Pengingat"}
                   </span>
                 )}
               </div>
@@ -17585,6 +17696,50 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
             {addingAgenda ? desktopAddAgendaPanel : desktopCalendarPanel}
           </div>
         </div>
+
+        {agendaReminder && reminderMenuOpen && reminderMenuPos && typeof document !== "undefined" && createPortal(
+          <>
+            <div
+              className="fixed inset-0 z-[255]"
+              onClick={(e) => {
+                e.stopPropagation();
+                setReminderMenuOpen(false);
+              }}
+            />
+            <div
+              style={{
+                position: "fixed",
+                bottom: `${reminderMenuPos.bottom}px`,
+                right: `${reminderMenuPos.right}px`,
+                minWidth: `${reminderMenuPos.width}px`,
+              }}
+              onClick={(e) => e.stopPropagation()}
+              className="z-[260] bg-white rounded-2xl border border-slate-200 shadow-[0_12px_32px_rgba(15,23,42,0.14)] p-1.5 flex flex-col gap-0.5 font-['Plus_Jakarta_Sans'] animate-[gemini-fade-in_0.12s_ease-out]"
+            >
+              {AGENDA_REMINDER_OPTIONS.map((opt) => {
+                const isActiveOpt = opt === agendaReminderOffset;
+                return (
+                  <button
+                    key={opt}
+                    type="button"
+                    onClick={() => {
+                      setAgendaReminderOffset(opt);
+                      setReminderMenuOpen(false);
+                    }}
+                    className={`w-full px-3 py-2 rounded-xl text-left text-xs transition-colors cursor-pointer ${
+                      isActiveOpt
+                        ? "bg-[#E8EEF7] text-slate-900 font-semibold"
+                        : "text-slate-600 hover:bg-slate-50 font-medium"
+                    }`}
+                  >
+                    {opt}
+                  </button>
+                );
+              })}
+            </div>
+          </>,
+          document.body
+        )}
       </div>
 
       {/* ── MOBILE POPUP (dipertahankan sesuai desain mobile existing) ── */}
