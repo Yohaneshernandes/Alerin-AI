@@ -1157,7 +1157,7 @@ function SearchModal({
                 </div>
                 <h4 className="text-[14.5px] font-bold text-slate-800 tracking-tight">Tidak ada obrolan</h4>
                 <p className="text-xs text-slate-400 font-normal leading-relaxed mt-1 max-w-[220px]">
-                  Belum ada riwayat percakapan yang tersimpan
+                  Belum ada riwayat pencarian obrolan terbaru
                 </p>
               </div>
             )}
