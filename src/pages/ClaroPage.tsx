@@ -10239,7 +10239,7 @@ function PercakapanTab({
         }} />
         <div className="flex-1 overflow-y-auto relative z-10 flex flex-col px-6 pt-16 pb-6">
           <div className="my-auto mx-auto w-full max-w-[680px]">
-            <div className="w-full bg-white rounded-2xl shadow-[0px_1px_3px_0px_rgba(59,130,246,0.04),0px_2px_16px_0px_rgba(59,130,246,0.06)] border border-blue-200/40 px-10 lg:px-14 py-10 lg:py-12 flex items-center justify-center gap-10 lg:gap-14">
+            <div className="w-full bg-white rounded-2xl shadow-[0px_1px_3px_0px_rgba(59,130,246,0.04),0px_2px_16px_0px_rgba(59,130,246,0.06)] border border-blue-200/40 px-10 lg:px-14 py-14 lg:py-[68px] flex items-center justify-center gap-10 lg:gap-14">
               <img
                 src="/assets/alerin-logo-only.png"
                 alt="Alerin"
