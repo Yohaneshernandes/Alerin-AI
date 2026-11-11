@@ -9527,7 +9527,7 @@ function getPackageBottomTagStyle(id: string): { label: string; className: strin
     case "diamond":
       return { label: "Persiapan Sidang", className: "bg-blue-100 text-blue-700" };
     case "complete":
-      return { label: "Paling Lengkap", className: "bg-emerald-100 text-emerald-700" };
+      return { label: "Paling Lengkap", className: "bg-blue-100 text-blue-700" };
     case "gold":
       return { label: "Proposal Awal", className: "bg-slate-100 text-slate-700" };
     case "reguler":
@@ -9579,7 +9579,7 @@ function ClassProgramPackagesCard({ featuredId }: { featuredId?: string }) {
     <div className="my-3 w-full max-w-full animate-in fade-in duration-300">
       {/* 1. Featured Package Card (Paling direkomendasikan) */}
       <div className="rounded-2xl border border-slate-200/90 bg-white p-4 sm:p-5 shadow-[0_1px_4px_rgba(15,23,42,0.03)]">
-        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-[11px] font-semibold leading-4">
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-700 text-[11px] font-semibold leading-4">
           Paling direkomendasikan
         </span>
 
@@ -9587,7 +9587,7 @@ function ClassProgramPackagesCard({ featuredId }: { featuredId?: string }) {
           Paket {formatPackageHeadingName(featuredPkg.name)}
         </h3>
 
-        <p className="text-[28px] sm:text-[30px] font-bold text-emerald-700 tracking-tight leading-tight mt-1">
+        <p className="text-[28px] sm:text-[30px] font-bold text-blue-600 tracking-tight leading-tight mt-1">
           {featuredPkg.price}
         </p>
 
