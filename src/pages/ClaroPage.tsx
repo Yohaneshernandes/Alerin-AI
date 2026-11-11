@@ -13,6 +13,7 @@ import CariJurnalFigmaPanel from "@/components/CariJurnalFigmaPanel";
 import FiturLandingFigma from "@/components/FiturLandingFigma";
 import FileContentPreview from "@/components/FileContentPreview";
 import PdfViewer from "@/components/PdfViewer";
+import { downloadAttachmentFile } from "@/utils/generateDownloadFile";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type NavTab = "percakapan" | "fitur" | "proyek" | "progress" | "quizlab" | "profil";
@@ -8741,29 +8742,23 @@ type FileAttachmentItem = {
 
 function FileAttachmentCard({ items }: { items: FileAttachmentItem[] }) {
   const [downloadingName, setDownloadingName] = React.useState<string | null>(null);
+  const timerRef = React.useRef<number | null>(null);
 
-  const handleDownload = (item: FileAttachmentItem) => {
+  React.useEffect(() => {
+    return () => {
+      if (timerRef.current) window.clearTimeout(timerRef.current);
+    };
+  }, []);
+
+  const handleDownload = async (item: FileAttachmentItem) => {
     setDownloadingName(item.name);
-    setTimeout(() => setDownloadingName(null), 1800);
+    if (timerRef.current) window.clearTimeout(timerRef.current);
+    timerRef.current = window.setTimeout(() => {
+      setDownloadingName(null);
+      timerRef.current = null;
+    }, 1800);
     try {
-      let content = `Dokumen: ${item.name}\nDeskripsi: ${item.meta}\nDibuat oleh: Alerin AI\nTanggal: ${new Date().toLocaleDateString("id-ID")}\n\nDokumen berhasil diunduh dari Alerin AI.`;
-      let mime = "text/plain";
-      if (item.name.endsWith(".csv") || item.name.endsWith(".xlsx")) {
-        content = "No,NIM,Nama Mahasiswa,Program Studi,Status\n1,00123,Andi Pratama,Sistem Informasi,Aktif\n2,00124,Siti Amelia,Informatika,Aktif\n3,00125,Budi Santoso,Manajemen,Aktif\n4,00126,Dewi Lestari,Akuntansi,Aktif\n5,00127,Rian Hidayat,Ilmu Komunikasi,Aktif\n";
-        mime = "text/csv;charset=utf-8;";
-      } else if (item.name.endsWith(".pptx") || item.name.endsWith(".ppt")) {
-        content = `Presentasi: ${item.name}\nDeskripsi: ${item.meta}\nDibuat oleh: Alerin AI\nTanggal: ${new Date().toLocaleDateString("id-ID")}\n\nStruktur Slide Presentasi:\n1. Judul Penelitian & Identitas\n2. Latar Belakang & Urgensi Masalah\n3. Rumusan Masalah & Tujuan Penelitian\n4. Tinjauan Pustaka & Kerangka Konseptual\n5. Metodologi Penelitian & Desain Riset\n6. Populasi, Sampel, & Teknik Pengumpulan Data\n7. Hasil Analisis Data & Pengujian Hipotesis\n8. Pembahasan & Temuan Kunci\n9. Kesimpulan & Implikasi Manajerial\n10. Keterbatasan & Saran Penelitian Lanjutan`;
-        mime = "text/plain;charset=utf-8;";
-      }
-      const blob = new Blob([content], { type: mime });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = item.name;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      await downloadAttachmentFile(item);
     } catch (e) {
       console.error("Gagal mengunduh file", e);
     }
@@ -8917,13 +8912,21 @@ function FileAttachmentCard({ items }: { items: FileAttachmentItem[] }) {
 
         return (
           <div key={idx} className="p-3.5 sm:p-4 hover:bg-neutral-50/70 transition-colors">
-            <div className="flex items-center justify-between gap-3">
+            <button
+              type="button"
+              onClick={() => void handleDownload(item)}
+              title={`Unduh ${item.name}`}
+              aria-label={`Unduh ${item.name}`}
+              className="w-full flex items-center justify-between gap-3 text-left cursor-pointer group active:opacity-80"
+            >
               <div className="flex items-center gap-3.5 min-w-0">
-                <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${bg} ${color}`}>
+                <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-[1.04] ${bg} ${color}`}>
                   {icon}
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[0.9375rem] font-semibold text-neutral-900 truncate">{item.name}</p>
+                  <p className="text-[0.9375rem] font-semibold text-neutral-900 group-hover:text-blue-600 transition-colors truncate">
+                    {item.name}
+                  </p>
                   <p className="text-[0.8125rem] text-neutral-500 mt-0.5 leading-normal">
                     {item.meta ? item.meta.replace(/bisa diedit/gi, "4 halaman") : ""}
                   </p>
@@ -8932,15 +8935,10 @@ function FileAttachmentCard({ items }: { items: FileAttachmentItem[] }) {
 
               {item.badge ? (
                 <span className="shrink-0 text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/60">
-                  {item.badge}
+                  {downloadingName === item.name ? "Mengunduh..." : item.badge}
                 </span>
               ) : !hasBottomAction ? (
-                <button
-                  type="button"
-                  onClick={() => handleDownload(item)}
-                  title={`Unduh ${item.name}`}
-                  className="p-2 text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100 rounded-lg active:scale-90 transition-all shrink-0 cursor-pointer"
-                >
+                <span className="p-2 text-neutral-500 group-hover:text-neutral-900 group-hover:bg-neutral-100 rounded-lg transition-all shrink-0">
                   {downloadingName === item.name ? (
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="animate-pulse">
                       <polyline points="20 6 9 17 4 12" />
@@ -8952,14 +8950,14 @@ function FileAttachmentCard({ items }: { items: FileAttachmentItem[] }) {
                       <line x1="12" y1="15" x2="12" y2="3" />
                     </svg>
                   )}
-                </button>
+                </span>
               ) : null}
-            </div>
+            </button>
 
             {hasBottomAction && (
               <button
                 type="button"
-                onClick={() => handleDownload(item)}
+                onClick={() => void handleDownload(item)}
                 className="inline-flex items-center gap-1.5 text-[0.875rem] font-medium text-neutral-900 hover:text-blue-600 underline decoration-dotted decoration-neutral-400 underline-offset-4 cursor-pointer mt-2.5 ml-0.5 active:opacity-70 transition-colors"
               >
                 {downloadingName === item.name ? (
