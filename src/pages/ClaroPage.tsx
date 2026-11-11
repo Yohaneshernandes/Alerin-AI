@@ -10230,93 +10230,29 @@ function PercakapanTab({
   if (!chatMode) {
     return (
       <>
-      {/* Desktop view (biarkan seperti sekarang) */}
-      <div className="hidden md:flex flex-1 flex-col overflow-hidden relative" style={{
-        background: "linear-gradient(160deg, #fafcff 0%, #f4f8ff 40%, #f8fbff 70%, #fafcff 100%)",
-      }}>
+      {/* Desktop view — kartu sambutan mobile versi landscape terpusat */}
+      <div className="hidden md:flex flex-1 flex-col overflow-hidden relative claro-chat-bg">
         <div className="absolute inset-0 pointer-events-none" style={{
           backgroundImage: "radial-gradient(circle, rgba(59,130,246,0.035) 1px, transparent 1px)",
           backgroundSize: "24px 24px",
           zIndex: 0,
         }} />
-        <div className="flex-1 overflow-y-auto relative z-10">
-          <div className="max-w-5xl mx-auto px-4 md:px-6 pt-5 pb-5 md:pt-16">
-            {/* Hero card */}
-            <div className="rounded-2xl mb-4 overflow-hidden" style={{
-              background: "#ffffff",
-              border: "1.5px solid rgba(191,219,254,0.4)",
-              boxShadow: "0 2px 16px rgba(59,130,246,0.06), 0 1px 3px rgba(59,130,246,0.04)",
-            }}>
-              <div className="flex items-center gap-6 px-6 py-5">
-                {/* Left: text */}
-                <div className="flex-1 min-w-0">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold mb-3" style={{ background: "#eff6ff", border: "1.5px solid #bfdbfe", color: "#374151" }}>
-                    <svg width="9" height="9" viewBox="0 0 12 12" fill="none">
-                      <path d="M6 0l1.2 3.8L11 4.5l-3 2.9.7 4L6 9.5l-2.7 1.9.7-4-3-2.9 3.8-.7z" fill="#2563eb"/>
-                    </svg>
-                    AI khusus dunia perkuliahan
-                  </span>
-                  <h2 className="font-display font-900 leading-snug mb-2 text-slate-900" style={{ fontSize: "clamp(1.15rem, 3.2vw, 1.6rem)" }}>
-                    Tanya apa saja tentang kuliah.{" "}
-                    <span style={{ color: "#2563eb", fontWeight: 600 }}>Alerin bantu sampai jelas.</span>
-                  </h2>
-                  <p className="text-slate-500 text-[12px] leading-relaxed mb-4">
-                    Mulai dari materi, tugas, jurnal, hingga skripsi—semua dalam satu ruang yang memahami perjalanan kuliahmu.
-                  </p>
-                  <button onClick={() => send("Halo Alerin! Aku mau mulai belajar hari ini.")}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-white transition-all hover:opacity-90 active:scale-95"
-                    style={{ background: "linear-gradient(135deg,#2563eb,#4f46e5)", boxShadow: "0 4px 12px rgba(37,99,235,0.3)" }}>
-                    Mulai Chat
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                  </button>
-                </div>
-
-                {/* Right: mascot */}
-                <img src={claroIconImg} alt="Alerin mascot" className="hidden sm:block shrink-0 object-contain" style={{ width: 100, height: 100 }} />
-              </div>
-            </div>
-
-            {/* Shortcuts */}
-            <div className="mb-7">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <p className="font-bold text-slate-800 text-base">Pintasan untukmu</p>
-                  <p className="text-xs text-slate-400">Disesuaikan dengan jurusan dan semester</p>
-                </div>
-                <button onClick={() => onTab("fitur")} className="text-xs font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-1">
-                  Lihat semua <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                </button>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {SHORTCUTS.map((s, idx) => {
-                  const types: ShortcutType[] = ["mata-kuliah", "tugas", "skripsi", "cari-judul"];
-                  const sType = types[idx] ?? "mata-kuliah";
-                  return (
-                    <button key={s.title} onClick={() => setShortcutModal(sType)}
-                      className="flex items-center gap-3 p-4 rounded-2xl bg-white border border-slate-100 hover:border-blue-200 hover:shadow-sm transition-all text-left group">
-                      <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-[#eff6ff] border border-blue-100/60 overflow-hidden">
-                        {s.iconSrc ? (
-                          <img
-                            src={s.iconSrc}
-                            alt=""
-                            className={
-                              s.iconSrc.includes("52023")
-                                ? "w-[18px] h-[15px] object-contain"
-                                : "w-4 h-4 object-contain"
-                            }
-                          />
-                        ) : (
-                          <span className="text-lg">{s.icon}</span>
-                        )}
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold text-slate-800 group-hover:text-blue-600 transition-colors">{s.title}</p>
-                        <p className="text-[11px] text-slate-400">{s.desc}</p>
-                      </div>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="2" className="ml-auto shrink-0"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                    </button>
-                  );
-                })}
+        <div className="flex-1 overflow-y-auto relative z-10 flex flex-col px-6 pt-16 pb-6">
+          <div className="my-auto mx-auto w-full max-w-[680px]">
+            <div className="w-full bg-white rounded-2xl shadow-[0px_1px_3px_0px_rgba(59,130,246,0.04),0px_2px_16px_0px_rgba(59,130,246,0.06)] border border-blue-200/40 px-10 lg:px-14 py-10 lg:py-12 flex items-center justify-center gap-10 lg:gap-14">
+              <img
+                src="/assets/alerin-logo-only.png"
+                alt="Alerin"
+                className="h-24 lg:h-28 w-auto object-contain shrink-0"
+              />
+              <div className="min-w-0 max-w-[330px] text-left">
+                <h2 className="text-slate-900 text-xl lg:text-[22px] font-normal leading-snug">
+                  Tanya apa saja tentang kuliah.{" "}
+                  <span className="block text-blue-500 font-bold">Alerin bantu sampai jelas.</span>
+                </h2>
+                <p className="mt-2.5 text-slate-500 text-xs lg:text-[13px] font-normal leading-relaxed">
+                  Mulai dari materi, tugas, jurnal, hingga skripsi semua dalam satu ruang yang memahami perjalanan kuliahmu.
+                </p>
               </div>
             </div>
           </div>
