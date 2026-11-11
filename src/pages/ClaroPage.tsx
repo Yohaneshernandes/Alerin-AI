@@ -10573,16 +10573,7 @@ function SharedChatPreviewView({
       {/* Isi: Folder List (jika folder proyek) atau Preview Percakapan */}
       <div className="relative z-10 flex-1 overflow-y-auto px-4 md:px-8 py-5 modal-custom-scrollbar">
         {isShowingFolderList && preview.folderChats ? (
-          <div className="max-w-3xl mx-auto w-full space-y-3 pb-4">
-            <div className="flex items-center justify-between gap-2 px-1">
-              <p className="text-xs font-semibold text-slate-500">
-                Pilih obrolan dalam folder untuk melihat pratinjau
-              </p>
-              <span className="shrink-0 px-2.5 py-0.5 rounded-full bg-[#EAF2FF] text-[#1A73E8] text-[11px] font-semibold">
-                {preview.folderChats.length} Obrolan
-              </span>
-            </div>
-            <div className="space-y-2.5">
+          <div className="max-w-3xl mx-auto w-full space-y-2.5 pb-4">
               {preview.folderChats.map((chatItem) => {
                 const previewSnippet =
                   chatItem.snippet ||
@@ -10626,7 +10617,6 @@ function SharedChatPreviewView({
                   </button>
                 );
               })}
-            </div>
           </div>
         ) : (
         <div className="max-w-3xl mx-auto w-full space-y-6 pb-4">
