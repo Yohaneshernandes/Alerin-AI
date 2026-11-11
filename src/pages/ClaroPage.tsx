@@ -10363,10 +10363,10 @@ function PercakapanTab({
         className="flex-1 overflow-y-auto relative z-10 pb-4"
         style={{ scrollbarWidth: "none" }}
       >
-        <div className="max-w-5xl mx-auto px-4 md:px-6 pt-20 md:pt-16 pb-6">
-          {/* Mobile date & time header (Gambar 2: "Senin 14.59") */}
+        <div className="max-w-5xl mx-auto px-4 md:px-6 pt-20 md:pt-[84px] pb-6">
+          {/* Date & time header (contoh: "Senin 14.59" — sama di mobile & desktop) */}
           {msgs.length > 0 && (
-            <div className="md:hidden flex justify-center pb-5 pt-1">
+            <div className="flex justify-center pb-5 pt-1">
               <span className="text-[13px] text-slate-400 font-medium select-none tracking-tight">
                 {getChatDateHeader()}
               </span>
