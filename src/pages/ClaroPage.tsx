@@ -21,6 +21,12 @@ const DEFAULT_SOURCES: ChatSource[] = [
   { title: "Google Scholar — Portal Penelusuran Literatur Akademik Global", author: "Google Inc.", year: "2024", url: "https://scholar.google.com" },
   { title: "SINTA: Science and Technology Index Indonesia", author: "Kemdikbudristek RI", year: "2024", url: "https://sinta.kemdikbud.go.id" },
   { title: "Scopus: Database Abstrak dan Sitasi Ilmiah Bereputasi", author: "Elsevier", year: "2024", url: "https://www.scopus.com" },
+  { title: "ScienceDirect — Peer-Reviewed Academic Literature", author: "Elsevier", year: "2024", url: "https://www.sciencedirect.com" },
+  { title: "DOAJ: Directory of Open Access Journals", author: "DOAJ Foundation", year: "2024", url: "https://doaj.org" },
+  { title: "IEEE Xplore Digital Library", author: "IEEE", year: "2024", url: "https://ieeexplore.ieee.org" },
+  { title: "Garuda (Garba Rujukan Digital) Indonesia", author: "Kemdikbudristek RI", year: "2024", url: "https://garuda.kemdikbud.go.id" },
+  { title: "SpringerLink — Books, Journals & Reference Works", author: "Springer Nature", year: "2024", url: "https://link.springer.com" },
+  { title: "CrossRef Metadata & DOI Academic Registry", author: "Crossref", year: "2024", url: "https://www.crossref.org" },
 ];
 type FeatureKey =
   | "chat"
@@ -2759,6 +2765,12 @@ const SOURCE_MAP: { pattern: RegExp; sources: ChatSource[] }[] = [
     { title: "Calculus and Analytic Geometry", author: "Thomas, G.B., & Finney, R.L.", year: "2021", url: "https://scholar.google.com" },
     { title: "Fundamental Mathematics and Geometry Principles", author: "Stewart, J.", year: "2020", url: "https://scholar.google.com" },
     { title: "Mathematical Methods for Science and Engineering", author: "Riley, K.F., Hobson, M.P., & Bence, S.J.", year: "2022", url: "https://www.scopus.com" },
+    { title: "Calculus Volume 1–3: OpenStax Academic Textbook", author: "Strang, G., & Herman, E.", year: "2023", url: "https://scholar.google.com" },
+    { title: "Linear Algebra and Its Applications (Sixth Edition)", author: "Lay, D.C., Lay, S.R., & McDonald, J.J.", year: "2021", url: "https://www.sciencedirect.com" },
+    { title: "Advanced Engineering Mathematics (10th Edition)", author: "Kreyszig, E.", year: "2020", url: "https://www.scopus.com" },
+    { title: "Elementary Differential Equations and Boundary Value Problems", author: "Boyce, W.E., & DiPrima, R.C.", year: "2022", url: "https://scholar.google.com" },
+    { title: "Discrete Mathematics and Its Applications", author: "Rosen, K.H.", year: "2019", url: "https://sinta.kemdikbud.go.id" },
+    { title: "Introduction to Probability and Mathematical Statistics", author: "Hogg, R.V., McKean, J.W., & Craig, A.T.", year: "2021", url: "https://www.scopus.com" },
   ]},
   { pattern: /TAM|UTAUT|technology acceptance/i, sources: [
     { title: "Perceived Usefulness, Perceived Ease of Use, and User Acceptance of Information Technology", author: "Davis, F.D.", year: "1989", url: "https://doi.org/10.2307/249008" },
@@ -2805,12 +2817,26 @@ function getSuggestions(userMsg: string, claroBotText: string): string[] {
   return DEFAULT_SUGGESTIONS;
 }
 
+function ensureSourceCount(primary: ChatSource[], targetCount = 9): ChatSource[] {
+  if (primary.length >= targetCount) return primary.slice(0, targetCount);
+  const seen = new Set(primary.map((s) => s.title.toLowerCase()));
+  const merged = [...primary];
+  for (const fallback of DEFAULT_SOURCES) {
+    if (merged.length >= targetCount) break;
+    if (!seen.has(fallback.title.toLowerCase())) {
+      seen.add(fallback.title.toLowerCase());
+      merged.push(fallback);
+    }
+  }
+  return merged;
+}
+
 function getSources(userMsg: string, claroBotText: string): ChatSource[] | undefined {
   const combined = userMsg + " " + claroBotText;
   for (const { pattern, sources } of SOURCE_MAP) {
-    if (pattern.test(combined)) return sources;
+    if (pattern.test(combined)) return ensureSourceCount(sources, 9);
   }
-  return DEFAULT_SOURCES;
+  return ensureSourceCount(DEFAULT_SOURCES, 9);
 }
 
 function getAcademicBadge(src: ChatSource, index: number) {
@@ -2897,6 +2923,132 @@ function SourceLogoIcon({
       <svg width={isSm ? "9" : "12"} height={isSm ? "9" : "12"} viewBox="0 0 24 24" fill="white">
         <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
       </svg>
+    </div>
+  );
+}
+
+/** Pill trigger for message sources: always shows up to 3 overlapping icons + total count label. */
+function SourcesToggleButton({
+  sources,
+  isOpen,
+  onToggle,
+  compact = false,
+}: {
+  sources: ChatSource[];
+  isOpen: boolean;
+  onToggle: () => void;
+  compact?: boolean;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      className={`flex items-center gap-1.5 cursor-pointer select-none text-left py-1 ${
+        compact ? "px-1.5" : "px-2"
+      } rounded-lg hover:bg-slate-100/80 transition-colors`}
+    >
+      <div className="flex -space-x-1.5 items-center">
+        {sources.slice(0, 3).map((src, si) => (
+          <SourceLogoIcon
+            key={si}
+            source={src}
+            index={si}
+            size="sm"
+            style={{ zIndex: 3 - si }}
+          />
+        ))}
+      </div>
+      <span className={`text-xs font-semibold transition-colors ${isOpen ? "text-black font-bold" : "text-neutral-800 hover:text-black"}`}>
+        {sources.length} Sumber
+      </span>
+      <svg className={`w-3 h-3 text-neutral-500 transition-transform duration-200 ${isOpen ? "rotate-180 text-black" : ""}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+        <path d="M6 9l6 6 6-6" />
+      </svg>
+    </button>
+  );
+}
+
+/** Scrollable expandable sources list showing 3 full cards + half of the 4th card as scroll peek. */
+function ExpandableSourcesList({ sources }: { sources: ChatSource[] }) {
+  const listRef = useRef<HTMLDivElement | null>(null);
+  const [maxHeight, setMaxHeight] = useState<number | undefined>(252);
+
+  useLayoutEffect(() => {
+    const updateViewportHeight = () => {
+      const el = listRef.current;
+      if (!el) return;
+      const items = el.children;
+      if (items.length >= 4) {
+        const fourthItem = items[3] as HTMLElement;
+        setMaxHeight(Math.round(fourthItem.offsetTop + fourthItem.offsetHeight * 0.5));
+      } else {
+        setMaxHeight(undefined);
+      }
+    };
+
+    updateViewportHeight();
+    window.addEventListener("resize", updateViewportHeight);
+    const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(updateViewportHeight) : null;
+    if (ro && listRef.current) ro.observe(listRef.current);
+
+    return () => {
+      window.removeEventListener("resize", updateViewportHeight);
+      ro?.disconnect();
+    };
+  }, [sources]);
+
+  return (
+    <div
+      ref={listRef}
+      onTouchStart={(e) => e.stopPropagation()}
+      onTouchMove={(e) => e.stopPropagation()}
+      style={{
+        ...(maxHeight ? { maxHeight: `${maxHeight}px` } : {}),
+        WebkitOverflowScrolling: "touch",
+        overscrollBehaviorY: "contain",
+      }}
+      className="modal-custom-scrollbar relative mt-3 flex flex-col gap-2 overflow-y-auto overflow-x-hidden overscroll-contain touch-pan-y pr-1.5 animate-in fade-in duration-200"
+    >
+      {sources.map((src, si) => (
+        <div
+          key={si}
+          className="shrink-0 flex items-start gap-2.5 p-2.5 rounded-xl border border-slate-100 bg-slate-50/70 hover:bg-slate-50 transition-colors"
+        >
+          <SourceLogoIcon
+            source={src}
+            index={si}
+            size="md"
+            className="mt-0.5"
+          />
+          <div className="flex-1 min-w-0">
+            {src.url ? (
+              <a
+                href={src.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs font-medium text-neutral-900 hover:text-blue-600 hover:underline leading-snug line-clamp-2"
+              >
+                {src.title}
+              </a>
+            ) : (
+              <p className="text-xs font-medium text-slate-800 leading-snug line-clamp-2">{src.title}</p>
+            )}
+            <p className="text-[10px] text-slate-400 mt-0.5 flex items-center gap-1.5">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" className="text-slate-500 shrink-0">
+                <path d="M12 3L1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z" />
+              </svg>
+              <span>{src.author} · {src.year}</span>
+            </p>
+          </div>
+          {src.url && (
+            <svg className="w-3 h-3 text-slate-400 shrink-0 mt-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" />
+              <polyline points="15 3 21 3 21 9" />
+              <line x1="10" y1="14" x2="21" y2="3" />
+            </svg>
+          )}
+        </div>
+      ))}
     </div>
   );
 }
@@ -11241,65 +11393,19 @@ function PercakapanTab({
                       {/* Right: Sumber (sejajar / lurus dengan action bar) & Timestamp */}
                       <div className="flex items-center gap-3">
                         {m.sources && m.sources.length > 0 && (
-                          <button
-                            type="button"
-                            onClick={() => setOpenSourcesIdx((prev) => (prev === i ? null : i))}
-                            className="flex items-center gap-1.5 cursor-pointer select-none text-left py-1 px-2 rounded-lg hover:bg-slate-100/80 transition-colors"
-                          >
-                            <div className="flex -space-x-1.5 items-center">
-                              {m.sources.slice(0, 3).map((src, si) => (
-                                <SourceLogoIcon
-                                  key={si}
-                                  source={src}
-                                  index={si}
-                                  size="sm"
-                                  style={{ zIndex: 3 - si }}
-                                />
-                              ))}
-                            </div>
-                            <span className={`text-xs font-semibold transition-colors ${openSourcesIdx === i ? "text-black font-bold" : "text-neutral-800 hover:text-black"}`}>
-                              {m.sources.length} Sumber
-                            </span>
-                            <svg className={`w-3 h-3 text-neutral-500 transition-transform duration-200 ${openSourcesIdx === i ? "rotate-180 text-black" : ""}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M6 9l6 6 6-6"/></svg>
-                          </button>
+                          <SourcesToggleButton
+                            sources={m.sources}
+                            isOpen={openSourcesIdx === i}
+                            onToggle={() => setOpenSourcesIdx((prev) => (prev === i ? null : i))}
+                          />
                         )}
                         <span className="text-[10px] text-slate-400 pr-0.5">{m.time}</span>
                       </div>
                     </div>
 
-                    {/* Expandable Sources Details (Full width) */}
+                    {/* Expandable Sources Details (Full width, 3 full + 4th half-peek scrollable) */}
                     {m.sources && m.sources.length > 0 && openSourcesIdx === i && (
-                      <div className="mt-3 flex flex-col gap-2 animate-in fade-in duration-200">
-                        {m.sources.map((src, si) => (
-                          <div key={si} className="flex items-start gap-2.5 p-2.5 rounded-xl border border-slate-100 bg-slate-50/70 hover:bg-slate-50 transition-colors">
-                            <SourceLogoIcon
-                              source={src}
-                              index={si}
-                              size="md"
-                              className="mt-0.5"
-                            />
-                            <div className="flex-1 min-w-0">
-                              {src.url ? (
-                                <a href={src.url} target="_blank" rel="noopener noreferrer"
-                                  className="text-xs font-medium text-neutral-900 hover:text-blue-600 hover:underline leading-snug line-clamp-2">
-                                  {src.title}
-                                </a>
-                              ) : (
-                                <p className="text-xs font-medium text-slate-800 leading-snug line-clamp-2">{src.title}</p>
-                              )}
-                              <p className="text-[10px] text-slate-400 mt-0.5 flex items-center gap-1.5">
-                                <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" className="text-slate-500 shrink-0">
-                                  <path d="M12 3L1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z" />
-                                </svg>
-                                <span>{src.author} · {src.year}</span>
-                              </p>
-                            </div>
-                            {src.url && (
-                              <svg className="w-3 h-3 text-slate-400 shrink-0 mt-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-                            )}
-                          </div>
-                        ))}
-                      </div>
+                      <ExpandableSourcesList sources={m.sources} />
                     )}
                   </div>
                 ) : (
@@ -16183,65 +16289,20 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                           {/* Right: Sumber & Timestamp sebaris di sebelah kanan */}
                           <div className="flex items-center gap-2 shrink-0">
                             {m.sources && m.sources.length > 0 && (
-                              <button
-                                type="button"
-                                onClick={() => setProjOpenSourcesIdx((prev) => (prev === idx ? null : idx))}
-                                className="flex items-center gap-1.5 cursor-pointer select-none text-left py-1 px-1.5 rounded-lg hover:bg-slate-100/80 transition-colors"
-                              >
-                                <div className="flex -space-x-1.5 items-center">
-                                  {m.sources.slice(0, 3).map((src, si) => (
-                                    <SourceLogoIcon
-                                      key={si}
-                                      source={src}
-                                      index={si}
-                                      size="sm"
-                                      style={{ zIndex: 3 - si }}
-                                    />
-                                  ))}
-                                </div>
-                                <span className={`text-xs font-semibold transition-colors ${projOpenSourcesIdx === idx ? "text-black font-bold" : "text-neutral-800 hover:text-black"}`}>
-                                  {m.sources.length} Sumber
-                                </span>
-                                <svg className={`w-3 h-3 text-neutral-500 transition-transform duration-200 ${projOpenSourcesIdx === idx ? "rotate-180 text-black" : ""}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M6 9l6 6 6-6"/></svg>
-                              </button>
+                              <SourcesToggleButton
+                                sources={m.sources}
+                                isOpen={projOpenSourcesIdx === idx}
+                                onToggle={() => setProjOpenSourcesIdx((prev) => (prev === idx ? null : idx))}
+                                compact
+                              />
                             )}
                             <span className="text-[10px] text-slate-400 whitespace-nowrap">{m.time}</span>
                           </div>
                         </div>
 
-                        {/* Expandable Sources Details (Full width) */}
+                        {/* Expandable Sources Details (Full width, 3 full + 4th half-peek scrollable) */}
                         {m.sources && m.sources.length > 0 && projOpenSourcesIdx === idx && (
-                          <div className="mt-3 flex flex-col gap-2 animate-in fade-in duration-200">
-                            {m.sources.map((src, si) => (
-                              <div key={si} className="flex items-start gap-2.5 p-2.5 rounded-xl border border-slate-100 bg-slate-50/70 hover:bg-slate-50 transition-colors">
-                                <SourceLogoIcon
-                                  source={src}
-                                  index={si}
-                                  size="md"
-                                  className="mt-0.5"
-                                />
-                                <div className="flex-1 min-w-0">
-                                  {src.url ? (
-                                    <a href={src.url} target="_blank" rel="noopener noreferrer"
-                                      className="text-xs font-medium text-neutral-900 hover:text-blue-600 hover:underline leading-snug line-clamp-2">
-                                      {src.title}
-                                    </a>
-                                  ) : (
-                                    <p className="text-xs font-medium text-slate-800 leading-snug line-clamp-2">{src.title}</p>
-                                  )}
-                                  <p className="text-[10px] text-slate-400 mt-0.5 flex items-center gap-1.5">
-                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" className="text-slate-500 shrink-0">
-                                      <path d="M12 3L1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z" />
-                                    </svg>
-                                    <span>{src.author} · {src.year}</span>
-                                  </p>
-                                </div>
-                                {src.url && (
-                                  <svg className="w-3 h-3 text-slate-400 shrink-0 mt-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/></svg>
-                                )}
-                              </div>
-                            ))}
-                          </div>
+                          <ExpandableSourcesList sources={m.sources} />
                         )}
                       </div>
                     ) : (
