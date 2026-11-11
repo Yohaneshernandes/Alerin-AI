@@ -6254,10 +6254,21 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
               <button
                 type="button"
                 onClick={() => setSidebarOpen(true)}
+                aria-label="Buka sidebar"
                 title="Buka sidebar"
-                className="size-9 rounded-full overflow-hidden border border-white shadow-xs hover:opacity-90 transition-opacity cursor-pointer"
+                className="group relative size-9 rounded-full flex items-center justify-center overflow-hidden border border-white bg-white shadow-xs hover:border-neutral-200/80 hover:bg-slate-100 hover:shadow-none transition-all cursor-pointer"
               >
-                <img src="/assets/73c1a.png" alt="Alerin" className="size-full object-cover" />
+                <img
+                  src="/assets/73c1a.png"
+                  alt="Alerin"
+                  className="size-full object-cover transition-opacity duration-150 group-hover:opacity-0 group-focus-visible:opacity-0"
+                />
+                <span className="pointer-events-none absolute inset-0 flex items-center justify-center text-neutral-800 opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus-visible:opacity-100">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                    <line x1="9" y1="3" x2="9" y2="21" />
+                  </svg>
+                </span>
               </button>
 
               <button
