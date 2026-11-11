@@ -3722,25 +3722,98 @@ function ImageGeneratingBubble({
   );
 }
 
+/** Triggers a local file download for an image URL (with CORS blob fetch + fallback). */
+async function downloadImageFile(url: string, label?: string): Promise<boolean> {
+  const safeBase = (label || "alerin-gambar")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 40) || "alerin-gambar";
+
+  const triggerAnchor = (href: string, ext: string, revokeAfter?: boolean) => {
+    const a = document.createElement("a");
+    a.href = href;
+    a.download = `${safeBase}-${Date.now()}.${ext}`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    if (revokeAfter) setTimeout(() => URL.revokeObjectURL(href), 1000);
+  };
+
+  try {
+    if (url.startsWith("data:") || url.startsWith("blob:")) {
+      const ext = url.includes("image/png") ? "png" : url.includes("image/webp") ? "webp" : "jpg";
+      triggerAnchor(url, ext);
+      return true;
+    }
+
+    const res = await fetch(url, { mode: "cors" });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const blob = await res.blob();
+    const ext = blob.type.includes("png") ? "png" : blob.type.includes("webp") ? "webp" : "jpg";
+    const blobUrl = URL.createObjectURL(blob);
+    triggerAnchor(blobUrl, ext, true);
+    return true;
+  } catch {
+    try {
+      triggerAnchor(url, "jpg");
+      return true;
+    } catch {
+      return false;
+    }
+  }
+}
+
+function DownloadStatusIcon({ downloaded, size = 15 }: { downloaded: boolean; size?: number }) {
+  return downloaded ? (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  ) : (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+      <polyline points="7 10 12 15 17 10" />
+      <line x1="12" y1="15" x2="12" y2="3" />
+    </svg>
+  );
+}
+
 function ImageResultBubble({
   imageUrl,
   prompt,
   orientation,
   onPreview,
+  onDownloadSuccess,
 }: {
   imageUrl: string;
   prompt: string;
   orientation?: "landscape" | "portrait";
   onPreview?: (url: string) => void;
+  onDownloadSuccess?: () => void;
 }) {
   const [visible, setVisible] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const [downloading, setDownloading] = useState(false);
+  const [downloaded, setDownloaded] = useState(false);
   const [detectedOrientation, setDetectedOrientation] = useState<"landscape" | "portrait" | null>(null);
 
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), 50);
     return () => clearTimeout(t);
   }, []);
+
+  const handleDownload = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (downloading) return;
+    setDownloading(true);
+    const ok = await downloadImageFile(imageUrl, prompt);
+    setDownloading(false);
+    if (ok) {
+      setDownloaded(true);
+      onDownloadSuccess?.();
+      setTimeout(() => setDownloaded(false), 1800);
+    }
+  };
 
   const effectiveOrientation = detectedOrientation ?? orientation ?? detectImageOrientation(prompt);
   const isLandscape = effectiveOrientation === "landscape";
@@ -3782,21 +3855,109 @@ function ImageResultBubble({
           <div className="absolute inset-0 shimmer-sweep bg-gradient-to-br from-blue-50 to-indigo-50" />
         )}
 
-        {/* Floating preview/share button at bottom-right inside image (matching video) */}
+        {/* Floating download button at bottom-right inside photo */}
         <button
           type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            onPreview?.(imageUrl);
-          }}
-          aria-label="Lihat foto penuh"
-          className="absolute bottom-3 right-3 size-9 rounded-full bg-black/45 hover:bg-black/60 backdrop-blur-md text-white flex items-center justify-center shadow-md active:scale-90 transition-all"
+          onClick={handleDownload}
+          disabled={downloading}
+          aria-label="Unduh gambar"
+          title="Unduh gambar"
+          className="absolute bottom-3 right-3 size-9 rounded-full bg-black/50 hover:bg-black/70 backdrop-blur-md text-white flex items-center justify-center shadow-md active:scale-90 transition-all cursor-pointer disabled:opacity-70"
         >
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
-            <polyline points="16 6 12 2 8 6" />
-            <line x1="12" y1="2" x2="12" y2="15" />
+          <DownloadStatusIcon downloaded={downloaded} size={15} />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/** Shared fullscreen photo preview modal with download button. */
+function ImageLightboxModal({
+  imageUrl,
+  alt = "Pratinjau foto",
+  zIndexClass = "z-[280]",
+  onClose,
+  onDownloadSuccess,
+}: {
+  imageUrl: string | null;
+  alt?: string;
+  zIndexClass?: string;
+  onClose: () => void;
+  onDownloadSuccess?: () => void;
+}) {
+  const [downloading, setDownloading] = useState(false);
+  const [downloaded, setDownloaded] = useState(false);
+
+  useEffect(() => {
+    setDownloaded(false);
+    setDownloading(false);
+    if (!imageUrl) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [imageUrl, onClose]);
+
+  if (!imageUrl) return null;
+
+  const handleDownload = async () => {
+    if (downloading) return;
+    setDownloading(true);
+    const ok = await downloadImageFile(imageUrl, alt);
+    setDownloading(false);
+    if (ok) {
+      setDownloaded(true);
+      onDownloadSuccess?.();
+      setTimeout(() => setDownloaded(false), 1800);
+    }
+  };
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      className={`fixed inset-0 ${zIndexClass} bg-black/85 backdrop-blur-md flex flex-col items-center justify-between p-4`}
+      onClick={onClose}
+    >
+      <div className="w-full flex items-center justify-end text-white pt-2 px-2" onClick={(e) => e.stopPropagation()}>
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Tutup preview"
+          className="size-9 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-colors shrink-0 cursor-pointer"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
           </svg>
+        </button>
+      </div>
+
+      <div className="flex-1 flex items-center justify-center p-2 max-w-full max-h-[75vh]" onClick={(e) => e.stopPropagation()}>
+        <img
+          src={imageUrl}
+          alt={alt}
+          className="max-w-full max-h-[75vh] rounded-2xl object-contain shadow-2xl"
+        />
+      </div>
+
+      <div className="w-full max-w-sm flex items-center justify-center gap-3 pb-4" onClick={(e) => e.stopPropagation()}>
+        <button
+          type="button"
+          onClick={handleDownload}
+          disabled={downloading}
+          className="px-5 py-2.5 rounded-full bg-[#1A73E8] hover:bg-[#1557b0] active:scale-95 text-white text-xs font-semibold flex items-center gap-2 shadow-lg transition-all cursor-pointer disabled:opacity-70"
+        >
+          <DownloadStatusIcon downloaded={downloaded} size={14} />
+          <span>{downloading ? "Mengunduh..." : downloaded ? "Tersimpan" : "Unduh Gambar"}</span>
+        </button>
+        <button
+          type="button"
+          onClick={onClose}
+          className="px-5 py-2.5 rounded-full bg-white/20 hover:bg-white/30 text-white text-xs font-semibold transition-colors cursor-pointer"
+        >
+          Tutup
         </button>
       </div>
     </div>
@@ -10987,6 +11148,7 @@ function PercakapanTab({
                       prompt={m.imagePrompt ?? ""}
                       orientation={m.imageOrientation}
                       onPreview={(url) => setChatImagePreview(url)}
+                      onDownloadSuccess={() => showActionToast("Gambar berhasil diunduh")}
                     />
                     <MarkdownRenderer text={m.text} />
                   </div>
@@ -11286,46 +11448,13 @@ function PercakapanTab({
     )}
 
     {/* Lightbox for chat photos */}
-    {chatImagePreview && (
-      <div
-        role="dialog"
-        aria-modal="true"
-        className="fixed inset-0 z-[250] bg-black/85 backdrop-blur-md flex flex-col items-center justify-between p-4"
-        onClick={() => setChatImagePreview(null)}
-      >
-        <div className="w-full flex items-center justify-end text-white pt-2 px-2" onClick={(e) => e.stopPropagation()}>
-          <button
-            type="button"
-            onClick={() => setChatImagePreview(null)}
-            aria-label="Tutup preview"
-            className="size-9 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-colors shrink-0"
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
-          </button>
-        </div>
-
-        <div className="flex-1 flex items-center justify-center p-2 max-w-full max-h-[75vh]" onClick={(e) => e.stopPropagation()}>
-          <img
-            src={chatImagePreview}
-            alt="Preview"
-            className="max-w-full max-h-[75vh] rounded-2xl object-contain shadow-2xl"
-          />
-        </div>
-
-        <div className="w-full max-w-sm flex items-center justify-center pb-4" onClick={(e) => e.stopPropagation()}>
-          <button
-            type="button"
-            onClick={() => setChatImagePreview(null)}
-            className="px-6 py-2 rounded-full bg-white/20 hover:bg-white/30 text-white text-xs font-semibold transition-colors"
-          >
-            Tutup
-          </button>
-        </div>
-      </div>
-    )}
+    <ImageLightboxModal
+      imageUrl={chatImagePreview}
+      alt="Preview"
+      zIndexClass="z-[250]"
+      onClose={() => setChatImagePreview(null)}
+      onDownloadSuccess={() => showActionToast("Gambar berhasil diunduh")}
+    />
 
     {/* Modal Pilih & Salin Teks */}
     <SelectTextModal
@@ -15128,23 +15257,13 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
       {toast && <Toast msg={toast} onDone={() => setToast(null)} />}
 
       {/* Modal Preview Gambar Proyek */}
-      {projImagePreview && (
-        <div
-          className="fixed inset-0 z-[280] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-[gemini-fade-in_0.15s_ease-out]"
-          onClick={() => setProjImagePreview(null)}
-        >
-          <div className="relative max-w-3xl max-h-[90vh] flex flex-col items-center" onClick={(e) => e.stopPropagation()}>
-            <img src={projImagePreview} alt="Pratinjau foto proyek" className="max-w-full max-h-[85vh] rounded-2xl object-contain shadow-2xl" />
-            <button
-              type="button"
-              onClick={() => setProjImagePreview(null)}
-              className="absolute top-3 right-3 size-9 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center cursor-pointer active:scale-95 transition-all"
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            </button>
-          </div>
-        </div>
-      )}
+      <ImageLightboxModal
+        imageUrl={projImagePreview}
+        alt="Pratinjau foto proyek"
+        zIndexClass="z-[280]"
+        onClose={() => setProjImagePreview(null)}
+        onDownloadSuccess={() => setToast("Gambar berhasil diunduh")}
+      />
 
       {/* Modal Pilih & Salin Teks Proyek */}
       <SelectTextModal
@@ -15970,6 +16089,7 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                           prompt={m.imagePrompt ?? ""}
                           orientation={m.imageOrientation}
                           onPreview={(url) => setProjImagePreview(url)}
+                          onDownloadSuccess={() => setToast("Gambar berhasil diunduh")}
                         />
                         <MarkdownRenderer text={m.text} />
                       </div>
