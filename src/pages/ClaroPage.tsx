@@ -3107,25 +3107,6 @@ function SelectTextModal({
 }) {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
-  useEffect(() => {
-    if (text === null) return;
-    const selectAllText = () => {
-      const el = textareaRef.current;
-      if (!el) return;
-      el.focus();
-      el.select();
-      try {
-        el.setSelectionRange(0, el.value.length);
-      } catch {}
-    };
-    const rafId = window.requestAnimationFrame(selectAllText);
-    const timerId = window.setTimeout(selectAllText, 60);
-    return () => {
-      window.cancelAnimationFrame(rafId);
-      window.clearTimeout(timerId);
-    };
-  }, [text]);
-
   if (text === null) return null;
 
   const handleCopy = () => {
@@ -3185,16 +3166,9 @@ function SelectTextModal({
         <div className="relative">
           <textarea
             ref={textareaRef}
-            autoFocus
             readOnly
             value={text}
-            onClick={(e) => {
-              const target = e.currentTarget;
-              if (target.selectionStart === target.selectionEnd) {
-                target.select();
-              }
-            }}
-            className="w-full h-[225px] min-h-[180px] max-h-[380px] p-3.5 text-sm leading-relaxed text-slate-900 bg-white border-2 border-[#1A73E8] rounded-2xl ring-2 ring-[#1A73E8]/20 focus:outline-none focus:ring-2 focus:ring-[#1A73E8] selection:bg-[#BCE3FA] selection:text-slate-900 select-text cursor-text resize-y font-normal"
+            className="w-full h-[225px] min-h-[180px] max-h-[380px] p-3 text-sm leading-relaxed text-slate-900 bg-transparent border-2 border-transparent rounded-2xl focus:bg-white focus:border-[#1A73E8] focus:ring-2 focus:ring-[#1A73E8]/20 focus:outline-none selection:bg-[#BCE3FA] selection:text-slate-900 select-text cursor-text resize-none font-normal transition-all"
           />
         </div>
 
