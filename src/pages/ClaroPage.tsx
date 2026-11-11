@@ -14135,7 +14135,30 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
   const chatEndRef = useRef<HTMLDivElement>(null);
   const sourceFileInputRef = useRef<HTMLInputElement>(null);
 
+  const getUserPlanInfo = () => {
+    if (typeof window !== "undefined") {
+      try {
+        const saved = localStorage.getItem("alerin_user_package") || localStorage.getItem("alerin_user_plan");
+        if (saved) {
+          const lower = saved.toLowerCase();
+          if (lower.includes("pro") || lower.includes("max")) {
+            return { label: "Pro", limit: 50, maxFolders: null as number | null };
+          }
+          if (lower.includes("plus")) {
+            return { label: "Plus", limit: 20, maxFolders: 25 };
+          }
+        }
+      } catch {}
+    }
+    return { label: "Gratis", limit: 10, maxFolders: 10 };
+  };
+
   const handleCreateProject = () => {
+    const planInfo = getUserPlanInfo();
+    if (planInfo.maxFolders !== null && projects.length >= planInfo.maxFolders) {
+      setToast(`Batas ${planInfo.maxFolders} folder proyek tercapai. Upgrade paket untuk membuat folder baru.`);
+      return;
+    }
     const trimmed = projectName.trim().slice(0, 25);
     if (!trimmed) return;
     const newProj: MobileProjectItem = {
@@ -14692,19 +14715,8 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
 
       {/* ── Modal Pop-up 'Buat Proyek' ── */}
       {newProjectOpen && (() => {
-        const userPlanInfo = (() => {
-          if (typeof window !== "undefined") {
-            try {
-              const saved = localStorage.getItem("alerin_user_package") || localStorage.getItem("alerin_user_plan");
-              if (saved) {
-                const lower = saved.toLowerCase();
-                if (lower.includes("pro")) return { label: "Pro", limit: 50 };
-                if (lower.includes("plus")) return { label: "Plus", limit: 20 };
-              }
-            } catch {}
-          }
-          return { label: "Gratis", limit: 10 };
-        })();
+        const userPlanInfo = getUserPlanInfo();
+        const isFolderLimitReached = userPlanInfo.maxFolders !== null && projects.length >= userPlanInfo.maxFolders;
 
         return (
           <div
@@ -14747,21 +14759,57 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                   autoCorrect="on"
                   spellCheck={false}
                   maxLength={25}
+                  disabled={isFolderLimitReached}
                   onKeyDown={(e) => {
-                    if (e.key === "Enter" && projectName.trim()) handleCreateProject();
+                    if (e.key === "Enter" && projectName.trim() && !isFolderLimitReached) handleCreateProject();
                     if (e.key === "Escape") setNewProjectOpen(false);
                   }}
-                  placeholder="Masukkan nama proyek..."
-                  autoFocus
-                  className="w-full text-sm text-neutral-800 bg-neutral-50 border border-neutral-200 focus:border-[#1A73E8] focus:bg-white focus:ring-3 focus:ring-blue-100 rounded-xl px-3.5 py-2.5 outline-none transition-all placeholder:text-neutral-400"
+                  placeholder={isFolderLimitReached ? "Batas folder proyek tercapai" : "Masukkan nama proyek..."}
+                  autoFocus={!isFolderLimitReached}
+                  className={`w-full text-sm rounded-xl px-3.5 py-2.5 outline-none transition-all placeholder:text-neutral-400 border ${
+                    isFolderLimitReached
+                      ? "text-neutral-400 bg-neutral-100 border-neutral-200 cursor-not-allowed"
+                      : "text-neutral-800 bg-neutral-50 border-neutral-200 focus:border-[#1A73E8] focus:bg-white focus:ring-3 focus:ring-blue-100"
+                  }`}
                 />
               </div>
 
-              <div className="rounded-xl bg-neutral-50 px-3.5 py-2.5 border border-neutral-100">
-                <p className="text-xs text-neutral-600 leading-relaxed">
-                  Setiap proyek di Akun {userPlanInfo.label} menyimpan hingga {userPlanInfo.limit} riwayat obrolan.
-                </p>
-              </div>
+              {isFolderLimitReached ? (
+                <div className="rounded-xl bg-amber-50/90 px-3.5 py-3 border border-amber-200/90 flex flex-col gap-2.5">
+                  <div className="flex items-start gap-2">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="text-amber-600 shrink-0 mt-0.5">
+                      <circle cx="12" cy="12" r="10" />
+                      <line x1="12" y1="8" x2="12" y2="12" />
+                      <line x1="12" y1="16" x2="12.01" y2="16" />
+                    </svg>
+                    <p className="text-xs text-amber-900 leading-relaxed font-medium">
+                      Batas maksimal {userPlanInfo.maxFolders} folder proyek untuk Akun {userPlanInfo.label} sudah tercapai, sehingga tidak bisa membuat folder baru lagi.{" "}
+                      <span className="font-normal text-amber-800">
+                        Upgrade paket untuk membuat folder proyek tanpa batas.
+                      </span>
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setNewProjectOpen(false);
+                      window.dispatchEvent(new CustomEvent("alerin-open-upgrade"));
+                    }}
+                    className="w-full py-2 px-3 rounded-lg bg-[#1A73E8] hover:bg-[#1557b0] active:scale-[0.99] text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-2xs"
+                  >
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                      <path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z" />
+                    </svg>
+                    <span>Upgrade Paket</span>
+                  </button>
+                </div>
+              ) : (
+                <div className="rounded-xl bg-neutral-50 px-3.5 py-2.5 border border-neutral-100">
+                  <p className="text-xs text-neutral-600 leading-relaxed">
+                    Setiap proyek di Akun {userPlanInfo.label} menyimpan hingga {userPlanInfo.limit} riwayat obrolan.
+                  </p>
+                </div>
+              )}
 
               <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-neutral-100">
                 <button
@@ -14773,11 +14821,11 @@ function ProyekTab({ onTab, onOpenHistory }: { onTab: (t: NavTab) => void; onOpe
                 </button>
                 <button
                   type="button"
-                  disabled={!projectName.trim()}
+                  disabled={!projectName.trim() || isFolderLimitReached}
                   onClick={handleCreateProject}
-                  className={`flex-1 px-4 py-2.5 rounded-xl text-xs font-bold transition-all text-center shadow-xs cursor-pointer ${
-                    projectName.trim()
-                      ? "bg-[#1A73E8] hover:bg-[#1557b0] text-white active:scale-95"
+                  className={`flex-1 px-4 py-2.5 rounded-xl text-xs font-bold transition-all text-center shadow-xs ${
+                    projectName.trim() && !isFolderLimitReached
+                      ? "bg-[#1A73E8] hover:bg-[#1557b0] text-white active:scale-95 cursor-pointer"
                       : "bg-[#E2E8F0] text-[#94A3B8] cursor-not-allowed"
                   }`}
                 >
