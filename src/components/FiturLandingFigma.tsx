@@ -3,9 +3,6 @@ type FiturLandingFigmaProps = {
   onJurnal: () => void;
   onSkripsi: () => void;
   onParafrase: () => void;
-  onMataKuliah: () => void;
-  onTugas: () => void;
-  onPemeriksaan: () => void;
 };
 
 const assets = "/assets/fitur-design";
@@ -15,91 +12,51 @@ export default function FiturLandingFigma({
   onJurnal,
   onSkripsi,
   onParafrase,
-  onMataKuliah,
-  onTugas,
-  onPemeriksaan,
 }: FiturLandingFigmaProps) {
   const features = [
     {
       title: "Alerin Chat",
       description: "AI asisten untuk riset akademik dan diskusi topik.",
       icon: "05de5.svg",
+      mobileIcon: "17983.svg",
       iconClass: "h-[44.283px] w-[44.283px]",
       framedIcon: false,
       arrow: "2138c.svg",
+      mobileArrow: "c4a81.svg",
       action: onChat,
     },
     {
       title: "Alerin Jurnal",
       description: "Temukan referensi akademik terindeks Scopus & Sinta.",
       icon: "5ad2c.svg",
+      mobileIcon: "0a094.svg",
       iconClass: "h-[44.283px] w-[44.283px]",
       framedIcon: false,
       arrow: "2138c.svg",
+      mobileArrow: "c4a81.svg",
       action: onJurnal,
     },
     {
       title: "Alerin Skripsi",
       description: "Dapatkan arahan sesuai tahap penelitian dan revisi kamu.",
       icon: "4d2e9.svg",
+      mobileIcon: "52023.svg",
       iconClass: "h-[16.606px] w-[20.296px]",
       framedIcon: true,
       arrow: "939bb.svg",
+      mobileArrow: "a19d2.svg",
       action: onSkripsi,
-    },
-    {
-      title: "Alerin Tesis",
-      description: "Dukungan riset kuantitatif dan kualitatif tingkat magister.",
-      icon: "52225.svg",
-      iconClass: "h-6 w-6",
-      framedIcon: true,
-      arrow: "939bb.svg",
-      action: onSkripsi,
-    },
-    {
-      title: "Alerin Disertasi",
-      description: "Validasi novelty riset, kerangka konseptual, dan publikasi jurnal.",
-      icon: "d8964.svg",
-      iconClass: "h-[17.59px] w-[15.981px]",
-      framedIcon: true,
-      arrow: "939bb.svg",
-      action: onSkripsi,
-    },
-    {
-      title: "Alerin Mata Kuliah",
-      description: "Jelaskan materi dan buat rangkuman serta latihan.",
-      icon: "3843e.svg",
-      iconClass: "h-5 w-5",
-      framedIcon: true,
-      arrow: "15eff.svg",
-      action: onMataKuliah,
-    },
-    {
-      title: "Alerin Tugas Kuliah",
-      description: "Ikuti instruksi dosen dan buat tugas dengan langkah yang jelas.",
-      icon: "f0e9f.svg",
-      iconClass: "h-5 w-5",
-      framedIcon: true,
-      arrow: "5184b.svg",
-      action: onTugas,
     },
     {
       title: "Alerin Parafrase",
       description: "Ubah teks skripsi otomatis dengan pilihan gaya & intensitas.",
       icon: "377ce.svg",
+      mobileIcon: "bff8f.svg",
       iconClass: "h-[16.103px] w-[18.116px]",
       framedIcon: true,
       arrow: "3f8a0.svg",
+      mobileArrow: "6fcef.svg",
       action: onParafrase,
-    },
-    {
-      title: "Alerin Cek Naskah",
-      description: "Periksa ejaan, tata bahasa, dan gaya akademik tulisanmu.",
-      icon: "ee1b9.svg",
-      iconClass: "h-[23.483px] w-[18.787px]",
-      framedIcon: true,
-      arrow: "3955b.svg",
-      action: onPemeriksaan,
     },
   ];
 
@@ -110,7 +67,7 @@ export default function FiturLandingFigma({
           <div className="relative block md:flex md:items-start md:justify-between md:gap-5">
             <div className="w-full md:w-auto">
               <span className="inline-flex rounded-full border border-[#bfdbfe] bg-[#eff6ff] px-3 py-1 font-['Inter:Bold'] text-xs font-bold text-[#3b82f6]">
-                9 alur akademik
+                {features.length} alur akademik
               </span>
               <h1 className="mt-3 font-['Plus_Jakarta_Sans:SemiBold'] text-[25px] font-semibold leading-8 text-[#0f172b] md:text-2xl">
                 Pilih cara Alerin membantumu
@@ -129,7 +86,7 @@ export default function FiturLandingFigma({
             </button>
           </div>
 
-          <div className="mt-[18px] grid gap-x-3 gap-y-3 sm:grid-cols-2 md:gap-y-[15px] lg:grid-cols-3">
+          <div className="mt-[18px] grid gap-x-3 gap-y-3 sm:grid-cols-2 md:gap-y-[15px]">
             {features.map(feature => (
               <button
                 key={feature.title}
@@ -139,17 +96,7 @@ export default function FiturLandingFigma({
               >
                 <span className={`flex h-[43.987px] w-[43.987px] shrink-0 items-center justify-center rounded-2xl bg-[#eff6ff] md:h-[44.283px] md:w-[44.283px] ${feature.framedIcon ? "" : "md:bg-transparent"}`}>
                   <img
-                    src={`${assets}/${({
-                      "Alerin Chat": "17983.svg",
-                      "Alerin Jurnal": "0a094.svg",
-                      "Alerin Skripsi": "52023.svg",
-                      "Alerin Tesis": "79ce0.svg",
-                      "Alerin Disertasi": "d8964.svg",
-                      "Alerin Mata Kuliah": "3843e.svg",
-                      "Alerin Tugas Kuliah": "f0e9f.svg",
-                      "Alerin Parafrase": "bff8f.svg",
-                      "Alerin Cek Naskah": "7c197.svg",
-                    } as Record<string, string>)[feature.title]}`}
+                    src={`${assets}/${feature.mobileIcon}`}
                     alt=""
                     className="md:hidden"
                   />
@@ -165,17 +112,7 @@ export default function FiturLandingFigma({
                 </span>
                 <span className="flex h-[13.988px] w-[13.988px] shrink-0 items-center justify-center md:hidden">
                   <img
-                    src={`${assets}/${({
-                      "Alerin Chat": "c4a81.svg",
-                      "Alerin Jurnal": "c4a81.svg",
-                      "Alerin Skripsi": "a19d2.svg",
-                      "Alerin Tesis": "a19d2.svg",
-                      "Alerin Disertasi": "a19d2.svg",
-                      "Alerin Mata Kuliah": "9f3f6.svg",
-                      "Alerin Tugas Kuliah": "5e755.svg",
-                      "Alerin Parafrase": "6fcef.svg",
-                      "Alerin Cek Naskah": "6d66f.svg",
-                    } as Record<string, string>)[feature.title]}`}
+                    src={`${assets}/${feature.mobileArrow}`}
                     alt=""
                   />
                 </span>

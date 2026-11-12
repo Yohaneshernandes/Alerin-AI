@@ -3105,9 +3105,9 @@ function ExpandableSourcesList({ sources }: { sources: ChatSource[] }) {
   );
 }
 
-// 9 Fitur Resmi dari "Semua Fitur" (disinkronkan dengan FiturLandingFigma)
+// 4 Fitur Resmi dari "Semua Fitur" (disinkronkan dengan FiturLandingFigma)
 const OFFICIAL_FEATURES: Record<
-  "chat" | "jurnal" | "skripsi" | "tesis" | "disertasi" | "matakuliah" | "tugas" | "parafrase" | "ceknaskah",
+  "chat" | "jurnal" | "skripsi" | "parafrase",
   FeatureRec
 > = {
   chat: {
@@ -3137,42 +3137,6 @@ const OFFICIAL_FEATURES: Record<
     iconSrc: "/assets/fitur-design/52023.svg",
     color: "#2563eb",
   },
-  tesis: {
-    label: "Alerin Tesis",
-    desc: "Dukungan riset kuantitatif dan kualitatif tingkat magister.",
-    tab: "fitur",
-    featureKey: "tesis",
-    icon: "🎖️",
-    iconSrc: "/assets/fitur-design/79ce0.svg",
-    color: "#2563eb",
-  },
-  disertasi: {
-    label: "Alerin Disertasi",
-    desc: "Validasi novelty riset, kerangka konseptual, dan publikasi jurnal.",
-    tab: "fitur",
-    featureKey: "disertasi",
-    icon: "📜",
-    iconSrc: "/assets/fitur-design/d8964.svg",
-    color: "#2563eb",
-  },
-  matakuliah: {
-    label: "Alerin Mata Kuliah",
-    desc: "Jelaskan materi dan buat rangkuman serta latihan.",
-    tab: "fitur",
-    featureKey: "matakuliah",
-    icon: "📖",
-    iconSrc: "/assets/fitur-design/3843e.svg",
-    color: "#2563eb",
-  },
-  tugas: {
-    label: "Alerin Tugas Kuliah",
-    desc: "Ikuti instruksi dosen dan buat tugas dengan langkah yang jelas.",
-    tab: "fitur",
-    featureKey: "tugas",
-    icon: "📋",
-    iconSrc: "/assets/fitur-design/f0e9f.svg",
-    color: "#2563eb",
-  },
   parafrase: {
     label: "Alerin Parafrase",
     desc: "Ubah teks skripsi otomatis dengan pilihan gaya & intensitas.",
@@ -3180,15 +3144,6 @@ const OFFICIAL_FEATURES: Record<
     featureKey: "parafrase",
     icon: "✍️",
     iconSrc: "/assets/fitur-design/bff8f.svg",
-    color: "#2563eb",
-  },
-  ceknaskah: {
-    label: "Alerin Cek Naskah",
-    desc: "Periksa ejaan, tata bahasa, dan gaya akademik tulisanmu.",
-    tab: "fitur",
-    featureKey: "grammar",
-    icon: "📝",
-    iconSrc: "/assets/fitur-design/7c197.svg",
     color: "#2563eb",
   },
 };
@@ -3199,32 +3154,12 @@ const FEATURE_REC_MAP: { pattern: RegExp; rec: FeatureRec }[] = [
     rec: OFFICIAL_FEATURES.parafrase,
   },
   {
-    pattern: /cek naskah|plagiarisme|plagiat|cek kesamaan|similarity|grammar|tata bahasa|ejaan|typo|kata baku|eyd|cek kalimat|pemeriksaan/i,
-    rec: OFFICIAL_FEATURES.ceknaskah,
-  },
-  {
     pattern: /jurnal|referensi|pustaka|sitasi|citation|scopus|sinta|daftar pustaka/i,
     rec: OFFICIAL_FEATURES.jurnal,
   },
   {
-    pattern: /tesis|magister|s2/i,
-    rec: OFFICIAL_FEATURES.tesis,
-  },
-  {
-    pattern: /disertasi|doktor|s3|novelty/i,
-    rec: OFFICIAL_FEATURES.disertasi,
-  },
-  {
     pattern: /\b(?:paket|class\s*program)\b|skripsi|cari judul|saran judul|ide judul|rumusan masalah|hipotesis|metodologi|kuantitatif|kualitatif|sampel|kuesioner|sem|smartpls|spss|regresi/i,
     rec: OFFICIAL_FEATURES.skripsi,
-  },
-  {
-    pattern: /tugas|pr|essay|esai|makalah|laporan|presentasi|ppt|slide|powerpoint/i,
-    rec: OFFICIAL_FEATURES.tugas,
-  },
-  {
-    pattern: /mata kuliah|matkul|materi|kuliah|uas|uts|ujian|kuis|rumus|formula|matematika/i,
-    rec: OFFICIAL_FEATURES.matakuliah,
   },
   {
     pattern: /visualisasi|grafik|chart|kpi|bagan|diagram|flowchart|mind\s*map|info\s*grafi[sk]|infografi[sk]|penulisan|tulisan|kolom|tabel|code|kode|koding|file|dokumen/i,
@@ -14587,9 +14522,6 @@ function FiturTab({ onChat, openFeatureKey, onFeatureOpened }: { onChat: (prompt
         onJurnal={() => setShowJurnal(true)}
         onSkripsi={() => setShortcutModal("skripsi")}
         onParafrase={() => setShowParafrase(true)}
-        onMataKuliah={() => setShortcutModal("mata-kuliah")}
-        onTugas={() => setShortcutModal("tugas")}
-        onPemeriksaan={() => setShowGrammar(true)}
       />
       {shortcutModal && (
         <ShortcutModal
