@@ -9697,10 +9697,9 @@ function ClassProgramDetailModal({
   );
 }
 
-function ClassProgramPackagesCard({ featuredId }: { featuredId?: string }) {
-  const [selectedPkg, setSelectedPkg] = useState<ClassProgramPkg | null>(null);
-  const [enrolledName, setEnrolledName] = useState<string | null>(null);
+const CLASS_PROGRAM_PACKAGE_DETAIL_URL = "https://classprogram.id/produk/bso/NQ==";
 
+function ClassProgramPackagesCard({ featuredId }: { featuredId?: string }) {
   const featuredPkg = useMemo(() => getFeaturedPackage(featuredId), [featuredId]);
 
   const featuredHighlights = useMemo(() => {
@@ -9759,26 +9758,15 @@ function ClassProgramPackagesCard({ featuredId }: { featuredId?: string }) {
           ))}
         </ul>
 
-        <button
-          type="button"
-          onClick={() => {
-            setEnrolledName(null);
-            setSelectedPkg(featuredPkg);
-          }}
-          className="mt-4 w-full py-2.5 px-4 rounded-full bg-neutral-900 hover:bg-neutral-800 active:scale-[0.99] text-white text-xs sm:text-[13px] font-semibold leading-5 cursor-pointer transition-all text-center"
+        <a
+          href={CLASS_PROGRAM_PACKAGE_DETAIL_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-4 block w-full py-2.5 px-4 rounded-full bg-neutral-900 hover:bg-neutral-800 active:scale-[0.99] text-white text-xs sm:text-[13px] font-semibold leading-5 cursor-pointer transition-all text-center no-underline"
         >
           Lihat detail paket
-        </button>
+        </a>
       </div>
-
-      {selectedPkg && (
-        <ClassProgramDetailModal
-          pkg={selectedPkg}
-          enrolledName={enrolledName}
-          onSelect={(name) => setEnrolledName(name)}
-          onClose={() => setSelectedPkg(null)}
-        />
-      )}
     </div>
   );
 }
