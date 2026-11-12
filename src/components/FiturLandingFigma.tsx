@@ -86,7 +86,7 @@ export default function FiturLandingFigma({
             </button>
           </div>
 
-          <div className="mt-[18px] grid gap-x-3 gap-y-3 sm:grid-cols-2 md:gap-y-[15px]">
+          <div className="mt-[18px] grid gap-x-3 gap-y-3 sm:grid-cols-2 md:gap-y-[15px] lg:grid-cols-3">
             {features.map(feature => (
               <button
                 key={feature.title}
