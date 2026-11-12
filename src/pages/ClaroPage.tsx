@@ -5364,6 +5364,12 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
     },
   ];
 
+  const renderCollapsedTooltip = (label: string) => (
+    <span className="pointer-events-none absolute left-full top-1/2 z-[999] ml-3 -translate-y-1/2 whitespace-nowrap rounded-full border border-slate-200/90 bg-white px-4 py-2 text-sm font-semibold text-slate-800 opacity-0 shadow-lg transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100">
+      {label}
+    </span>
+  );
+
   const renderHistoryItem = (item: RiwayatItem) => {
     const isActive = Boolean(hasActiveChat && activeHistoryId === item.id);
     return (
@@ -6243,7 +6249,10 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
 
       <div className="flex flex-1 min-h-0">
         {/* Left sidebar — desktop only, disamakan tampilannya dengan mobile drawer & bisa diciutkan */}
-        <aside className="hidden md:flex shrink-0 border-r border-slate-100 flex-col bg-white overflow-hidden"
+        <aside
+          className={`hidden md:flex shrink-0 border-r border-slate-100 flex-col bg-white ${
+            sidebarOpen ? "overflow-hidden" : "relative z-30 overflow-visible"
+          }`}
           style={{ width: sidebarOpen ? 272 : 60, transition: "width 0.28s cubic-bezier(0.4,0,0.2,1)", minWidth: 0 }}>
           {sidebarOpen ? (
             <div className="flex flex-col flex-1 min-h-0 py-5 px-4">
@@ -6255,32 +6264,35 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                 type="button"
                 onClick={() => setSidebarOpen(true)}
                 aria-label="Buka sidebar"
-                title="Buka sidebar"
-                className="group relative size-9 rounded-full flex items-center justify-center overflow-hidden border border-white bg-white shadow-xs hover:border-neutral-200/80 hover:bg-slate-100 hover:shadow-none transition-all cursor-pointer"
+                className="group relative size-9 rounded-full flex items-center justify-center border border-white bg-white shadow-xs hover:border-neutral-200/80 hover:bg-slate-100 hover:shadow-none transition-all cursor-pointer"
               >
-                <img
-                  src="/assets/73c1a.png"
-                  alt="Alerin"
-                  className="size-full object-cover transition-opacity duration-150 group-hover:opacity-0 group-focus-visible:opacity-0"
-                />
+                <span className="size-full rounded-full overflow-hidden flex items-center justify-center">
+                  <img
+                    src="/assets/73c1a.png"
+                    alt="Alerin"
+                    className="size-full object-cover transition-opacity duration-150 group-hover:opacity-0 group-focus-visible:opacity-0"
+                  />
+                </span>
                 <span className="pointer-events-none absolute inset-0 flex items-center justify-center text-neutral-800 opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus-visible:opacity-100">
                   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <rect x="3" y="3" width="18" height="18" rx="2" />
                     <line x1="9" y1="3" x2="9" y2="21" />
                   </svg>
                 </span>
+                {renderCollapsedTooltip("Buka sidebar")}
               </button>
 
               <button
                 type="button"
                 onClick={() => setSearchOpen(true)}
-                title="Cari percakapan"
-                className="size-9 rounded-xl flex items-center justify-center text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+                aria-label="Cari percakapan"
+                className="group relative size-9 rounded-xl flex items-center justify-center text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="11" cy="11" r="8" />
                   <line x1="21" y1="21" x2="16.65" y2="16.65" />
                 </svg>
+                {renderCollapsedTooltip("Cari percakapan")}
               </button>
 
               <nav className="flex flex-col items-center gap-1.5 flex-1">
@@ -6289,14 +6301,15 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                     key={nav.id}
                     type="button"
                     onClick={nav.onClick}
-                    title={nav.label}
-                    className={`size-10 flex items-center justify-center rounded-2xl transition-colors cursor-pointer ${
+                    aria-label={nav.label}
+                    className={`group relative size-10 flex items-center justify-center rounded-2xl transition-colors cursor-pointer ${
                       nav.active
                         ? "bg-[#1A73E8] text-white shadow-xs shadow-[#1A73E8]/20"
                         : "text-slate-600 hover:bg-slate-100"
                     }`}
                   >
                     {nav.icon}
+                    {renderCollapsedTooltip(nav.label)}
                   </button>
                 ))}
               </nav>
@@ -6309,13 +6322,14 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                   try { localStorage.removeItem("alerin_active_history_id"); } catch {}
                   onNewChat();
                 }}
-                title="Obrolan baru"
-                className="size-10 rounded-full bg-[#1A73E8] hover:bg-[#1557b0] text-white shadow-md shadow-[#1A73E8]/25 flex items-center justify-center transition-all cursor-pointer"
+                aria-label="Obrolan baru"
+                className="group relative size-10 rounded-full bg-[#1A73E8] hover:bg-[#1557b0] text-white shadow-md shadow-[#1A73E8]/25 flex items-center justify-center transition-all cursor-pointer"
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <line x1="12" y1="5" x2="12" y2="19" />
                   <line x1="5" y1="12" x2="19" y2="12" />
                 </svg>
+                {renderCollapsedTooltip("Obrolan baru")}
               </button>
             </div>
           )}
