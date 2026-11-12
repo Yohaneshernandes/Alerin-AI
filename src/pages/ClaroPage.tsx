@@ -3643,6 +3643,72 @@ function ChatFollowUpSuggestions({
   );
 }
 
+function InlineMessageEditor({
+  value,
+  onChange,
+  onSave,
+  onCancel,
+}: {
+  value: string;
+  onChange: (next: string) => void;
+  onSave: () => void;
+  onCancel: () => void;
+}) {
+  return (
+    <div className="w-full max-w-[85vw] sm:max-w-[420px] md:max-w-[540px] bg-white rounded-2xl rounded-tr-sm border-2 border-blue-500 shadow-md p-3.5 md:p-4 flex flex-col gap-2.5 md:gap-3 animate-in fade-in duration-150 text-left">
+      <div className="flex items-center justify-between pb-1.5 md:pb-2 border-b border-slate-100">
+        <span className="text-[12px] md:text-[13.5px] font-semibold text-blue-600 flex items-center gap-1.5">
+          <svg className="w-3.5 h-3.5 md:w-4 md:h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 20h9" />
+            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+          </svg>
+          Edit Pesan
+        </span>
+        <span className="text-[10px] md:text-[11.5px] text-slate-400">Tekan Simpan untuk memperbarui</span>
+      </div>
+      <textarea
+        value={value}
+        onChange={(e) => onChange(capitalizeWords(e.target.value))}
+        autoCapitalize="sentences"
+        autoCorrect="on"
+        spellCheck={false}
+        className="w-full min-h-[72px] md:min-h-[104px] max-h-[220px] md:max-h-[280px] p-2.5 md:p-3 text-sm md:text-[15px] text-slate-900 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white resize-y leading-relaxed"
+        autoFocus
+        rows={Math.min(6, Math.max(2, value.split("\n").length))}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            onSave();
+          } else if (e.key === "Escape") {
+            e.preventDefault();
+            onCancel();
+          }
+        }}
+      />
+      <div className="flex items-center justify-end gap-2 pt-1">
+        <button
+          type="button"
+          onClick={onCancel}
+          className="px-3 py-1.5 md:px-4 md:py-2 text-xs md:text-[13px] font-medium text-slate-600 hover:text-slate-800 hover:bg-slate-100 active:bg-slate-200 rounded-xl transition-colors cursor-pointer"
+        >
+          Batal
+        </button>
+        <button
+          type="button"
+          onClick={onSave}
+          disabled={!value.trim()}
+          className="px-3.5 py-1.5 md:px-4 md:py-2 text-xs md:text-[13px] font-semibold text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl transition-colors shadow-xs flex items-center gap-1.5 cursor-pointer"
+        >
+          <svg className="w-3.5 h-3.5 md:w-4 md:h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+          Simpan
+        </button>
+      </div>
+    </div>
+  );
+}
+
 // ─── Bird mascot icon ─────────────────────────────────────────────────────────
 function BirdIcon({ size = 32, color = "#3b82f6" }: { size?: number; color?: string }) {
   return (
@@ -6099,7 +6165,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
           onClick={() => setMoveToProjectItem(null)}
         >
           <div
-            className="w-full max-w-[360px] md:max-w-[460px] bg-white rounded-3xl p-5 md:p-6 shadow-2xl border border-slate-100 flex flex-col gap-4 md:gap-5 animate-[gemini-zoom-in_0.2s_ease-out]"
+            className="w-full max-w-[360px] md:max-w-[660px] bg-white rounded-3xl p-5 md:p-6 shadow-2xl border border-slate-100 flex flex-col gap-4 md:gap-5 animate-[gemini-zoom-in_0.2s_ease-out]"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between">
@@ -6124,7 +6190,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
             </div>
 
             <div className="min-w-0">
-              <p className="text-xs md:text-sm text-slate-500 mb-2.5 md:mb-3">
+              <p className="text-xs md:text-sm text-slate-500 mb-2.5 md:mb-3.5">
                 Pilih proyek tujuan untuk <span className="font-semibold text-slate-700 font-['Inter:Medium']">"{moveToProjectItem.title}"</span>:
               </p>
 
@@ -6133,7 +6199,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                 onTouchStart={(e) => e.stopPropagation()}
                 onTouchMove={(e) => e.stopPropagation()}
                 style={{ WebkitOverflowScrolling: "touch", overscrollBehaviorY: "contain" }}
-                className="flex flex-col gap-1.5 md:gap-2 h-[196px] max-h-[45vh] md:h-[264px] md:max-h-[50vh] overflow-y-auto overflow-x-hidden overscroll-contain touch-pan-y py-0.5 pr-1.5 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-slate-300 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent"
+                className="flex flex-col gap-1.5 md:grid md:grid-cols-2 md:gap-2.5 h-[196px] max-h-[45vh] md:h-auto md:max-h-[46vh] overflow-y-auto overflow-x-hidden overscroll-contain touch-pan-y py-0.5 pr-1.5 md:pr-0.5 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-slate-300 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent"
               >
                 {MOVE_TO_PROJECT_FOLDERS.map((proj) => {
                   const isChosen = selectedProjectId === proj.id;
@@ -11620,57 +11686,12 @@ function PercakapanTab({
                   )
                 ) : null}
                 {editingBubbleIdx === i ? (
-                  <div className="w-full max-w-[85vw] sm:max-w-[420px] bg-white rounded-2xl rounded-tr-sm border-2 border-blue-500 shadow-md p-3.5 flex flex-col gap-2.5 animate-in fade-in duration-150 text-left">
-                    <div className="flex items-center justify-between pb-1.5 border-b border-slate-100">
-                      <span className="text-[12px] font-semibold text-blue-600 flex items-center gap-1.5">
-                        <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M12 20h9"/>
-                          <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
-                        </svg>
-                        Edit Pesan
-                      </span>
-                      <span className="text-[10px] text-slate-400">Tekan Simpan untuk memperbarui</span>
-                    </div>
-                    <textarea
-                      value={editingBubbleText}
-                      onChange={(e) => setEditingBubbleText(capitalizeWords(e.target.value))}
-                      autoCapitalize="sentences"
-                      autoCorrect="on"
-                      spellCheck={false}
-                      className="w-full min-h-[72px] max-h-[220px] p-2.5 text-sm text-slate-900 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white resize-y leading-relaxed"
-                      autoFocus
-                      rows={Math.min(6, Math.max(2, editingBubbleText.split('\n').length))}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" && !e.shiftKey) {
-                          e.preventDefault();
-                          handleSaveEditBubble(i, editingBubbleText);
-                        } else if (e.key === "Escape") {
-                          e.preventDefault();
-                          handleCancelEditBubble();
-                        }
-                      }}
-                    />
-                    <div className="flex items-center justify-end gap-2 pt-1">
-                      <button
-                        type="button"
-                        onClick={handleCancelEditBubble}
-                        className="px-3 py-1.5 text-xs font-medium text-slate-600 hover:text-slate-800 hover:bg-slate-100 active:bg-slate-200 rounded-xl transition-colors cursor-pointer"
-                      >
-                        Batal
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleSaveEditBubble(i, editingBubbleText)}
-                        disabled={!editingBubbleText.trim()}
-                        className="px-3.5 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl transition-colors shadow-xs flex items-center gap-1.5 cursor-pointer"
-                      >
-                        <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                          <polyline points="20 6 9 17 4 12"/>
-                        </svg>
-                        Simpan
-                      </button>
-                    </div>
-                  </div>
+                  <InlineMessageEditor
+                    value={editingBubbleText}
+                    onChange={setEditingBubbleText}
+                    onSave={() => handleSaveEditBubble(i, editingBubbleText)}
+                    onCancel={handleCancelEditBubble}
+                  />
                 ) : (
                   <div className="relative inline-block max-w-[80%] md:max-w-[68%]">
                     <div
@@ -16591,57 +16612,12 @@ function ProyekTab({
                 return (
                   <div key={idx} className="flex flex-col items-end gap-1 relative">
                     {editingProjBubbleIdx === idx ? (
-                      <div className="w-full max-w-[85vw] sm:max-w-[420px] bg-white rounded-2xl rounded-tr-sm border-2 border-blue-500 shadow-md p-3.5 flex flex-col gap-2.5 animate-in fade-in duration-150 text-left">
-                        <div className="flex items-center justify-between pb-1.5 border-b border-slate-100">
-                          <span className="text-[12px] font-semibold text-blue-600 flex items-center gap-1.5">
-                            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                              <path d="M12 20h9"/>
-                              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
-                            </svg>
-                            Edit Pesan
-                          </span>
-                          <span className="text-[10px] text-slate-400">Tekan Simpan untuk memperbarui</span>
-                        </div>
-                        <textarea
-                          value={editingProjBubbleText}
-                          onChange={(e) => setEditingProjBubbleText(capitalizeWords(e.target.value))}
-                          autoCapitalize="sentences"
-                          autoCorrect="on"
-                          spellCheck={false}
-                          className="w-full min-h-[72px] max-h-[220px] p-2.5 text-sm text-slate-900 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white resize-y leading-relaxed"
-                          autoFocus
-                          rows={Math.min(6, Math.max(2, editingProjBubbleText.split('\n').length))}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter" && !e.shiftKey) {
-                              e.preventDefault();
-                              handleProjSaveEditBubble(idx, editingProjBubbleText);
-                            } else if (e.key === "Escape") {
-                              e.preventDefault();
-                              handleProjCancelEditBubble();
-                            }
-                          }}
-                        />
-                        <div className="flex items-center justify-end gap-2 pt-1">
-                          <button
-                            type="button"
-                            onClick={handleProjCancelEditBubble}
-                            className="px-3 py-1.5 text-xs font-medium text-slate-600 hover:text-slate-800 hover:bg-slate-100 active:bg-slate-200 rounded-xl transition-colors cursor-pointer"
-                          >
-                            Batal
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleProjSaveEditBubble(idx, editingProjBubbleText)}
-                            disabled={!editingProjBubbleText.trim()}
-                            className="px-3.5 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl transition-colors shadow-xs flex items-center gap-1.5 cursor-pointer"
-                          >
-                            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                              <polyline points="20 6 9 17 4 12"/>
-                            </svg>
-                            Simpan
-                          </button>
-                        </div>
-                      </div>
+                      <InlineMessageEditor
+                        value={editingProjBubbleText}
+                        onChange={setEditingProjBubbleText}
+                        onSave={() => handleProjSaveEditBubble(idx, editingProjBubbleText)}
+                        onCancel={handleProjCancelEditBubble}
+                      />
                     ) : (
                       <div className="relative inline-block max-w-[82%]">
                         <div
