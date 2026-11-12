@@ -16927,16 +16927,16 @@ function ProyekTab({
               {projectMenuOpen && (
                 <>
                   <div className="fixed inset-0 z-[190]" onClick={() => setProjectMenuOpen(false)} />
-                  <div className="absolute right-0 top-12 z-[200] w-[190px] bg-white rounded-2xl border border-neutral-200 shadow-xl p-1.5 animate-[gemini-fade-in_0.15s_ease-out]">
+                  <div className="absolute right-0 top-12 md:top-11 z-[200] w-[190px] md:w-[228px] bg-white rounded-2xl border border-neutral-200 shadow-xl p-1.5 md:p-2 animate-[gemini-fade-in_0.15s_ease-out]">
                     <button
                       type="button"
                       onClick={() => {
                         setProjectMenuOpen(false);
                         handleShareProject(selectedProject);
                       }}
-                      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-neutral-700 hover:bg-neutral-100 transition-colors text-left"
+                      className="w-full flex items-center gap-2.5 md:gap-3 px-3 py-2 md:px-3.5 md:py-2.5 rounded-xl text-xs md:text-[13.5px] font-semibold text-neutral-700 hover:bg-neutral-100 transition-colors text-left cursor-pointer"
                     >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <svg className="w-3.5 h-3.5 md:w-4 md:h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
                         <polyline points="16 6 12 2 8 6" />
                         <line x1="12" y1="2" x2="12" y2="15" />
@@ -16952,9 +16952,9 @@ function ProyekTab({
                         setRenameProjectModal(true);
                         setProjectMenuOpen(false);
                       }}
-                      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-neutral-700 hover:bg-neutral-100 transition-colors text-left"
+                      className="w-full flex items-center gap-2.5 md:gap-3 px-3 py-2 md:px-3.5 md:py-2.5 rounded-xl text-xs md:text-[13.5px] font-semibold text-neutral-700 hover:bg-neutral-100 transition-colors text-left cursor-pointer"
                     >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                      <svg className="w-3.5 h-3.5 md:w-4 md:h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
                       <span>Ganti Nama Proyek</span>
                     </button>
                     <div className="h-px bg-neutral-100 my-1" />
@@ -16965,9 +16965,9 @@ function ProyekTab({
                         setDeleteProjectConfirm(true);
                         setProjectMenuOpen(false);
                       }}
-                      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-red-600 hover:bg-red-50 transition-colors text-left"
+                      className="w-full flex items-center gap-2.5 md:gap-3 px-3 py-2 md:px-3.5 md:py-2.5 rounded-xl text-xs md:text-[13.5px] font-semibold text-red-600 hover:bg-red-50 transition-colors text-left cursor-pointer"
                     >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                      <svg className="w-3.5 h-3.5 md:w-4 md:h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                       <span>Hapus Proyek</span>
                     </button>
                   </div>
