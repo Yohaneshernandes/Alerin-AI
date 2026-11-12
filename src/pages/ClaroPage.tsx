@@ -662,27 +662,23 @@ const CLASS_PROGRAM_PACKAGES: ClassProgramPkg[] = [
   },
 ];
 
-function formatClassProgramAsText(): string {
+function getFeaturedPackage(featuredId?: string): ClassProgramPkg {
+  if (featuredId) {
+    const matched = CLASS_PROGRAM_PACKAGES.find((p) => p.id === featuredId.toLowerCase());
+    if (matched) return matched;
+  }
+  return CLASS_PROGRAM_PACKAGES.find((p) => p.popular) ?? CLASS_PROGRAM_PACKAGES[0];
+}
+
+function formatClassProgramAsText(featuredId?: string): string {
+  const pkg = getFeaturedPackage(featuredId);
   return [
     "Rekomendasi Paket Class Program Alerin",
     "",
-    ...CLASS_PROGRAM_PACKAGES.flatMap((pkg) => [
-      `${pkg.name} — ${pkg.price} (${pkg.duration}, normal ${pkg.originalPrice} · ${pkg.discountLabel})`,
-      ...pkg.features.map((f) => `• ${f}`),
-      "",
-    ]),
+    `${pkg.name} — ${pkg.price} (${pkg.duration.replace("*", "")}, normal ${pkg.originalPrice.replace("*", "")} · ${pkg.discountLabel})`,
+    ...pkg.features.map((f) => `• ${f}`),
   ].join("\n");
 }
-
-const CLASS_PROGRAM_TABLE_MD = `| Fitur | Silver | Gold | Complete | Platinum | Diamond | Reguler |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| Judul, Topik & Variabel | ✓ | - | ✓ | - | - | Konsultasi |
-| Outline & Tinjauan Pustaka | - | ✓ | ✓ | - | - | Konsultasi |
-| Olah Data & Pembahasan | - | - | ✓ | ✓ | - | Konsultasi |
-| Slide PPT & Latihan Sidang | - | - | - | - | ✓ | By Request |
-| Durasi Bimbingan | 1 Bln | 2 Bln | 3 Bln | 2 Bln | 14 Hr | 14 Hr |
-| Diskon Promo | 25% | 40% | 50% | 40% | 17% | 8% |
-| Harga | 299rb | 499rb | 1,01jt | 459rb | 249rb | 229rb |`;
 
 // ─── Format Markdown Bersih untuk Disalin ke Clipboard ──────────────────────
 // Merapikan teks hasil salinan agar enak dibaca di pesan chat, input, dokumen, atau WhatsApp
@@ -691,9 +687,12 @@ export function cleanMarkdownForCopy(md: string): string {
   let text = stripEmoticons(md);
 
   // Bersihkan blok paket class program menjadi ringkasan teks terstruktur
-  text = text.replace(/```(?:paket-class|paket|classprogram)(?::[a-z0-9-]+)?[\s\S]*?```/gi, () => {
-    return formatClassProgramAsText();
+  text = text.replace(/```(?:paket-class|paket|classprogram)(?::([a-z0-9-]+))?[\s\S]*?```/gi, (_m, featuredId) => {
+    return formatClassProgramAsText(featuredId);
   });
+
+  // Bersihkan penanda tautan "Pelajari selengkapnya" pada akhir output paket
+  text = text.replace(/```paket-selengkapnya[\s\S]*?```/gi, "Pelajari selengkapnya tentang semua Paket Class Program Alerin.");
 
   // Bersihkan blok infografis menjadi ringkasan teks terstruktur
   text = text.replace(/```(?:infografis|infographic)(?::([a-z0-9-]+))?[\s\S]*?```/gi, (_m, variant) => {
@@ -1749,16 +1748,12 @@ Kamu ingin dibuatkan **info grafis** untuk topik atau data apa? Tulis topikmu di
   // ── 00-paket. REKOMENDASI PAKET CLASS PROGRAM ────────────────────────────
   [
     /\b(?:paket\b(?=.*(?:sidang|presentasi|ppt|diamond))|(?:sidang|presentasi)\b(?=.*\bpaket\b))/i,
-    `Kalau kamu sedang mempersiapkan **seminar proposal maupun sidang skripsi**, Alerin rekomendasikan pilihan **Paket Class Program** terbaik untuk tahap presentasi dan sidang, lengkap dengan perbandingan fitur dan harganya.
+    `Kalau kamu sedang mempersiapkan **seminar proposal maupun sidang skripsi**, Alerin rekomendasikan pilihan **Paket Class Program** terbaik untuk tahap presentasi dan sidang, lengkap dengan rincian fitur, durasi, dan harganya.
 
 # Rekomendasi paket Class Program (Persiapan Sidang)
 
 \`\`\`paket-class:diamond
 \`\`\`
-
-# Tabel perbandingan Class Program
-
-${CLASS_PROGRAM_TABLE_MD}
 
 # Rekomendasi paket sesuai kebutuhan persiapan sidang
 
@@ -1768,20 +1763,19 @@ ${CLASS_PROGRAM_TABLE_MD}
 
 *Harga promo, diskon, dan masa bimbingan Class Program berlaku sejak tanggal aktivasi paket.*
 
-Kapan jadwal seminar proposal atau sidang skripsimu berlangsung agar Alerin bantu susunkan persiapan yang paling pas?`
+Kapan jadwal seminar proposal atau sidang skripsimu berlangsung agar Alerin bantu susunkan persiapan yang paling pas?
+
+\`\`\`paket-selengkapnya
+\`\`\``
   ],
   [
     /\b(?:bandingkan\s+paket|gold.*platinum|pilih\s+paket.*progres|memilih\s+paket)\b/i,
-    `Berikut perbandingan lengkap seluruh **Paket Class Program Alerin** beserta harga, fitur bimbingan, keunggulan masing-masing paket, dan panduan memilihnya sesuai progres skripsimu.
+    `Berikut rekomendasi **Paket Class Program Alerin** terbaik beserta harga, fitur bimbingan, keunggulan masing-masing paket, dan panduan memilihnya sesuai progres skripsimu.
 
 # Rekomendasi paket Class Program
 
 \`\`\`paket-class
 \`\`\`
-
-# Tabel perbandingan Class Program
-
-${CLASS_PROGRAM_TABLE_MD}
 
 # Panduan memilih paket sesuai tahap skripsimu
 
@@ -1794,22 +1788,21 @@ ${CLASS_PROGRAM_TABLE_MD}
 
 *Semua harga promo dan masa bimbingan Class Program berlaku sejak aktivasi paket.*
 
-Saat ini skripsimu sedang berada di bagian mana? Ceritakan agar Alerin bantu pilihkan paket terbaik.`
+Saat ini skripsimu sedang berada di bagian mana? Ceritakan agar Alerin bantu pilihkan paket terbaik.
+
+\`\`\`paket-selengkapnya
+\`\`\``
   ],
   [
     /\b(?:paket(?:\s+(?:class|program|bimbingan|belajar|skripsi|alerin))?|class\s*program)\b/i,
-    `Kalau kamu membutuhkan **rekomendasi paket Class Program**, Alerin bisa menyajikannya dalam bentuk rincian kartu paket dan tabel perbandingan lengkap dengan harga, fitur bimbingan, durasi, serta rekomendasi paket terbaik untuk tahap skripsimu.
+    `Kalau kamu membutuhkan **rekomendasi paket Class Program**, Alerin bisa menyajikannya dalam bentuk kartu rekomendasi paket lengkap dengan harga, fitur bimbingan, durasi, serta panduan memilih paket terbaik untuk tahap skripsimu.
 
-Berikut pilihan paket **Class Program Alerin** yang tersedia:
+Berikut pilihan paket **Class Program Alerin** yang paling direkomendasikan:
 
 # Pilihan paket Class Program
 
 \`\`\`paket-class
 \`\`\`
-
-# Tabel perbandingan Class Program
-
-${CLASS_PROGRAM_TABLE_MD}
 
 # Rekomendasi paket sesuai tahap skripsimu
 
@@ -1822,7 +1815,10 @@ ${CLASS_PROGRAM_TABLE_MD}
 
 *Harga promo, persentase diskon, dan masa bimbingan berlaku sejak tanggal aktivasi Class Program Alerin.*
 
-Kalau mau, beri tahu Alerin sedang berada di **tahap skripsi mana** sekarang (cari judul, proposal, olah data, atau persiapan sidang) agar Alerin bantu pilihkan **paket Class Program** yang paling tepat untukmu.`
+Kalau mau, beri tahu Alerin sedang berada di **tahap skripsi mana** sekarang (cari judul, proposal, olah data, atau persiapan sidang) agar Alerin bantu pilihkan **paket Class Program** yang paling tepat untukmu.
+
+\`\`\`paket-selengkapnya
+\`\`\``
   ],
 
   // ── 00. VISUALISASI DATA (Grafik Batang, Garis, Lingkaran, Perbandingan, KPI) ───
@@ -9600,22 +9596,112 @@ function getPackageBottomTagStyle(id: string): { label: string; className: strin
   }
 }
 
+function ClassProgramDetailModal({
+  pkg,
+  enrolledName,
+  onSelect,
+  onClose,
+}: {
+  pkg: ClassProgramPkg;
+  enrolledName: string | null;
+  onSelect: (name: string) => void;
+  onClose: () => void;
+}) {
+  if (typeof document === "undefined") return null;
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[270] flex items-center justify-center p-4 bg-black/45 backdrop-blur-xs animate-[gemini-fade-in_0.15s_ease-out]"
+      role="dialog"
+      aria-modal="true"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-[380px] sm:max-w-[420px] bg-white rounded-3xl p-5 shadow-2xl border border-slate-100 flex flex-col gap-4 animate-[gemini-zoom-in_0.2s_ease-out]"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold tracking-wide uppercase text-white bg-gradient-to-r from-[#1A73E8] to-[#1E40AF]">
+              {pkg.name}
+            </span>
+            <div className="flex items-baseline gap-2 mt-2.5">
+              <span className="text-2xl font-extrabold text-slate-900">{pkg.price}</span>
+              <span className="text-xs font-medium text-slate-500">/ {pkg.duration}</span>
+            </div>
+            <div className="flex items-center gap-2 mt-1">
+              <span className="text-xs line-through font-semibold text-rose-500">{pkg.originalPrice}</span>
+              <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-[#EAF2FF] text-[#1A73E8]">
+                {pkg.discountLabel}
+              </span>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Tutup detail paket"
+            className="size-8 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-colors cursor-pointer shrink-0"
+          >
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+
+        <div className="rounded-2xl bg-slate-50 border border-slate-100 p-3.5">
+          <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">Cocok Untuk</p>
+          <p className="text-xs text-slate-700 leading-relaxed">{pkg.summary}</p>
+        </div>
+
+        <div>
+          <p className="text-xs font-bold text-slate-800 mb-2">Yang Kamu Dapatkan:</p>
+          <ul className="space-y-2">
+            {pkg.features.map((feat, idx) => (
+              <li key={idx} className="flex items-start gap-2 text-xs text-slate-700 leading-snug">
+                <span className="size-4 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                </span>
+                <span>{feat}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {enrolledName === pkg.name && (
+          <div className="rounded-xl bg-emerald-50 border border-emerald-200 px-3.5 py-2.5 text-xs font-medium text-emerald-800">
+            Pilihan paket <strong>{pkg.name}</strong> dicatat! Konsultan Class Program Alerin siap membantu pendaftaranmu.
+          </div>
+        )}
+
+        <div className="flex items-center gap-2 pt-1 border-t border-slate-100">
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex-1 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+          >
+            Tutup
+          </button>
+          <button
+            type="button"
+            onClick={() => onSelect(pkg.name)}
+            className="flex-1 py-2.5 rounded-xl text-xs font-bold text-white bg-[#1A73E8] hover:bg-[#1557b0] active:scale-[0.99] transition-all cursor-pointer shadow-xs"
+          >
+            Pilih Paket Ini
+          </button>
+        </div>
+      </div>
+    </div>,
+    document.body
+  );
+}
+
 function ClassProgramPackagesCard({ featuredId }: { featuredId?: string }) {
   const [selectedPkg, setSelectedPkg] = useState<ClassProgramPkg | null>(null);
   const [enrolledName, setEnrolledName] = useState<string | null>(null);
 
-  const featuredPkg = useMemo(() => {
-    if (featuredId) {
-      const matched = CLASS_PROGRAM_PACKAGES.find((p) => p.id === featuredId.toLowerCase());
-      if (matched) return matched;
-    }
-    return CLASS_PROGRAM_PACKAGES.find((p) => p.popular) ?? CLASS_PROGRAM_PACKAGES[0];
-  }, [featuredId]);
-
-  const secondaryPackages = useMemo(
-    () => CLASS_PROGRAM_PACKAGES.filter((p) => p.id !== featuredPkg.id),
-    [featuredPkg]
-  );
+  const featuredPkg = useMemo(() => getFeaturedPackage(featuredId), [featuredId]);
 
   const featuredHighlights = useMemo(() => {
     if (featuredPkg.id === "complete") {
@@ -9640,7 +9726,7 @@ function ClassProgramPackagesCard({ featuredId }: { featuredId?: string }) {
 
   return (
     <div className="my-3 w-full max-w-full animate-in fade-in duration-300">
-      {/* 1. Featured Package Card (Paling direkomendasikan) */}
+      {/* 1. Featured Package Card (Tampilkan 1 Paket Utama) */}
       <div className="rounded-2xl border border-slate-200/90 bg-white p-4 sm:p-5 shadow-[0_1px_4px_rgba(15,23,42,0.03)]">
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-700 text-[11px] font-semibold leading-4">
           Paling direkomendasikan
@@ -9685,93 +9771,66 @@ function ClassProgramPackagesCard({ featuredId }: { featuredId?: string }) {
         </button>
       </div>
 
-      {/* 2. Grid 2 Kolom Paket Lainnya */}
-      <div className="mt-3 grid grid-cols-2 gap-2.5 sm:gap-3">
-        {secondaryPackages.map((pkg, idx) => {
-          const badge = getPackageBottomTagStyle(pkg.id);
-          const isLastOddCard = secondaryPackages.length % 2 === 1 && idx === secondaryPackages.length - 1;
-          return (
-            <button
-              key={pkg.id}
-              type="button"
-              onClick={() => {
-                setEnrolledName(null);
-                setSelectedPkg(pkg);
-              }}
-              className={`rounded-2xl border border-slate-200/90 bg-white p-3.5 sm:p-4 flex flex-col justify-between text-left hover:border-slate-300 hover:shadow-xs active:scale-[0.99] transition-all cursor-pointer ${
-                isLastOddCard ? "col-span-2" : ""
-              }`}
-            >
-              <div>
-                <h4 className="text-[13.5px] sm:text-[15px] font-bold text-slate-900 leading-5">
-                  {formatPackageHeadingName(pkg.name)}
-                </h4>
+      {selectedPkg && (
+        <ClassProgramDetailModal
+          pkg={selectedPkg}
+          enrolledName={enrolledName}
+          onSelect={(name) => setEnrolledName(name)}
+          onClose={() => setSelectedPkg(null)}
+        />
+      )}
+    </div>
+  );
+}
 
-                <p className="text-xl sm:text-[22px] font-bold text-slate-900 tracking-tight leading-tight mt-1 whitespace-nowrap">
-                  {pkg.price}
-                </p>
+function ClassProgramLearnMoreLink() {
+  const [isCatalogOpen, setIsCatalogOpen] = useState(false);
+  const [selectedPkg, setSelectedPkg] = useState<ClassProgramPkg | null>(null);
+  const [enrolledName, setEnrolledName] = useState<string | null>(null);
 
-                <p className="text-[11px] sm:text-xs text-slate-500 leading-4 mt-1">
-                  / {pkg.duration.replace("*", "")} · {pkg.discountLabel.replace("Dapatkan ", "")}
-                </p>
-
-                <ul className="mt-3 space-y-1.5">
-                  {pkg.features.map((feat, fi) => (
-                    <li key={fi} className="flex items-start gap-2 text-xs sm:text-[13px] text-slate-800 leading-snug">
-                      <span className="size-1 rounded-full bg-slate-900 shrink-0 mt-[6px]" />
-                      <span>{feat}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="mt-3 pt-1 flex items-center justify-between gap-2">
-                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold leading-4 ${badge.className}`}>
-                  {badge.label}
-                </span>
-                {isLastOddCard && (
-                  <span className="text-[11px] font-semibold text-slate-500">
-                    Lihat detail →
-                  </span>
-                )}
-              </div>
-            </button>
-          );
-        })}
+  return (
+    <>
+      <div className="mt-3 pt-1">
+        <button
+          type="button"
+          onClick={() => setIsCatalogOpen(true)}
+          className="inline-flex items-center gap-1.5 text-[13.5px] font-semibold text-[#1A73E8] hover:text-[#1557b0] underline underline-offset-4 decoration-[#1A73E8]/35 hover:decoration-[#1A73E8] cursor-pointer transition-colors"
+        >
+          <span>Pelajari selengkapnya</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M5 12h14" />
+            <path d="m12 5 7 7-7 7" />
+          </svg>
+        </button>
       </div>
 
-      {/* Modal Detail Paket */}
-      {selectedPkg && typeof document !== "undefined" && createPortal(
+      {isCatalogOpen && typeof document !== "undefined" && createPortal(
         <div
           className="fixed inset-0 z-[260] flex items-center justify-center p-4 bg-black/45 backdrop-blur-xs animate-[gemini-fade-in_0.15s_ease-out]"
           role="dialog"
           aria-modal="true"
-          onClick={() => setSelectedPkg(null)}
+          onClick={() => setIsCatalogOpen(false)}
         >
           <div
-            className="w-full max-w-[380px] bg-white rounded-3xl p-5 shadow-2xl border border-slate-100 flex flex-col gap-4 animate-[gemini-zoom-in_0.2s_ease-out]"
+            className="w-full max-w-[420px] sm:max-w-[680px] max-h-[85vh] bg-white rounded-3xl p-5 sm:p-6 shadow-2xl border border-slate-100 flex flex-col gap-4 overflow-hidden animate-[gemini-zoom-in_0.2s_ease-out]"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-start justify-between gap-3">
+            <div className="flex items-start justify-between gap-3 shrink-0">
               <div>
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold tracking-wide uppercase text-white bg-gradient-to-r from-[#1A73E8] to-[#1E40AF]">
-                  {selectedPkg.name}
+                  CLASS PROGRAM ALERIN
                 </span>
-                <div className="flex items-baseline gap-2 mt-2.5">
-                  <span className="text-2xl font-extrabold text-slate-900">{selectedPkg.price}</span>
-                  <span className="text-xs font-medium text-slate-500">/ {selectedPkg.duration}</span>
-                </div>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className="text-xs line-through font-semibold text-rose-500">{selectedPkg.originalPrice}</span>
-                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-[#EAF2FF] text-[#1A73E8]">
-                    {selectedPkg.discountLabel}
-                  </span>
-                </div>
+                <h3 className="text-lg sm:text-xl font-bold text-slate-900 mt-2">
+                  Pilihan Lengkap Paket Class Program
+                </h3>
+                <p className="text-xs sm:text-[13px] text-slate-600 leading-relaxed mt-1">
+                  Pilih paket bimbingan yang paling sesuai dengan tahap skripsimu. Klik salah satu kartu paket untuk melihat detail atau mendaftar.
+                </p>
               </div>
               <button
                 type="button"
-                onClick={() => setSelectedPkg(null)}
-                aria-label="Tutup detail paket"
+                onClick={() => setIsCatalogOpen(false)}
+                aria-label="Tutup daftar paket"
                 className="size-8 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-colors cursor-pointer shrink-0"
               >
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3">
@@ -9781,54 +9840,64 @@ function ClassProgramPackagesCard({ featuredId }: { featuredId?: string }) {
               </button>
             </div>
 
-            <div className="rounded-2xl bg-slate-50 border border-slate-100 p-3.5">
-              <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">Cocok Untuk</p>
-              <p className="text-xs text-slate-700 leading-relaxed">{selectedPkg.summary}</p>
-            </div>
-
-            <div>
-              <p className="text-xs font-bold text-slate-800 mb-2">Yang Kamu Dapatkan:</p>
-              <ul className="space-y-2">
-                {selectedPkg.features.map((feat, idx) => (
-                  <li key={idx} className="flex items-start gap-2 text-xs text-slate-700 leading-snug">
-                    <span className="size-4 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5">
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="20 6 9 17 4 12" />
-                      </svg>
+            <div className="overflow-y-auto pr-1 -mr-1 grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {CLASS_PROGRAM_PACKAGES.map((pkg) => {
+                const badge = getPackageBottomTagStyle(pkg.id);
+                return (
+                  <button
+                    key={pkg.id}
+                    type="button"
+                    onClick={() => {
+                      setEnrolledName(null);
+                      setSelectedPkg(pkg);
+                    }}
+                    className="rounded-2xl border border-slate-200/90 bg-white p-4 flex flex-col justify-between text-left hover:border-blue-300 hover:shadow-xs active:scale-[0.99] transition-all cursor-pointer"
+                  >
+                    <div>
+                      <div className="flex items-center justify-between gap-2">
+                        <h4 className="text-sm font-bold text-slate-900">
+                          {formatPackageHeadingName(pkg.name)}
+                        </h4>
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10.5px] font-semibold ${badge.className}`}>
+                          {badge.label}
+                        </span>
+                      </div>
+                      <p className="text-xl font-bold text-blue-600 tracking-tight mt-1">
+                        {pkg.price}
+                      </p>
+                      <p className="text-[11px] text-slate-500 mt-0.5">
+                        / {pkg.duration.replace("*", "")} · Normal {pkg.originalPrice.replace("*", "")} ({pkg.discountLabel.replace("Dapatkan ", "")})
+                      </p>
+                      <ul className="mt-2.5 space-y-1">
+                        {pkg.features.map((feat, fi) => (
+                          <li key={fi} className="flex items-start gap-2 text-xs text-slate-700 leading-snug">
+                            <span className="size-1 rounded-full bg-slate-900 shrink-0 mt-[6px]" />
+                            <span>{feat}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    <span className="mt-3 pt-2 border-t border-slate-100 text-xs font-semibold text-[#1A73E8]">
+                      Lihat detail paket →
                     </span>
-                    <span>{feat}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {enrolledName === selectedPkg.name && (
-              <div className="rounded-xl bg-emerald-50 border border-emerald-200 px-3.5 py-2.5 text-xs font-medium text-emerald-800">
-                Pilihan paket <strong>{selectedPkg.name}</strong> dicatat! Konsultan Class Program Alerin siap membantu pendaftaranmu.
-              </div>
-            )}
-
-            <div className="flex items-center gap-2 pt-1 border-t border-slate-100">
-              <button
-                type="button"
-                onClick={() => setSelectedPkg(null)}
-                className="flex-1 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
-              >
-                Tutup
-              </button>
-              <button
-                type="button"
-                onClick={() => setEnrolledName(selectedPkg.name)}
-                className="flex-1 py-2.5 rounded-xl text-xs font-bold text-white bg-[#1A73E8] hover:bg-[#1557b0] active:scale-[0.99] transition-all cursor-pointer shadow-xs"
-              >
-                Pilih Paket Ini
-              </button>
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>,
         document.body
       )}
-    </div>
+
+      {selectedPkg && (
+        <ClassProgramDetailModal
+          pkg={selectedPkg}
+          enrolledName={enrolledName}
+          onSelect={(name) => setEnrolledName(name)}
+          onClose={() => setSelectedPkg(null)}
+        />
+      )}
+    </>
   );
 }
 
@@ -9895,6 +9964,14 @@ function MarkdownRenderer({ text, isStreaming, compact }: { text: string; isStre
         if (hasClosingFence || !isStreaming) {
           const featuredId = lang.includes(":") ? lang.split(":")[1] : undefined;
           elements.push(<ClassProgramPackagesCard key={`pkg-${i}`} featuredId={featuredId} />);
+        }
+        continue;
+      }
+
+      // Pelajari Selengkapnya CTA at the bottom of package responses
+      if (!compact && lang === "paket-selengkapnya") {
+        if (hasClosingFence || !isStreaming) {
+          elements.push(<ClassProgramLearnMoreLink key={`pkg-more-${i}`} />);
         }
         continue;
       }
