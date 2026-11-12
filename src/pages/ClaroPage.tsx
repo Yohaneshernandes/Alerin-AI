@@ -6006,23 +6006,23 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
           onClick={() => setRenameModalItem(null)}
         >
           <div
-            className="w-full max-w-[340px] bg-white rounded-3xl p-5 shadow-2xl border border-slate-100 flex flex-col gap-4 animate-[gemini-zoom-in_0.2s_ease-out]"
+            className="w-full max-w-[340px] md:max-w-[440px] bg-white rounded-3xl p-5 md:p-6 shadow-2xl border border-slate-100 flex flex-col gap-4 md:gap-5 animate-[gemini-zoom-in_0.2s_ease-out]"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="size-8 rounded-xl bg-slate-100 text-slate-900 flex items-center justify-center shrink-0">
+                <div className="size-8 md:size-9 rounded-xl bg-slate-100 text-slate-900 flex items-center justify-center shrink-0">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M12 20h9" />
                     <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
                   </svg>
                 </div>
-                <h3 className="text-base font-bold text-slate-900">Ubah Nama Riwayat</h3>
+                <h3 className="text-base md:text-lg font-bold text-slate-900">Ubah Nama Riwayat</h3>
               </div>
               <button
                 type="button"
                 onClick={() => setRenameModalItem(null)}
-                className="size-7 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center transition-colors"
+                className="size-7 md:size-8 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center transition-colors cursor-pointer"
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <line x1="18" y1="6" x2="6" y2="18" />
@@ -6033,10 +6033,10 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
 
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-xs font-medium text-slate-500">
+                <label className="block text-xs md:text-[13px] font-medium text-slate-500">
                   Nama percakapan
                 </label>
-                <span className="text-[11px] text-slate-400 font-medium">
+                <span className="text-[11px] md:text-xs text-slate-400 font-medium">
                   {renameInput.length}/25
                 </span>
               </div>
@@ -6054,15 +6054,15 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                 }}
                 autoFocus
                 placeholder="Masukkan judul riwayat..."
-                className="w-full text-[14px] text-slate-800 bg-slate-50 border border-slate-200 focus:border-blue-500 focus:bg-white focus:ring-3 focus:ring-blue-100 rounded-xl px-3.5 py-2.5 outline-none transition-all"
+                className="w-full text-[14px] md:text-[15px] text-slate-800 bg-slate-50 border border-slate-200 focus:border-blue-500 focus:bg-white focus:ring-3 focus:ring-blue-100 rounded-xl px-3.5 py-2.5 md:px-4 md:py-3 outline-none transition-all"
               />
             </div>
 
-            <div className="flex items-center justify-end gap-2 pt-1">
+            <div className="flex items-center justify-end gap-2 pt-1 md:pt-2">
               <button
                 type="button"
                 onClick={() => setRenameModalItem(null)}
-                className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors"
+                className="px-4 py-2 md:px-5 md:py-2.5 rounded-xl text-xs md:text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
               >
                 Batal
               </button>
@@ -6070,7 +6070,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                 type="button"
                 disabled={!renameInput.trim()}
                 onClick={() => saveRename(renameModalItem.id, renameInput)}
-                className="px-4 py-2 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white shadow-xs transition-colors"
+                className="px-4 py-2 md:px-5 md:py-2.5 rounded-xl text-xs md:text-sm font-bold bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white shadow-xs transition-colors cursor-pointer"
               >
                 Simpan
               </button>
@@ -6086,22 +6086,22 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
           onClick={() => setMoveToProjectItem(null)}
         >
           <div
-            className="w-full max-w-[360px] bg-white rounded-3xl p-5 shadow-2xl border border-slate-100 flex flex-col gap-4 animate-[gemini-zoom-in_0.2s_ease-out]"
+            className="w-full max-w-[360px] md:max-w-[460px] bg-white rounded-3xl p-5 md:p-6 shadow-2xl border border-slate-100 flex flex-col gap-4 md:gap-5 animate-[gemini-zoom-in_0.2s_ease-out]"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="size-8 rounded-xl bg-[#F2F4F7] text-neutral-900 flex items-center justify-center shrink-0">
+                <div className="size-8 md:size-9 rounded-xl bg-[#F2F4F7] text-neutral-900 flex items-center justify-center shrink-0">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
                   </svg>
                 </div>
-                <h3 className="text-base font-bold text-slate-900">Pindahkan ke Proyek</h3>
+                <h3 className="text-base md:text-lg font-bold text-slate-900">Pindahkan ke Proyek</h3>
               </div>
               <button
                 type="button"
                 onClick={() => setMoveToProjectItem(null)}
-                className="size-7 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center transition-colors"
+                className="size-7 md:size-8 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center transition-colors cursor-pointer"
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <line x1="18" y1="6" x2="6" y2="18" />
@@ -6111,7 +6111,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
             </div>
 
             <div className="min-w-0">
-              <p className="text-xs text-slate-500 mb-2.5">
+              <p className="text-xs md:text-sm text-slate-500 mb-2.5 md:mb-3">
                 Pilih proyek tujuan untuk <span className="font-semibold text-slate-700 font-['Inter:Medium']">"{moveToProjectItem.title}"</span>:
               </p>
 
@@ -6120,7 +6120,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                 onTouchStart={(e) => e.stopPropagation()}
                 onTouchMove={(e) => e.stopPropagation()}
                 style={{ WebkitOverflowScrolling: "touch", overscrollBehaviorY: "contain" }}
-                className="flex flex-col gap-1.5 h-[196px] max-h-[45vh] overflow-y-auto overflow-x-hidden overscroll-contain touch-pan-y py-0.5 pr-1.5 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-slate-300 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent"
+                className="flex flex-col gap-1.5 md:gap-2 h-[196px] max-h-[45vh] md:h-[264px] md:max-h-[50vh] overflow-y-auto overflow-x-hidden overscroll-contain touch-pan-y py-0.5 pr-1.5 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-slate-300 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent"
               >
                 {MOVE_TO_PROJECT_FOLDERS.map((proj) => {
                   const isChosen = selectedProjectId === proj.id;
@@ -6129,19 +6129,19 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                       key={proj.id}
                       type="button"
                       onClick={() => setSelectedProjectId(proj.id)}
-                      className={`w-full h-[50px] shrink-0 flex items-center gap-3 px-3 py-2 rounded-xl border text-left transition-colors ${
+                      className={`w-full h-[50px] md:h-[54px] shrink-0 flex items-center gap-3 px-3 py-2 md:px-3.5 rounded-xl border text-left transition-colors cursor-pointer ${
                         isChosen
                           ? "border-neutral-900 bg-neutral-50/70"
                           : "border-slate-100 hover:border-slate-200 hover:bg-slate-50"
                       }`}
                     >
-                      <div className={`size-8 rounded-lg flex items-center justify-center shrink-0 ${isChosen ? "bg-black text-white" : "bg-[#F2F4F7] text-neutral-900"}`}>
+                      <div className={`size-8 md:size-9 rounded-lg flex items-center justify-center shrink-0 ${isChosen ? "bg-black text-white" : "bg-[#F2F4F7] text-neutral-900"}`}>
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                           <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
                         </svg>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className={`text-[13px] font-semibold leading-tight truncate ${isChosen ? "text-neutral-900" : "text-slate-800"}`}>
+                        <p className={`text-[13px] md:text-sm font-semibold leading-tight truncate ${isChosen ? "text-neutral-900" : "text-slate-800"}`}>
                           {proj.name}
                         </p>
                       </div>
@@ -6156,11 +6156,11 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-2 pt-1 border-t border-slate-100">
+            <div className="flex items-center justify-end gap-2 pt-1 md:pt-2 border-t border-slate-100">
               <button
                 type="button"
                 onClick={() => setMoveToProjectItem(null)}
-                className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors"
+                className="px-4 py-2 md:px-5 md:py-2.5 rounded-xl text-xs md:text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
               >
                 Batal
               </button>
@@ -6172,7 +6172,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                   showToast(`Percakapan berhasil dipindahkan ke ${projName}`);
                   setMoveToProjectItem(null);
                 }}
-                className="px-4 py-2 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-xs transition-colors"
+                className="px-4 py-2 md:px-5 md:py-2.5 rounded-xl text-xs md:text-sm font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-xs transition-colors cursor-pointer"
               >
                 Pindahkan
               </button>
@@ -6190,12 +6190,12 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
           onClick={() => setDeleteConfirmItem(null)}
         >
           <div
-            className="w-full max-w-[340px] bg-white rounded-3xl p-5 shadow-2xl border border-slate-100 flex flex-col gap-4 animate-[gemini-zoom-in_0.2s_ease-out]"
+            className="w-full max-w-[340px] md:max-w-[440px] bg-white rounded-3xl p-5 md:p-6 shadow-2xl border border-slate-100 flex flex-col gap-4 md:gap-5 animate-[gemini-zoom-in_0.2s_ease-out]"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="size-8 rounded-xl bg-red-50 text-red-600 flex items-center justify-center shrink-0 border border-red-100">
+                <div className="size-8 md:size-9 rounded-xl bg-red-50 text-red-600 flex items-center justify-center shrink-0 border border-red-100">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="3 6 5 6 21 6" />
                     <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
@@ -6203,12 +6203,12 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                     <line x1="14" y1="11" x2="14" y2="17" />
                   </svg>
                 </div>
-                <h3 className="text-base font-bold text-slate-900">Hapus Percakapan?</h3>
+                <h3 className="text-base md:text-lg font-bold text-slate-900">Hapus Percakapan?</h3>
               </div>
               <button
                 type="button"
                 onClick={() => setDeleteConfirmItem(null)}
-                className="size-7 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center transition-colors cursor-pointer"
+                className="size-7 md:size-8 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center transition-colors cursor-pointer"
                 aria-label="Tutup"
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -6219,16 +6219,16 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
             </div>
 
             <div>
-              <p className="text-xs text-slate-500 leading-relaxed">
+              <p className="text-xs md:text-sm text-slate-500 leading-relaxed">
                 Apakah kamu yakin ingin menghapus percakapan <span className="font-semibold text-slate-800">"{deleteConfirmItem.title}"</span>? Tindakan ini tidak dapat dibatalkan.
               </p>
             </div>
 
-            <div className="flex items-center justify-end gap-2 pt-1 border-t border-slate-100">
+            <div className="flex items-center justify-end gap-2 pt-1 md:pt-2 border-t border-slate-100">
               <button
                 type="button"
                 onClick={() => setDeleteConfirmItem(null)}
-                className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+                className="px-4 py-2 md:px-5 md:py-2.5 rounded-xl text-xs md:text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
               >
                 Batal
               </button>
@@ -6238,7 +6238,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                   deleteRiwayat(deleteConfirmItem.id);
                   setDeleteConfirmItem(null);
                 }}
-                className="px-4 py-2 rounded-xl text-xs font-bold bg-red-600 hover:bg-red-700 text-white shadow-xs transition-colors cursor-pointer active:scale-95"
+                className="px-4 py-2 md:px-5 md:py-2.5 rounded-xl text-xs md:text-sm font-bold bg-red-600 hover:bg-red-700 text-white shadow-xs transition-colors cursor-pointer active:scale-95"
               >
                 Hapus
               </button>
@@ -15836,15 +15836,15 @@ function ProyekTab({
             aria-modal="true"
           >
             <div
-              className="w-full max-w-[340px] bg-white rounded-3xl p-5 shadow-2xl border border-neutral-100 flex flex-col gap-4 animate-[gemini-zoom-in_0.2s_ease-out]"
+              className="w-full max-w-[340px] md:max-w-[450px] bg-white rounded-3xl p-5 md:p-6 shadow-2xl border border-neutral-100 flex flex-col gap-4 md:gap-5 animate-[gemini-zoom-in_0.2s_ease-out]"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between">
-                <h3 className="text-base font-bold text-neutral-900">Buat Proyek</h3>
+                <h3 className="text-base md:text-lg font-bold text-neutral-900">Buat Proyek</h3>
                 <button
                   type="button"
                   onClick={() => setNewProjectOpen(false)}
-                  className="size-7 rounded-full text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 flex items-center justify-center transition-colors cursor-pointer"
+                  className="size-7 md:size-8 rounded-full text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 flex items-center justify-center transition-colors cursor-pointer"
                   aria-label="Tutup"
                 >
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -15856,8 +15856,8 @@ function ProyekTab({
 
               <div>
                 <div className="flex items-center justify-between mb-1.5">
-                  <label className="block text-xs font-semibold text-neutral-700">Nama Proyek</label>
-                  <span className={`text-[11px] font-medium tabular-nums ${projectName.length >= 25 ? "text-amber-600 font-semibold" : "text-neutral-400"}`}>
+                  <label className="block text-xs md:text-[13px] font-semibold text-neutral-700">Nama Proyek</label>
+                  <span className={`text-[11px] md:text-xs font-medium tabular-nums ${projectName.length >= 25 ? "text-amber-600 font-semibold" : "text-neutral-400"}`}>
                     {projectName.length}/25
                   </span>
                 </div>
@@ -15876,7 +15876,7 @@ function ProyekTab({
                   }}
                   placeholder={isFolderLimitReached ? "Batas folder proyek tercapai" : "Masukkan nama proyek..."}
                   autoFocus={!isFolderLimitReached}
-                  className={`w-full text-sm rounded-xl px-3.5 py-2.5 outline-none transition-all placeholder:text-neutral-400 border ${
+                  className={`w-full text-sm md:text-[15px] rounded-xl px-3.5 py-2.5 md:px-4 md:py-3 outline-none transition-all placeholder:text-neutral-400 border ${
                     isFolderLimitReached
                       ? "text-neutral-400 bg-neutral-100 border-neutral-200 cursor-not-allowed"
                       : "text-neutral-800 bg-neutral-50 border-neutral-200 focus:border-[#1A73E8] focus:bg-white focus:ring-3 focus:ring-blue-100"
@@ -15885,7 +15885,7 @@ function ProyekTab({
               </div>
 
               {isFolderLimitReached ? (
-                <div className="rounded-xl bg-[#EAF2FF]/90 px-3.5 py-3 border border-blue-200 flex flex-col gap-2.5">
+                <div className="rounded-xl bg-[#EAF2FF]/90 px-3.5 py-3 md:px-4 md:py-3.5 border border-blue-200 flex flex-col gap-2.5">
                   <div className="flex items-start gap-2">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="text-[#1A73E8] shrink-0 mt-0.5">
                       <circle cx="12" cy="12" r="10" />
@@ -15893,10 +15893,10 @@ function ProyekTab({
                       <line x1="12" y1="16" x2="12.01" y2="16" />
                     </svg>
                     <div className="flex flex-col gap-1">
-                      <p className="text-xs text-blue-950 leading-relaxed font-medium">
+                      <p className="text-xs md:text-[13px] text-blue-950 leading-relaxed font-medium">
                         Batas maksimal {userPlanInfo.maxFolders} proyek untuk Akun {userPlanInfo.label} sudah tercapai, sehingga tidak bisa membuat proyek baru lagi.
                       </p>
-                      <p className="text-xs leading-relaxed font-normal text-blue-900/80">
+                      <p className="text-xs md:text-[13px] leading-relaxed font-normal text-blue-900/80">
                         Upgrade paket untuk meningkatkan batas pembuatan proyek
                       </p>
                     </div>
@@ -15907,7 +15907,7 @@ function ProyekTab({
                       setNewProjectOpen(false);
                       window.dispatchEvent(new CustomEvent("alerin-open-upgrade"));
                     }}
-                    className="w-full py-2 px-3 rounded-lg bg-[#1A73E8] hover:bg-[#1557b0] active:scale-[0.99] text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-2xs"
+                    className="w-full py-2 md:py-2.5 px-3 rounded-lg bg-[#1A73E8] hover:bg-[#1557b0] active:scale-[0.99] text-white text-xs md:text-[13px] font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-2xs"
                   >
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="none">
                       <path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z" />
@@ -15916,8 +15916,8 @@ function ProyekTab({
                   </button>
                 </div>
               ) : (
-                <div className="rounded-xl bg-neutral-50 px-3.5 py-2.5 border border-neutral-100">
-                  <p className="text-xs text-neutral-600 leading-relaxed">
+                <div className="rounded-xl bg-neutral-50 px-3.5 py-2.5 md:px-4 md:py-3 border border-neutral-100">
+                  <p className="text-xs md:text-[13px] text-neutral-600 leading-relaxed">
                     Setiap proyek di Akun {userPlanInfo.label} menyimpan hingga {userPlanInfo.limit} riwayat obrolan.
                   </p>
                 </div>
@@ -15927,7 +15927,7 @@ function ProyekTab({
                 <button
                   type="button"
                   onClick={() => setNewProjectOpen(false)}
-                  className="flex-1 px-4 py-2.5 rounded-xl text-xs font-semibold text-neutral-600 hover:bg-neutral-100 active:bg-neutral-200 transition-colors cursor-pointer text-center"
+                  className="flex-1 px-4 py-2.5 md:text-sm rounded-xl text-xs font-semibold text-neutral-600 hover:bg-neutral-100 active:bg-neutral-200 transition-colors cursor-pointer text-center"
                 >
                   Batal
                 </button>
@@ -15935,7 +15935,7 @@ function ProyekTab({
                   type="button"
                   disabled={!projectName.trim() || isFolderLimitReached}
                   onClick={handleCreateProject}
-                  className={`flex-1 px-4 py-2.5 rounded-xl text-xs font-bold transition-all text-center shadow-xs ${
+                  className={`flex-1 px-4 py-2.5 md:text-sm rounded-xl text-xs font-bold transition-all text-center shadow-xs ${
                     projectName.trim() && !isFolderLimitReached
                       ? "bg-[#1A73E8] hover:bg-[#1557b0] text-white active:scale-95 cursor-pointer"
                       : "bg-[#E2E8F0] text-[#94A3B8] cursor-not-allowed"
@@ -15959,18 +15959,18 @@ function ProyekTab({
           }}
         >
           <div
-            className="w-full max-w-[340px] bg-white rounded-3xl p-5 shadow-2xl border border-slate-100 flex flex-col gap-4 animate-[gemini-zoom-in_0.2s_ease-out]"
+            className="w-full max-w-[340px] md:max-w-[440px] bg-white rounded-3xl p-5 md:p-6 shadow-2xl border border-slate-100 flex flex-col gap-4 md:gap-5 animate-[gemini-zoom-in_0.2s_ease-out]"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="size-8 rounded-xl bg-slate-100 text-slate-900 flex items-center justify-center shrink-0">
+                <div className="size-8 md:size-9 rounded-xl bg-slate-100 text-slate-900 flex items-center justify-center shrink-0">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M12 20h9" />
                     <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
                   </svg>
                 </div>
-                <h3 className="text-base font-bold text-slate-900">Ganti Nama Proyek</h3>
+                <h3 className="text-base md:text-lg font-bold text-slate-900">Ganti Nama Proyek</h3>
               </div>
               <button
                 type="button"
@@ -15978,7 +15978,7 @@ function ProyekTab({
                   setRenameProjectModal(false);
                   setProjectActionTarget(null);
                 }}
-                className="size-7 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center transition-colors cursor-pointer"
+                className="size-7 md:size-8 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center transition-colors cursor-pointer"
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <line x1="18" y1="6" x2="6" y2="18" />
@@ -15989,10 +15989,10 @@ function ProyekTab({
 
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-xs font-medium text-slate-500">
+                <label className="block text-xs md:text-[13px] font-medium text-slate-500">
                   Nama proyek
                 </label>
-                <span className="text-[11px] text-slate-400 font-medium">
+                <span className="text-[11px] md:text-xs text-slate-400 font-medium">
                   {renameProjectInput.length}/25
                 </span>
               </div>
@@ -16013,18 +16013,18 @@ function ProyekTab({
                 }}
                 autoFocus
                 placeholder="Masukkan nama proyek..."
-                className="w-full text-[14px] text-slate-800 bg-slate-50 border border-slate-200 focus:border-blue-500 focus:bg-white focus:ring-3 focus:ring-blue-100 rounded-xl px-3.5 py-2.5 outline-none transition-all"
+                className="w-full text-[14px] md:text-[15px] text-slate-800 bg-slate-50 border border-slate-200 focus:border-blue-500 focus:bg-white focus:ring-3 focus:ring-blue-100 rounded-xl px-3.5 py-2.5 md:px-4 md:py-3 outline-none transition-all"
               />
             </div>
 
-            <div className="flex items-center justify-end gap-2 pt-1">
+            <div className="flex items-center justify-end gap-2 pt-1 md:pt-2">
               <button
                 type="button"
                 onClick={() => {
                   setRenameProjectModal(false);
                   setProjectActionTarget(null);
                 }}
-                className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+                className="px-4 py-2 md:px-5 md:py-2.5 rounded-xl text-xs md:text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
               >
                 Batal
               </button>
@@ -16032,7 +16032,7 @@ function ProyekTab({
                 type="button"
                 disabled={!renameProjectInput.trim()}
                 onClick={handleRenameProject}
-                className="px-4 py-2 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white shadow-xs transition-colors cursor-pointer"
+                className="px-4 py-2 md:px-5 md:py-2.5 rounded-xl text-xs md:text-sm font-bold bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white shadow-xs transition-colors cursor-pointer"
               >
                 Simpan
               </button>
@@ -16050,9 +16050,9 @@ function ProyekTab({
             setProjectActionTarget(null);
           }}
         >
-          <div className="w-full max-w-[320px] bg-white rounded-3xl p-5 shadow-2xl border border-neutral-100 flex flex-col gap-3 animate-[gemini-zoom-in_0.2s_ease-out]" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-base font-bold text-neutral-900">Hapus Proyek?</h3>
-            <p className="text-xs text-neutral-500 leading-relaxed">
+          <div className="w-full max-w-[320px] md:max-w-[440px] bg-white rounded-3xl p-5 md:p-6 shadow-2xl border border-neutral-100 flex flex-col gap-3 md:gap-4 animate-[gemini-zoom-in_0.2s_ease-out]" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-base md:text-lg font-bold text-neutral-900">Hapus Proyek?</h3>
+            <p className="text-xs md:text-sm text-neutral-500 leading-relaxed">
               Apakah kamu yakin ingin menghapus proyek "{projectActionTarget?.title || selectedProject?.title}"? Seluruh riwayat obrolan di dalamnya akan terhapus.
             </p>
             <div className="flex items-center justify-end gap-2 pt-2 border-t border-neutral-100">
@@ -16062,11 +16062,11 @@ function ProyekTab({
                   setDeleteProjectConfirm(false);
                   setProjectActionTarget(null);
                 }}
-                className="flex-1 px-4 py-2.5 rounded-xl text-xs font-semibold text-neutral-600 hover:bg-neutral-100 text-center"
+                className="flex-1 px-4 py-2.5 md:text-sm rounded-xl text-xs font-semibold text-neutral-600 hover:bg-neutral-100 text-center cursor-pointer"
               >
                 Batal
               </button>
-              <button type="button" onClick={handleDeleteProject} className="flex-1 px-4 py-2.5 rounded-xl text-xs font-bold bg-red-600 text-white text-center hover:bg-red-700">Hapus</button>
+              <button type="button" onClick={handleDeleteProject} className="flex-1 px-4 py-2.5 md:text-sm rounded-xl text-xs font-bold bg-red-600 text-white text-center hover:bg-red-700 cursor-pointer">Hapus</button>
             </div>
           </div>
         </div>
@@ -16081,10 +16081,10 @@ function ProyekTab({
             setChatActionTarget(null);
           }}
         >
-          <div className="w-full max-w-[340px] bg-white rounded-3xl p-5 shadow-2xl border border-neutral-100 flex flex-col gap-4 animate-[gemini-zoom-in_0.2s_ease-out]" onClick={(e) => e.stopPropagation()}>
+          <div className="w-full max-w-[340px] md:max-w-[440px] bg-white rounded-3xl p-5 md:p-6 shadow-2xl border border-neutral-100 flex flex-col gap-4 md:gap-5 animate-[gemini-zoom-in_0.2s_ease-out]" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between">
-              <h3 className="text-base font-bold text-neutral-900">Ganti Nama Obrolan</h3>
-              <span className={`text-[11px] font-medium ${renameChatInput.length >= 25 ? "text-amber-600 font-semibold" : "text-neutral-400"}`}>
+              <h3 className="text-base md:text-lg font-bold text-neutral-900">Ganti Nama Obrolan</h3>
+              <span className={`text-[11px] md:text-xs font-medium ${renameChatInput.length >= 25 ? "text-amber-600 font-semibold" : "text-neutral-400"}`}>
                 {renameChatInput.length}/25
               </span>
             </div>
@@ -16104,7 +16104,7 @@ function ProyekTab({
                 }
               }}
               autoFocus
-              className="w-full text-sm text-neutral-800 bg-neutral-50 border border-neutral-200 focus:border-blue-500 focus:bg-white rounded-xl px-3.5 py-2.5 outline-none"
+              className="w-full text-sm md:text-[15px] text-neutral-800 bg-neutral-50 border border-neutral-200 focus:border-blue-500 focus:bg-white rounded-xl px-3.5 py-2.5 md:px-4 md:py-3 outline-none"
             />
             <div className="flex items-center justify-end gap-2 pt-2 border-t border-neutral-100">
               <button
@@ -16113,11 +16113,11 @@ function ProyekTab({
                   setRenameChatModal(false);
                   setChatActionTarget(null);
                 }}
-                className="flex-1 px-4 py-2.5 rounded-xl text-xs font-semibold text-neutral-600 hover:bg-neutral-100 text-center"
+                className="flex-1 px-4 py-2.5 md:text-sm rounded-xl text-xs font-semibold text-neutral-600 hover:bg-neutral-100 text-center cursor-pointer"
               >
                 Batal
               </button>
-              <button type="button" disabled={!renameChatInput.trim()} onClick={handleRenameChat} className="flex-1 px-4 py-2.5 rounded-xl text-xs font-bold bg-blue-600 text-white text-center hover:bg-blue-700">Simpan</button>
+              <button type="button" disabled={!renameChatInput.trim()} onClick={handleRenameChat} className="flex-1 px-4 py-2.5 md:text-sm rounded-xl text-xs font-bold bg-blue-600 text-white text-center hover:bg-blue-700 cursor-pointer">Simpan</button>
             </div>
           </div>
         </div>
@@ -16132,9 +16132,9 @@ function ProyekTab({
             setChatActionTarget(null);
           }}
         >
-          <div className="w-full max-w-[320px] bg-white rounded-3xl p-5 shadow-2xl border border-neutral-100 flex flex-col gap-3 animate-[gemini-zoom-in_0.2s_ease-out]" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-base font-bold text-neutral-900">Hapus Obrolan?</h3>
-            <p className="text-xs text-neutral-500 leading-relaxed">
+          <div className="w-full max-w-[320px] md:max-w-[440px] bg-white rounded-3xl p-5 md:p-6 shadow-2xl border border-neutral-100 flex flex-col gap-3 md:gap-4 animate-[gemini-zoom-in_0.2s_ease-out]" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-base md:text-lg font-bold text-neutral-900">Hapus Obrolan?</h3>
+            <p className="text-xs md:text-sm text-neutral-500 leading-relaxed">
               Apakah kamu yakin ingin menghapus sesi obrolan "{chatActionTarget?.title || selectedProjectChat?.title}"?
             </p>
             <div className="flex items-center justify-end gap-2 pt-2 border-t border-neutral-100">
@@ -16144,11 +16144,11 @@ function ProyekTab({
                   setDeleteChatConfirm(false);
                   setChatActionTarget(null);
                 }}
-                className="flex-1 px-4 py-2.5 rounded-xl text-xs font-semibold text-neutral-600 hover:bg-neutral-100 text-center"
+                className="flex-1 px-4 py-2.5 md:text-sm rounded-xl text-xs font-semibold text-neutral-600 hover:bg-neutral-100 text-center cursor-pointer"
               >
                 Batal
               </button>
-              <button type="button" onClick={handleDeleteChat} className="flex-1 px-4 py-2.5 rounded-xl text-xs font-bold bg-red-600 text-white text-center hover:bg-red-700">Hapus</button>
+              <button type="button" onClick={handleDeleteChat} className="flex-1 px-4 py-2.5 md:text-sm rounded-xl text-xs font-bold bg-red-600 text-white text-center hover:bg-red-700 cursor-pointer">Hapus</button>
             </div>
           </div>
         </div>
