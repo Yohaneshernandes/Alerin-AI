@@ -3400,6 +3400,7 @@ function SelectTextModal({
 function useUserBubbleLongPress(getRoleAt: (idx: number) => string | undefined) {
   const [activeIdx, setActiveIdx] = useState<number | null>(null);
   const [placement, setPlacement] = useState<"top" | "bottom">("top");
+  const [anchorPos, setAnchorPos] = useState<{ x: number; y: number } | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const startPosRef = useRef<{ x: number; y: number } | null>(null);
   const getRoleRef = useRef(getRoleAt);
@@ -3414,24 +3415,34 @@ function useUserBubbleLongPress(getRoleAt: (idx: number) => string | undefined) 
 
   useEffect(() => clearTimer, [clearTimer]);
 
-  const openMenuForTarget = useCallback((idx: number, target: HTMLDivElement, vibrate = false) => {
-    if (vibrate && typeof navigator !== "undefined" && navigator.vibrate) {
-      try { navigator.vibrate(40); } catch (_) {}
-    }
-    const rect = target.getBoundingClientRect();
-    setPlacement(rect.top < 220 ? "bottom" : "top");
-    setActiveIdx(idx);
-    timerRef.current = null;
-  }, []);
+  const openMenuForTarget = useCallback(
+    (idx: number, target: HTMLDivElement, vibrate = false, point?: { x: number; y: number }) => {
+      if (vibrate && typeof navigator !== "undefined" && navigator.vibrate) {
+        try { navigator.vibrate(40); } catch (_) {}
+      }
+      const rect = target.getBoundingClientRect();
+      const vh = typeof window !== "undefined" ? window.innerHeight : 844;
+      const resolvedPoint = point ?? {
+        x: rect.right - 24,
+        y: Math.min(Math.max(rect.top + 24, 80), vh - 160),
+      };
+      setPlacement(resolvedPoint.y < 220 ? "bottom" : "top");
+      setAnchorPos(resolvedPoint);
+      setActiveIdx(idx);
+      timerRef.current = null;
+    },
+    []
+  );
 
   const getBubbleInteractionProps = useCallback((idx: number) => ({
     onTouchStart: (e: React.TouchEvent<HTMLDivElement>) => {
       if (getRoleRef.current(idx) !== "user") return;
       const touch = e.touches[0];
-      startPosRef.current = { x: touch.clientX, y: touch.clientY };
+      const point = { x: touch.clientX, y: touch.clientY };
+      startPosRef.current = point;
       clearTimer();
       const target = e.currentTarget;
-      timerRef.current = setTimeout(() => openMenuForTarget(idx, target, true), 450);
+      timerRef.current = setTimeout(() => openMenuForTarget(idx, target, true, point), 450);
     },
     onTouchMove: (e: React.TouchEvent<HTMLDivElement>) => {
       if (!startPosRef.current || !timerRef.current) return;
@@ -3444,10 +3455,11 @@ function useUserBubbleLongPress(getRoleAt: (idx: number) => string | undefined) 
     onTouchCancel: clearTimer,
     onMouseDown: (e: React.MouseEvent<HTMLDivElement>) => {
       if (e.button !== 0 || getRoleRef.current(idx) !== "user") return;
-      startPosRef.current = { x: e.clientX, y: e.clientY };
+      const point = { x: e.clientX, y: e.clientY };
+      startPosRef.current = point;
       clearTimer();
       const target = e.currentTarget;
-      timerRef.current = setTimeout(() => openMenuForTarget(idx, target, false), 450);
+      timerRef.current = setTimeout(() => openMenuForTarget(idx, target, false, point), 450);
     },
     onMouseMove: (e: React.MouseEvent<HTMLDivElement>) => {
       if (!startPosRef.current || !timerRef.current) return;
@@ -3461,16 +3473,17 @@ function useUserBubbleLongPress(getRoleAt: (idx: number) => string | undefined) 
       e.preventDefault();
       clearTimer();
       if (getRoleRef.current(idx) !== "user") return;
-      openMenuForTarget(idx, e.currentTarget, false);
+      openMenuForTarget(idx, e.currentTarget, false, { x: e.clientX, y: e.clientY });
     },
   }), [clearTimer, openMenuForTarget]);
 
-  return { activeIdx, setActiveIdx, placement, getBubbleInteractionProps };
+  return { activeIdx, setActiveIdx, placement, anchorPos, getBubbleInteractionProps };
 }
 
 function UserBubbleActionMenu({
   open,
   placement,
+  anchorPos,
   showEdit,
   onClose,
   onCopy,
@@ -3479,25 +3492,38 @@ function UserBubbleActionMenu({
 }: {
   open: boolean;
   placement: "top" | "bottom";
+  anchorPos?: { x: number; y: number } | null;
   showEdit: boolean;
   onClose: () => void;
   onCopy: () => void;
   onEdit: () => void;
   onSelectText: () => void;
 }) {
-  if (!open) return null;
+  if (!open || typeof document === "undefined") return null;
 
-  return (
+  const menuWidth = 176;
+  const estimatedHeight = showEdit ? 136 : 96;
+  const margin = 12;
+  const gap = 14;
+  const vw = typeof window !== "undefined" ? window.innerWidth : 390;
+  const vh = typeof window !== "undefined" ? window.innerHeight : 844;
+  const x = anchorPos ? anchorPos.x : vw - margin - menuWidth / 2;
+  const y = anchorPos ? anchorPos.y : vh / 2;
+  const left = Math.max(margin, Math.min(x - menuWidth / 2, vw - menuWidth - margin));
+  const preferTop = placement === "top" && y - estimatedHeight - gap >= margin;
+  const rawTop = preferTop ? y - estimatedHeight - gap : y + gap;
+  const top = Math.max(margin, Math.min(rawTop, vh - estimatedHeight - margin));
+
+  return createPortal(
     <>
       <div
-        className="fixed inset-0 z-40 bg-transparent"
-        onClick={onClose}
+        className="fixed inset-0 z-[250] bg-transparent"
+        onMouseDown={onClose}
         onTouchStart={onClose}
       />
       <div
-        className={`absolute right-0 z-50 bg-white rounded-2xl border border-slate-200/90 shadow-[0_12px_36px_rgba(0,0,0,0.18)] p-1.5 w-44 flex flex-col gap-0.5 text-xs animate-in fade-in zoom-in-95 ${
-          placement === "bottom" ? "top-full mt-2" : "bottom-full mb-2"
-        }`}
+        style={{ left: `${left}px`, top: `${top}px` }}
+        className="fixed z-[251] bg-white rounded-2xl border border-slate-200/90 shadow-[0_12px_36px_rgba(0,0,0,0.18)] p-1.5 w-44 flex flex-col gap-0.5 text-xs animate-in fade-in zoom-in-95"
         onClick={(e) => e.stopPropagation()}
         onPointerDown={(e) => e.stopPropagation()}
         onTouchStart={(e) => e.stopPropagation()}
@@ -3569,7 +3595,8 @@ function UserBubbleActionMenu({
           <span>Pilih teks</span>
         </button>
       </div>
-    </>
+    </>,
+    document.body
   );
 }
 
@@ -10792,6 +10819,7 @@ function PercakapanTab({
     activeIdx: activeUserBubbleMenuIdx,
     setActiveIdx: setActiveUserBubbleMenuIdx,
     placement: userBubbleMenuPlacement,
+    anchorPos: userBubbleMenuAnchorPos,
     getBubbleInteractionProps,
   } = useUserBubbleLongPress((idx) => msgs[idx]?.role);
 
@@ -11616,6 +11644,7 @@ function PercakapanTab({
                     <UserBubbleActionMenu
                       open={activeUserBubbleMenuIdx === i}
                       placement={userBubbleMenuPlacement}
+                      anchorPos={userBubbleMenuAnchorPos}
                       showEdit={isLatestUserMsg}
                       onClose={() => setActiveUserBubbleMenuIdx(null)}
                       onCopy={() => handleCopyUserMessage(m.text)}
@@ -15140,6 +15169,7 @@ function ProyekTab({
     activeIdx: activeProjUserBubbleIdx,
     setActiveIdx: setActiveProjUserBubbleIdx,
     placement: projBubblePlacement,
+    anchorPos: projBubbleAnchorPos,
     getBubbleInteractionProps: getProjBubbleInteractionProps,
   } = useUserBubbleLongPress((idx) => selectedProjectChat?.msgs?.[idx]?.role);
 
@@ -16597,6 +16627,7 @@ function ProyekTab({
                         <UserBubbleActionMenu
                           open={activeProjUserBubbleIdx === idx}
                           placement={projBubblePlacement}
+                          anchorPos={projBubbleAnchorPos}
                           showEdit={isLatestProjUser}
                           onClose={() => setActiveProjUserBubbleIdx(null)}
                           onCopy={() => handleProjCopyUserMessage(m.text)}
@@ -16929,7 +16960,7 @@ function ProyekTab({
             </div>
           </header>
 
-          {/* Obrolan List (Mobile: baris teks · Desktop: kartu shape putih serasi) */}
+          {/* Obrolan List (Mobile: baris teks · Desktop: kartu shape abu-abu lembut serasi background) */}
           <div className="relative z-10 flex-1 overflow-y-auto px-4 md:px-7 pt-3 md:pt-5 pb-4" style={{ scrollbarWidth: "none" }}>
             <div className="max-w-4xl mx-auto w-full space-y-3 md:space-y-3.5">
             {(projectChatsMap[selectedProject.id] ?? []).length === 0 ? (
@@ -16958,7 +16989,7 @@ function ProyekTab({
                         setSelectedProjectChat(chat);
                       }
                     }}
-                    className="project-chat-row w-full flex items-center justify-between gap-2 text-left px-2.5 py-2 hover:bg-neutral-50 active:bg-neutral-100/70 rounded-xl md:rounded-2xl md:bg-white md:border md:border-[#e2e8f0] md:px-5 md:py-4 md:shadow-[0_0_20px_2px_rgba(37,99,235,0.08)] md:hover:-translate-y-0.5 md:hover:border-blue-200 md:hover:bg-white md:hover:shadow-[0_10px_26px_rgba(37,99,235,0.12)] transition-all cursor-pointer group"
+                    className="project-chat-row w-full flex items-center justify-between gap-2 text-left px-2.5 py-2 hover:bg-neutral-50 active:bg-neutral-100/70 rounded-xl md:rounded-2xl md:bg-slate-100/75 md:border md:border-slate-200/80 md:px-5 md:py-4 md:shadow-none md:hover:-translate-y-0.5 md:hover:border-slate-300/90 md:hover:bg-slate-100 md:hover:shadow-2xs transition-all cursor-pointer group"
                   >
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5">
