@@ -4724,11 +4724,15 @@ function NotifPanel({ onClose, onNavigate }: { onClose: () => void; onNavigate: 
 
         {/* Items list — tanpa scrollbar garis biru samping (scrollbar hidden & clean) */}
         <div
-          className="max-h-[60vh] md:max-h-[420px] overflow-y-auto divide-y divide-slate-100/90 md:divide-y-0 md:grid md:grid-cols-2 md:gap-2.5 md:p-4 pb-2 [&::-webkit-scrollbar]:hidden"
+          className={`max-h-[60vh] md:h-[268px] overflow-y-auto md:p-4 md:pb-4 pb-2 [&::-webkit-scrollbar]:hidden ${
+            currentList.length === 0
+              ? "divide-y divide-slate-100/90 md:divide-y-0 md:flex md:items-center md:justify-center"
+              : "divide-y divide-slate-100/90 md:divide-y-0 md:grid md:grid-cols-2 md:gap-2.5 md:content-start"
+          }`}
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {currentList.length === 0 ? (
-            <div className="md:col-span-2 py-14 md:py-10 px-6 flex flex-col items-center justify-center text-center animate-[gemini-fade-in_0.2s_ease-out]">
+            <div className="py-14 md:py-0 px-6 flex flex-col items-center justify-center text-center animate-[gemini-fade-in_0.2s_ease-out]">
               <div className="size-16 rounded-full bg-slate-50 border border-slate-200/80 flex items-center justify-center text-slate-400 mb-3.5 shadow-2xs">
                 {activeTab === "umum" ? (
                   <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400">
