@@ -1174,9 +1174,9 @@ function SearchModal({
                     <line x1="9" y1="10" x2="15" y2="10" />
                   </svg>
                 </div>
-                <h4 className="text-[14.5px] font-bold text-slate-800 tracking-tight">Tidak ada obrolan</h4>
+                <h4 className="text-[14.5px] font-bold text-slate-800 tracking-tight">Tidak ada riwayat</h4>
                 <p className="text-xs text-slate-400 font-normal leading-relaxed mt-1 max-w-[220px]">
-                  Belum ada riwayat pencarian obrolan terbaru
+                  Belum ada riwayat pencarian terbaru
                 </p>
               </div>
             )}
