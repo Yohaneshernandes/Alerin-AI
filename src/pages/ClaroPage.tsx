@@ -8193,6 +8193,8 @@ function MermaidCard({ code }: { code: string }) {
 }
 
 // ─── Data Visualization Cards (Bar, Line, Pie/Donut, Comparison, KPI) ───────
+const CHART_CARD_CLS = "my-3.5 rounded-2xl border border-neutral-200/90 bg-white p-4 sm:p-5 md:p-4 md:max-w-[560px] shadow-xs";
+
 function BarChartCard() {
   const data = [
     { month: "Januari", val: 120, pct: "21.4%" },
@@ -8204,22 +8206,22 @@ function BarChartCard() {
   ];
 
   return (
-    <div className="my-3.5 rounded-2xl border border-neutral-200/90 bg-white p-4 sm:p-5 shadow-xs">
+    <div className={CHART_CARD_CLS}>
       <h4 className="text-[0.9375rem] font-bold text-slate-900 leading-tight">
         Pertumbuhan Pengguna Aplikasi
       </h4>
-      <p className="text-xs text-slate-500 mt-1 mb-4">
+      <p className="text-xs text-slate-500 mt-1 mb-4 md:mb-3">
         Data simulasi jumlah pengguna per bulan.
       </p>
 
-      <div className="space-y-3.5">
+      <div className="space-y-3.5 md:space-y-2.5">
         {data.map((item, idx) => (
           <div key={idx} className="space-y-1">
             <div className="flex items-center justify-between text-xs sm:text-[13px] font-medium text-slate-800">
               <span>{item.month}</span>
               <span>{item.val}</span>
             </div>
-            <div className="w-full h-1.5 sm:h-2 bg-neutral-100 rounded-full overflow-hidden">
+            <div className="w-full h-1.5 sm:h-2 md:h-1.5 bg-neutral-100 rounded-full overflow-hidden">
               <div
                 className="h-full bg-[#4589f8] rounded-full transition-all duration-500"
                 style={{ width: item.pct }}
@@ -8234,11 +8236,11 @@ function BarChartCard() {
 
 function LineChartCard() {
   return (
-    <div className="my-3.5 rounded-2xl border border-neutral-200/90 bg-white p-4 sm:p-5 shadow-xs">
+    <div className={CHART_CARD_CLS}>
       <h4 className="text-[0.9375rem] font-bold text-slate-900 leading-tight">
         Tren Penjualan 2026
       </h4>
-      <p className="text-xs text-slate-500 mt-1 mb-3">
+      <p className="text-xs text-slate-500 mt-1 mb-3 md:mb-2.5">
         Nilai penjualan simulasi dalam juta rupiah.
       </p>
 
@@ -8253,7 +8255,7 @@ function LineChartCard() {
 
       {/* Line Chart Canvas */}
       <div className="w-full pt-1">
-        <svg viewBox="0 0 460 220" className="w-full h-auto block select-none font-sans">
+        <svg viewBox="-12 0 476 220" className="w-full h-auto md:max-h-[215px] block select-none font-sans">
           <defs>
             <linearGradient id="lineGrad" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="#2563eb" stopOpacity="0.12" />
@@ -8306,17 +8308,17 @@ function LineChartCard() {
 
 function PieChartCard() {
   return (
-    <div className="my-3.5 rounded-2xl border border-neutral-200/90 bg-white p-4 sm:p-5 shadow-xs">
+    <div className={CHART_CARD_CLS}>
       <h4 className="text-[0.9375rem] font-bold text-slate-900 leading-tight">
         Distribusi Pengguna Berdasarkan Perangkat
       </h4>
-      <p className="text-xs text-slate-500 mt-1 mb-4">
+      <p className="text-xs text-slate-500 mt-1 mb-4 md:mb-3">
         Persentase dari total 1.000 pengguna simulasi.
       </p>
 
       {/* Donut Chart SVG */}
-      <div className="flex justify-center py-2">
-        <svg viewBox="0 0 240 240" className="w-[180px] h-[180px] sm:w-[200px] sm:h-[200px] block select-none">
+      <div className="flex justify-center py-2 md:py-1">
+        <svg viewBox="0 0 240 240" className="w-[180px] h-[180px] sm:w-[200px] sm:h-[200px] md:w-[165px] md:h-[165px] block select-none">
           {/* Slice 1: Mobile 650 (65%) -> Blue */}
           <path
             d="M 53.7 168.2 A 82 82 0 1 0 120 38 L 120 72 A 48 48 0 1 1 81.2 148.2 Z"
@@ -8373,15 +8375,15 @@ function ComparisonChartCard() {
   ];
 
   return (
-    <div className="my-3.5 rounded-2xl border border-neutral-200/90 bg-white p-4 sm:p-5 shadow-xs">
+    <div className={CHART_CARD_CLS}>
       <h4 className="text-[0.9375rem] font-bold text-slate-900 leading-tight">
         Target vs Realisasi
       </h4>
-      <p className="text-xs text-slate-500 mt-1 mb-4">
+      <p className="text-xs text-slate-500 mt-1 mb-4 md:mb-3">
         Perbandingan dalam juta rupiah.
       </p>
 
-      <div className="space-y-4">
+      <div className="space-y-4 md:space-y-3">
         {comparisons.map((c, idx) => (
           <div key={idx} className="space-y-1.5">
             <span className="text-xs font-semibold text-slate-900 block">{c.month}</span>
@@ -8423,7 +8425,7 @@ function KpiSummaryCard() {
   ];
 
   return (
-    <div className="my-3.5 grid grid-cols-2 gap-2.5 sm:gap-3">
+    <div className="my-3.5 grid grid-cols-2 gap-2.5 sm:gap-3 md:max-w-[560px]">
       {kpis.map((kpi, idx) => (
         <div key={idx} className="rounded-2xl border border-neutral-200/90 bg-white p-3.5 sm:p-4 shadow-xs">
           <span className="text-xs text-slate-500 block leading-tight">{kpi.label}</span>
