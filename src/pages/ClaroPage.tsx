@@ -10569,7 +10569,6 @@ function SharedChatPreviewView({
 
   const hasFolderList = Boolean(preview.folderChats && preview.folderChats.length > 0);
   const isShowingFolderList = hasFolderList && !activeFolderChat;
-  const displayedTitle = activeFolderChat ? activeFolderChat.title : preview.title;
   const displayedMsgs = activeFolderChat ? activeFolderChat.msgs : preview.msgs;
 
   const handleHeaderBack = useCallback(() => {
@@ -10629,7 +10628,7 @@ function SharedChatPreviewView({
             )}
             <div className="min-w-0 flex items-center gap-2">
               <h1 className="text-[15px] md:text-base font-bold text-slate-900 truncate">
-                {displayedTitle}
+                Dibagikan ke Anda
               </h1>
               <span className="shrink-0 inline-flex items-center px-2 py-0.5 rounded-full bg-[#EAF2FF] text-[#1A73E8] text-[10px] font-semibold">
                 Pratinjau
