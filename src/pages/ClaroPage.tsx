@@ -2979,6 +2979,62 @@ function SourceLogoIcon({
   );
 }
 
+/** Three-dot overflow menu popover on assistant messages with timestamp and report action. */
+function ResponseMoreMenuPopover({
+  timestampLabel,
+  onClose,
+  onReport,
+}: {
+  timestampLabel: string;
+  onClose: () => void;
+  onReport: () => void;
+}) {
+  return (
+    <>
+      <div className="fixed inset-0 z-30" onClick={onClose} />
+      <div className="absolute bottom-full left-0 mb-2 z-40 bg-white rounded-2xl border border-slate-200/90 shadow-[0_8px_30px_rgba(0,0,0,0.12)] p-1.5 md:p-2 min-w-[175px] md:min-w-[196px] flex flex-col gap-1 md:gap-1.5 text-xs md:text-[13px] animate-in fade-in zoom-in-95">
+        {/* Tanggal & Jam respon */}
+        <div className="px-3 py-2 md:px-3.5 md:py-2.5 border-b border-slate-100 flex items-center gap-2 md:gap-2.5 select-none">
+          <svg
+            className="w-3.5 h-3.5 md:w-4 md:h-4 text-slate-400 shrink-0"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <polyline points="12 6 12 12 16 14" />
+          </svg>
+          <span className="text-[11px] md:text-xs font-medium text-slate-500 whitespace-nowrap">
+            {timestampLabel}
+          </span>
+        </div>
+
+        <button
+          type="button"
+          onClick={onReport}
+          className="flex items-center gap-2.5 md:gap-3 px-3 py-2 md:px-3.5 md:py-2.5 rounded-xl text-left font-medium hover:bg-rose-50 text-rose-600 transition-colors cursor-pointer"
+        >
+          <svg
+            className="w-4 h-4 md:w-[17px] md:h-[17px] text-rose-500 shrink-0"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+          >
+            <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
+            <line x1="4" y1="22" x2="4" y2="15" />
+          </svg>
+          <span className="whitespace-nowrap">Laporkan respon</span>
+        </button>
+      </div>
+    </>
+  );
+}
+
 /** Pill trigger for message sources: always shows up to 3 overlapping icons + total count label. */
 function SourcesToggleButton({
   sources,
@@ -7665,7 +7721,7 @@ function ChatInputBox({
                     <button
                       type="button"
                       onClick={openInNativeViewer}
-                      className="size-9 rounded-full bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 flex items-center justify-center transition-all cursor-pointer"
+                      className="size-9 rounded-full bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 flex md:hidden items-center justify-center transition-all cursor-pointer"
                       title="Buka di Bawaan HP / Tab Baru"
                       aria-label="Buka di bawaan HP"
                     >
@@ -12275,36 +12331,14 @@ function PercakapanTab({
                           </button>
 
                           {moreMenuIdx === i && (
-                            <>
-                              <div
-                                className="fixed inset-0 z-30"
-                                onClick={() => setMoreMenuIdx(null)}
-                              />
-                              <div className="absolute bottom-full left-0 mb-2 z-40 bg-white rounded-2xl border border-slate-200/90 shadow-[0_8px_30px_rgba(0,0,0,0.12)] p-1.5 min-w-[175px] flex flex-col gap-1 text-xs animate-in fade-in zoom-in-95">
-                                {/* Tanggal & Jam respon */}
-                                <div className="px-3 py-2 border-b border-slate-100 flex items-center gap-2 select-none">
-                                  <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                                    <circle cx="12" cy="12" r="10" />
-                                    <polyline points="12 6 12 12 16 14" />
-                                  </svg>
-                                  <span className="text-[11px] font-medium text-slate-500 whitespace-nowrap">
-                                    {getMessageTimestampDisplay(m)}
-                                  </span>
-                                </div>
-
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    setMoreMenuIdx(null);
-                                    showActionToast("Laporan respon diterima. Terima kasih!");
-                                  }}
-                                  className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-left font-medium hover:bg-rose-50 text-rose-600 transition-colors"
-                                >
-                                  <svg className="w-4 h-4 text-rose-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
-                                  <span className="whitespace-nowrap">Laporkan respon</span>
-                                </button>
-                              </div>
-                            </>
+                            <ResponseMoreMenuPopover
+                              timestampLabel={getMessageTimestampDisplay(m)}
+                              onClose={() => setMoreMenuIdx(null)}
+                              onReport={() => {
+                                setMoreMenuIdx(null);
+                                showActionToast("Laporan respon diterima. Terima kasih!");
+                              }}
+                            />
                           )}
                         </div>
                       </div>
@@ -17205,36 +17239,14 @@ function ProyekTab({
                               </button>
 
                               {projMoreMenuIdx === idx && (
-                                <>
-                                  <div
-                                    className="fixed inset-0 z-30"
-                                    onClick={() => setProjMoreMenuIdx(null)}
-                                  />
-                                  <div className="absolute bottom-full left-0 mb-2 z-40 bg-white rounded-2xl border border-slate-200/90 shadow-[0_8px_30px_rgba(0,0,0,0.12)] p-1.5 min-w-[175px] flex flex-col gap-1 text-xs animate-in fade-in zoom-in-95">
-                                    {/* Tanggal & Jam respon */}
-                                    <div className="px-3 py-2 border-b border-slate-100 flex items-center gap-2 select-none">
-                                      <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                                        <circle cx="12" cy="12" r="10" />
-                                        <polyline points="12 6 12 12 16 14" />
-                                      </svg>
-                                      <span className="text-[11px] font-medium text-slate-500 whitespace-nowrap">
-                                        {getMessageTimestampDisplay(m)}
-                                      </span>
-                                    </div>
-
-                                    <button
-                                      type="button"
-                                      onClick={() => {
-                                        setProjMoreMenuIdx(null);
-                                        setToast("Laporan respon diterima. Terima kasih!");
-                                      }}
-                                      className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-left font-medium hover:bg-rose-50 text-rose-600 transition-colors cursor-pointer"
-                                    >
-                                      <svg className="w-4 h-4 text-rose-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
-                                      <span className="whitespace-nowrap">Laporkan respon</span>
-                                    </button>
-                                  </div>
-                                </>
+                                <ResponseMoreMenuPopover
+                                  timestampLabel={getMessageTimestampDisplay(m)}
+                                  onClose={() => setProjMoreMenuIdx(null)}
+                                  onReport={() => {
+                                    setProjMoreMenuIdx(null);
+                                    setToast("Laporan respon diterima. Terima kasih!");
+                                  }}
+                                />
                               )}
                             </div>
                           </div>
