@@ -6416,8 +6416,8 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
 
         {/* Main content */}
         <main className="relative flex-1 min-w-0 overflow-hidden flex flex-col">
-          {/* Floating top-right Upgrade & profile bar — desktop only (tersembunyi di Semua Fitur & Proyek Saya) */}
-          {activeTab !== "fitur" && activeTab !== "proyek" && (
+          {/* Floating top-right Upgrade & profile bar — desktop only (tersembunyi di Semua Fitur, Proyek Saya & Profil) */}
+          {activeTab !== "fitur" && activeTab !== "proyek" && activeTab !== "profil" && (
           <div className="hidden md:flex items-center gap-2.5 absolute top-3.5 right-6 z-40">
             <button
               type="button"
