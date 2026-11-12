@@ -3969,8 +3969,8 @@ function DotMatrixCanvas({
   }, [isRevealing, orientation]);
 
   const containerClasses = orientation === "landscape"
-    ? "w-[310px] sm:w-[350px] h-[210px] sm:h-[235px]"
-    : "w-[270px] sm:w-[290px] h-[360px] sm:h-[390px]";
+    ? "w-[310px] sm:w-[350px] md:w-[440px] h-[210px] sm:h-[235px] md:h-[290px]"
+    : "w-[270px] sm:w-[290px] md:w-[340px] h-[360px] sm:h-[390px] md:h-[455px]";
 
   return (
     <div className={`${containerClasses} relative rounded-3xl flex items-center justify-center transition-all duration-300`}>
@@ -4018,7 +4018,9 @@ function ImageGeneratingBubble({
     return () => clearInterval(interval);
   }, []);
 
-  const maxWidthClass = effectiveOrientation === "landscape" ? "max-w-[360px]" : "max-w-[320px]";
+  const maxWidthClass = effectiveOrientation === "landscape"
+    ? "max-w-[360px] md:max-w-[460px]"
+    : "max-w-[320px] md:max-w-[360px]";
 
   return (
     <div className={`flex flex-col items-start w-full ${maxWidthClass} select-none py-1 transition-all duration-300`}>
@@ -4161,10 +4163,12 @@ function ImageResultBubble({
   const isLandscape = effectiveOrientation === "landscape";
 
   const cardClasses = isLandscape
-    ? "w-full max-w-[340px] sm:max-w-[380px] h-[215px] sm:h-[240px]"
-    : "w-[270px] sm:w-[290px] h-[360px] sm:h-[390px]";
+    ? "w-full max-w-[340px] sm:max-w-[380px] md:max-w-[460px] h-[215px] sm:h-[240px] md:h-[290px]"
+    : "w-[270px] sm:w-[290px] md:w-[340px] h-[360px] sm:h-[390px] md:h-[455px]";
 
-  const containerClasses = isLandscape ? "max-w-[380px]" : "max-w-[290px]";
+  const containerClasses = isLandscape
+    ? "max-w-[380px] md:max-w-[460px]"
+    : "max-w-[290px] md:max-w-[340px]";
 
   return (
     <div
