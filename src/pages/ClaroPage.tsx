@@ -4157,7 +4157,7 @@ function ImageLightboxModal({
           className="px-5 py-2.5 rounded-full bg-[#1A73E8] hover:bg-[#1557b0] active:scale-95 text-white text-xs font-semibold flex items-center gap-2 shadow-lg transition-all cursor-pointer disabled:opacity-70"
         >
           <DownloadStatusIcon downloaded={downloaded} size={14} />
-          <span>{downloading ? "Mengunduh..." : downloaded ? "Tersimpan" : "Unduh Gambar"}</span>
+          <span>{downloading ? "Mengunduh..." : downloaded ? "Tersimpan" : "Unduh"}</span>
         </button>
         <button
           type="button"
