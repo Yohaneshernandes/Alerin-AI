@@ -994,49 +994,7 @@ function SearchModal({
   }));
 
   // 2. Data pencarian proyek (sinkron langsung dari penyimpanan proyek pengguna & proyek bawaan)
-  const userProjects = useMemo(() => {
-    let projs: { id: string; title: string; time?: string; msgs?: ChatMsg[]; category?: string }[] = [];
-    if (typeof window !== "undefined") {
-      try {
-        const saved = localStorage.getItem("alerin_user_projects");
-        if (saved) {
-          const parsed = JSON.parse(saved);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            projs = parsed.filter(
-              (p: any) =>
-                p.id !== "proj-shared-1" &&
-                p.id !== "proj-shared-2" &&
-                p.title?.toLowerCase() !== "pekerjaan kantor" &&
-                p.title?.toLowerCase() !== "caption"
-            );
-          }
-        }
-      } catch {}
-    }
-    const defaults = [
-      {
-        id: "proj-yohanes",
-        title: "Proyek Riset Yohanes",
-        time: "Terakhir diperbarui hari ini",
-        msgs: [
-          { role: "user" as const, text: "Halo Alerin, bantu analisis data dan metodologi proyek riset skripsi Yohanes.", time: "10.00" },
-          { role: "claro" as const, text: "Halo Yohanes! Alerin siap membantu metodologi, pengolahan data, dan penyusunan skripsi proyek risetmu.", time: "10.01" },
-        ],
-      },
-      { id: "proj-4", title: "Metodologi Penelitian", time: "Terakhir diperbarui hari ini" },
-      { id: "proj-1", title: "Pekerjaan Rumah", time: "1 hari yang lalu" },
-      { id: "proj-5", title: "Skripsi Live Shopping", time: "2 hari yang lalu" },
-      { id: "proj-6", title: "Persiapan UAS", time: "3 hari yang lalu" },
-    ];
-    const existingTitles = new Set(projs.map((p) => p.title.toLowerCase()));
-    for (const d of defaults) {
-      if (!existingTitles.has(d.title.toLowerCase())) {
-        projs.push(d);
-        existingTitles.add(d.title.toLowerCase());
-      }
-    }
-    return projs;
-  }, []);
+  const userProjects = useMemo(() => loadUserProjectsList(), []);
 
   const projectSearchItems = useMemo(() => {
     let projChatsMap: Record<string, { title: string; msgs: ChatMsg[] }[]> = {};
@@ -15200,6 +15158,107 @@ const DEFAULT_MOBILE_PROJECTS: MobileProjectItem[] = [
   },
 ];
 
+let hasPrunedProjectsOnBoot = false;
+
+function normalizeProjectList(items: MobileProjectItem[]): MobileProjectItem[] {
+  return items
+    .map((p) => {
+      const ts = getProjectTimestamp(p);
+      return {
+        ...p,
+        updatedAt: p.updatedAt && p.updatedAt > 0 && Math.abs(p.updatedAt - ts) < 86400000 * 3 ? p.updatedAt : ts,
+        pastelBg: "bg-[#F2F4F7]",
+        iconColor: "text-neutral-900",
+        iconType: "folder" as const,
+      };
+    })
+    .sort((a, b) => {
+      if (a.pinned && !b.pinned) return -1;
+      if (!a.pinned && b.pinned) return 1;
+      return getProjectTimestamp(b) - getProjectTimestamp(a);
+    });
+}
+
+function pruneStoredProjectsToDefaultFive(): void {
+  if (typeof window === "undefined" || hasPrunedProjectsOnBoot) return;
+  hasPrunedProjectsOnBoot = true;
+
+  const defaultById = new Map(DEFAULT_MOBILE_PROJECTS.map((p) => [p.id, p]));
+  const defaultTitleSet = new Set(DEFAULT_MOBILE_PROJECTS.map((p) => p.title.toLowerCase()));
+
+  try {
+    const saved = localStorage.getItem("alerin_user_projects");
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      const seenIds = new Set<string>();
+      const kept: MobileProjectItem[] = [];
+
+      if (Array.isArray(parsed)) {
+        for (const item of parsed) {
+          if (!item || typeof item.id !== "string") continue;
+          const canonical = defaultById.get(item.id);
+          if (!canonical || seenIds.has(item.id)) continue;
+          seenIds.add(item.id);
+          kept.push({
+            ...canonical,
+            ...item,
+            title: canonical.title,
+            category: canonical.category,
+          });
+        }
+      }
+
+      for (const def of DEFAULT_MOBILE_PROJECTS) {
+        if (!seenIds.has(def.id)) {
+          kept.push(def);
+          seenIds.add(def.id);
+        }
+      }
+
+      localStorage.setItem("alerin_user_projects", JSON.stringify(normalizeProjectList(kept)));
+    }
+  } catch {}
+
+  for (const storageKey of ["alerin_mobile_project_chats", "alerin_mobile_project_sources"]) {
+    try {
+      const savedMap = localStorage.getItem(storageKey);
+      if (!savedMap) continue;
+      const parsed = JSON.parse(savedMap);
+      if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) continue;
+      const filteredMap: Record<string, unknown> = {};
+      for (const [key, val] of Object.entries(parsed)) {
+        if (defaultById.has(key)) {
+          filteredMap[key] = val;
+        }
+      }
+      localStorage.setItem(storageKey, JSON.stringify(filteredMap));
+    } catch {}
+  }
+
+  try {
+    const openId = localStorage.getItem("alerin_open_project_id");
+    if (openId && !defaultById.has(openId) && !defaultTitleSet.has(openId.toLowerCase())) {
+      localStorage.removeItem("alerin_open_project_id");
+    }
+  } catch {}
+}
+
+function loadUserProjectsList(): MobileProjectItem[] {
+  pruneStoredProjectsToDefaultFive();
+  if (typeof window !== "undefined") {
+    try {
+      const saved = localStorage.getItem("alerin_user_projects");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return normalizeProjectList(parsed);
+        }
+      }
+    } catch {}
+  }
+  return DEFAULT_MOBILE_PROJECTS;
+}
+
 function ProjectIcon({
   type,
   className,
@@ -15368,52 +15427,7 @@ function ProyekTab({
   onOpenSharedChat?: (preview: SharedChatPreviewData) => void;
 }) {
   const openDrawer = useContext(ShellDrawerContext);
-  const [projects, setProjects] = useState<MobileProjectItem[]>(() => {
-    try {
-      const saved = localStorage.getItem("alerin_user_projects");
-      if (saved) {
-        const parsed: MobileProjectItem[] = JSON.parse(saved);
-        // Hapus folder "Pak Agik", "Pekerjaan kantor", dan "Caption"
-        let filtered = parsed.filter(
-          (p) =>
-            p.title !== "Pak Agik" &&
-            p.id !== "proj-2" &&
-            p.id !== "proj-3" &&
-            p.id !== "proj-shared-1" &&
-            p.id !== "proj-shared-2" &&
-            p.title?.toLowerCase() !== "pekerjaan kantor" &&
-            p.title?.toLowerCase() !== "caption"
-        );
-        // Pastikan Proyek Riset Yohanes ada
-        if (!filtered.some((p) => p.title.toLowerCase().includes("yohanes"))) {
-          const y = DEFAULT_MOBILE_PROJECTS.find((p) => p.id === "proj-yohanes");
-          if (y) filtered.unshift(y);
-        }
-        // Pastikan semua proyek menggunakan folder hitam konsisten dan diurutkan sesuai tanggal diubah
-        const normalized = filtered
-          .map((p) => {
-            const ts = getProjectTimestamp(p);
-            return {
-              ...p,
-              updatedAt: p.updatedAt && p.updatedAt > 0 && Math.abs(p.updatedAt - ts) < 86400000 * 3 ? p.updatedAt : ts,
-              pastelBg: "bg-[#F2F4F7]",
-              iconColor: "text-neutral-900",
-              iconType: "folder" as const,
-            };
-          })
-          .sort((a, b) => {
-            if (a.pinned && !b.pinned) return -1;
-            if (!a.pinned && b.pinned) return 1;
-            return getProjectTimestamp(b) - getProjectTimestamp(a);
-          });
-        try {
-          localStorage.setItem("alerin_user_projects", JSON.stringify(normalized));
-        } catch {}
-        return normalized;
-      }
-    } catch {}
-    return DEFAULT_MOBILE_PROJECTS;
-  });
+  const [projects, setProjects] = useState<MobileProjectItem[]>(() => loadUserProjectsList());
 
   const saveProjects = (items: MobileProjectItem[]) => {
     try {
@@ -23555,6 +23569,10 @@ function ProfilTab({ onTab, onRegister }: { onTab: (t: NavTab) => void; onRegist
 
 // ─── Main export ──────────────────────────────────────────────────────────────
 export default function AlerinPage() {
+  useState(() => {
+    pruneStoredProjectsToDefaultFive();
+    return true;
+  });
   const [tab, setTab] = useState<NavTab>("percakapan");
   const [historyMsgs, setHistoryMsgs] = useState<ChatMsg[] | undefined>(undefined);
   const [historyKey, setHistoryKey] = useState(0);
