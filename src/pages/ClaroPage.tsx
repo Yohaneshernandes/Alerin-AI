@@ -8434,7 +8434,7 @@ function BarChartCard() {
       </div>
 
       {/* Desktop: clean borderless vertical column chart */}
-      <div className="hidden md:block my-4 w-full md:max-w-[540px]">
+      <div className="hidden md:block my-4 w-full">
         <h4 className="text-[15px] font-semibold text-slate-900 leading-snug">
           Pertumbuhan Pengguna Aplikasi
         </h4>
@@ -8442,7 +8442,7 @@ function BarChartCard() {
           Data simulasi jumlah pengguna per bulan.
         </p>
 
-        <svg viewBox="0 0 640 240" className="w-full h-auto block select-none font-sans overflow-visible">
+        <svg viewBox="0 0 640 240" className="w-full md:max-w-[680px] md:mx-auto h-auto block select-none font-sans overflow-visible">
           {yTicks.map((tick) => {
             const y = plotBottom - (tick / 600) * plotHeight;
             return (
@@ -8608,7 +8608,7 @@ function LineChartCard() {
       </div>
 
       {/* Desktop: clean borderless multi-point line chart with floating tooltip */}
-      <div className="hidden md:block my-4 w-full md:max-w-[540px]">
+      <div className="hidden md:block my-4 w-full">
         <h4 className="text-[15px] font-semibold text-slate-900 leading-snug">
           Tren Penjualan 2026
         </h4>
@@ -8616,7 +8616,7 @@ function LineChartCard() {
           Nilai penjualan simulasi dalam juta rupiah.
         </p>
 
-        <div className="relative w-full">
+        <div className="relative w-full md:max-w-[680px] md:mx-auto">
           <svg viewBox="0 0 640 236" className="w-full h-auto block select-none font-sans overflow-visible">
             {yTicks.map((tick) => {
               const y = plotBottom - ((tick - 8) / (40 - 8)) * plotHeight;
@@ -8755,7 +8755,7 @@ function PieChartCard() {
       </div>
 
       {/* Desktop: clean borderless donut chart with white slice gaps & centered legend */}
-      <div className="hidden md:block my-4 w-full md:max-w-[540px]">
+      <div className="hidden md:block my-4 w-full">
         <h4 className="text-[15px] font-semibold text-slate-900 leading-snug">
           Distribusi Pengguna Berdasarkan Perangkat
         </h4>
@@ -8764,7 +8764,7 @@ function PieChartCard() {
         </p>
 
         <div className="flex justify-center py-0.5">
-          <svg viewBox="0 0 240 240" className="w-[164px] h-[164px] block select-none">
+          <svg viewBox="0 0 240 240" className="w-[192px] h-[192px] block select-none">
             {/* Slice 1: Mobile 65% -> Blue */}
             <path
               d="M 45.57 174.08 A 92 92 0 1 0 120 28 L 120 72 A 48 48 0 1 1 81.17 148.21 Z"
@@ -8881,6 +8881,7 @@ function ComparisonChartCard() {
           Perbandingan dalam juta rupiah.
         </p>
 
+        <div className="w-full md:max-w-[680px] md:mx-auto">
         <svg viewBox="0 0 640 262" className="w-full h-auto block select-none font-sans overflow-visible">
           {yTicks.map((tick) => {
             const y = plotBottom - (tick / 60) * plotHeight;
@@ -8961,6 +8962,7 @@ function ComparisonChartCard() {
             <span className="h-2 w-2 rounded-full bg-[#59b870]" />
             Realisasi
           </span>
+        </div>
         </div>
       </div>
     </>
@@ -11272,7 +11274,7 @@ function SharedChatPreviewView({
               })}
           </div>
         ) : (
-        <div className="max-w-3xl mx-auto w-full space-y-6 pb-4">
+        <div className="max-w-3xl mx-auto w-full space-y-6 pb-4 md:pb-24">
           {displayedMsgs.map((m, idx) => {
             if (m.role === "user") {
               return (
@@ -11344,7 +11346,7 @@ function SharedChatPreviewView({
 
       {/* Bottom CTA: tampil saat pratinjau obrolan terbuka */}
       {!isShowingFolderList && (
-        <div className="shrink-0 bg-white/95 md:bg-white/90 backdrop-blur-md relative z-20 border-t border-slate-200/80 px-4 py-3.5 md:py-4">
+        <div className="shrink-0 bg-white/95 md:bg-transparent backdrop-blur-md md:backdrop-blur-none relative md:absolute md:inset-x-0 md:bottom-0 z-20 md:z-30 border-t border-slate-200/80 md:border-t-0 px-4 py-3.5 md:pt-0 md:pb-6 md:pointer-events-none">
           <div className="max-w-3xl mx-auto w-full flex justify-center">
             <button
               type="button"
@@ -11355,7 +11357,7 @@ function SharedChatPreviewView({
                     : undefined
                 )
               }
-              className="w-full sm:w-auto sm:min-w-[260px] px-8 py-3 rounded-full bg-[#1A73E8] hover:bg-[#1557b0] active:scale-[0.98] text-white text-sm font-semibold flex items-center justify-center gap-2 shadow-[0_6px_18px_rgba(26,115,232,0.28)] transition-all cursor-pointer"
+              className="w-full sm:w-auto sm:min-w-[260px] px-8 py-3 rounded-full bg-[#1A73E8] hover:bg-[#1557b0] active:scale-[0.98] text-white text-sm font-semibold flex items-center justify-center gap-2 shadow-[0_6px_18px_rgba(26,115,232,0.28)] md:shadow-[0_10px_28px_rgba(26,115,232,0.34)] transition-all cursor-pointer md:pointer-events-auto"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
