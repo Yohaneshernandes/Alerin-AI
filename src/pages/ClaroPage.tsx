@@ -8434,11 +8434,11 @@ function BarChartCard() {
       </div>
 
       {/* Desktop: clean borderless vertical column chart */}
-      <div className="hidden md:block my-4 w-full">
+      <div className="hidden md:block my-6 w-full">
         <h4 className="text-[15px] font-semibold text-slate-900 leading-snug">
           Pertumbuhan Pengguna Aplikasi
         </h4>
-        <p className="text-[13px] text-slate-500 mt-0.5 mb-3">
+        <p className="text-[13px] text-slate-500 mt-0.5 mb-7">
           Data simulasi jumlah pengguna per bulan.
         </p>
 
@@ -8608,11 +8608,11 @@ function LineChartCard() {
       </div>
 
       {/* Desktop: clean borderless multi-point line chart with floating tooltip */}
-      <div className="hidden md:block my-4 w-full">
+      <div className="hidden md:block my-6 w-full">
         <h4 className="text-[15px] font-semibold text-slate-900 leading-snug">
           Tren Penjualan 2026
         </h4>
-        <p className="text-[13px] text-slate-500 mt-0.5 mb-3">
+        <p className="text-[13px] text-slate-500 mt-0.5 mb-7">
           Nilai penjualan simulasi dalam juta rupiah.
         </p>
 
@@ -8755,11 +8755,11 @@ function PieChartCard() {
       </div>
 
       {/* Desktop: clean borderless donut chart with white slice gaps & centered legend */}
-      <div className="hidden md:block my-4 w-full">
+      <div className="hidden md:block my-6 w-full">
         <h4 className="text-[15px] font-semibold text-slate-900 leading-snug">
           Distribusi Pengguna Berdasarkan Perangkat
         </h4>
-        <p className="text-[13px] text-slate-500 mt-0.5 mb-3">
+        <p className="text-[13px] text-slate-500 mt-0.5 mb-7">
           Persentase dari total 1.000 pengguna simulasi.
         </p>
 
@@ -8873,11 +8873,11 @@ function ComparisonChartCard() {
       </div>
 
       {/* Desktop: clean borderless grouped vertical bar chart */}
-      <div className="hidden md:block my-4 w-full">
+      <div className="hidden md:block my-6 w-full">
         <h4 className="text-[15px] font-semibold text-slate-900 leading-snug">
           Target vs Realisasi
         </h4>
-        <p className="text-[13px] text-slate-500 mt-0.5 mb-4">
+        <p className="text-[13px] text-slate-500 mt-0.5 mb-7">
           Perbandingan dalam juta rupiah.
         </p>
 
