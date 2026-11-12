@@ -4564,11 +4564,11 @@ function NotifPanel({ onClose, onNavigate }: { onClose: () => void; onNavigate: 
       onClick={onClose}
     >
       <div
-        className="w-full max-w-[390px] bg-white rounded-3xl overflow-hidden shadow-2xl border border-slate-100 flex flex-col animate-[gemini-zoom-in_0.2s_ease-out]"
+        className="w-full max-w-[390px] md:max-w-[680px] bg-white rounded-3xl overflow-hidden shadow-2xl border border-slate-100 flex flex-col animate-[gemini-zoom-in_0.2s_ease-out]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header (Tanda lonceng - klik untuk toggle status kosong / ada notifikasi) */}
-        <div className="flex items-center justify-between px-5 pt-5 pb-3">
+        <div className="flex items-center justify-between px-5 md:px-6 pt-5 pb-3">
           <div className="flex items-center gap-2.5">
             {/* Tanda lonceng abu-abu netral: klik untuk toggle tampilan kosong / default */}
             <button
@@ -4668,11 +4668,11 @@ function NotifPanel({ onClose, onNavigate }: { onClose: () => void; onNavigate: 
 
         {/* Items list — tanpa scrollbar garis biru samping (scrollbar hidden & clean) */}
         <div
-          className="max-h-[60vh] overflow-y-auto divide-y divide-slate-100/90 pb-2 [&::-webkit-scrollbar]:hidden"
+          className="max-h-[60vh] md:max-h-[420px] overflow-y-auto divide-y divide-slate-100/90 md:divide-y-0 md:grid md:grid-cols-2 md:gap-2.5 md:p-4 pb-2 [&::-webkit-scrollbar]:hidden"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {currentList.length === 0 ? (
-            <div className="py-14 px-6 flex flex-col items-center justify-center text-center animate-[gemini-fade-in_0.2s_ease-out]">
+            <div className="md:col-span-2 py-14 md:py-10 px-6 flex flex-col items-center justify-center text-center animate-[gemini-fade-in_0.2s_ease-out]">
               <div className="size-16 rounded-full bg-slate-50 border border-slate-200/80 flex items-center justify-center text-slate-400 mb-3.5 shadow-2xs">
                 {activeTab === "umum" ? (
                   <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400">
@@ -4705,7 +4705,7 @@ function NotifPanel({ onClose, onNavigate }: { onClose: () => void; onNavigate: 
                   onNavigate(n.tab);
                   onClose();
                 }}
-                className="w-full flex items-start gap-3.5 px-5 py-3.5 hover:bg-slate-50/80 active:bg-slate-100/70 transition-colors text-left cursor-pointer group"
+                className="w-full flex items-start gap-3.5 px-5 py-3.5 md:px-4 md:py-3 md:rounded-2xl md:border md:border-slate-100 md:bg-slate-50/40 hover:bg-slate-50/80 md:hover:bg-slate-50 active:bg-slate-100/70 transition-colors text-left cursor-pointer group"
               >
                 {/* Outlined squircle icon */}
                 <div className="size-11 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-center shrink-0 mt-0.5 text-slate-700 shadow-2xs group-hover:bg-white group-hover:border-slate-300 transition-colors">
