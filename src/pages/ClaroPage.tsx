@@ -10483,7 +10483,6 @@ function SharedChatPreviewView({
   onBack: () => void;
   onStartChat: (selected?: { title: string; msgs: ChatMsg[] }) => void;
 }) {
-  const [linkCopied, setLinkCopied] = useState(false);
   const [previewImgUrl, setPreviewImgUrl] = useState<string | null>(null);
   const [activeFolderChat, setActiveFolderChat] = useState<SharedFolderChatEntry | null>(null);
 
@@ -10512,14 +10511,6 @@ function SharedChatPreviewView({
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [handleHeaderBack, previewImgUrl]);
 
-  const handleCopyShareUrl = () => {
-    if (navigator?.clipboard?.writeText) {
-      navigator.clipboard.writeText(preview.shareUrl).catch(() => {});
-    }
-    setLinkCopied(true);
-    setTimeout(() => setLinkCopied(false), 1800);
-  };
-
   return (
     <div className="fixed inset-0 z-[240] flex flex-col claro-chat-bg select-text">
       {/* Decorative dot grid overlay — desktop only */}
@@ -10534,8 +10525,8 @@ function SharedChatPreviewView({
 
       {/* Header Preview Chat / Folder */}
       <header className="shrink-0 bg-white md:bg-white/85 md:backdrop-blur-md relative z-20 border-b border-neutral-200 md:border-slate-200">
-        <div className="max-w-4xl mx-auto w-full flex items-center justify-between gap-2.5 px-4 md:px-6 py-3">
-          <div className="flex items-center gap-2.5 min-w-0">
+        <div className="max-w-4xl mx-auto w-full flex items-center gap-2.5 px-4 md:px-6 py-3">
+          <div className="flex items-center gap-2.5 min-w-0 flex-1">
             <button
               type="button"
               onClick={handleHeaderBack}
@@ -10568,30 +10559,6 @@ function SharedChatPreviewView({
               </span>
             </div>
           </div>
-
-          <button
-            type="button"
-            onClick={handleCopyShareUrl}
-            className="shrink-0 h-9 px-3.5 rounded-full border border-slate-200 bg-white hover:bg-slate-50 active:scale-95 text-xs font-medium text-slate-700 flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs"
-          >
-            {linkCopied ? (
-              <>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="20 6 9 17 4 12" />
-                </svg>
-                <span className="text-emerald-700 font-semibold">Tersalin</span>
-              </>
-            ) : (
-              <>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
-                </svg>
-                <span className="hidden sm:inline">Salin Tautan</span>
-                <span className="sm:hidden">Salin</span>
-              </>
-            )}
-          </button>
         </div>
       </header>
 
@@ -10732,7 +10699,7 @@ function SharedChatPreviewView({
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
               </svg>
-              <span>{preview.ctaLabel || (hasFolderList ? "Lanjutkan Obrolan" : "Mulai Obrolan")}</span>
+              <span>{preview.ctaLabel || "Lanjutkan Obrolan"}</span>
             </button>
           </div>
         </div>
