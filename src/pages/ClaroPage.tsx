@@ -6452,9 +6452,30 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
               >
                 <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0"
                   style={{ background: "linear-gradient(135deg,#f59e0b,#d97706)" }}>RA</div>
-                <div className="min-w-0 leading-tight">
+                <div className="min-w-0 flex flex-col items-start leading-tight">
                   <p className="text-xs font-semibold text-slate-800 whitespace-nowrap">Raka Aditya</p>
-                  <p className="text-[10px] text-slate-400 whitespace-nowrap">Premium · Sem 6</p>
+                  <span
+                    className={`mt-0.5 inline-flex items-center gap-1 rounded-full border px-2 py-[1px] font-['Inter:Bold'] text-[9.5px] font-bold leading-[13px] whitespace-nowrap ${
+                      isDarkTheme
+                        ? "border-blue-500/40 bg-slate-900 text-slate-100"
+                        : "border-blue-200 bg-white text-slate-900"
+                    }`}
+                  >
+                    Plus
+                    <span className="relative h-[13px] w-[13px] shrink-0 overflow-hidden">
+                      <span
+                        className="pointer-events-none absolute left-0 top-0 block h-[17px] w-[17px] origin-top-left"
+                        style={{ transform: "scale(0.7647)" }}
+                      >
+                        <img
+                          src="/assets/8923b.png"
+                          alt=""
+                          className="pointer-events-none absolute max-w-none"
+                          style={{ width: 41, height: 74, left: -12, top: -6 }}
+                        />
+                      </span>
+                    </span>
+                  </span>
                 </div>
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400 ml-0.5 shrink-0">
                   <polyline points="6 9 12 15 18 9" />
