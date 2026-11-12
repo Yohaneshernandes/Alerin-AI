@@ -5151,7 +5151,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const shell = document.querySelector(".h-screen");
+      const shell = document.querySelector(".alerin-shell");
       shell?.classList.toggle("profile-dark", isDarkTheme);
       if (shell instanceof HTMLElement) {
         shell.style.backgroundColor = isDarkTheme ? "#0f172a" : "#ffffff";
@@ -5750,7 +5750,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
 
   return (
     <ShellDrawerContext.Provider value={() => setMobileDrawerOpen(true)}>
-      <div className="h-screen flex flex-col overflow-hidden bg-white" style={{ fontFamily: "'Inter', sans-serif" }}>
+      <div className="alerin-shell fixed inset-0 md:static md:inset-auto md:h-dvh flex flex-col overflow-hidden bg-white" style={{ fontFamily: "'Inter', sans-serif" }}>
       {searchOpen && (
         <SearchModal
           onClose={() => setSearchOpen(false)}
@@ -5848,7 +5848,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
       {/* Mobile top header */}
       {activeTab === "percakapan" || activeTab === "fitur" ? (
         <header
-          className="md:hidden fixed top-0 left-0 right-0 flex items-center justify-between px-4 py-3 z-40 bg-white/80 backdrop-blur-xl border-b border-slate-200/40"
+          className="md:hidden fixed top-0 left-0 right-0 flex items-center justify-between px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3 z-40 bg-white/80 backdrop-blur-xl border-b border-slate-200/40"
           style={{ WebkitBackdropFilter: "blur(20px)", backdropFilter: "blur(20px)" }}
         >
           <div className="flex items-center gap-2.5">
@@ -6522,7 +6522,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
           <div
             ref={(menu) => {
               if (!menu) return;
-              const shell = menu.closest(".h-screen");
+              const shell = menu.closest(".alerin-shell");
               const isDark = window.localStorage.getItem("alerin-theme") === "dark";
               shell?.classList.toggle("profile-dark", isDark);
               if (shell instanceof HTMLElement) shell.style.backgroundColor = isDark ? "#0f172a" : "#ffffff";
@@ -6562,7 +6562,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                   setIsDarkTheme(nextDark);
                   if (typeof window !== "undefined") {
                     window.localStorage.setItem("alerin-theme", nextDark ? "dark" : "light");
-                    const shell = document.querySelector(".h-screen");
+                    const shell = document.querySelector(".alerin-shell");
                     shell?.classList.toggle("profile-dark", nextDark);
                     if (shell instanceof HTMLElement) shell.style.backgroundColor = nextDark ? "#0f172a" : "#ffffff";
                   }
@@ -11961,10 +11961,10 @@ function PercakapanTab({
       </div>
 
       {/* Mobile view (Gambar 2) */}
-      <div className="flex md:hidden flex-1 flex-col justify-between overflow-hidden relative bg-white pt-16">
+      <div className="flex md:hidden flex-1 min-h-0 flex-col justify-between overflow-hidden relative bg-white pt-16">
         {/* Centered Welcome Card */}
-        <div className="flex-1 flex flex-col items-center justify-center px-5 py-4">
-          <div className="w-full max-w-[340px] bg-white rounded-2xl shadow-[0px_1px_3px_0px_rgba(59,130,246,0.04),0px_2px_16px_0px_rgba(59,130,246,0.06)] border border-blue-200/40 p-6 flex flex-col items-center text-center">
+        <div className="flex-1 min-h-0 overflow-y-auto flex flex-col items-center justify-center px-5 py-4">
+          <div className="w-full max-w-[340px] my-auto bg-white rounded-2xl shadow-[0px_1px_3px_0px_rgba(59,130,246,0.04),0px_2px_16px_0px_rgba(59,130,246,0.06)] border border-blue-200/40 p-6 flex flex-col items-center text-center">
             <img src="/assets/alerin-logo-only.png" alt="Alerin" className="h-16 w-auto mb-4 object-contain" />
             <h2 className="text-slate-900 text-lg font-normal leading-snug">
               Tanya apa saja tentang kuliah.{" "}
@@ -11977,7 +11977,7 @@ function PercakapanTab({
         </div>
 
         {/* Bottom Chat Input */}
-        <div className="px-3 pb-2 pt-0 bg-white shrink-0">
+        <div className="px-3 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-0 bg-white shrink-0">
           <ChatInputBox
             input={input} setInput={setInput} onSend={send}
             activeCategory={activeCategory} setActiveCategory={setActiveCategory}
@@ -12002,7 +12002,7 @@ function PercakapanTab({
   // Chat mode
   return (
     <>
-    <div className="flex-1 flex flex-col overflow-hidden relative claro-chat-bg">
+    <div className="flex-1 min-h-0 flex flex-col overflow-hidden relative claro-chat-bg">
       {/* Decorative dot grid overlay — desktop only */}
       <div className="hidden md:block absolute inset-0 pointer-events-none" style={{
         backgroundImage: "radial-gradient(circle, rgba(59,130,246,0.035) 1px, transparent 1px)",
@@ -12033,7 +12033,7 @@ function PercakapanTab({
         onWheel={handleWheel}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
-        className="flex-1 overflow-y-auto relative z-10 pb-4 [&::-webkit-scrollbar]:hidden"
+        className="flex-1 min-h-0 overflow-y-auto relative z-10 pb-4 [&::-webkit-scrollbar]:hidden"
         style={{ scrollbarWidth: "none" }}
       >
         <div className="max-w-5xl mx-auto px-4 md:px-6 pt-20 md:pt-[84px] pb-6">
@@ -12348,7 +12348,7 @@ function PercakapanTab({
       </div>
 
       {/* Static input at bottom — all screen sizes */}
-      <div className="shrink-0 relative z-10 bg-white md:bg-transparent">
+      <div className="shrink-0 relative z-10 bg-white md:bg-transparent pb-[env(safe-area-inset-bottom)] md:pb-0">
         {/* Floating scroll to bottom button (Gambar 1: icon bulat panah bawah saat scroll ke atas) */}
         <div
           className={`absolute -top-11 left-1/2 -translate-x-1/2 z-20 transition-all duration-200 ease-out ${
@@ -17272,7 +17272,7 @@ function ProyekTab({
           </div>
 
           {/* Bottom Chat Input matching Gambar 2 / Alerin Chat */}
-          <div className="shrink-0 bg-white md:bg-transparent relative z-20">
+          <div className="shrink-0 bg-white md:bg-transparent relative z-20 pb-[env(safe-area-inset-bottom)] md:pb-0">
             <div className="max-w-4xl mx-auto w-full">
             <ChatInputBox
               input={chatInputText}
@@ -17472,7 +17472,7 @@ function ProyekTab({
           </div>
 
           {/* Bottom Chat Input matching Gambar 2 / Alerin Chat */}
-          <div className="shrink-0 bg-white md:bg-transparent relative z-20">
+          <div className="shrink-0 bg-white md:bg-transparent relative z-20 pb-[env(safe-area-inset-bottom)] md:pb-0">
             <div className="max-w-4xl mx-auto w-full">
             <ChatInputBox
               input={newChatQuickText}
@@ -23456,7 +23456,7 @@ function ProfilTab({ onTab, onRegister }: { onTab: (t: NavTab) => void; onRegist
                             aria-pressed={active}
                             onClick={(event) => {
                               const isDark = option.id === "dark";
-                              const shell = event.currentTarget.closest(".h-screen");
+                              const shell = event.currentTarget.closest(".alerin-shell");
                               setThemeMode(option.id);
                               shell?.classList.toggle("profile-dark", isDark);
                               if (shell instanceof HTMLElement) {
