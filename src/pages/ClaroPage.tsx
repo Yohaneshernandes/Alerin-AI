@@ -8338,11 +8338,11 @@ function BarChartCard() {
   const yTicks = [600, 450, 300, 150, 0];
   const plotLeft = 44;
   const plotRight = 630;
-  const plotTop = 16;
-  const plotBottom = 232;
+  const plotTop = 14;
+  const plotBottom = 212;
   const plotHeight = plotBottom - plotTop;
   const slotWidth = (plotRight - plotLeft) / data.length;
-  const barWidth = 76;
+  const barWidth = 64;
 
   return (
     <>
@@ -8374,15 +8374,15 @@ function BarChartCard() {
       </div>
 
       {/* Desktop: clean borderless vertical column chart */}
-      <div className="hidden md:block my-4 w-full">
+      <div className="hidden md:block my-4 w-full md:max-w-[540px]">
         <h4 className="text-[15px] font-semibold text-slate-900 leading-snug">
           Pertumbuhan Pengguna Aplikasi
         </h4>
-        <p className="text-[13px] text-slate-500 mt-0.5 mb-4">
+        <p className="text-[13px] text-slate-500 mt-0.5 mb-3">
           Data simulasi jumlah pengguna per bulan.
         </p>
 
-        <svg viewBox="0 0 640 262" className="w-full h-auto block select-none font-sans overflow-visible">
+        <svg viewBox="0 0 640 240" className="w-full h-auto block select-none font-sans overflow-visible">
           {yTicks.map((tick) => {
             const y = plotBottom - (tick / 600) * plotHeight;
             return (
@@ -8466,8 +8466,8 @@ function LineChartCard() {
   const yTicks = [40, 32, 24, 16, 8];
   const plotLeft = 68;
   const plotRight = 622;
-  const plotTop = 18;
-  const plotBottom = 228;
+  const plotTop = 14;
+  const plotBottom = 208;
   const plotHeight = plotBottom - plotTop;
   const coords = points.map((pt, idx) => ({
     ...pt,
@@ -8548,16 +8548,16 @@ function LineChartCard() {
       </div>
 
       {/* Desktop: clean borderless multi-point line chart with floating tooltip */}
-      <div className="hidden md:block my-4 w-full">
+      <div className="hidden md:block my-4 w-full md:max-w-[540px]">
         <h4 className="text-[15px] font-semibold text-slate-900 leading-snug">
           Tren Penjualan 2026
         </h4>
-        <p className="text-[13px] text-slate-500 mt-0.5 mb-4">
+        <p className="text-[13px] text-slate-500 mt-0.5 mb-3">
           Nilai penjualan simulasi dalam juta rupiah.
         </p>
 
         <div className="relative w-full">
-          <svg viewBox="0 0 640 258" className="w-full h-auto block select-none font-sans overflow-visible">
+          <svg viewBox="0 0 640 236" className="w-full h-auto block select-none font-sans overflow-visible">
             {yTicks.map((tick) => {
               const y = plotBottom - ((tick - 8) / (40 - 8)) * plotHeight;
               return (
@@ -8619,7 +8619,7 @@ function LineChartCard() {
           </svg>
 
           {/* Floating tooltip matching ChatGPT desktop preview */}
-          <div className="pointer-events-none absolute bottom-10 right-3 rounded-xl border border-slate-200/80 bg-[#f4f6f9]/95 px-3.5 py-2.5 shadow-sm backdrop-blur-xs">
+          <div className="pointer-events-none absolute bottom-8 right-2 rounded-xl border border-slate-200/80 bg-[#f4f6f9]/95 px-3 py-2 shadow-sm backdrop-blur-xs">
             <p className="text-xs font-semibold text-slate-900 leading-tight">{activePoint.label}</p>
             <div className="mt-1.5 flex items-center gap-3 text-xs leading-tight">
               <span className="inline-flex items-center gap-1.5 text-slate-500">
@@ -8695,16 +8695,16 @@ function PieChartCard() {
       </div>
 
       {/* Desktop: clean borderless donut chart with white slice gaps & centered legend */}
-      <div className="hidden md:block my-4 w-full">
+      <div className="hidden md:block my-4 w-full md:max-w-[540px]">
         <h4 className="text-[15px] font-semibold text-slate-900 leading-snug">
           Distribusi Pengguna Berdasarkan Perangkat
         </h4>
-        <p className="text-[13px] text-slate-500 mt-0.5 mb-5">
+        <p className="text-[13px] text-slate-500 mt-0.5 mb-3">
           Persentase dari total 1.000 pengguna simulasi.
         </p>
 
-        <div className="flex justify-center py-1">
-          <svg viewBox="0 0 240 240" className="w-[216px] h-[216px] block select-none">
+        <div className="flex justify-center py-0.5">
+          <svg viewBox="0 0 240 240" className="w-[164px] h-[164px] block select-none">
             {/* Slice 1: Mobile 65% -> Blue */}
             <path
               d="M 45.57 174.08 A 92 92 0 1 0 120 28 L 120 72 A 48 48 0 1 1 81.17 148.21 Z"
@@ -8732,7 +8732,7 @@ function PieChartCard() {
           </svg>
         </div>
 
-        <div className="mt-4 flex items-center justify-center gap-6 text-[13px] text-slate-700">
+        <div className="mt-3 flex items-center justify-center gap-6 text-[12.5px] text-slate-700">
           <span className="inline-flex items-center gap-2">
             <span className="h-2 w-2 rounded-full bg-[#59b870]" />
             Desktop
