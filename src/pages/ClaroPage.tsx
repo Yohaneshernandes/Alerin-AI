@@ -8323,9 +8323,16 @@ function MermaidCard({ code }: { code: string }) {
 }
 
 // ─── Data Visualization Cards (Bar, Line, Pie/Donut, Comparison, KPI) ───────
-const CHART_CARD_CLS = "my-3.5 rounded-2xl border border-neutral-200/90 bg-white p-4 sm:p-5 md:p-4 md:max-w-[560px] shadow-xs";
+const CHART_CARD_CLS = "my-3.5 rounded-2xl border border-neutral-200/90 bg-white p-4 sm:p-5 shadow-xs";
+
+function roundedTopBarPath(x: number, y: number, w: number, h: number, r = 6) {
+  const radius = Math.min(r, w / 2, h);
+  if (h <= 0) return "";
+  return `M ${x} ${y + h} L ${x} ${y + radius} Q ${x} ${y} ${x + radius} ${y} L ${x + w - radius} ${y} Q ${x + w} ${y} ${x + w} ${y + radius} L ${x + w} ${y + h} Z`;
+}
 
 function BarChartCard() {
+  const [hoveredIdx, setHoveredIdx] = React.useState<number | null>(null);
   const data = [
     { month: "Januari", val: 120, pct: "21.4%" },
     { month: "Februari", val: 180, pct: "32.1%" },
@@ -8334,240 +8341,624 @@ function BarChartCard() {
     { month: "Mei", val: 420, pct: "75%" },
     { month: "Juni", val: 560, pct: "100%" },
   ];
+  const yTicks = [600, 450, 300, 150, 0];
+  const plotLeft = 44;
+  const plotRight = 630;
+  const plotTop = 16;
+  const plotBottom = 232;
+  const plotHeight = plotBottom - plotTop;
+  const slotWidth = (plotRight - plotLeft) / data.length;
+  const barWidth = 76;
 
   return (
-    <div className={CHART_CARD_CLS}>
-      <h4 className="text-[0.9375rem] font-bold text-slate-900 leading-tight">
-        Pertumbuhan Pengguna Aplikasi
-      </h4>
-      <p className="text-xs text-slate-500 mt-1 mb-4 md:mb-3">
-        Data simulasi jumlah pengguna per bulan.
-      </p>
+    <>
+      {/* Mobile: keep existing horizontal progress bar card untouched */}
+      <div className={`${CHART_CARD_CLS} md:hidden`}>
+        <h4 className="text-[0.9375rem] font-bold text-slate-900 leading-tight">
+          Pertumbuhan Pengguna Aplikasi
+        </h4>
+        <p className="text-xs text-slate-500 mt-1 mb-4">
+          Data simulasi jumlah pengguna per bulan.
+        </p>
 
-      <div className="space-y-3.5 md:space-y-2.5">
-        {data.map((item, idx) => (
-          <div key={idx} className="space-y-1">
-            <div className="flex items-center justify-between text-xs sm:text-[13px] font-medium text-slate-800">
-              <span>{item.month}</span>
-              <span>{item.val}</span>
+        <div className="space-y-3.5">
+          {data.map((item, idx) => (
+            <div key={idx} className="space-y-1">
+              <div className="flex items-center justify-between text-xs sm:text-[13px] font-medium text-slate-800">
+                <span>{item.month}</span>
+                <span>{item.val}</span>
+              </div>
+              <div className="w-full h-1.5 sm:h-2 bg-neutral-100 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-[#4589f8] rounded-full transition-all duration-500"
+                  style={{ width: item.pct }}
+                />
+              </div>
             </div>
-            <div className="w-full h-1.5 sm:h-2 md:h-1.5 bg-neutral-100 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-[#4589f8] rounded-full transition-all duration-500"
-                style={{ width: item.pct }}
-              />
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-    </div>
+
+      {/* Desktop: clean borderless vertical column chart */}
+      <div className="hidden md:block my-4 w-full">
+        <h4 className="text-[15px] font-semibold text-slate-900 leading-snug">
+          Pertumbuhan Pengguna Aplikasi
+        </h4>
+        <p className="text-[13px] text-slate-500 mt-0.5 mb-4">
+          Data simulasi jumlah pengguna per bulan.
+        </p>
+
+        <svg viewBox="0 0 640 262" className="w-full h-auto block select-none font-sans overflow-visible">
+          {yTicks.map((tick) => {
+            const y = plotBottom - (tick / 600) * plotHeight;
+            return (
+              <g key={tick}>
+                <line
+                  x1={plotLeft}
+                  y1={y}
+                  x2={plotRight}
+                  y2={y}
+                  stroke="#e5e7eb"
+                  strokeDasharray="3 3"
+                  strokeWidth="1"
+                />
+                <text x={plotLeft - 12} y={y + 4} textAnchor="end" fontSize="12" fill="#64748b">
+                  {tick}
+                </text>
+              </g>
+            );
+          })}
+
+          {data.map((item, idx) => {
+            const barHeight = (item.val / 600) * plotHeight;
+            const barX = plotLeft + idx * slotWidth + (slotWidth - barWidth) / 2;
+            const barY = plotBottom - barHeight;
+            const isHovered = hoveredIdx === idx;
+            return (
+              <g
+                key={item.month}
+                onMouseEnter={() => setHoveredIdx(idx)}
+                onMouseLeave={() => setHoveredIdx(null)}
+                className="cursor-pointer"
+              >
+                <path
+                  d={roundedTopBarPath(barX, barY, barWidth, barHeight, 6)}
+                  fill={isHovered ? "#3b82f6" : "#4b94f8"}
+                />
+                <text x={barX + 2} y={plotBottom + 20} textAnchor="start" fontSize="12" fill="#475569">
+                  {item.month}
+                </text>
+                {isHovered && (
+                  <g>
+                    <rect
+                      x={barX + barWidth / 2 - 22}
+                      y={Math.max(2, barY - 28)}
+                      width="44"
+                      height="22"
+                      rx="6"
+                      fill="#0f172a"
+                    />
+                    <text
+                      x={barX + barWidth / 2}
+                      y={Math.max(17, barY - 13)}
+                      textAnchor="middle"
+                      fontSize="11"
+                      fontWeight="600"
+                      fill="#ffffff"
+                    >
+                      {item.val}
+                    </text>
+                  </g>
+                )}
+              </g>
+            );
+          })}
+        </svg>
+      </div>
+    </>
   );
 }
 
 function LineChartCard() {
-  return (
-    <div className={`${CHART_CARD_CLS} md:max-w-[440px] md:p-3.5`}>
-      <h4 className="text-[0.9375rem] md:text-sm font-bold text-slate-900 leading-tight">
-        Tren Penjualan 2026
-      </h4>
-      <p className="text-xs md:text-[11px] text-slate-500 mt-1 md:mt-0.5 mb-3 md:mb-2">
-        Nilai penjualan simulasi dalam juta rupiah.
-      </p>
+  const [activeIdx, setActiveIdx] = React.useState(5);
+  const points = [
+    { label: "Jan", val: 10 },
+    { label: "Feb", val: 15 },
+    { label: "Mar", val: 13 },
+    { label: "Apr", val: 22 },
+    { label: "Mei", val: 28 },
+    { label: "Jun", val: 35 },
+  ];
+  const yTicks = [40, 32, 24, 16, 8];
+  const plotLeft = 68;
+  const plotRight = 622;
+  const plotTop = 18;
+  const plotBottom = 228;
+  const plotHeight = plotBottom - plotTop;
+  const coords = points.map((pt, idx) => ({
+    ...pt,
+    x: plotLeft + (idx / (points.length - 1)) * (plotRight - plotLeft),
+    y: plotBottom - ((pt.val - 8) / (40 - 8)) * plotHeight,
+  }));
+  const activePoint = coords[activeIdx] || coords[5];
 
-      {/* Metric highlight badge */}
-      <div className="flex items-start gap-2.5 md:gap-2 mb-2 md:mb-1.5">
-        <div className="w-1 self-stretch bg-blue-600 rounded-full" />
-        <div>
-          <span className="text-[11px] md:text-[10px] text-slate-500 block leading-tight">Penjualan</span>
-          <span className="text-sm md:text-[13px] font-bold text-slate-900 leading-tight">Rp35 juta</span>
+  return (
+    <>
+      {/* Mobile: keep existing line chart card untouched */}
+      <div className={`${CHART_CARD_CLS} md:hidden`}>
+        <h4 className="text-[0.9375rem] font-bold text-slate-900 leading-tight">
+          Tren Penjualan 2026
+        </h4>
+        <p className="text-xs text-slate-500 mt-1 mb-3">
+          Nilai penjualan simulasi dalam juta rupiah.
+        </p>
+
+        {/* Metric highlight badge */}
+        <div className="flex items-start gap-2.5 mb-2">
+          <div className="w-1 self-stretch bg-blue-600 rounded-full" />
+          <div>
+            <span className="text-[11px] text-slate-500 block leading-tight">Penjualan</span>
+            <span className="text-sm font-bold text-slate-900 leading-tight">Rp35 juta</span>
+          </div>
+        </div>
+
+        {/* Line Chart Canvas */}
+        <div className="w-full pt-1">
+          <svg viewBox="-22 0 494 220" className="w-full h-auto block select-none font-sans">
+            <defs>
+              <linearGradient id="lineGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#2563eb" stopOpacity="0.12" />
+                <stop offset="100%" stopColor="#2563eb" stopOpacity="0.0" />
+              </linearGradient>
+            </defs>
+
+            {/* Dotted grid lines */}
+            <line x1="50" y1="40" x2="420" y2="40" stroke="#e2e8f0" strokeDasharray="3 3" strokeWidth="1" />
+            <line x1="50" y1="100" x2="420" y2="100" stroke="#e2e8f0" strokeDasharray="3 3" strokeWidth="1" />
+            <line x1="50" y1="160" x2="420" y2="160" stroke="#e2e8f0" strokeDasharray="3 3" strokeWidth="1" />
+            <line x1="50" y1="190" x2="420" y2="190" stroke="#e2e8f0" strokeDasharray="3 3" strokeWidth="1" />
+
+            {/* Y Axis text labels */}
+            <text x="44" y="44" textAnchor="end" fontSize="10" fill="#94a3b8">Rp40 juta</text>
+            <text x="44" y="193" textAnchor="end" fontSize="10" fill="#94a3b8">Rp8 juta</text>
+            <text x="18" y="115" textAnchor="middle" fontSize="10" fill="#94a3b8" transform="rotate(-90 18 115)">Penjualan</text>
+
+            {/* X Axis text labels */}
+            <text x="50" y="208" textAnchor="middle" fontSize="10" fill="#64748b">Jan</text>
+            <text x="235" y="208" textAnchor="middle" fontSize="10" fill="#64748b">Bulan</text>
+            <text x="420" y="208" textAnchor="middle" fontSize="10" fill="#64748b">Jun</text>
+
+            {/* Vertical Jun Indicator Line */}
+            <line x1="420" y1="36" x2="420" y2="190" stroke="#94a3b8" strokeWidth="1" />
+            <text x="420" y="26" textAnchor="middle" fontSize="11" fill="#1e293b" fontWeight="600">Jun</text>
+
+            {/* Area fill */}
+            <path
+              d="M 50 180 C 90 160, 115 135, 140 140 C 165 145, 185 168, 220 156 C 265 140, 310 95, 370 65 C 395 52, 410 42, 420 36 L 420 190 L 50 190 Z"
+              fill="url(#lineGrad)"
+            />
+
+            {/* The line curve */}
+            <path
+              d="M 50 180 C 90 160, 115 135, 140 140 C 165 145, 185 168, 220 156 C 265 140, 310 95, 370 65 C 395 52, 410 42, 420 36"
+              fill="none"
+              stroke="#2563eb"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+            />
+
+            {/* Dot marker at Jun */}
+            <circle cx="420" cy="36" r="5" fill="#2563eb" stroke="#ffffff" strokeWidth="2" />
+          </svg>
         </div>
       </div>
 
-      {/* Line Chart Canvas */}
-      <div className="w-full pt-1 md:pt-0.5">
-        <svg viewBox="-22 0 494 220" className="w-full h-auto md:max-h-[185px] block select-none font-sans">
-          <defs>
-            <linearGradient id="lineGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#2563eb" stopOpacity="0.12" />
-              <stop offset="100%" stopColor="#2563eb" stopOpacity="0.0" />
-            </linearGradient>
-          </defs>
+      {/* Desktop: clean borderless multi-point line chart with floating tooltip */}
+      <div className="hidden md:block my-4 w-full">
+        <h4 className="text-[15px] font-semibold text-slate-900 leading-snug">
+          Tren Penjualan 2026
+        </h4>
+        <p className="text-[13px] text-slate-500 mt-0.5 mb-4">
+          Nilai penjualan simulasi dalam juta rupiah.
+        </p>
 
-          {/* Dotted grid lines */}
-          <line x1="50" y1="40" x2="420" y2="40" stroke="#e2e8f0" strokeDasharray="3 3" strokeWidth="1" />
-          <line x1="50" y1="100" x2="420" y2="100" stroke="#e2e8f0" strokeDasharray="3 3" strokeWidth="1" />
-          <line x1="50" y1="160" x2="420" y2="160" stroke="#e2e8f0" strokeDasharray="3 3" strokeWidth="1" />
-          <line x1="50" y1="190" x2="420" y2="190" stroke="#e2e8f0" strokeDasharray="3 3" strokeWidth="1" />
+        <div className="relative w-full">
+          <svg viewBox="0 0 640 258" className="w-full h-auto block select-none font-sans overflow-visible">
+            {yTicks.map((tick) => {
+              const y = plotBottom - ((tick - 8) / (40 - 8)) * plotHeight;
+              return (
+                <g key={tick}>
+                  <line
+                    x1={plotLeft}
+                    y1={y}
+                    x2={plotRight}
+                    y2={y}
+                    stroke="#e5e7eb"
+                    strokeDasharray="3 3"
+                    strokeWidth="1"
+                  />
+                  <text x={plotLeft - 12} y={y + 4} textAnchor="end" fontSize="12" fill="#64748b">
+                    Rp{tick} juta
+                  </text>
+                </g>
+              );
+            })}
 
-          {/* Y Axis text labels */}
-          <text x="44" y="44" textAnchor="end" fontSize="10" fill="#94a3b8">Rp40 juta</text>
-          <text x="44" y="193" textAnchor="end" fontSize="10" fill="#94a3b8">Rp8 juta</text>
-          <text x="18" y="115" textAnchor="middle" fontSize="10" fill="#94a3b8" transform="rotate(-90 18 115)">Penjualan</text>
+            <line
+              x1={activePoint.x}
+              y1={plotTop}
+              x2={activePoint.x}
+              y2={plotBottom}
+              stroke="#e2e8f0"
+              strokeWidth="1"
+            />
 
-          {/* X Axis text labels */}
-          <text x="50" y="208" textAnchor="middle" fontSize="10" fill="#64748b">Jan</text>
-          <text x="235" y="208" textAnchor="middle" fontSize="10" fill="#64748b">Bulan</text>
-          <text x="420" y="208" textAnchor="middle" fontSize="10" fill="#64748b">Jun</text>
+            <polyline
+              points={coords.map((c) => `${c.x},${c.y}`).join(" ")}
+              fill="none"
+              stroke="#4b94f8"
+              strokeWidth="2"
+              strokeLinejoin="round"
+              strokeLinecap="round"
+            />
 
-          {/* Vertical Jun Indicator Line */}
-          <line x1="420" y1="36" x2="420" y2="190" stroke="#94a3b8" strokeWidth="1" />
-          <text x="420" y="26" textAnchor="middle" fontSize="11" fill="#1e293b" fontWeight="600">Jun</text>
+            {coords.map((pt, idx) => (
+              <g
+                key={pt.label}
+                onMouseEnter={() => setActiveIdx(idx)}
+                className="cursor-pointer"
+              >
+                <circle cx={pt.x} cy={pt.y} r="14" fill="transparent" />
+                <circle
+                  cx={pt.x}
+                  cy={pt.y}
+                  r={activeIdx === idx ? 4.5 : 3.5}
+                  fill="#4b94f8"
+                  stroke="#ffffff"
+                  strokeWidth="1.5"
+                />
+                <text x={pt.x} y={plotBottom + 20} textAnchor="middle" fontSize="12" fill="#64748b">
+                  {pt.label}
+                </text>
+              </g>
+            ))}
+          </svg>
 
-          {/* Area fill */}
-          <path
-            d="M 50 180 C 90 160, 115 135, 140 140 C 165 145, 185 168, 220 156 C 265 140, 310 95, 370 65 C 395 52, 410 42, 420 36 L 420 190 L 50 190 Z"
-            fill="url(#lineGrad)"
-          />
-
-          {/* The line curve */}
-          <path
-            d="M 50 180 C 90 160, 115 135, 140 140 C 165 145, 185 168, 220 156 C 265 140, 310 95, 370 65 C 395 52, 410 42, 420 36"
-            fill="none"
-            stroke="#2563eb"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-          />
-
-          {/* Dot marker at Jun */}
-          <circle cx="420" cy="36" r="5" fill="#2563eb" stroke="#ffffff" strokeWidth="2" />
-        </svg>
+          {/* Floating tooltip matching ChatGPT desktop preview */}
+          <div className="pointer-events-none absolute bottom-10 right-3 rounded-xl border border-slate-200/80 bg-[#f4f6f9]/95 px-3.5 py-2.5 shadow-sm backdrop-blur-xs">
+            <p className="text-xs font-semibold text-slate-900 leading-tight">{activePoint.label}</p>
+            <div className="mt-1.5 flex items-center gap-3 text-xs leading-tight">
+              <span className="inline-flex items-center gap-1.5 text-slate-500">
+                <span className="h-2 w-2 rounded-full bg-[#4b94f8]" />
+                Penjualan
+              </span>
+              <span className="font-semibold text-slate-900">Rp{activePoint.val} juta</span>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
 function PieChartCard() {
   return (
-    <div className={CHART_CARD_CLS}>
-      <h4 className="text-[0.9375rem] font-bold text-slate-900 leading-tight">
-        Distribusi Pengguna Berdasarkan Perangkat
-      </h4>
-      <p className="text-xs text-slate-500 mt-1 mb-4 md:mb-3">
-        Persentase dari total 1.000 pengguna simulasi.
-      </p>
+    <>
+      {/* Mobile: keep existing donut chart card untouched */}
+      <div className={`${CHART_CARD_CLS} md:hidden`}>
+        <h4 className="text-[0.9375rem] font-bold text-slate-900 leading-tight">
+          Distribusi Pengguna Berdasarkan Perangkat
+        </h4>
+        <p className="text-xs text-slate-500 mt-1 mb-4">
+          Persentase dari total 1.000 pengguna simulasi.
+        </p>
 
-      {/* Donut Chart SVG */}
-      <div className="flex justify-center py-2 md:py-1">
-        <svg viewBox="0 0 240 240" className="w-[180px] h-[180px] sm:w-[200px] sm:h-[200px] md:w-[165px] md:h-[165px] block select-none">
-          {/* Slice 1: Mobile 650 (65%) -> Blue */}
-          <path
-            d="M 53.7 168.2 A 82 82 0 1 0 120 38 L 120 72 A 48 48 0 1 1 81.2 148.2 Z"
-            fill="#0084ff"
-          />
-          {/* Slice 2: Desktop 280 (28%) -> Green */}
-          <path
-            d="M 85.3 45.7 A 82 82 0 0 0 52.8 167.0 L 80.7 147.5 A 48 48 0 0 1 99.7 76.5 Z"
-            fill="#00b050"
-          />
-          {/* Slice 3: Tablet 70 (7%) -> Yellow */}
-          <path
-            d="M 118.6 38.0 A 82 82 0 0 0 86.6 45.1 L 100.5 76.1 A 48 48 0 0 1 119.2 72.0 Z"
-            fill="#ffc000"
-          />
-        </svg>
+        {/* Donut Chart SVG */}
+        <div className="flex justify-center py-2">
+          <svg viewBox="0 0 240 240" className="w-[180px] h-[180px] sm:w-[200px] sm:h-[200px] block select-none">
+            {/* Slice 1: Mobile 650 (65%) -> Blue */}
+            <path
+              d="M 53.7 168.2 A 82 82 0 1 0 120 38 L 120 72 A 48 48 0 1 1 81.2 148.2 Z"
+              fill="#0084ff"
+            />
+            {/* Slice 2: Desktop 280 (28%) -> Green */}
+            <path
+              d="M 85.3 45.7 A 82 82 0 0 0 52.8 167.0 L 80.7 147.5 A 48 48 0 0 1 99.7 76.5 Z"
+              fill="#00b050"
+            />
+            {/* Slice 3: Tablet 70 (7%) -> Yellow */}
+            <path
+              d="M 118.6 38.0 A 82 82 0 0 0 86.6 45.1 L 100.5 76.1 A 48 48 0 0 1 119.2 72.0 Z"
+              fill="#ffc000"
+            />
+          </svg>
+        </div>
+
+        {/* Legend below chart */}
+        <div className="grid grid-cols-3 gap-2 pt-3 border-t border-neutral-100">
+          <div className="flex items-center gap-2">
+            <div className="w-1 h-7 bg-[#0084ff] rounded-full shrink-0" />
+            <div>
+              <span className="text-[11px] text-slate-500 block leading-tight">Mobile</span>
+              <span className="text-xs sm:text-sm font-bold text-slate-900 leading-tight">650</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-1 h-7 bg-[#00b050] rounded-full shrink-0" />
+            <div>
+              <span className="text-[11px] text-slate-500 block leading-tight">Desktop</span>
+              <span className="text-xs sm:text-sm font-bold text-slate-900 leading-tight">280</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-1 h-7 bg-[#ffc000] rounded-full shrink-0" />
+            <div>
+              <span className="text-[11px] text-slate-500 block leading-tight">Tablet</span>
+              <span className="text-xs sm:text-sm font-bold text-slate-900 leading-tight">70</span>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Legend below chart */}
-      <div className="grid grid-cols-3 gap-2 pt-3 border-t border-neutral-100">
-        <div className="flex items-center gap-2">
-          <div className="w-1 h-7 bg-[#0084ff] rounded-full shrink-0" />
-          <div>
-            <span className="text-[11px] text-slate-500 block leading-tight">Mobile</span>
-            <span className="text-xs sm:text-sm font-bold text-slate-900 leading-tight">650</span>
-          </div>
+      {/* Desktop: clean borderless donut chart with white slice gaps & centered legend */}
+      <div className="hidden md:block my-4 w-full">
+        <h4 className="text-[15px] font-semibold text-slate-900 leading-snug">
+          Distribusi Pengguna Berdasarkan Perangkat
+        </h4>
+        <p className="text-[13px] text-slate-500 mt-0.5 mb-5">
+          Persentase dari total 1.000 pengguna simulasi.
+        </p>
+
+        <div className="flex justify-center py-1">
+          <svg viewBox="0 0 240 240" className="w-[216px] h-[216px] block select-none">
+            {/* Slice 1: Mobile 65% -> Blue */}
+            <path
+              d="M 45.57 174.08 A 92 92 0 1 0 120 28 L 120 72 A 48 48 0 1 1 81.17 148.21 Z"
+              fill="#4b94f8"
+              stroke="#ffffff"
+              strokeWidth="2.5"
+              strokeLinejoin="round"
+            />
+            {/* Slice 2: Desktop 28% -> Green */}
+            <path
+              d="M 80.83 36.76 A 92 92 0 0 0 45.57 174.08 L 81.17 148.21 A 48 48 0 0 1 99.56 76.57 Z"
+              fill="#59b870"
+              stroke="#ffffff"
+              strokeWidth="2.5"
+              strokeLinejoin="round"
+            />
+            {/* Slice 3: Tablet 7% -> Coral Orange */}
+            <path
+              d="M 120 28 A 92 92 0 0 0 80.83 36.76 L 99.56 76.57 A 48 48 0 0 1 120 72 Z"
+              fill="#eb804f"
+              stroke="#ffffff"
+              strokeWidth="2.5"
+              strokeLinejoin="round"
+            />
+          </svg>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="w-1 h-7 bg-[#00b050] rounded-full shrink-0" />
-          <div>
-            <span className="text-[11px] text-slate-500 block leading-tight">Desktop</span>
-            <span className="text-xs sm:text-sm font-bold text-slate-900 leading-tight">280</span>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-1 h-7 bg-[#ffc000] rounded-full shrink-0" />
-          <div>
-            <span className="text-[11px] text-slate-500 block leading-tight">Tablet</span>
-            <span className="text-xs sm:text-sm font-bold text-slate-900 leading-tight">70</span>
-          </div>
+
+        <div className="mt-4 flex items-center justify-center gap-6 text-[13px] text-slate-700">
+          <span className="inline-flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-[#59b870]" />
+            Desktop
+          </span>
+          <span className="inline-flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-[#4b94f8]" />
+            Mobile
+          </span>
+          <span className="inline-flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-[#eb804f]" />
+            Tablet
+          </span>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
 function ComparisonChartCard() {
+  const [hoveredKey, setHoveredKey] = React.useState<string | null>(null);
   const comparisons = [
-    { month: "Januari", targetVal: "Rp20 jt", targetPct: "40%", realVal: "Rp18 jt", realPct: "36%" },
-    { month: "Februari", targetVal: "Rp25 jt", targetPct: "50%", realVal: "Rp28 jt", realPct: "56%" },
-    { month: "Maret", targetVal: "Rp30 jt", targetPct: "60%", realVal: "Rp27 jt", realPct: "54%" },
-    { month: "April", targetVal: "Rp35 jt", targetPct: "70%", realVal: "Rp40 jt", realPct: "80%" },
-    { month: "Mei", targetVal: "Rp40 jt", targetPct: "80%", realVal: "Rp45 jt", realPct: "90%" },
+    { month: "Januari", target: 20, targetVal: "Rp20 jt", targetPct: "40%", real: 18, realVal: "Rp18 jt", realPct: "36%" },
+    { month: "Februari", target: 25, targetVal: "Rp25 jt", targetPct: "50%", real: 28, realVal: "Rp28 jt", realPct: "56%" },
+    { month: "Maret", target: 30, targetVal: "Rp30 jt", targetPct: "60%", real: 27, realVal: "Rp27 jt", realPct: "54%" },
+    { month: "April", target: 35, targetVal: "Rp35 jt", targetPct: "70%", real: 40, realVal: "Rp40 jt", realPct: "80%" },
+    { month: "Mei", target: 40, targetVal: "Rp40 jt", targetPct: "80%", real: 45, realVal: "Rp45 jt", realPct: "90%" },
   ];
+  const yTicks = [60, 45, 30, 15, 0];
+  const plotLeft = 58;
+  const plotRight = 630;
+  const plotTop = 16;
+  const plotBottom = 232;
+  const plotHeight = plotBottom - plotTop;
+  const groupWidth = (plotRight - plotLeft) / comparisons.length;
+  const barWidth = 44;
+  const innerGap = 5;
 
   return (
-    <div className={CHART_CARD_CLS}>
-      <h4 className="text-[0.9375rem] font-bold text-slate-900 leading-tight">
-        Target vs Realisasi
-      </h4>
-      <p className="text-xs text-slate-500 mt-1 mb-4 md:mb-3">
-        Perbandingan dalam juta rupiah.
-      </p>
+    <>
+      {/* Mobile: keep existing horizontal comparison card untouched */}
+      <div className={`${CHART_CARD_CLS} md:hidden`}>
+        <h4 className="text-[0.9375rem] font-bold text-slate-900 leading-tight">
+          Target vs Realisasi
+        </h4>
+        <p className="text-xs text-slate-500 mt-1 mb-4">
+          Perbandingan dalam juta rupiah.
+        </p>
 
-      <div className="space-y-4 md:space-y-3">
-        {comparisons.map((c, idx) => (
-          <div key={idx} className="space-y-1.5">
-            <span className="text-xs font-semibold text-slate-900 block">{c.month}</span>
+        <div className="space-y-4">
+          {comparisons.map((c, idx) => (
+            <div key={idx} className="space-y-1.5">
+              <span className="text-xs font-semibold text-slate-900 block">{c.month}</span>
 
-            {/* Target row */}
-            <div className="space-y-0.5">
-              <div className="flex items-center justify-between text-[11px] sm:text-xs text-slate-600">
-                <span>Target</span>
-                <span className="font-medium text-slate-800">{c.targetVal}</span>
+              {/* Target row */}
+              <div className="space-y-0.5">
+                <div className="flex items-center justify-between text-[11px] sm:text-xs text-slate-600">
+                  <span>Target</span>
+                  <span className="font-medium text-slate-800">{c.targetVal}</span>
+                </div>
+                <div className="w-full h-1.5 bg-neutral-100 rounded-full overflow-hidden">
+                  <div className="h-full bg-[#4589f8] rounded-full" style={{ width: c.targetPct }} />
+                </div>
               </div>
-              <div className="w-full h-1.5 bg-neutral-100 rounded-full overflow-hidden">
-                <div className="h-full bg-[#4589f8] rounded-full" style={{ width: c.targetPct }} />
+
+              {/* Realisasi row */}
+              <div className="space-y-0.5">
+                <div className="flex items-center justify-between text-[11px] sm:text-xs text-slate-600">
+                  <span>Realisasi</span>
+                  <span className="font-medium text-slate-800">{c.realVal}</span>
+                </div>
+                <div className="w-full h-1.5 bg-neutral-100 rounded-full overflow-hidden">
+                  <div className="h-full bg-[#22c55e] rounded-full" style={{ width: c.realPct }} />
+                </div>
               </div>
             </div>
-
-            {/* Realisasi row */}
-            <div className="space-y-0.5">
-              <div className="flex items-center justify-between text-[11px] sm:text-xs text-slate-600">
-                <span>Realisasi</span>
-                <span className="font-medium text-slate-800">{c.realVal}</span>
-              </div>
-              <div className="w-full h-1.5 bg-neutral-100 rounded-full overflow-hidden">
-                <div className="h-full bg-[#22c55e] rounded-full" style={{ width: c.realPct }} />
-              </div>
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-    </div>
+
+      {/* Desktop: clean borderless grouped vertical bar chart */}
+      <div className="hidden md:block my-4 w-full">
+        <h4 className="text-[15px] font-semibold text-slate-900 leading-snug">
+          Target vs Realisasi
+        </h4>
+        <p className="text-[13px] text-slate-500 mt-0.5 mb-4">
+          Perbandingan dalam juta rupiah.
+        </p>
+
+        <svg viewBox="0 0 640 262" className="w-full h-auto block select-none font-sans overflow-visible">
+          {yTicks.map((tick) => {
+            const y = plotBottom - (tick / 60) * plotHeight;
+            return (
+              <g key={tick}>
+                <line
+                  x1={plotLeft}
+                  y1={y}
+                  x2={plotRight}
+                  y2={y}
+                  stroke="#e5e7eb"
+                  strokeDasharray="3 3"
+                  strokeWidth="1"
+                />
+                <text x={plotLeft - 12} y={y + 4} textAnchor="end" fontSize="12" fill="#64748b">
+                  Rp{tick} jt
+                </text>
+              </g>
+            );
+          })}
+
+          {comparisons.map((c, idx) => {
+            const pairWidth = barWidth * 2 + innerGap;
+            const pairX = plotLeft + idx * groupWidth + (groupWidth - pairWidth) / 2;
+            const targetH = (c.target / 60) * plotHeight;
+            const realH = (c.real / 60) * plotHeight;
+            const targetY = plotBottom - targetH;
+            const realX = pairX + barWidth + innerGap;
+            const realY = plotBottom - realH;
+            return (
+              <g key={c.month}>
+                <g
+                  onMouseEnter={() => setHoveredKey(`${c.month}-target`)}
+                  onMouseLeave={() => setHoveredKey(null)}
+                  className="cursor-pointer"
+                >
+                  <path
+                    d={roundedTopBarPath(pairX, targetY, barWidth, targetH, 6)}
+                    fill={hoveredKey === `${c.month}-target` ? "#3b82f6" : "#4b94f8"}
+                  />
+                  {hoveredKey === `${c.month}-target` && (
+                    <g>
+                      <rect x={pairX + barWidth / 2 - 26} y={Math.max(2, targetY - 26)} width="52" height="20" rx="6" fill="#0f172a" />
+                      <text x={pairX + barWidth / 2} y={Math.max(15, targetY - 12)} textAnchor="middle" fontSize="10.5" fontWeight="600" fill="#ffffff">{c.targetVal}</text>
+                    </g>
+                  )}
+                </g>
+                <g
+                  onMouseEnter={() => setHoveredKey(`${c.month}-real`)}
+                  onMouseLeave={() => setHoveredKey(null)}
+                  className="cursor-pointer"
+                >
+                  <path
+                    d={roundedTopBarPath(realX, realY, barWidth, realH, 6)}
+                    fill={hoveredKey === `${c.month}-real` ? "#48a860" : "#59b870"}
+                  />
+                  {hoveredKey === `${c.month}-real` && (
+                    <g>
+                      <rect x={realX + barWidth / 2 - 26} y={Math.max(2, realY - 26)} width="52" height="20" rx="6" fill="#0f172a" />
+                      <text x={realX + barWidth / 2} y={Math.max(15, realY - 12)} textAnchor="middle" fontSize="10.5" fontWeight="600" fill="#ffffff">{c.realVal}</text>
+                    </g>
+                  )}
+                </g>
+                <text x={pairX} y={plotBottom + 20} textAnchor="start" fontSize="12" fill="#475569">
+                  {c.month}
+                </text>
+              </g>
+            );
+          })}
+        </svg>
+
+        <div className="mt-2.5 flex items-center justify-center gap-6 text-[13px] text-slate-700">
+          <span className="inline-flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-[#4b94f8]" />
+            Target
+          </span>
+          <span className="inline-flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-[#59b870]" />
+            Realisasi
+          </span>
+        </div>
+      </div>
+    </>
   );
 }
 
 function KpiSummaryCard() {
   const kpis = [
-    { label: "Total pengguna", val: "1.250", valColor: "text-[#059669]", change: "↗ +18,5%" },
-    { label: "Total transaksi", val: "845", valColor: "text-slate-900", change: "↗ +12,2%" },
-    { label: "Conversion rate", val: "6,8%", valColor: "text-slate-900", change: "+2,1%" },
-    { label: "Pendapatan", val: "Rp45 jt", valColor: "text-slate-900", change: "+15,4%" },
+    { label: "Total pengguna", val: "1.250", valColor: "text-[#059669]", change: "+18,5%", trendIcon: true },
+    { label: "Total transaksi", val: "845", valColor: "text-slate-900", change: "+12,2%", trendIcon: true },
+    { label: "Conversion rate", val: "6,8%", valColor: "text-slate-900", change: "+2,1%", trendIcon: false },
+    { label: "Pendapatan", val: "Rp45 jt", valColor: "text-slate-900", change: "+15,4%", trendIcon: false },
   ];
 
   return (
-    <div className="my-3.5 grid grid-cols-2 gap-2.5 sm:gap-3 md:max-w-[560px]">
-      {kpis.map((kpi, idx) => (
-        <div key={idx} className="rounded-2xl border border-neutral-200/90 bg-white p-3.5 sm:p-4 shadow-xs">
-          <span className="text-xs text-slate-500 block leading-tight">{kpi.label}</span>
-          <div className={`text-xl sm:text-2xl font-bold ${kpi.valColor} my-1 leading-tight`}>
-            {kpi.val}
+    <>
+      {/* Mobile: keep existing 2x2 KPI card grid untouched */}
+      <div className="my-3.5 grid grid-cols-2 gap-2.5 sm:gap-3 md:hidden">
+        {kpis.map((kpi, idx) => (
+          <div key={idx} className="rounded-2xl border border-neutral-200/90 bg-white p-3.5 sm:p-4 shadow-xs">
+            <span className="text-xs text-slate-500 block leading-tight">{kpi.label}</span>
+            <div className={`text-xl sm:text-2xl font-bold ${kpi.valColor} my-1 leading-tight`}>
+              {kpi.val}
+            </div>
+            <span className="text-xs font-semibold text-[#059669] block leading-tight">
+              {kpi.trendIcon ? `↗ ${kpi.change}` : kpi.change}
+            </span>
           </div>
-          <span className="text-xs font-semibold text-[#059669] block leading-tight">
-            {kpi.change}
-          </span>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+
+      {/* Desktop: clean full-width 2x2 KPI cards matching reference */}
+      <div className="hidden md:grid my-3.5 grid-cols-2 gap-3.5 w-full">
+        {kpis.map((kpi, idx) => (
+          <div key={idx} className="rounded-xl border border-slate-200/90 bg-white px-5 py-4">
+            <span className="text-[13px] text-slate-500 block leading-tight">{kpi.label}</span>
+            <div className={`text-[26px] font-bold ${kpi.valColor} my-1.5 leading-tight tracking-tight`}>
+              {kpi.val}
+            </div>
+            <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#059669] leading-tight">
+              {kpi.trendIcon && (
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                  <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
+                  <polyline points="16 7 22 7 22 13" />
+                </svg>
+              )}
+              {kpi.change}
+            </span>
+          </div>
+        ))}
+      </div>
+    </>
   );
 }
 
@@ -10293,77 +10684,123 @@ function MarkdownRenderer({ text, isStreaming, compact }: { text: string; isStre
           })
         : [];
 
+      const isVizDataTable =
+        headers.length === 4 &&
+        headers[0].trim().toLowerCase() === "bulan" &&
+        headers[3].trim().toLowerCase() === "pendapatan";
+
       elements.push(
-        <div
-          key={`tbl-${i}`}
-          className={`my-3.5 w-full ${isFitScreen ? "overflow-hidden" : "overflow-x-auto"} select-text rounded-xl border border-neutral-300 bg-white shadow-xs`}
-          style={{
-            WebkitOverflowScrolling: "touch",
-            scrollbarWidth: "none",
-            touchAction: isFitScreen ? "auto" : "pan-x pan-y",
-          }}
-        >
-          <table
-            className={`text-black border-collapse text-left ${
-              isFitScreen
-                ? "w-full table-fixed text-[13px] sm:text-[0.9375rem]"
-                : "w-max min-w-full text-[13px] sm:text-[0.9375rem]"
-            }`}
+        <React.Fragment key={`tbl-${i}`}>
+          {isVizDataTable && (
+            <div className="hidden md:block my-4 w-full overflow-x-auto select-text">
+              <table className="w-full border-collapse text-left text-[13.5px]">
+                <thead>
+                  <tr className="border-b border-slate-200">
+                    {headers.map((h, ci) => (
+                      <th
+                        key={ci}
+                        className={`py-2.5 font-semibold text-slate-900 ${
+                          ci === 0 ? "text-left pr-4" : "text-right pl-4"
+                        }`}
+                      >
+                        {renderInlineMd(cleanMdText(h))}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {body.map((row, ri) => {
+                    const cells = parseRow(row);
+                    return (
+                      <tr key={ri} className="border-b border-slate-200/80 last:border-b-0">
+                        {cells.map((cell, ci) => (
+                          <td
+                            key={ci}
+                            className={`py-3 text-slate-800 ${
+                              ci === 0 ? "text-left pr-4" : "text-right pl-4 tabular-nums"
+                            }`}
+                          >
+                            {renderInlineMd(cleanMdText(cell))}
+                          </td>
+                        ))}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          <div
+            className={`${isVizDataTable ? "md:hidden " : ""}my-3.5 w-full ${isFitScreen ? "overflow-hidden" : "overflow-x-auto"} select-text rounded-xl border border-neutral-300 bg-white shadow-xs`}
+            style={{
+              WebkitOverflowScrolling: "touch",
+              scrollbarWidth: "none",
+              touchAction: isFitScreen ? "auto" : "pan-x pan-y",
+            }}
           >
-            <thead>
-              <tr className="border-b border-neutral-300 bg-neutral-50/80">
-                {headers.map((h, ci) => {
-                  let colWidthClass = "";
-                  if (isFitScreen) {
-                    if (colCount === 2) {
-                      colWidthClass = ci === 0 ? "w-[44%] sm:w-[40%]" : "w-[56%] sm:w-[60%]";
-                    } else if (colCount === 3) {
-                      colWidthClass = ci === 0 ? "w-[22%] sm:w-[20%]" : ci === 1 ? "w-[36%] sm:w-[35%]" : "w-[42%] sm:w-[45%]";
+            <table
+              className={`text-black border-collapse text-left ${
+                isFitScreen
+                  ? "w-full table-fixed text-[13px] sm:text-[0.9375rem]"
+                  : "w-max min-w-full text-[13px] sm:text-[0.9375rem]"
+              }`}
+            >
+              <thead>
+                <tr className="border-b border-neutral-300 bg-neutral-50/80">
+                  {headers.map((h, ci) => {
+                    let colWidthClass = "";
+                    if (isFitScreen) {
+                      if (colCount === 2) {
+                        colWidthClass = ci === 0 ? "w-[44%] sm:w-[40%]" : "w-[56%] sm:w-[60%]";
+                      } else if (colCount === 3) {
+                        colWidthClass = ci === 0 ? "w-[22%] sm:w-[20%]" : ci === 1 ? "w-[36%] sm:w-[35%]" : "w-[42%] sm:w-[45%]";
+                      }
                     }
-                  }
+                    return (
+                      <th
+                        key={ci}
+                        className={`py-2.5 sm:py-3 px-2 sm:px-3 text-center align-middle font-semibold text-black break-words border-r border-neutral-200/80 last:border-r-0 ${colWidthClass} ${
+                          !isFitScreen ? "whitespace-nowrap px-4" : ""
+                        }`}
+                      >
+                        {renderInlineMd(cleanMdText(h))}
+                      </th>
+                    );
+                  })}
+                </tr>
+              </thead>
+              <tbody>
+                {body.map((row, ri) => {
+                  const cells = parseRow(row);
+                  const isLastRow = ri === body.length - 1;
                   return (
-                    <th
-                      key={ci}
-                      className={`py-2.5 sm:py-3 px-2 sm:px-3 text-center align-middle font-semibold text-black break-words border-r border-neutral-200/80 last:border-r-0 ${colWidthClass} ${
-                        !isFitScreen ? "whitespace-nowrap px-4" : ""
-                      }`}
+                    <tr
+                      key={ri}
+                      className={`${!isLastRow ? "border-b border-neutral-200" : ""} hover:bg-neutral-50/40 transition-colors`}
                     >
-                      {renderInlineMd(cleanMdText(h))}
-                    </th>
+                      {cells.map((cell, ci) => {
+                        const cellAlign = colAligns[ci] || "text-left";
+                        return (
+                          <td
+                            key={ci}
+                            className={`py-2.5 sm:py-3.5 px-2 sm:px-3 text-black leading-snug sm:leading-relaxed align-top break-words ${cellAlign} border-r border-neutral-200/70 last:border-r-0 ${
+                              ci === 0
+                                ? "font-semibold sm:font-medium text-slate-900"
+                                : "text-slate-800"
+                            } ${!isFitScreen ? "min-w-[120px] px-4" : ""}`}
+                          >
+                            {renderInlineMd(cleanMdText(cell))}
+                          </td>
+                        );
+                      })}
+                    </tr>
                   );
                 })}
-              </tr>
-            </thead>
-            <tbody>
-              {body.map((row, ri) => {
-                const cells = parseRow(row);
-                const isLastRow = ri === body.length - 1;
-                return (
-                  <tr
-                    key={ri}
-                    className={`${!isLastRow ? "border-b border-neutral-200" : ""} hover:bg-neutral-50/40 transition-colors`}
-                  >
-                    {cells.map((cell, ci) => {
-                      const cellAlign = colAligns[ci] || "text-left";
-                      return (
-                        <td
-                          key={ci}
-                          className={`py-2.5 sm:py-3.5 px-2 sm:px-3 text-black leading-snug sm:leading-relaxed align-top break-words ${cellAlign} border-r border-neutral-200/70 last:border-r-0 ${
-                            ci === 0
-                              ? "font-semibold sm:font-medium text-slate-900"
-                              : "text-slate-800"
-                          } ${!isFitScreen ? "min-w-[120px] px-4" : ""}`}
-                        >
-                          {renderInlineMd(cleanMdText(cell))}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+              </tbody>
+            </table>
+          </div>
+        </React.Fragment>
       );
       continue;
     }
