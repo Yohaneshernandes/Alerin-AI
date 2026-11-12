@@ -8236,26 +8236,26 @@ function BarChartCard() {
 
 function LineChartCard() {
   return (
-    <div className={CHART_CARD_CLS}>
-      <h4 className="text-[0.9375rem] font-bold text-slate-900 leading-tight">
+    <div className={`${CHART_CARD_CLS} md:max-w-[440px] md:p-3.5`}>
+      <h4 className="text-[0.9375rem] md:text-sm font-bold text-slate-900 leading-tight">
         Tren Penjualan 2026
       </h4>
-      <p className="text-xs text-slate-500 mt-1 mb-3 md:mb-2.5">
+      <p className="text-xs md:text-[11px] text-slate-500 mt-1 md:mt-0.5 mb-3 md:mb-2">
         Nilai penjualan simulasi dalam juta rupiah.
       </p>
 
       {/* Metric highlight badge */}
-      <div className="flex items-start gap-2.5 mb-2">
+      <div className="flex items-start gap-2.5 md:gap-2 mb-2 md:mb-1.5">
         <div className="w-1 self-stretch bg-blue-600 rounded-full" />
         <div>
-          <span className="text-[11px] text-slate-500 block leading-tight">Penjualan</span>
-          <span className="text-sm font-bold text-slate-900 leading-tight">Rp35 juta</span>
+          <span className="text-[11px] md:text-[10px] text-slate-500 block leading-tight">Penjualan</span>
+          <span className="text-sm md:text-[13px] font-bold text-slate-900 leading-tight">Rp35 juta</span>
         </div>
       </div>
 
       {/* Line Chart Canvas */}
-      <div className="w-full pt-1">
-        <svg viewBox="-12 0 476 220" className="w-full h-auto md:max-h-[215px] block select-none font-sans">
+      <div className="w-full pt-1 md:pt-0.5">
+        <svg viewBox="-22 0 494 220" className="w-full h-auto md:max-h-[185px] block select-none font-sans">
           <defs>
             <linearGradient id="lineGrad" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="#2563eb" stopOpacity="0.12" />
