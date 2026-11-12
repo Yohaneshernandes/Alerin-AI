@@ -3322,6 +3322,13 @@ function SelectTextModal({
     setAllSelected(el.value.length > 0 && el.selectionStart === 0 && el.selectionEnd === el.value.length);
   };
 
+  const selectAllInTextarea = (el: HTMLTextAreaElement) => {
+    el.focus();
+    el.select();
+    try { el.setSelectionRange(0, el.value.length); } catch {}
+    setAllSelected(true);
+  };
+
   const handleToggleSelectAll = () => {
     const el = textareaRef.current;
     if (!el) return;
@@ -3333,10 +3340,7 @@ function SelectTextModal({
       try { window.getSelection()?.removeAllRanges(); } catch {}
       setAllSelected(false);
     } else {
-      el.focus();
-      el.select();
-      try { el.setSelectionRange(0, el.value.length); } catch {}
-      setAllSelected(true);
+      selectAllInTextarea(el);
     }
   };
 
@@ -3399,6 +3403,14 @@ function SelectTextModal({
             ref={textareaRef}
             readOnly
             value={text}
+            onClick={(e) => {
+              const el = e.currentTarget;
+              if (el.value.length > 0 && el.selectionStart === el.selectionEnd) {
+                selectAllInTextarea(el);
+              } else {
+                syncAllSelectedState(el);
+              }
+            }}
             onSelect={(e) => syncAllSelectedState(e.currentTarget)}
             onMouseUp={(e) => syncAllSelectedState(e.currentTarget)}
             onKeyUp={(e) => syncAllSelectedState(e.currentTarget)}
