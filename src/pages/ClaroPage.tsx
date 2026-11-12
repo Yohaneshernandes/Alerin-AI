@@ -10744,61 +10744,16 @@ function MarkdownRenderer({ text, isStreaming, compact }: { text: string; isStre
           })
         : [];
 
-      const isVizDataTable =
-        headers.length === 4 &&
-        headers[0].trim().toLowerCase() === "bulan" &&
-        headers[3].trim().toLowerCase() === "pendapatan";
-
       elements.push(
-        <React.Fragment key={`tbl-${i}`}>
-          {isVizDataTable && (
-            <div className="hidden md:block my-4 w-full overflow-x-auto select-text">
-              <table className="w-full border-collapse text-left text-[13.5px]">
-                <thead>
-                  <tr className="border-b border-slate-200">
-                    {headers.map((h, ci) => (
-                      <th
-                        key={ci}
-                        className={`py-2.5 font-semibold text-slate-900 ${
-                          ci === 0 ? "text-left pr-4" : "text-right pl-4"
-                        }`}
-                      >
-                        {renderInlineMd(cleanMdText(h))}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {body.map((row, ri) => {
-                    const cells = parseRow(row);
-                    return (
-                      <tr key={ri} className="border-b border-slate-200/80 last:border-b-0">
-                        {cells.map((cell, ci) => (
-                          <td
-                            key={ci}
-                            className={`py-3 text-slate-800 ${
-                              ci === 0 ? "text-left pr-4" : "text-right pl-4 tabular-nums"
-                            }`}
-                          >
-                            {renderInlineMd(cleanMdText(cell))}
-                          </td>
-                        ))}
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          )}
-
-          <div
-            className={`${isVizDataTable ? "md:hidden " : ""}my-3.5 w-full ${isFitScreen ? "overflow-hidden" : "overflow-x-auto"} select-text rounded-xl border border-neutral-300 bg-white shadow-xs`}
-            style={{
-              WebkitOverflowScrolling: "touch",
-              scrollbarWidth: "none",
-              touchAction: isFitScreen ? "auto" : "pan-x pan-y",
-            }}
-          >
+        <div
+          key={`tbl-${i}`}
+          className={`my-3.5 w-full ${isFitScreen ? "overflow-hidden" : "overflow-x-auto"} select-text rounded-xl border border-neutral-300 bg-white shadow-xs`}
+          style={{
+            WebkitOverflowScrolling: "touch",
+            scrollbarWidth: "none",
+            touchAction: isFitScreen ? "auto" : "pan-x pan-y",
+          }}
+        >
             <table
               className={`text-black border-collapse text-left ${
                 isFitScreen
@@ -10860,7 +10815,6 @@ function MarkdownRenderer({ text, isStreaming, compact }: { text: string; isStre
               </tbody>
             </table>
           </div>
-        </React.Fragment>
       );
       continue;
     }
