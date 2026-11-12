@@ -3600,6 +3600,49 @@ function UserBubbleActionMenu({
   );
 }
 
+function ChatFollowUpSuggestions({
+  suggestions,
+  onSelect,
+}: {
+  suggestions: string[];
+  onSelect: (suggestion: string) => void;
+}) {
+  return (
+    <div className="mt-4">
+      <p className="text-[11px] md:text-[13px] text-slate-400 font-medium mb-2 md:mb-2.5">
+        Kalau mau, saya bisa:
+      </p>
+      <div className="flex flex-col gap-1.5 md:gap-2">
+        {suggestions.map((s, si) => (
+          <button
+            key={si}
+            type="button"
+            onClick={() => onSelect(s)}
+            className="flex items-center gap-2 md:gap-2.5 px-3 py-2 md:px-4 md:py-2.5 rounded-xl text-xs md:text-[13.5px] font-medium text-left transition-all hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50 cursor-pointer"
+            style={{
+              background: "rgba(255,255,255,0.8)",
+              border: "1px solid rgba(226,232,240,0.8)",
+              color: "#475569",
+              boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
+            }}
+          >
+            <svg
+              className="w-2.5 h-2.5 md:w-3 md:h-3 shrink-0"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#3b82f6"
+              strokeWidth="2.5"
+            >
+              <path d="M9 18l6-6-6-6" />
+            </svg>
+            <span>{s}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ─── Bird mascot icon ─────────────────────────────────────────────────────────
 function BirdIcon({ size = 32, color = "#3b82f6" }: { size?: number; color?: string }) {
   return (
@@ -11817,19 +11860,7 @@ function PercakapanTab({
 
                 {/* Suggestions */}
                 {isLastAlerin && m.suggestions && m.suggestions.length > 0 && (
-                  <div className="mt-4">
-                    <p className="text-[11px] text-slate-400 font-medium mb-2">Kalau mau, saya bisa:</p>
-                    <div className="flex flex-col gap-1.5">
-                      {m.suggestions.map((s, si) => (
-                        <button key={si} onClick={() => send(s)}
-                          className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-left transition-all hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50"
-                          style={{ background: "rgba(255,255,255,0.8)", border: "1px solid rgba(226,232,240,0.8)", color: "#475569", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
-                          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2.5"><path d="M9 18l6-6-6-6"/></svg>
-                          {s}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
+                  <ChatFollowUpSuggestions suggestions={m.suggestions} onSelect={send} />
                 )}
 
                 {/* Feature recommendation card */}
@@ -16805,23 +16836,7 @@ function ProyekTab({
 
                     {/* Suggestions */}
                     {isLastAlerin && m.suggestions && m.suggestions.length > 0 && (
-                      <div className="mt-4">
-                        <p className="text-[11px] text-slate-400 font-medium mb-2">Kalau mau, saya bisa:</p>
-                        <div className="flex flex-col gap-1.5">
-                          {m.suggestions.map((s, si) => (
-                            <button
-                              key={si}
-                              type="button"
-                              onClick={() => handleSendMessageInChat(s)}
-                              className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium text-left transition-all hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50 cursor-pointer"
-                              style={{ background: "rgba(255,255,255,0.8)", border: "1px solid rgba(226,232,240,0.8)", color: "#475569", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}
-                            >
-                              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2.5"><path d="M9 18l6-6-6-6"/></svg>
-                              {s}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
+                      <ChatFollowUpSuggestions suggestions={m.suggestions} onSelect={handleSendMessageInChat} />
                     )}
                   </div>
                 </div>
