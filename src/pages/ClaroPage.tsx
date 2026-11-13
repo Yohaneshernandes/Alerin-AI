@@ -18602,25 +18602,25 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
 
       {/* Agenda Section (sesuai rancangan pop-up kalender dengan daftar agenda di bawahnya) */}
       {selected && selectedKey && selectedEvents.length > 0 && (
-        <div className="border-t border-slate-200 px-6 pt-2.5 pb-3.5 flex flex-col gap-2.5">
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2 min-w-0">
-              <svg width="14" height="15" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
-                <rect x="3" y="4" width="18" height="18" rx="2" />
-                <line x1="16" y1="2" x2="16" y2="6" />
-                <line x1="8" y1="2" x2="8" y2="6" />
-                <line x1="3" y1="10" x2="21" y2="10" />
-              </svg>
-              <span className="text-slate-900 text-sm font-bold leading-6 truncate">
-                Agenda {selected.toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
+        <div className="border-t border-slate-200">
+          <div className="calendar-agenda-scrollbar max-h-[160px] overflow-y-auto pl-6 pr-6 pt-2.5 pb-3.5 flex flex-col gap-2.5">
+            <div className="sticky top-0 z-10 bg-white -mx-6 px-6 pt-0.5 pb-1 flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 min-w-0">
+                <svg width="14" height="15" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                  <rect x="3" y="4" width="18" height="18" rx="2" />
+                  <line x1="16" y1="2" x2="16" y2="6" />
+                  <line x1="8" y1="2" x2="8" y2="6" />
+                  <line x1="3" y1="10" x2="21" y2="10" />
+                </svg>
+                <span className="text-slate-900 text-sm font-bold leading-6 truncate">
+                  Agenda {selected.toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
+                </span>
+              </div>
+              <span className="px-2.5 py-0.5 bg-blue-100 rounded-full text-blue-600 text-[10px] font-semibold leading-4 tracking-tight shrink-0">
+                {selectedEvents.length} Agenda
               </span>
             </div>
-            <span className="px-2.5 py-0.5 bg-blue-100 rounded-full text-blue-600 text-[10px] font-semibold leading-4 tracking-tight shrink-0">
-              {selectedEvents.length} Agenda
-            </span>
-          </div>
 
-          <div className="calendar-agenda-scrollbar max-h-[126px] overflow-y-auto flex flex-col gap-2.5 pr-2">
             {selectedEvents.map((ev, ei) => (
               <div
                 key={`${ev.source}-${ev.sourceIndex}-${ei}`}

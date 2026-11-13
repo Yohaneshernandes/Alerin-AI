@@ -788,17 +788,20 @@ body {
 
 .calendar-agenda-scrollbar {
   scrollbar-width: thin !important;
-  scrollbar-color: #2563eb #d4d4d8 !important;
+  scrollbar-color: #2563eb #e2e8f0 !important;
 }
 .calendar-agenda-scrollbar::-webkit-scrollbar {
-  width: 3px !important;
+  width: 4px !important;
   display: block !important;
 }
 .calendar-agenda-scrollbar::-webkit-scrollbar-track {
-  background: #d4d4d8 !important;
-  border-radius: 2px !important;
+  background: #e2e8f0 !important;
+  border-radius: 9999px !important;
 }
 .calendar-agenda-scrollbar::-webkit-scrollbar-thumb {
   background: #2563eb !important;
-  border-radius: 2px !important;
+  border-radius: 9999px !important;
+}
+.calendar-agenda-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #1d4ed8 !important;
 }
