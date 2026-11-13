@@ -18331,7 +18331,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                 </svg>
               </div>
               <h2 className="text-slate-900 text-lg font-bold leading-6">Alerin Kalender</h2>
-              <span className="px-2 py-0.5 bg-zinc-900 rounded-full text-white text-xs font-semibold leading-4 tracking-tight">
+              <span className="px-2.5 py-0.5 bg-slate-50 border border-slate-200/90 rounded-lg text-slate-900 text-xs font-semibold leading-4 tracking-tight">
                 {year}
               </span>
             </div>
@@ -18370,10 +18370,9 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
               {googleConnected ? (
                 <span className="size-1.5 bg-blue-600 rounded-full shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]" />
               ) : (
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round" className="text-gray-700">
-                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                  <polyline points="15 3 21 3 21 9" />
-                  <line x1="10" y1="14" x2="21" y2="3" />
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-700 shrink-0">
+                  <path d="M20 11a8.1 8.1 0 0 0-15.5-2m-.5-5v5h5" />
+                  <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 5v-5h-5" />
                 </svg>
               )}
             </button>
