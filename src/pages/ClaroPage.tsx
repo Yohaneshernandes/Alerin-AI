@@ -17720,6 +17720,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
     source: "preset" | "custom";
     sourceIndex: number;
   } | null>(null);
+  const [agendaErrors, setAgendaErrors] = useState<{ title?: boolean; time?: boolean }>({});
   const [hiddenPresetMap, setHiddenPresetMap] = useState<Record<string, number[]>>(() => {
     try {
       const saved = localStorage.getItem("alerin_calendar_hidden_presets");
@@ -17739,6 +17740,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
     setReminderMenuOpen(false);
     setTimePickerOpen(false);
     setDeleteAgendaConfirm(null);
+    setAgendaErrors({});
     setAddingAgenda((prevAdding) => {
       if (prevAdding === nextAdding) return prevAdding;
       if (slideTimerRef.current) window.clearTimeout(slideTimerRef.current);
@@ -17857,6 +17859,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
       setAgendaTime("");
       return;
     }
+    setAgendaErrors((prev) => (prev.time ? { ...prev, time: false } : prev));
     if (digits.length <= 2) {
       const parsedH = parseInt(digits, 10);
       if (!Number.isNaN(parsedH)) setPickerHour(Math.min(23, parsedH));
@@ -17902,6 +17905,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
     setPickerHour(wrappedH);
     setPickerMinute(wrappedM);
     setAgendaTime(`${String(wrappedH).padStart(2, "0")} . ${String(wrappedM).padStart(2, "0")}`);
+    setAgendaErrors((prev) => (prev.time ? { ...prev, time: false } : prev));
   };
 
   const openAddAgendaModal = () => {
@@ -17911,6 +17915,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
     setAgendaNotes("");
     setAgendaReminder(false);
     setAgendaReminderOffset("30 menit sebelumnya");
+    setAgendaErrors({});
     setReminderMenuOpen(false);
     setTimePickerOpen(false);
     switchDesktopView(true);
@@ -17927,6 +17932,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
     setAgendaNotes((ev.notes || "").slice(0, 300));
     setAgendaReminder(Boolean(ev.reminder));
     setAgendaReminderOffset(ev.reminderOffset || "30 menit sebelumnya");
+    setAgendaErrors({});
     setReminderMenuOpen(false);
     setTimePickerOpen(false);
     switchDesktopView(true);
@@ -17959,14 +17965,21 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
   const handleSaveAgenda = () => {
     const trimmed = agendaTitle.trim();
     const match = agendaTime.trim().match(/^([01]\d|2[0-3])\s*[.:]\s*([0-5]\d)$/);
-    if (!trimmed) {
-      showCalNotice("Harap isi Judul Agenda terlebih dahulu", "error");
+    const hasTitleError = !trimmed;
+    const hasTimeError = !match;
+
+    if (hasTitleError || hasTimeError) {
+      setAgendaErrors({ title: hasTitleError, time: hasTimeError });
+      if (hasTitleError && hasTimeError) {
+        showCalNotice("Harap isi Judul dan Waktu terlebih dahulu", "error");
+      } else if (hasTitleError) {
+        showCalNotice("Harap isi Judul Agenda terlebih dahulu", "error");
+      } else {
+        showCalNotice("Masukkan Waktu Kegiatan yang valid (contoh: 10 . 00)", "error");
+      }
       return;
     }
-    if (!match) {
-      showCalNotice("Masukkan Waktu Kegiatan yang valid (contoh: 10 . 00)", "error");
-      return;
-    }
+    setAgendaErrors({});
     const normalizedTime = `${match[1]}.${match[2]}`;
     const targetDate = selected ?? today;
     const key = editingAgenda ? editingAgenda.key : toKey(targetDate);
@@ -18093,18 +18106,25 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
             type="text"
             maxLength={50}
             value={agendaTitle}
-            onChange={(e) => setAgendaTitle(capitalizeWords(e.target.value.slice(0, 50)))}
+            onChange={(e) => {
+              setAgendaTitle(capitalizeWords(e.target.value.slice(0, 50)));
+              if (agendaErrors.title) setAgendaErrors((prev) => ({ ...prev, title: false }));
+            }}
             autoCapitalize="sentences"
             placeholder="Contoh: Diskusi Evaluasi Mingguan"
-            className="w-full px-3.5 py-2.5 bg-white rounded-xl outline outline-1 outline-offset-[-1px] outline-slate-200 focus:outline-[#1A73E8] text-sm text-slate-900 placeholder:text-slate-400 font-normal transition-colors"
+            className={`w-full px-3.5 py-2.5 bg-white rounded-xl outline outline-1 outline-offset-[-1px] text-sm text-slate-900 placeholder:text-slate-400 font-normal transition-colors ${
+              agendaErrors.title
+                ? "outline-red-400 focus:outline-red-400"
+                : "outline-slate-200 focus:outline-[#1A73E8]"
+            }`}
           />
         </div>
 
-        {/* Row: Tanggal Kegiatan (otomatis & terkunci) & Waktu Kegiatan */}
+        {/* Row: Tanggal (otomatis & terkunci) & Waktu */}
         <div className="grid grid-cols-2 gap-4">
           <div className="flex flex-col gap-1.5">
             <label className="text-slate-900 text-xs font-semibold leading-4">
-              Tanggal Kegiatan
+              Tanggal
             </label>
             <div
               aria-readonly="true"
@@ -18135,14 +18155,18 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
 
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-semibold leading-4">
-              <span className="text-slate-900">Waktu Kegiatan</span>
+              <span className="text-slate-900">Waktu</span>
               <span className="text-rose-500">*</span>
             </label>
             <div
               ref={timeFieldRef}
               onClick={openTimePicker}
               className={`relative flex items-center bg-white rounded-xl outline outline-1 outline-offset-[-1px] transition-colors cursor-pointer ${
-                timePickerOpen ? "outline-[#1A73E8] ring-2 ring-[#1A73E8]/15" : "outline-slate-200 focus-within:outline-[#1A73E8]"
+                agendaErrors.time
+                  ? "outline-red-400 focus-within:outline-red-400"
+                  : timePickerOpen
+                  ? "outline-[#1A73E8] ring-2 ring-[#1A73E8]/15"
+                  : "outline-slate-200 focus-within:outline-[#1A73E8]"
               }`}
             >
               <input
@@ -18308,7 +18332,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
           onClick={handleSaveAgenda}
           className="h-9 px-6 py-2 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] rounded-[10px] text-white text-xs font-semibold leading-4 cursor-pointer transition-all flex items-center justify-center"
         >
-          Simpan Agenda
+          Simpan
         </button>
       </div>
     </div>
