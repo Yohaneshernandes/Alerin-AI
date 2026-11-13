@@ -5671,33 +5671,102 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
           </nav>
 
           {/* Disematkan & Riwayat Section — mengisi sisa tinggi sampai tepat di atas tombol Obrolan */}
-          <div
-            onScroll={() => activeHistoryMenu && setActiveHistoryMenu(null)}
-            className={`flex-1 min-h-0 pt-1 overflow-y-auto pr-1 pb-2 ${isMobileDrawer ? "space-y-4" : "space-y-3.5"}`}
-          >
-            {pinnedHistoryItems.length > 0 && (
-              <div>
-                <div className={`text-zinc-500 font-semibold uppercase tracking-wider px-1 ${
-                  isMobileDrawer ? "text-xs mb-2" : "text-[11.5px] mb-1.5"
-                }`}>
-                  Disematkan
+          {isMobileDrawer ? (
+            <div
+              onScroll={() => activeHistoryMenu && setActiveHistoryMenu(null)}
+              className="flex-1 min-h-0 pt-1 overflow-y-auto pr-1 pb-2 space-y-4"
+            >
+              {pinnedHistoryItems.length > 0 && (
+                <div>
+                  <div className="text-zinc-500 font-semibold uppercase tracking-wider px-1 text-xs mb-2">
+                    Disematkan
+                  </div>
+                  <div className="space-y-1">
+                    {pinnedHistoryItems.map((item) => renderHistoryItem(item, true))}
+                  </div>
                 </div>
-                <div className={isMobileDrawer ? "space-y-1" : "space-y-0.5"}>
-                  {pinnedHistoryItems.map((item) => renderHistoryItem(item, isMobileDrawer))}
-                </div>
-              </div>
-            )}
+              )}
 
-            <div>
-              <div className={`text-zinc-500 font-semibold uppercase tracking-wider px-1 ${
-                isMobileDrawer ? "text-xs mb-2" : "text-[11.5px] mb-1.5"
-              }`}>
-                Riwayat
+              <div>
+                <div className="text-zinc-500 font-semibold uppercase tracking-wider px-1 text-xs mb-2">
+                  Riwayat
+                </div>
+                <div className="space-y-1">
+                  {unpinnedHistoryItems.length > 0 ? (
+                    (expandedHistory ? unpinnedHistoryItems : unpinnedHistoryItems.slice(0, 7)).map(
+                      (item) => renderHistoryItem(item, true)
+                    )
+                  ) : (
+                    <p className="px-2 py-1 text-xs text-slate-400">Belum ada riwayat lainnya</p>
+                  )}
+
+                  {isLoadingMoreHistory && (
+                    <div className="space-y-3 py-2.5 px-1.5 animate-pulse">
+                      <div className="h-2.5 w-[68%] rounded-sm bg-neutral-200" />
+                      <div className="h-2.5 w-[36%] rounded-sm bg-neutral-200" />
+                      <div className="h-2.5 w-[56%] rounded-sm bg-neutral-200" />
+                    </div>
+                  )}
+
+                  {unpinnedHistoryItems.length > 7 && !isLoadingMoreHistory && (
+                    <div className="pt-1.5 pb-1 px-1">
+                      <button
+                        type="button"
+                        onClick={handleToggleExpandHistory}
+                        className="flex items-center justify-between w-full text-left text-neutral-500 hover:text-blue-600 font-medium transition-colors cursor-pointer group text-[13px] py-1 px-1"
+                      >
+                        <span>
+                          {expandedHistory ? "Tampilkan lebih sedikit" : "Lihat selengkapnya"}
+                        </span>
+                        <svg
+                          width="13"
+                          height="13"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          className={`ml-auto text-neutral-400 group-hover:text-blue-600 transition-transform duration-200 ${
+                            expandedHistory ? "rotate-180" : ""
+                          }`}
+                        >
+                          <path d="M6 9l6 6 6-6" />
+                        </svg>
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
-              <div className={isMobileDrawer ? "space-y-1" : "space-y-0.5"}>
+            </div>
+          ) : (
+            /* Desktop: Judul Disematkan, item Disematkan, dan Judul Riwayat tetap diam di atas (HANYA list riwayat yang di-scroll) */
+            <div className="flex flex-col flex-1 min-h-0 pt-1">
+              {pinnedHistoryItems.length > 0 && (
+                <div className="shrink-0 mb-3.5">
+                  <div className="text-zinc-500 font-semibold uppercase tracking-wider px-1 text-[11.5px] mb-1.5">
+                    Disematkan
+                  </div>
+                  <div className="space-y-0.5">
+                    {pinnedHistoryItems.map((item) => renderHistoryItem(item, false))}
+                  </div>
+                </div>
+              )}
+
+              <div className="shrink-0 mb-1.5">
+                <div className="text-zinc-500 font-semibold uppercase tracking-wider px-1 text-[11.5px]">
+                  Riwayat
+                </div>
+              </div>
+
+              {/* Hanya daftar riwayat ini yang memiliki overflow-y-auto */}
+              <div
+                onScroll={() => activeHistoryMenu && setActiveHistoryMenu(null)}
+                className="flex-1 min-h-0 overflow-y-auto pr-1 pb-1 space-y-0.5"
+              >
                 {unpinnedHistoryItems.length > 0 ? (
                   (expandedHistory ? unpinnedHistoryItems : unpinnedHistoryItems.slice(0, 7)).map(
-                    (item) => renderHistoryItem(item, isMobileDrawer)
+                    (item) => renderHistoryItem(item, false)
                   )
                 ) : (
                   <p className="px-2 py-1 text-xs text-slate-400">Belum ada riwayat lainnya</p>
@@ -5712,20 +5781,18 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                 )}
 
                 {unpinnedHistoryItems.length > 7 && !isLoadingMoreHistory && (
-                  <div className={isMobileDrawer ? "pt-1.5 pb-1 px-1" : "pt-1 pb-0.5 px-1"}>
+                  <div className="pt-1 pb-0.5 px-1">
                     <button
                       type="button"
                       onClick={handleToggleExpandHistory}
-                      className={`flex items-center justify-between w-full text-left text-neutral-500 hover:text-blue-600 font-medium transition-colors cursor-pointer group ${
-                        isMobileDrawer ? "text-[13px] py-1 px-1" : "text-[12.5px] py-0.5 px-1"
-                      }`}
+                      className="flex items-center justify-between w-full text-left text-neutral-500 hover:text-blue-600 font-medium transition-colors cursor-pointer group text-[12.5px] py-0.5 px-1"
                     >
                       <span>
                         {expandedHistory ? "Tampilkan lebih sedikit" : "Lihat selengkapnya"}
                       </span>
                       <svg
-                        width={isMobileDrawer ? "13" : "12"}
-                        height={isMobileDrawer ? "13" : "12"}
+                        width="12"
+                        height="12"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
@@ -5743,7 +5810,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                 )}
               </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Bottom + Obrolan button */}
