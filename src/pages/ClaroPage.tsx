@@ -17684,6 +17684,11 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
   const [selected, setSelected] = useState<Date | null>(() => new Date(today.getFullYear(), today.getMonth(), today.getDate()));
   const [googleConnected, setGoogleConnected] = useState(false);
   const [googleConnectModal, setGoogleConnectModal] = useState(false);
+  const [googleSyncingModal, setGoogleSyncingModal] = useState(false);
+  const [syncProgress, setSyncProgress] = useState(0);
+  const [syncStageText, setSyncStageText] = useState("Menghubungkan ke server Google...");
+  const syncIntervalRef = useRef<number | null>(null);
+  const syncTimeoutRef = useRef<number | null>(null);
   const [addingAgenda, setAddingAgenda] = useState(false);
   const [slideSeq, setSlideSeq] = useState(0);
   const [slideDirection, setSlideDirection] = useState<"forward" | "back">("forward");
@@ -17742,6 +17747,15 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
     setTimePickerOpen(false);
     setDeleteAgendaConfirm(null);
     setGoogleConnectModal(false);
+    if (syncIntervalRef.current) {
+      window.clearInterval(syncIntervalRef.current);
+      syncIntervalRef.current = null;
+    }
+    if (syncTimeoutRef.current) {
+      window.clearTimeout(syncTimeoutRef.current);
+      syncTimeoutRef.current = null;
+    }
+    setGoogleSyncingModal(false);
     setAgendaErrors({});
     setAddingAgenda((prevAdding) => {
       if (prevAdding === nextAdding) return prevAdding;
@@ -17771,6 +17785,8 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
       if (slideTimerRef.current) window.clearTimeout(slideTimerRef.current);
       if (calNoticeTimerRef.current) window.clearTimeout(calNoticeTimerRef.current);
       if (googleTimerRef.current) window.clearTimeout(googleTimerRef.current);
+      if (syncIntervalRef.current) window.clearInterval(syncIntervalRef.current);
+      if (syncTimeoutRef.current) window.clearTimeout(syncTimeoutRef.current);
     };
   }, []);
 
@@ -17785,7 +17801,9 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        if (deleteAgendaConfirm) setDeleteAgendaConfirm(null);
+        if (googleSyncingModal) cancelGoogleSync();
+        else if (googleConnectModal) setGoogleConnectModal(false);
+        else if (deleteAgendaConfirm) setDeleteAgendaConfirm(null);
         else if (timePickerOpen) setTimePickerOpen(false);
         else if (reminderMenuOpen) setReminderMenuOpen(false);
         else if (addingAgenda) switchDesktopView(false);
@@ -17794,7 +17812,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [deleteAgendaConfirm, addingAgenda, reminderMenuOpen, timePickerOpen, switchDesktopView, onClose]);
+  }, [googleSyncingModal, googleConnectModal, deleteAgendaConfirm, addingAgenda, reminderMenuOpen, timePickerOpen, switchDesktopView, onClose]);
 
   const year = cursor.getFullYear();
   const month = cursor.getMonth();
@@ -17964,15 +17982,65 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
     setDeleteAgendaConfirm(null);
   };
 
+  const cancelGoogleSync = useCallback(() => {
+    if (syncIntervalRef.current) {
+      window.clearInterval(syncIntervalRef.current);
+      syncIntervalRef.current = null;
+    }
+    if (syncTimeoutRef.current) {
+      window.clearTimeout(syncTimeoutRef.current);
+      syncTimeoutRef.current = null;
+    }
+    setGoogleSyncingModal(false);
+    showCalNotice("Sinkronisasi Google Kalender dibatalkan", "info");
+  }, [showCalNotice]);
+
+  const startGoogleSync = useCallback(() => {
+    if (syncIntervalRef.current) window.clearInterval(syncIntervalRef.current);
+    if (syncTimeoutRef.current) window.clearTimeout(syncTimeoutRef.current);
+
+    setSyncProgress(15);
+    setSyncStageText("Menghubungkan ke server Google...");
+    setGoogleSyncingModal(true);
+
+    const stages: { min: number; text: string }[] = [
+      { min: 0, text: "Menghubungkan ke server Google..." },
+      { min: 28, text: "Menyinkronkan dengan Google Kalender..." },
+      { min: 68, text: "Memverifikasi izin akses kalender..." },
+      { min: 96, text: "Sinkronisasi selesai!" },
+    ];
+
+    syncIntervalRef.current = window.setInterval(() => {
+      setSyncProgress((prev) => {
+        const step = prev < 50 ? Math.floor(Math.random() * 7) + 6 : Math.floor(Math.random() * 9) + 7;
+        const next = Math.min(100, prev + step);
+
+        const currentStage = stages.slice().reverse().find((s) => next >= s.min);
+        if (currentStage) {
+          setSyncStageText(currentStage.text);
+        }
+
+        if (next >= 100) {
+          if (syncIntervalRef.current) {
+            window.clearInterval(syncIntervalRef.current);
+            syncIntervalRef.current = null;
+          }
+          syncTimeoutRef.current = window.setTimeout(() => {
+            setGoogleSyncingModal(false);
+            setGoogleConnected(true);
+            showCalNotice("Google Kalender berhasil terhubung", "success");
+            syncTimeoutRef.current = null;
+          }, 450);
+          return 100;
+        }
+        return next;
+      });
+    }, 180);
+  }, [showCalNotice]);
+
   const handleConfirmGoogleConnect = () => {
     setGoogleConnectModal(false);
-    showCalNotice("Menghubungkan ke Google Kalender…", "info");
-    if (googleTimerRef.current) window.clearTimeout(googleTimerRef.current);
-    googleTimerRef.current = window.setTimeout(() => {
-      setGoogleConnected(true);
-      googleTimerRef.current = null;
-      showCalNotice("Google Kalender berhasil terhubung", "success");
-    }, 1100);
+    startGoogleSync();
   };
 
   const handleSaveAgenda = () => {
@@ -18854,6 +18922,120 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                     </span>
                   </button>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* Pop-up Loading Sinkronisasi Google Kalender (Desktop) */}
+          {googleSyncingModal && (
+            <div
+              className="absolute inset-0 z-30 flex items-center justify-center p-4 bg-slate-950/20 backdrop-blur-[2px] animate-[gemini-fade-in_0.15s_ease-out]"
+              onClick={cancelGoogleSync}
+            >
+              <div
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="google-syncing-title"
+                onClick={(e) => e.stopPropagation()}
+                className="relative w-96 max-w-[calc(100%-32px)] p-6 bg-white rounded-2xl outline outline-1 outline-offset-[-1px] outline-slate-200/90 shadow-[0px_22.7px_45.4px_0px_rgba(2,6,23,0.35)] flex flex-col justify-start items-center animate-[gemini-zoom-in_0.16s_ease-out]"
+              >
+                {/* Tombol Tutup X */}
+                <button
+                  type="button"
+                  onClick={cancelGoogleSync}
+                  aria-label="Tutup"
+                  className="size-7 right-2.5 top-2.5 absolute rounded-full inline-flex justify-center items-center text-neutral-400 hover:text-neutral-600 hover:bg-slate-100 transition-colors cursor-pointer"
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </button>
+
+                {/* Logo Alerin <-> Sync (Spinning) <-> Google */}
+                <div className="pb-4 flex items-center justify-center gap-3">
+                  <div className="size-12 bg-blue-50 rounded-2xl outline outline-1 outline-offset-[-1px] outline-blue-100 flex justify-center items-center shrink-0">
+                    <img
+                      src="/assets/alerin-logo-only.png"
+                      alt="Alerin"
+                      className="size-6 object-contain"
+                    />
+                  </div>
+
+                  <div className="size-6 bg-blue-50 rounded-full shadow-[0px_0.67px_1.33px_0px_rgba(0,0,0,0.05)] outline outline-[0.67px] outline-offset-[-0.67px] outline-blue-600 flex justify-center items-center shrink-0 text-blue-600">
+                    <svg
+                      width="11"
+                      height="11"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.4"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="animate-spin"
+                    >
+                      <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                      <path d="M3 3v5h5" />
+                      <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16" />
+                      <path d="M21 21v-5h-5" />
+                    </svg>
+                  </div>
+
+                  <div className="size-12 bg-blue-50 rounded-2xl outline outline-1 outline-offset-[-1px] outline-blue-100 inline-flex justify-center items-center shrink-0">
+                    <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" className="size-6">
+                      <path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z" />
+                      <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96H1.29v3.09C3.26 21.3 7.31 24 12 24z" />
+                      <path fill="#FBBC05" d="M5.27 14.29c-.25-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.98-3.09z" />
+                      <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.98 3.09c.95-2.85 3.6-4.96 6.73-4.96z" />
+                    </svg>
+                  </div>
+                </div>
+
+                {/* Judul */}
+                <div className="pb-1 flex flex-col justify-start items-center">
+                  <h3
+                    id="google-syncing-title"
+                    className="text-center justify-center text-slate-900 text-sm font-bold font-['Plus_Jakarta_Sans'] leading-6"
+                  >
+                    Menghubungkan ke Google Kalender...
+                  </h3>
+                </div>
+
+                {/* Deskripsi */}
+                <div className="pb-5 px-1.5 flex flex-col justify-start items-center">
+                  <p className="text-center justify-center text-gray-500 text-xs font-normal font-['Plus_Jakarta_Sans'] leading-5">
+                    Mohon tunggu sebentar, Alerin sedang menyinkronkan jadwal bimbingan dan agenda akademikmu.
+                  </p>
+                </div>
+
+                {/* Progress Bar */}
+                <div className="self-stretch h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                  <div
+                    style={{ width: `${syncProgress}%` }}
+                    className="h-1.5 bg-blue-600 rounded-full transition-all duration-200 ease-out"
+                  />
+                </div>
+
+                {/* Status Teks & Persentase */}
+                <div className="self-stretch pt-2.5 pb-5 flex items-center justify-between">
+                  <span className="text-gray-500 text-xs font-normal font-['Plus_Jakarta_Sans'] leading-4 transition-all">
+                    {syncStageText}
+                  </span>
+                  <span className="text-slate-700 text-xs font-semibold font-['Plus_Jakarta_Sans'] leading-4">
+                    {syncProgress}%
+                  </span>
+                </div>
+
+                {/* Tombol Batalkan Proses */}
+                <button
+                  type="button"
+                  onClick={cancelGoogleSync}
+                  className="w-full py-2.5 bg-red-100/25 hover:bg-red-50/70 active:scale-[0.99] rounded-xl outline outline-1 outline-offset-[-1px] outline-red-700/50 flex justify-center items-center transition-all cursor-pointer"
+                >
+                  <span className="text-center justify-center text-red-700 text-sm font-semibold font-['Plus_Jakarta_Sans'] leading-5">
+                    Batalkan Proses
+                  </span>
+                </button>
               </div>
             </div>
           )}
