@@ -18184,7 +18184,10 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
               <span className="text-slate-900">Judul Agenda </span>
               <span className="text-rose-500">*</span>
             </label>
-            <span className="text-gray-500 text-[10px] font-light font-['JetBrains_Mono'] leading-4">
+            <span
+              style={{ fontFamily: "'JetBrains Mono', 'JetBrains_Mono', monospace" }}
+              className="text-gray-500 text-[10px] font-normal leading-4"
+            >
               {agendaTitle.length}/50
             </span>
           </div>
@@ -18305,7 +18308,10 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center justify-between">
             <label className="text-slate-900 text-xs font-semibold leading-4">Catatan</label>
-            <span className="text-gray-500 text-[10px] font-light font-['JetBrains_Mono'] leading-4">
+            <span
+              style={{ fontFamily: "'JetBrains Mono', 'JetBrains_Mono', monospace" }}
+              className="text-gray-500 text-[10px] font-normal leading-4"
+            >
               {agendaNotes.length}/300
             </span>
           </div>
