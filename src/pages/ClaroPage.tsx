@@ -17685,6 +17685,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
   const [googleConnected, setGoogleConnected] = useState(false);
   const [googleConnectModal, setGoogleConnectModal] = useState(false);
   const [googleSyncingModal, setGoogleSyncingModal] = useState(false);
+  const [googleSuccessModal, setGoogleSuccessModal] = useState(false);
   const [syncProgress, setSyncProgress] = useState(0);
   const [syncStageText, setSyncStageText] = useState("Menghubungkan ke server Google...");
   const syncIntervalRef = useRef<number | null>(null);
@@ -17756,6 +17757,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
       syncTimeoutRef.current = null;
     }
     setGoogleSyncingModal(false);
+    setGoogleSuccessModal(false);
     setAgendaErrors({});
     setAddingAgenda((prevAdding) => {
       if (prevAdding === nextAdding) return prevAdding;
@@ -17801,7 +17803,8 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        if (googleSyncingModal) cancelGoogleSync();
+        if (googleSuccessModal) setGoogleSuccessModal(false);
+        else if (googleSyncingModal) cancelGoogleSync();
         else if (googleConnectModal) setGoogleConnectModal(false);
         else if (deleteAgendaConfirm) setDeleteAgendaConfirm(null);
         else if (timePickerOpen) setTimePickerOpen(false);
@@ -17812,7 +17815,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [googleSyncingModal, googleConnectModal, deleteAgendaConfirm, addingAgenda, reminderMenuOpen, timePickerOpen, switchDesktopView, onClose]);
+  }, [googleSuccessModal, googleSyncingModal, googleConnectModal, deleteAgendaConfirm, addingAgenda, reminderMenuOpen, timePickerOpen, switchDesktopView, onClose]);
 
   const year = cursor.getFullYear();
   const month = cursor.getMonth();
@@ -17992,6 +17995,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
       syncTimeoutRef.current = null;
     }
     setGoogleSyncingModal(false);
+    setGoogleSuccessModal(false);
     showCalNotice("Sinkronisasi Google Kalender dibatalkan", "info");
   }, [showCalNotice]);
 
@@ -18001,6 +18005,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
 
     setSyncProgress(15);
     setSyncStageText("Menghubungkan ke server Google...");
+    setGoogleSuccessModal(false);
     setGoogleSyncingModal(true);
 
     const stages: { min: number; text: string }[] = [
@@ -18028,6 +18033,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
           syncTimeoutRef.current = window.setTimeout(() => {
             setGoogleSyncingModal(false);
             setGoogleConnected(true);
+            setGoogleSuccessModal(true);
             showCalNotice("Google Kalender berhasil terhubung", "success");
             syncTimeoutRef.current = null;
           }, 450);
@@ -18450,7 +18456,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
               type="button"
               onClick={() => {
                 if (googleConnected) {
-                  showCalNotice("Google Kalender sudah terhubung", "success");
+                  setGoogleSuccessModal(true);
                   return;
                 }
                 setGoogleConnectModal(true);
@@ -19034,6 +19040,87 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                 >
                   <span className="text-center justify-center text-red-700 text-sm font-semibold font-['Plus_Jakarta_Sans'] leading-5">
                     Batalkan Proses
+                  </span>
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Pop-up Berhasil Terhubung Google Kalender (Desktop) */}
+          {googleSuccessModal && (
+            <div
+              className="absolute inset-0 z-30 flex items-center justify-center p-4 bg-slate-950/20 backdrop-blur-[2px] animate-[gemini-fade-in_0.15s_ease-out]"
+              onClick={() => setGoogleSuccessModal(false)}
+            >
+              <div
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="google-success-title"
+                onClick={(e) => e.stopPropagation()}
+                className="relative w-80 max-w-[calc(100%-32px)] p-6 bg-white rounded-2xl outline outline-1 outline-offset-[-1px] outline-slate-200/90 shadow-[0px_22.7px_45.4px_0px_rgba(2,6,23,0.35)] flex flex-col justify-start items-center animate-[gemini-zoom-in_0.16s_ease-out]"
+              >
+                {/* Tombol Tutup X */}
+                <button
+                  type="button"
+                  onClick={() => setGoogleSuccessModal(false)}
+                  aria-label="Tutup"
+                  className="size-7 right-2.5 top-2.5 absolute rounded-full inline-flex justify-center items-center text-neutral-400 hover:text-neutral-600 hover:bg-slate-100 transition-colors cursor-pointer"
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </button>
+
+                {/* Icon Centang Hijau */}
+                <div className="pb-4 flex flex-col justify-start items-start">
+                  <div className="size-12 bg-emerald-50/80 rounded-[10px] shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] outline outline-1 outline-offset-[-1px] outline-emerald-200/60 inline-flex justify-center items-center">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  </div>
+                </div>
+
+                {/* Judul Berhasil Terhubung */}
+                <div className="pb-2 flex flex-col justify-start items-start">
+                  <h3
+                    id="google-success-title"
+                    className="text-center justify-center text-slate-900 text-sm font-bold font-['Plus_Jakarta_Sans'] leading-6"
+                  >
+                    Berhasil Terhubung!
+                  </h3>
+                </div>
+
+                {/* Deskripsi */}
+                <div className="w-72 max-w-full pb-3 flex flex-col justify-start items-start">
+                  <p className="w-full text-center justify-center text-gray-500 text-xs font-medium font-['Plus_Jakarta_Sans'] leading-4">
+                    Akun Google Kalender Anda telah tersinkronisasi.<br />
+                    Semua agenda sekarang akan terbarui otomatis.
+                  </p>
+                </div>
+
+                {/* Banner Sinkronisasi Otomatis 2 Arah */}
+                <div className="self-stretch h-14 pb-5 flex flex-col justify-start items-start">
+                  <div className="self-stretch h-10 px-4 py-[5px] bg-emerald-50/70 rounded-[10px] outline outline-1 outline-offset-[-1px] outline-emerald-200/80 inline-flex justify-center items-center gap-2.5">
+                    <div className="size-4 bg-emerald-600 rounded-full shadow-[0px_0.82px_1.65px_0px_rgba(0,0,0,0.05)] flex justify-center items-center text-white shrink-0">
+                      <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                    </div>
+                    <span className="justify-center text-emerald-800 text-xs font-semibold font-['Plus_Jakarta_Sans'] leading-5">
+                      Sinkronisasi otomatis aktif 2 arah
+                    </span>
+                  </div>
+                </div>
+
+                {/* Tombol Selesai */}
+                <button
+                  type="button"
+                  onClick={() => setGoogleSuccessModal(false)}
+                  className="w-full px-3 py-2.5 relative bg-blue-600 hover:bg-blue-700 active:scale-[0.98] rounded-[10px] inline-flex justify-center items-center shadow-[0px_2px_4px_-2px_rgba(59,130,246,0.20),0px_4px_6px_-1px_rgba(59,130,246,0.20)] transition-all cursor-pointer"
+                >
+                  <span className="text-center justify-center text-white text-xs font-semibold font-['Plus_Jakarta_Sans'] leading-4">
+                    Selesai
                   </span>
                 </button>
               </div>
