@@ -17683,6 +17683,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
   const [cursor, setCursor] = useState(() => new Date(today.getFullYear(), today.getMonth(), 1));
   const [selected, setSelected] = useState<Date | null>(() => new Date(today.getFullYear(), today.getMonth(), today.getDate()));
   const [googleConnected, setGoogleConnected] = useState(false);
+  const [googleConnectModal, setGoogleConnectModal] = useState(false);
   const [addingAgenda, setAddingAgenda] = useState(false);
   const [slideSeq, setSlideSeq] = useState(0);
   const [slideDirection, setSlideDirection] = useState<"forward" | "back">("forward");
@@ -17740,6 +17741,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
     setReminderMenuOpen(false);
     setTimePickerOpen(false);
     setDeleteAgendaConfirm(null);
+    setGoogleConnectModal(false);
     setAgendaErrors({});
     setAddingAgenda((prevAdding) => {
       if (prevAdding === nextAdding) return prevAdding;
@@ -17960,6 +17962,17 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
     if (!deleteAgendaConfirm) return;
     handleDeleteAgenda(deleteAgendaConfirm.key, deleteAgendaConfirm.source, deleteAgendaConfirm.sourceIndex);
     setDeleteAgendaConfirm(null);
+  };
+
+  const handleConfirmGoogleConnect = () => {
+    setGoogleConnectModal(false);
+    showCalNotice("Menghubungkan ke Google Kalender…", "info");
+    if (googleTimerRef.current) window.clearTimeout(googleTimerRef.current);
+    googleTimerRef.current = window.setTimeout(() => {
+      setGoogleConnected(true);
+      googleTimerRef.current = null;
+      showCalNotice("Google Kalender berhasil terhubung", "success");
+    }, 1100);
   };
 
   const handleSaveAgenda = () => {
@@ -18372,13 +18385,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                   showCalNotice("Google Kalender sudah terhubung", "success");
                   return;
                 }
-                showCalNotice("Menghubungkan ke Google Kalender…", "info");
-                if (googleTimerRef.current) window.clearTimeout(googleTimerRef.current);
-                googleTimerRef.current = window.setTimeout(() => {
-                  setGoogleConnected(true);
-                  googleTimerRef.current = null;
-                  showCalNotice("Google Kalender berhasil terhubung", "success");
-                }, 1100);
+                setGoogleConnectModal(true);
               }}
               className="h-8 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 active:scale-[0.99] rounded-[10px] outline outline-1 outline-offset-[-1px] outline-slate-200 flex items-center gap-[5px] cursor-pointer transition-all"
             >
@@ -18627,7 +18634,8 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
     <div
       className="fixed inset-0 z-[200] overflow-y-auto bg-slate-950/45 backdrop-blur-xs animate-[gemini-fade-in_0.15s_ease-out]"
       onClick={() => {
-        if (deleteAgendaConfirm) setDeleteAgendaConfirm(null);
+        if (googleConnectModal) setGoogleConnectModal(false);
+        else if (deleteAgendaConfirm) setDeleteAgendaConfirm(null);
         else onClose();
       }}
     >
@@ -18735,6 +18743,115 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                     className="h-8 px-5 bg-blue-600 hover:bg-blue-700 active:scale-[0.99] rounded-lg shadow-[0px_0.9086957px_1.8173914px_0px_rgba(0,0,0,0.05)] inline-flex justify-center items-center text-white text-xs font-semibold leading-5 cursor-pointer transition-all"
                   >
                     Ya, Hapus
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Pop-up Hubungkan Google Kalender (Desktop) */}
+          {googleConnectModal && (
+            <div
+              className="absolute inset-0 z-30 flex items-center justify-center p-4 bg-slate-950/20 backdrop-blur-[2px] animate-[gemini-fade-in_0.15s_ease-out]"
+              onClick={() => setGoogleConnectModal(false)}
+            >
+              <div
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="google-connect-title"
+                onClick={(e) => e.stopPropagation()}
+                className="relative w-96 max-w-[calc(100%-32px)] p-6 bg-white rounded-2xl outline outline-1 outline-offset-[-1px] outline-slate-200/90 shadow-[0px_22.7px_45.4px_0px_rgba(2,6,23,0.30)] flex flex-col justify-start items-center animate-[gemini-zoom-in_0.16s_ease-out]"
+              >
+                {/* Tombol Tutup X */}
+                <button
+                  type="button"
+                  onClick={() => setGoogleConnectModal(false)}
+                  aria-label="Tutup"
+                  className="size-7 right-2.5 top-2.5 absolute rounded-full inline-flex justify-center items-center text-neutral-400 hover:text-neutral-600 hover:bg-slate-100 transition-colors cursor-pointer"
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </button>
+
+                {/* Logo Alerin <-> Google */}
+                <div className="pb-4 flex items-center justify-center gap-3">
+                  <div className="size-12 bg-blue-50 rounded-2xl outline outline-1 outline-offset-[-1px] outline-blue-100 flex justify-center items-center shrink-0">
+                    <img
+                      src="/assets/alerin-logo-only.png"
+                      alt="Alerin"
+                      className="size-6 object-contain"
+                    />
+                  </div>
+
+                  <div className="size-6 bg-slate-100 rounded-full inline-flex justify-center items-center text-slate-400 shrink-0">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="m8 7-5 5 5 5" />
+                      <path d="M21 12H3" />
+                      <path d="m16 7 5 5-5 5" />
+                    </svg>
+                  </div>
+
+                  <div className="size-12 bg-blue-50 rounded-2xl outline outline-1 outline-offset-[-1px] outline-blue-100 inline-flex justify-center items-center shrink-0">
+                    <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" className="size-6">
+                      <path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z" />
+                      <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96H1.29v3.09C3.26 21.3 7.31 24 12 24z" />
+                      <path fill="#FBBC05" d="M5.27 14.29c-.25-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.98-3.09z" />
+                      <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.98 3.09c.95-2.85 3.6-4.96 6.73-4.96z" />
+                    </svg>
+                  </div>
+                </div>
+
+                {/* Judul */}
+                <div className="pb-2 flex flex-col justify-start items-center">
+                  <h3
+                    id="google-connect-title"
+                    className="text-center justify-center text-slate-900 text-sm font-bold font-['Plus_Jakarta_Sans'] leading-6"
+                  >
+                    Hubungkan dengan Google Kalender?
+                  </h3>
+                </div>
+
+                {/* Deskripsi */}
+                <div className="pb-3 px-1.5 flex flex-col justify-start items-center">
+                  <p className="text-center justify-center text-slate-600 text-xs font-normal font-['Plus_Jakarta_Sans'] leading-5">
+                    Alerin akan mengakses dan membagikan informasi agenda <br className="hidden sm:inline" />akademik ke Google Kalender Anda secara dua arah.
+                  </p>
+                </div>
+
+                {/* Kotak Kebijakan Privasi */}
+                <div className="w-full pb-5 flex flex-col justify-start items-start">
+                  <div className="w-full p-2.5 bg-slate-50 rounded-xl outline outline-1 outline-offset-[-1px] outline-slate-200/80 inline-flex justify-start items-start gap-2">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400 shrink-0 mt-0.5">
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                    </svg>
+                    <p className="text-slate-500 text-xs font-normal font-['Plus_Jakarta_Sans'] leading-4">
+                      Dengan melanjutkan, Anda menyetujui sinkronisasi<br className="hidden sm:inline" />jadwal yang aman sesuai Kebijakan Privasi Alerin.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Tombol Aksi */}
+                <div className="self-stretch inline-flex justify-start items-start gap-2.5">
+                  <button
+                    type="button"
+                    onClick={() => setGoogleConnectModal(false)}
+                    className="flex-1 px-3 py-2.5 rounded-xl outline outline-1 outline-offset-[-1px] outline-slate-200 inline-flex flex-col justify-center items-center hover:bg-slate-50 active:scale-[0.98] transition-all cursor-pointer bg-white"
+                  >
+                    <span className="text-center justify-center text-slate-600 text-xs font-semibold font-['Plus_Jakarta_Sans'] leading-4">
+                      Batal
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleConfirmGoogleConnect}
+                    className="flex-1 px-3 py-2.5 relative bg-blue-600 hover:bg-blue-700 active:scale-[0.98] rounded-xl inline-flex justify-center items-center shadow-[0px_2px_4px_-2px_rgba(59,130,246,0.20),0px_4px_6px_-1px_rgba(59,130,246,0.20)] transition-all cursor-pointer"
+                  >
+                    <span className="text-center justify-center text-white text-xs font-semibold font-['Plus_Jakarta_Sans'] leading-4">
+                      Ya, Hubungkan
+                    </span>
                   </button>
                 </div>
               </div>
