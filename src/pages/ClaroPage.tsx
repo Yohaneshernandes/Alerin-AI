@@ -18834,7 +18834,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                 aria-modal="true"
                 aria-labelledby="google-connect-title"
                 onClick={(e) => e.stopPropagation()}
-                className="relative w-96 max-w-[calc(100%-32px)] p-6 bg-white rounded-2xl outline outline-1 outline-offset-[-1px] outline-slate-200/90 shadow-[0px_22.7px_45.4px_0px_rgba(2,6,23,0.30)] flex flex-col justify-start items-center animate-[gemini-zoom-in_0.16s_ease-out]"
+                className="relative w-[400px] max-w-[calc(100%-32px)] p-6 bg-white rounded-2xl outline outline-1 outline-offset-[-1px] outline-slate-200/90 shadow-[0px_22.7px_45.4px_0px_rgba(2,6,23,0.30)] flex flex-col justify-start items-center animate-[gemini-zoom-in_0.16s_ease-out]"
               >
                 {/* Tombol Tutup X */}
                 <button
@@ -18888,9 +18888,11 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                 </div>
 
                 {/* Deskripsi */}
-                <div className="pb-3 px-1.5 flex flex-col justify-start items-center">
+                <div className="pb-3 w-full flex flex-col justify-start items-center">
                   <p className="text-center justify-center text-slate-600 text-xs font-normal font-['Plus_Jakarta_Sans'] leading-5">
-                    Alerin akan mengakses dan membagikan informasi agenda <br className="hidden sm:inline" />akademik ke Google Kalender Anda secara dua arah.
+                    <span className="inline-block sm:whitespace-nowrap">Alerin akan mengakses dan membagikan informasi agenda</span>
+                    <br />
+                    <span className="inline-block sm:whitespace-nowrap">akademik ke Google Kalender Anda secara dua arah.</span>
                   </p>
                 </div>
 
