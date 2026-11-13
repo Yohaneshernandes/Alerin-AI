@@ -5501,24 +5501,24 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
               }}
               autoFocus
               className={`w-full text-slate-800 bg-white border border-blue-400 rounded-lg outline-none shadow-xs ${
-                isMobile ? "text-[14px] px-2 py-1" : "text-[12.5px] px-1.5 py-0.5"
+                isMobile ? "text-[14px] px-2 py-1" : "text-[13px] px-2 py-0.5"
               }`}
             />
             <button
               type="button"
               onClick={() => saveRename(item.id)}
               aria-label="Simpan"
-              className={`${isMobile ? "size-7" : "size-6"} rounded-lg bg-blue-600 text-white flex items-center justify-center shrink-0 hover:bg-blue-700 transition-colors`}
+              className={`${isMobile ? "size-7" : "size-[26px]"} rounded-lg bg-blue-600 text-white flex items-center justify-center shrink-0 hover:bg-blue-700 transition-colors`}
             >
-              <svg width={isMobile ? "13" : "11"} height={isMobile ? "13" : "11"} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              <svg width={isMobile ? "13" : "11.5"} height={isMobile ? "13" : "11.5"} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
             </button>
             <button
               type="button"
               onClick={() => setEditingId(null)}
               aria-label="Batal"
-              className={`${isMobile ? "size-7" : "size-6"} rounded-lg border border-slate-200 text-slate-500 flex items-center justify-center shrink-0 hover:bg-slate-100 transition-colors`}
+              className={`${isMobile ? "size-7" : "size-[26px]"} rounded-lg border border-slate-200 text-slate-500 flex items-center justify-center shrink-0 hover:bg-slate-100 transition-colors`}
             >
-              <svg width={isMobile ? "13" : "11"} height={isMobile ? "13" : "11"} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              <svg width={isMobile ? "13" : "11.5"} height={isMobile ? "13" : "11.5"} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
           </div>
         ) : (
@@ -5535,14 +5535,14 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
               className={`flex-1 text-left truncate transition-colors pr-2 flex items-center font-normal ${
                 isMobile
                   ? "text-[15px] leading-relaxed gap-2"
-                  : "text-[13px] leading-5 gap-1.5"
+                  : "text-[13.5px] leading-snug gap-2"
               } ${
                 isActive ? "text-slate-900" : "text-neutral-800 hover:text-blue-600"
               }`}
             >
               {item.pinned && (
                 <span title="Disematkan" className="inline-flex shrink-0 text-neutral-800">
-                  <PinIcon size={isMobile ? 16 : 13.5} className="text-neutral-800" />
+                  <PinIcon size={isMobile ? 16 : 14.5} className="text-neutral-800" />
                 </span>
               )}
               <span className="truncate">{item.title}</span>
@@ -5569,7 +5569,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                 });
               }}
               aria-label={`Menu riwayat ${item.title}`}
-              className={`${isMobile ? "size-7" : "size-6"} rounded-lg flex items-center justify-center transition-colors shrink-0 ${
+              className={`${isMobile ? "size-7" : "size-[26px]"} rounded-lg flex items-center justify-center transition-colors shrink-0 ${
                 activeHistoryMenu?.item.id === item.id
                   ? "text-slate-800 bg-slate-200/70"
                   : isActive
@@ -5577,7 +5577,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                     : "text-slate-400 hover:text-slate-700 hover:bg-slate-200/60"
               }`}
             >
-              <svg width={isMobile ? "16" : "14"} height={isMobile ? "16" : "14"} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <svg width={isMobile ? "16" : "15"} height={isMobile ? "16" : "15"} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                 <circle cx="12" cy="12" r="1.5"/>
                 <circle cx="19" cy="12" r="1.5"/>
                 <circle cx="5" cy="12" r="1.5"/>
@@ -5603,14 +5603,14 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
       <>
         <div className="flex flex-col flex-1 min-h-0">
           {/* Drawer / Sidebar Header */}
-          <div className={`shrink-0 flex items-center justify-between ${isMobileDrawer ? "mb-5" : "mb-3"}`}>
-            <div className={`flex items-center ${isMobileDrawer ? "gap-2.5" : "gap-2"}`}>
+          <div className={`shrink-0 flex items-center justify-between ${isMobileDrawer ? "mb-5" : "mb-4"}`}>
+            <div className={`flex items-center ${isMobileDrawer ? "gap-2.5" : "gap-2.5"}`}>
               <img
                 src="/assets/73c1a.png"
                 alt="Alerin"
-                className={`${isMobileDrawer ? "size-9" : "size-7"} rounded-full object-cover shadow-xs border border-white`}
+                className={`${isMobileDrawer ? "size-9" : "size-8"} rounded-full object-cover shadow-xs border border-white`}
               />
-              <span className={`font-bold text-slate-900 leading-none font-sans ${isMobileDrawer ? "text-lg" : "text-[15px]"}`}>ALERIN</span>
+              <span className={`font-bold text-slate-900 leading-none font-sans ${isMobileDrawer ? "text-lg" : "text-[16px]"}`}>ALERIN</span>
             </div>
             <div className="flex items-center gap-1">
               <button
@@ -5621,9 +5621,9 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                   setSearchOpen(true);
                 }}
                 aria-label="Cari percakapan"
-                className={`${isMobileDrawer ? "size-8" : "size-7"} rounded-xl flex items-center justify-center text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer`}
+                className={`${isMobileDrawer ? "size-8" : "size-[30px]"} rounded-xl flex items-center justify-center text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer`}
               >
-                <svg width={isMobileDrawer ? "18" : "16"} height={isMobileDrawer ? "18" : "16"} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg width={isMobileDrawer ? "18" : "17"} height={isMobileDrawer ? "18" : "17"} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="11" cy="11" r="8" />
                   <line x1="21" y1="21" x2="16.65" y2="16.65" />
                 </svg>
@@ -5633,9 +5633,9 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                 onClick={handleCollapseOrClose}
                 aria-label={isMobileDrawer ? "Tutup menu" : "Ciutkan sidebar"}
                 title={isMobileDrawer ? "Tutup menu" : "Ciutkan sidebar"}
-                className={`${isMobileDrawer ? "size-8" : "size-7"} rounded-full border border-neutral-200/80 flex items-center justify-center text-neutral-800 hover:bg-slate-100 transition-colors cursor-pointer`}
+                className={`${isMobileDrawer ? "size-8" : "size-[30px]"} rounded-full border border-neutral-200/80 flex items-center justify-center text-neutral-800 hover:bg-slate-100 transition-colors cursor-pointer`}
               >
-                <svg width={isMobileDrawer ? "15" : "13.5"} height={isMobileDrawer ? "15" : "13.5"} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <svg width={isMobileDrawer ? "15" : "14"} height={isMobileDrawer ? "15" : "14"} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                   <rect x="3" y="3" width="18" height="18" rx="2" />
                   <line x1="9" y1="3" x2="9" y2="21" />
                 </svg>
@@ -5644,7 +5644,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
           </div>
 
           {/* Navigation Menu */}
-          <nav className={`shrink-0 ${isMobileDrawer ? "space-y-1 mb-6" : "space-y-0.5 mb-3"}`}>
+          <nav className={`shrink-0 ${isMobileDrawer ? "space-y-1 mb-6" : "space-y-1 mb-4"}`}>
             {SIDEBAR_NAV_ITEMS.map((nav) => (
               <button
                 key={nav.id}
@@ -5657,7 +5657,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                 className={`w-full flex items-center transition-colors text-left cursor-pointer ${
                   isMobileDrawer
                     ? "h-11 px-3.5 py-2.5 rounded-2xl gap-3 [&>svg]:size-5"
-                    : "h-8.5 px-2.5 py-1.5 rounded-xl gap-2.5 [&>svg]:size-4"
+                    : "h-9.5 px-3 py-2 rounded-xl gap-2.5 [&>svg]:size-[18px]"
                 } ${
                   nav.active
                     ? "bg-[#1A73E8] text-white font-bold shadow-xs shadow-[#1A73E8]/20"
@@ -5665,7 +5665,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                 }`}
               >
                 {nav.icon}
-                <span className={isMobileDrawer ? "text-base" : "text-[13px]"}>{nav.label}</span>
+                <span className={isMobileDrawer ? "text-base" : "text-[13.5px]"}>{nav.label}</span>
               </button>
             ))}
           </nav>
@@ -5673,12 +5673,12 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
           {/* Disematkan & Riwayat Section — mengisi sisa tinggi sampai tepat di atas tombol Obrolan */}
           <div
             onScroll={() => activeHistoryMenu && setActiveHistoryMenu(null)}
-            className={`flex-1 min-h-0 pt-1 overflow-y-auto pr-1 pb-2 ${isMobileDrawer ? "space-y-4" : "space-y-3"}`}
+            className={`flex-1 min-h-0 pt-1 overflow-y-auto pr-1 pb-2 ${isMobileDrawer ? "space-y-4" : "space-y-3.5"}`}
           >
             {pinnedHistoryItems.length > 0 && (
               <div>
                 <div className={`text-zinc-500 font-semibold uppercase tracking-wider px-1 ${
-                  isMobileDrawer ? "text-xs mb-2" : "text-[11px] mb-1"
+                  isMobileDrawer ? "text-xs mb-2" : "text-[11.5px] mb-1.5"
                 }`}>
                   Disematkan
                 </div>
@@ -5690,7 +5690,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
 
             <div>
               <div className={`text-zinc-500 font-semibold uppercase tracking-wider px-1 ${
-                isMobileDrawer ? "text-xs mb-2" : "text-[11px] mb-1"
+                isMobileDrawer ? "text-xs mb-2" : "text-[11.5px] mb-1.5"
               }`}>
                 Riwayat
               </div>
@@ -5717,15 +5717,15 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                       type="button"
                       onClick={handleToggleExpandHistory}
                       className={`flex items-center justify-between w-full text-left text-neutral-500 hover:text-blue-600 font-medium transition-colors cursor-pointer group ${
-                        isMobileDrawer ? "text-[13px] py-1 px-1" : "text-[12px] py-0.5 px-1"
+                        isMobileDrawer ? "text-[13px] py-1 px-1" : "text-[12.5px] py-0.5 px-1"
                       }`}
                     >
                       <span>
                         {expandedHistory ? "Tampilkan lebih sedikit" : "Lihat selengkapnya"}
                       </span>
                       <svg
-                        width={isMobileDrawer ? "13" : "11"}
-                        height={isMobileDrawer ? "13" : "11"}
+                        width={isMobileDrawer ? "13" : "12"}
+                        height={isMobileDrawer ? "13" : "12"}
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
@@ -5747,7 +5747,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
         </div>
 
         {/* Bottom + Obrolan button */}
-        <div className={`shrink-0 ${isMobileDrawer ? "pt-3" : "pt-2"}`}>
+        <div className={`shrink-0 ${isMobileDrawer ? "pt-3" : "pt-2.5"}`}>
           <button
             type="button"
             onClick={() => {
@@ -5760,10 +5760,10 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
             className={`w-full bg-[#1A73E8] hover:bg-[#1557b0] active:scale-[0.98] text-white flex items-center justify-center font-semibold transition-all cursor-pointer ${
               isMobileDrawer
                 ? "h-11 px-5 py-2.5 rounded-full shadow-md shadow-[#1A73E8]/25 gap-2 text-sm"
-                : "h-9 px-4 py-1.5 rounded-xl shadow-xs shadow-[#1A73E8]/20 gap-1.5 text-[13px]"
+                : "h-10 px-4 py-2 rounded-xl shadow-xs shadow-[#1A73E8]/20 gap-2 text-[13.5px]"
             }`}
           >
-            <svg width={isMobileDrawer ? "16" : "14"} height={isMobileDrawer ? "16" : "14"} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <svg width={isMobileDrawer ? "16" : "15"} height={isMobileDrawer ? "16" : "15"} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <line x1="12" y1="5" x2="12" y2="19" />
               <line x1="5" y1="12" x2="19" y2="12" />
             </svg>
@@ -6374,9 +6374,9 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
           className={`hidden md:flex shrink-0 border-r border-slate-100 flex-col bg-white ${
             sidebarOpen ? "overflow-hidden" : "relative z-30 overflow-visible"
           }`}
-          style={{ width: sidebarOpen ? 248 : 58, transition: "width 0.28s cubic-bezier(0.4,0,0.2,1)", minWidth: 0 }}>
+          style={{ width: sidebarOpen ? 260 : 58, transition: "width 0.28s cubic-bezier(0.4,0,0.2,1)", minWidth: 0 }}>
           {sidebarOpen ? (
-            <div className="flex flex-col flex-1 min-h-0 py-3.5 px-3">
+            <div className="flex flex-col flex-1 min-h-0 py-4 px-3.5">
               {renderSidebarPanel(false)}
             </div>
           ) : (
