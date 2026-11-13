@@ -6859,6 +6859,9 @@ const MODES: {
 
 function ChatInputBox({
   input, setInput, onSend, onSendWithFile, onNewChat, activeCategory, setActiveCategory, hideTopSuggestions, mobileFloat, onPopupOpenChange, loading, onStop,
+  suggestionsPlacement = "top",
+  suggestionsAlign = "left",
+  centerLanding = false,
 }: {
   input: string;
   setInput: (v: string) => void;
@@ -6872,6 +6875,9 @@ function ChatInputBox({
   onPopupOpenChange?: (open: boolean) => void;
   loading?: boolean;
   onStop?: () => void;
+  suggestionsPlacement?: "top" | "bottom";
+  suggestionsAlign?: "left" | "center";
+  centerLanding?: boolean;
 }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const mobileTextareaRef = useRef<HTMLTextAreaElement>(null);
@@ -7205,7 +7211,9 @@ function ChatInputBox({
   return (
     <div className={mobileFloat
       ? "fixed md:relative bottom-4 md:bottom-auto left-3 right-3 md:left-auto md:right-auto md:mx-6 md:mb-4 z-[60] md:z-auto pt-1 px-3 pb-2 md:pt-1 md:pb-2 rounded-2xl"
-      : "shrink-0 px-3 md:px-6 pb-2 md:pb-3 pt-0"}
+      : centerLanding
+        ? "w-full p-0"
+        : "shrink-0 px-3 md:px-6 pb-2 md:pb-3 pt-0"}
       style={mobileFloat
         ? { background: "rgba(255,255,255,0.88)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.92)", boxShadow: "0 8px 32px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.06)" } as React.CSSProperties
         : {}}>
@@ -7215,7 +7223,7 @@ function ChatInputBox({
         onChange={handleFileChange} />
 
       {/* Suggestion pills — default or per-category, hidden in chat mode (dibatasi 3 saja) */}
-      {!hideTopSuggestions && (
+      {!hideTopSuggestions && suggestionsPlacement === "top" && (
         <div className="flex gap-2 overflow-x-auto pb-2.5 pt-0.5 px-0.5" style={{ scrollbarWidth: "none" }}>
           {currentSuggestions.slice(0, 3).map((s) => (
             <button
@@ -7236,7 +7244,7 @@ function ChatInputBox({
           borderColor: listening ? "#3b82f6" : mobileFloat ? "transparent" : undefined,
           boxShadow: listening
             ? "0 0 0 3px rgba(59,130,246,0.12), 0 4px 20px rgba(0,0,0,0.08)"
-            : mobileFloat ? "none" : undefined,
+            : mobileFloat ? "none" : centerLanding ? "0 4px 24px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.04)" : undefined,
           transition: "box-shadow 0.2s, border-color 0.2s",
         }}>
         {/* Attachment preview thumbnails inside card (supports multiple photos & files, matching Gambar user) */}
@@ -7614,10 +7622,10 @@ function ChatInputBox({
                 onClick={handleSend}
                 disabled={!input.trim() && uploadedItems.length === 0}
                 aria-label="Kirim pesan"
-                className={`size-8 rounded-full flex items-center justify-center text-white transition-all shrink-0 ${
+                className={`size-8 rounded-full flex items-center justify-center transition-all shrink-0 ${
                   (input.trim() || uploadedItems.length > 0)
-                    ? "bg-blue-600 hover:bg-blue-700 shadow-xs cursor-pointer active:scale-95"
-                    : "bg-indigo-200 opacity-30 cursor-not-allowed"
+                    ? "bg-blue-600 hover:bg-blue-700 text-white shadow-xs cursor-pointer active:scale-95"
+                    : "bg-blue-50/90 text-blue-300 border border-blue-100/60 cursor-not-allowed"
                 }`}
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
@@ -7626,6 +7634,27 @@ function ChatInputBox({
           </div>
         </div>
       </div>
+
+      {/* Suggestion pills — placed below input card when suggestionsPlacement === "bottom" */}
+      {!hideTopSuggestions && suggestionsPlacement === "bottom" && (
+        <div
+          className={`flex items-center gap-2.5 pt-3.5 pb-1 px-0.5 ${
+            suggestionsAlign === "center" ? "justify-center flex-wrap" : "overflow-x-auto"
+          }`}
+          style={{ scrollbarWidth: "none" }}
+        >
+          {currentSuggestions.slice(0, 3).map((s) => (
+            <button
+              key={s}
+              type="button"
+              onClick={() => onSend(s)}
+              className="shrink-0 inline-flex items-center h-8 px-4 rounded-full border border-slate-200/90 bg-white/95 text-xs font-medium text-slate-700 hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50/70 active:scale-[0.98] transition-all whitespace-nowrap shadow-xs cursor-pointer select-none"
+            >
+              {s}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* File & Photo Preview View (ChatGPT Style matching Gambar 2) */}
       {previewModalOpen && selectedPreviewItem && typeof document !== "undefined" && createPortal(
@@ -12011,44 +12040,46 @@ function PercakapanTab({
   if (!chatMode) {
     return (
       <>
-      {/* Desktop view — kartu sambutan mobile versi landscape terpusat */}
+      {/* Desktop view — tampilan awal terpusat (Logo, Tagline, Input Box, & Suggestion Pills) */}
       <div className="hidden md:flex flex-1 flex-col overflow-hidden relative claro-chat-bg">
         <div className="absolute inset-0 pointer-events-none" style={{
           backgroundImage: "radial-gradient(circle, rgba(59,130,246,0.035) 1px, transparent 1px)",
           backgroundSize: "24px 24px",
           zIndex: 0,
         }} />
-        <div className="flex-1 overflow-y-auto relative z-10 flex flex-col px-6 pt-16 pb-6">
-          <div className="my-auto mx-auto w-full max-w-[720px]">
-            <div className="w-full bg-white rounded-2xl shadow-[0px_1px_3px_0px_rgba(59,130,246,0.04),0px_2px_16px_0px_rgba(59,130,246,0.06)] border border-blue-200/40 px-10 lg:px-14 py-14 lg:py-[68px] flex items-center justify-center gap-10 lg:gap-12">
-              <img
-                src="/assets/alerin-logo-only.png"
-                alt="Alerin"
-                className="h-24 lg:h-28 w-auto object-contain shrink-0"
-              />
-              <div className="min-w-0 max-w-[390px] text-left">
-                <h2 className="text-slate-900 text-2xl lg:text-[26px] font-normal leading-snug">
-                  Tanya apa saja tentang kuliah.{" "}
-                  <span className="block text-blue-500 font-bold">Alerin bantu sampai jelas.</span>
-                </h2>
-                <p className="mt-3 text-slate-500 text-sm lg:text-[15px] font-normal leading-relaxed">
-                  Mulai dari materi, tugas, jurnal, hingga skripsi semua dalam satu ruang yang memahami perjalanan kuliahmu.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Desktop only: static input pinned at bottom */}
-        <div className="shrink-0">
-          <div className="max-w-5xl mx-auto">
-            <ChatInputBox
-              input={input} setInput={setInput} onSend={send}
-              activeCategory={activeCategory} setActiveCategory={setActiveCategory}
-              onSendWithFile={sendWithFile}
-              loading={isGenerating}
-              onStop={handleStop}
+        <div className="flex-1 overflow-y-auto relative z-10 flex flex-col items-center justify-center px-6 py-8">
+          <div className="my-auto mx-auto w-full max-w-[800px] flex flex-col items-center text-center">
+            {/* Logo Alerin terpusat */}
+            <img
+              src="/assets/alerin-logo-only.png"
+              alt="Alerin"
+              className="h-20 lg:h-22 w-auto object-contain select-none mb-6 shrink-0"
             />
+
+            {/* Judul & Tagline */}
+            <h1 className="text-slate-900 text-[28px] lg:text-[32px] font-bold leading-tight tracking-tight text-center font-['Plus_Jakarta_Sans',sans-serif]">
+              Tanya apa saja tentang kuliah.
+              <span className="block text-[#1A73E8]">Alerin bantu sampai jelas.</span>
+            </h1>
+
+            {/* Subtitle */}
+            <p className="mt-3.5 text-slate-500 text-sm lg:text-[15px] font-normal leading-relaxed text-center max-w-[540px] mx-auto">
+              Mulai dari materi, tugas, jurnal, hingga skripsi semua dalam satu ruang yang memahami perjalanan kuliahmu.
+            </p>
+
+            {/* Input Card terpusat langsung di bawah subtitle + pil saran prompt di bawahnya */}
+            <div className="w-full max-w-[760px] mx-auto mt-7 text-left">
+              <ChatInputBox
+                input={input} setInput={setInput} onSend={send}
+                activeCategory={activeCategory} setActiveCategory={setActiveCategory}
+                onSendWithFile={sendWithFile}
+                loading={isGenerating}
+                onStop={handleStop}
+                suggestionsPlacement="bottom"
+                suggestionsAlign="center"
+                centerLanding
+              />
+            </div>
           </div>
         </div>
       </div>
