@@ -4427,39 +4427,13 @@ function ImageGeneratingBubble({
         </p>
       </div>
 
-      {/* Modern AI Generative Studio Canvas with Aurora, Neural Grid, Laser Beam & Bottom-Right White Pill */}
-      <div className="mb-3.5">
+      {/* Modern AI Generative Studio Canvas with Aurora, Neural Grid & Bottom-Right White Pill */}
+      <div>
         <ModernGenerativeCanvas
           isRevealing={isRevealing}
           orientation={effectiveOrientation}
           progress={progress}
         />
-      </div>
-
-      {/* Modern Upgrade Callout Card */}
-      <div className="w-full pt-1 flex flex-col items-start gap-2.5">
-        <div className="p-3.5 rounded-2xl bg-white/70 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60 shadow-xs flex items-center justify-between gap-3 w-full">
-          <div className="min-w-0">
-            <p className="text-[13px] font-medium text-slate-800 dark:text-slate-200 leading-snug">
-              Ingin hasil lebih detail dan akurat?
-            </p>
-            <p className="text-[11.5px] text-slate-500 dark:text-slate-400">
-              Akses resolusi 4K & rendering prioritas dengan Alerin Pro.
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={() => {
-              window.dispatchEvent(new CustomEvent("alerin-open-upgrade"));
-            }}
-            className="shrink-0 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 active:scale-95 text-xs font-semibold text-white shadow-xs transition-all cursor-pointer"
-          >
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="white" stroke="none">
-              <path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z" />
-            </svg>
-            <span>Dapatkan Pro</span>
-          </button>
-        </div>
       </div>
     </div>
   );
