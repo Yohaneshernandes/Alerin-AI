@@ -13,6 +13,7 @@ import CariJurnalFigmaPanel from "@/components/CariJurnalFigmaPanel";
 import FiturLandingFigma from "@/components/FiturLandingFigma";
 import FileContentPreview from "@/components/FileContentPreview";
 import PdfViewer from "@/components/PdfViewer";
+import PlusBadgeIcon from "@/components/PlusBadgeIcon";
 import { downloadAttachmentFile } from "@/utils/generateDownloadFile";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -7075,19 +7076,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                     }`}
                   >
                     Plus
-                    <span className="relative h-[13px] w-[13px] shrink-0 overflow-hidden">
-                      <span
-                        className="pointer-events-none absolute left-0 top-0 block h-[17px] w-[17px] origin-top-left"
-                        style={{ transform: "scale(0.7647)" }}
-                      >
-                        <img
-                          src="/assets/8923b.png"
-                          alt=""
-                          className="pointer-events-none absolute max-w-none"
-                          style={{ width: 41, height: 74, left: -12, top: -6 }}
-                        />
-                      </span>
-                    </span>
+                    <PlusBadgeIcon size={11} />
                   </span>
                 </div>
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400 ml-0.5 shrink-0">
@@ -23410,9 +23399,7 @@ function ProfilTab({ onTab, onRegister }: { onTab: (t: NavTab) => void; onRegist
                   <p className="font-['Plus_Jakarta_Sans:Bold'] text-profile-name font-bold text-slate-900">{nama}</p>
                   <span className="absolute left-1/2 top-[-33px] mt-[5px] inline-flex h-profile-badge w-[107px] -translate-x-1/2 items-center justify-center gap-1.5 rounded-full border border-blue-200 bg-white px-3 font-['Inter:Bold'] text-profile-badge font-bold text-slate-900 shadow-sm md:static md:mt-0 md:w-auto md:translate-x-0 md:bg-white md:text-slate-900 md:shadow-none">
                     Alerin Plus
-                    <span className="relative h-[17px] w-[17px] overflow-hidden">
-                      <img src="/assets/8923b.png" alt="" className="pointer-events-none absolute max-w-none" style={{ width: 41, height: 74, left: -12, top: -6 }} />
-                    </span>
+                    <PlusBadgeIcon size={13} />
                   </span>
                 </div>
                 <p className="mt-1 font-['Inter:Medium'] text-sm font-medium leading-5 text-[#3e3f40]">{jenjang.replace(/\s*\([^)]*\)/, "")} · {prodi} · {universitas}</p>

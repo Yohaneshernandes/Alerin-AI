@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent, type PointerEvent as ReactPointerEvent, type ReactNode, type UIEvent } from "react";
+import PlusBadgeIcon from "./PlusBadgeIcon";
 
 type JournalView = "home" | "collection" | "riwayat";
 type RiwayatItem = { label: string; query: string; type: "journal" | "review" | "map"; waktu: string; pinned?: boolean };
@@ -1630,9 +1631,7 @@ function ProfileCard({
               <p className="truncate font-['Inter:Semi_Bold'] text-sm font-semibold text-slate-800">Raka Aditya</p>
               <span className="inline-flex items-center gap-1 rounded-full border border-blue-200 bg-indigo-950 px-2 py-0.5 font-['Inter:Bold'] text-[8px] font-bold text-white">
                 Plus
-                <span className="relative h-3 w-3 overflow-hidden">
-                  <img src={`${assets}/8923b.png`} alt="" className="absolute -left-2 -top-1 h-12 max-w-none" />
-                </span>
+                <PlusBadgeIcon size={10} />
               </span>
             </div>
             <p className="mt-0.5 font-['Inter:Regular'] text-xs text-slate-400">Manajemen · Semester 6</p>
@@ -13289,12 +13288,10 @@ export default function CariJurnalFigmaPanel({
                   type="button"
                   onClick={() => setUpgradeOpen(true)}
                   title="Lihat Pilihan Paket"
-                  className="inline-flex items-center gap-0.5 rounded-full bg-[#1e264b] hover:bg-[#2a3466] active:scale-95 px-1.5 py-0.5 font-['Inter:Bold'] text-[7.5px] font-bold text-white leading-none cursor-pointer transition-all shadow-xs"
+                  className="inline-flex items-center gap-1 rounded-full bg-[#1e264b] hover:bg-[#2a3466] active:scale-95 px-1.5 py-0.5 font-['Inter:Bold'] text-[7.5px] font-bold text-white leading-none cursor-pointer transition-all shadow-xs"
                 >
                   Plus
-                  <span className="relative h-2.5 w-2.5 overflow-hidden">
-                    <img src={`${mobileAssets}/8923b.png`} alt="" className="absolute -left-1.5 -top-0.5 h-8 max-w-none" />
-                  </span>
+                  <PlusBadgeIcon size={9} />
                 </button>
               </div>
             </div>
