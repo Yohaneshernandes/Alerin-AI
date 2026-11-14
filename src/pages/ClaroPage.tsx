@@ -77,11 +77,35 @@ type SharedChatPreviewData = {
 // ─── Auto-Capitalize Awal Kalimat untuk Seluruh Input Teks & Pop-up ───────────
 export function capitalizeWords(str: string): string {
   if (!str) return str;
-  return str
-    // Awal teks / awal kalimat
-    .replace(/^([\s"'‘“«(\[{]*)([a-z\u00E0-\u00FC])/u, (_m, pre, c) => pre + c.toUpperCase())
-    // Awal kalimat setelah tanda akhir kalimat (. ? !) atau baris baru (\n)
-    .replace(/([.!?\n\r]+[\s"'‘“«(\[{]*)([a-z\u00E0-\u00FC])/gu, (_m, pre, c) => pre + c.toUpperCase());
+
+  // Jika user mengetik atau menempelkan URL berawalan Http://, Https://, Www., Localhost:, ubah ke huruf kecil
+  let result = str.replace(/^([\s"'‘“«(\[{]*)(https?|ftp|www|localhost)([:.\/])/i, (_m, pre, proto, punct) => {
+    return `${pre}${proto.toLowerCase()}${punct}`;
+  });
+
+  const trimmed = result.trimStart();
+  // Khusus ketika input diawali URL/link, jangan kapitalisasi huruf pertamanya
+  const startsWithUrl = /^(https?(:|\/|$)|www\.?|localhost(:|\/|$)|ftp(:|\/|$)|[a-zA-Z0-9-]+\.(com|org|net|edu|gov|id|co|io|ai|app|dev|me|site|xyz|tech|link)([:\/]|$))/i.test(trimmed);
+
+  // Awal teks / awal kalimat (hanya jika BUKAN awalan URL)
+  if (!startsWithUrl) {
+    result = result.replace(/^([\s"'‘“«(\[{]*)([a-z\u00E0-\u00FC])/u, (_m, pre, c) => pre + c.toUpperCase());
+  }
+
+  // Awal kalimat setelah tanda akhir kalimat (. ? !) atau baris baru (\n)
+  result = result.replace(/([.!?\n\r]+[\s"'‘“«(\[{]*)([a-z\u00E0-\u00FC])/gu, (m, pre, c, offset, fullStr) => {
+    const after = fullStr.slice(offset + pre.length);
+    if (/^(https?:\/\/|www\.|localhost|[a-z0-9-]+\.[a-z]{2,})/i.test(after)) {
+      return m; // jangan dikapitalisasi jika URL
+    }
+    const before = fullStr.slice(0, offset);
+    if (pre.startsWith(".") && /[a-zA-Z0-9_-]$/.test(before) && !pre.includes(" ")) {
+      return m; // bagian dari domain / nama file ekstensi
+    }
+    return pre + c.toUpperCase();
+  });
+
+  return result;
 }
 export const capitalizeSentence = capitalizeWords;
 
@@ -98,6 +122,7 @@ const ENGLISH_INTERFACE_COPY: Record<string, string> = {
   "Chat": "Chat",
   "Fitur": "Features",
   "Proyek": "Projects",
+  "Cari Obrolan": "Search chats",
   "Cari percakapan": "Search chats",
   "Disematkan": "Pinned",
   "Riwayat": "History",
@@ -882,7 +907,83 @@ export function cleanMarkdownForCopy(md: string): string {
   return text;
 }
 
-// ─── Render Pesan Pengguna (Mendukung baris baru & styling rapi) ───────────────
+// ─── Render Pesan Pengguna (Mendukung link biru yang bisa diklik, bold & italic) ──
+function renderTextWithLinks(rawText: string) {
+  if (!rawText) return null;
+
+  // Regex mencari pola URL: http://, https://, www., localhost:PORT, dsb.
+  const urlRegex = /(https?:\/\/[^\s<>"'()]+|www\.[^\s<>"'()]+|localhost:[0-9]+[^\s<>"'()]*|[a-zA-Z0-9-]+\.(?:com|org|net|edu|gov|id|co\.id|io|ai|app|dev|me)\b[^\s<>"'()]*)/gi;
+  const parts: React.ReactNode[] = [];
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+
+  while ((match = urlRegex.exec(rawText)) !== null) {
+    const matchStart = match.index;
+    const matchEnd = urlRegex.lastIndex;
+
+    // Teks biasa sebelum URL
+    if (matchStart > lastIndex) {
+      parts.push(rawText.slice(lastIndex, matchStart));
+    }
+
+    let urlStr = match[0];
+    let trailingPunct = "";
+    // Pisahkan tanda baca di ujung URL jika ada (seperti titik di akhir kalimat)
+    const punctMatch = urlStr.match(/([.,!?;:)]+)$/);
+    if (punctMatch) {
+      trailingPunct = punctMatch[1];
+      urlStr = urlStr.slice(0, -trailingPunct.length);
+    }
+
+    // Pastikan awalan protokol tidak kapital (http://, https://, www., localhost:)
+    const displayUrl = urlStr
+      .replace(/^https?:\/\//i, (m) => m.toLowerCase())
+      .replace(/^www\./i, "www.")
+      .replace(/^localhost:/i, "localhost:");
+
+    let href = urlStr;
+    if (/^https?:\/\//i.test(href)) {
+      href = href.replace(/^https?:\/\//i, (m) => m.toLowerCase());
+    } else if (/^www\./i.test(href)) {
+      href = "https://" + href;
+    } else if (/^localhost:/i.test(href)) {
+      href = "http://" + href;
+    } else {
+      href = "https://" + href;
+    }
+
+    parts.push(
+      <React.Fragment key={`link-${matchStart}`}>
+        <a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+          onTouchStart={(e) => {
+            e.stopPropagation();
+          }}
+          className="text-[#1A73E8] hover:text-[#1557b0] dark:text-blue-400 dark:hover:text-blue-300 font-medium underline underline-offset-2 break-all hover:opacity-90 transition-opacity cursor-pointer inline"
+          title={`Buka tautan: ${href}`}
+        >
+          {displayUrl}
+        </a>
+        {trailingPunct}
+      </React.Fragment>
+    );
+
+    lastIndex = matchEnd;
+  }
+
+  // Teks sisa setelah URL terakhir
+  if (lastIndex < rawText.length) {
+    parts.push(rawText.slice(lastIndex));
+  }
+
+  return parts.length > 0 ? parts : rawText;
+}
+
 function renderUserMessageContent(text: string) {
   if (!text) return null;
   // Parse inline bold **teks** dan *miring* jika pengguna mengirim format markdown
@@ -890,20 +991,107 @@ function renderUserMessageContent(text: string) {
   return parts.map((part, idx) => {
     if (part.startsWith("**") && part.endsWith("**") && part.length >= 4) {
       return (
-        <strong key={idx} className="font-semibold text-slate-950">
-          {part.slice(2, -2)}
+        <strong key={idx} className="font-semibold text-slate-950 dark:text-white">
+          {renderTextWithLinks(part.slice(2, -2))}
         </strong>
       );
     }
     if (part.startsWith("*") && part.endsWith("*") && part.length >= 2) {
       return (
         <em key={idx} className="italic">
-          {part.slice(1, -1)}
+          {renderTextWithLinks(part.slice(1, -1))}
         </em>
       );
     }
-    return part;
+    return <React.Fragment key={idx}>{renderTextWithLinks(part)}</React.Fragment>;
   });
+}
+
+// Komponen pesan pengguna dengan fitur lihat selengkapnya / lihat lebih sedikit jika > 850 karakter
+function UserMessageBubbleContent({ text }: { text: string }) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const THRESHOLD = 850;
+
+  if (!text) return null;
+
+  const isLong = text.length > THRESHOLD;
+  if (!isLong) {
+    return <>{renderUserMessageContent(text)}</>;
+  }
+
+  if (isExpanded) {
+    return (
+      <div className="flex flex-col">
+        <span>{renderUserMessageContent(text)}</span>
+        <div className="pt-2 mt-2 border-t claro-user-bubble-divider flex justify-end">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsExpanded(false);
+            }}
+            onTouchStart={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.stopPropagation()}
+            className="claro-user-bubble-toggle-btn inline-flex items-center gap-1.5 text-xs font-semibold transition-colors cursor-pointer select-none py-1 px-2.5 rounded-lg"
+          >
+            <span>Lihat lebih sedikit</span>
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <polyline points="18 15 12 9 6 15" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Potong di batas kata/baris yang rapi di dekat 850 karakter
+  let cutIndex = THRESHOLD;
+  const lastBreak = Math.max(text.lastIndexOf(" ", THRESHOLD), text.lastIndexOf("\n", THRESHOLD));
+  if (lastBreak > THRESHOLD - 120) {
+    cutIndex = lastBreak;
+  }
+  const displayText = text.slice(0, cutIndex).trimEnd() + "...";
+
+  return (
+    <div className="flex flex-col">
+      <span>{renderUserMessageContent(displayText)}</span>
+      <div className="pt-2 mt-2 border-t claro-user-bubble-divider flex justify-end">
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsExpanded(true);
+          }}
+          onTouchStart={(e) => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
+          className="claro-user-bubble-toggle-btn inline-flex items-center gap-1.5 text-xs font-semibold transition-colors cursor-pointer select-none py-1 px-2.5 rounded-lg"
+        >
+          <span>Lihat selengkapnya</span>
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  );
 }
 
 // ─── Search data ─────────────────────────────────────────────────────────────
@@ -958,6 +1146,7 @@ function SearchModal({
   onSelect?: (title: string, itemType?: "chat" | "dokumen" | "proyek", itemId?: string) => void;
   historyItems?: RiwayatItem[];
 }) {
+  const isDark = typeof window !== "undefined" && (document.documentElement.classList.contains("dark") || window.localStorage.getItem("alerin-theme") === "dark");
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<SearchFilter>("semua");
   const [showRecentChats, setShowRecentChats] = useState(true);
@@ -1057,11 +1246,13 @@ function SearchModal({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-[350px] sm:max-w-lg rounded-3xl overflow-hidden bg-white shadow-2xl border border-slate-100 flex flex-col animate-[gemini-zoom-in_0.2s_ease-out]"
+        className={`w-full max-w-[350px] sm:max-w-lg rounded-3xl overflow-hidden shadow-2xl border flex flex-col animate-[gemini-zoom-in_0.2s_ease-out] ${
+          isDark ? "bg-[#1e293b] border-slate-700 text-white" : "bg-white border-slate-100 text-slate-900"
+        }`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Search input row */}
-        <div className="flex items-center gap-3 px-5 py-3.5 border-b border-slate-100/60">
+        <div className={`flex items-center gap-3 px-5 py-3.5 border-b ${isDark ? "border-slate-700/80" : "border-slate-100/60"}`}>
           <input
             ref={inputRef}
             value={query}
@@ -1080,13 +1271,15 @@ function SearchModal({
               }
             }}
             placeholder="Cari..."
-            className="flex-1 bg-transparent text-slate-800 text-[15px] placeholder-slate-400 outline-none"
+            className={`flex-1 bg-transparent text-[15px] outline-none ${isDark ? "text-slate-100 placeholder-slate-500" : "text-slate-800 placeholder-slate-400"}`}
           />
           <button
             type="button"
             onClick={onClose}
             aria-label="Tutup pencarian"
-            className="size-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer shrink-0"
+            className={`size-8 rounded-full flex items-center justify-center transition-colors cursor-pointer shrink-0 ${
+              isDark ? "text-slate-400 hover:text-white hover:bg-slate-800" : "text-slate-400 hover:text-slate-600 hover:bg-slate-100"
+            }`}
           >
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="18" y1="6" x2="6" y2="18" />
@@ -1115,7 +1308,9 @@ function SearchModal({
                     onSelect?.(title, "chat");
                     onClose();
                   }}
-                  className="w-full flex items-center gap-3 px-5 py-2.5 hover:bg-slate-50 active:bg-slate-100 transition-colors text-left group cursor-pointer"
+                  className={`w-full flex items-center gap-3 px-5 py-2.5 transition-colors text-left group cursor-pointer ${
+                    isDark ? "hover:bg-slate-800/80 active:bg-slate-800 text-slate-200" : "hover:bg-slate-50 active:bg-slate-100 text-slate-800"
+                  }`}
                 >
                   <span className="text-slate-400 group-hover:text-slate-600 transition-colors shrink-0">
                     <ChatBubbleIcon />
@@ -2950,7 +3145,7 @@ function ResponseMoreMenuPopover({
   return (
     <>
       <div className="fixed inset-0 z-30" onClick={onClose} />
-      <div className="absolute bottom-full left-0 mb-2 z-40 bg-white rounded-2xl border border-slate-200/90 shadow-[0_8px_30px_rgba(0,0,0,0.12)] p-1.5 md:p-2 min-w-[175px] md:min-w-[196px] flex flex-col gap-1 md:gap-1.5 text-xs md:text-[13px] animate-in fade-in zoom-in-95">
+      <div className="response-more-menu absolute bottom-full left-0 mb-2 z-40 bg-white rounded-2xl border border-slate-200/90 shadow-[0_8px_30px_rgba(0,0,0,0.12)] p-1.5 md:p-2 min-w-[175px] md:min-w-[196px] flex flex-col gap-1 md:gap-1.5 text-xs md:text-[13px] animate-in fade-in zoom-in-95">
         {/* Tanggal & Jam respon */}
         <div className="px-3 py-2 md:px-3.5 md:py-2.5 border-b border-slate-100 flex items-center gap-2 md:gap-2.5 select-none">
           <svg
@@ -3267,6 +3462,11 @@ function SelectTextModal({
 
   if (text === null) return null;
 
+  const isDark =
+    typeof window !== "undefined" &&
+    (document.documentElement.classList.contains("dark") ||
+      window.localStorage.getItem("alerin-theme") === "dark");
+
   const syncAllSelectedState = (el: HTMLTextAreaElement) => {
     setAllSelected(el.value.length > 0 && el.selectionStart === 0 && el.selectionEnd === el.value.length);
   };
@@ -3291,6 +3491,77 @@ function SelectTextModal({
     } else {
       selectAllInTextarea(el);
     }
+  };
+
+  const isWordChar = (val: string, idx: number) => {
+    if (idx < 0 || idx >= val.length) return false;
+    const char = val[idx];
+    if (/[\s\n\r\t.,!?;:"'()\[\]{}<>/\\@#$%^&*+=~|«»“”‘’`—–]/.test(char)) {
+      return false;
+    }
+    if (char === "-") {
+      return (
+        idx > 0 &&
+        idx < val.length - 1 &&
+        !/[\s\n\r\t.,!?;:"'()\[\]{}<>/\\@#$%^&*+=~|«»“”‘’`—–]/.test(val[idx - 1]) &&
+        !/[\s\n\r\t.,!?;:"'()\[\]{}<>/\\@#$%^&*+=~|«»“”‘’`—–]/.test(val[idx + 1])
+      );
+    }
+    return true;
+  };
+
+  const handleTextareaClick = (e: React.MouseEvent<HTMLTextAreaElement>) => {
+    const el = e.currentTarget;
+    const val = el.value;
+    if (!val) return;
+
+    // If user dragged to make a custom selection, preserve it
+    if (el.selectionStart !== el.selectionEnd) {
+      syncAllSelectedState(el);
+      return;
+    }
+
+    // Check if clicked in empty area below the text lines
+    const rect = el.getBoundingClientRect();
+    const clickY = e.clientY - rect.top;
+    const lines = val.split("\n");
+    const approxWrappedLines = lines.reduce(
+      (acc, line) => acc + Math.max(1, Math.ceil(line.length / 40)),
+      0
+    );
+    const approxTextBottom = 16 + approxWrappedLines * 24 + 16;
+    if (clickY > approxTextBottom && clickY > 50) {
+      syncAllSelectedState(el);
+      return;
+    }
+
+    const pos = el.selectionStart ?? 0;
+    let targetPos = pos;
+    if (!isWordChar(val, targetPos)) {
+      if (targetPos > 0 && isWordChar(val, targetPos - 1)) {
+        targetPos = targetPos - 1;
+      } else {
+        syncAllSelectedState(el);
+        return;
+      }
+    }
+
+    let start = targetPos;
+    let end = targetPos;
+    while (start > 0 && isWordChar(val, start - 1)) {
+      start--;
+    }
+    while (end < val.length && isWordChar(val, end)) {
+      end++;
+    }
+
+    if (end > start) {
+      el.focus();
+      try {
+        el.setSelectionRange(start, end);
+      } catch {}
+    }
+    syncAllSelectedState(el);
   };
 
   const handleCopy = () => {
@@ -3322,11 +3593,19 @@ function SelectTextModal({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-[440px] bg-white rounded-3xl p-5 shadow-2xl border border-slate-100 flex flex-col gap-3.5 animate-[gemini-zoom-in_0.2s_ease-out]"
+        className={`w-full max-w-[440px] rounded-3xl p-5 shadow-2xl border flex flex-col gap-3.5 animate-[gemini-zoom-in_0.2s_ease-out] ${
+          isDark
+            ? "bg-[#1e293b] border-slate-700 text-white shadow-black/40"
+            : "bg-white border-slate-100 text-slate-900 shadow-2xl"
+        }`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center gap-2.5">
-          <div className="size-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+          <div
+            className={`size-8 rounded-xl flex items-center justify-center shrink-0 ${
+              isDark ? "bg-blue-950/70 text-blue-400" : "bg-blue-50 text-blue-600"
+            }`}
+          >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="4" y1="7" x2="4" y2="4"/>
               <line x1="4" y1="4" x2="7" y2="4"/>
@@ -3342,8 +3621,8 @@ function SelectTextModal({
             </svg>
           </div>
           <div>
-            <h3 className="text-base font-bold text-slate-900 leading-tight">Pilih Teks</h3>
-            <p className="text-[11px] text-slate-500">Sorot bagian teks atau salin semua teks di bawah</p>
+            <h3 className={`text-base font-bold leading-tight ${isDark ? "text-white" : "text-slate-900"}`}>Pilih Teks</h3>
+            <p className={`text-[11px] ${isDark ? "text-slate-400" : "text-slate-500"}`}>Sorot bagian teks atau salin semua teks di bawah</p>
           </div>
         </div>
 
@@ -3352,29 +3631,30 @@ function SelectTextModal({
             ref={textareaRef}
             readOnly
             value={text}
-            onClick={(e) => {
-              const el = e.currentTarget;
-              if (el.value.length > 0 && el.selectionStart === el.selectionEnd) {
-                selectAllInTextarea(el);
-              } else {
-                syncAllSelectedState(el);
-              }
-            }}
+            onClick={handleTextareaClick}
             onSelect={(e) => syncAllSelectedState(e.currentTarget)}
             onMouseUp={(e) => syncAllSelectedState(e.currentTarget)}
             onKeyUp={(e) => syncAllSelectedState(e.currentTarget)}
-            className="w-full h-[225px] min-h-[180px] max-h-[380px] p-3.5 text-sm leading-relaxed text-slate-900 bg-white border-2 border-[#1A73E8] rounded-2xl ring-2 ring-[#1A73E8]/20 focus:outline-none focus:ring-2 focus:ring-[#1A73E8] selection:bg-[#BCE3FA] selection:text-slate-900 select-text cursor-text resize-none font-normal transition-all"
+            className={`w-full h-[225px] min-h-[180px] max-h-[380px] p-3.5 text-sm leading-relaxed border-2 border-[#1A73E8] rounded-2xl ring-2 ring-[#1A73E8]/20 focus:outline-none focus:ring-2 focus:ring-[#1A73E8] select-text cursor-text resize-none font-normal transition-all ${
+              isDark
+                ? "bg-[#0f172a] text-slate-100 selection:bg-[#1A73E8]/50 selection:text-white"
+                : "bg-white text-slate-900 selection:bg-[#BCE3FA] selection:text-slate-900"
+            }`}
           />
         </div>
 
-        <div className="flex items-center justify-between gap-2 pt-1 border-t border-slate-100">
+        <div className={`flex items-center justify-between gap-2 pt-1 border-t ${isDark ? "border-slate-800" : "border-slate-100"}`}>
           <button
             type="button"
             onClick={handleToggleSelectAll}
             className={`px-3 py-2 text-xs font-medium rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer ${
               allSelected
-                ? "bg-blue-50 text-blue-700 hover:bg-blue-100 active:bg-blue-200"
-                : "text-blue-600 hover:bg-blue-50 active:bg-blue-100"
+                ? isDark
+                  ? "bg-blue-900/40 text-blue-300 hover:bg-blue-900/60"
+                  : "bg-blue-50 text-blue-700 hover:bg-blue-100 active:bg-blue-200"
+                : isDark
+                  ? "text-blue-400 hover:bg-slate-800 active:bg-slate-700"
+                  : "text-blue-600 hover:bg-blue-50 active:bg-blue-100"
             }`}
           >
             <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -3388,7 +3668,11 @@ function SelectTextModal({
             <button
               type="button"
               onClick={onClose}
-              className="px-3.5 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 active:bg-slate-200 rounded-xl transition-colors cursor-pointer"
+              className={`px-3.5 py-2 text-xs font-medium rounded-xl transition-colors cursor-pointer ${
+                isDark
+                  ? "text-slate-300 hover:bg-slate-800 active:bg-slate-700"
+                  : "text-slate-600 hover:bg-slate-100 active:bg-slate-200"
+              }`}
             >
               Tutup
             </button>
@@ -3537,7 +3821,7 @@ function UserBubbleActionMenu({
       />
       <div
         style={{ left: `${left}px`, top: `${top}px` }}
-        className="fixed z-[251] bg-white rounded-2xl border border-slate-200/90 shadow-[0_12px_36px_rgba(0,0,0,0.18)] p-1.5 w-44 flex flex-col gap-0.5 text-xs animate-in fade-in zoom-in-95"
+        className="user-bubble-action-menu fixed z-[251] bg-white rounded-2xl border border-slate-200/90 shadow-[0_12px_36px_rgba(0,0,0,0.18)] p-1.5 w-44 flex flex-col gap-0.5 text-xs animate-in fade-in zoom-in-95"
         onClick={(e) => e.stopPropagation()}
         onPointerDown={(e) => e.stopPropagation()}
         onTouchStart={(e) => e.stopPropagation()}
@@ -3632,24 +3916,20 @@ function ChatFollowUpSuggestions({
             key={si}
             type="button"
             onClick={() => onSelect(s)}
-            className="flex items-center gap-2 md:gap-2.5 px-3 py-2 md:px-4 md:py-2.5 rounded-xl text-xs md:text-[13.5px] font-medium text-left transition-all hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50 cursor-pointer"
-            style={{
-              background: "rgba(255,255,255,0.8)",
-              border: "1px solid rgba(226,232,240,0.8)",
-              color: "#475569",
-              boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
-            }}
+            className="chat-followup-btn group flex items-center gap-2 md:gap-2.5 px-3.5 py-2.5 md:px-4 md:py-3 rounded-2xl text-xs md:text-[13.5px] font-medium text-left cursor-pointer"
           >
             <svg
-              className="w-2.5 h-2.5 md:w-3 md:h-3 shrink-0"
+              className="w-2.5 h-2.5 md:w-3 md:h-3 shrink-0 text-[#1A73E8] group-hover:translate-x-1 transition-transform duration-200"
               viewBox="0 0 24 24"
               fill="none"
-              stroke="#3b82f6"
+              stroke="currentColor"
               strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             >
               <path d="M9 18l6-6-6-6" />
             </svg>
-            <span>{s}</span>
+            <span className="flex-1 leading-snug">{s}</span>
           </button>
         ))}
       </div>
@@ -3668,25 +3948,40 @@ function InlineMessageEditor({
   onSave: () => void;
   onCancel: () => void;
 }) {
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+
+  useEffect(() => {
+    if (textareaRef.current) {
+      const len = textareaRef.current.value.length;
+      textareaRef.current.focus();
+      textareaRef.current.setSelectionRange(len, len);
+    }
+  }, []);
+
   return (
-    <div className="w-full max-w-[85vw] sm:max-w-[420px] md:max-w-[540px] bg-white rounded-2xl rounded-tr-sm border-2 border-blue-500 shadow-md p-3.5 md:p-4 flex flex-col gap-2.5 md:gap-3 animate-in fade-in duration-150 text-left">
-      <div className="flex items-center justify-between pb-1.5 md:pb-2 border-b border-slate-100">
-        <span className="text-[12px] md:text-[13.5px] font-semibold text-blue-600 flex items-center gap-1.5">
+    <div className="w-full max-w-[85vw] sm:max-w-[420px] md:max-w-[540px] bg-white dark:bg-[#1e293b] rounded-2xl rounded-tr-sm border-2 border-blue-500 shadow-md p-3.5 md:p-4 flex flex-col gap-2.5 md:gap-3 animate-in fade-in duration-150 text-left">
+      <div className="flex items-center justify-between pb-1.5 md:pb-2 border-b border-slate-100 dark:border-slate-700/60">
+        <span className="text-[12px] md:text-[13.5px] font-semibold text-blue-600 dark:text-blue-400 flex items-center gap-1.5">
           <svg className="w-3.5 h-3.5 md:w-4 md:h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M12 20h9" />
             <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
           </svg>
           Edit Pesan
         </span>
-        <span className="text-[10px] md:text-[11.5px] text-slate-400">Tekan Simpan untuk memperbarui</span>
+        <span className="text-[10px] md:text-[11.5px] text-slate-400 dark:text-slate-400">Tekan Simpan untuk memperbarui</span>
       </div>
       <textarea
+        ref={textareaRef}
         value={value}
         onChange={(e) => onChange(capitalizeWords(e.target.value))}
+        onFocus={(e) => {
+          const len = e.currentTarget.value.length;
+          e.currentTarget.setSelectionRange(len, len);
+        }}
         autoCapitalize="sentences"
         autoCorrect="on"
         spellCheck={false}
-        className="w-full min-h-[72px] md:min-h-[104px] max-h-[220px] md:max-h-[280px] p-2.5 md:p-3 text-sm md:text-[15px] text-slate-900 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white resize-y leading-relaxed"
+        className="w-full min-h-[72px] md:min-h-[104px] max-h-[220px] md:max-h-[280px] p-2.5 md:p-3 text-sm md:text-[15px] text-slate-900 dark:text-slate-100 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white dark:focus:bg-slate-800 resize-y leading-relaxed"
         autoFocus
         rows={Math.min(6, Math.max(2, value.split("\n").length))}
         onKeyDown={(e) => {
@@ -3703,7 +3998,7 @@ function InlineMessageEditor({
         <button
           type="button"
           onClick={onCancel}
-          className="px-3 py-1.5 md:px-4 md:py-2 text-xs md:text-[13px] font-medium text-slate-600 hover:text-slate-800 hover:bg-slate-100 active:bg-slate-200 rounded-xl transition-colors cursor-pointer"
+          className="px-3 py-1.5 md:px-4 md:py-2 text-xs md:text-[13px] font-medium text-slate-600 dark:text-slate-300 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700 active:bg-slate-200 rounded-xl transition-colors cursor-pointer"
         >
           Batal
         </button>
@@ -3736,25 +4031,35 @@ function BirdIcon({ size = 32, color = "#3b82f6" }: { size?: number; color?: str
 
 // ─── Layout shell ─────────────────────────────────────────────────────────────
 // ─── Toast ────────────────────────────────────────────────────────────────────
-function parseClaroToast(rawMsg: string): { title: string; description: string } {
+function parseClaroToast(rawMsg: string | { title: string; description?: string }): { title: string; description: string } {
+  if (typeof rawMsg === "object" && rawMsg !== null) {
+    return {
+      title: rawMsg.title,
+      description: rawMsg.description ? (rawMsg.description.endsWith(".") || rawMsg.description.endsWith("!") ? rawMsg.description : `${rawMsg.description}.`) : "",
+    };
+  }
   const raw = String(rawMsg || "").trim();
   const lower = raw.toLowerCase();
-  if (lower.includes("dihapus")) return { title: "Berhasil Dihapus", description: raw.endsWith(".") ? raw : `${raw}.` };
-  if (lower.includes("disimpan") || lower.includes("simpan")) return { title: "Berhasil Disimpan", description: raw.endsWith(".") ? raw : `${raw}.` };
-  if (lower.includes("dibuat")) return { title: "Berhasil Dibuat", description: raw.endsWith(".") ? raw : `${raw}.` };
-  if (lower.includes("ditambahkan")) return { title: "Berhasil Ditambahkan", description: raw.endsWith(".") ? raw : `${raw}.` };
-  if (lower.includes("tersinkron") || lower.includes("berhasil")) return { title: "Berhasil", description: raw.endsWith(".") ? raw : `${raw}.` };
-  return { title: "Pemberitahuan", description: raw.endsWith(".") ? raw : `${raw}.` };
+  const cleanDesc = raw.endsWith(".") || raw.endsWith("!") ? raw : `${raw}.`;
+
+  if (lower.includes("lapor")) return { title: "Laporan Diterima", description: cleanDesc };
+  if (lower.includes("disalin") || lower.includes("salin")) return { title: "Berhasil Disalin", description: cleanDesc };
+  if (lower.includes("dihapus")) return { title: "Berhasil Dihapus", description: cleanDesc };
+  if (lower.includes("disimpan") || lower.includes("simpan")) return { title: "Berhasil Disimpan", description: cleanDesc };
+  if (lower.includes("dibuat")) return { title: "Berhasil Dibuat", description: cleanDesc };
+  if (lower.includes("ditambahkan")) return { title: "Berhasil Ditambahkan", description: cleanDesc };
+  if (lower.includes("tersinkron") || lower.includes("berhasil")) return { title: "Berhasil", description: cleanDesc };
+  return { title: "Pemberitahuan", description: cleanDesc };
 }
 
-function Toast({ msg, onDone }: { msg: string; onDone: () => void }) {
+function Toast({ msg, onDone }: { msg: string | { title: string; description?: string }; onDone: () => void }) {
   useEffect(() => { const t = setTimeout(onDone, 3200); return () => clearTimeout(t); }, [onDone]);
   const { title, description } = parseClaroToast(msg);
-  return (
+  const content = (
     <div
       role="status"
       aria-live="polite"
-      className="fixed bottom-6 left-4 right-4 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 z-[300] mx-auto w-auto max-w-[400px] sm:min-w-[340px] sm:max-w-[420px] flex items-center justify-between gap-3.5 rounded-2xl border border-slate-200/80 bg-white p-3.5 sm:p-4 shadow-[0_16px_40px_rgba(0,0,0,0.14),0_4px_12px_rgba(0,0,0,0.06)] animate-[gemini-fade-in_0.2s_ease-out]"
+      className="fixed bottom-6 left-4 right-4 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 z-[300] mx-auto w-auto max-w-[400px] sm:min-w-[340px] sm:max-w-[420px] flex items-center justify-between gap-3.5 rounded-2xl border border-slate-200/80 bg-white dark:bg-[#1e293b] dark:border-slate-700/80 p-3.5 sm:p-4 shadow-[0_16px_40px_rgba(0,0,0,0.14),0_4px_12px_rgba(0,0,0,0.06)] animate-[gemini-fade-in_0.2s_ease-out]"
     >
       <div className="flex items-center gap-3.5 min-w-0 flex-1">
         <div className="flex h-9.5 w-9.5 shrink-0 items-center justify-center rounded-full bg-blue-600 text-white shadow-sm shadow-blue-500/20">
@@ -3763,11 +4068,11 @@ function Toast({ msg, onDone }: { msg: string; onDone: () => void }) {
           </svg>
         </div>
         <div className="min-w-0 flex-1">
-          <h4 className="text-[14px] font-bold leading-tight text-slate-900 tracking-tight truncate">
+          <h4 className="text-[14px] font-bold leading-tight text-slate-900 dark:text-slate-100 tracking-tight truncate">
             {title}
           </h4>
           {description ? (
-            <p className="mt-0.5 text-xs leading-snug text-slate-500 font-normal line-clamp-2">
+            <p className="mt-0.5 text-xs leading-snug text-slate-500 dark:text-slate-400 font-normal line-clamp-2">
               {description}
             </p>
           ) : null}
@@ -3776,7 +4081,7 @@ function Toast({ msg, onDone }: { msg: string; onDone: () => void }) {
       <button
         type="button"
         onClick={onDone}
-        className="size-7 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center transition-colors shrink-0 cursor-pointer"
+        className="size-7 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/60 flex items-center justify-center transition-colors shrink-0 cursor-pointer"
         aria-label="Tutup notifikasi"
       >
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -3786,6 +4091,8 @@ function Toast({ msg, onDone }: { msg: string; onDone: () => void }) {
       </button>
     </div>
   );
+
+  return typeof document !== "undefined" ? createPortal(content, document.body) : content;
 }
 
 // ─── Image bubble components (ChatGPT / Gemini style dot matrix) ───────────────
@@ -4528,6 +4835,37 @@ const DEFAULT_NOTIFS_UMUM: NotifItem[] = [
     unread: false,
     tab: "percakapan",
   },
+  {
+    id: "notif-jurnal",
+    icon: (
+      /* Book / journal icon matching design */
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z" />
+        <path d="M6 6h10" />
+        <path d="M6 10h10" />
+      </svg>
+    ),
+    title: "Rekomendasi jurnal baru",
+    desc: "3 referensi terindeks SINTA sesuai topik skripsimu siap dibaca.",
+    time: "Kemarin",
+    unread: false,
+    tab: "fitur",
+  },
+  {
+    id: "notif-progres",
+    icon: (
+      /* Trending up / check icon matching design */
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
+        <polyline points="16 7 22 7 22 13" />
+      </svg>
+    ),
+    title: "Progres mingguan naik",
+    desc: "Kamu sudah menyelesaikan 4 dari 5 target belajar minggu ini.",
+    time: "2 hari lalu",
+    unread: false,
+    tab: "progress",
+  },
 ];
 
 const DEFAULT_NOTIFS_SISTEM: NotifItem[] = [
@@ -4566,13 +4904,25 @@ function NotifPanel({ onClose, onNavigate }: { onClose: () => void; onNavigate: 
   const [notifsUmum, setNotifsUmum] = useState<NotifItem[]>(DEFAULT_NOTIFS_UMUM);
   const [notifsSistem, setNotifsSistem] = useState<NotifItem[]>(DEFAULT_NOTIFS_SISTEM);
   const [isSimulatedEmpty, setIsSimulatedEmpty] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(() =>
+    typeof window !== "undefined" ? window.innerWidth >= 768 : false
+  );
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 768);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const handleMarkAllRead = () => {
     setNotifsUmum((prev) => prev.map((n) => ({ ...n, unread: false })));
     setNotifsSistem((prev) => prev.map((n) => ({ ...n, unread: false })));
   };
 
-  const displayUmum = isSimulatedEmpty ? [] : notifsUmum;
+  // Di tampilan desktop tampilkan 6 notifikasi umum (3 baris x 2 kolom), di mobile tetap 4 notifikasi
+  const displayUmum = isSimulatedEmpty ? [] : isDesktop ? notifsUmum : notifsUmum.slice(0, 4);
   const displaySistem = isSimulatedEmpty ? [] : notifsSistem;
   const currentList = activeTab === "umum" ? displayUmum : displaySistem;
 
@@ -4686,7 +5036,7 @@ function NotifPanel({ onClose, onNavigate }: { onClose: () => void; onNavigate: 
 
         {/* Items list — tanpa scrollbar garis biru samping (scrollbar hidden & clean) */}
         <div
-          className={`max-h-[60vh] md:h-[268px] overflow-y-auto md:p-4 md:pb-4 pb-2 [&::-webkit-scrollbar]:hidden ${
+          className={`max-h-[60vh] md:max-h-[500px] md:h-auto overflow-y-auto md:p-4 md:pb-4 pb-2 [&::-webkit-scrollbar]:hidden ${
             currentList.length === 0
               ? "divide-y divide-slate-100/90 md:divide-y-0 md:flex md:items-center md:justify-center"
               : "divide-y divide-slate-100/90 md:divide-y-0 md:grid md:grid-cols-2 md:gap-2.5 md:content-start"
@@ -5153,10 +5503,21 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
     if (typeof window !== "undefined") {
       const shell = document.querySelector(".alerin-shell");
       shell?.classList.toggle("profile-dark", isDarkTheme);
+      shell?.classList.toggle("alerin-dark-theme", isDarkTheme);
+      shell?.classList.toggle("dark", isDarkTheme);
       if (shell instanceof HTMLElement) {
         shell.style.backgroundColor = isDarkTheme ? "#0f172a" : "#ffffff";
       }
+      document.documentElement.classList.toggle("dark", isDarkTheme);
+      document.documentElement.classList.toggle("profile-dark", isDarkTheme);
+      document.documentElement.classList.toggle("alerin-dark-theme", isDarkTheme);
       document.documentElement.style.colorScheme = isDarkTheme ? "dark" : "light";
+      if (document.body) {
+        document.body.classList.toggle("dark", isDarkTheme);
+        document.body.classList.toggle("profile-dark", isDarkTheme);
+        document.body.classList.toggle("alerin-dark-theme", isDarkTheme);
+        document.body.style.backgroundColor = isDarkTheme ? "#0f172a" : "#ffffff";
+      }
     }
   }, [isDarkTheme]);
 
@@ -5278,7 +5639,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
     });
     setEditingId(null);
     setRenameModalItem(null);
-    showToast("Judul riwayat percakapan diperbarui");
+    showToast("Judul riwayat obrolan diperbarui");
   };
 
   const deleteRiwayat = (id: string) => {
@@ -5291,7 +5652,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
       setActiveHistoryId(null);
       try { localStorage.removeItem("alerin_active_history_id"); } catch {}
     }
-    showToast("Riwayat percakapan telah dihapus");
+    showToast("Riwayat obrolan telah dihapus");
   };
 
   const togglePinRiwayat = (id: string) => {
@@ -5305,7 +5666,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
     const currentPinnedCount = historyList.filter((item) => item.pinned).length;
     if (isPinning && currentPinnedCount >= MAX_PINNED_RIWAYAT) {
       setActiveHistoryMenu(null);
-      showToast(`Maksimal ${MAX_PINNED_RIWAYAT} percakapan yang dapat disematkan`);
+      showToast(`Maksimal ${MAX_PINNED_RIWAYAT} obrolan yang dapat disematkan`);
       return;
     }
 
@@ -5316,7 +5677,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
     saveRiwayatToStorage(next);
     setHistoryList(next);
     setActiveHistoryMenu(null);
-    showToast(isPinning ? "Percakapan berhasil disematkan" : "Sematan percakapan dilepas");
+    showToast(isPinning ? "Obrolan berhasil disematkan" : "Sematan obrolan dilepas");
   };
 
   useEffect(() => {
@@ -5481,8 +5842,8 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
           isMobile ? "rounded-xl px-2 py-1" : "rounded-lg px-2 py-0.5"
         } ${
           isActive
-            ? "bg-slate-100/90 text-slate-900"
-            : "hover:bg-slate-50 text-neutral-800"
+            ? (isDarkTheme ? "bg-slate-800 text-white" : "bg-slate-100/90 text-slate-900")
+            : (isDarkTheme ? "hover:bg-slate-800/70 text-slate-300" : "hover:bg-slate-50 text-neutral-800")
         }`}
       >
         {editingId === item.id ? (
@@ -5500,7 +5861,9 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                 if (e.key === "Escape") setEditingId(null);
               }}
               autoFocus
-              className={`w-full text-slate-800 bg-white border border-blue-400 rounded-lg outline-none shadow-xs ${
+              className={`w-full border rounded-lg outline-none shadow-xs ${
+                isDarkTheme ? "text-white bg-slate-900 border-blue-500" : "text-slate-800 bg-white border-blue-400"
+              } ${
                 isMobile ? "text-[14px] px-2 py-1" : "text-[13px] px-2 py-0.5"
               }`}
             />
@@ -5516,7 +5879,9 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
               type="button"
               onClick={() => setEditingId(null)}
               aria-label="Batal"
-              className={`${isMobile ? "size-7" : "size-[26px]"} rounded-lg border border-slate-200 text-slate-500 flex items-center justify-center shrink-0 hover:bg-slate-100 transition-colors`}
+              className={`${isMobile ? "size-7" : "size-[26px]"} rounded-lg border flex items-center justify-center shrink-0 transition-colors ${
+                isDarkTheme ? "border-slate-700 text-slate-400 hover:bg-slate-800" : "border-slate-200 text-slate-500 hover:bg-slate-100"
+              }`}
             >
               <svg width={isMobile ? "13" : "11.5"} height={isMobile ? "13" : "11.5"} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
@@ -5537,12 +5902,14 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                   ? "text-[15px] leading-relaxed gap-2"
                   : "text-[13.5px] leading-snug gap-2"
               } ${
-                isActive ? "text-slate-900" : "text-neutral-800 hover:text-blue-600"
+                isActive
+                  ? (isDarkTheme ? "text-white font-medium" : "text-slate-900")
+                  : (isDarkTheme ? "text-slate-300 hover:text-white" : "text-neutral-800 hover:text-blue-600")
               }`}
             >
               {item.pinned && (
-                <span title="Disematkan" className="inline-flex shrink-0 text-neutral-800">
-                  <PinIcon size={isMobile ? 16 : 14.5} className="text-neutral-800" />
+                <span title="Disematkan" className={`inline-flex shrink-0 ${isDarkTheme ? "text-slate-400" : "text-neutral-800"}`}>
+                  <PinIcon size={isMobile ? 16 : 14.5} className={isDarkTheme ? "text-slate-400" : "text-neutral-800"} />
                 </span>
               )}
               <span className="truncate">{item.title}</span>
@@ -5571,10 +5938,10 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
               aria-label={`Menu riwayat ${item.title}`}
               className={`${isMobile ? "size-7" : "size-[26px]"} rounded-lg flex items-center justify-center transition-colors shrink-0 ${
                 activeHistoryMenu?.item.id === item.id
-                  ? "text-slate-800 bg-slate-200/70"
+                  ? (isDarkTheme ? "text-white bg-slate-700" : "text-slate-800 bg-slate-200/70")
                   : isActive
-                    ? "text-slate-500 hover:text-slate-800 hover:bg-slate-200/60"
-                    : "text-slate-400 hover:text-slate-700 hover:bg-slate-200/60"
+                    ? (isDarkTheme ? "text-slate-400 hover:text-white hover:bg-slate-700/60" : "text-slate-500 hover:text-slate-800 hover:bg-slate-200/60")
+                    : (isDarkTheme ? "text-slate-500 hover:text-slate-200 hover:bg-slate-700/60" : "text-slate-400 hover:text-slate-700 hover:bg-slate-200/60")
               }`}
             >
               <svg width={isMobile ? "16" : "15"} height={isMobile ? "16" : "15"} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -5608,9 +5975,9 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
               <img
                 src="/assets/73c1a.png"
                 alt="Alerin"
-                className={`${isMobileDrawer ? "size-9" : "size-8"} rounded-full object-cover shadow-xs border border-white`}
+                className={`${isMobileDrawer ? "size-9" : "size-8"} rounded-full object-cover shadow-xs border ${isDarkTheme ? "border-slate-700" : "border-white"}`}
               />
-              <span className={`font-bold text-slate-900 leading-none font-sans ${isMobileDrawer ? "text-lg" : "text-[16px]"}`}>ALERIN</span>
+              <span className={`font-bold leading-none font-sans ${isMobileDrawer ? "text-lg" : "text-[16px]"} ${isDarkTheme ? "text-white" : "text-slate-900"}`}>ALERIN</span>
             </div>
             <div className="flex items-center gap-1">
               <button
@@ -5620,8 +5987,11 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                   closeDrawer();
                   setSearchOpen(true);
                 }}
-                aria-label="Cari percakapan"
-                className={`${isMobileDrawer ? "size-8" : "size-[30px]"} rounded-xl flex items-center justify-center text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer`}
+                aria-label="Cari Obrolan"
+                title="Cari Obrolan"
+                className={`${isMobileDrawer ? "size-8" : "size-[30px]"} rounded-xl flex items-center justify-center transition-colors cursor-pointer ${
+                  isDarkTheme ? "text-slate-300 hover:text-white hover:bg-slate-800" : "text-slate-700 hover:bg-slate-100"
+                }`}
               >
                 <svg width={isMobileDrawer ? "18" : "17"} height={isMobileDrawer ? "18" : "17"} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="11" cy="11" r="8" />
@@ -5633,7 +6003,9 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                 onClick={handleCollapseOrClose}
                 aria-label={isMobileDrawer ? "Tutup menu" : "Ciutkan sidebar"}
                 title={isMobileDrawer ? "Tutup menu" : "Ciutkan sidebar"}
-                className={`${isMobileDrawer ? "size-8" : "size-[30px]"} rounded-full border border-neutral-200/80 flex items-center justify-center text-neutral-800 hover:bg-slate-100 transition-colors cursor-pointer`}
+                className={`${isMobileDrawer ? "size-8" : "size-[30px]"} rounded-full border flex items-center justify-center transition-colors cursor-pointer ${
+                  isDarkTheme ? "border-slate-700 text-slate-300 hover:text-white hover:bg-slate-800" : "border-neutral-200/80 text-neutral-800 hover:bg-slate-100"
+                }`}
               >
                 <svg width={isMobileDrawer ? "15" : "14"} height={isMobileDrawer ? "15" : "14"} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                   <rect x="3" y="3" width="18" height="18" rx="2" />
@@ -5661,7 +6033,9 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                 } ${
                   nav.active
                     ? "bg-[#1A73E8] text-white font-bold shadow-xs shadow-[#1A73E8]/20"
-                    : "text-slate-600 hover:bg-slate-100 font-medium"
+                    : isDarkTheme
+                      ? "text-slate-400 hover:text-slate-100 hover:bg-slate-800/70 font-medium"
+                      : "text-slate-600 hover:bg-slate-100 font-medium"
                 }`}
               >
                 {nav.icon}
@@ -5670,147 +6044,88 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
             ))}
           </nav>
 
-          {/* Disematkan & Riwayat Section — mengisi sisa tinggi sampai tepat di atas tombol Obrolan */}
-          {isMobileDrawer ? (
+          {/* Disematkan & Riwayat Section — Judul Disematkan, item Disematkan, dan Judul Riwayat tetap diam di atas (HANYA list riwayat yang di-scroll baik di Mobile maupun Desktop) */}
+          <div className="flex flex-col flex-1 min-h-0 pt-1">
+            {pinnedHistoryItems.length > 0 && (
+              <div className={`shrink-0 ${isMobileDrawer ? "mb-4" : "mb-3.5"}`}>
+                <div className={`font-semibold uppercase tracking-wider px-1 ${
+                  isMobileDrawer ? "text-xs mb-2" : "text-[11.5px] mb-1.5"
+                } ${
+                  isDarkTheme ? "text-slate-400 bg-[#0f172a]" : "text-zinc-500 bg-white"
+                }`}>
+                  Disematkan
+                </div>
+                <div className={isMobileDrawer ? "space-y-1" : "space-y-0.5"}>
+                  {pinnedHistoryItems.map((item) => renderHistoryItem(item, isMobileDrawer))}
+                </div>
+              </div>
+            )}
+
+            <div className={`shrink-0 ${isMobileDrawer ? "mb-2" : "mb-1.5"}`}>
+              <div className={`font-semibold uppercase tracking-wider px-1 ${
+                isMobileDrawer ? "text-xs" : "text-[11.5px]"
+              } ${
+                isDarkTheme ? "text-slate-400 bg-[#0f172a]" : "text-zinc-500 bg-white"
+              }`}>
+                Riwayat
+              </div>
+            </div>
+
+            {/* Hanya daftar riwayat ini yang memiliki overflow-y-auto */}
             <div
               onScroll={() => activeHistoryMenu && setActiveHistoryMenu(null)}
-              className="flex-1 min-h-0 pt-1 overflow-y-auto pr-1 pb-2 space-y-4"
+              className={`flex-1 min-h-0 overflow-y-auto pr-1 pb-1 ${
+                isMobileDrawer ? "space-y-1" : "space-y-0.5"
+              }`}
             >
-              {pinnedHistoryItems.length > 0 && (
-                <div>
-                  <div className="text-zinc-500 font-semibold uppercase tracking-wider px-1 text-xs mb-2">
-                    Disematkan
-                  </div>
-                  <div className="space-y-1">
-                    {pinnedHistoryItems.map((item) => renderHistoryItem(item, true))}
-                  </div>
+              {unpinnedHistoryItems.length > 0 ? (
+                (expandedHistory ? unpinnedHistoryItems : unpinnedHistoryItems.slice(0, 7)).map(
+                  (item) => renderHistoryItem(item, isMobileDrawer)
+                )
+              ) : (
+                <p className="px-2 py-1 text-xs text-slate-400">Belum ada riwayat lainnya</p>
+              )}
+
+              {isLoadingMoreHistory && (
+                <div className="space-y-3 py-2.5 px-1.5 animate-pulse">
+                  <div className="h-2.5 w-[68%] rounded-sm bg-neutral-200" />
+                  <div className="h-2.5 w-[36%] rounded-sm bg-neutral-200" />
+                  <div className="h-2.5 w-[56%] rounded-sm bg-neutral-200" />
                 </div>
               )}
 
-              <div>
-                <div className="text-zinc-500 font-semibold uppercase tracking-wider px-1 text-xs mb-2">
-                  Riwayat
-                </div>
-                <div className="space-y-1">
-                  {unpinnedHistoryItems.length > 0 ? (
-                    (expandedHistory ? unpinnedHistoryItems : unpinnedHistoryItems.slice(0, 7)).map(
-                      (item) => renderHistoryItem(item, true)
-                    )
-                  ) : (
-                    <p className="px-2 py-1 text-xs text-slate-400">Belum ada riwayat lainnya</p>
-                  )}
-
-                  {isLoadingMoreHistory && (
-                    <div className="space-y-3 py-2.5 px-1.5 animate-pulse">
-                      <div className="h-2.5 w-[68%] rounded-sm bg-neutral-200" />
-                      <div className="h-2.5 w-[36%] rounded-sm bg-neutral-200" />
-                      <div className="h-2.5 w-[56%] rounded-sm bg-neutral-200" />
-                    </div>
-                  )}
-
-                  {unpinnedHistoryItems.length > 7 && !isLoadingMoreHistory && (
-                    <div className="pt-1.5 pb-1 px-1">
-                      <button
-                        type="button"
-                        onClick={handleToggleExpandHistory}
-                        className="flex items-center justify-between w-full text-left text-neutral-500 hover:text-blue-600 font-medium transition-colors cursor-pointer group text-[13px] py-1 px-1"
-                      >
-                        <span>
-                          {expandedHistory ? "Tampilkan lebih sedikit" : "Lihat selengkapnya"}
-                        </span>
-                        <svg
-                          width="13"
-                          height="13"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2.2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          className={`ml-auto text-neutral-400 group-hover:text-blue-600 transition-transform duration-200 ${
-                            expandedHistory ? "rotate-180" : ""
-                          }`}
-                        >
-                          <path d="M6 9l6 6 6-6" />
-                        </svg>
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          ) : (
-            /* Desktop: Judul Disematkan, item Disematkan, dan Judul Riwayat tetap diam di atas (HANYA list riwayat yang di-scroll) */
-            <div className="flex flex-col flex-1 min-h-0 pt-1">
-              {pinnedHistoryItems.length > 0 && (
-                <div className="shrink-0 mb-3.5">
-                  <div className="text-zinc-500 font-semibold uppercase tracking-wider px-1 text-[11.5px] mb-1.5">
-                    Disematkan
-                  </div>
-                  <div className="space-y-0.5">
-                    {pinnedHistoryItems.map((item) => renderHistoryItem(item, false))}
-                  </div>
-                </div>
-              )}
-
-              <div className="shrink-0 mb-1.5">
-                <div className="text-zinc-500 font-semibold uppercase tracking-wider px-1 text-[11.5px]">
-                  Riwayat
-                </div>
-              </div>
-
-              {/* Hanya daftar riwayat ini yang memiliki overflow-y-auto */}
-              <div
-                onScroll={() => activeHistoryMenu && setActiveHistoryMenu(null)}
-                className="flex-1 min-h-0 overflow-y-auto pr-1 pb-1 space-y-0.5"
-              >
-                {unpinnedHistoryItems.length > 0 ? (
-                  (expandedHistory ? unpinnedHistoryItems : unpinnedHistoryItems.slice(0, 7)).map(
-                    (item) => renderHistoryItem(item, false)
-                  )
-                ) : (
-                  <p className="px-2 py-1 text-xs text-slate-400">Belum ada riwayat lainnya</p>
-                )}
-
-                {isLoadingMoreHistory && (
-                  <div className="space-y-3 py-2.5 px-1.5 animate-pulse">
-                    <div className="h-2.5 w-[68%] rounded-sm bg-neutral-200" />
-                    <div className="h-2.5 w-[36%] rounded-sm bg-neutral-200" />
-                    <div className="h-2.5 w-[56%] rounded-sm bg-neutral-200" />
-                  </div>
-                )}
-
-                {unpinnedHistoryItems.length > 7 && !isLoadingMoreHistory && (
-                  <div className="pt-1 pb-0.5 px-1">
-                    <button
-                      type="button"
-                      onClick={handleToggleExpandHistory}
-                      className="flex items-center justify-between w-full text-left text-neutral-500 hover:text-blue-600 font-medium transition-colors cursor-pointer group text-[12.5px] py-0.5 px-1"
+              {unpinnedHistoryItems.length > 7 && !isLoadingMoreHistory && (
+                <div className={isMobileDrawer ? "pt-1.5 pb-1 px-1" : "pt-1 pb-0.5 px-1"}>
+                  <button
+                    type="button"
+                    onClick={handleToggleExpandHistory}
+                    className={`flex items-center justify-between w-full text-left text-neutral-500 hover:text-blue-600 font-medium transition-colors cursor-pointer group px-1 ${
+                      isMobileDrawer ? "text-[13px] py-1" : "text-[12.5px] py-0.5"
+                    }`}
+                  >
+                    <span>
+                      {expandedHistory ? "Tampilkan lebih sedikit" : "Lihat selengkapnya"}
+                    </span>
+                    <svg
+                      width={isMobileDrawer ? "13" : "12"}
+                      height={isMobileDrawer ? "13" : "12"}
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className={`ml-auto text-neutral-400 group-hover:text-blue-600 transition-transform duration-200 ${
+                        expandedHistory ? "rotate-180" : ""
+                      }`}
                     >
-                      <span>
-                        {expandedHistory ? "Tampilkan lebih sedikit" : "Lihat selengkapnya"}
-                      </span>
-                      <svg
-                        width="12"
-                        height="12"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2.2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className={`ml-auto text-neutral-400 group-hover:text-blue-600 transition-transform duration-200 ${
-                          expandedHistory ? "rotate-180" : ""
-                        }`}
-                      >
-                        <path d="M6 9l6 6 6-6" />
-                      </svg>
-                    </button>
-                  </div>
-                )}
-              </div>
+                      <path d="M6 9l6 6 6-6" />
+                    </svg>
+                  </button>
+                </div>
+              )}
             </div>
-          )}
+          </div>
         </div>
 
         {/* Bottom + Obrolan button */}
@@ -6063,7 +6378,9 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
             }}
           />
           <aside
-            className="fixed top-0 left-0 bottom-0 w-72 max-w-[85vw] bg-white z-[160] shadow-2xl flex flex-col py-5 px-4 overflow-hidden"
+            className={`fixed top-0 left-0 bottom-0 w-72 max-w-[85vw] z-[160] shadow-2xl flex flex-col py-5 px-4 overflow-hidden ${
+              isDarkTheme ? "bg-[#0f172a] border-r border-slate-800" : "bg-white"
+            }`}
             style={{ animation: "drawerSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1)" }}
           >
             {renderSidebarPanel(true)}
@@ -6099,7 +6416,11 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
             />
             <div
               style={menuStyle}
-              className="z-[200] w-[212px] bg-white rounded-2xl border border-slate-200/90 shadow-[0_12px_36px_rgba(0,0,0,0.12),0_2px_8px_rgba(0,0,0,0.06)] p-1.5 overflow-hidden animate-[gemini-fade-in_0.15s_ease-out]"
+              className={`z-[200] w-[212px] rounded-2xl border p-1.5 overflow-hidden animate-[gemini-fade-in_0.15s_ease-out] ${
+                isDarkTheme
+                  ? "bg-[#1e293b] border-slate-700 shadow-[0_12px_36px_rgba(0,0,0,0.5)] text-slate-200"
+                  : "bg-white border-slate-200/90 shadow-[0_12px_36px_rgba(0,0,0,0.12),0_2px_8px_rgba(0,0,0,0.06)] text-slate-800"
+              }`}
               onClick={(e) => e.stopPropagation()}
             >
               <button
@@ -6109,9 +6430,11 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                   setRenameInput(item.title.slice(0, 25));
                   setActiveHistoryMenu(null);
                 }}
-                className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[13px] font-medium text-slate-800 hover:bg-slate-100/70 active:scale-[0.99] transition-all text-left"
+                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[13px] font-medium active:scale-[0.99] transition-all text-left ${
+                  isDarkTheme ? "text-slate-200 hover:bg-slate-800" : "text-slate-800 hover:bg-slate-100/70"
+                }`}
               >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-500 shrink-0">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`shrink-0 ${isDarkTheme ? "text-slate-400" : "text-slate-500"}`}>
                   <path d="M12 20h9"/>
                   <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
                 </svg>
@@ -6124,9 +6447,11 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                   setMoveToProjectItem({ id: item.id, title: item.title });
                   setActiveHistoryMenu(null);
                 }}
-                className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[13px] font-medium text-slate-800 hover:bg-slate-100/70 active:scale-[0.99] transition-all text-left"
+                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[13px] font-medium active:scale-[0.99] transition-all text-left ${
+                  isDarkTheme ? "text-slate-200 hover:bg-slate-800" : "text-slate-800 hover:bg-slate-100/70"
+                }`}
               >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-500 shrink-0">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`shrink-0 ${isDarkTheme ? "text-slate-400" : "text-slate-500"}`}>
                   <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
                 </svg>
                 <span className="truncate">Pindahkan ke Proyek</span>
@@ -6139,17 +6464,19 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                   <button
                     type="button"
                     onClick={() => togglePinRiwayat(item.id)}
-                    className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[13px] font-medium hover:bg-slate-100/70 active:scale-[0.99] transition-all text-left ${
-                      isPinLimitReached ? "text-slate-400" : "text-slate-800"
+                    className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[13px] font-medium active:scale-[0.99] transition-all text-left ${
+                      isPinLimitReached
+                        ? (isDarkTheme ? "text-slate-500" : "text-slate-400")
+                        : (isDarkTheme ? "text-slate-200 hover:bg-slate-800" : "text-slate-800 hover:bg-slate-100/70")
                     }`}
                   >
                     <PinIcon
                       size={16}
-                      className={`shrink-0 ${isPinLimitReached ? "text-slate-400" : "text-slate-500"}`}
+                      className={`shrink-0 ${isPinLimitReached ? (isDarkTheme ? "text-slate-600" : "text-slate-400") : (isDarkTheme ? "text-slate-400" : "text-slate-500")}`}
                     />
                     <span>{item.pinned ? "Lepas Sematan" : "Sematkan"}</span>
                     {isPinLimitReached && (
-                      <span className="ml-auto text-[11px] font-normal text-slate-400">
+                      <span className={`ml-auto text-[11px] font-normal ${isDarkTheme ? "text-slate-500" : "text-slate-400"}`}>
                         Maks {MAX_PINNED_RIWAYAT}
                       </span>
                     )}
@@ -6157,7 +6484,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                 );
               })()}
 
-              <div className="h-px bg-slate-100 my-1 mx-1" />
+              <div className={`h-px my-1 mx-1 ${isDarkTheme ? "bg-slate-700/80" : "bg-slate-100"}`} />
 
               <button
                 type="button"
@@ -6165,7 +6492,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                   setDeleteConfirmItem({ id: item.id, title: item.title });
                   setActiveHistoryMenu(null);
                 }}
-                className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[13px] font-medium text-red-600 hover:bg-red-50 active:scale-[0.99] transition-all text-left"
+                className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[13px] font-medium text-red-500 hover:bg-red-500/10 active:scale-[0.99] transition-all text-left"
               >
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-red-500 shrink-0">
                   <polyline points="3 6 5 6 21 6"/>
@@ -6194,23 +6521,27 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
           onClick={() => setRenameModalItem(null)}
         >
           <div
-            className="w-full max-w-[340px] md:max-w-[440px] bg-white rounded-3xl p-5 md:p-6 shadow-2xl border border-slate-100 flex flex-col gap-4 md:gap-5 animate-[gemini-zoom-in_0.2s_ease-out]"
+            className={`w-full max-w-[340px] md:max-w-[440px] rounded-3xl p-5 md:p-6 shadow-2xl border flex flex-col gap-4 md:gap-5 animate-[gemini-zoom-in_0.2s_ease-out] ${
+              isDarkTheme ? "bg-[#1e293b] border-slate-700 text-white" : "bg-white border-slate-100 text-slate-900"
+            }`}
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="size-8 md:size-9 rounded-xl bg-slate-100 text-slate-900 flex items-center justify-center shrink-0">
+                <div className={`size-8 md:size-9 rounded-xl flex items-center justify-center shrink-0 ${isDarkTheme ? "bg-slate-800 text-white" : "bg-slate-100 text-slate-900"}`}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M12 20h9" />
                     <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
                   </svg>
                 </div>
-                <h3 className="text-base md:text-lg font-bold text-slate-900">Ubah Nama Riwayat</h3>
+                <h3 className={`text-base md:text-lg font-bold ${isDarkTheme ? "text-white" : "text-slate-900"}`}>Ubah Nama Riwayat</h3>
               </div>
               <button
                 type="button"
                 onClick={() => setRenameModalItem(null)}
-                className="size-7 md:size-8 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center transition-colors cursor-pointer"
+                className={`size-7 md:size-8 rounded-full flex items-center justify-center transition-colors cursor-pointer ${
+                  isDarkTheme ? "text-slate-400 hover:text-white hover:bg-slate-800" : "text-slate-400 hover:text-slate-600 hover:bg-slate-100"
+                }`}
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <line x1="18" y1="6" x2="6" y2="18" />
@@ -6221,10 +6552,10 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
 
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-xs md:text-[13px] font-medium text-slate-500">
-                  Nama percakapan
+                <label className={`block text-xs md:text-[13px] font-medium ${isDarkTheme ? "text-slate-400" : "text-slate-500"}`}>
+                  Nama obrolan
                 </label>
-                <span className="text-[11px] md:text-xs text-slate-400 font-medium">
+                <span className={`text-[11px] md:text-xs font-medium ${isDarkTheme ? "text-slate-500" : "text-slate-400"}`}>
                   {renameInput.length}/25
                 </span>
               </div>
@@ -6242,7 +6573,11 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                 }}
                 autoFocus
                 placeholder="Masukkan judul riwayat..."
-                className="w-full text-[14px] md:text-[15px] text-slate-800 bg-slate-50 border border-slate-200 focus:border-blue-500 focus:bg-white focus:ring-3 focus:ring-blue-100 rounded-xl px-3.5 py-2.5 md:px-4 md:py-3 outline-none transition-all"
+                className={`w-full text-[14px] md:text-[15px] rounded-xl px-3.5 py-2.5 md:px-4 md:py-3 outline-none transition-all ${
+                  isDarkTheme
+                    ? "text-white bg-slate-800/90 border border-slate-700 placeholder-slate-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                    : "text-slate-800 bg-slate-50 border border-slate-200 focus:border-blue-500 focus:bg-white focus:ring-3 focus:ring-blue-100 placeholder-slate-400"
+                }`}
               />
             </div>
 
@@ -6250,7 +6585,9 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
               <button
                 type="button"
                 onClick={() => setRenameModalItem(null)}
-                className="px-4 py-2 md:px-5 md:py-2.5 rounded-xl text-xs md:text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+                className={`px-4 py-2 md:px-5 md:py-2.5 rounded-xl text-xs md:text-sm font-semibold transition-colors cursor-pointer ${
+                  isDarkTheme ? "text-slate-300 hover:bg-slate-800" : "text-slate-600 hover:bg-slate-100"
+                }`}
               >
                 Batal
               </button>
@@ -6274,22 +6611,28 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
           onClick={() => setMoveToProjectItem(null)}
         >
           <div
-            className="w-full max-w-[360px] md:max-w-[660px] bg-white rounded-3xl p-5 md:p-6 shadow-2xl border border-slate-100 flex flex-col gap-4 md:gap-5 animate-[gemini-zoom-in_0.2s_ease-out]"
+            className={`w-full max-w-[360px] md:max-w-[660px] rounded-3xl p-5 md:p-6 shadow-2xl border flex flex-col gap-4 md:gap-5 animate-[gemini-zoom-in_0.2s_ease-out] ${
+              isDarkTheme ? "bg-[#1e293b] border-slate-700 text-white" : "bg-white border-slate-100 text-slate-900"
+            }`}
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="size-8 md:size-9 rounded-xl bg-[#F2F4F7] text-neutral-900 flex items-center justify-center shrink-0">
+                <div className={`size-8 md:size-9 rounded-xl flex items-center justify-center shrink-0 border ${
+                  isDarkTheme ? "bg-blue-950/70 text-blue-400 border-blue-900/60" : "bg-blue-50 text-[#1A73E8] border-blue-100/80"
+                }`}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
                   </svg>
                 </div>
-                <h3 className="text-base md:text-lg font-bold text-slate-900">Pindahkan ke Proyek</h3>
+                <h3 className={`text-base md:text-lg font-bold ${isDarkTheme ? "text-white" : "text-slate-900"}`}>Pindahkan ke Proyek</h3>
               </div>
               <button
                 type="button"
                 onClick={() => setMoveToProjectItem(null)}
-                className="size-7 md:size-8 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center transition-colors cursor-pointer"
+                className={`size-7 md:size-8 rounded-full flex items-center justify-center transition-colors cursor-pointer ${
+                  isDarkTheme ? "text-slate-400 hover:text-white hover:bg-slate-800" : "text-slate-400 hover:text-slate-600 hover:bg-slate-100"
+                }`}
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <line x1="18" y1="6" x2="6" y2="18" />
@@ -6299,8 +6642,8 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
             </div>
 
             <div className="min-w-0">
-              <p className="text-xs md:text-sm text-slate-500 mb-2.5 md:mb-3.5">
-                Pilih proyek tujuan untuk <span className="font-semibold text-slate-700 font-['Inter:Medium']">"{moveToProjectItem.title}"</span>:
+              <p className={`text-xs md:text-sm mb-2.5 md:mb-3.5 ${isDarkTheme ? "text-slate-400" : "text-slate-500"}`}>
+                Pilih proyek tujuan untuk <span className={`font-semibold font-['Inter:Medium'] ${isDarkTheme ? "text-slate-200" : "text-slate-700"}`}>"{moveToProjectItem.title}"</span>:
               </p>
 
               <div
@@ -6317,23 +6660,53 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                       key={proj.id}
                       type="button"
                       onClick={() => setSelectedProjectId(proj.id)}
-                      className={`w-full h-[50px] md:h-[54px] shrink-0 flex items-center gap-3 px-3 py-2 md:px-3.5 rounded-xl border text-left transition-colors cursor-pointer ${
+                      className={`w-full h-[50px] md:h-[54px] shrink-0 flex items-center gap-3 px-3 py-2 md:px-3.5 rounded-xl border text-left transition-all duration-150 cursor-pointer group ${
                         isChosen
-                          ? "border-neutral-900 bg-neutral-50/70"
-                          : "border-slate-100 hover:border-slate-200 hover:bg-slate-50"
+                          ? isDarkTheme
+                            ? "border-blue-500 bg-blue-950/40 text-white shadow-xs ring-1 ring-blue-500/30"
+                            : "border-[#1A73E8] bg-blue-50/80 text-slate-900 shadow-xs ring-1 ring-[#1A73E8]/30"
+                          : isDarkTheme
+                          ? "border-slate-700/80 hover:border-blue-400/50 hover:bg-slate-800/80 text-slate-300"
+                          : "border-slate-200/90 hover:border-blue-200 hover:bg-blue-50/30 text-slate-800"
                       }`}
                     >
-                      <div className={`size-8 md:size-9 rounded-lg flex items-center justify-center shrink-0 ${isChosen ? "bg-black text-white" : "bg-[#F2F4F7] text-neutral-900"}`}>
+                      <div
+                        className={`size-8 md:size-9 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
+                          isChosen
+                            ? "bg-[#1A73E8] text-white shadow-xs shadow-blue-500/30"
+                            : isDarkTheme
+                            ? "bg-slate-800 text-blue-400 group-hover:bg-slate-700 group-hover:text-blue-300"
+                            : "bg-blue-50 text-[#1A73E8] border border-blue-100/70 group-hover:bg-blue-100/80"
+                        }`}
+                      >
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                           <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
                         </svg>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className={`text-[13px] md:text-sm font-semibold leading-tight truncate ${isChosen ? "text-neutral-900" : "text-slate-800"}`}>
+                        <p
+                          className={`text-[13px] md:text-sm font-semibold leading-tight truncate ${
+                            isChosen
+                              ? isDarkTheme
+                                ? "text-white"
+                                : "text-[#1A73E8]"
+                              : isDarkTheme
+                              ? "text-slate-200"
+                              : "text-slate-800"
+                          }`}
+                        >
                           {proj.name}
                         </p>
                       </div>
-                      <div className={`size-4 rounded-full border flex items-center justify-center shrink-0 ${isChosen ? "border-black bg-black text-white" : "border-slate-300"}`}>
+                      <div
+                        className={`size-4 rounded-full border flex items-center justify-center shrink-0 transition-all ${
+                          isChosen
+                            ? "border-[#1A73E8] bg-[#1A73E8] text-white shadow-xs"
+                            : isDarkTheme
+                            ? "border-slate-600 group-hover:border-blue-400"
+                            : "border-slate-300 group-hover:border-blue-400"
+                        }`}
+                      >
                         {isChosen && (
                           <div className="size-1.5 rounded-full bg-white" />
                         )}
@@ -6344,11 +6717,13 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-2 pt-1 md:pt-2 border-t border-slate-100">
+            <div className={`flex items-center justify-end gap-2 pt-1 md:pt-2 border-t ${isDarkTheme ? "border-slate-700/80" : "border-slate-100"}`}>
               <button
                 type="button"
                 onClick={() => setMoveToProjectItem(null)}
-                className="px-4 py-2 md:px-5 md:py-2.5 rounded-xl text-xs md:text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+                className={`px-4 py-2 md:px-5 md:py-2.5 rounded-xl text-xs md:text-sm font-semibold transition-colors cursor-pointer ${
+                  isDarkTheme ? "text-slate-300 hover:bg-slate-800" : "text-slate-600 hover:bg-slate-100"
+                }`}
               >
                 Batal
               </button>
@@ -6357,7 +6732,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                 onClick={() => {
                   const target = MOVE_TO_PROJECT_FOLDERS.find((p) => p.id === selectedProjectId);
                   const projName = target ? target.name : "Proyek";
-                  showToast(`Percakapan berhasil dipindahkan ke ${projName}`);
+                  showToast(`Obrolan berhasil dipindahkan ke ${projName}`);
                   setMoveToProjectItem(null);
                 }}
                 className="px-4 py-2 md:px-5 md:py-2.5 rounded-xl text-xs md:text-sm font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-xs transition-colors cursor-pointer"
@@ -6369,7 +6744,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
         </div>
       )}
 
-      {/* Modal Konfirmasi Hapus Percakapan */}
+      {/* Modal Konfirmasi Hapus Obrolan */}
       {deleteConfirmItem && (
         <div
           className="fixed inset-0 z-[250] flex items-center justify-center p-4 bg-black/45 backdrop-blur-xs animate-[gemini-fade-in_0.15s_ease-out]"
@@ -6378,12 +6753,16 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
           onClick={() => setDeleteConfirmItem(null)}
         >
           <div
-            className="w-full max-w-[340px] md:max-w-[440px] bg-white rounded-3xl p-5 md:p-6 shadow-2xl border border-slate-100 flex flex-col gap-4 md:gap-5 animate-[gemini-zoom-in_0.2s_ease-out]"
+            className={`w-full max-w-[340px] md:max-w-[440px] rounded-3xl p-5 md:p-6 shadow-2xl border flex flex-col gap-4 md:gap-5 animate-[gemini-zoom-in_0.2s_ease-out] ${
+              isDarkTheme ? "bg-[#1e293b] border-slate-700 text-white" : "bg-white border-slate-100 text-slate-900"
+            }`}
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="size-8 md:size-9 rounded-xl bg-red-50 text-red-600 flex items-center justify-center shrink-0 border border-red-100">
+                <div className={`size-8 md:size-9 rounded-xl flex items-center justify-center shrink-0 border ${
+                  isDarkTheme ? "bg-red-950/40 text-red-400 border-red-900/50" : "bg-red-50 text-red-600 border-red-100"
+                }`}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="3 6 5 6 21 6" />
                     <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
@@ -6391,12 +6770,14 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                     <line x1="14" y1="11" x2="14" y2="17" />
                   </svg>
                 </div>
-                <h3 className="text-base md:text-lg font-bold text-slate-900">Hapus Percakapan?</h3>
+                <h3 className={`text-base md:text-lg font-bold ${isDarkTheme ? "text-white" : "text-slate-900"}`}>Hapus Obrolan?</h3>
               </div>
               <button
                 type="button"
                 onClick={() => setDeleteConfirmItem(null)}
-                className="size-7 md:size-8 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center transition-colors cursor-pointer"
+                className={`size-7 md:size-8 rounded-full flex items-center justify-center transition-colors cursor-pointer ${
+                  isDarkTheme ? "text-slate-400 hover:text-white hover:bg-slate-800" : "text-slate-400 hover:text-slate-600 hover:bg-slate-100"
+                }`}
                 aria-label="Tutup"
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -6407,16 +6788,18 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
             </div>
 
             <div>
-              <p className="text-xs md:text-sm text-slate-500 leading-relaxed">
-                Apakah kamu yakin ingin menghapus percakapan <span className="font-semibold text-slate-800">"{deleteConfirmItem.title}"</span>? Tindakan ini tidak dapat dibatalkan.
+              <p className={`text-xs md:text-sm leading-relaxed ${isDarkTheme ? "text-slate-300" : "text-slate-500"}`}>
+                Apakah kamu yakin ingin menghapus obrolan <span className={`font-semibold ${isDarkTheme ? "text-white" : "text-slate-800"}`}>"{deleteConfirmItem.title}"</span>? Tindakan ini tidak dapat dibatalkan.
               </p>
             </div>
 
-            <div className="flex items-center justify-end gap-2 pt-1 md:pt-2 border-t border-slate-100">
+            <div className={`flex items-center justify-end gap-2 pt-1 md:pt-2 border-t ${isDarkTheme ? "border-slate-700/80" : "border-slate-100"}`}>
               <button
                 type="button"
                 onClick={() => setDeleteConfirmItem(null)}
-                className="px-4 py-2 md:px-5 md:py-2.5 rounded-xl text-xs md:text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+                className={`px-4 py-2 md:px-5 md:py-2.5 rounded-xl text-xs md:text-sm font-semibold transition-colors cursor-pointer ${
+                  isDarkTheme ? "text-slate-300 hover:bg-slate-800" : "text-slate-600 hover:bg-slate-100"
+                }`}
               >
                 Batal
               </button>
@@ -6438,7 +6821,9 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
       <div className="flex flex-1 min-h-0">
         {/* Left sidebar — desktop only, disamakan tampilannya dengan mobile drawer & bisa diciutkan */}
         <aside
-          className={`hidden md:flex shrink-0 border-r border-slate-100 flex-col bg-white ${
+          className={`hidden md:flex shrink-0 border-r flex-col ${
+            isDarkTheme ? "bg-[#0f172a] border-slate-800" : "bg-white border-slate-100"
+          } ${
             sidebarOpen ? "overflow-hidden" : "relative z-30 overflow-visible"
           }`}
           style={{ width: sidebarOpen ? 260 : 58, transition: "width 0.28s cubic-bezier(0.4,0,0.2,1)", minWidth: 0 }}>
@@ -6452,7 +6837,11 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                 type="button"
                 onClick={() => setSidebarOpen(true)}
                 aria-label="Buka sidebar"
-                className="group relative size-9 rounded-full flex items-center justify-center border border-white bg-white shadow-xs hover:border-neutral-200/80 hover:bg-slate-100 hover:shadow-none transition-all cursor-pointer"
+                className={`group relative size-9 rounded-full flex items-center justify-center border shadow-xs transition-all cursor-pointer ${
+                  isDarkTheme
+                    ? "border-slate-700 bg-slate-800 hover:border-slate-600 hover:bg-slate-700 hover:shadow-none"
+                    : "border-white bg-white hover:border-neutral-200/80 hover:bg-slate-100 hover:shadow-none"
+                }`}
               >
                 <span className="size-full rounded-full overflow-hidden flex items-center justify-center">
                   <img
@@ -6461,7 +6850,9 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                     className="size-full object-cover transition-opacity duration-150 group-hover:opacity-0 group-focus-visible:opacity-0"
                   />
                 </span>
-                <span className="pointer-events-none absolute inset-0 flex items-center justify-center text-neutral-800 opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus-visible:opacity-100">
+                <span className={`pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus-visible:opacity-100 ${
+                  isDarkTheme ? "text-slate-200" : "text-neutral-800"
+                }`}>
                   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <rect x="3" y="3" width="18" height="18" rx="2" />
                     <line x1="9" y1="3" x2="9" y2="21" />
@@ -6473,14 +6864,17 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
               <button
                 type="button"
                 onClick={() => setSearchOpen(true)}
-                aria-label="Cari percakapan"
-                className="group relative size-9 rounded-xl flex items-center justify-center text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+                aria-label="Cari Obrolan"
+                title="Cari Obrolan"
+                className={`group relative size-9 rounded-xl flex items-center justify-center transition-colors cursor-pointer ${
+                  isDarkTheme ? "text-slate-300 hover:bg-slate-800 hover:text-white" : "text-slate-600 hover:bg-slate-100"
+                }`}
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <circle cx="11" cy="11" r="8" />
                   <line x1="21" y1="21" x2="16.65" y2="16.65" />
                 </svg>
-                {renderCollapsedTooltip("Cari percakapan")}
+                {renderCollapsedTooltip("Cari Obrolan")}
               </button>
 
               <nav className="flex flex-col items-center gap-1.5 flex-1">
@@ -6493,6 +6887,8 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                     className={`group relative size-10 flex items-center justify-center rounded-2xl transition-colors cursor-pointer ${
                       nav.active
                         ? "bg-[#1A73E8] text-white shadow-xs shadow-[#1A73E8]/20"
+                        : isDarkTheme
+                        ? "text-slate-400 hover:bg-slate-800 hover:text-slate-200"
                         : "text-slate-600 hover:bg-slate-100"
                     }`}
                   >
@@ -6562,7 +6958,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                 <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0"
                   style={{ background: "linear-gradient(135deg,#f59e0b,#d97706)" }}>RA</div>
                 <div className="min-w-0 flex flex-col items-start leading-tight">
-                  <p className="text-xs font-semibold text-slate-800 whitespace-nowrap">Raka Aditya</p>
+                  <p className={`text-xs font-semibold whitespace-nowrap ${isDarkTheme ? "text-slate-100" : "text-slate-800"}`}>Raka Aditya</p>
                   <span
                     className={`mt-0.5 inline-flex items-center gap-1 rounded-full border px-2 py-[1px] font-['Inter:Bold'] text-[9.5px] font-bold leading-[13px] whitespace-nowrap ${
                       isDarkTheme
@@ -6596,10 +6992,12 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                 onClick={() => setNotifOpen(o => !o)}
                 title="Notifikasi"
                 aria-label="Notifikasi"
-                className="relative w-8 h-8 flex items-center justify-center rounded-full text-slate-500 hover:text-slate-800 hover:bg-slate-100/80 transition-colors shrink-0 cursor-pointer"
+                className={`relative w-8 h-8 flex items-center justify-center rounded-full transition-colors shrink-0 cursor-pointer ${
+                  isDarkTheme ? "text-slate-300 hover:text-white hover:bg-slate-700/80" : "text-slate-500 hover:text-slate-800 hover:bg-slate-100/80"
+                }`}
               >
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-                <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-red-500 border border-white" />
+                <span className={`absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-red-500 border ${isDarkTheme ? "border-slate-800" : "border-white"}`} />
               </button>
             </div>
           </div>
@@ -6613,17 +7011,14 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
         <>
           <div className="fixed inset-0 z-[190]" onClick={() => setProfileMenuOpen(false)} />
           <div
-            ref={(menu) => {
-              if (!menu) return;
-              const shell = menu.closest(".alerin-shell");
-              const isDark = window.localStorage.getItem("alerin-theme") === "dark";
-              shell?.classList.toggle("profile-dark", isDark);
-              if (shell instanceof HTMLElement) shell.style.backgroundColor = isDark ? "#0f172a" : "#ffffff";
-            }}
-            className="fixed z-[200] w-64 max-w-[calc(100vw-24px)] overflow-hidden rounded-2xl border border-slate-100 bg-white animate-[gemini-fade-in_0.15s_ease-out]"
-            style={{ top: profileMenuPos.top, right: profileMenuPos.right, boxShadow: "0 12px 40px rgba(0,0,0,0.13), 0 2px 8px rgba(0,0,0,0.06)" }}>
-            <div className="flex items-center gap-3 border-b border-slate-100 px-4 py-4">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-600 text-sm font-bold text-white overflow-hidden ring-1 ring-slate-100">
+            className={`fixed z-[200] w-64 max-w-[calc(100vw-24px)] overflow-hidden rounded-2xl border animate-[gemini-fade-in_0.15s_ease-out] ${
+              isDarkTheme
+                ? "bg-[#1e293b] border-slate-700 shadow-[0_12px_40px_rgba(0,0,0,0.5),0_2px_8px_rgba(0,0,0,0.3)] text-slate-100"
+                : "border-slate-100 bg-white shadow-[0_12px_40px_rgba(0,0,0,0.13),0_2px_8px_rgba(0,0,0,0.06)] text-slate-900"
+            }`}
+            style={{ top: profileMenuPos.top, right: profileMenuPos.right }}>
+            <div className={`flex items-center gap-3 border-b px-4 py-4 ${isDarkTheme ? "border-slate-700/80" : "border-slate-100"}`}>
+              <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-600 text-sm font-bold text-white overflow-hidden ring-1 ${isDarkTheme ? "ring-slate-700" : "ring-slate-100"}`}>
                 <img
                   src="/assets/avatar-profile.jpg"
                   alt="Raka"
@@ -6634,14 +7029,16 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                 />
               </div>
               <div className="min-w-0">
-                <p className="truncate text-sm font-bold text-slate-900">Raka</p>
+                <p className={`truncate text-sm font-bold ${isDarkTheme ? "text-white" : "text-slate-900"}`}>Raka</p>
                 <p className="mt-0.5 truncate text-xs text-slate-400">rakaaditya@gmail.com</p>
               </div>
             </div>
 
             <div className="p-2">
               <button type="button" onClick={() => { onTab("profil"); setProfileMenuOpen(false); }}
-                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-slate-600 transition-colors hover:bg-slate-50">
+                className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 transition-colors cursor-pointer ${
+                  isDarkTheme ? "text-slate-300 hover:bg-slate-800" : "text-slate-600 hover:bg-slate-50"
+                }`}>
                 <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                 <span className="text-sm font-medium">Profil</span>
               </button>
@@ -6657,11 +7054,26 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                     window.localStorage.setItem("alerin-theme", nextDark ? "dark" : "light");
                     const shell = document.querySelector(".alerin-shell");
                     shell?.classList.toggle("profile-dark", nextDark);
+                    shell?.classList.toggle("alerin-dark-theme", nextDark);
+                    shell?.classList.toggle("dark", nextDark);
                     if (shell instanceof HTMLElement) shell.style.backgroundColor = nextDark ? "#0f172a" : "#ffffff";
+                    document.documentElement.classList.toggle("dark", nextDark);
+                    document.documentElement.classList.toggle("profile-dark", nextDark);
+                    document.documentElement.classList.toggle("alerin-dark-theme", nextDark);
+                    document.documentElement.style.colorScheme = nextDark ? "dark" : "light";
+                    if (document.body) {
+                      document.body.classList.toggle("dark", nextDark);
+                      document.body.classList.toggle("profile-dark", nextDark);
+                      document.body.classList.toggle("alerin-dark-theme", nextDark);
+                      document.body.style.backgroundColor = nextDark ? "#0f172a" : "#ffffff";
+                    }
+                    window.dispatchEvent(new Event("alerin-theme-change"));
                   }
                   showToast(nextDark ? "Mode Gelap diaktifkan" : "Mode Terang diaktifkan");
                 }}
-                className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-slate-600 transition-colors hover:bg-slate-50 cursor-pointer"
+                className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 transition-colors cursor-pointer ${
+                  isDarkTheme ? "text-slate-300 hover:bg-slate-800" : "text-slate-600 hover:bg-slate-50"
+                }`}
               >
                 <span className="flex items-center gap-3">
                   {isDarkTheme ? (
@@ -6684,17 +7096,21 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
               </button>
 
               <button type="button" onClick={() => { showToast("Form saran & laporan siap digunakan."); setProfileMenuOpen(false); }}
-                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-slate-600 transition-colors hover:bg-slate-50">
+                className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 transition-colors cursor-pointer ${
+                  isDarkTheme ? "text-slate-300 hover:bg-slate-800" : "text-slate-600 hover:bg-slate-50"
+                }`}>
                 <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 9h8M8 13h5"/></svg>
                 <span className="text-sm font-medium">Saran &amp; Laporan</span>
               </button>
 
               <button type="button" onClick={() => { showToast("Pintasan Alerin siap dipasang di layar utama."); setProfileMenuOpen(false); }}
-                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-slate-600 transition-colors hover:bg-slate-50">
+                className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors cursor-pointer ${
+                  isDarkTheme ? "text-slate-300 hover:bg-slate-800" : "text-slate-600 hover:bg-slate-50"
+                }`}>
                 <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="3" y="3" width="18" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M9 8l3 3 3-3M12 5v6"/></svg>
                 <span className="flex flex-col">
                   <span className="text-sm font-medium">Pasang Pintasan</span>
-                  <span className="text-[11px] text-slate-400">Cara cepat mengakses  Alerin</span>
+                  <span className="text-[11px] text-slate-400">Cara cepat mengakses Alerin</span>
                 </span>
               </button>
             </div>
@@ -6862,6 +7278,7 @@ function ChatInputBox({
   suggestionsPlacement = "top",
   suggestionsAlign = "left",
   centerLanding = false,
+  isDark: isDarkProp,
 }: {
   input: string;
   setInput: (v: string) => void;
@@ -6878,7 +7295,14 @@ function ChatInputBox({
   suggestionsPlacement?: "top" | "bottom";
   suggestionsAlign?: "left" | "center";
   centerLanding?: boolean;
+  isDark?: boolean;
 }) {
+  const isDark = typeof isDarkProp === "boolean"
+    ? isDarkProp
+    : typeof document !== "undefined" &&
+      (document.documentElement.classList.contains("dark") ||
+        document.documentElement.classList.contains("profile-dark") ||
+        document.body?.classList.contains("dark"));
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const mobileTextareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -7230,7 +7654,11 @@ function ChatInputBox({
               key={s}
               type="button"
               onClick={() => onSend(s)}
-              className="shrink-0 inline-flex items-center h-8 px-3.5 rounded-full border border-slate-200/90 bg-white/95 text-xs font-medium text-slate-700 hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50/70 active:scale-[0.98] transition-all whitespace-nowrap shadow-xs cursor-pointer select-none"
+              className={`shrink-0 inline-flex items-center h-8 px-3.5 rounded-full border text-xs font-medium active:scale-[0.98] transition-all whitespace-nowrap shadow-xs cursor-pointer select-none ${
+                isDark
+                  ? "border-slate-700/80 bg-slate-800/90 text-slate-300 hover:border-blue-500/50 hover:text-blue-400 hover:bg-slate-700/80"
+                  : "border-slate-200/90 bg-white/95 text-slate-700 hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50/70"
+              }`}
             >
               {s}
             </button>
@@ -7241,10 +7669,16 @@ function ChatInputBox({
       {/* Input card with Glass styling */}
       <div ref={cardContainerRef} className="rounded-2xl border overflow-visible mb-1 relative claro-glass-card"
         style={{
-          borderColor: listening ? "#3b82f6" : mobileFloat ? "transparent" : undefined,
+          borderColor: listening ? "#3b82f6" : mobileFloat ? "transparent" : isDark ? "#334155" : undefined,
           boxShadow: listening
             ? "0 0 0 3px rgba(59,130,246,0.12), 0 4px 20px rgba(0,0,0,0.08)"
-            : mobileFloat ? "none" : centerLanding ? "0 4px 24px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.04)" : undefined,
+            : mobileFloat
+              ? "none"
+              : isDark
+                ? "0 4px 24px rgba(0,0,0,0.4), 0 1px 3px rgba(0,0,0,0.3)"
+                : centerLanding
+                  ? "0 4px 24px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.04)"
+                  : undefined,
           transition: "box-shadow 0.2s, border-color 0.2s",
         }}>
         {/* Attachment preview thumbnails inside card (supports multiple photos & files, matching Gambar user) */}
@@ -7339,7 +7773,11 @@ function ChatInputBox({
             onClick={() => setIsFullscreenInput(true)}
             aria-label="Perbesar kolom teks"
             title="Perbesar kolom teks"
-            className="absolute top-2.5 right-2.5 z-20 size-7.5 sm:size-8 rounded-xl bg-white/75 backdrop-blur-md border border-white/90 shadow-[0_2px_8px_rgba(0,0,0,0.06)] text-slate-500 hover:text-slate-800 active:scale-95 transition-all flex items-center justify-center cursor-pointer select-none"
+            className={`absolute top-2.5 right-2.5 z-20 size-7.5 sm:size-8 rounded-xl border active:scale-95 transition-all flex items-center justify-center cursor-pointer select-none ${
+              isDark
+                ? "bg-slate-800/85 backdrop-blur-md border-slate-700 shadow-[0_2px_8px_rgba(0,0,0,0.3)] text-slate-300 hover:text-white"
+                : "bg-white/75 backdrop-blur-md border-white/90 shadow-[0_2px_8px_rgba(0,0,0,0.06)] text-slate-500 hover:text-slate-800"
+            }`}
           >
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
               <path d="M15 3h6v6" />
@@ -7358,7 +7796,9 @@ function ChatInputBox({
           spellCheck={false}
           placeholder={listening ? "Berbicara sekarang…" : "Diskusi dengan Alerin"}
           rows={1}
-          className="md:hidden w-full px-4 pt-3 pb-1 text-[15px] text-slate-800 placeholder-slate-400 resize-none outline-none leading-relaxed rounded-t-2xl bg-transparent min-h-[38px]"
+          className={`md:hidden w-full px-4 pt-3 pb-1 text-[15px] resize-none outline-none leading-relaxed rounded-t-2xl bg-transparent min-h-[38px] ${
+            isDark ? "text-slate-100 placeholder-slate-500" : "text-slate-800 placeholder-slate-400"
+          }`}
         />
         {/* Desktop textarea: seragam dengan mobile (Enter keyboard tetap langsung kirim) */}
         <textarea
@@ -7371,7 +7811,9 @@ function ChatInputBox({
           onKeyDown={handleDesktopKey}
           placeholder={listening ? "Berbicara sekarang…" : "Diskusi dengan Alerin"}
           rows={1}
-          className="hidden md:block w-full px-4 pt-3 pb-1 text-[15px] text-slate-800 placeholder-slate-400 resize-none outline-none leading-relaxed rounded-t-2xl bg-transparent min-h-[38px]"
+          className={`hidden md:block w-full px-4 pt-3 pb-1 text-[15px] resize-none outline-none leading-relaxed rounded-t-2xl bg-transparent min-h-[38px] ${
+            isDark ? "text-slate-100 placeholder-slate-500" : "text-slate-800 placeholder-slate-400"
+          }`}
         />
         {/* Bottom row inside card */}
         <div className="flex items-center px-3 pb-2.5 pt-1 gap-2">
@@ -7383,8 +7825,12 @@ function ChatInputBox({
                 type="button"
                 onClick={() => openUploadMenu(uploadBtnRef)}
                 aria-label="Tambah lampiran"
-                className="size-8 rounded-full border border-slate-200/90 flex items-center justify-center text-slate-600 hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50 transition-all shrink-0 bg-white/70 md:bg-white shadow-xs cursor-pointer"
-                style={uploadMenuOpen ? { borderColor: "#93c5fd", color: "#2563eb", background: "#eff6ff" } : {}}
+                className={`size-8 rounded-full border flex items-center justify-center transition-all shrink-0 shadow-xs cursor-pointer ${
+                  isDark
+                    ? "border-slate-700 bg-slate-800 text-slate-300 hover:border-slate-600 hover:text-white"
+                    : "border-slate-200/90 bg-white/70 md:bg-white text-slate-600 hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50"
+                }`}
+                style={uploadMenuOpen ? { borderColor: isDark ? "#60a5fa" : "#93c5fd", color: isDark ? "#60a5fa" : "#2563eb", background: isDark ? "#1e293b" : "#eff6ff" } : {}}
               >
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="12" y1="5" x2="12" y2="19" />
@@ -7396,35 +7842,44 @@ function ChatInputBox({
               {uploadMenuOpen && uploadMenuPos && typeof document !== "undefined" && createPortal(
                 <>
                   <div className="fixed inset-0 z-[190]" onClick={() => setUploadMenuOpen(false)} />
-                  <div className="fixed z-[200] w-52 rounded-2xl overflow-hidden"
+                  <div className={`fixed z-[200] w-52 rounded-2xl overflow-hidden border ${
+                    isDark
+                      ? "bg-[#1e293b] border-slate-700 shadow-[0_12px_40px_rgba(0,0,0,0.5),0_2px_8px_rgba(0,0,0,0.3)] text-slate-200"
+                      : "bg-white border-slate-200 shadow-[0_12px_40px_rgba(0,0,0,0.12),0_2px_8px_rgba(0,0,0,0.06)] text-slate-800"
+                  }`}
                     style={{
                       bottom: uploadMenuPos.bottom,
                       left: Math.min(uploadMenuPos.left, window.innerWidth - 220),
-                      background: "#fff",
-                      border: "1px solid #e2e8f0",
-                      boxShadow: "0 12px 40px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)",
                     }}>
                     {/* Upload dokumen */}
                     <button onClick={() => { fileInputRef.current?.click(); }}
-                      className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-slate-50 transition-colors text-left">
-                      <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 bg-slate-100 text-slate-700 border border-slate-200/70">
+                      className={`w-full flex items-center gap-3 px-4 py-2.5 transition-colors text-left cursor-pointer ${
+                        isDark ? "hover:bg-slate-800/90" : "hover:bg-slate-50"
+                      }`}>
+                      <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 border ${
+                        isDark ? "bg-slate-800 text-slate-300 border-slate-700" : "bg-slate-100 text-slate-700 border-slate-200/70"
+                      }`}>
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                       </div>
-                      <span className="font-semibold text-xs text-slate-800">File</span>
+                      <span className={`font-semibold text-xs ${isDark ? "text-slate-200" : "text-slate-800"}`}>File</span>
                     </button>
 
-                    <div className="mx-4 h-px bg-slate-100" />
+                    <div className={`mx-4 h-px ${isDark ? "bg-slate-700/60" : "bg-slate-100"}`} />
 
                     {/* Upload foto */}
                     <button onClick={() => { imageInputRef.current?.click(); }}
-                      className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-slate-50 transition-colors text-left">
-                      <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 bg-slate-100 text-slate-700 border border-slate-200/70">
+                      className={`w-full flex items-center gap-3 px-4 py-2.5 transition-colors text-left cursor-pointer ${
+                        isDark ? "hover:bg-slate-800/90" : "hover:bg-slate-50"
+                      }`}>
+                      <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 border ${
+                        isDark ? "bg-slate-800 text-slate-300 border-slate-700" : "bg-slate-100 text-slate-700 border-slate-200/70"
+                      }`}>
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                       </div>
-                      <span className="font-semibold text-xs text-slate-800">Foto</span>
+                      <span className={`font-semibold text-xs ${isDark ? "text-slate-200" : "text-slate-800"}`}>Foto</span>
                     </button>
 
-                    <div className="mx-4 h-px bg-slate-100" />
+                    <div className={`mx-4 h-px ${isDark ? "bg-slate-700/60" : "bg-slate-100"}`} />
 
                     {/* Ambil foto kamera */}
                     <button onClick={() => {
@@ -7447,11 +7902,15 @@ function ChatInputBox({
                       };
                       inp.click();
                     }}
-                      className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-slate-50 transition-colors text-left">
-                      <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 bg-slate-100 text-slate-700 border border-slate-200/70">
+                      className={`w-full flex items-center gap-3 px-4 py-2.5 transition-colors text-left cursor-pointer ${
+                        isDark ? "hover:bg-slate-800/90" : "hover:bg-slate-50"
+                      }`}>
+                      <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 border ${
+                        isDark ? "bg-slate-800 text-slate-300 border-slate-700" : "bg-slate-100 text-slate-700 border-slate-200/70"
+                      }`}>
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
                       </div>
-                      <span className="font-semibold text-xs text-slate-800">Kamera</span>
+                      <span className={`font-semibold text-xs ${isDark ? "text-slate-200" : "text-slate-800"}`}>Kamera</span>
                     </button>
                   </div>
                 </>,
@@ -7469,14 +7928,18 @@ function ChatInputBox({
                   if (pos) setModeDropdownPos(pos);
                   setModeOpen(true);
                 }}
-                className="flex items-center gap-1.5 h-8 px-3.5 py-1.5 rounded-full border border-slate-200/90 text-xs font-semibold transition-all whitespace-nowrap shadow-xs cursor-pointer bg-white/70 md:bg-white text-slate-700 hover:border-blue-300 hover:text-blue-600"
-                style={modeOpen ? { borderColor: "#93c5fd", color: "#2563eb", background: "#eff6ff" } : {}}
+                className={`flex items-center gap-1.5 h-8 px-3.5 py-1.5 rounded-full border text-xs font-semibold transition-all whitespace-nowrap shadow-xs cursor-pointer ${
+                  isDark
+                    ? "border-slate-700 bg-slate-800 text-slate-300 hover:border-slate-600 hover:text-white"
+                    : "border-slate-200/90 bg-white/70 md:bg-white text-slate-700 hover:border-blue-300 hover:text-blue-600"
+                }`}
+                style={modeOpen ? { borderColor: isDark ? "#60a5fa" : "#93c5fd", color: isDark ? "#60a5fa" : "#2563eb", background: isDark ? "#1e293b" : "#eff6ff" } : {}}
               >
                 {currentMode.label}
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ opacity: 0.6 }}><path d="M6 9l6 6 6-6"/></svg>
               </button>
 
-              {/* Mode dropdown — fixed to escape overflow:hidden parents (Desain Gambar 2, Isi Gambar 3, Terbuka Semua) */}
+              {/* Mode dropdown */}
               {modeOpen && modeDropdownPos && typeof document !== "undefined" && createPortal(
                 <>
                   <div
@@ -7489,14 +7952,17 @@ function ChatInputBox({
                   />
                   <div
                     ref={modeDropdownRef}
-                    className="fixed w-[270px] max-w-[calc(100vw-24px)] rounded-[24px] bg-white/98 backdrop-blur-xl border border-slate-200/70 p-2 z-[200] select-none transition-all duration-200 ease-out animate-[gemini-fade-in_0.2s_ease-out]"
+                    className={`fixed w-[270px] max-w-[calc(100vw-24px)] rounded-[24px] border p-2 z-[200] select-none transition-all duration-200 ease-out animate-[gemini-fade-in_0.2s_ease-out] ${
+                      isDark
+                        ? "bg-[#1e293b] border-slate-700 shadow-[0_16px_40px_rgba(0,0,0,0.5),0_4px_14px_rgba(0,0,0,0.3)]"
+                        : "bg-white/98 backdrop-blur-xl border-slate-200/70 shadow-[0_16px_40px_-8px_rgba(0,0,0,0.12),0_4px_14px_rgba(0,0,0,0.05)]"
+                    }`}
                     style={{
-                      boxShadow: "0 16px 40px -8px rgba(0,0,0,0.12), 0 4px 14px rgba(0,0,0,0.05)",
                       bottom: modeDropdownPos.bottom,
                       left: modeDropdownPos.left,
                     }}
                   >
-                    {/* Mode List (Tanpa icon, judul & deskripsi bersih) */}
+                    {/* Mode List */}
                     <div className="space-y-1">
                       {MODES.map((m) => {
                         const isSelected = activeMode === m.id;
@@ -7511,21 +7977,21 @@ function ChatInputBox({
                               setModeDropdownPos(null);
                             }}
                             className={`w-full flex items-start gap-2.5 px-3 py-2.5 rounded-2xl text-left transition-all active:scale-[0.99] cursor-pointer ${
-                              isSelected ? "bg-slate-100/70" : "hover:bg-slate-50"
+                              isSelected
+                                ? (isDark ? "bg-slate-800" : "bg-slate-100/70")
+                                : (isDark ? "hover:bg-slate-800/60" : "hover:bg-slate-50")
                             }`}
                           >
-                            {/* Content: Title & Description */}
                             <div className="flex-1 min-w-0 pr-1">
-                              <p className="text-[13.5px] font-semibold text-slate-900 leading-tight">
+                              <p className={`text-[13.5px] font-semibold leading-tight ${isDark ? "text-white" : "text-slate-900"}`}>
                                 {m.fullTitle}
                               </p>
-                              <p className="text-[11.5px] text-slate-500 font-normal leading-relaxed mt-1">
+                              <p className={`text-[11.5px] font-normal leading-relaxed mt-1 ${isDark ? "text-slate-400" : "text-slate-500"}`}>
                                 {m.desc}
                               </p>
                             </div>
 
-                            {/* Checkmark on the side (di atas / sejajar judul) */}
-                            <div className="shrink-0 w-5 flex items-center justify-end self-start mt-0.5 text-slate-900">
+                            <div className={`shrink-0 w-5 flex items-center justify-end self-start mt-0.5 ${isDark ? "text-blue-400" : "text-slate-900"}`}>
                               {isSelected && (
                                 <svg
                                   width="16"
@@ -7546,27 +8012,24 @@ function ChatInputBox({
                       })}
                     </div>
 
-                    {/* V-shape bubble pointer pointing down to the button */}
+                    {/* V-shape bubble pointer */}
                     <div
                       className="absolute -bottom-2 -translate-x-1/2 pointer-events-none z-20 flex justify-center"
                       style={{ left: modeDropdownPos.arrowLeft ?? 135 }}
                     >
                       <svg width="18" height="9" viewBox="0 0 18 9" fill="none" className="filter drop-shadow-[0_2px_3px_rgba(0,0,0,0.06)]">
-                        {/* V-shape body fill */}
                         <path
                           d="M0 0 L7.4 7.4 C8.3 8.3 9.7 8.3 10.6 7.4 L18 0"
-                          fill="#ffffff"
+                          fill={isDark ? "#1e293b" : "#ffffff"}
                         />
-                        {/* V-shape border */}
                         <path
                           d="M0 0 L7.4 7.4 C8.3 8.3 9.7 8.3 10.6 7.4 L18 0"
-                          stroke="#cbd5e1"
+                          stroke={isDark ? "#334155" : "#cbd5e1"}
                           strokeWidth="1.2"
                           strokeLinecap="round"
                           strokeLinejoin="round"
                         />
-                        {/* White line mask to seamlessly merge with the card's bottom border */}
-                        <line x1="0.5" y1="0" x2="17.5" y2="0" stroke="#ffffff" strokeWidth="2.5" />
+                        <line x1="0.5" y1="0" x2="17.5" y2="0" stroke={isDark ? "#1e293b" : "#ffffff"} strokeWidth="2.5" />
                       </svg>
                     </div>
                   </div>
@@ -7586,8 +8049,10 @@ function ChatInputBox({
               aria-label={listening ? "Hentikan dikte" : "Dikte suara"}
               className={`size-8 rounded-full border flex items-center justify-center transition-all cursor-pointer shadow-xs shrink-0 ${
                 listening
-                  ? "bg-red-500 border-red-500 text-white shadow-[0_0_0_4px_rgba(239,68,68,0.15)]"
-                  : "border-slate-200/90 bg-white/70 md:bg-white text-slate-600 hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50"
+                  ? "bg-red-500 border-red-500 text-white shadow-[0_0_0_4px_rgba(239,68,68,0.2)]"
+                  : isDark
+                    ? "border-slate-700 bg-slate-800 text-slate-300 hover:border-slate-600 hover:text-white"
+                    : "border-slate-200/90 bg-white/70 md:bg-white text-slate-600 hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50"
               }`}
             >
               {listening ? (
@@ -7622,10 +8087,10 @@ function ChatInputBox({
                 onClick={handleSend}
                 disabled={!input.trim() && uploadedItems.length === 0}
                 aria-label="Kirim pesan"
-                className={`size-8 rounded-full flex items-center justify-center transition-all shrink-0 ${
+                className={`size-8 rounded-full flex items-center justify-center text-white transition-all shrink-0 ${
                   (input.trim() || uploadedItems.length > 0)
-                    ? "bg-blue-600 hover:bg-blue-700 text-white shadow-xs cursor-pointer active:scale-95"
-                    : "bg-blue-50/90 text-blue-300 border border-blue-100/60 cursor-not-allowed"
+                    ? "bg-blue-600 hover:bg-blue-700 shadow-xs cursor-pointer active:scale-95"
+                    : "bg-blue-600 opacity-30 cursor-not-allowed"
                 }`}
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
@@ -7648,7 +8113,11 @@ function ChatInputBox({
               key={s}
               type="button"
               onClick={() => onSend(s)}
-              className="shrink-0 inline-flex items-center h-8 px-4 rounded-full border border-slate-200/90 bg-white/95 text-xs font-medium text-slate-700 hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50/70 active:scale-[0.98] transition-all whitespace-nowrap shadow-xs cursor-pointer select-none"
+              className={`shrink-0 inline-flex items-center h-8 px-4 rounded-full border text-xs font-medium active:scale-[0.98] transition-all whitespace-nowrap shadow-xs cursor-pointer select-none ${
+                isDark
+                  ? "border-slate-700/80 bg-slate-800/90 text-slate-300 hover:border-blue-500/50 hover:text-blue-400 hover:bg-slate-700/80"
+                  : "border-slate-200/90 bg-white/95 text-slate-700 hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50/70"
+              }`}
             >
               {s}
             </button>
@@ -7676,7 +8145,9 @@ function ChatInputBox({
             <div
               role="dialog"
               aria-modal="true"
-              className="fixed inset-0 z-[320] bg-white flex flex-col select-none animate-[gemini-fade-in_0.15s_ease-out]"
+              className={`fixed inset-0 z-[320] flex flex-col select-none animate-[gemini-fade-in_0.15s_ease-out] ${
+                isDark ? "bg-[#0f172a] text-white" : "bg-white text-slate-900"
+              }`}
               style={{ height: "100dvh" }}
             >
               {/* Overlay backdrop to dismiss dropdown */}
@@ -7688,7 +8159,9 @@ function ChatInputBox({
               )}
 
               {/* Header (Gambar 2: White header, centered filename + chevron, circular close button on right) */}
-              <div className="w-full bg-white border-b border-slate-100/90 flex items-center justify-between px-3 sm:px-5 pt-[max(0.6rem,env(safe-area-inset-top))] pb-2.5 shrink-0 z-50">
+              <div className={`w-full border-b flex items-center justify-between px-3 sm:px-5 pt-[max(0.6rem,env(safe-area-inset-top))] pb-2.5 shrink-0 z-50 ${
+                isDark ? "bg-[#0f172a] border-slate-800" : "bg-white border-slate-100/90"
+              }`}>
                 {/* Left: Kembali / Back button */}
                 <div className="flex items-center gap-1.5 min-w-[70px]">
                   <button
@@ -7959,7 +8432,7 @@ function ChatInputBox({
               className={`size-11 rounded-full flex items-center justify-center text-white transition-all shadow-md shrink-0 ${
                 input.trim() || uploadedItems.length > 0
                   ? "bg-blue-600 hover:bg-blue-700 active:scale-95 cursor-pointer shadow-blue-500/25"
-                  : "bg-blue-300 opacity-40 cursor-not-allowed"
+                  : "bg-blue-600 opacity-30 cursor-not-allowed"
               }`}
             >
               <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -11271,7 +11744,7 @@ function SharedChatPreviewView({
                 const previewSnippet =
                   chatItem.snippet ||
                   chatItem.msgs.find((m) => m.text)?.text ||
-                  "Ketuk untuk melihat pratinjau percakapan";
+                  "Ketuk untuk melihat pratinjau obrolan";
                 return (
                   <button
                     key={chatItem.id}
@@ -11348,7 +11821,7 @@ function SharedChatPreviewView({
 
                   {m.text && (
                     <div className="rounded-2xl rounded-br-sm px-4 py-2.5 text-[0.9375rem] leading-relaxed text-slate-900 bg-[#EAF2FF] border border-[#BFDBFE]/80 shadow-xs max-w-[85%] md:max-w-[75%] whitespace-pre-wrap break-words">
-                      {renderUserMessageContent(m.text)}
+                      <UserMessageBubbleContent text={m.text} />
                     </div>
                   )}
                 </div>
@@ -11443,6 +11916,37 @@ function PercakapanTab({
   const [typing, setTyping] = useState(false);
   const [chatMode, setChatMode] = useState((initialMsgs ?? []).length > 0 || Boolean(pendingDraft));
 
+  const [isDarkTheme, setIsDarkTheme] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return (
+      document.documentElement.classList.contains("dark") ||
+      document.documentElement.classList.contains("profile-dark") ||
+      document.body?.classList.contains("dark") ||
+      window.localStorage.getItem("alerin-theme") === "dark"
+    );
+  });
+
+  useEffect(() => {
+    const checkDark = () => {
+      const isDark =
+        document.documentElement.classList.contains("dark") ||
+        document.documentElement.classList.contains("profile-dark") ||
+        document.body?.classList.contains("dark") ||
+        window.localStorage.getItem("alerin-theme") === "dark";
+      setIsDarkTheme(isDark);
+    };
+    checkDark();
+    const observer = new MutationObserver(checkDark);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+    window.addEventListener("storage", checkDark);
+    window.addEventListener("alerin-theme-change", checkDark);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("storage", checkDark);
+      window.removeEventListener("alerin-theme-change", checkDark);
+    };
+  }, []);
+
   useEffect(() => {
     onChatModeChange?.(msgs.length > 0);
   }, [msgs.length, onChatModeChange]);
@@ -11470,11 +11974,10 @@ function PercakapanTab({
   const [moreMenuIdx, setMoreMenuIdx] = useState<number | null>(null);
   const [openSourcesIdx, setOpenSourcesIdx] = useState<number | null>(null);
   const [copiedIdx, setCopiedIdx] = useState<number | null>(null);
-  const [actionToast, setActionToast] = useState<string | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
 
   const showActionToast = useCallback((msg: string) => {
-    setActionToast(msg);
-    setTimeout(() => setActionToast(null), 2200);
+    setToast(msg);
   }, []);
 
   // User Bubble Long-Press Menu (Salin, Edit [hanya bubble terbaru], Pilih teks)
@@ -11900,7 +12403,11 @@ function PercakapanTab({
   const send = useCallback((text: string) => {
     if (!text.trim()) return;
     setChatMode(true);
-    const userMsg: ChatMsg = { role: "user", text: text.trim(), time: now() };
+    // Jika diawali URL/link dengan huruf kapital (misal Http:// atau Https://), ubah awalannya ke huruf kecil
+    const cleanText = text.trim().replace(/^([\s"'‘“«(\[{]*)(https?|ftp|www|localhost)([:.\/])/i, (_m, pre, proto, punct) => {
+      return `${pre}${proto.toLowerCase()}${punct}`;
+    });
+    const userMsg: ChatMsg = { role: "user", text: cleanText, time: now() };
     setMsgs((m) => [...m, userMsg]);
     setInput("");
     userScrolledUpRef.current = false;
@@ -12043,7 +12550,9 @@ function PercakapanTab({
       {/* Desktop view — tampilan awal terpusat (Logo, Tagline, Input Box, & Suggestion Pills) */}
       <div className="hidden md:flex flex-1 flex-col overflow-hidden relative claro-chat-bg">
         <div className="absolute inset-0 pointer-events-none" style={{
-          backgroundImage: "radial-gradient(circle, rgba(59,130,246,0.035) 1px, transparent 1px)",
+          backgroundImage: isDarkTheme
+            ? "radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px)"
+            : "radial-gradient(circle, rgba(59,130,246,0.035) 1px, transparent 1px)",
           backgroundSize: "24px 24px",
           zIndex: 0,
         }} />
@@ -12057,13 +12566,17 @@ function PercakapanTab({
             />
 
             {/* Judul & Tagline */}
-            <h1 className="text-slate-900 text-[28px] lg:text-[32px] font-bold leading-tight tracking-tight text-center font-['Plus_Jakarta_Sans',sans-serif]">
+            <h1 className={`text-[28px] lg:text-[32px] font-bold leading-tight tracking-tight text-center font-['Plus_Jakarta_Sans',sans-serif] ${
+              isDarkTheme ? "text-slate-100" : "text-slate-900"
+            }`}>
               Tanya apa saja tentang kuliah.
-              <span className="block text-[#1A73E8]">Alerin bantu sampai jelas.</span>
+              <span className={`block ${isDarkTheme ? "text-blue-400" : "text-[#1A73E8]"}`}>Alerin bantu sampai jelas.</span>
             </h1>
 
             {/* Subtitle */}
-            <p className="mt-3.5 text-slate-500 text-sm lg:text-[15px] font-normal leading-relaxed text-center max-w-[540px] mx-auto">
+            <p className={`mt-3.5 text-sm lg:text-[15px] font-normal leading-relaxed text-center max-w-[540px] mx-auto ${
+              isDarkTheme ? "text-slate-400" : "text-slate-500"
+            }`}>
               Mulai dari materi, tugas, jurnal, hingga skripsi semua dalam satu ruang yang memahami perjalanan kuliahmu.
             </p>
 
@@ -12078,6 +12591,7 @@ function PercakapanTab({
                 suggestionsPlacement="bottom"
                 suggestionsAlign="center"
                 centerLanding
+                isDark={isDarkTheme}
               />
             </div>
           </div>
@@ -12085,29 +12599,38 @@ function PercakapanTab({
       </div>
 
       {/* Mobile view (Gambar 2) */}
-      <div className="flex md:hidden flex-1 min-h-0 flex-col justify-between overflow-hidden relative bg-white pt-16">
+      <div className={`flex md:hidden flex-1 min-h-0 flex-col justify-between overflow-hidden relative pt-16 ${
+        isDarkTheme ? "bg-[#0f172a]" : "bg-white"
+      }`}>
         {/* Centered Welcome Card */}
         <div className="flex-1 min-h-0 overflow-y-auto flex flex-col items-center justify-center px-5 py-4">
-          <div className="w-full max-w-[340px] my-auto bg-white rounded-2xl shadow-[0px_1px_3px_0px_rgba(59,130,246,0.04),0px_2px_16px_0px_rgba(59,130,246,0.06)] border border-blue-200/40 p-6 flex flex-col items-center text-center">
+          <div className={`w-full max-w-[340px] my-auto rounded-2xl p-6 flex flex-col items-center text-center border ${
+            isDarkTheme
+              ? "bg-[#1e293b] border-slate-700/80 shadow-[0px_4px_20px_rgba(0,0,0,0.4)]"
+              : "bg-white shadow-[0px_1px_3px_0px_rgba(59,130,246,0.04),0px_2px_16px_0px_rgba(59,130,246,0.06)] border-blue-200/40"
+          }`}>
             <img src="/assets/alerin-logo-only.png" alt="Alerin" className="h-16 w-auto mb-4 object-contain" />
-            <h2 className="text-slate-900 text-lg font-normal leading-snug">
+            <h2 className={`text-lg font-normal leading-snug ${isDarkTheme ? "text-slate-100" : "text-slate-900"}`}>
               Tanya apa saja tentang kuliah.{" "}
-              <span className="text-blue-500 font-bold">Alerin bantu sampai jelas.</span>
+              <span className={`font-bold ${isDarkTheme ? "text-blue-400" : "text-blue-500"}`}>Alerin bantu sampai jelas.</span>
             </h2>
-            <p className="mt-3 text-slate-500 text-xs font-normal leading-relaxed">
+            <p className={`mt-3 text-xs font-normal leading-relaxed ${isDarkTheme ? "text-slate-400" : "text-slate-500"}`}>
               Mulai dari materi, tugas, jurnal, hingga skripsi semua dalam satu ruang yang memahami perjalanan kuliahmu.
             </p>
           </div>
         </div>
 
         {/* Bottom Chat Input */}
-        <div className="px-3 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-0 bg-white shrink-0">
+        <div className={`px-3 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-0 shrink-0 ${
+          isDarkTheme ? "bg-[#0f172a]" : "bg-white"
+        }`}>
           <ChatInputBox
             input={input} setInput={setInput} onSend={send}
             activeCategory={activeCategory} setActiveCategory={setActiveCategory}
             onSendWithFile={sendWithFile}
             loading={isGenerating}
             onStop={handleStop}
+            isDark={isDarkTheme}
           />
         </div>
       </div>
@@ -12129,7 +12652,9 @@ function PercakapanTab({
     <div className="flex-1 min-h-0 flex flex-col overflow-hidden relative claro-chat-bg">
       {/* Decorative dot grid overlay — desktop only */}
       <div className="hidden md:block absolute inset-0 pointer-events-none" style={{
-        backgroundImage: "radial-gradient(circle, rgba(59,130,246,0.035) 1px, transparent 1px)",
+        backgroundImage: isDarkTheme
+          ? "radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px)"
+          : "radial-gradient(circle, rgba(59,130,246,0.035) 1px, transparent 1px)",
         backgroundSize: "24px 24px",
         zIndex: 0,
       }} />
@@ -12257,7 +12782,7 @@ function PercakapanTab({
                       }`}
                       title="Tahan untuk membuka menu aksi"
                     >
-                      {renderUserMessageContent(m.text)}
+                      <UserMessageBubbleContent text={m.text} />
                     </div>
 
                     {/* Pop-up Menu Aksi Bubble Chat (Long-Press): Salin & Pilih teks untuk semua bubble, + Edit hanya untuk terbaru */}
@@ -12445,11 +12970,11 @@ function PercakapanTab({
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5 mb-0.5">
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600">Fitur Alerin</span>
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-blue-500">Fitur Alerin</span>
                         <span className="text-[10px] text-slate-400">· Coba sekarang</span>
                       </div>
-                      <p className="text-sm font-bold text-slate-800">{m.featureRec.label}</p>
-                      <p className="text-[11px] text-slate-500 leading-relaxed truncate">{m.featureRec.desc}</p>
+                      <p className={`text-sm font-bold ${isDarkTheme ? "text-slate-100" : "text-slate-800"}`}>{m.featureRec.label}</p>
+                      <p className={`text-[11px] leading-relaxed truncate ${isDarkTheme ? "text-slate-400" : "text-slate-500"}`}>{m.featureRec.desc}</p>
                     </div>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2" className="shrink-0 group-hover:stroke-blue-500 transition-colors"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                   </button>
@@ -12472,7 +12997,9 @@ function PercakapanTab({
       </div>
 
       {/* Static input at bottom — all screen sizes */}
-      <div className="shrink-0 relative z-10 bg-white md:bg-transparent pb-[env(safe-area-inset-bottom)] md:pb-0">
+      <div className={`shrink-0 relative z-10 pb-[env(safe-area-inset-bottom)] md:pb-0 ${
+        isDarkTheme ? "bg-[#0f172a] md:bg-transparent" : "bg-white md:bg-transparent"
+      }`}>
         {/* Floating scroll to bottom button (Gambar 1: icon bulat panah bawah saat scroll ke atas) */}
         <div
           className={`absolute -top-11 left-1/2 -translate-x-1/2 z-20 transition-all duration-200 ease-out ${
@@ -12483,7 +13010,11 @@ function PercakapanTab({
             type="button"
             onClick={scrollToBottom}
             aria-label="Scroll ke chat terbaru"
-            className="size-9 rounded-full bg-white/95 backdrop-blur-md border border-slate-200/90 shadow-[0_2px_8px_rgba(0,0,0,0.12)] flex items-center justify-center text-slate-700 hover:text-slate-900 hover:bg-white active:scale-90 transition-all cursor-pointer"
+            className={`size-9 rounded-full border shadow-[0_2px_8px_rgba(0,0,0,0.12)] flex items-center justify-center active:scale-90 transition-all cursor-pointer ${
+              isDarkTheme
+                ? "bg-[#1e293b]/95 backdrop-blur-md border-slate-700 text-slate-200 hover:text-white hover:bg-[#1e293b]"
+                : "bg-white/95 backdrop-blur-md border-slate-200/90 text-slate-700 hover:text-slate-900 hover:bg-white"
+            }`}
           >
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 4v14" />
@@ -12502,6 +13033,7 @@ function PercakapanTab({
             onPopupOpenChange={setInputPopupOpen}
             loading={isGenerating}
             onStop={handleStop}
+            isDark={isDarkTheme}
           />
         </div>
       </div>
@@ -12530,12 +13062,8 @@ function PercakapanTab({
       onCopied={showActionToast}
     />
 
-    {/* Floating Action Feedback Toast */}
-    {actionToast && (
-      <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[260] bg-slate-900/95 backdrop-blur-md text-white text-xs font-medium px-4 py-2 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.25)] border border-slate-700/60 pointer-events-none flex items-center gap-2 animate-in fade-in zoom-in-95">
-        <span>{actionToast}</span>
-      </div>
-    )}
+    {/* Feedback Toast (Standar Alerin) */}
+    {toast && <Toast msg={toast} onDone={() => setToast(null)} />}
     </>
   );
 }
@@ -16202,8 +16730,11 @@ function ProyekTab({
   }, [updateChatInStateAndStorage]);
 
   const handleStartNewProjectChat = useCallback((text: string) => {
-    const trimmed = text.trim();
+    let trimmed = text.trim();
     if (!trimmed || !selectedProject) return;
+    trimmed = trimmed.replace(/^([\s"'‘“«(\[{]*)(https?|ftp|www|localhost)([:.\/])/i, (_m, pre, proto, punct) => {
+      return `${pre}${proto.toLowerCase()}${punct}`;
+    });
     const nowTimestamp = Date.now();
     const newChatId = `pchat-${nowTimestamp}`;
     const userMsg: ChatMsg = { role: "user", text: trimmed, time: now() };
@@ -16223,8 +16754,11 @@ function ProyekTab({
   }, [selectedProject, updateChatInStateAndStorage, runProjectChatResponse]);
 
   const handleSendMessageInChat = useCallback((text: string) => {
-    const trimmed = text.trim();
+    let trimmed = text.trim();
     if (!trimmed || !selectedProject || !selectedProjectChat) return;
+    trimmed = trimmed.replace(/^([\s"'‘“«(\[{]*)(https?|ftp|www|localhost)([:.\/])/i, (_m, pre, proto, punct) => {
+      return `${pre}${proto.toLowerCase()}${punct}`;
+    });
     const nowTimestamp = Date.now();
     const userMsg: ChatMsg = { role: "user", text: trimmed, time: now() };
     const updatedMsgs = [...selectedProjectChat.msgs, userMsg];
@@ -17217,7 +17751,7 @@ function ProyekTab({
                           }`}
                           title="Tahan untuk membuka menu aksi"
                         >
-                          {renderUserMessageContent(m.text)}
+                          <UserMessageBubbleContent text={m.text} />
                         </div>
 
                         {/* Pop-up Menu Aksi Bubble Chat (Long-Press): Salin & Pilih teks untuk semua bubble, + Edit hanya untuk terbaru */}
@@ -23997,14 +24531,27 @@ function ProfilTab({ onTab, onRegister }: { onTab: (t: NavTab) => void; onRegist
                             aria-pressed={active}
                             onClick={(event) => {
                               const isDark = option.id === "dark";
-                              const shell = event.currentTarget.closest(".alerin-shell");
+                              const shell = event.currentTarget.closest(".alerin-shell") || document.querySelector(".alerin-shell");
                               setThemeMode(option.id);
+                              setIsDarkTheme(isDark);
                               shell?.classList.toggle("profile-dark", isDark);
+                              shell?.classList.toggle("alerin-dark-theme", isDark);
+                              shell?.classList.toggle("dark", isDark);
                               if (shell instanceof HTMLElement) {
                                 shell.style.backgroundColor = isDark ? "#0f172a" : "#ffffff";
                               }
+                              document.documentElement.classList.toggle("dark", isDark);
+                              document.documentElement.classList.toggle("profile-dark", isDark);
+                              document.documentElement.classList.toggle("alerin-dark-theme", isDark);
                               document.documentElement.style.colorScheme = option.id;
+                              if (document.body) {
+                                document.body.classList.toggle("dark", isDark);
+                                document.body.classList.toggle("profile-dark", isDark);
+                                document.body.classList.toggle("alerin-dark-theme", isDark);
+                                document.body.style.backgroundColor = isDark ? "#0f172a" : "#ffffff";
+                              }
                               window.localStorage.setItem("alerin-theme", option.id);
+                              window.dispatchEvent(new Event("alerin-theme-change"));
                             }}
                             className={`rounded-xl border p-2.5 text-left transition-all ${active ? "border-blue-500 ring-2 ring-blue-100" : "border-slate-200 hover:border-blue-200"}`}
                           >

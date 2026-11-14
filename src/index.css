@@ -70,26 +70,77 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+.profile-dark,
+.alerin-dark-theme,
+html.dark,
+body.dark {
+  background-color: #0f172a !important;
+  color-scheme: dark;
+}
+
+.profile-dark .alerin-shell,
+.alerin-dark-theme.alerin-shell,
+.alerin-dark-theme .alerin-shell,
+.dark .alerin-shell,
+.profile-dark .claro-chat-bg,
+.alerin-dark-theme .claro-chat-bg,
+.dark .claro-chat-bg {
+  background-color: #0f172a !important;
+  background-image: none !important;
+}
+
+@media (min-width: 768px) {
+  .profile-dark .claro-chat-bg,
+  .alerin-dark-theme .claro-chat-bg,
+  .dark .claro-chat-bg {
+    background-color: #0f172a !important;
+    background-image: none !important;
+  }
+}
+
+.profile-dark aside,
+.alerin-dark-theme aside,
+.dark aside {
+  background-color: #0f172a !important;
+  border-color: #1e293b !important;
+}
+
+.profile-dark header,
+.alerin-dark-theme header,
+.dark header {
+  background-color: #0f172a !important;
+  border-color: #1e293b !important;
+}
+
 .profile-dark .bg-white,
 .alerin-dark-theme .bg-white,
 .alerin-dark-theme .bg-white\/80,
 .alerin-dark-theme .bg-white\/85,
 .alerin-dark-theme .bg-white\/90,
-.alerin-dark-theme .bg-white\/95 {
+.alerin-dark-theme .bg-white\/95,
+.dark .bg-white,
+.dark .bg-white\/80,
+.dark .bg-white\/85,
+.dark .bg-white\/90,
+.dark .bg-white\/95 {
   background-color: #1e293b !important;
 }
 
 .profile-dark .bg-slate-50,
 .profile-dark .bg-neutral-50,
 .alerin-dark-theme .bg-slate-50,
-.alerin-dark-theme .bg-neutral-50 {
+.alerin-dark-theme .bg-neutral-50,
+.dark .bg-slate-50,
+.dark .bg-neutral-50 {
   background-color: #0f172a !important;
 }
 
 .profile-dark .bg-slate-100,
 .profile-dark .bg-slate-200,
 .alerin-dark-theme .bg-slate-100,
-.alerin-dark-theme .bg-slate-200 {
+.alerin-dark-theme .bg-slate-200,
+.dark .bg-slate-100,
+.dark .bg-slate-200 {
   background-color: #1e293b !important;
 }
 
@@ -224,28 +275,44 @@ body {
   color: #94a3b8 !important;
 }
 
-.alerin-dark-theme aside {
+.profile-dark aside,
+.alerin-dark-theme aside,
+.dark aside {
   background-color: #0f172a !important;
   border-color: #1e293b !important;
 }
 
-.alerin-dark-theme header {
+.profile-dark header,
+.alerin-dark-theme header,
+.dark header {
   background-color: #0f172a !important;
   border-color: #1e293b !important;
 }
 
+.profile-dark .bg-\[\#f4f7fb\],
+.profile-dark .bg-\[\#f3f6f9\],
+.profile-dark .bg-\[\#f1f5f9\],
+.profile-dark .bg-\[\#f8fafc\],
 .alerin-dark-theme .bg-\[\#f4f7fb\],
 .alerin-dark-theme .bg-\[\#f3f6f9\],
 .alerin-dark-theme .bg-\[\#f1f5f9\],
-.alerin-dark-theme .bg-\[\#f8fafc\] {
-  background-color: #0b0f19 !important;
+.alerin-dark-theme .bg-\[\#f8fafc\],
+.dark .bg-\[\#f4f7fb\],
+.dark .bg-\[\#f3f6f9\],
+.dark .bg-\[\#f1f5f9\],
+.dark .bg-\[\#f8fafc\] {
+  background-color: #0f172a !important;
 }
 
-.alerin-dark-theme .bg-\[\#eaf6ff\] {
+.profile-dark .bg-\[\#eaf6ff\],
+.alerin-dark-theme .bg-\[\#eaf6ff\],
+.dark .bg-\[\#eaf6ff\] {
   background-color: #172554 !important;
 }
 
-.alerin-dark-theme .bg-\[rgba\(200\,226\,251\,0\.24\)\] {
+.profile-dark .bg-\[rgba\(200\,226\,251\,0\.24\)\],
+.alerin-dark-theme .bg-\[rgba\(200\,226\,251\,0\.24\)\],
+.dark .bg-\[rgba\(200\,226\,251\,0\.24\)\] {
   background-color: #1e293b !important;
 }
 
@@ -695,6 +762,22 @@ body {
   }
 }
 
+.profile-dark .claro-chat-bg,
+.alerin-dark-theme .claro-chat-bg,
+.dark .claro-chat-bg {
+  background-color: #0f172a !important;
+  background-image: none !important;
+}
+
+@media (min-width: 768px) {
+  .profile-dark .claro-chat-bg,
+  .alerin-dark-theme .claro-chat-bg,
+  .dark .claro-chat-bg {
+    background-color: #0f172a !important;
+    background-image: none !important;
+  }
+}
+
 .claro-user-bubble {
   background: #eaf2ff;
   color: #0f172a;
@@ -709,6 +792,55 @@ body {
     border: 1px solid rgba(191, 219, 254, 0.85);
     box-shadow: 0 1px 3px rgba(37, 99, 235, 0.05);
   }
+}
+
+.profile-dark .claro-user-bubble,
+.alerin-dark-theme .claro-user-bubble,
+.dark .claro-user-bubble {
+  background: #1e293b !important;
+  color: #f8fafc !important;
+  border-color: #334155 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+@media (min-width: 768px) {
+  .profile-dark .claro-user-bubble,
+  .alerin-dark-theme .claro-user-bubble,
+  .dark .claro-user-bubble {
+    background: #1e293b !important;
+    color: #f8fafc !important;
+    border-color: #334155 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+  }
+}
+
+/* User Bubble Expand/Collapse (Lihat selengkapnya / Lihat lebih sedikit) */
+.claro-user-bubble-toggle-btn {
+  color: #1a73e8;
+}
+.claro-user-bubble-toggle-btn:hover {
+  background-color: rgba(219, 234, 254, 0.6);
+  color: #1557b0;
+}
+.claro-user-bubble-divider {
+  border-top-color: rgba(191, 219, 254, 0.85);
+}
+
+.profile-dark .claro-user-bubble-toggle-btn,
+.alerin-dark-theme .claro-user-bubble-toggle-btn,
+.dark .claro-user-bubble-toggle-btn {
+  color: #60a5fa !important;
+}
+.profile-dark .claro-user-bubble-toggle-btn:hover,
+.alerin-dark-theme .claro-user-bubble-toggle-btn:hover,
+.dark .claro-user-bubble-toggle-btn:hover {
+  background-color: rgba(51, 65, 85, 0.7) !important;
+  color: #93c5fd !important;
+}
+.profile-dark .claro-user-bubble-divider,
+.alerin-dark-theme .claro-user-bubble-divider,
+.dark .claro-user-bubble-divider {
+  border-top-color: rgba(51, 65, 85, 0.85) !important;
 }
 
 .claro-glass-card {
@@ -741,6 +873,114 @@ body {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     border-radius: 1rem;
   }
+}
+
+.profile-dark .claro-glass-card,
+.alerin-dark-theme .claro-glass-card,
+.dark .claro-glass-card {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.3) !important;
+}
+
+@media (min-width: 768px) {
+  .profile-dark .claro-glass-card,
+  .alerin-dark-theme .claro-glass-card,
+  .dark .claro-glass-card {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.3) !important;
+  }
+}
+
+.profile-dark .claro-glass-card:focus-within,
+.alerin-dark-theme .claro-glass-card:focus-within,
+.dark .claro-glass-card:focus-within {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25), 0 8px 30px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Follow-up suggestions cards */
+.chat-followup-btn {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  color: #334155;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.chat-followup-btn:hover {
+  background: #f0f6ff !important;
+  border-color: #3b82f6 !important;
+  color: #1a73e8 !important;
+  box-shadow: 0 4px 14px rgba(26, 115, 232, 0.12) !important;
+  transform: translateX(4px);
+}
+
+.chat-followup-btn:active {
+  transform: translateX(2px) scale(0.99);
+}
+
+.profile-dark .chat-followup-btn,
+.alerin-dark-theme .chat-followup-btn,
+.dark .chat-followup-btn {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  color: #e2e8f0 !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25) !important;
+}
+
+.profile-dark .chat-followup-btn:hover,
+.alerin-dark-theme .chat-followup-btn:hover,
+.dark .chat-followup-btn:hover {
+  background: #273549 !important;
+  border-color: #3b82f6 !important;
+  color: #60a5fa !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45) !important;
+  transform: translateX(4px);
+}
+
+.profile-dark .chat-followup-btn:active,
+.alerin-dark-theme .chat-followup-btn:active,
+.dark .chat-followup-btn:active {
+  transform: translateX(2px) scale(0.99);
+}
+
+/* Action menus */
+.profile-dark .user-bubble-action-menu,
+.alerin-dark-theme .user-bubble-action-menu,
+.dark .user-bubble-action-menu,
+.profile-dark .response-more-menu,
+.alerin-dark-theme .response-more-menu,
+.dark .response-more-menu {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5) !important;
+  color: #f8fafc !important;
+}
+
+.profile-dark .user-bubble-action-menu button,
+.alerin-dark-theme .user-bubble-action-menu button,
+.dark .user-bubble-action-menu button,
+.profile-dark .response-more-menu button,
+.alerin-dark-theme .response-more-menu button,
+.dark .response-more-menu button {
+  color: #e2e8f0 !important;
+}
+
+.profile-dark .user-bubble-action-menu button:hover,
+.alerin-dark-theme .user-bubble-action-menu button:hover,
+.dark .user-bubble-action-menu button:hover,
+.profile-dark .response-more-menu button:hover,
+.alerin-dark-theme .response-more-menu button:hover,
+.dark .response-more-menu button:hover {
+  background-color: #334155 !important;
+}
+
+.profile-dark .response-more-menu .border-b,
+.alerin-dark-theme .response-more-menu .border-b,
+.dark .response-more-menu .border-b {
+  border-color: #334155 !important;
 }
 
 @keyframes drawerSlideIn {
