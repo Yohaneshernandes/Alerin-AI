@@ -1047,3 +1047,44 @@ body.dark {
 .calendar-agenda-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #1d4ed8 !important;
 }
+
+/* Alerin Toast Notification (Always crisp white card) */
+.alerin-toast-card,
+.profile-dark .alerin-toast-card,
+.alerin-dark-theme .alerin-toast-card,
+.dark .alerin-toast-card {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border-color: rgba(226, 232, 240, 0.95) !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.14), 0 4px 12px rgba(0, 0, 0, 0.06) !important;
+}
+
+.alerin-toast-card h4,
+.profile-dark .alerin-toast-card h4,
+.alerin-dark-theme .alerin-toast-card h4,
+.dark .alerin-toast-card h4 {
+  color: #0f172a !important;
+}
+
+.alerin-toast-card p,
+.profile-dark .alerin-toast-card p,
+.alerin-dark-theme .alerin-toast-card p,
+.dark .alerin-toast-card p {
+  color: #64748b !important;
+}
+
+.alerin-toast-card button,
+.profile-dark .alerin-toast-card button,
+.alerin-dark-theme .alerin-toast-card button,
+.dark .alerin-toast-card button {
+  color: #94a3b8 !important;
+}
+
+.alerin-toast-card button:hover,
+.profile-dark .alerin-toast-card button:hover,
+.alerin-dark-theme .alerin-toast-card button:hover,
+.dark .alerin-toast-card button:hover {
+  background-color: #f1f5f9 !important;
+  color: #334155 !important;
+}

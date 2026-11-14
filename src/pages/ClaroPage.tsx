@@ -4059,7 +4059,8 @@ function Toast({ msg, onDone }: { msg: string | { title: string; description?: s
     <div
       role="status"
       aria-live="polite"
-      className="fixed bottom-6 left-4 right-4 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 z-[300] mx-auto w-auto max-w-[400px] sm:min-w-[340px] sm:max-w-[420px] flex items-center justify-between gap-3.5 rounded-2xl border border-slate-200/80 bg-white dark:bg-[#1e293b] dark:border-slate-700/80 p-3.5 sm:p-4 shadow-[0_16px_40px_rgba(0,0,0,0.14),0_4px_12px_rgba(0,0,0,0.06)] animate-[gemini-fade-in_0.2s_ease-out]"
+      className="alerin-toast-card fixed bottom-6 left-4 right-4 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 z-[300] mx-auto w-auto max-w-[400px] sm:min-w-[340px] sm:max-w-[420px] flex items-center justify-between gap-3.5 rounded-2xl border border-slate-200/90 bg-white p-3.5 sm:p-4 shadow-[0_16px_40px_rgba(0,0,0,0.14),0_4px_12px_rgba(0,0,0,0.06)] animate-[gemini-fade-in_0.2s_ease-out]"
+      style={{ backgroundColor: "#ffffff", color: "#0f172a" }}
     >
       <div className="flex items-center gap-3.5 min-w-0 flex-1">
         <div className="flex h-9.5 w-9.5 shrink-0 items-center justify-center rounded-full bg-blue-600 text-white shadow-sm shadow-blue-500/20">
@@ -4068,11 +4069,11 @@ function Toast({ msg, onDone }: { msg: string | { title: string; description?: s
           </svg>
         </div>
         <div className="min-w-0 flex-1">
-          <h4 className="text-[14px] font-bold leading-tight text-slate-900 dark:text-slate-100 tracking-tight truncate">
+          <h4 className="text-[14px] font-bold leading-tight text-slate-900 tracking-tight truncate" style={{ color: "#0f172a" }}>
             {title}
           </h4>
           {description ? (
-            <p className="mt-0.5 text-xs leading-snug text-slate-500 dark:text-slate-400 font-normal line-clamp-2">
+            <p className="mt-0.5 text-xs leading-snug text-slate-500 font-normal line-clamp-2" style={{ color: "#64748b" }}>
               {description}
             </p>
           ) : null}
@@ -4081,7 +4082,7 @@ function Toast({ msg, onDone }: { msg: string | { title: string; description?: s
       <button
         type="button"
         onClick={onDone}
-        className="size-7 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/60 flex items-center justify-center transition-colors shrink-0 cursor-pointer"
+        className="size-7 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center transition-colors shrink-0 cursor-pointer"
         aria-label="Tutup notifikasi"
       >
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -4095,21 +4096,23 @@ function Toast({ msg, onDone }: { msg: string | { title: string; description?: s
   return typeof document !== "undefined" ? createPortal(content, document.body) : content;
 }
 
-// ─── Image bubble components (ChatGPT / Gemini style dot matrix) ───────────────
+// ─── Image bubble components (Modern AI Generative Studio Canvas) ───────────────
 const IMAGE_GENERATING_STAGES = [
-  "Membuat sketsa",
-  "Menyiapkan latar",
-  "Membuat draf pertama",
-  "Menyempurnakan detail",
-  "Menambahkan sentuhan akhir",
+  { label: "Membuat sketsa", targetPercent: 24 },
+  { label: "Menyiapkan latar", targetPercent: 48 },
+  { label: "Membuat draf pertama", targetPercent: 72 },
+  { label: "Menyempurnakan detail", targetPercent: 90 },
+  { label: "Menambahkan sentuhan akhir", targetPercent: 99 },
 ];
 
-function DotMatrixCanvas({
+function ModernGenerativeCanvas({
   isRevealing,
   orientation = "portrait",
+  progress,
 }: {
   isRevealing?: boolean;
   orientation?: "landscape" | "portrait";
+  progress: number;
 }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -4123,18 +4126,23 @@ function DotMatrixCanvas({
     const startTime = performance.now();
     let revealStart: number | null = null;
 
-    const isLand = orientation === "landscape";
-    const cols = isLand ? 23 : 17;
-    const rows = isLand ? 15 : 23;
-    const paddingX = 14;
-    const paddingY = 14;
-    const cornerRadius = 24;
+    // Seed 28 floating micro stardust particles
+    const particles = Array.from({ length: 28 }, () => ({
+      xRatio: Math.random(),
+      yRatio: Math.random(),
+      size: 0.8 + Math.random() * 1.8,
+      speedY: 0.15 + Math.random() * 0.45,
+      driftSpeed: 0.4 + Math.random() * 0.8,
+      opacity: 0.2 + Math.random() * 0.7,
+      pulseOffset: Math.random() * Math.PI * 2,
+    }));
 
     const render = (now: number) => {
       const dpr = Math.min(window.devicePixelRatio || 2, 3);
       const rect = canvas.getBoundingClientRect();
-      const defaultW = isLand ? 320 : 270;
-      const defaultH = isLand ? 210 : 360;
+      const isLand = orientation === "landscape";
+      const defaultW = isLand ? 360 : 280;
+      const defaultH = isLand ? 230 : 380;
       const w = rect.width || defaultW;
       const h = rect.height || defaultH;
 
@@ -4147,82 +4155,170 @@ function DotMatrixCanvas({
       ctx.scale(dpr, dpr);
       ctx.clearRect(0, 0, w, h);
 
-      const time = (now - startTime) * 0.0011;
+      const time = (now - startTime) * 0.0012;
+      const isDark = typeof document !== "undefined" && (
+        document.documentElement.classList.contains("dark") ||
+        document.documentElement.classList.contains("profile-dark") ||
+        document.body?.classList.contains("dark")
+      );
 
-      // Handle reveal phase (dots expand and burst/cross-fade outward)
-      let revealProgress = 0;
-      if (isRevealing) {
-        if (!revealStart) revealStart = now;
-        revealProgress = Math.min(1, (now - revealStart) / 500);
+      // 1. Base Ambient Background (Deep space dark or crisp soft ambient light)
+      if (isDark) {
+        const bgGrad = ctx.createLinearGradient(0, 0, 0, h);
+        bgGrad.addColorStop(0, "#0b1329");
+        bgGrad.addColorStop(0.5, "#0f172a");
+        bgGrad.addColorStop(1, "#070b16");
+        ctx.fillStyle = bgGrad;
+      } else {
+        const bgGrad = ctx.createLinearGradient(0, 0, 0, h);
+        bgGrad.addColorStop(0, "#f8fafd");
+        bgGrad.addColorStop(0.5, "#eef5ff");
+        bgGrad.addColorStop(1, "#e6f0fd");
+        ctx.fillStyle = bgGrad;
+      }
+      ctx.fillRect(0, 0, w, h);
+
+      // 2. Latent Space Neural Matrix Grid (Subtle futuristic coordinates)
+      const gridSize = isLand ? 28 : 24;
+      ctx.lineWidth = 0.5;
+      ctx.strokeStyle = isDark ? "rgba(148, 163, 184, 0.07)" : "rgba(148, 163, 184, 0.16)";
+      for (let x = 0; x < w; x += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, h);
+        ctx.stroke();
+      }
+      for (let y = 0; y < h; y += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(w, y);
+        ctx.stroke();
       }
 
-      // Organic fluid energy orbs (Lissajous figure-8 matching video)
-      const cx1 = w * (0.5 + 0.22 * Math.sin(time * 0.8) + 0.06 * Math.cos(time * 1.5));
-      const cy1 = h * (0.5 + 0.24 * Math.cos(time * 0.65) + 0.05 * Math.sin(time * 1.2));
-      const r1 = (Math.min(w, h) * 0.36) * (1 + 0.18 * Math.sin(time * 1.3));
-
-      const cx2 = w * (0.5 + 0.24 * Math.sin(time * 0.8 - 1.0));
-      const cy2 = h * (0.5 + 0.26 * Math.cos(time * 0.65 - 1.0));
-      const r2 = (Math.min(w, h) * 0.28) * (1 + 0.15 * Math.cos(time * 1.6));
-
-      const stepX = (w - paddingX * 2) / (cols - 1);
-      const stepY = (h - paddingY * 2) / (rows - 1);
-
-      for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++) {
-          const x = paddingX + c * stepX;
-          const y = paddingY + r * stepY;
-
-          // Euclidean rounded-corner check to form perfect card shape
-          const inCornerTL = x < cornerRadius && y < cornerRadius && Math.hypot(x - cornerRadius, y - cornerRadius) > cornerRadius;
-          const inCornerTR = x > w - cornerRadius && y < cornerRadius && Math.hypot(x - (w - cornerRadius), y - cornerRadius) > cornerRadius;
-          const inCornerBL = x < cornerRadius && y > h - cornerRadius && Math.hypot(x - cornerRadius, y - (h - cornerRadius)) > cornerRadius;
-          const inCornerBR = x > w - cornerRadius && y > h - cornerRadius && Math.hypot(x - (w - cornerRadius), y - (h - cornerRadius)) > cornerRadius;
-          if (inCornerTL || inCornerTR || inCornerBL || inCornerBR) continue;
-
-          // Distance to energy orbs
-          const d1 = Math.hypot(x - cx1, y - cy1);
-          const d2 = Math.hypot(x - cx2, y - cy2);
-          const int1 = Math.exp(- (d1 * d1) / (2 * r1 * r1));
-          const int2 = Math.exp(- (d2 * d2) / (2 * r2 * r2)) * 0.75;
-          const intensity = Math.min(1, Math.max(int1, int2));
-
-          let radius = 1.45;
-          let fill = "rgba(203, 213, 225, 0.45)"; // soft slate for inactive dots
-
-          if (revealProgress > 0) {
-            // Reveal wave: expands outward from center
-            const centerDist = Math.hypot(x - w / 2, y - h / 2);
-            const waveRadius = revealProgress * (Math.hypot(w, h) * 0.6);
-            const distToWave = Math.abs(centerDist - waveRadius);
-            if (distToWave < 45) {
-              const waveInt = 1 - (distToWave / 45);
-              radius = 1.45 + waveInt * 2.8;
-              fill = `rgba(37, 99, 235, ${(0.85 * (1 - revealProgress * 0.5)).toFixed(2)})`;
-            } else if (centerDist < waveRadius) {
-              // Inside revealed region: fade out
-              radius = Math.max(0, 1.45 * (1 - revealProgress));
-              fill = `rgba(147, 197, 253, ${(0.35 * (1 - revealProgress)).toFixed(2)})`;
-            }
-          } else if (intensity > 0.08) {
-            const factor = (intensity - 0.08) / 0.92;
-            radius = 1.45 + factor * 1.35; // swells up to 2.8px
-            if (factor > 0.45) {
-              fill = "#2563eb"; // vibrant ChatGPT blue
-            } else {
-              const t = factor / 0.45;
-              const alpha = (0.5 + t * 0.45).toFixed(2);
-              fill = `rgba(59, 130, 246, ${alpha})`;
-            }
-          }
-
-          if (radius > 0.2) {
-            ctx.beginPath();
-            ctx.arc(x, y, radius, 0, Math.PI * 2);
-            ctx.fillStyle = fill;
-            ctx.fill();
-          }
+      // Small cross-hairs at grid intersections
+      ctx.fillStyle = isDark ? "rgba(96, 165, 250, 0.22)" : "rgba(37, 99, 235, 0.25)";
+      for (let x = gridSize; x < w; x += gridSize * 2) {
+        for (let y = gridSize; y < h; y += gridSize * 2) {
+          ctx.fillRect(x - 1, y - 1, 2, 2);
         }
+      }
+
+      // 3. Fluid Living Aurora Orbs (Harmonic Lissajous curves creating generative motion)
+      ctx.save();
+      ctx.globalCompositeOperation = isDark ? "screen" : "multiply";
+
+      // Blob A: Alerin Electric Blue
+      const cx1 = w * (0.45 + 0.24 * Math.sin(time * 0.9) + 0.05 * Math.cos(time * 1.6));
+      const cy1 = h * (0.42 + 0.22 * Math.cos(time * 0.75) + 0.06 * Math.sin(time * 1.3));
+      const r1 = Math.min(w, h) * (0.42 + 0.08 * Math.sin(time * 1.4));
+      const grad1 = ctx.createRadialGradient(cx1, cy1, 0, cx1, cy1, r1);
+      grad1.addColorStop(0, isDark ? "rgba(26, 115, 232, 0.55)" : "rgba(37, 99, 235, 0.32)");
+      grad1.addColorStop(0.6, isDark ? "rgba(37, 99, 235, 0.25)" : "rgba(59, 130, 246, 0.14)");
+      grad1.addColorStop(1, "rgba(26, 115, 232, 0)");
+      ctx.fillStyle = grad1;
+      ctx.beginPath();
+      ctx.arc(cx1, cy1, r1, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Blob B: Vibrant Cyan / Aqua
+      const cx2 = w * (0.62 + 0.22 * Math.sin(time * 0.8 - 1.2));
+      const cy2 = h * (0.58 + 0.25 * Math.cos(time * 0.65 - 0.8));
+      const r2 = Math.min(w, h) * (0.38 + 0.07 * Math.cos(time * 1.5));
+      const grad2 = ctx.createRadialGradient(cx2, cy2, 0, cx2, cy2, r2);
+      grad2.addColorStop(0, isDark ? "rgba(6, 182, 212, 0.50)" : "rgba(6, 182, 212, 0.28)");
+      grad2.addColorStop(0.65, isDark ? "rgba(6, 182, 212, 0.20)" : "rgba(6, 182, 212, 0.10)");
+      grad2.addColorStop(1, "rgba(6, 182, 212, 0)");
+      ctx.fillStyle = grad2;
+      ctx.beginPath();
+      ctx.arc(cx2, cy2, r2, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Blob C: Deep Violet / Purple
+      const cx3 = w * (0.35 + 0.20 * Math.cos(time * 0.7 + 1.0));
+      const cy3 = h * (0.65 + 0.18 * Math.sin(time * 0.85 + 1.2));
+      const r3 = Math.min(w, h) * (0.35 + 0.06 * Math.sin(time * 1.1));
+      const grad3 = ctx.createRadialGradient(cx3, cy3, 0, cx3, cy3, r3);
+      grad3.addColorStop(0, isDark ? "rgba(139, 92, 246, 0.45)" : "rgba(139, 92, 246, 0.24)");
+      grad3.addColorStop(0.7, isDark ? "rgba(139, 92, 246, 0.18)" : "rgba(139, 92, 246, 0.08)");
+      grad3.addColorStop(1, "rgba(139, 92, 246, 0)");
+      ctx.fillStyle = grad3;
+      ctx.beginPath();
+      ctx.arc(cx3, cy3, r3, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Blob D: Magenta / Warm Sunset Shimmer
+      const cx4 = w * (0.55 + 0.20 * Math.sin(time * 1.1 + 0.5));
+      const cy4 = h * (0.30 + 0.18 * Math.cos(time * 0.9 + 0.5));
+      const r4 = Math.min(w, h) * (0.32 + 0.05 * Math.cos(time * 1.3));
+      const grad4 = ctx.createRadialGradient(cx4, cy4, 0, cx4, cy4, r4);
+      grad4.addColorStop(0, isDark ? "rgba(236, 72, 153, 0.35)" : "rgba(244, 114, 182, 0.22)");
+      grad4.addColorStop(0.7, isDark ? "rgba(236, 72, 153, 0.12)" : "rgba(244, 114, 182, 0.06)");
+      grad4.addColorStop(1, "rgba(236, 72, 153, 0)");
+      ctx.fillStyle = grad4;
+      ctx.beginPath();
+      ctx.arc(cx4, cy4, r4, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+
+      // 4. Holographic Laser Scanning Beam (Simulating rasterized AI rendering)
+      const scanPeriod = 3.6;
+      const scanProgress = (time % scanPeriod) / scanPeriod;
+      const scanY = h * scanProgress;
+      const beamHeight = 48;
+      const scanGrad = ctx.createLinearGradient(0, scanY - beamHeight / 2, 0, scanY + beamHeight / 2);
+      scanGrad.addColorStop(0, "rgba(56, 189, 248, 0)");
+      scanGrad.addColorStop(0.5, isDark ? "rgba(56, 189, 248, 0.16)" : "rgba(37, 99, 235, 0.12)");
+      scanGrad.addColorStop(1, "rgba(56, 189, 248, 0)");
+      ctx.fillStyle = scanGrad;
+      ctx.fillRect(0, scanY - beamHeight / 2, w, beamHeight);
+
+      // Focused laser hairline in beam center
+      ctx.strokeStyle = isDark ? "rgba(147, 197, 253, 0.45)" : "rgba(37, 99, 235, 0.35)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(0, scanY);
+      ctx.lineTo(w, scanY);
+      ctx.stroke();
+
+      // 5. Floating Stardust Particles (Ethereal neural sparks rising gently)
+      particles.forEach((p) => {
+        p.yRatio -= (p.speedY * 0.0018);
+        if (p.yRatio < -0.05) {
+          p.yRatio = 1.05;
+          p.xRatio = Math.random();
+        }
+        const px = w * (p.xRatio + 0.02 * Math.sin(time * p.driftSpeed + p.pulseOffset));
+        const py = h * p.yRatio;
+        const currentOpacity = p.opacity * (0.6 + 0.4 * Math.sin(time * 3 + p.pulseOffset));
+
+        ctx.fillStyle = isDark
+          ? `rgba(186, 230, 253, ${currentOpacity.toFixed(2)})`
+          : `rgba(37, 99, 235, ${(currentOpacity * 0.75).toFixed(2)})`;
+        ctx.beginPath();
+        ctx.arc(px, py, p.size, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // 6. Radiant Reveal Burst (When AI rendering finishes, flashes smoothly before showing photo)
+      if (isRevealing) {
+        if (!revealStart) revealStart = now;
+        const revTime = Math.min(1, (now - revealStart) / 600);
+        const flashIntensity = Math.max(0, 1 - revTime * 1.4);
+        ctx.fillStyle = isDark
+          ? `rgba(255, 255, 255, ${(flashIntensity * 0.85).toFixed(2)})`
+          : `rgba(255, 255, 255, ${(flashIntensity * 0.95).toFixed(2)})`;
+        ctx.fillRect(0, 0, w, h);
+
+        const revRadius = revTime * Math.hypot(w, h) * 0.8;
+        const ringGrad = ctx.createRadialGradient(w / 2, h / 2, Math.max(0, revRadius - 30), w / 2, h / 2, revRadius + 30);
+        ringGrad.addColorStop(0, "rgba(59, 130, 246, 0)");
+        ringGrad.addColorStop(0.5, `rgba(96, 165, 250, ${(0.6 * (1 - revTime)).toFixed(2)})`);
+        ringGrad.addColorStop(1, "rgba(59, 130, 246, 0)");
+        ctx.fillStyle = ringGrad;
+        ctx.beginPath();
+        ctx.arc(w / 2, h / 2, revRadius + 30, 0, Math.PI * 2);
+        ctx.fill();
       }
 
       ctx.restore();
@@ -4233,17 +4329,30 @@ function DotMatrixCanvas({
     return () => cancelAnimationFrame(animId);
   }, [isRevealing, orientation]);
 
-  const containerClasses = orientation === "landscape"
-    ? "w-[310px] sm:w-[350px] md:w-[440px] h-[210px] sm:h-[235px] md:h-[290px]"
-    : "w-[270px] sm:w-[290px] md:w-[340px] h-[360px] sm:h-[390px] md:h-[455px]";
+  const isLandscape = orientation === "landscape";
+  const containerClasses = isLandscape
+    ? "w-[310px] sm:w-[360px] md:w-[450px] h-[215px] sm:h-[240px] md:h-[290px]"
+    : "w-[270px] sm:w-[300px] md:w-[350px] h-[360px] sm:h-[400px] md:h-[460px]";
 
   return (
-    <div className={`${containerClasses} relative rounded-3xl flex items-center justify-center transition-all duration-300`}>
+    <div
+      className={`${containerClasses} relative rounded-3xl overflow-hidden shadow-[0_14px_38px_rgba(0,0,0,0.07)] flex flex-col justify-end transition-all duration-300 select-none`}
+    >
+      {/* Background Interactive Generative Canvas */}
       <canvas
         ref={canvasRef}
-        className="w-full h-full block"
+        className="absolute inset-0 w-full h-full block"
         style={{ width: "100%", height: "100%" }}
       />
+
+      {/* Badge Persentase di Pojok Kanan Bawah (Shape Putih Elegan Tanpa Stroke) */}
+      <div className="absolute bottom-3.5 right-3.5 z-10 pointer-events-none">
+        <div className="px-3 py-1 rounded-full bg-white shadow-[0_2px_12px_rgba(0,0,0,0.12)] flex items-center justify-center">
+          <span className="text-xs font-bold font-mono tracking-tight text-slate-800 tabular-nums">
+            {progress}%
+          </span>
+        </div>
+      </div>
     </div>
   );
 }
@@ -4258,21 +4367,22 @@ function ImageGeneratingBubble({
   const [stageIndex, setStageIndex] = useState(0);
   const [isFading, setIsFading] = useState(false);
   const [isRevealing, setIsRevealing] = useState(false);
+  const [progress, setProgress] = useState(14);
 
   const effectiveOrientation = orientation ?? detectImageOrientation(prompt);
 
+  // Stages ticker: 5 stages tuned to complete in ~8 seconds total
   useEffect(() => {
-    const stageDuration = 2300;
+    const stageDuration = 1500;
     const interval = setInterval(() => {
       setStageIndex((prev) => {
         if (prev < IMAGE_GENERATING_STAGES.length - 1) {
           setIsFading(true);
           setTimeout(() => {
             setIsFading(false);
-          }, 350);
+          }, 300);
           return prev + 1;
         } else {
-          // Reached final stage, trigger reveal animation
           setIsRevealing(true);
           clearInterval(interval);
           return prev;
@@ -4283,49 +4393,73 @@ function ImageGeneratingBubble({
     return () => clearInterval(interval);
   }, []);
 
+  // Smooth percentage counter towards each stage's target
+  useEffect(() => {
+    const target = isRevealing ? 100 : IMAGE_GENERATING_STAGES[stageIndex].targetPercent;
+    const timer = setInterval(() => {
+      setProgress((p) => {
+        if (p >= target) return target;
+        const diff = target - p;
+        const step = Math.max(1, Math.round(diff * 0.16));
+        return Math.min(target, p + step);
+      });
+    }, 100);
+
+    return () => clearInterval(timer);
+  }, [stageIndex, isRevealing]);
+
   const maxWidthClass = effectiveOrientation === "landscape"
     ? "max-w-[360px] md:max-w-[460px]"
     : "max-w-[320px] md:max-w-[360px]";
 
   return (
     <div className={`flex flex-col items-start w-full ${maxWidthClass} select-none py-1 transition-all duration-300`}>
-      {/* Dynamic changing text above loading (as in video: "Membuat sketsa", etc.) */}
+      {/* Dynamic changing text above loading */}
       <div className="min-h-[26px] flex items-center mb-2.5">
         <p
-          className="text-[15px] font-normal text-neutral-500 transition-all duration-350 ease-in-out"
+          className="text-[15px] font-normal text-neutral-600 dark:text-neutral-400 transition-all duration-300 ease-in-out"
           style={{
             opacity: isRevealing ? 0 : isFading ? 0 : 1,
             transform: isFading ? "translateY(-4px)" : "translateY(0)",
           }}
         >
-          {IMAGE_GENERATING_STAGES[stageIndex]}
+          {IMAGE_GENERATING_STAGES[stageIndex].label}
         </p>
       </div>
 
-      {/* Animated Dot Matrix Grid (Lissajous organic energy orb matching video, landscape or portrait) */}
-      <div className="mb-4">
-        <DotMatrixCanvas isRevealing={isRevealing} orientation={effectiveOrientation} />
+      {/* Modern AI Generative Studio Canvas with Aurora, Neural Grid, Laser Beam & Bottom-Right White Pill */}
+      <div className="mb-3.5">
+        <ModernGenerativeCanvas
+          isRevealing={isRevealing}
+          orientation={effectiveOrientation}
+          progress={progress}
+        />
       </div>
 
-      {/* Upgrade callout below dot matrix */}
+      {/* Modern Upgrade Callout Card */}
       <div className="w-full pt-1 flex flex-col items-start gap-2.5">
-        <p className="text-[14px] text-neutral-800 font-normal leading-snug">
-          Ingin hasil yang lebih detail dan akurat?<br />
-          Coba Alerin Pro.
-        </p>
-
-        <button
-          type="button"
-          onClick={() => {
-            window.dispatchEvent(new CustomEvent("alerin-open-upgrade"));
-          }}
-          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-slate-200/90 bg-white hover:bg-slate-50 text-[13px] font-semibold text-blue-600 shadow-xs transition-all active:scale-95"
-        >
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="#2563eb" stroke="none">
-            <path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z" />
-          </svg>
-          <span>Dapatkan Pro</span>
-        </button>
+        <div className="p-3.5 rounded-2xl bg-white/70 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60 shadow-xs flex items-center justify-between gap-3 w-full">
+          <div className="min-w-0">
+            <p className="text-[13px] font-medium text-slate-800 dark:text-slate-200 leading-snug">
+              Ingin hasil lebih detail dan akurat?
+            </p>
+            <p className="text-[11.5px] text-slate-500 dark:text-slate-400">
+              Akses resolusi 4K & rendering prioritas dengan Alerin Pro.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              window.dispatchEvent(new CustomEvent("alerin-open-upgrade"));
+            }}
+            className="shrink-0 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 active:scale-95 text-xs font-semibold text-white shadow-xs transition-all cursor-pointer"
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="white" stroke="none">
+              <path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z" />
+            </svg>
+            <span>Dapatkan Pro</span>
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -12449,7 +12583,7 @@ function PercakapanTab({
               : msg
           )
         );
-      }, 2600);
+      }, 8000);
     } else if (isParaphraseRequest(text)) {
       setTyping(true);
       responseTimeoutRef.current = setTimeout(() => {
@@ -12527,7 +12661,7 @@ function PercakapanTab({
               : msg
           )
         );
-      }, 2600);
+      }, 8000);
       return;
     }
 
@@ -16572,7 +16706,7 @@ function ProyekTab({
         updateChatInStateAndStorage(finalChat);
         setIsGenerating(false);
         setTimeout(() => chatEndRef.current?.scrollIntoView({ behavior: "smooth" }), 60);
-      }, 2600);
+      }, 8000);
       return;
     }
 
