@@ -18505,6 +18505,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
   const [agendaReminderOffset, setAgendaReminderOffset] = useState("30 menit sebelumnya");
   const [reminderMenuOpen, setReminderMenuOpen] = useState(false);
   const [mobileReminderDropdown, setMobileReminderDropdown] = useState(false);
+  const [mobileTimePickerOpen, setMobileTimePickerOpen] = useState(false);
   const [reminderMenuPos, setReminderMenuPos] = useState<{ bottom: number; right: number; width: number } | null>(null);
   const [timePickerOpen, setTimePickerOpen] = useState(false);
   const [timePickerPos, setTimePickerPos] = useState<{ top: number; left: number } | null>(null);
@@ -18541,6 +18542,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
     setReminderMenuOpen(false);
     setMobileReminderDropdown(false);
     setTimePickerOpen(false);
+    setMobileTimePickerOpen(false);
     setDeleteAgendaConfirm(null);
     setGoogleConnectModal(false);
     if (syncIntervalRef.current) {
@@ -18603,6 +18605,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
         else if (googleConnectModal) setGoogleConnectModal(false);
         else if (deleteAgendaConfirm) setDeleteAgendaConfirm(null);
         else if (timePickerOpen) setTimePickerOpen(false);
+        else if (mobileTimePickerOpen) setMobileTimePickerOpen(false);
         else if (reminderMenuOpen) setReminderMenuOpen(false);
         else if (addingAgenda) switchDesktopView(false);
         else onClose();
@@ -18610,7 +18613,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [googleSuccessModal, googleSyncingModal, googleConnectModal, deleteAgendaConfirm, addingAgenda, reminderMenuOpen, timePickerOpen, switchDesktopView, onClose]);
+  }, [googleSuccessModal, googleSyncingModal, googleConnectModal, deleteAgendaConfirm, addingAgenda, reminderMenuOpen, timePickerOpen, mobileTimePickerOpen, switchDesktopView, onClose]);
 
   const year = cursor.getFullYear();
   const month = cursor.getMonth();
@@ -18726,6 +18729,22 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
     setAgendaErrors((prev) => (prev.time ? { ...prev, time: false } : prev));
   };
 
+  const openMobileTimePicker = () => {
+    setMobileReminderDropdown(false);
+    const parsed = agendaTime.trim().match(/^([01]?\d|2[0-3])(?:\s*[.:]\s*([0-5]\d))?$/);
+    if (parsed) {
+      setPickerHour(parseInt(parsed[1], 10));
+      setPickerMinute(parsed[2] ? parseInt(parsed[2], 10) : 0);
+    } else {
+      setPickerHour(10);
+      setPickerMinute(0);
+      if (!agendaTime) {
+        setAgendaTime("10 . 00");
+      }
+    }
+    setMobileTimePickerOpen(true);
+  };
+
   const openAddAgendaModal = () => {
     setEditingAgenda(null);
     setAgendaTitle("");
@@ -18736,6 +18755,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
     setAgendaErrors({});
     setReminderMenuOpen(false);
     setTimePickerOpen(false);
+    setMobileTimePickerOpen(false);
     switchDesktopView(true);
   };
 
@@ -18753,6 +18773,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
     setAgendaErrors({});
     setReminderMenuOpen(false);
     setTimePickerOpen(false);
+    setMobileTimePickerOpen(false);
     switchDesktopView(true);
   };
 
@@ -18915,6 +18936,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
     setAgendaReminder(false);
     setReminderMenuOpen(false);
     setTimePickerOpen(false);
+    setMobileTimePickerOpen(false);
     switchDesktopView(false);
     showCalNotice(wasEditing ? "Agenda berhasil diperbarui" : "Agenda baru berhasil ditambahkan", "success");
   };
@@ -20156,7 +20178,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
             </div>
 
             {/* Form Fields Section */}
-            <div className="self-stretch px-5 py-2.5 sm:py-3 bg-slate-50 flex flex-col justify-start items-start gap-2.5 overflow-hidden">
+            <div className="self-stretch px-5 py-2.5 sm:py-3 bg-slate-50 flex flex-col justify-start items-start gap-2.5">
               {/* Judul Agenda */}
               <div className="self-stretch flex flex-col justify-start items-start gap-1.5">
                 <div className="self-stretch inline-flex justify-between items-center">
@@ -20208,17 +20230,31 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                 </div>
 
                 {/* Waktu */}
-                <div className="self-stretch flex flex-col justify-start items-start gap-1.5">
+                <div className="self-stretch flex flex-col justify-start items-start gap-1.5 relative">
                   <label className="self-stretch text-slate-800 text-xs font-semibold leading-4">
                     Waktu <span className="text-rose-500">*</span>
                   </label>
-                  <div className="self-stretch relative inline-flex justify-start items-center">
+                  <div
+                    onClick={() => {
+                      if (!mobileTimePickerOpen) {
+                        openMobileTimePicker();
+                      } else {
+                        setMobileTimePickerOpen(false);
+                      }
+                    }}
+                    className="self-stretch relative inline-flex justify-start items-center cursor-pointer"
+                  >
                     <input
                       type="text"
                       value={agendaTime}
                       onChange={(e) => handleAgendaTimeChange(e.target.value)}
+                      onFocus={() => {
+                        if (!mobileTimePickerOpen) {
+                          openMobileTimePicker();
+                        }
+                      }}
                       placeholder="-- . --"
-                      className={`flex-1 pl-3.5 pr-9 py-2.5 bg-white rounded-xl outline outline-1 outline-offset-[-1px] text-xs text-slate-900 placeholder:text-slate-400 font-normal transition-colors ${
+                      className={`flex-1 pl-3.5 pr-9 py-2.5 bg-white rounded-xl outline outline-1 outline-offset-[-1px] text-xs text-slate-900 placeholder:text-slate-400 font-normal transition-colors cursor-pointer ${
                         agendaErrors.time ? "outline-red-400 focus:outline-red-400" : "outline-slate-200 focus:outline-blue-600"
                       }`}
                     />
@@ -20229,6 +20265,103 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                       </svg>
                     </div>
                   </div>
+
+                  {/* Mobile Time Picker Dropdown Popover */}
+                  {mobileTimePickerOpen && (
+                    <>
+                      <div
+                        className="fixed inset-0 z-30"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setMobileTimePickerOpen(false);
+                        }}
+                      />
+                      <div
+                        onClick={(e) => e.stopPropagation()}
+                        className="absolute top-full left-0 mt-1.5 z-40 bg-white rounded-2xl border border-slate-200/90 shadow-[0_12px_32px_rgba(15,23,42,0.18)] px-3.5 py-2.5 flex items-center justify-center gap-1 font-['Plus_Jakarta_Sans'] select-none animate-[gemini-fade-in_0.12s_ease-out]"
+                      >
+                        {[
+                          {
+                            key: "hour",
+                            value: pickerHour,
+                            mod: 24,
+                            onPick: (nextVal: number) => applyPickerTime(nextVal, pickerMinute),
+                          },
+                          {
+                            key: "minute",
+                            value: pickerMinute,
+                            mod: 60,
+                            onPick: (nextVal: number) => applyPickerTime(pickerHour, nextVal),
+                          },
+                        ].map((col, colIdx) => (
+                          <React.Fragment key={col.key}>
+                            {colIdx === 1 && (
+                              <span className="text-slate-900 font-bold text-sm leading-none px-0.5 self-center">
+                                .
+                              </span>
+                            )}
+                            <div
+                              onWheel={(e) => {
+                                e.preventDefault();
+                                col.onPick(col.value + (e.deltaY > 0 ? 1 : -1));
+                              }}
+                              className="flex flex-col items-center"
+                            >
+                              <button
+                                type="button"
+                                aria-label={`Kurangi ${col.key}`}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  col.onPick(col.value - 1);
+                                }}
+                                className="w-9 h-5 rounded flex items-center justify-center text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
+                              >
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round">
+                                  <path d="M18 15l-6-6-6 6" />
+                                </svg>
+                              </button>
+
+                              {[-3, -2, -1, 0, 1, 2, 3].map((offset) => {
+                                const val = (col.value + offset + col.mod) % col.mod;
+                                const isCenter = offset === 0;
+                                return (
+                                  <button
+                                    key={offset}
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      col.onPick(val);
+                                    }}
+                                    className={`w-9 flex items-center justify-center transition-colors cursor-pointer text-xs ${
+                                      isCenter
+                                        ? "h-6 bg-blue-600 rounded-lg text-white font-semibold shadow-xs"
+                                        : "h-5 text-slate-500 hover:text-slate-800 font-normal"
+                                    }`}
+                                  >
+                                    {String(val).padStart(2, "0")}
+                                  </button>
+                                );
+                              })}
+
+                              <button
+                                type="button"
+                                aria-label={`Tambah ${col.key}`}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  col.onPick(col.value + 1);
+                                }}
+                                className="w-9 h-5 rounded flex items-center justify-center text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
+                              >
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round">
+                                  <path d="M6 9l6 6 6-6" />
+                                </svg>
+                              </button>
+                            </div>
+                          </React.Fragment>
+                        ))}
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
 
