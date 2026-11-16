@@ -18504,6 +18504,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
   const [agendaReminder, setAgendaReminder] = useState(false);
   const [agendaReminderOffset, setAgendaReminderOffset] = useState("30 menit sebelumnya");
   const [reminderMenuOpen, setReminderMenuOpen] = useState(false);
+  const [mobileReminderDropdown, setMobileReminderDropdown] = useState(false);
   const [reminderMenuPos, setReminderMenuPos] = useState<{ bottom: number; right: number; width: number } | null>(null);
   const [timePickerOpen, setTimePickerOpen] = useState(false);
   const [timePickerPos, setTimePickerPos] = useState<{ top: number; left: number } | null>(null);
@@ -18538,6 +18539,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
 
   const switchDesktopView = useCallback((nextAdding: boolean, direction: "forward" | "back" = "forward") => {
     setReminderMenuOpen(false);
+    setMobileReminderDropdown(false);
     setTimePickerOpen(false);
     setDeleteAgendaConfirm(null);
     setGoogleConnectModal(false);
@@ -20251,36 +20253,71 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
               </div>
 
               {/* Aktifkan Pengingat Card */}
-              <div className="self-stretch p-3.5 bg-white rounded-2xl outline outline-1 outline-offset-[-1px] outline-slate-200/90 inline-flex justify-between items-center">
-                <div className="flex justify-start items-center gap-2.5">
-                  <div className="size-9 bg-blue-50 rounded-lg outline outline-1 outline-offset-[-1px] outline-blue-100/50 flex justify-center items-center shrink-0 text-blue-600">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-                      <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-                    </svg>
+              <div className="self-stretch p-3.5 bg-white rounded-2xl outline outline-1 outline-offset-[-1px] outline-slate-200/90 flex flex-col gap-2.5">
+                <div className="self-stretch inline-flex justify-between items-center">
+                  <div className="flex justify-start items-center gap-2.5">
+                    <div className="size-9 bg-blue-50 rounded-lg outline outline-1 outline-offset-[-1px] outline-blue-100/50 flex justify-center items-center shrink-0 text-blue-600">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                      </svg>
+                    </div>
+                    <div className="inline-flex flex-col justify-start items-start gap-0.5">
+                      <span className="justify-center text-slate-900 text-xs font-bold leading-4">
+                        Aktifkan Pengingat
+                      </span>
+                      <span className="justify-center text-gray-500 text-[9.5px] font-normal leading-4">
+                        Kirim notifikasi sebelum agenda dimulai
+                      </span>
+                    </div>
                   </div>
-                  <div className="inline-flex flex-col justify-start items-start gap-0.5">
-                    <span className="justify-center text-slate-900 text-xs font-bold leading-4">
-                      Aktifkan Pengingat
-                    </span>
-                    <span className="justify-center text-gray-500 text-[9.5px] font-normal leading-4">
-                      Kirim notifikasi sebelum agenda dimulai
-                    </span>
-                  </div>
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={agendaReminder}
+                    onClick={() => {
+                      const next = !agendaReminder;
+                      setAgendaReminder(next);
+                      if (!next) setMobileReminderDropdown(false);
+                    }}
+                    className={`w-9 h-5 rounded-full relative flex items-center p-0.5 cursor-pointer transition-colors ${
+                      agendaReminder ? "bg-blue-600 justify-end" : "bg-slate-200 justify-start"
+                    }`}
+                  >
+                    <div className="size-4 rounded-full bg-white shadow-sm" />
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  role="switch"
-                  aria-checked={agendaReminder}
-                  onClick={() => setAgendaReminder(!agendaReminder)}
-                  className={`w-8 h-4.5 rounded-full relative flex items-center p-0.5 cursor-pointer transition-colors ${
-                    agendaReminder ? "bg-blue-600 justify-end" : "bg-slate-200 justify-start"
-                  }`}
-                >
-                  <div className={`size-3.5 rounded-full shadow-sm transition-all ${
-                    agendaReminder ? "bg-white border border-blue-600" : "bg-white border border-slate-300"
-                  }`} />
-                </button>
+
+                {agendaReminder && (
+                  <>
+                    <div className="self-stretch h-px bg-slate-100" />
+                    <div className="self-stretch flex items-center justify-between pt-0.5 relative">
+                      <span className="text-slate-600 text-xs font-normal font-['Plus_Jakarta_Sans'] leading-4">
+                        Beri tahu saya:
+                      </span>
+                      <div className="relative">
+                        <div className="h-8 px-3 py-1.5 bg-white rounded-lg outline outline-1 outline-offset-[-1px] outline-slate-200 inline-flex items-center justify-between gap-2 text-slate-800 text-xs font-medium shadow-2xs pointer-events-none">
+                          <span>{agendaReminderOffset}</span>
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-500">
+                            <polyline points="6 9 12 15 18 9" />
+                          </svg>
+                        </div>
+                        <select
+                          value={agendaReminderOffset}
+                          onChange={(e) => setAgendaReminderOffset(e.target.value)}
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer text-xs"
+                          aria-label="Pilih waktu pengingat"
+                        >
+                          {AGENDA_REMINDER_OPTIONS.map((opt) => (
+                            <option key={opt} value={opt}>
+                              {opt}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
 
