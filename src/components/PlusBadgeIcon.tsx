@@ -6,7 +6,7 @@
 export default function PlusBadgeIcon({
   size = 11,
   className = "shrink-0",
-  variant = "crown",
+  variant = "diamond",
 }: {
   size?: number;
   className?: string;
@@ -24,21 +24,30 @@ export default function PlusBadgeIcon({
         aria-hidden="true"
       >
         <path
-          d="M6 3h12l4.5 7L12 22 1.5 10 6 3z"
+          d="M6 3h12l4 6-10 13L2 9Z"
           fill="url(#alerin-plus-diamond-grad)"
+          stroke="url(#alerin-plus-diamond-grad)"
+          strokeWidth="1.2"
+          strokeLinejoin="round"
         />
         <path
-          d="M1.5 10h21M6 3l6 19 6-19M8 3l4 7 4-7"
-          stroke="rgba(255,255,255,0.75)"
-          strokeWidth="1.2"
+          d="M11 3 8 9l4 13 4-13-3-6"
+          stroke="rgba(255,255,255,0.85)"
+          strokeWidth="1.3"
           strokeLinecap="round"
           strokeLinejoin="round"
+        />
+        <path
+          d="M2 9h20"
+          stroke="rgba(255,255,255,0.85)"
+          strokeWidth="1.3"
+          strokeLinecap="round"
         />
         <defs>
           <linearGradient id="alerin-plus-diamond-grad" x1="2" y1="3" x2="22" y2="22" gradientUnits="userSpaceOnUse">
             <stop offset="0%" stopColor="#38bdf8" />
             <stop offset="50%" stopColor="#2563eb" />
-            <stop offset="100%" stopColor="#1e40af" />
+            <stop offset="100%" stopColor="#1d4ed8" />
           </linearGradient>
         </defs>
       </svg>
