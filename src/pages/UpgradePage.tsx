@@ -1498,6 +1498,12 @@ export default function UpgradePage() {
                 {/* Dropdown for 7 Hari */}
                 {openDropdown === "7d" && (
                   <div className="absolute top-full left-0 sm:left-1/2 sm:-translate-x-1/2 mt-2 w-64 max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-2xl border border-slate-200/90 p-2 z-50 text-left animate-[gemini-zoom-in_0.15s_ease-out]">
+                    {/* Speech bubble pointer / arrow */}
+                    <div
+                      className="absolute -top-[5px] left-14 sm:left-1/2 sm:-translate-x-1/2 w-3 h-3 bg-white border-t border-l border-slate-200/90 rotate-45 rounded-tl-[1.5px] pointer-events-none z-10"
+                      aria-hidden="true"
+                    />
+
                     {/* Option: 7 Hari Plus */}
                     <button
                       type="button"
@@ -1622,6 +1628,12 @@ export default function UpgradePage() {
                 {/* Dropdown for 30 Hari */}
                 {openDropdown === "30d" && (
                   <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-64 max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-2xl border border-slate-200/90 p-2 z-50 text-left animate-[gemini-zoom-in_0.15s_ease-out]">
+                    {/* Speech bubble pointer / arrow */}
+                    <div
+                      className="absolute -top-[5px] left-1/2 -translate-x-1/2 w-3 h-3 bg-white border-t border-l border-slate-200/90 rotate-45 rounded-tl-[1.5px] pointer-events-none z-10"
+                      aria-hidden="true"
+                    />
+
                     {/* Option: 30 Hari Plus */}
                     <button
                       type="button"
@@ -1746,6 +1758,12 @@ export default function UpgradePage() {
                 {/* Dropdown for 1 Tahun */}
                 {openDropdown === "1y" && (
                   <div className="absolute top-full right-0 sm:right-auto sm:left-1/2 sm:-translate-x-1/2 mt-2 w-64 max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-2xl border border-slate-200/90 p-2 z-50 text-left animate-[gemini-zoom-in_0.15s_ease-out]">
+                    {/* Speech bubble pointer / arrow */}
+                    <div
+                      className="absolute -top-[5px] right-14 sm:right-auto sm:left-1/2 sm:-translate-x-1/2 w-3 h-3 bg-white border-t border-l border-slate-200/90 rotate-45 rounded-tl-[1.5px] pointer-events-none z-10"
+                      aria-hidden="true"
+                    />
+
                     {/* Option: 1 Tahun Plus */}
                     <button
                       type="button"
