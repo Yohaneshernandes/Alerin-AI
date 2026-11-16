@@ -1498,12 +1498,6 @@ export default function UpgradePage() {
                 {/* Dropdown for 7 Hari */}
                 {openDropdown === "7d" && (
                   <div className="absolute top-full left-0 sm:left-1/2 sm:-translate-x-1/2 mt-2 w-64 max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-2xl border border-slate-200/90 p-2 z-50 text-left animate-[gemini-zoom-in_0.15s_ease-out]">
-                    <div className="px-3 py-1.5 border-b border-slate-100 mb-1">
-                      <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                        Pilih Paket 7 Hari
-                      </p>
-                    </div>
-
                     {/* Option: 7 Hari Plus */}
                     <button
                       type="button"
@@ -1628,12 +1622,6 @@ export default function UpgradePage() {
                 {/* Dropdown for 30 Hari */}
                 {openDropdown === "30d" && (
                   <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-64 max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-2xl border border-slate-200/90 p-2 z-50 text-left animate-[gemini-zoom-in_0.15s_ease-out]">
-                    <div className="px-3 py-1.5 border-b border-slate-100 mb-1">
-                      <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                        Pilih Paket 30 Hari
-                      </p>
-                    </div>
-
                     {/* Option: 30 Hari Plus */}
                     <button
                       type="button"
@@ -1758,12 +1746,6 @@ export default function UpgradePage() {
                 {/* Dropdown for 1 Tahun */}
                 {openDropdown === "1y" && (
                   <div className="absolute top-full right-0 sm:right-auto sm:left-1/2 sm:-translate-x-1/2 mt-2 w-64 max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-2xl border border-slate-200/90 p-2 z-50 text-left animate-[gemini-zoom-in_0.15s_ease-out]">
-                    <div className="px-3 py-1.5 border-b border-slate-100 mb-1">
-                      <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                        Pilih Paket 1 Tahun
-                      </p>
-                    </div>
-
                     {/* Option: 1 Tahun Plus */}
                     <button
                       type="button"
