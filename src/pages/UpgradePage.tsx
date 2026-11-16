@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect, useCallback, useRef } from "react"
 import { useNavigate, Link } from "react-router";
 import PlusBadgeIcon from "@/components/PlusBadgeIcon";
 import AlerinBusinessModal from "@/components/AlerinBusinessModal";
+import AlerinToast from "@/components/AlerinToast";
 
 // Database rincian detail paket fitur
 const FEATURE_DETAILS: Record<
@@ -659,17 +660,14 @@ export default function UpgradePage() {
   const [isPaymentProcessing, setIsPaymentProcessing] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 
-  const [toast, setToast] = useState<{
-    text: string;
-    type: "info" | "success" | "warning" | "error";
-  } | null>(null);
+  const [toast, setToast] = useState<string | { title: string; description?: string } | null>(null);
 
-  const showToast = (text: string, type: "info" | "success" | "warning" | "error" = "info") => {
-    setToast({ text, type });
-    window.setTimeout(() => {
-      setToast(null);
-    }, 3000);
-  };
+  const showToast = useCallback(
+    (msg: string | { title: string; description?: string }, _type?: string) => {
+      setToast(msg);
+    },
+    []
+  );
 
   // Toggle Features
   const toggleFeature = (key: string) => {
@@ -837,24 +835,8 @@ export default function UpgradePage() {
         setProfileMenuOpen(false);
       }}
     >
-      {/* Toast Notification Container */}
-      {toast && (
-        <div className="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-auto animate-[gemini-fade-in_0.2s_ease-out]">
-          <div
-            className={`px-4 py-2.5 rounded-xl shadow-xl text-xs font-semibold flex items-center gap-2 ${
-              toast.type === "success"
-                ? "bg-brand-600 text-white"
-                : toast.type === "error"
-                ? "bg-red-600 text-white"
-                : toast.type === "warning"
-                ? "bg-amber-600 text-white"
-                : "bg-slate-900 text-white"
-            }`}
-          >
-            <span>{toast.text}</span>
-          </div>
-        </div>
-      )}
+      {/* Toast Notification (Persis Toast di Alerin Chat) */}
+      {toast && <AlerinToast msg={toast} onDone={() => setToast(null)} />}
 
       {/* HEADER & NAVIGATION (Persis Header Utama Alerin di Chat) */}
       <header
