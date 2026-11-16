@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { useNavigate, Link } from "react-router";
 import PlusBadgeIcon from "@/components/PlusBadgeIcon";
 
@@ -221,11 +221,10 @@ function formatRupiah(num: number): string {
   }).format(num);
 }
 
-function getDurationReadable(dur: "7d" | "30d" | "1y"): string {
-  if (dur === "7d") return "7 Hari";
-  if (dur === "30d") return "30 Hari";
-  if (dur === "1y") return "1 Tahun";
-  return dur;
+function getDurationReadable(dur: "7d" | "30d" | "1y", tier?: "plus" | "pro"): string {
+  const durLabel = dur === "7d" ? "7 Hari" : dur === "30d" ? "30 Hari" : "1 Tahun";
+  if (!tier) return durLabel;
+  return `${durLabel} (${tier === "pro" ? "Pro" : "Plus"})`;
 }
 
 export default function UpgradePage() {
@@ -233,6 +232,35 @@ export default function UpgradePage() {
 
   // State
   const [currentDuration, setCurrentDuration] = useState<"7d" | "30d" | "1y">("30d");
+  const [currentTier, setCurrentTier] = useState<"plus" | "pro">("plus");
+  const [openDropdown, setOpenDropdown] = useState<"7d" | "30d" | "1y" | null>(null);
+
+  useEffect(() => {
+    const handleOutsideClick = () => {
+      setOpenDropdown(null);
+    };
+    window.addEventListener("click", handleOutsideClick);
+    return () => window.removeEventListener("click", handleOutsideClick);
+  }, []);
+
+  const getPrice = useCallback((key: string) => {
+    const item = PRICING_DATABASE[key];
+    if (!item) return 0;
+    const base = item.prices[currentDuration];
+    if (currentTier === "pro") {
+      return Math.round((base * 1.35) / 1000) * 1000;
+    }
+    return base;
+  }, [currentDuration, currentTier]);
+
+  const getOriginalYearly = useCallback((key: string) => {
+    const item = PRICING_DATABASE[key];
+    if (!item) return 0;
+    if (currentTier === "pro") {
+      return Math.round((item.original_yearly * 1.35) / 1000) * 1000;
+    }
+    return item.original_yearly;
+  }, [currentTier]);
   const [selectedFeatures, setSelectedFeatures] = useState<Set<string>>(
     () => new Set(["skripsi", "parafrase"])
   );
@@ -295,11 +323,10 @@ export default function UpgradePage() {
     let orig = 0;
 
     FEATURE_KEYS.forEach((key) => {
-      const item = PRICING_DATABASE[key];
-      const price = item.prices[currentDuration];
+      const price = getPrice(key);
       if (selectedFeatures.has(key)) {
         sub += price;
-        orig += currentDuration === "1y" ? item.original_yearly : price;
+        orig += currentDuration === "1y" ? getOriginalYearly(key) : price;
       }
     });
 
@@ -604,59 +631,446 @@ export default function UpgradePage() {
             </p>
           </div>
 
-          {/* DURATION SELECTOR (Tabs/Pills) */}
-          <div className="flex justify-center">
+          {/* DURATION SELECTOR (Tabs/Pills with Dropdown Plus / Pro) */}
+          <div className="flex justify-center" onClick={(e) => e.stopPropagation()}>
             <div
-              className="bg-slate-100/90 p-1.5 rounded-2xl border border-slate-200/80 inline-flex shadow-inner max-w-full overflow-x-auto no-scrollbar gap-1"
+              className="bg-slate-100/90 p-1.5 rounded-2xl border border-slate-200/80 inline-flex shadow-inner max-w-full overflow-visible gap-1"
               role="tablist"
             >
-              {/* Option: 7 Hari */}
-              <button
-                type="button"
-                onClick={() => {
-                  setCurrentDuration("7d");
-                  showToast("Durasi diubah ke: 7 Hari", "info");
-                }}
-                className={`duration-btn relative px-5 sm:px-8 py-2.5 rounded-xl text-xs sm:text-sm transition-all whitespace-nowrap cursor-pointer ${
-                  currentDuration === "7d"
-                    ? "font-bold bg-white text-blue-600 shadow-sm"
-                    : "font-semibold text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                7 Hari
-              </button>
+              {/* Tab 1: 7 Hari */}
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setOpenDropdown((prev) => (prev === "7d" ? null : "7d"))}
+                  className={`duration-btn relative px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
+                    currentDuration === "7d"
+                      ? "font-bold bg-white text-blue-600 shadow-sm"
+                      : "font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-200/50"
+                  }`}
+                >
+                  <span>7 Hari</span>
+                  {currentDuration === "7d" && (
+                    <span
+                      className={`text-[9.5px] font-bold uppercase px-1.5 py-0.5 rounded-md ${
+                        currentTier === "pro"
+                          ? "bg-indigo-100 text-indigo-700"
+                          : "bg-blue-100 text-blue-700"
+                      }`}
+                    >
+                      {currentTier === "pro" ? "Pro" : "Plus"}
+                    </span>
+                  )}
+                  <svg
+                    className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${
+                      openDropdown === "7d" ? "rotate-180" : ""
+                    }`}
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                  >
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </button>
 
-              {/* Option: 30 Hari */}
-              <button
-                type="button"
-                onClick={() => {
-                  setCurrentDuration("30d");
-                  showToast("Durasi diubah ke: 30 Hari", "info");
-                }}
-                className={`duration-btn relative px-5 sm:px-8 py-2.5 rounded-xl text-xs sm:text-sm transition-all whitespace-nowrap cursor-pointer ${
-                  currentDuration === "30d"
-                    ? "font-bold bg-white text-blue-600 shadow-sm"
-                    : "font-semibold text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                30 Hari
-              </button>
+                {/* Dropdown for 7 Hari */}
+                {openDropdown === "7d" && (
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-64 bg-white rounded-2xl shadow-2xl border border-slate-200/90 p-2 z-50 text-left animate-[gemini-zoom-in_0.15s_ease-out]">
+                    <div className="px-3 py-1.5 border-b border-slate-100 mb-1">
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                        Pilih Paket 7 Hari
+                      </p>
+                    </div>
 
-              {/* Option: 1 Tahun */}
-              <button
-                type="button"
-                onClick={() => {
-                  setCurrentDuration("1y");
-                  showToast("Durasi diubah ke: 1 Tahun", "info");
-                }}
-                className={`duration-btn relative px-5 sm:px-8 py-2.5 rounded-xl text-xs sm:text-sm transition-all whitespace-nowrap cursor-pointer ${
-                  currentDuration === "1y"
-                    ? "font-bold bg-white text-blue-600 shadow-sm"
-                    : "font-semibold text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                1 Tahun
-              </button>
+                    {/* Option: 7 Hari Plus */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCurrentDuration("7d");
+                        setCurrentTier("plus");
+                        setOpenDropdown(null);
+                        showToast("Paket dipilih: 7 Hari Plus", "success");
+                      }}
+                      className={`w-full flex items-center justify-between p-2.5 rounded-xl transition-all cursor-pointer ${
+                        currentDuration === "7d" && currentTier === "plus"
+                          ? "bg-blue-50/80 border border-blue-200 text-blue-900"
+                          : "hover:bg-slate-50 text-slate-700"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <div className="size-8 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600 shrink-0">
+                          <PlusBadgeIcon size={14} />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-1.5">
+                            <p className="text-xs font-bold text-slate-900">7 Hari Plus</p>
+                            <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-blue-100 text-blue-700">
+                              Plus
+                            </span>
+                          </div>
+                          <p className="text-[10.5px] text-slate-500">Akses fitur esensial</p>
+                        </div>
+                      </div>
+                      {currentDuration === "7d" && currentTier === "plus" && (
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="#2563eb"
+                          strokeWidth="2.5"
+                          className="shrink-0"
+                        >
+                          <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                      )}
+                    </button>
+
+                    {/* Option: 7 Hari Pro */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCurrentDuration("7d");
+                        setCurrentTier("pro");
+                        setOpenDropdown(null);
+                        showToast("Paket dipilih: 7 Hari Pro", "success");
+                      }}
+                      className={`w-full flex items-center justify-between p-2.5 rounded-xl transition-all cursor-pointer mt-1 ${
+                        currentDuration === "7d" && currentTier === "pro"
+                          ? "bg-indigo-50/80 border border-indigo-200 text-indigo-900"
+                          : "hover:bg-slate-50 text-slate-700"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <div className="size-8 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-600 shrink-0">
+                          <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2.5"
+                          >
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                          </svg>
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-1.5">
+                            <p className="text-xs font-bold text-slate-900">7 Hari Pro</p>
+                            <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-indigo-100 text-indigo-700">
+                              Pro
+                            </span>
+                          </div>
+                          <p className="text-[10.5px] text-slate-500">Kuota & prioritas AI penuh</p>
+                        </div>
+                      </div>
+                      {currentDuration === "7d" && currentTier === "pro" && (
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="#4f46e5"
+                          strokeWidth="2.5"
+                          className="shrink-0"
+                        >
+                          <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                      )}
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Tab 2: 30 Hari */}
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setOpenDropdown((prev) => (prev === "30d" ? null : "30d"))}
+                  className={`duration-btn relative px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
+                    currentDuration === "30d"
+                      ? "font-bold bg-white text-blue-600 shadow-sm"
+                      : "font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-200/50"
+                  }`}
+                >
+                  <span>30 Hari</span>
+                  {currentDuration === "30d" && (
+                    <span
+                      className={`text-[9.5px] font-bold uppercase px-1.5 py-0.5 rounded-md ${
+                        currentTier === "pro"
+                          ? "bg-indigo-100 text-indigo-700"
+                          : "bg-blue-100 text-blue-700"
+                      }`}
+                    >
+                      {currentTier === "pro" ? "Pro" : "Plus"}
+                    </span>
+                  )}
+                  <svg
+                    className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${
+                      openDropdown === "30d" ? "rotate-180" : ""
+                    }`}
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                  >
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </button>
+
+                {/* Dropdown for 30 Hari */}
+                {openDropdown === "30d" && (
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-64 bg-white rounded-2xl shadow-2xl border border-slate-200/90 p-2 z-50 text-left animate-[gemini-zoom-in_0.15s_ease-out]">
+                    <div className="px-3 py-1.5 border-b border-slate-100 mb-1">
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                        Pilih Paket 30 Hari
+                      </p>
+                    </div>
+
+                    {/* Option: 30 Hari Plus */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCurrentDuration("30d");
+                        setCurrentTier("plus");
+                        setOpenDropdown(null);
+                        showToast("Paket dipilih: 30 Hari Plus", "success");
+                      }}
+                      className={`w-full flex items-center justify-between p-2.5 rounded-xl transition-all cursor-pointer ${
+                        currentDuration === "30d" && currentTier === "plus"
+                          ? "bg-blue-50/80 border border-blue-200 text-blue-900"
+                          : "hover:bg-slate-50 text-slate-700"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <div className="size-8 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600 shrink-0">
+                          <PlusBadgeIcon size={14} />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-1.5">
+                            <p className="text-xs font-bold text-slate-900">30 Hari Plus</p>
+                            <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-blue-100 text-blue-700">
+                              Plus
+                            </span>
+                          </div>
+                          <p className="text-[10.5px] text-slate-500">Pilihan bulanan esensial</p>
+                        </div>
+                      </div>
+                      {currentDuration === "30d" && currentTier === "plus" && (
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="#2563eb"
+                          strokeWidth="2.5"
+                          className="shrink-0"
+                        >
+                          <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                      )}
+                    </button>
+
+                    {/* Option: 30 Hari Pro */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCurrentDuration("30d");
+                        setCurrentTier("pro");
+                        setOpenDropdown(null);
+                        showToast("Paket dipilih: 30 Hari Pro", "success");
+                      }}
+                      className={`w-full flex items-center justify-between p-2.5 rounded-xl transition-all cursor-pointer mt-1 ${
+                        currentDuration === "30d" && currentTier === "pro"
+                          ? "bg-indigo-50/80 border border-indigo-200 text-indigo-900"
+                          : "hover:bg-slate-50 text-slate-700"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <div className="size-8 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-600 shrink-0">
+                          <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2.5"
+                          >
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                          </svg>
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-1.5">
+                            <p className="text-xs font-bold text-slate-900">30 Hari Pro</p>
+                            <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-indigo-100 text-indigo-700">
+                              Pro
+                            </span>
+                          </div>
+                          <p className="text-[10.5px] text-slate-500">Kuota & prioritas AI penuh</p>
+                        </div>
+                      </div>
+                      {currentDuration === "30d" && currentTier === "pro" && (
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="#4f46e5"
+                          strokeWidth="2.5"
+                          className="shrink-0"
+                        >
+                          <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                      )}
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Tab 3: 1 Tahun */}
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setOpenDropdown((prev) => (prev === "1y" ? null : "1y"))}
+                  className={`duration-btn relative px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
+                    currentDuration === "1y"
+                      ? "font-bold bg-white text-blue-600 shadow-sm"
+                      : "font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-200/50"
+                  }`}
+                >
+                  <span>1 Tahun</span>
+                  {currentDuration === "1y" && (
+                    <span
+                      className={`text-[9.5px] font-bold uppercase px-1.5 py-0.5 rounded-md ${
+                        currentTier === "pro"
+                          ? "bg-indigo-100 text-indigo-700"
+                          : "bg-blue-100 text-blue-700"
+                      }`}
+                    >
+                      {currentTier === "pro" ? "Pro" : "Plus"}
+                    </span>
+                  )}
+                  <svg
+                    className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${
+                      openDropdown === "1y" ? "rotate-180" : ""
+                    }`}
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                  >
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </button>
+
+                {/* Dropdown for 1 Tahun */}
+                {openDropdown === "1y" && (
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-64 bg-white rounded-2xl shadow-2xl border border-slate-200/90 p-2 z-50 text-left animate-[gemini-zoom-in_0.15s_ease-out]">
+                    <div className="px-3 py-1.5 border-b border-slate-100 mb-1">
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                        Pilih Paket 1 Tahun
+                      </p>
+                    </div>
+
+                    {/* Option: 1 Tahun Plus */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCurrentDuration("1y");
+                        setCurrentTier("plus");
+                        setOpenDropdown(null);
+                        showToast("Paket dipilih: 1 Tahun Plus", "success");
+                      }}
+                      className={`w-full flex items-center justify-between p-2.5 rounded-xl transition-all cursor-pointer ${
+                        currentDuration === "1y" && currentTier === "plus"
+                          ? "bg-blue-50/80 border border-blue-200 text-blue-900"
+                          : "hover:bg-slate-50 text-slate-700"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <div className="size-8 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600 shrink-0">
+                          <PlusBadgeIcon size={14} />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-1.5">
+                            <p className="text-xs font-bold text-slate-900">1 Tahun Plus</p>
+                            <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-blue-100 text-blue-700">
+                              Plus
+                            </span>
+                          </div>
+                          <p className="text-[10.5px] text-slate-500">Hemat tahunan esensial</p>
+                        </div>
+                      </div>
+                      {currentDuration === "1y" && currentTier === "plus" && (
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="#2563eb"
+                          strokeWidth="2.5"
+                          className="shrink-0"
+                        >
+                          <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                      )}
+                    </button>
+
+                    {/* Option: 1 Tahun Pro */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCurrentDuration("1y");
+                        setCurrentTier("pro");
+                        setOpenDropdown(null);
+                        showToast("Paket dipilih: 1 Tahun Pro", "success");
+                      }}
+                      className={`w-full flex items-center justify-between p-2.5 rounded-xl transition-all cursor-pointer mt-1 ${
+                        currentDuration === "1y" && currentTier === "pro"
+                          ? "bg-indigo-50/80 border border-indigo-200 text-indigo-900"
+                          : "hover:bg-slate-50 text-slate-700"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <div className="size-8 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-600 shrink-0">
+                          <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2.5"
+                          >
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                          </svg>
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-1.5">
+                            <p className="text-xs font-bold text-slate-900">1 Tahun Pro</p>
+                            <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-indigo-100 text-indigo-700">
+                              Pro
+                            </span>
+                          </div>
+                          <p className="text-[10.5px] text-slate-500">Kuota & prioritas AI penuh</p>
+                        </div>
+                      </div>
+                      {currentDuration === "1y" && currentTier === "pro" && (
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="#4f46e5"
+                          strokeWidth="2.5"
+                          className="shrink-0"
+                        >
+                          <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                      )}
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -724,7 +1138,7 @@ export default function UpgradePage() {
               {FEATURE_KEYS.map((key) => {
                 const item = PRICING_DATABASE[key];
                 const isSelected = selectedFeatures.has(key);
-                const price = item.prices[currentDuration];
+                const price = getPrice(key);
                 const isSingleSpan = key === "tugaskuliah";
 
                 return (
@@ -925,7 +1339,7 @@ export default function UpgradePage() {
                   <p className="text-xs text-slate-500">Konfigurasi langganan Alerin</p>
                 </div>
                 <span className="text-xs font-bold text-brand-700 bg-brand-50 border border-brand-200 px-3 py-1 rounded-full">
-                  {getDurationReadable(currentDuration)}
+                  {getDurationReadable(currentDuration, currentTier)}
                 </span>
               </div>
 
@@ -957,7 +1371,7 @@ export default function UpgradePage() {
                           </span>
                         </div>
                         <span className="font-semibold text-slate-900 text-xs shrink-0">
-                          {formatRupiah(item.prices[currentDuration])}
+                          {formatRupiah(getPrice(key))}
                         </span>
                       </div>
                     );
@@ -1078,7 +1492,7 @@ export default function UpgradePage() {
                 {selectedFeatures.size} Fitur
               </span>
               <span className="text-[11px] text-slate-500">
-                {getDurationReadable(currentDuration)}
+                {getDurationReadable(currentDuration, currentTier)}
               </span>
             </div>
             <div className="flex items-baseline gap-1.5 mt-0.5">
@@ -1170,7 +1584,7 @@ export default function UpgradePage() {
                   <div className="flex justify-between items-center text-xs pb-2 border-b border-slate-200/60">
                     <span className="text-slate-500">Durasi Langganan:</span>
                     <span className="font-bold text-slate-900 bg-white px-2.5 py-1 rounded-md border border-slate-200">
-                      {getDurationReadable(currentDuration)}
+                      {getDurationReadable(currentDuration, currentTier)}
                     </span>
                   </div>
 
@@ -1189,7 +1603,7 @@ export default function UpgradePage() {
                               {item.name}
                             </span>
                             <span className="font-semibold shrink-0 ml-2">
-                              {formatRupiah(item.prices[currentDuration])}
+                              {formatRupiah(getPrice(key))}
                             </span>
                           </li>
                         );
@@ -1479,7 +1893,7 @@ export default function UpgradePage() {
               <div className="flex justify-between">
                 <span className="text-slate-500">Masa Berlaku:</span>
                 <span className="font-bold text-slate-800">
-                  Aktif selama {getDurationReadable(currentDuration)}
+                  Aktif selama {getDurationReadable(currentDuration, currentTier)}
                 </span>
               </div>
             </div>
@@ -1537,8 +1951,8 @@ export default function UpgradePage() {
                         </span>
                       </div>
                       <p className="text-xs font-bold text-brand-600 mt-0.5">
-                        {formatRupiah(pricing.prices[currentDuration])} /{" "}
-                        {getDurationReadable(currentDuration)}
+                        {formatRupiah(getPrice(activeModalFeatureKey || ""))} /{" "}
+                        {getDurationReadable(currentDuration, currentTier)}
                       </p>
                     </div>
                   </div>
