@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useCallback } from "react";
+import React, { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { useNavigate, Link } from "react-router";
 import PlusBadgeIcon from "@/components/PlusBadgeIcon";
 
@@ -227,6 +227,310 @@ function getDurationReadable(dur: "7d" | "30d" | "1y", tier?: "plus" | "pro"): s
   return `${durLabel} (${tier === "pro" ? "Pro" : "Plus"})`;
 }
 
+interface NotifItemData {
+  id: string;
+  icon: React.ReactNode;
+  title: string;
+  desc: string;
+  time: string;
+  unread: boolean;
+  tab: string;
+}
+
+const UPGRADE_NOTIFS_UMUM: NotifItemData[] = [
+  {
+    id: "notif-target",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10" />
+        <circle cx="12" cy="12" r="6" />
+        <circle cx="12" cy="12" r="2" />
+      </svg>
+    ),
+    title: "Target mingguan menunggu",
+    desc: "Kamu belum menyelesaikan satu pun target minggu ini.",
+    time: "Baru saja",
+    unread: true,
+    tab: "progress",
+  },
+  {
+    id: "notif-deadline",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="13" r="8" />
+        <path d="M12 9v4l2 2" />
+        <path d="M5 3 2 6" />
+        <path d="m22 6-3-3" />
+        <path d="M6.38 18.7 4 21" />
+        <path d="M17.64 18.67 20 21" />
+      </svg>
+    ),
+    title: "Deadline besok!",
+    desc: "Presentasi Riset Pasar · besok pukul 09.00",
+    time: "1 jam lalu",
+    unread: true,
+    tab: "progress",
+  },
+  {
+    id: "notif-quiz",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+        <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+        <path d="M4 22h16" />
+        <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
+        <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
+        <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
+      </svg>
+    ),
+    title: "QUIZLAB tersedia",
+    desc: "Quiz baru Sistem Informasi Semester 6 sudah aktif.",
+    time: "3 jam lalu",
+    unread: false,
+    tab: "quizlab",
+  },
+  {
+    id: "notif-saran",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-1 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5" />
+        <path d="M9 18h6" />
+        <path d="M10 22h4" />
+      </svg>
+    ),
+    title: "Alerin punya saran",
+    desc: "Berdasarkan progresmu, coba mulai BAB II sekarang.",
+    time: "Kemarin",
+    unread: false,
+    tab: "percakapan",
+  },
+];
+
+const UPGRADE_NOTIFS_SISTEM: NotifItemData[] = [
+  {
+    id: "notif-v24",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+        <path d="m9 12 2 2 4-4" />
+      </svg>
+    ),
+    title: "Pembaruan Alerin v2.4",
+    desc: "Peningkatan kecepatan respon dan performa model penalaran terbaru.",
+    time: "2 hari lalu",
+    unread: false,
+    tab: "percakapan",
+  },
+  {
+    id: "notif-sync",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+        <polyline points="22 4 12 14.01 9 11.01" />
+      </svg>
+    ),
+    title: "Sinkronisasi Berhasil",
+    desc: "Riwayat obrolan dan data tugas perkuliahan telah aman tersimpan.",
+    time: "3 hari lalu",
+    unread: false,
+    tab: "percakapan",
+  },
+];
+
+function UpgradeNotifModal({
+  onClose,
+  onNavigate,
+}: {
+  onClose: () => void;
+  onNavigate: (tab: string) => void;
+}) {
+  const [activeTab, setActiveTab] = useState<"umum" | "sistem">("umum");
+  const [notifsUmum, setNotifsUmum] = useState<NotifItemData[]>(UPGRADE_NOTIFS_UMUM);
+  const [notifsSistem, setNotifsSistem] = useState<NotifItemData[]>(UPGRADE_NOTIFS_SISTEM);
+  const [isSimulatedEmpty, setIsSimulatedEmpty] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(() =>
+    typeof window !== "undefined" ? window.innerWidth >= 768 : false
+  );
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 768);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const handleMarkAllRead = () => {
+    setNotifsUmum((prev) => prev.map((n) => ({ ...n, unread: false })));
+    setNotifsSistem((prev) => prev.map((n) => ({ ...n, unread: false })));
+  };
+
+  const displayUmum = isSimulatedEmpty ? [] : isDesktop ? notifsUmum : notifsUmum.slice(0, 4);
+  const displaySistem = isSimulatedEmpty ? [] : notifsSistem;
+  const currentList = activeTab === "umum" ? displayUmum : displaySistem;
+
+  return (
+    <div
+      className="fixed inset-0 z-[220] flex items-center justify-center p-4 bg-black/45 backdrop-blur-xs select-none animate-[gemini-fade-in_0.15s_ease-out]"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-[390px] md:max-w-[680px] bg-white rounded-3xl overflow-hidden shadow-2xl border border-slate-100 flex flex-col animate-[gemini-zoom-in_0.2s_ease-out]"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between px-5 md:px-6 pt-5 pb-3">
+          <div className="flex items-center gap-2.5">
+            <button
+              type="button"
+              onClick={() => setIsSimulatedEmpty((prev) => !prev)}
+              title={isSimulatedEmpty ? "Tampilkan notifikasi" : "Simulasikan tidak ada notifikasi"}
+              className={`size-9 rounded-full border flex items-center justify-center transition-all cursor-pointer active:scale-95 ${
+                isSimulatedEmpty
+                  ? "bg-slate-200/80 border-slate-300 text-slate-700 shadow-inner"
+                  : "bg-slate-100 hover:bg-slate-200/80 border-slate-200/70 text-slate-600 shadow-2xs"
+              }`}
+            >
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+              </svg>
+            </button>
+            <h3 className="font-bold text-[17px] text-slate-900 tracking-tight">Notifikasi</h3>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={handleMarkAllRead}
+              disabled={isSimulatedEmpty || currentList.length === 0}
+              className={`text-xs font-semibold transition-all ${
+                isSimulatedEmpty || currentList.length === 0
+                  ? "text-slate-400 cursor-not-allowed"
+                  : "text-slate-900 hover:text-black active:scale-95 cursor-pointer"
+              }`}
+            >
+              Tandai dibaca
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Tutup notifikasi"
+              className="size-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 active:scale-90 transition-all cursor-pointer"
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        {/* Tab row */}
+        <div className="grid grid-cols-2 border-b border-slate-100 w-full relative">
+          <button
+            type="button"
+            onClick={() => setActiveTab("umum")}
+            className={`relative flex items-center justify-center gap-2 py-3 text-sm font-semibold transition-all cursor-pointer ${
+              activeTab === "umum" ? "text-blue-600 font-bold" : "text-slate-400 hover:text-slate-600 font-medium"
+            }`}
+          >
+            <span>Umum</span>
+            <span
+              className={`px-2 py-0.5 rounded-full text-xs font-bold transition-colors ${
+                activeTab === "umum" ? "bg-blue-100 text-blue-700" : "bg-slate-100 text-slate-500"
+              }`}
+            >
+              {displayUmum.length}
+            </span>
+            {activeTab === "umum" && (
+              <span className="absolute bottom-0 inset-x-0 h-0.5 bg-blue-600 rounded-full" />
+            )}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab("sistem")}
+            className={`relative flex items-center justify-center gap-2 py-3 text-sm font-semibold transition-all cursor-pointer ${
+              activeTab === "sistem" ? "text-blue-600 font-bold" : "text-slate-400 hover:text-slate-600 font-medium"
+            }`}
+          >
+            <span>Sistem</span>
+            <span
+              className={`px-2 py-0.5 rounded-full text-xs font-bold transition-colors ${
+                activeTab === "sistem" ? "bg-blue-100 text-blue-700" : "bg-slate-100 text-slate-500"
+              }`}
+            >
+              {displaySistem.length}
+            </span>
+            {activeTab === "sistem" && (
+              <span className="absolute bottom-0 inset-x-0 h-0.5 bg-blue-600 rounded-full" />
+            )}
+          </button>
+        </div>
+
+        {/* List items */}
+        <div
+          className={`max-h-[60vh] md:max-h-[500px] md:h-auto overflow-y-auto md:p-4 md:pb-4 pb-2 [&::-webkit-scrollbar]:hidden ${
+            currentList.length === 0
+              ? "divide-y divide-slate-100/90 md:divide-y-0 md:flex md:items-center md:justify-center"
+              : "divide-y divide-slate-100/90 md:divide-y-0 md:grid md:grid-cols-2 md:gap-2.5 md:content-start"
+          }`}
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        >
+          {currentList.length === 0 ? (
+            <div className="py-14 md:py-0 px-6 flex flex-col items-center justify-center text-center animate-[gemini-fade-in_0.2s_ease-out]">
+              <div className="size-16 rounded-full bg-slate-50 border border-slate-200/80 flex items-center justify-center text-slate-400 mb-3.5 shadow-2xs">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="text-slate-400">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                  <line x1="4" y1="4" x2="20" y2="20" />
+                </svg>
+              </div>
+              <h4 className="text-[15px] font-bold text-slate-800 tracking-tight">Tidak ada notifikasi</h4>
+              <p className="text-xs text-slate-400 font-normal leading-relaxed mt-1.5 max-w-[260px]">
+                Belum ada pembaruan aktivitas untukmu saat ini.
+              </p>
+            </div>
+          ) : (
+            currentList.map((n) => (
+              <button
+                key={n.id}
+                type="button"
+                onClick={() => {
+                  onNavigate(n.tab);
+                  onClose();
+                }}
+                className="w-full flex items-start gap-3.5 px-5 py-3.5 md:px-4 md:py-3 md:rounded-2xl md:border md:border-slate-100 md:bg-slate-50/40 hover:bg-slate-50/80 md:hover:bg-slate-50 active:bg-slate-100/70 transition-colors text-left cursor-pointer group"
+              >
+                <div className="size-11 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-center shrink-0 mt-0.5 text-slate-700 shadow-2xs group-hover:bg-white group-hover:border-slate-300 transition-colors">
+                  {n.icon}
+                </div>
+                <div className="flex-1 min-w-0 pr-1">
+                  <div className="flex items-center gap-1.5 leading-snug">
+                    <h4 className="text-[13.5px] font-medium text-slate-900 truncate">{n.title}</h4>
+                    {n.unread && <span className="size-2 rounded-full bg-blue-600 shrink-0 inline-block" />}
+                  </div>
+                  <p className="text-xs text-slate-500 font-normal leading-relaxed mt-0.5 line-clamp-2">
+                    {n.desc}
+                  </p>
+                  <span className="text-[11px] text-slate-400 font-normal mt-1 block">
+                    {n.time}
+                  </span>
+                </div>
+                <div className="shrink-0 pt-3 text-slate-300 group-hover:text-slate-400 transition-colors">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="m9 18 6-6-6-6" />
+                  </svg>
+                </div>
+              </button>
+            ))
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function UpgradePage() {
   const navigate = useNavigate();
 
@@ -234,6 +538,50 @@ export default function UpgradePage() {
   const [currentDuration, setCurrentDuration] = useState<"7d" | "30d" | "1y">("30d");
   const [currentTier, setCurrentTier] = useState<"plus" | "pro">("plus");
   const [openDropdown, setOpenDropdown] = useState<"7d" | "30d" | "1y" | null>(null);
+
+  // Header Interactive States (Persis Header Alerin Chat)
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const [profileMenuPos, setProfileMenuPos] = useState<{ top: number; right: number } | null>(null);
+  const profileBtnRef = useRef<HTMLButtonElement>(null);
+  const [currentAccountPlan, setCurrentAccountPlan] = useState("Paket: Plus");
+  const [isDarkTheme, setIsDarkTheme] = useState(() =>
+    typeof window !== "undefined" && window.localStorage.getItem("alerin-theme") === "dark"
+  );
+
+  useEffect(() => {
+    const checkTheme = () => {
+      setIsDarkTheme(window.localStorage.getItem("alerin-theme") === "dark");
+    };
+    window.addEventListener("alerin-theme-change", checkTheme);
+    return () => window.removeEventListener("alerin-theme-change", checkTheme);
+  }, []);
+
+  const toggleTheme = () => {
+    const nextDark = !isDarkTheme;
+    setIsDarkTheme(nextDark);
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem("alerin-theme", nextDark ? "dark" : "light");
+      const shell = document.querySelector(".alerin-shell");
+      shell?.classList.toggle("profile-dark", nextDark);
+      shell?.classList.toggle("alerin-dark-theme", nextDark);
+      shell?.classList.toggle("dark", nextDark);
+      if (shell instanceof HTMLElement) shell.style.backgroundColor = nextDark ? "#0f172a" : "#ffffff";
+      document.documentElement.classList.toggle("dark", nextDark);
+      document.documentElement.classList.toggle("profile-dark", nextDark);
+      document.documentElement.classList.toggle("alerin-dark-theme", nextDark);
+      document.documentElement.style.colorScheme = nextDark ? "dark" : "light";
+      if (document.body) {
+        document.body.classList.toggle("dark", nextDark);
+        document.body.classList.toggle("profile-dark", nextDark);
+        document.body.classList.toggle("alerin-dark-theme", nextDark);
+        document.body.style.backgroundColor = nextDark ? "#0f172a" : "#ffffff";
+      }
+      window.dispatchEvent(new Event("alerin-theme-change"));
+    }
+    showToast(nextDark ? "Mode Gelap diaktifkan" : "Mode Terang diaktifkan", "info");
+  };
 
   useEffect(() => {
     const handleOutsideClick = () => {
@@ -453,8 +801,7 @@ export default function UpgradePage() {
     <div
       className="min-h-screen bg-[#F8FAFC] text-slate-800 font-sans antialiased flex flex-col selection:bg-brand-100 selection:text-brand-900"
       onClick={() => {
-        setPlanDropdownOpen(false);
-        setProfileDropdownOpen(false);
+        setProfileMenuOpen(false);
       }}
     >
       {/* Toast Notification Container */}
@@ -486,31 +833,37 @@ export default function UpgradePage() {
           <div className="flex items-center gap-2.5">
             <button
               type="button"
-              onClick={() => navigate("/")}
-              aria-label="Kembali ke chat"
+              onClick={() => setMobileDrawerOpen(true)}
+              aria-label="Buka navigasi"
               className="size-10 rounded-full border border-slate-200/90 bg-white/70 backdrop-blur-sm flex flex-col justify-center items-center gap-1 hover:bg-slate-50 active:scale-95 transition-all shrink-0 shadow-xs cursor-pointer"
-              title="Kembali ke Obrolan"
+              title="Buka Navigasi"
             >
               <div className="w-4 h-0.5 bg-slate-800 rounded-full" />
               <div className="w-4 h-0.5 bg-slate-800 rounded-full" />
             </button>
-            <div
-              className="h-10 px-4 py-2 rounded-full border border-blue-200/90 bg-blue-50/80 backdrop-blur-sm flex items-center gap-1.5 shrink-0 shadow-xs"
+            <button
+              type="button"
+              onClick={() => {
+                window.scrollTo({ top: 0, behavior: "smooth" });
+                showToast("Anda sedang berada di halaman Upgrade Paket", "info");
+              }}
+              className="h-10 px-4 py-2 rounded-full border border-blue-200/90 bg-blue-50/80 backdrop-blur-sm flex items-center gap-1.5 shrink-0 shadow-xs hover:bg-blue-100/70 active:scale-95 transition-all cursor-pointer"
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#155dfc" strokeWidth="2.5">
                 <line x1="12" y1="5" x2="12" y2="19" />
                 <line x1="5" y1="12" x2="19" y2="12" />
               </svg>
               <span className="text-[#155dfc] text-sm font-semibold leading-5">Upgrade</span>
-            </div>
+            </button>
           </div>
 
           <div className="flex items-center gap-2">
             <button
               type="button"
-              onClick={() => navigate("/")}
+              onClick={() => setNotifOpen(true)}
               aria-label="Notifikasi"
               className="size-10 rounded-full border border-slate-200/90 bg-white/70 backdrop-blur-sm flex items-center justify-center hover:bg-slate-50 active:scale-95 transition-all relative shrink-0 shadow-xs cursor-pointer"
+              title="Buka Notifikasi"
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
@@ -520,9 +873,17 @@ export default function UpgradePage() {
             </button>
             <button
               type="button"
-              onClick={() => navigate("/")}
+              onClick={(e) => {
+                const rect = e.currentTarget.getBoundingClientRect();
+                setProfileMenuPos({
+                  top: rect.bottom + 8,
+                  right: Math.max(12, window.innerWidth - rect.right),
+                });
+                setProfileMenuOpen((o) => !o);
+              }}
               aria-label="Profil pengguna"
               className="size-9 rounded-full overflow-hidden shrink-0 hover:opacity-90 active:scale-95 transition-all ring-1 ring-slate-200/90 bg-sky-100 shadow-xs cursor-pointer"
+              title="Menu Profil"
             >
               <img
                 src="/assets/avatar-profile.jpg"
@@ -565,22 +926,38 @@ export default function UpgradePage() {
 
           {/* Right: Floating pill group persis seperti di ClaroPage */}
           <div className="flex items-center gap-2.5">
-            <div
-              className="h-[46px] px-4 rounded-full backdrop-blur-md border border-blue-200/90 bg-blue-50/80 flex items-center gap-1.5 transition-colors shrink-0 shadow-[0_4px_20px_rgba(21,93,252,0.08)] text-[#155dfc] font-semibold text-sm leading-5 cursor-default"
+            <button
+              type="button"
+              onClick={() => {
+                window.scrollTo({ top: 0, behavior: "smooth" });
+                showToast("Anda sedang berada di halaman Upgrade Paket", "info");
+              }}
+              className="h-[46px] px-4 rounded-full backdrop-blur-md border border-blue-200/90 bg-blue-50/80 flex items-center gap-1.5 transition-colors shrink-0 shadow-[0_4px_20px_rgba(21,93,252,0.08)] text-[#155dfc] font-semibold text-sm leading-5 cursor-pointer hover:bg-blue-100/70 active:scale-95"
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#155dfc" strokeWidth="2.5">
                 <line x1="12" y1="5" x2="12" y2="19" />
                 <line x1="5" y1="12" x2="19" y2="12" />
               </svg>
               <span>Upgrade</span>
-            </div>
+            </button>
 
             <div
               className="flex items-center gap-2 px-2.5 py-1.5 rounded-full backdrop-blur-md border border-slate-200/85 bg-white/90 shadow-[0_4px_20px_rgba(15,23,42,0.08)] transition-colors"
             >
               <button
+                ref={profileBtnRef}
                 type="button"
-                onClick={() => navigate("/")}
+                onClick={() => {
+                  const pillEl = profileBtnRef.current?.parentElement ?? profileBtnRef.current;
+                  const rect = pillEl?.getBoundingClientRect();
+                  if (rect) {
+                    setProfileMenuPos({
+                      top: rect.bottom + 8,
+                      right: Math.max(12, window.innerWidth - rect.right),
+                    });
+                  }
+                  setProfileMenuOpen((o) => !o);
+                }}
                 className="flex items-center gap-2.5 pl-0.5 pr-1 text-left hover:opacity-85 transition-opacity cursor-pointer"
               >
                 <div
@@ -603,7 +980,7 @@ export default function UpgradePage() {
               <div className="w-px h-5 shrink-0 bg-slate-200/80" />
               <button
                 type="button"
-                onClick={() => navigate("/")}
+                onClick={() => setNotifOpen(true)}
                 title="Notifikasi"
                 aria-label="Notifikasi"
                 className="relative w-8 h-8 flex items-center justify-center rounded-full transition-colors shrink-0 cursor-pointer text-slate-500 hover:text-slate-800 hover:bg-slate-100/80"
@@ -618,6 +995,344 @@ export default function UpgradePage() {
           </div>
         </div>
       </header>
+
+      {/* Notification Modal (Persis NotifPanel di Alerin Chat) */}
+      {notifOpen && (
+        <UpgradeNotifModal
+          onClose={() => setNotifOpen(false)}
+          onNavigate={(tab) => {
+            navigate(tab ? `/?tab=${tab}` : "/");
+            setNotifOpen(false);
+          }}
+        />
+      )}
+
+      {/* Profile Popup Menu (Persis Profile Menu di Alerin Chat) */}
+      {profileMenuOpen && profileMenuPos && (
+        <>
+          <div className="fixed inset-0 z-[190]" onClick={() => setProfileMenuOpen(false)} />
+          <div
+            className={`fixed z-[200] w-64 max-w-[calc(100vw-24px)] overflow-hidden rounded-2xl border animate-[gemini-fade-in_0.15s_ease-out] ${
+              isDarkTheme
+                ? "bg-[#1e293b] border-slate-700 shadow-[0_12px_40px_rgba(0,0,0,0.5),0_2px_8px_rgba(0,0,0,0.3)] text-slate-100"
+                : "border-slate-100 bg-white shadow-[0_12px_40px_rgba(0,0,0,0.13),0_2px_8px_rgba(0,0,0,0.06)] text-slate-900"
+            }`}
+            style={{ top: profileMenuPos.top, right: profileMenuPos.right }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className={`flex items-center gap-3 border-b px-4 py-4 ${isDarkTheme ? "border-slate-700/80" : "border-slate-100"}`}>
+              <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-600 text-sm font-bold text-white overflow-hidden ring-1 ${isDarkTheme ? "ring-slate-700" : "ring-slate-100"}`}>
+                <img
+                  src="/assets/avatar-profile.jpg"
+                  alt="Raka"
+                  className="h-full w-full object-cover"
+                  onError={(e) => {
+                    (e.currentTarget as HTMLElement).style.display = "none";
+                  }}
+                />
+              </div>
+              <div className="min-w-0">
+                <p className={`truncate text-sm font-bold ${isDarkTheme ? "text-white" : "text-slate-900"}`}>Raka</p>
+                <p className="mt-0.5 truncate text-xs text-slate-400">rakaaditya@gmail.com</p>
+              </div>
+            </div>
+
+            <div className="p-2 space-y-0.5">
+              <button
+                type="button"
+                onClick={() => {
+                  navigate("/?tab=profil");
+                  setProfileMenuOpen(false);
+                }}
+                className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 transition-colors cursor-pointer text-left ${
+                  isDarkTheme ? "text-slate-300 hover:bg-slate-800" : "text-slate-600 hover:bg-slate-50"
+                }`}
+              >
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+                <span className="text-sm font-medium">Profil</span>
+              </button>
+
+              <button
+                type="button"
+                role="switch"
+                aria-checked={isDarkTheme}
+                onClick={() => {
+                  toggleTheme();
+                }}
+                className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 transition-colors cursor-pointer text-left ${
+                  isDarkTheme ? "text-slate-300 hover:bg-slate-800" : "text-slate-600 hover:bg-slate-50"
+                }`}
+              >
+                <span className="flex items-center gap-3">
+                  {isDarkTheme ? (
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-amber-500">
+                      <circle cx="12" cy="12" r="4" />
+                      <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+                    </svg>
+                  ) : (
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                    </svg>
+                  )}
+                  <span className="text-sm font-medium">
+                    {isDarkTheme ? "Mode Terang" : "Mode Gelap"}
+                  </span>
+                </span>
+                <span className={`relative h-6 w-11 rounded-full transition-colors ${isDarkTheme ? "bg-blue-600" : "bg-slate-200"}`}>
+                  <span className={`absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform duration-200 ${isDarkTheme ? "translate-x-5" : "translate-x-0"}`} />
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  showToast("Form saran & laporan siap digunakan.", "info");
+                  setProfileMenuOpen(false);
+                }}
+                className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 transition-colors cursor-pointer text-left ${
+                  isDarkTheme ? "text-slate-300 hover:bg-slate-800" : "text-slate-600 hover:bg-slate-50"
+                }`}
+              >
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                  <path d="M8 9h8M8 13h5" />
+                </svg>
+                <span className="text-sm font-medium">Saran &amp; Laporan</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  showToast("Pintasan Alerin siap dipasang di layar utama.", "info");
+                  setProfileMenuOpen(false);
+                }}
+                className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors cursor-pointer ${
+                  isDarkTheme ? "text-slate-300 hover:bg-slate-800" : "text-slate-600 hover:bg-slate-50"
+                }`}
+              >
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                  <rect x="3" y="3" width="18" height="14" rx="2" />
+                  <path d="M8 21h8M12 17v4" />
+                  <path d="M9 8l3 3 3-3M12 5v6" />
+                </svg>
+                <span className="flex flex-col">
+                  <span className="text-sm font-medium">Pasang Pintasan</span>
+                  <span className="text-[11px] text-slate-400">Cara cepat mengakses Alerin</span>
+                </span>
+              </button>
+
+              <div className={`my-1 border-t ${isDarkTheme ? "border-slate-800" : "border-slate-100"}`} />
+
+              <button
+                type="button"
+                onClick={() => {
+                  showToast("Berhasil keluar dari akun.", "info");
+                  setProfileMenuOpen(false);
+                  navigate("/");
+                }}
+                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors cursor-pointer text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30"
+              >
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                  <polyline points="16 17 21 12 16 7" />
+                  <line x1="21" y1="12" x2="9" y2="12" />
+                </svg>
+                <span className="text-sm font-medium">Keluar</span>
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Mobile Drawer Sidebar (Persis Mobile Drawer di Alerin Chat) */}
+      {mobileDrawerOpen && (
+        <div className="md:hidden fixed inset-0 z-[150]">
+          <div
+            className="fixed inset-0 bg-black/40 backdrop-blur-xs transition-opacity"
+            onClick={() => setMobileDrawerOpen(false)}
+          />
+          <aside
+            className={`fixed top-0 left-0 bottom-0 w-72 max-w-[85vw] z-[160] shadow-2xl flex flex-col py-5 px-4 overflow-hidden ${
+              isDarkTheme ? "bg-[#0f172a] border-r border-slate-800 text-white" : "bg-white text-slate-900"
+            }`}
+            style={{ animation: "drawerSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1)" }}
+          >
+            {/* Drawer Header */}
+            <div className="shrink-0 flex items-center justify-between mb-5">
+              <div className="flex items-center gap-2.5">
+                <img
+                  src="/assets/73c1a.png"
+                  alt="Alerin"
+                  className="size-9 rounded-full object-cover shadow-xs border border-white"
+                />
+                <span className="font-bold leading-none font-sans text-lg">ALERIN</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileDrawerOpen(false);
+                    navigate("/");
+                  }}
+                  aria-label="Cari Obrolan"
+                  title="Cari Obrolan"
+                  className={`size-8 rounded-xl flex items-center justify-center transition-colors cursor-pointer ${
+                    isDarkTheme ? "text-slate-300 hover:text-white hover:bg-slate-800" : "text-slate-700 hover:bg-slate-100"
+                  }`}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMobileDrawerOpen(false)}
+                  aria-label="Tutup menu"
+                  title="Tutup menu"
+                  className={`size-8 rounded-full border flex items-center justify-center transition-colors cursor-pointer ${
+                    isDarkTheme ? "border-slate-700 text-slate-300 hover:text-white hover:bg-slate-800" : "border-neutral-200/80 text-neutral-800 hover:bg-slate-100"
+                  }`}
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            {/* Navigation items */}
+            <nav className="shrink-0 space-y-1 mb-5">
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileDrawerOpen(false);
+                  navigate("/");
+                }}
+                className="w-full flex items-center h-11 px-3.5 py-2.5 rounded-2xl gap-3 text-slate-600 hover:bg-slate-100 font-medium transition-colors text-left cursor-pointer"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                  <polyline points="9 22 9 12 15 12 15 22" />
+                </svg>
+                <span className="text-base">Beranda</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileDrawerOpen(false);
+                  navigate("/?tab=fitur");
+                }}
+                className="w-full flex items-center h-11 px-3.5 py-2.5 rounded-2xl gap-3 text-slate-600 hover:bg-slate-100 font-medium transition-colors text-left cursor-pointer"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="3" width="7" height="7" rx="1" />
+                  <rect x="14" y="3" width="7" height="7" rx="1" />
+                  <rect x="14" y="14" width="7" height="7" rx="1" />
+                  <rect x="3" y="14" width="7" height="7" rx="1" />
+                </svg>
+                <span className="text-base">Semua Fitur</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileDrawerOpen(false);
+                  navigate("/?tab=proyek");
+                }}
+                className="w-full flex items-center h-11 px-3.5 py-2.5 rounded-2xl gap-3 text-slate-600 hover:bg-slate-100 font-medium transition-colors text-left cursor-pointer"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                  <polyline points="14 2 14 8 20 8" />
+                </svg>
+                <span className="text-base">Proyek Saya</span>
+              </button>
+
+              <button
+                type="button"
+                className="w-full flex items-center h-11 px-3.5 py-2.5 rounded-2xl gap-3 bg-[#155dfc] text-white font-bold shadow-xs shadow-[#155dfc]/20 text-left cursor-pointer"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                </svg>
+                <span className="text-base">Upgrade Paket</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileDrawerOpen(false);
+                  navigate("/?tab=progress");
+                }}
+                className="w-full flex items-center h-11 px-3.5 py-2.5 rounded-2xl gap-3 text-slate-600 hover:bg-slate-100 font-medium transition-colors text-left cursor-pointer"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
+                  <polyline points="16 7 22 7 22 13" />
+                </svg>
+                <span className="text-base">Target &amp; Progres</span>
+              </button>
+            </nav>
+
+            {/* Riwayat Percakapan */}
+            <div className="flex flex-col flex-1 min-h-0 pt-1 border-t border-slate-100">
+              <div className="shrink-0 mb-2 mt-2">
+                <div className="font-semibold uppercase tracking-wider px-1 text-xs text-slate-400">
+                  Riwayat Percakapan
+                </div>
+              </div>
+              <div className="flex-1 min-h-0 overflow-y-auto pr-1 space-y-1">
+                {[
+                  "Review Bab 1-5 Skripsi & Metodologi",
+                  "Analisis Data SPSS & SEM-PLS",
+                  "Parafrase Abstrak Publikasi Jurnal",
+                  "Formulasi Novelty Disertasi S3",
+                  "Studi Kasus & Pembahasan Teori",
+                ].map((title, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => {
+                      setMobileDrawerOpen(false);
+                      navigate("/");
+                    }}
+                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left text-sm text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer group"
+                  >
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="text-slate-400 group-hover:text-blue-600 shrink-0">
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                    </svg>
+                    <span className="truncate">{title}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Bottom Obrolan Baru button */}
+            <div className="shrink-0 pt-3 border-t border-slate-100 mt-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileDrawerOpen(false);
+                  navigate("/");
+                }}
+                className="w-full bg-[#155dfc] hover:bg-[#124ecc] active:scale-[0.98] text-white flex items-center justify-center font-semibold transition-all cursor-pointer h-11 px-5 py-2.5 rounded-full shadow-md shadow-[#155dfc]/25 gap-2 text-sm"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+                <span>Obrolan Baru</span>
+              </button>
+            </div>
+          </aside>
+        </div>
+      )}
 
       {/* DURATION SELECTOR SECTION */}
       <section className="relative pt-6 pb-4 sm:pt-8 sm:pb-6 bg-gradient-to-b from-white via-white to-[#F8FAFC]">

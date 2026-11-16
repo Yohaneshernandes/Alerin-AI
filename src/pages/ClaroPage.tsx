@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo, useLayoutEffect, createContext, useContext } from "react";
 import { createPortal } from "react-dom";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate, useSearchParams } from "react-router";
 import katex from "katex";
 import maskotImg from "@/imports/Animasi_Maskot_Buku_31_Agu_2026.png";
 import owlGradImg from "@/imports/image-6.png";
@@ -25983,7 +25983,23 @@ export default function AlerinPage() {
     pruneStoredProjectsToDefaultFive();
     return true;
   });
-  const [tab, setTab] = useState<NavTab>("percakapan");
+  const [searchParams] = useSearchParams();
+  const [tab, setTab] = useState<NavTab>(() => {
+    if (typeof window !== "undefined") {
+      const q = new URLSearchParams(window.location.search).get("tab");
+      if (q && ["percakapan", "fitur", "proyek", "progress", "quizlab", "profil"].includes(q)) {
+        return q as NavTab;
+      }
+    }
+    return "percakapan";
+  });
+
+  useEffect(() => {
+    const q = searchParams.get("tab");
+    if (q && ["percakapan", "fitur", "proyek", "progress", "quizlab", "profil"].includes(q)) {
+      setTab(q as NavTab);
+    }
+  }, [searchParams]);
   const [historyMsgs, setHistoryMsgs] = useState<ChatMsg[] | undefined>(undefined);
   const [historyKey, setHistoryKey] = useState(0);
   const [hasActiveChat, setHasActiveChat] = useState(false);
