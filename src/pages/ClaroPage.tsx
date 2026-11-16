@@ -20103,135 +20103,387 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
         )}
       </div>
 
-      {/* ── MOBILE POPUP (dipertahankan sesuai desain mobile existing) ── */}
+      {/* ── MOBILE POPUP (Sesuai Desain Figma Mobile 100%) ── */}
       <div
-        className="flex md:hidden items-start justify-center py-8 px-4"
+        className="flex md:hidden min-h-full items-center justify-center p-4"
         onClick={onClose}
       >
-        <div className="w-full max-w-xl mx-auto" onClick={e => e.stopPropagation()}>
-          {/* Calendar card */}
-          <div className="bg-white rounded-3xl overflow-hidden" style={{ boxShadow: "0 24px 80px rgba(0,0,0,0.18)" }}>
-            {/* Header */}
-            <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-slate-100">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                </div>
-                <div>
-                  <p className="font-display font-800 text-base text-slate-900">{monthNames[month]} {year}</p>
-                  <p className="text-[11px] text-slate-400">Kalender Akademik Alerin</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-1">
-                <button onClick={() => setCursor(new Date(year, month - 1, 1))}
-                  className="w-8 h-8 rounded-xl flex items-center justify-center hover:bg-slate-100 transition-colors text-slate-500">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 18l-6-6 6-6"/></svg>
+        {addingAgenda ? (
+          <div
+            className="w-80 max-w-[512px] bg-white rounded-2xl shadow-xl shadow-[0px_10px_30px_rgba(15,23,42,0.15)] flex flex-col overflow-hidden relative font-['Plus_Jakarta_Sans']"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header Tambah Agenda Mobile */}
+            <div className="px-5 py-3.5 bg-white border-b border-slate-200 flex items-center justify-between shrink-0">
+              <div className="flex items-center gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => switchDesktopView(false, "back")}
+                  className="size-7 bg-slate-50 hover:bg-slate-100 rounded-lg outline outline-1 outline-offset-[-1px] outline-slate-200 flex items-center justify-center text-slate-500 cursor-pointer transition-colors shrink-0"
+                  aria-label="Kembali ke kalender"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12" />
+                    <polyline points="12 19 5 12 12 5" />
+                  </svg>
                 </button>
-                <button onClick={() => setCursor(new Date(today.getFullYear(), today.getMonth(), 1))}
-                  className="px-3 py-1 rounded-lg text-xs font-bold text-blue-600 hover:bg-blue-50 transition-colors">
-                  Hari ini
-                </button>
-                <button onClick={() => setCursor(new Date(year, month + 1, 1))}
-                  className="w-8 h-8 rounded-xl flex items-center justify-center hover:bg-slate-100 transition-colors text-slate-500">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18l6-6-6-6"/></svg>
-                </button>
-                <button onClick={onClose} className="ml-2 w-8 h-8 rounded-xl flex items-center justify-center hover:bg-slate-100 transition-colors text-slate-400">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                </button>
-              </div>
-            </div>
-
-            {/* Day labels */}
-            <div className="grid grid-cols-7 px-4 pt-3 pb-1">
-              {dayNames.map(d => (
-                <div key={d} className="text-center text-[11px] font-bold text-slate-400 py-1">{d}</div>
-              ))}
-            </div>
-
-            {/* Date cells */}
-            <div className="grid grid-cols-7 px-4 pb-4 gap-y-1">
-              {cells.map((d, i) => {
-                if (!d) return <div key={i} />;
-                const key = cellKey(d);
-                const events = getEventsForKey(key);
-                const hasEvents = events.length > 0;
-                const todayCell = isToday(d);
-                const sel = isSelected(d);
-                return (
-                  <button key={i} onClick={() => setSelected(sel ? null : new Date(year, month, d))}
-                    className="flex flex-col items-center py-1.5 px-1 rounded-xl transition-all"
-                    style={sel ? { background: "#3b82f6" } : todayCell ? { background: "#eff6ff" } : {}}>
-                    <span className="text-sm font-semibold leading-none mb-1"
-                      style={{ color: sel ? "#fff" : todayCell ? "#2563eb" : "#334155" }}>{d}</span>
-                    {hasEvents ? (
-                      <div className="flex gap-0.5 flex-wrap justify-center">
-                        {events.slice(0,3).map((ev, ei) => (
-                          <span key={ei} className="w-1.5 h-1.5 rounded-full" style={{ background: sel ? "#fff" : ev.color }} />
-                        ))}
-                      </div>
-                    ) : <div className="h-2" />}
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Selected day events */}
-            {selected && (
-              <div className="border-t border-slate-100 px-6 py-4">
-                <p className="text-xs font-bold text-slate-500 mb-3">
-                  {selected.toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long" })}
-                </p>
-                {selectedEvents.length === 0 ? (
-                  <div className="flex items-center gap-3 py-3">
-                    <div className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                    </div>
-                    <p className="text-sm text-slate-400">Tidak ada jadwal di hari ini</p>
-                    <button onClick={() => { onClose(); onToast("Silakan tambah target baru!"); }}
-                      className="ml-auto text-xs font-bold text-blue-600 hover:text-blue-700">+ Tambah</button>
-                  </div>
-                ) : (
-                  <div className="space-y-2">
-                    {selectedEvents.map((ev, ei) => (
-                      <div key={ei} className="flex items-center gap-3 p-3 rounded-xl" style={{ background: ev.color + "12" }}>
-                        <div className="w-1 h-10 rounded-full shrink-0" style={{ background: ev.color }} />
-                        <div className="flex-1">
-                          <p className="text-sm font-bold text-slate-800">{ev.label}</p>
-                          <p className="text-xs text-slate-400 flex items-center gap-1 mt-0.5">
-                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                            {ev.time}
-                          </p>
-                        </div>
-                        <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: ev.color }} />
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Footer: Google Calendar integration */}
-            <div className="border-t border-slate-100 px-6 py-4 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                {/* Google Calendar G logo */}
-                <div className="w-7 h-7 rounded-lg overflow-hidden flex items-center justify-center border border-slate-200 bg-white shrink-0">
-                  <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M12 11.2v2.8h4.4c-.4 2.2-2.3 3.8-4.4 3.8-2.7 0-4.8-2.2-4.8-4.8s2.1-4.8 4.8-4.8c1.2 0 2.4.5 3.2 1.3l2.1-2.1C15.7 5.6 13.9 4.8 12 4.8 7.6 4.8 4 8.4 4 12s3.6 7.2 8 7.2c6.6 0 8.2-6.2 7.5-8.2L12 11.2z"/></svg>
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-slate-700">Google Kalender</p>
-                  <p className="text-[10px] text-slate-400">Sinkronkan deadline otomatis</p>
+                <div className="flex flex-col">
+                  <h2 className="text-slate-900 text-sm font-bold leading-5">Tambah Agenda</h2>
+                  <p className="text-gray-500 text-[10px] font-normal leading-3.5">
+                    Jadwalkan agenda baru pada {formattedActivityDate}
+                  </p>
                 </div>
               </div>
               <button
-                onClick={() => { onToast("Menghubungkan ke Google Kalender…"); setTimeout(() => onToast("Berhasil! Deadline tersinkron ✓"), 1800); }}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-white transition-all hover:opacity-90"
-                style={{ background: "linear-gradient(135deg,#4285F4,#0F9D58)" }}>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-                Integrasi Google Kalender
+                type="button"
+                onClick={onClose}
+                className="w-6 h-6 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+                aria-label="Tutup"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Form Fields Mobile */}
+            <div className="p-4 bg-slate-50 flex flex-col gap-3 max-h-[60vh] overflow-y-auto">
+              <div className="flex flex-col gap-1">
+                <label className="text-xs font-semibold leading-4 text-slate-900">
+                  Judul Agenda <span className="text-rose-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  maxLength={50}
+                  value={agendaTitle}
+                  onChange={(e) => {
+                    setAgendaTitle(capitalizeWords(e.target.value.slice(0, 50)));
+                    if (agendaErrors.title) setAgendaErrors((prev) => ({ ...prev, title: false }));
+                  }}
+                  placeholder="Contoh: Bimbingan Bab 4"
+                  className={`w-full px-3 py-2 bg-white rounded-xl outline outline-1 outline-offset-[-1px] text-xs text-slate-900 placeholder:text-slate-400 transition-colors ${
+                    agendaErrors.title ? "outline-red-400 focus:outline-red-400" : "outline-slate-200 focus:outline-blue-600"
+                  }`}
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-2.5">
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-semibold leading-4 text-slate-900">Tanggal</label>
+                  <div className="px-3 py-2 bg-slate-100 rounded-xl outline outline-1 outline-offset-[-1px] outline-slate-200 text-xs text-slate-700 font-medium truncate">
+                    {formattedActivityDate}
+                  </div>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-semibold leading-4 text-slate-900">
+                    Waktu <span className="text-rose-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={agendaTime}
+                    onChange={(e) => handleAgendaTimeChange(e.target.value)}
+                    placeholder="10:00"
+                    className={`w-full px-3 py-2 bg-white rounded-xl outline outline-1 outline-offset-[-1px] text-xs text-slate-900 placeholder:text-slate-400 transition-colors ${
+                      agendaErrors.time ? "outline-red-400 focus:outline-red-400" : "outline-slate-200 focus:outline-blue-600"
+                    }`}
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="text-xs font-semibold leading-4 text-slate-900">Catatan (Opsional)</label>
+                <textarea
+                  rows={2}
+                  maxLength={120}
+                  value={agendaNotes}
+                  onChange={(e) => setAgendaNotes(e.target.value.slice(0, 120))}
+                  placeholder="Tuliskan catatan singkat…"
+                  className="w-full px-3 py-2 bg-white rounded-xl outline outline-1 outline-offset-[-1px] outline-slate-200 focus:outline-blue-600 text-xs text-slate-900 placeholder:text-slate-400 resize-none transition-colors"
+                />
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="px-5 py-3 bg-white border-t border-slate-200 flex items-center justify-end gap-2 shrink-0">
+              <button
+                type="button"
+                onClick={() => switchDesktopView(false)}
+                className="h-9 px-4 py-1.5 bg-slate-50 hover:bg-slate-100 rounded-xl outline outline-1 outline-offset-[-1px] outline-slate-200 text-slate-600 text-xs font-semibold cursor-pointer transition-colors"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveAgenda}
+                className="h-9 px-5 py-1.5 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] rounded-xl text-white text-xs font-semibold cursor-pointer transition-all flex items-center justify-center"
+              >
+                Simpan
               </button>
             </div>
           </div>
-        </div>
+        ) : (
+          <div
+            className="w-80 max-w-[512px] max-h-[813.28px] relative bg-white rounded-2xl shadow-xl shadow-[0px_-10px_30px_-5px_rgba(15,23,42,0.15)] flex flex-col justify-start items-start overflow-hidden font-['Plus_Jakarta_Sans']"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Tombol Tutup X (posisi sesuai Figma) */}
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Tutup"
+              className="absolute right-3.5 top-3.5 p-1 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors z-20 cursor-pointer"
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+
+            {/* Header Section */}
+            <div className="self-stretch px-5 pt-3.5 pb-2.5 border-b border-slate-100 flex flex-col justify-start items-start gap-3">
+              {/* Hubungkan Google Kalender */}
+              <div className="self-stretch inline-flex justify-start items-start">
+                <button
+                  type="button"
+                  onClick={() => {
+                    onToast("Menghubungkan ke Google Kalender…");
+                    setTimeout(() => onToast("Berhasil! Google Kalender tersinkron ✓"), 1500);
+                    setGoogleConnected(true);
+                  }}
+                  className="h-7 px-3 py-[5px] bg-slate-50 hover:bg-slate-100 rounded-[10px] outline outline-1 outline-offset-[-1px] outline-slate-200 flex justify-start items-center gap-[5px] transition-colors cursor-pointer"
+                >
+                  <div className="size-3 relative overflow-hidden shrink-0">
+                    <svg width="12" height="12" viewBox="0 0 24 24">
+                      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.51h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.34z" />
+                      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                      <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+                      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
+                    </svg>
+                  </div>
+                  <div className="inline-flex flex-col justify-start items-start">
+                    <span className="justify-center text-slate-900 text-[10px] font-semibold font-['Plus_Jakarta_Sans'] leading-4">
+                      {googleConnected ? "Google Kalender Terhubung" : "Hubungkan Google Kalender"}
+                    </span>
+                  </div>
+                  <div className="h-3 inline-flex flex-col justify-start items-start">
+                    <div className="h-3 pt-[0.84px] flex flex-col justify-center items-center">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="text-gray-700">
+                        <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2" />
+                      </svg>
+                    </div>
+                  </div>
+                </button>
+              </div>
+
+              {/* Title & Subtitle */}
+              <div className="self-stretch flex flex-col justify-start items-start gap-1.5">
+                <div className="self-stretch pb-[0.75px] flex flex-col justify-start items-start gap-[5px]">
+                  <div className="self-stretch inline-flex justify-start items-center gap-2.5">
+                    <div className="size-7 bg-blue-100 rounded-lg flex justify-center items-center shrink-0 text-blue-600">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" />
+                        <line x1="16" y1="2" x2="16" y2="6" />
+                        <line x1="8" y1="2" x2="8" y2="6" />
+                        <line x1="3" y1="10" x2="21" y2="10" />
+                      </svg>
+                    </div>
+                    <div className="inline-flex flex-col justify-start items-start">
+                      <span className="justify-center text-slate-900 text-base font-bold font-['Plus_Jakarta_Sans'] leading-6">Alerin Kalender</span>
+                    </div>
+                    <div className="px-2 py-0.5 bg-slate-50 rounded-md outline outline-1 outline-offset-[-1px] outline-slate-200 inline-flex flex-col justify-start items-start">
+                      <span className="w-6 h-3 text-center justify-center text-zinc-900 text-[10px] font-semibold font-['Plus_Jakarta_Sans'] leading-4 tracking-tight">{year}</span>
+                    </div>
+                  </div>
+                  <div className="self-stretch justify-center text-slate-500 text-xs font-normal font-['Plus_Jakarta_Sans'] leading-4">
+                    Atur jadwal bimbingan dan pantau aktivitas akademikmu.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Calendar Body Section */}
+            <div className="self-stretch px-5 pt-[5px] pb-3.5 flex flex-col justify-start items-start gap-2.5 overflow-hidden">
+              {/* Month Navigation */}
+              <div className="self-stretch inline-flex justify-between items-center">
+                <div className="inline-flex flex-col justify-start items-start">
+                  <span className="justify-center text-slate-900 text-sm font-bold font-['Plus_Jakarta_Sans'] leading-5">
+                    {monthNames[month]} {year}
+                  </span>
+                </div>
+                <div className="flex justify-start items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setCursor(new Date(year, month - 1, 1))}
+                    aria-label="Bulan Sebelumnya"
+                    className="w-7 h-6 bg-blue-100/30 hover:bg-blue-100/60 rounded-md flex justify-center items-center cursor-pointer transition-colors text-gray-700"
+                  >
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M15 18l-6-6 6-6" /></svg>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const now = new Date();
+                      setCursor(new Date(now.getFullYear(), now.getMonth(), 1));
+                      setSelected(new Date(now.getFullYear(), now.getMonth(), now.getDate()));
+                    }}
+                    className="h-6 px-2.5 py-0.5 bg-blue-100 hover:bg-blue-200/80 rounded-md inline-flex flex-col justify-center items-center cursor-pointer transition-colors"
+                  >
+                    <span className="w-10 h-5 text-center justify-center text-blue-600 text-xs font-semibold font-['Plus_Jakarta_Sans'] leading-4 tracking-tight">Hari Ini</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setCursor(new Date(year, month + 1, 1))}
+                    aria-label="Bulan Berikutnya"
+                    className="w-7 h-6 bg-blue-100/30 hover:bg-blue-100/60 rounded-md flex justify-center items-center cursor-pointer transition-colors text-gray-700"
+                  >
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M9 18l6-6-6-6" /></svg>
+                  </button>
+                </div>
+              </div>
+
+              {/* Grid Box */}
+              <div className="self-stretch p-2 bg-slate-50 rounded-xl outline outline-1 outline-offset-[-1px] outline-slate-200 flex flex-col justify-start items-start gap-1">
+                {/* Days of week header */}
+                <div className="self-stretch inline-flex justify-center items-start">
+                  <div className="flex-1 py-1 inline-flex flex-col justify-start items-center">
+                    <span className="text-center justify-center text-red-500 text-xs font-semibold font-['Plus_Jakarta_Sans'] leading-4">MIN</span>
+                  </div>
+                  <div className="flex-1 py-1 inline-flex flex-col justify-start items-center">
+                    <span className="text-center justify-center text-slate-500 text-xs font-semibold font-['Plus_Jakarta_Sans'] leading-4">SEN</span>
+                  </div>
+                  <div className="flex-1 py-1 inline-flex flex-col justify-start items-center">
+                    <span className="text-center justify-center text-slate-500 text-xs font-semibold font-['Plus_Jakarta_Sans'] leading-4">SEL</span>
+                  </div>
+                  <div className="flex-1 py-1 inline-flex flex-col justify-start items-center">
+                    <span className="text-center justify-center text-slate-500 text-xs font-semibold font-['Plus_Jakarta_Sans'] leading-4">RAB</span>
+                  </div>
+                  <div className="flex-1 py-1 inline-flex flex-col justify-start items-center">
+                    <span className="text-center justify-center text-slate-500 text-xs font-semibold font-['Plus_Jakarta_Sans'] leading-4">KAM</span>
+                  </div>
+                  <div className="flex-1 py-1 inline-flex flex-col justify-start items-center">
+                    <span className="text-center justify-center text-slate-500 text-xs font-semibold font-['Plus_Jakarta_Sans'] leading-4">JUM</span>
+                  </div>
+                  <div className="flex-1 py-1 inline-flex flex-col justify-start items-center">
+                    <span className="text-center justify-center text-slate-500 text-xs font-semibold font-['Plus_Jakarta_Sans'] leading-4">SAB</span>
+                  </div>
+                </div>
+
+                {/* Date numbers grid */}
+                <div className="grid grid-cols-7 w-full">
+                  {(() => {
+                    const mFirstDay = new Date(year, month, 1).getDay();
+                    const mDaysInMonth = new Date(year, month + 1, 0).getDate();
+                    const mPrevMonthDays = new Date(year, month, 0).getDate();
+
+                    const mLeading = Array.from({ length: mFirstDay }, (_, i) => ({
+                      day: mPrevMonthDays - mFirstDay + 1 + i,
+                      type: "prev" as const,
+                      date: new Date(year, month - 1, mPrevMonthDays - mFirstDay + 1 + i),
+                    }));
+
+                    const mCurrent = Array.from({ length: mDaysInMonth }, (_, i) => ({
+                      day: i + 1,
+                      type: "current" as const,
+                      date: new Date(year, month, i + 1),
+                    }));
+
+                    const mTotal = mLeading.length + mCurrent.length;
+                    const mTarget = mTotal <= 35 ? 35 : 42;
+                    const mTrailing = Array.from({ length: mTarget - mTotal }, (_, i) => ({
+                      day: i + 1,
+                      type: "next" as const,
+                      date: new Date(year, month + 1, i + 1),
+                    }));
+
+                    const mGrid = [...mLeading, ...mCurrent, ...mTrailing];
+
+                    return mGrid.map((c, idx) => {
+                      const colIdx = idx % 7;
+                      const isSun = colIdx === 0;
+                      const isSel = selected && (
+                        selected.getFullYear() === c.date.getFullYear() &&
+                        selected.getMonth() === c.date.getMonth() &&
+                        selected.getDate() === c.date.getDate()
+                      );
+                      const cEvents = getEventsForKey(toKey(c.date));
+                      const hasEvents = cEvents.length > 0;
+
+                      return (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => {
+                            setSelected(c.date);
+                            if (c.type === "prev") {
+                              setCursor(new Date(year, month - 1, 1));
+                            } else if (c.type === "next") {
+                              setCursor(new Date(year, month + 1, 1));
+                            }
+                          }}
+                          className="self-stretch h-9 flex items-center justify-center relative cursor-pointer"
+                        >
+                          {isSel ? (
+                            <div className="size-8 bg-blue-600 rounded-lg inline-flex flex-col justify-center items-center shadow-sm">
+                              <span className="text-center justify-center text-white text-xs font-bold font-['Plus_Jakarta_Sans'] leading-3">
+                                {c.day}
+                              </span>
+                              {hasEvents && (
+                                <span className="size-1 rounded-full bg-white mt-0.5" />
+                              )}
+                            </div>
+                          ) : (
+                            <div className="self-stretch h-9 py-2.5 inline-flex flex-col justify-center items-center relative">
+                              <span
+                                className={`text-center justify-center text-xs font-['Plus_Jakarta_Sans'] ${
+                                  c.type !== "current"
+                                    ? "text-slate-300 font-medium leading-4"
+                                    : isSun
+                                    ? "text-red-500 font-semibold leading-4"
+                                    : "text-slate-800 font-medium leading-4"
+                                }`}
+                              >
+                                {c.day}
+                              </span>
+                              {hasEvents && (
+                                <span
+                                  className={`size-1 rounded-full absolute bottom-1 ${
+                                    c.type !== "current" ? "bg-slate-300" : "bg-blue-600"
+                                  }`}
+                                />
+                              )}
+                            </div>
+                          )}
+                        </button>
+                      );
+                    });
+                  })()}
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom Button: Tambah Agenda Baru */}
+            <div className="self-stretch h-16 px-5 py-2.5 bg-white border-t border-slate-200 flex flex-col justify-start items-start">
+              <button
+                type="button"
+                onClick={() => switchDesktopView(true)}
+                className="self-stretch h-11 relative bg-blue-600 hover:bg-blue-700 active:scale-[0.99] rounded-xl inline-flex justify-center items-center gap-2 shadow-[0px_2px_4px_-2px_rgba(59,130,246,0.25)] shadow-[0px_4px_6px_-1px_rgba(59,130,246,0.25)] transition-all cursor-pointer text-white"
+              >
+                <div className="size-3 relative overflow-hidden flex items-center justify-center">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                  </svg>
+                </div>
+                <div className="h-5 inline-flex flex-col justify-start items-center">
+                  <span className="text-center justify-center text-white text-xs font-semibold font-['Plus_Jakarta_Sans'] leading-5">
+                    Tambah Agenda Baru
+                  </span>
+                </div>
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
