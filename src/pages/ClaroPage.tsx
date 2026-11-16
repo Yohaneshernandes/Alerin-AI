@@ -18471,6 +18471,201 @@ const AGENDA_REMINDER_OPTIONS = [
   "3 hari sebelumnya",
 ];
 
+function MobileTimeColumn({
+  value,
+  mod,
+  onPick,
+  ariaLabel,
+}: {
+  value: number;
+  mod: number;
+  onPick: (v: number) => void;
+  ariaLabel: string;
+}) {
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const valueRef = useRef(value);
+  valueRef.current = value;
+  const modRef = useRef(mod);
+  modRef.current = mod;
+  const onPickRef = useRef(onPick);
+  onPickRef.current = onPick;
+
+  const dragStartYRef = useRef<number | null>(null);
+  const dragAccumRef = useRef<number>(0);
+  const hasMovedRef = useRef<boolean>(false);
+
+  // Attach native non-passive wheel & touch listeners to stop modal scroll and smoothly scroll numbers
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    let wheelAccum = 0;
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (Math.abs(e.deltaY) >= 40) {
+        onPickRef.current(valueRef.current + (e.deltaY > 0 ? 1 : -1));
+      } else {
+        wheelAccum += e.deltaY;
+        const threshold = 16;
+        if (Math.abs(wheelAccum) >= threshold) {
+          const step = Math.sign(wheelAccum);
+          wheelAccum = 0;
+          onPickRef.current(valueRef.current + step);
+        }
+      }
+    };
+
+    let touchStartY = 0;
+    let touchAccum = 0;
+    const onTouchStart = (e: TouchEvent) => {
+      if (e.touches.length === 1) {
+        touchStartY = e.touches[0].clientY;
+        touchAccum = 0;
+        hasMovedRef.current = false;
+      }
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+      if (e.touches.length !== 1) return;
+      e.preventDefault();
+      e.stopPropagation();
+      const currentY = e.touches[0].clientY;
+      const deltaY = touchStartY - currentY; // swipe up -> positive
+      if (Math.abs(deltaY) > 4) {
+        hasMovedRef.current = true;
+      }
+      const stepThreshold = 18;
+      const net = deltaY - touchAccum;
+      if (Math.abs(net) >= stepThreshold) {
+        const steps = Math.trunc(net / stepThreshold);
+        touchAccum += steps * stepThreshold;
+        onPickRef.current(valueRef.current + steps);
+      }
+    };
+
+    const onTouchEnd = () => {
+      setTimeout(() => {
+        hasMovedRef.current = false;
+      }, 60);
+    };
+
+    el.addEventListener("wheel", onWheel, { passive: false });
+    el.addEventListener("touchstart", onTouchStart, { passive: true });
+    el.addEventListener("touchmove", onTouchMove, { passive: false });
+    el.addEventListener("touchend", onTouchEnd, { passive: true });
+
+    return () => {
+      el.removeEventListener("wheel", onWheel);
+      el.removeEventListener("touchstart", onTouchStart);
+      el.removeEventListener("touchmove", onTouchMove);
+      el.removeEventListener("touchend", onTouchEnd);
+    };
+  }, []);
+
+  // Pointer drag for mouse drag in devtools / browser
+  const onPointerDown = (e: React.PointerEvent) => {
+    if (e.pointerType === "touch") return; // Handled by native touch listeners
+    if (e.button !== 0) return;
+    dragStartYRef.current = e.clientY;
+    dragAccumRef.current = 0;
+    hasMovedRef.current = false;
+    try {
+      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    } catch {}
+  };
+
+  const onPointerMove = (e: React.PointerEvent) => {
+    if (dragStartYRef.current === null) return;
+    const deltaY = dragStartYRef.current - e.clientY;
+    if (Math.abs(deltaY) > 4) {
+      hasMovedRef.current = true;
+    }
+    const stepThreshold = 18;
+    const net = deltaY - dragAccumRef.current;
+    if (Math.abs(net) >= stepThreshold) {
+      const steps = Math.trunc(net / stepThreshold);
+      dragAccumRef.current += steps * stepThreshold;
+      onPickRef.current(valueRef.current + steps);
+    }
+  };
+
+  const onPointerUp = (e: React.PointerEvent) => {
+    dragStartYRef.current = null;
+    dragAccumRef.current = 0;
+    try {
+      (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
+    } catch {}
+    setTimeout(() => {
+      hasMovedRef.current = false;
+    }, 60);
+  };
+
+  return (
+    <div
+      ref={containerRef}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerUp}
+      onPointerCancel={onPointerUp}
+      className="flex flex-col items-center select-none touch-none cursor-ns-resize"
+    >
+      <button
+        type="button"
+        aria-label={`Kurangi ${ariaLabel}`}
+        onClick={(e) => {
+          e.stopPropagation();
+          if (hasMovedRef.current) return;
+          onPick(value - 1);
+        }}
+        className="w-9 h-5 rounded flex items-center justify-center text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
+      >
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M18 15l-6-6-6 6" />
+        </svg>
+      </button>
+
+      {[-3, -2, -1, 0, 1, 2, 3].map((offset) => {
+        const val = (value + offset + mod) % mod;
+        const isCenter = offset === 0;
+        return (
+          <button
+            key={offset}
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (hasMovedRef.current) return;
+              onPick(val);
+            }}
+            className={`w-9 flex items-center justify-center transition-colors cursor-pointer text-xs ${
+              isCenter
+                ? "h-6 bg-blue-600 rounded-lg text-white font-semibold shadow-xs"
+                : "h-5 text-slate-500 hover:text-slate-800 font-normal"
+            }`}
+          >
+            {String(val).padStart(2, "0")}
+          </button>
+        );
+      })}
+
+      <button
+        type="button"
+        aria-label={`Tambah ${ariaLabel}`}
+        onClick={(e) => {
+          e.stopPropagation();
+          if (hasMovedRef.current) return;
+          onPick(value + 1);
+        }}
+        className="w-9 h-5 rounded flex items-center justify-center text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
+      >
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M6 9l6 6 6-6" />
+        </svg>
+      </button>
+    </div>
+  );
+}
+
 function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m: string) => void }) {
   const today = useMemo(() => new Date(), []);
   const [cursor, setCursor] = useState(() => new Date(today.getFullYear(), today.getMonth(), 1));
@@ -20278,87 +20473,23 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                       />
                       <div
                         onClick={(e) => e.stopPropagation()}
-                        className="absolute top-full left-0 mt-1.5 z-40 bg-white rounded-2xl border border-slate-200/90 shadow-[0_12px_32px_rgba(15,23,42,0.18)] px-3.5 py-2.5 flex items-center justify-center gap-1 font-['Plus_Jakarta_Sans'] select-none animate-[gemini-fade-in_0.12s_ease-out]"
+                        className="absolute top-full left-0 mt-1.5 z-40 bg-white rounded-2xl border border-slate-200/90 shadow-[0_12px_32px_rgba(15,23,42,0.18)] px-3.5 py-2.5 flex items-center justify-center gap-1 font-['Plus_Jakarta_Sans'] select-none animate-[gemini-fade-in_0.12s_ease-out] touch-none overscroll-contain"
                       >
-                        {[
-                          {
-                            key: "hour",
-                            value: pickerHour,
-                            mod: 24,
-                            onPick: (nextVal: number) => applyPickerTime(nextVal, pickerMinute),
-                          },
-                          {
-                            key: "minute",
-                            value: pickerMinute,
-                            mod: 60,
-                            onPick: (nextVal: number) => applyPickerTime(pickerHour, nextVal),
-                          },
-                        ].map((col, colIdx) => (
-                          <React.Fragment key={col.key}>
-                            {colIdx === 1 && (
-                              <span className="text-slate-900 font-bold text-sm leading-none px-0.5 self-center">
-                                .
-                              </span>
-                            )}
-                            <div
-                              onWheel={(e) => {
-                                e.preventDefault();
-                                col.onPick(col.value + (e.deltaY > 0 ? 1 : -1));
-                              }}
-                              className="flex flex-col items-center"
-                            >
-                              <button
-                                type="button"
-                                aria-label={`Kurangi ${col.key}`}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  col.onPick(col.value - 1);
-                                }}
-                                className="w-9 h-5 rounded flex items-center justify-center text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
-                              >
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round">
-                                  <path d="M18 15l-6-6-6 6" />
-                                </svg>
-                              </button>
-
-                              {[-3, -2, -1, 0, 1, 2, 3].map((offset) => {
-                                const val = (col.value + offset + col.mod) % col.mod;
-                                const isCenter = offset === 0;
-                                return (
-                                  <button
-                                    key={offset}
-                                    type="button"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      col.onPick(val);
-                                    }}
-                                    className={`w-9 flex items-center justify-center transition-colors cursor-pointer text-xs ${
-                                      isCenter
-                                        ? "h-6 bg-blue-600 rounded-lg text-white font-semibold shadow-xs"
-                                        : "h-5 text-slate-500 hover:text-slate-800 font-normal"
-                                    }`}
-                                  >
-                                    {String(val).padStart(2, "0")}
-                                  </button>
-                                );
-                              })}
-
-                              <button
-                                type="button"
-                                aria-label={`Tambah ${col.key}`}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  col.onPick(col.value + 1);
-                                }}
-                                className="w-9 h-5 rounded flex items-center justify-center text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
-                              >
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round">
-                                  <path d="M6 9l6 6 6-6" />
-                                </svg>
-                              </button>
-                            </div>
-                          </React.Fragment>
-                        ))}
+                        <MobileTimeColumn
+                          value={pickerHour}
+                          mod={24}
+                          onPick={(v) => applyPickerTime(v, pickerMinute)}
+                          ariaLabel="jam"
+                        />
+                        <span className="text-slate-900 font-bold text-sm leading-none px-0.5 self-center">
+                          .
+                        </span>
+                        <MobileTimeColumn
+                          value={pickerMinute}
+                          mod={60}
+                          onPick={(v) => applyPickerTime(pickerHour, v)}
+                          ariaLabel="menit"
+                        />
                       </div>
                     </>
                   )}
