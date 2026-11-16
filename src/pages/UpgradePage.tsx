@@ -1415,7 +1415,7 @@ export default function UpgradePage() {
                       <div>
                         <div className="flex items-center gap-1.5">
                           <p className="text-xs font-bold text-slate-900">
-                            7 Hari <span className="text-[#155dfc]">Plus</span>
+                            7 Hari <span className="text-slate-900">Plus</span>
                           </p>
                           <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-[#155dfc]">
                             Plus
@@ -1545,7 +1545,7 @@ export default function UpgradePage() {
                       <div>
                         <div className="flex items-center gap-1.5">
                           <p className="text-xs font-bold text-slate-900">
-                            30 Hari <span className="text-[#155dfc]">Plus</span>
+                            30 Hari <span className="text-slate-900">Plus</span>
                           </p>
                           <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-[#155dfc]">
                             Plus
@@ -1675,7 +1675,7 @@ export default function UpgradePage() {
                       <div>
                         <div className="flex items-center gap-1.5">
                           <p className="text-xs font-bold text-slate-900">
-                            1 Tahun <span className="text-[#155dfc]">Plus</span>
+                            1 Tahun <span className="text-slate-900">Plus</span>
                           </p>
                           <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-[#155dfc]">
                             Plus
