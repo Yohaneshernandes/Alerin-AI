@@ -919,24 +919,16 @@ export default function UpgradePage() {
                       }}
                       className="w-full flex items-center justify-between p-2.5 rounded-xl transition-all cursor-pointer hover:bg-blue-50/80 group text-left border border-transparent hover:border-blue-100"
                     >
-                      <div className="flex items-center gap-2.5">
-                        <div className="size-9 rounded-xl bg-blue-50 text-[#155dfc] border border-blue-100 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-                            <circle cx="12" cy="7" r="4" />
-                          </svg>
+                      <div>
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-xs font-bold text-slate-900">Alerin</span>
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#155dfc] text-white shadow-xs">
+                            Individual
+                          </span>
                         </div>
-                        <div>
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-xs font-bold text-slate-900">Alerin</span>
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#155dfc] text-white shadow-xs">
-                              Individual
-                            </span>
-                          </div>
-                          <p className="text-[10.5px] text-slate-500 mt-0.5 line-clamp-1">
-                            Riset & skripsi personal
-                          </p>
-                        </div>
+                        <p className="text-[10.5px] text-slate-500 mt-0.5 line-clamp-1">
+                          Riset & skripsi personal
+                        </p>
                       </div>
                       <svg className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#155dfc] group-hover:translate-x-0.5 transition-all shrink-0 ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                         <polyline points="9 18 15 12 9 6" />
@@ -952,24 +944,16 @@ export default function UpgradePage() {
                       }}
                       className="w-full flex items-center justify-between p-2.5 rounded-xl transition-all cursor-pointer hover:bg-slate-50 group text-left border border-transparent hover:border-slate-200"
                     >
-                      <div className="flex items-center gap-2.5">
-                        <div className="size-9 rounded-xl bg-slate-900 text-white flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-xs">
-                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
-                            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
-                          </svg>
+                      <div>
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-xs font-bold text-slate-900">Alerin</span>
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-900 text-white shadow-xs">
+                            Business
+                          </span>
                         </div>
-                        <div>
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-xs font-bold text-slate-900">Alerin</span>
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-900 text-white shadow-xs">
-                              Business
-                            </span>
-                          </div>
-                          <p className="text-[10.5px] text-slate-500 mt-0.5 line-clamp-1">
-                            Kampus, lab & tim institusi
-                          </p>
-                        </div>
+                        <p className="text-[10.5px] text-slate-500 mt-0.5 line-clamp-1">
+                          Kampus, lab & tim institusi
+                        </p>
                       </div>
                       <svg className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-900 group-hover:translate-x-0.5 transition-all shrink-0 ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                         <polyline points="9 18 15 12 9 6" />
@@ -1095,24 +1079,16 @@ export default function UpgradePage() {
                       }}
                       className="w-full flex items-center justify-between p-2.5 rounded-xl transition-all cursor-pointer hover:bg-blue-50/80 group text-left border border-transparent hover:border-blue-100"
                     >
-                      <div className="flex items-center gap-3">
-                        <div className="size-9 rounded-xl bg-blue-50 text-[#155dfc] border border-blue-100 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-                            <circle cx="12" cy="7" r="4" />
-                          </svg>
+                      <div>
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-sm font-bold text-slate-900">Alerin</span>
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#155dfc] text-white shadow-xs">
+                            Individual
+                          </span>
                         </div>
-                        <div>
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-sm font-bold text-slate-900">Alerin</span>
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#155dfc] text-white shadow-xs">
-                              Individual
-                            </span>
-                          </div>
-                          <p className="text-xs text-slate-500 mt-0.5 line-clamp-1">
-                            Riset, skripsi & tugas akademik personal
-                          </p>
-                        </div>
+                        <p className="text-xs text-slate-500 mt-0.5 line-clamp-1">
+                          Riset, skripsi & tugas akademik personal
+                        </p>
                       </div>
                       <svg className="w-4 h-4 text-slate-400 group-hover:text-[#155dfc] group-hover:translate-x-0.5 transition-all shrink-0 ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                         <polyline points="9 18 15 12 9 6" />
@@ -1128,24 +1104,16 @@ export default function UpgradePage() {
                       }}
                       className="w-full flex items-center justify-between p-2.5 rounded-xl transition-all cursor-pointer hover:bg-slate-50 group text-left border border-transparent hover:border-slate-200"
                     >
-                      <div className="flex items-center gap-3">
-                        <div className="size-9 rounded-xl bg-slate-900 text-white flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-xs">
-                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
-                            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
-                          </svg>
+                      <div>
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-sm font-bold text-slate-900">Alerin</span>
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-900 text-white shadow-xs">
+                            Business
+                          </span>
                         </div>
-                        <div>
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-sm font-bold text-slate-900">Alerin</span>
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-900 text-white shadow-xs">
-                              Business
-                            </span>
-                          </div>
-                          <p className="text-xs text-slate-500 mt-0.5 line-clamp-1">
-                            Kampus, lab riset & tim institusi
-                          </p>
-                        </div>
+                        <p className="text-xs text-slate-500 mt-0.5 line-clamp-1">
+                          Kampus, lab riset & tim institusi
+                        </p>
                       </div>
                       <svg className="w-4 h-4 text-slate-400 group-hover:text-slate-900 group-hover:translate-x-0.5 transition-all shrink-0 ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                         <polyline points="9 18 15 12 9 6" />
