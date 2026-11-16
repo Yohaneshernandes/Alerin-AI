@@ -644,7 +644,7 @@ export default function UpgradePage() {
                   onClick={() => setOpenDropdown((prev) => (prev === "7d" ? null : "7d"))}
                   className={`duration-btn relative px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
                     currentDuration === "7d"
-                      ? "font-bold bg-white text-blue-600 shadow-sm"
+                      ? `font-bold bg-white ${currentTier === "pro" ? "text-slate-900" : "text-blue-600"} shadow-sm`
                       : "font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-200/50"
                   }`}
                 >
@@ -653,7 +653,7 @@ export default function UpgradePage() {
                     <span
                       className={`text-[9.5px] font-bold uppercase px-1.5 py-0.5 rounded-md ${
                         currentTier === "pro"
-                          ? "bg-indigo-100 text-indigo-700"
+                          ? "bg-slate-100 text-slate-900 border border-slate-300"
                           : "bg-blue-100 text-blue-700"
                       }`}
                     >
@@ -697,19 +697,16 @@ export default function UpgradePage() {
                           : "hover:bg-slate-50 text-slate-700"
                       }`}
                     >
-                      <div className="flex items-center gap-2.5">
-                        <div className="size-8 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600 shrink-0">
-                          <PlusBadgeIcon size={14} />
+                      <div>
+                        <div className="flex items-center gap-1.5">
+                          <p className="text-xs font-bold text-slate-900">
+                            7 Hari <span className="text-blue-600">Plus</span>
+                          </p>
+                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-blue-700">
+                            Plus
+                          </span>
                         </div>
-                        <div>
-                          <div className="flex items-center gap-1.5">
-                            <p className="text-xs font-bold text-slate-900">7 Hari Plus</p>
-                            <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-blue-100 text-blue-700">
-                              Plus
-                            </span>
-                          </div>
-                          <p className="text-[10.5px] text-slate-500">Akses fitur esensial</p>
-                        </div>
+                        <p className="text-[10.5px] text-slate-500 mt-0.5">Akses fitur esensial</p>
                       </div>
                       {currentDuration === "7d" && currentTier === "plus" && (
                         <svg
@@ -719,7 +716,7 @@ export default function UpgradePage() {
                           fill="none"
                           stroke="#2563eb"
                           strokeWidth="2.5"
-                          className="shrink-0"
+                          className="shrink-0 ml-2"
                         >
                           <polyline points="20 6 9 17 4 12" />
                         </svg>
@@ -737,32 +734,20 @@ export default function UpgradePage() {
                       }}
                       className={`w-full flex items-center justify-between p-2.5 rounded-xl transition-all cursor-pointer mt-1 ${
                         currentDuration === "7d" && currentTier === "pro"
-                          ? "bg-indigo-50/80 border border-indigo-200 text-indigo-900"
+                          ? "bg-slate-100/90 border border-slate-300 text-slate-900"
                           : "hover:bg-slate-50 text-slate-700"
                       }`}
                     >
-                      <div className="flex items-center gap-2.5">
-                        <div className="size-8 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-600 shrink-0">
-                          <svg
-                            width="14"
-                            height="14"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2.5"
-                          >
-                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                          </svg>
+                      <div>
+                        <div className="flex items-center gap-1.5">
+                          <p className="text-xs font-bold text-slate-900">
+                            7 Hari <span className="text-slate-900">Pro</span>
+                          </p>
+                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-900 border border-slate-300">
+                            Pro
+                          </span>
                         </div>
-                        <div>
-                          <div className="flex items-center gap-1.5">
-                            <p className="text-xs font-bold text-slate-900">7 Hari Pro</p>
-                            <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-indigo-100 text-indigo-700">
-                              Pro
-                            </span>
-                          </div>
-                          <p className="text-[10.5px] text-slate-500">Kuota & prioritas AI penuh</p>
-                        </div>
+                        <p className="text-[10.5px] text-slate-500 mt-0.5">Kuota & prioritas AI penuh</p>
                       </div>
                       {currentDuration === "7d" && currentTier === "pro" && (
                         <svg
@@ -770,9 +755,9 @@ export default function UpgradePage() {
                           height="16"
                           viewBox="0 0 24 24"
                           fill="none"
-                          stroke="#4f46e5"
+                          stroke="#0f172a"
                           strokeWidth="2.5"
-                          className="shrink-0"
+                          className="shrink-0 ml-2"
                         >
                           <polyline points="20 6 9 17 4 12" />
                         </svg>
@@ -789,7 +774,7 @@ export default function UpgradePage() {
                   onClick={() => setOpenDropdown((prev) => (prev === "30d" ? null : "30d"))}
                   className={`duration-btn relative px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
                     currentDuration === "30d"
-                      ? "font-bold bg-white text-blue-600 shadow-sm"
+                      ? `font-bold bg-white ${currentTier === "pro" ? "text-slate-900" : "text-blue-600"} shadow-sm`
                       : "font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-200/50"
                   }`}
                 >
@@ -798,7 +783,7 @@ export default function UpgradePage() {
                     <span
                       className={`text-[9.5px] font-bold uppercase px-1.5 py-0.5 rounded-md ${
                         currentTier === "pro"
-                          ? "bg-indigo-100 text-indigo-700"
+                          ? "bg-slate-100 text-slate-900 border border-slate-300"
                           : "bg-blue-100 text-blue-700"
                       }`}
                     >
@@ -842,19 +827,16 @@ export default function UpgradePage() {
                           : "hover:bg-slate-50 text-slate-700"
                       }`}
                     >
-                      <div className="flex items-center gap-2.5">
-                        <div className="size-8 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600 shrink-0">
-                          <PlusBadgeIcon size={14} />
+                      <div>
+                        <div className="flex items-center gap-1.5">
+                          <p className="text-xs font-bold text-slate-900">
+                            30 Hari <span className="text-blue-600">Plus</span>
+                          </p>
+                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-blue-700">
+                            Plus
+                          </span>
                         </div>
-                        <div>
-                          <div className="flex items-center gap-1.5">
-                            <p className="text-xs font-bold text-slate-900">30 Hari Plus</p>
-                            <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-blue-100 text-blue-700">
-                              Plus
-                            </span>
-                          </div>
-                          <p className="text-[10.5px] text-slate-500">Pilihan bulanan esensial</p>
-                        </div>
+                        <p className="text-[10.5px] text-slate-500 mt-0.5">Pilihan bulanan esensial</p>
                       </div>
                       {currentDuration === "30d" && currentTier === "plus" && (
                         <svg
@@ -864,7 +846,7 @@ export default function UpgradePage() {
                           fill="none"
                           stroke="#2563eb"
                           strokeWidth="2.5"
-                          className="shrink-0"
+                          className="shrink-0 ml-2"
                         >
                           <polyline points="20 6 9 17 4 12" />
                         </svg>
@@ -882,32 +864,20 @@ export default function UpgradePage() {
                       }}
                       className={`w-full flex items-center justify-between p-2.5 rounded-xl transition-all cursor-pointer mt-1 ${
                         currentDuration === "30d" && currentTier === "pro"
-                          ? "bg-indigo-50/80 border border-indigo-200 text-indigo-900"
+                          ? "bg-slate-100/90 border border-slate-300 text-slate-900"
                           : "hover:bg-slate-50 text-slate-700"
                       }`}
                     >
-                      <div className="flex items-center gap-2.5">
-                        <div className="size-8 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-600 shrink-0">
-                          <svg
-                            width="14"
-                            height="14"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2.5"
-                          >
-                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                          </svg>
+                      <div>
+                        <div className="flex items-center gap-1.5">
+                          <p className="text-xs font-bold text-slate-900">
+                            30 Hari <span className="text-slate-900">Pro</span>
+                          </p>
+                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-900 border border-slate-300">
+                            Pro
+                          </span>
                         </div>
-                        <div>
-                          <div className="flex items-center gap-1.5">
-                            <p className="text-xs font-bold text-slate-900">30 Hari Pro</p>
-                            <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-indigo-100 text-indigo-700">
-                              Pro
-                            </span>
-                          </div>
-                          <p className="text-[10.5px] text-slate-500">Kuota & prioritas AI penuh</p>
-                        </div>
+                        <p className="text-[10.5px] text-slate-500 mt-0.5">Kuota & prioritas AI penuh</p>
                       </div>
                       {currentDuration === "30d" && currentTier === "pro" && (
                         <svg
@@ -915,9 +885,9 @@ export default function UpgradePage() {
                           height="16"
                           viewBox="0 0 24 24"
                           fill="none"
-                          stroke="#4f46e5"
+                          stroke="#0f172a"
                           strokeWidth="2.5"
-                          className="shrink-0"
+                          className="shrink-0 ml-2"
                         >
                           <polyline points="20 6 9 17 4 12" />
                         </svg>
@@ -934,7 +904,7 @@ export default function UpgradePage() {
                   onClick={() => setOpenDropdown((prev) => (prev === "1y" ? null : "1y"))}
                   className={`duration-btn relative px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
                     currentDuration === "1y"
-                      ? "font-bold bg-white text-blue-600 shadow-sm"
+                      ? `font-bold bg-white ${currentTier === "pro" ? "text-slate-900" : "text-blue-600"} shadow-sm`
                       : "font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-200/50"
                   }`}
                 >
@@ -943,7 +913,7 @@ export default function UpgradePage() {
                     <span
                       className={`text-[9.5px] font-bold uppercase px-1.5 py-0.5 rounded-md ${
                         currentTier === "pro"
-                          ? "bg-indigo-100 text-indigo-700"
+                          ? "bg-slate-100 text-slate-900 border border-slate-300"
                           : "bg-blue-100 text-blue-700"
                       }`}
                     >
@@ -987,19 +957,16 @@ export default function UpgradePage() {
                           : "hover:bg-slate-50 text-slate-700"
                       }`}
                     >
-                      <div className="flex items-center gap-2.5">
-                        <div className="size-8 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600 shrink-0">
-                          <PlusBadgeIcon size={14} />
+                      <div>
+                        <div className="flex items-center gap-1.5">
+                          <p className="text-xs font-bold text-slate-900">
+                            1 Tahun <span className="text-blue-600">Plus</span>
+                          </p>
+                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-blue-700">
+                            Plus
+                          </span>
                         </div>
-                        <div>
-                          <div className="flex items-center gap-1.5">
-                            <p className="text-xs font-bold text-slate-900">1 Tahun Plus</p>
-                            <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-blue-100 text-blue-700">
-                              Plus
-                            </span>
-                          </div>
-                          <p className="text-[10.5px] text-slate-500">Hemat tahunan esensial</p>
-                        </div>
+                        <p className="text-[10.5px] text-slate-500 mt-0.5">Hemat tahunan esensial</p>
                       </div>
                       {currentDuration === "1y" && currentTier === "plus" && (
                         <svg
@@ -1009,7 +976,7 @@ export default function UpgradePage() {
                           fill="none"
                           stroke="#2563eb"
                           strokeWidth="2.5"
-                          className="shrink-0"
+                          className="shrink-0 ml-2"
                         >
                           <polyline points="20 6 9 17 4 12" />
                         </svg>
@@ -1027,32 +994,20 @@ export default function UpgradePage() {
                       }}
                       className={`w-full flex items-center justify-between p-2.5 rounded-xl transition-all cursor-pointer mt-1 ${
                         currentDuration === "1y" && currentTier === "pro"
-                          ? "bg-indigo-50/80 border border-indigo-200 text-indigo-900"
+                          ? "bg-slate-100/90 border border-slate-300 text-slate-900"
                           : "hover:bg-slate-50 text-slate-700"
                       }`}
                     >
-                      <div className="flex items-center gap-2.5">
-                        <div className="size-8 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-600 shrink-0">
-                          <svg
-                            width="14"
-                            height="14"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2.5"
-                          >
-                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                          </svg>
+                      <div>
+                        <div className="flex items-center gap-1.5">
+                          <p className="text-xs font-bold text-slate-900">
+                            1 Tahun <span className="text-slate-900">Pro</span>
+                          </p>
+                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-900 border border-slate-300">
+                            Pro
+                          </span>
                         </div>
-                        <div>
-                          <div className="flex items-center gap-1.5">
-                            <p className="text-xs font-bold text-slate-900">1 Tahun Pro</p>
-                            <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-indigo-100 text-indigo-700">
-                              Pro
-                            </span>
-                          </div>
-                          <p className="text-[10.5px] text-slate-500">Kuota & prioritas AI penuh</p>
-                        </div>
+                        <p className="text-[10.5px] text-slate-500 mt-0.5">Kuota & prioritas AI penuh</p>
                       </div>
                       {currentDuration === "1y" && currentTier === "pro" && (
                         <svg
@@ -1060,9 +1015,9 @@ export default function UpgradePage() {
                           height="16"
                           viewBox="0 0 24 24"
                           fill="none"
-                          stroke="#4f46e5"
+                          stroke="#0f172a"
                           strokeWidth="2.5"
-                          className="shrink-0"
+                          className="shrink-0 ml-2"
                         >
                           <polyline points="20 6 9 17 4 12" />
                         </svg>
