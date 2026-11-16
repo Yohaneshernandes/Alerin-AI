@@ -6407,17 +6407,6 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                   <line x1="5" y1="12" x2="19" y2="12" />
                 </svg>
                 <span className="text-blue-600 text-sm font-semibold leading-5">Upgrade</span>
-                <svg
-                  className={`w-3 h-3 text-blue-600 transition-transform duration-200 ${
-                    upgradeDropdownOpen ? "rotate-180" : ""
-                  }`}
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                >
-                  <polyline points="6 9 12 15 18 9" />
-                </svg>
               </button>
 
               {/* Mobile Upgrade Dropdown */}
@@ -7172,17 +7161,6 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 <span className="text-sm font-semibold leading-5">Upgrade</span>
-                <svg
-                  className={`w-3.5 h-3.5 transition-transform duration-200 ${
-                    upgradeDropdownOpen ? "rotate-180" : ""
-                  }`}
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                >
-                  <polyline points="6 9 12 15 18 9" />
-                </svg>
               </button>
 
               {/* Desktop Upgrade Dropdown */}
