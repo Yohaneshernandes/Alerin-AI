@@ -1136,15 +1136,19 @@ export default function UpgradePage() {
                         </div>
 
                         <div className="text-right shrink-0">
-                          {currentDuration === "1y" && (
-                            <span className="text-[11px] text-slate-400 line-through mr-1">
-                              {formatRupiah(item.original_yearly)}
+                          <div className="flex items-baseline justify-end gap-1 flex-wrap">
+                            {currentDuration === "1y" && (
+                              <span className="text-[11px] text-slate-400 line-through mr-0.5">
+                                {formatRupiah(item.original_yearly)}
+                              </span>
+                            )}
+                            <span className="text-sm sm:text-base font-extrabold text-slate-900 whitespace-nowrap">
+                              {formatRupiah(price)}
                             </span>
-                          )}
-                          <span className="text-sm font-extrabold text-slate-900">
-                            {formatRupiah(price)}
-                          </span>
-                          <span className="text-[10px] text-slate-500 block">{durationLabel}</span>
+                            <span className="text-[11px] text-slate-500 font-normal whitespace-nowrap">
+                              {durationLabel}
+                            </span>
+                          </div>
                         </div>
                       </div>
 
