@@ -224,7 +224,7 @@ function formatRupiah(num: number): string {
 function getDurationReadable(dur: "7d" | "30d" | "1y"): string {
   if (dur === "7d") return "7 Hari";
   if (dur === "30d") return "30 Hari";
-  if (dur === "1y") return "1 Tahun (12 Bulan)";
+  if (dur === "1y") return "1 Tahun";
   return dur;
 }
 
@@ -617,61 +617,45 @@ export default function UpgradePage() {
                   setCurrentDuration("7d");
                   showToast("Durasi diubah ke: 7 Hari", "info");
                 }}
-                className={`duration-btn relative px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
+                className={`duration-btn relative px-5 sm:px-8 py-2.5 rounded-xl text-xs sm:text-sm transition-all whitespace-nowrap cursor-pointer ${
                   currentDuration === "7d"
-                    ? "font-bold bg-white text-brand-700 shadow-sm"
-                    : "text-slate-600 hover:text-slate-900"
+                    ? "font-bold bg-white text-blue-600 shadow-sm"
+                    : "font-semibold text-slate-600 hover:text-slate-900"
                 }`}
               >
-                <span>7 Hari</span>
-                <span className="text-[11px] font-normal text-slate-400">Uji Coba</span>
+                7 Hari
               </button>
 
-              {/* Option: 30 Hari (Default) */}
+              {/* Option: 30 Hari */}
               <button
                 type="button"
                 onClick={() => {
                   setCurrentDuration("30d");
                   showToast("Durasi diubah ke: 30 Hari", "info");
                 }}
-                className={`duration-btn relative px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
+                className={`duration-btn relative px-5 sm:px-8 py-2.5 rounded-xl text-xs sm:text-sm transition-all whitespace-nowrap cursor-pointer ${
                   currentDuration === "30d"
-                    ? "font-bold bg-white text-brand-700 shadow-sm"
+                    ? "font-bold bg-white text-blue-600 shadow-sm"
                     : "font-semibold text-slate-600 hover:text-slate-900"
                 }`}
               >
-                <span>30 Hari</span>
-                <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-brand-50 text-brand-600 border border-brand-200">
-                  Populer
-                </span>
+                30 Hari
               </button>
 
-              {/* Option: 1 Tahun (Hemat 20%) */}
+              {/* Option: 1 Tahun */}
               <button
                 type="button"
                 onClick={() => {
                   setCurrentDuration("1y");
-                  showToast("Durasi diubah ke: 1 Tahun (12 Bulan)", "info");
+                  showToast("Durasi diubah ke: 1 Tahun", "info");
                 }}
-                className={`duration-btn relative px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
+                className={`duration-btn relative px-5 sm:px-8 py-2.5 rounded-xl text-xs sm:text-sm transition-all whitespace-nowrap cursor-pointer ${
                   currentDuration === "1y"
-                    ? "font-bold bg-white text-brand-700 shadow-sm"
+                    ? "font-bold bg-white text-blue-600 shadow-sm"
                     : "font-semibold text-slate-600 hover:text-slate-900"
                 }`}
               >
-                <span>1 Tahun / 12 Bulan</span>
-                <span className="inline-flex items-center gap-1 text-[11px] font-extrabold text-brand-700 bg-brand-100 px-2 py-0.5 rounded-full border border-brand-200">
-                  <svg
-                    className="w-3 h-3 text-brand-600"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                  >
-                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-                  </svg>
-                  Hemat 20%
-                </span>
+                1 Tahun
               </button>
             </div>
           </div>
