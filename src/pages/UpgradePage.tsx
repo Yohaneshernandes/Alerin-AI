@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { useNavigate, Link } from "react-router";
+import PlusBadgeIcon from "@/components/PlusBadgeIcon";
 
 // Database rincian detail paket fitur
 const FEATURE_DETAILS: Record<
@@ -242,9 +243,6 @@ export default function UpgradePage() {
     type: "fixed";
   } | null>(null);
 
-  const [currentAccountPlan, setCurrentAccountPlan] = useState("Paket: Gratis");
-  const [planDropdownOpen, setPlanDropdownOpen] = useState(false);
-  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
 
   const [activeModalFeatureKey, setActiveModalFeatureKey] = useState<string | null>(null);
   const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
@@ -451,268 +449,144 @@ export default function UpgradePage() {
         </div>
       )}
 
-      {/* HEADER & NAVIGATION */}
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 transition-all duration-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 sm:h-20">
-            {/* Left: Logo & Back Button */}
-            <div className="flex items-center gap-3">
-              <Link to="/" className="flex items-center gap-2.5 group">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-600 to-brand-800 flex items-center justify-center shadow-md shadow-brand-600/20 group-hover:scale-105 transition-transform">
-                  <svg
-                    className="w-6 h-6 text-white"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.3"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
-                  </svg>
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-xl font-bold tracking-tight text-slate-900 group-hover:text-brand-600 transition-colors">
-                    Alerin
-                  </span>
-                </div>
-              </Link>
+      {/* HEADER & NAVIGATION (Persis Header Utama Alerin di Chat) */}
+      <header
+        className="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-slate-200/40 transition-all duration-200 shadow-xs"
+        style={{ WebkitBackdropFilter: "blur(20px)", backdropFilter: "blur(20px)" }}
+      >
+        {/* Mobile top header — persis header mobile chat Alerin */}
+        <div className="md:hidden flex items-center justify-between px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3 w-full">
+          <div className="flex items-center gap-2.5">
+            <button
+              type="button"
+              onClick={() => navigate("/")}
+              aria-label="Kembali ke chat"
+              className="size-10 rounded-full border border-slate-200/90 bg-white/70 backdrop-blur-sm flex flex-col justify-center items-center gap-1 hover:bg-slate-50 active:scale-95 transition-all shrink-0 shadow-xs cursor-pointer"
+              title="Kembali ke Obrolan"
+            >
+              <div className="w-4 h-0.5 bg-slate-800 rounded-full" />
+              <div className="w-4 h-0.5 bg-slate-800 rounded-full" />
+            </button>
+            <div
+              className="h-10 px-4 py-2 rounded-full border border-blue-200/90 bg-blue-50/80 backdrop-blur-sm flex items-center gap-1.5 shrink-0 shadow-xs"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2.5">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+              <span className="text-blue-600 text-sm font-semibold leading-5">Upgrade</span>
+            </div>
+          </div>
 
-              {/* Kembali ke Dashboard Button */}
-              <button
-                type="button"
-                onClick={() => navigate("/")}
-                className="hidden sm:inline-flex items-center gap-1.5 ml-2 px-3 py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600 hover:text-slate-900 text-xs font-semibold transition-colors cursor-pointer"
-              >
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="m15 18-6-6 6-6" />
-                </svg>
-                <span>Kembali ke Dashboard</span>
-              </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => navigate("/")}
+              aria-label="Notifikasi"
+              className="size-10 rounded-full border border-slate-200/90 bg-white/70 backdrop-blur-sm flex items-center justify-center hover:bg-slate-50 active:scale-95 transition-all relative shrink-0 shadow-xs cursor-pointer"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+              </svg>
+              <span className="absolute top-2 right-2 size-2 bg-red-500 rounded-full ring-2 ring-white" />
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate("/")}
+              aria-label="Profil pengguna"
+              className="size-9 rounded-full overflow-hidden shrink-0 hover:opacity-90 active:scale-95 transition-all ring-1 ring-slate-200/90 bg-sky-100 shadow-xs cursor-pointer"
+            >
+              <img
+                src="/assets/avatar-profile.jpg"
+                alt="Profil"
+                className="size-full object-cover"
+                onError={(e) => {
+                  (e.currentTarget as HTMLImageElement).src = "/assets/avatar-profile.jpg";
+                }}
+              />
+            </button>
+          </div>
+        </div>
+
+        {/* Desktop top header — persis header desktop chat Alerin */}
+        <div className="hidden md:flex items-center justify-between h-[72px] px-6 lg:px-8 max-w-7xl mx-auto w-full">
+          {/* Left: Brand Alerin & Kembali ke Chat */}
+          <div className="flex items-center gap-3">
+            <Link to="/" className="flex items-center gap-2.5 group cursor-pointer">
+              <img
+                src="/assets/73c1a.png"
+                alt="Alerin"
+                className="size-9 rounded-full border border-white object-cover shadow-sm group-hover:scale-105 transition-transform"
+              />
+              <span className="font-extrabold text-xl tracking-tight text-slate-900 group-hover:text-blue-600 transition-colors">
+                ALERIN
+              </span>
+            </Link>
+
+            <button
+              type="button"
+              onClick={() => navigate("/")}
+              className="inline-flex items-center gap-1.5 ml-3 px-3.5 py-2 rounded-full border border-slate-200/90 bg-white/80 hover:bg-blue-50/60 hover:border-blue-200 text-slate-700 hover:text-blue-600 text-xs font-semibold shadow-xs transition-all cursor-pointer"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="15 18 9 12 15 6" />
+              </svg>
+              <span>Kembali ke Chat</span>
+            </button>
+          </div>
+
+          {/* Right: Floating pill group persis seperti di ClaroPage */}
+          <div className="flex items-center gap-2.5">
+            <div
+              className="h-[46px] px-4 rounded-full backdrop-blur-md border border-blue-200/90 bg-blue-50/80 flex items-center gap-1.5 transition-colors shrink-0 shadow-[0_4px_20px_rgba(37,99,235,0.08)] text-blue-600 font-semibold text-sm leading-5"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+              <span>Upgrade</span>
             </div>
 
-            {/* Center: Navigation Menu */}
-            <nav className="hidden md:flex items-center gap-7">
-              <a
-                href="#fitur"
-                className="text-sm font-medium text-slate-600 hover:text-brand-600 transition-colors"
-              >
-                Fitur Ekosistem
-              </a>
-              <a
-                href="#solusi"
-                className="text-sm font-medium text-slate-600 hover:text-brand-600 transition-colors"
-              >
-                Solusi Akademik
-              </a>
-              <a
-                href="#faq"
-                className="text-sm font-medium text-slate-600 hover:text-brand-600 transition-colors"
-              >
-                Bantuan & FAQ
-              </a>
-
-              {/* Tombol Alleri Bisnis */}
-              <div className="relative group px-3.5 py-1.5 rounded-xl border-2 border-brand-600 text-brand-700 bg-white hover:bg-brand-50 font-bold text-xs uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-sm cursor-pointer">
-                <svg
-                  className="w-3.5 h-3.5 text-brand-600"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                >
-                  <rect width="20" height="14" x="2" y="7" rx="2" ry="2" />
-                  <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
-                </svg>
-                <span>Alerin Bisnis</span>
-                <span className="inline-flex items-center px-1.5 py-0.2 text-[9px] font-extrabold bg-brand-600 text-white rounded">
-                  B2B
-                </span>
-              </div>
-            </nav>
-
-            {/* Right: Status Langganan & Avatar */}
-            <div className="flex items-center gap-3 sm:gap-4">
-              {/* Back button for mobile */}
+            <div
+              className="flex items-center gap-2 px-2.5 py-1.5 rounded-full backdrop-blur-md border border-slate-200/85 bg-white/90 shadow-[0_4px_20px_rgba(15,23,42,0.08)] transition-colors"
+            >
               <button
                 type="button"
                 onClick={() => navigate("/")}
-                aria-label="Kembali ke Dashboard"
-                className="sm:hidden p-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+                className="flex items-center gap-2.5 pl-0.5 pr-1 text-left hover:opacity-85 transition-opacity cursor-pointer"
               >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+                <div
+                  className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0 shadow-xs"
+                  style={{ background: "linear-gradient(135deg,#f59e0b,#d97706)" }}
                 >
-                  <path d="m15 18-6-6 6-6" />
+                  RA
+                </div>
+                <div className="min-w-0 flex flex-col items-start leading-tight">
+                  <p className="text-xs font-semibold whitespace-nowrap text-slate-800">Raka Aditya</p>
+                  <span className="mt-0.5 inline-flex items-center gap-1 rounded-full border border-blue-200 bg-white px-2 py-[1px] font-['Inter:Bold'] text-[9.5px] font-bold leading-[13px] whitespace-nowrap text-slate-900 shadow-2xs">
+                    Plus
+                    <PlusBadgeIcon size={11} />
+                  </span>
+                </div>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400 ml-0.5 shrink-0">
+                  <polyline points="6 9 12 15 18 9" />
                 </svg>
               </button>
-
-              {/* Status Langganan Badge (Clickable Dropdown) */}
-              <div className="relative">
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setPlanDropdownOpen((v) => !v);
-                    setProfileDropdownOpen(false);
-                  }}
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-semibold transition-all cursor-pointer ${
-                    currentAccountPlan.includes("Pro")
-                      ? "bg-brand-50 text-brand-700 border-brand-200"
-                      : "bg-slate-100 hover:bg-slate-200/80 border-slate-200 text-slate-700"
-                  }`}
-                >
-                  <span className="w-2 h-2 rounded-full bg-brand-500 animate-pulse" />
-                  <span>{currentAccountPlan}</span>
-                  <svg
-                    className="w-3.5 h-3.5 text-slate-500 ml-0.5"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path d="m6 9 6 6 6-6" />
-                  </svg>
-                </button>
-
-                {/* Dropdown: Status Paket */}
-                {planDropdownOpen && (
-                  <div
-                    onClick={(e) => e.stopPropagation()}
-                    className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-slate-200/80 p-3.5 z-50 animate-[gemini-zoom-in_0.15s_ease-out]"
-                  >
-                    <div className="flex items-center justify-between pb-2.5 border-b border-slate-100">
-                      <span className="text-xs text-slate-500 font-medium">Status Akun Anda</span>
-                      <span className="text-[11px] font-bold text-brand-700 bg-brand-50 px-2 py-0.5 rounded-full border border-brand-200">
-                        {currentAccountPlan.includes("Pro") ? "Pro Tier" : "Free Tier"}
-                      </span>
-                    </div>
-                    <div className="py-2.5 space-y-1.5 text-xs text-slate-600">
-                      <div className="flex justify-between">
-                        <span>Sisa Kuota Uji Coba:</span>
-                        <span className="font-semibold text-slate-800">
-                          {currentAccountPlan.includes("Pro") ? "Unlimited" : "3 Dokumen"}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Masa Aktif:</span>
-                        <span className="font-semibold text-slate-800">
-                          {currentAccountPlan.includes("Pro")
-                            ? getDurationReadable(currentDuration)
-                            : "Tidak Terbatas"}
-                        </span>
-                      </div>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setPlanDropdownOpen(false);
-                        const el = document.getElementById("configurator");
-                        if (el) el.scrollIntoView({ behavior: "smooth" });
-                      }}
-                      className="w-full mt-1 py-2 px-3 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-semibold text-center transition-colors flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
-                    >
-                      <svg
-                        className="w-3.5 h-3.5"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      >
-                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-                      </svg>
-                      Kelola & Upgrade Paket
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              {/* Avatar Profil Pengguna (Clickable Dropdown) */}
-              <div className="relative">
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setProfileDropdownOpen((v) => !v);
-                    setPlanDropdownOpen(false);
-                  }}
-                  className="flex items-center gap-2 p-1 rounded-full hover:ring-2 hover:ring-brand-500/20 transition-all cursor-pointer"
-                >
-                  <div className="w-9 h-9 rounded-full bg-slate-900 text-white font-bold text-xs flex items-center justify-center border-2 border-white shadow-sm ring-1 ring-slate-200">
-                    RD
-                  </div>
-                </button>
-
-                {/* Dropdown: Menu Profil */}
-                {profileDropdownOpen && (
-                  <div
-                    onClick={(e) => e.stopPropagation()}
-                    className="absolute right-0 mt-2 w-60 bg-white rounded-2xl shadow-xl border border-slate-200/80 p-2 z-50 animate-[gemini-zoom-in_0.15s_ease-out]"
-                  >
-                    <div className="px-3 py-2 border-b border-slate-100">
-                      <p className="text-xs font-bold text-slate-900 truncate">Reyhan Darmawan</p>
-                      <p className="text-[11px] text-slate-500 truncate">reyhan@universitas.ac.id</p>
-                    </div>
-                    <div className="py-1">
-                      <button
-                        type="button"
-                        onClick={() => navigate("/")}
-                        className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 rounded-xl transition-colors cursor-pointer text-left"
-                      >
-                        <svg
-                          className="w-4 h-4 text-slate-400"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                        >
-                          <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-                          <circle cx="12" cy="7" r="4" />
-                        </svg>
-                        Dashboard Utama
-                      </button>
-                    </div>
-                    <div className="pt-1.5 mt-1 border-t border-slate-100">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setProfileDropdownOpen(false);
-                          const el = document.getElementById("configurator");
-                          if (el) el.scrollIntoView({ behavior: "smooth" });
-                        }}
-                        className="w-full flex items-center justify-between px-3 py-2 text-xs font-bold text-white bg-brand-600 hover:bg-brand-700 rounded-xl transition-colors shadow-sm cursor-pointer"
-                      >
-                        <span>Upgrade / Kelola Paket</span>
-                        <svg
-                          className="w-3.5 h-3.5"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2.5"
-                        >
-                          <path d="M5 12h14m-7-7 7 7-7 7" />
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
+              <div className="w-px h-5 shrink-0 bg-slate-200/80" />
+              <button
+                type="button"
+                onClick={() => navigate("/")}
+                title="Notifikasi"
+                aria-label="Notifikasi"
+                className="relative w-8 h-8 flex items-center justify-center rounded-full transition-colors shrink-0 cursor-pointer text-slate-500 hover:text-slate-800 hover:bg-slate-100/80"
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                </svg>
+                <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-red-500 border border-white" />
+              </button>
             </div>
           </div>
         </div>
@@ -1370,15 +1244,18 @@ export default function UpgradePage() {
 
                 {/* Account recipient info */}
                 <div className="p-3 bg-brand-50/50 rounded-xl border border-brand-100 flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-brand-600 text-white font-bold text-xs flex items-center justify-center shrink-0">
-                    RD
+                  <div
+                    className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0 shadow-xs"
+                    style={{ background: "linear-gradient(135deg,#f59e0b,#d97706)" }}
+                  >
+                    RA
                   </div>
                   <div className="text-xs min-w-0">
                     <p className="font-bold text-slate-800 truncate">
-                      Reyhan Darmawan (Akun Utama)
+                      Raka Aditya (Akun Utama)
                     </p>
                     <p className="text-slate-500 truncate text-[11px]">
-                      reyhan@universitas.ac.id
+                      rakaaditya@gmail.com
                     </p>
                   </div>
                 </div>
