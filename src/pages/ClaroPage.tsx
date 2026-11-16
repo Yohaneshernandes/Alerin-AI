@@ -20285,40 +20285,75 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
         )}
 
         {calNotice && typeof document !== "undefined" && createPortal(
-          <div
-            key={calNotice.id}
-            role="status"
-            aria-live="polite"
-            onClick={(e) => {
-              e.stopPropagation();
-              setCalNotice(null);
-            }}
-            className="hidden md:flex fixed top-5 right-5 z-[310] bg-white rounded-2xl border border-slate-200/75 shadow-[0_14px_34px_-6px_rgba(15,23,42,0.18),0_4px_12px_-2px_rgba(15,23,42,0.06)] pl-3 pr-5 py-2.5 items-center gap-3 font-['Plus_Jakarta_Sans'] cursor-pointer select-none animate-[gemini-fade-in_0.18s_ease-out]"
-          >
-            <span
-              className={`size-8 rounded-full flex items-center justify-center shrink-0 text-white ${
-                calNotice.tone === "error" ? "bg-rose-500" : "bg-blue-600"
-              }`}
+          <>
+            {/* Desktop Toast */}
+            <div
+              key={`desk-${calNotice.id}`}
+              role="status"
+              aria-live="polite"
+              onClick={(e) => {
+                e.stopPropagation();
+                setCalNotice(null);
+              }}
+              className="hidden md:flex fixed top-5 right-5 z-[310] bg-white rounded-2xl border border-slate-200/75 shadow-[0_14px_34px_-6px_rgba(15,23,42,0.18),0_4px_12px_-2px_rgba(15,23,42,0.06)] pl-3 pr-5 py-2.5 items-center gap-3 font-['Plus_Jakarta_Sans'] cursor-pointer select-none animate-[gemini-fade-in_0.18s_ease-out]"
             >
-              {calNotice.tone === "error" ? (
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <line x1="12" y1="8" x2="12" y2="12" />
-                  <line x1="12" y1="16" x2="12.01" y2="16" />
-                </svg>
-              ) : calNotice.tone === "info" ? (
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" className="animate-spin" aria-hidden="true">
-                  <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-                </svg>
-              ) : (
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <polyline points="20 6 9 17 4 12" />
-                </svg>
-              )}
-            </span>
-            <span className="text-neutral-900 text-[13px] font-semibold leading-5 tracking-[-0.01em] whitespace-nowrap">
-              {calNotice.text}
-            </span>
-          </div>,
+              <span
+                className={`size-8 rounded-full flex items-center justify-center shrink-0 text-white ${
+                  calNotice.tone === "error" ? "bg-rose-500" : "bg-blue-600"
+                }`}
+              >
+                {calNotice.tone === "error" ? (
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <line x1="12" y1="8" x2="12" y2="12" />
+                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                  </svg>
+                ) : calNotice.tone === "info" ? (
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" className="animate-spin" aria-hidden="true">
+                    <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                  </svg>
+                ) : (
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                )}
+              </span>
+              <span className="text-neutral-900 text-[13px] font-semibold leading-5 tracking-[-0.01em] whitespace-nowrap">
+                {calNotice.text}
+              </span>
+            </div>
+
+            {/* Mobile Toast (sesuai screenshot media_1794799946322_6e2cde65.png) */}
+            <div
+              key={`mob-${calNotice.id}`}
+              role="status"
+              aria-live="polite"
+              onClick={(e) => {
+                e.stopPropagation();
+                setCalNotice(null);
+              }}
+              className="flex md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-[310] bg-white rounded-2xl border border-slate-200/85 shadow-[0_12px_32px_rgba(15,23,42,0.18)] pl-3 pr-5 py-2.5 items-center gap-3 font-['Plus_Jakarta_Sans'] cursor-pointer select-none animate-[gemini-fade-in_0.18s_ease-out] max-w-[90vw]"
+            >
+              <span
+                className={`size-8 rounded-full flex items-center justify-center shrink-0 text-white ${
+                  calNotice.tone === "error" ? "bg-rose-500" : "bg-blue-600"
+                }`}
+              >
+                {calNotice.tone === "error" ? (
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="12" y1="8" x2="12" y2="12" />
+                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                  </svg>
+                ) : (
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                )}
+              </span>
+              <span className="text-slate-900 text-xs font-semibold leading-5 tracking-[-0.01em] whitespace-nowrap">
+                {calNotice.text}
+              </span>
+            </div>
+          </>,
           document.body
         )}
       </div>
@@ -20825,6 +20860,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                     return mGrid.map((c, idx) => {
                       const colIdx = idx % 7;
                       const isSun = colIdx === 0;
+                      const isTod = c.type === "current" && isToday(c.day);
                       const isSel = selected && (
                         selected.getFullYear() === c.date.getFullYear() &&
                         selected.getMonth() === c.date.getMonth() &&
@@ -20854,6 +20890,15 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                               </span>
                               {hasEvents && (
                                 <span className="size-1 rounded-full bg-white mt-0.5" />
+                              )}
+                            </div>
+                          ) : isTod ? (
+                            <div className="size-8.5 bg-blue-100 rounded-lg inline-flex flex-col justify-center items-center">
+                              <span className="text-center justify-center text-blue-700 text-xs font-bold font-['Plus_Jakarta_Sans'] leading-3">
+                                {c.day}
+                              </span>
+                              {hasEvents && (
+                                <span className="size-1 rounded-full bg-blue-600 mt-0.5" />
                               )}
                             </div>
                           ) : (
@@ -20886,12 +20931,95 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
               </div>
             </div>
 
+            {/* Agenda List Section (Tampil saat tanggal terpilih memiliki agenda, sesuai desain Figma 100%) */}
+            {selected && selectedKey && selectedEvents.length > 0 && (
+              <div className="self-stretch px-5.5 pt-2 pb-3.5 border-t border-slate-200 flex flex-col justify-start items-start gap-2">
+                <div className="self-stretch inline-flex justify-between items-center">
+                  <div className="flex justify-start items-center gap-2 min-w-0">
+                    <div className="text-blue-600 shrink-0">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2563EB" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" />
+                        <line x1="16" y1="2" x2="16" y2="6" />
+                        <line x1="8" y1="2" x2="8" y2="6" />
+                        <line x1="3" y1="10" x2="21" y2="10" />
+                      </svg>
+                    </div>
+                    <span className="text-slate-900 text-xs font-bold font-['Plus_Jakarta_Sans'] leading-5 truncate">
+                      Agenda {selected.toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
+                    </span>
+                  </div>
+                  <div className="px-2 py-0.5 bg-blue-100 rounded-full inline-flex items-center shrink-0">
+                    <span className="text-blue-600 text-[9px] font-semibold font-['Plus_Jakarta_Sans'] leading-4 tracking-tight">
+                      {selectedEvents.length} Agenda
+                    </span>
+                  </div>
+                </div>
+
+                <div className="self-stretch max-h-36 overflow-y-auto flex flex-col gap-2 pr-0.5">
+                  {selectedEvents.map((ev, ei) => (
+                    <div
+                      key={`${ev.source}-${ev.sourceIndex}-${ei}`}
+                      className="self-stretch px-3 py-2 bg-blue-100/80 rounded-xl flex flex-col gap-1.5 shrink-0"
+                    >
+                      <div className="self-stretch flex justify-between items-start gap-2">
+                        <div className="flex-1 flex flex-col min-w-0">
+                          <span className="text-slate-900 text-xs font-semibold font-['Plus_Jakarta_Sans'] leading-4 truncate">
+                            {ev.label}
+                          </span>
+                          <div className="inline-flex items-center gap-1.5 mt-0.5 text-blue-600">
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                              <circle cx="12" cy="12" r="10" />
+                              <polyline points="12 6 12 12 16 14" />
+                            </svg>
+                            <span className="text-gray-700 text-[9px] font-medium font-['Plus_Jakarta_Sans'] leading-4">
+                              {ev.time ? (ev.time.includes("WIB") ? ev.time : `${ev.time} WIB`) : ""}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-1 shrink-0 opacity-80">
+                          <button
+                            type="button"
+                            onClick={() => openEditAgendaModal(selectedKey, ev)}
+                            className="size-5 rounded flex items-center justify-center text-slate-600 hover:text-slate-900 hover:bg-white/60 transition-colors cursor-pointer"
+                            aria-label="Edit agenda"
+                          >
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M12 20h9" />
+                              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                            </svg>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteAgenda(selectedKey, ev.source, ev.sourceIndex)}
+                            className="size-5 rounded flex items-center justify-center text-slate-600 hover:text-rose-600 hover:bg-white/60 transition-colors cursor-pointer"
+                            aria-label="Hapus agenda"
+                          >
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <polyline points="3 6 5 6 21 6" />
+                              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+
+                      {ev.notes && (
+                        <div className="self-stretch px-2.5 py-1.5 bg-white rounded-md text-gray-500 text-[10px] font-normal font-['Plus_Jakarta_Sans'] leading-4">
+                          {ev.notes}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Bottom Button: Tambah Agenda Baru */}
-            <div className="self-stretch h-17 px-5.5 py-3 bg-white border-t border-slate-200 flex flex-col justify-start items-start">
+            <div className="self-stretch px-5.5 py-2.5 bg-white border-t border-slate-200 flex flex-col justify-start items-start shrink-0">
               <button
                 type="button"
                 onClick={() => switchDesktopView(true)}
-                className="self-stretch h-11.5 relative bg-blue-600 hover:bg-blue-700 active:scale-[0.99] rounded-xl inline-flex justify-center items-center gap-2 shadow-[0px_2px_4px_-2px_rgba(59,130,246,0.25)] shadow-[0px_4px_6px_-1px_rgba(59,130,246,0.25)] transition-all cursor-pointer text-white"
+                className="self-stretch h-11 relative bg-blue-600 hover:bg-blue-700 active:scale-[0.99] rounded-xl inline-flex justify-center items-center gap-2 shadow-[0px_2px_4px_-2px_rgba(59,130,246,0.25)] shadow-[0px_4px_6px_-1px_rgba(59,130,246,0.25)] transition-all cursor-pointer text-white"
               >
                 <div className="size-3 relative overflow-hidden flex items-center justify-center">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
