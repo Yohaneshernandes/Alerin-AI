@@ -18802,13 +18802,14 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
         else if (timePickerOpen) setTimePickerOpen(false);
         else if (mobileTimePickerOpen) setMobileTimePickerOpen(false);
         else if (reminderMenuOpen) setReminderMenuOpen(false);
+        else if (mobileReminderDropdown) setMobileReminderDropdown(false);
         else if (addingAgenda) switchDesktopView(false);
         else onClose();
       }
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [googleSuccessModal, googleSyncingModal, googleConnectModal, deleteAgendaConfirm, addingAgenda, reminderMenuOpen, timePickerOpen, mobileTimePickerOpen, switchDesktopView, onClose]);
+  }, [googleSuccessModal, googleSyncingModal, googleConnectModal, deleteAgendaConfirm, addingAgenda, reminderMenuOpen, mobileReminderDropdown, timePickerOpen, mobileTimePickerOpen, switchDesktopView, onClose]);
 
   const year = cursor.getFullYear();
   const month = cursor.getMonth();
@@ -20560,24 +20561,66 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                         Beri tahu saya:
                       </span>
                       <div className="relative">
-                        <div className="h-8 px-3 py-1.5 bg-white rounded-lg outline outline-1 outline-offset-[-1px] outline-slate-200 inline-flex items-center justify-between gap-2 text-slate-800 text-xs font-medium shadow-2xs pointer-events-none">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setMobileTimePickerOpen(false);
+                            setMobileReminderDropdown(!mobileReminderDropdown);
+                          }}
+                          className="h-8 px-3 py-1.5 bg-white rounded-lg outline outline-1 outline-offset-[-1px] outline-slate-200 inline-flex items-center justify-between gap-2 text-slate-800 text-xs font-medium shadow-2xs cursor-pointer hover:bg-slate-50 transition-colors"
+                        >
                           <span>{agendaReminderOffset}</span>
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-500">
+                          <svg
+                            width="12"
+                            height="12"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2.2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="text-slate-500"
+                          >
                             <polyline points="6 9 12 15 18 9" />
                           </svg>
-                        </div>
-                        <select
-                          value={agendaReminderOffset}
-                          onChange={(e) => setAgendaReminderOffset(e.target.value)}
-                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer text-xs"
-                          aria-label="Pilih waktu pengingat"
-                        >
-                          {AGENDA_REMINDER_OPTIONS.map((opt) => (
-                            <option key={opt} value={opt}>
-                              {opt}
-                            </option>
-                          ))}
-                        </select>
+                        </button>
+
+                        {mobileReminderDropdown && (
+                          <>
+                            <div
+                              className="fixed inset-0 z-30"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setMobileReminderDropdown(false);
+                              }}
+                            />
+                            <div
+                              onClick={(e) => e.stopPropagation()}
+                              className="absolute bottom-full right-0 mb-1.5 z-40 w-[170px] bg-white rounded-2xl border border-slate-200/90 shadow-[0_12px_32px_rgba(15,23,42,0.18)] p-1.5 flex flex-col gap-0.5 select-none font-['Plus_Jakarta_Sans'] animate-[gemini-fade-in_0.12s_ease-out]"
+                            >
+                              {AGENDA_REMINDER_OPTIONS.map((opt) => {
+                                const isSelected = opt === agendaReminderOffset;
+                                return (
+                                  <button
+                                    key={opt}
+                                    type="button"
+                                    onClick={() => {
+                                      setAgendaReminderOffset(opt);
+                                      setMobileReminderDropdown(false);
+                                    }}
+                                    className={`w-full px-3 py-2 rounded-xl text-xs text-left cursor-pointer transition-colors ${
+                                      isSelected
+                                        ? "bg-slate-100 text-slate-900 font-semibold"
+                                        : "text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-normal"
+                                    }`}
+                                  >
+                                    {opt}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </>
+                        )}
                       </div>
                     </div>
                   </>
