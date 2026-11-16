@@ -20995,7 +20995,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                           </button>
                           <button
                             type="button"
-                            onClick={() => handleDeleteAgenda(selectedKey, ev.source, ev.sourceIndex)}
+                            onClick={() => setDeleteAgendaConfirm({ key: selectedKey!, label: ev.label, source: ev.source, sourceIndex: ev.sourceIndex })}
                             className="size-5 rounded flex items-center justify-center text-slate-600 hover:text-rose-600 hover:bg-white/60 transition-colors cursor-pointer"
                             aria-label="Hapus agenda"
                           >
@@ -21038,6 +21038,80 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                 </div>
               </button>
             </div>
+
+            {/* Pop-up Konfirmasi Hapus Agenda (Mobile, sesuai desain Figma 100%) */}
+            {deleteAgendaConfirm && (
+              <div
+                className="absolute inset-0 z-50 flex items-center justify-center p-3.5 bg-slate-900/25 backdrop-blur-[1px] rounded-2xl animate-[gemini-fade-in_0.15s_ease-out]"
+                onClick={() => setDeleteAgendaConfirm(null)}
+              >
+                <div
+                  role="dialog"
+                  aria-modal="true"
+                  onClick={(e) => e.stopPropagation()}
+                  className="relative w-72 max-w-[calc(100%-16px)] px-6 py-4 bg-white rounded-2xl outline outline-1 outline-offset-[-1px] outline-zinc-200 shadow-[0px_22.7px_45.4px_0px_rgba(2,6,23,0.35)] flex flex-col justify-start items-center gap-2.5 font-['Plus_Jakarta_Sans'] animate-[gemini-zoom-in_0.15s_ease-out]"
+                >
+                  {/* Close button X */}
+                  <button
+                    type="button"
+                    onClick={() => setDeleteAgendaConfirm(null)}
+                    aria-label="Tutup"
+                    className="size-7 right-2 top-2 absolute rounded-full inline-flex justify-center items-center text-neutral-400 hover:text-neutral-600 hover:bg-slate-100 transition-colors cursor-pointer"
+                  >
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="18" y1="6" x2="6" y2="18" />
+                      <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                  </button>
+
+                  {/* Header: Icon + Title */}
+                  <div className="self-stretch inline-flex justify-start items-start">
+                    <div className="size-8 bg-blue-100 rounded-xl shadow-[0px_0.69px_1.38px_0px_rgba(0,0,0,0.05)] outline outline-[0.69px] outline-offset-[-0.69px] outline-blue-200 flex justify-center items-center shrink-0">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="3 6 5 6 21 6" />
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                      </svg>
+                    </div>
+                    <div className="h-8 pl-3.5 inline-flex flex-col justify-start items-start">
+                      <div className="h-8 pt-0.5 flex flex-col justify-start items-start gap-1">
+                        <span className="w-48 h-8 flex items-center text-neutral-900 text-sm font-bold font-['Plus_Jakarta_Sans'] leading-6 truncate">
+                          Hapus Agenda?
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Body description */}
+                  <div className="self-stretch flex flex-col justify-start items-start">
+                    <p className="self-stretch text-zinc-500 text-xs font-normal font-['Plus_Jakarta_Sans'] leading-4">
+                      Apakah kamu yakin ingin menghapus Agenda{" "}
+                      <span className="text-zinc-600 font-semibold font-['Plus_Jakarta_Sans']">
+                        “{deleteAgendaConfirm.label}”
+                      </span>
+                      ? Tindakan ini tidak dapat dibatalkan.
+                    </p>
+                  </div>
+
+                  {/* Actions (Batal & Ya, Hapus) */}
+                  <div className="self-stretch inline-flex justify-end items-center gap-2.5 pt-1">
+                    <button
+                      type="button"
+                      onClick={() => setDeleteAgendaConfirm(null)}
+                      className="h-8 px-5 py-2 bg-slate-50 hover:bg-slate-100 rounded-lg outline outline-1 outline-offset-[-1px] outline-slate-200 inline-flex justify-center items-center text-slate-600 text-xs font-semibold font-['Plus_Jakarta_Sans'] leading-4 cursor-pointer transition-colors"
+                    >
+                      Batal
+                    </button>
+                    <button
+                      type="button"
+                      onClick={confirmDeleteAgenda}
+                      className="h-8 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] rounded-lg shadow-[0px_0.91px_1.82px_0px_rgba(0,0,0,0.05)] inline-flex justify-center items-center text-white text-xs font-semibold font-['Plus_Jakarta_Sans'] leading-4 cursor-pointer transition-all"
+                    >
+                      Ya, Hapus
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
