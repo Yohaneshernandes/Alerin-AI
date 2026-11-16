@@ -20110,35 +20110,41 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
       >
         {addingAgenda ? (
           <div
-            className="w-[356px] max-w-[calc(100vw-28px)] sm:w-[370px] bg-white rounded-2xl shadow-xl shadow-[0px_10px_30px_rgba(15,23,42,0.15)] flex flex-col overflow-hidden relative font-['Plus_Jakarta_Sans']"
+            className="w-[356px] max-w-[calc(100vw-28px)] sm:w-[370px] relative bg-white rounded-2xl shadow-xl shadow-[0px_10px_30px_rgba(15,23,42,0.15)] flex flex-col justify-start items-start overflow-hidden font-['Plus_Jakarta_Sans']"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Header Tambah Agenda Mobile */}
-            <div className="px-5.5 py-4 bg-white border-b border-slate-200 flex items-center justify-between shrink-0">
-              <div className="flex items-center gap-2.5">
-                <button
-                  type="button"
-                  onClick={() => switchDesktopView(false, "back")}
-                  className="size-7.5 bg-slate-50 hover:bg-slate-100 rounded-lg outline outline-1 outline-offset-[-1px] outline-slate-200 flex items-center justify-center text-slate-500 cursor-pointer transition-colors shrink-0"
-                  aria-label="Kembali ke kalender"
-                >
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="19" y1="12" x2="5" y2="12" />
-                    <polyline points="12 19 5 12 12 5" />
-                  </svg>
-                </button>
-                <div className="flex flex-col">
-                  <h2 className="text-slate-900 text-sm font-bold leading-5">Tambah Agenda</h2>
-                  <p className="text-gray-500 text-[10px] font-normal leading-3.5">
-                    Jadwalkan agenda baru pada {formattedActivityDate}
-                  </p>
+            {/* Header Section */}
+            <div className="self-stretch px-5 py-2.5 sm:py-3 border-b border-slate-200 inline-flex justify-between items-start shrink-0">
+              <div className="flex-1 flex justify-between items-start">
+                <div className="flex justify-start items-start gap-2.5">
+                  <div className="w-8 h-10 pt-0.5 inline-flex flex-col justify-center items-start">
+                    <button
+                      type="button"
+                      onClick={() => switchDesktopView(false, "back")}
+                      className="size-8 bg-slate-50 hover:bg-slate-100 rounded-lg outline outline-1 outline-offset-[-1px] outline-slate-200 inline-flex justify-center items-center text-slate-500 cursor-pointer transition-colors"
+                      aria-label="Kembali ke kalender"
+                    >
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="19" y1="12" x2="5" y2="12" />
+                        <polyline points="12 19 5 12 12 5" />
+                      </svg>
+                    </button>
+                  </div>
+                  <div className="inline-flex flex-col justify-start items-start gap-0.5">
+                    <div className="self-stretch flex flex-col justify-start items-start">
+                      <span className="justify-center text-slate-900 text-base font-bold leading-6">Tambah Agenda</span>
+                    </div>
+                    <div className="self-stretch flex flex-col justify-start items-start">
+                      <span className="justify-center text-gray-500 text-xs font-normal leading-4">Jadwalkan agenda baru pada kalender terpilih</span>
+                    </div>
+                  </div>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={onClose}
-                className="w-7 h-7 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
                 aria-label="Tutup"
+                className="size-7 -mr-1 -mt-0.5 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer shrink-0"
               >
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
                   <line x1="18" y1="6" x2="6" y2="18" />
@@ -20147,13 +20153,20 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
               </button>
             </div>
 
-            {/* Form Fields Mobile */}
-            <div className="p-4.5 bg-slate-50 flex flex-col gap-3.5 max-h-[60vh] overflow-y-auto">
-              <div className="flex flex-col gap-1">
-                <label className="text-xs font-semibold leading-4 text-slate-900">
-                  Judul Agenda <span className="text-rose-500">*</span>
-                </label>
+            {/* Form Fields Section */}
+            <div className="self-stretch px-5 py-2.5 sm:py-3 bg-slate-50 flex flex-col justify-start items-start gap-2.5 overflow-hidden">
+              {/* Judul Agenda */}
+              <div className="self-stretch flex flex-col justify-start items-start gap-1.5">
+                <div className="self-stretch inline-flex justify-between items-center">
+                  <label className="text-slate-800 text-xs font-semibold leading-4">
+                    Judul Agenda <span className="text-rose-500">*</span>
+                  </label>
+                  <span className="text-slate-400 text-[9px] font-medium font-mono font-['JetBrains_Mono'] leading-4">
+                    {agendaTitle.length}/50
+                  </span>
+                </div>
                 <input
+                  ref={titleInputRef}
                   type="text"
                   maxLength={50}
                   value={agendaTitle}
@@ -20161,62 +20174,129 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                     setAgendaTitle(capitalizeWords(e.target.value.slice(0, 50)));
                     if (agendaErrors.title) setAgendaErrors((prev) => ({ ...prev, title: false }));
                   }}
-                  placeholder="Contoh: Bimbingan Bab 4"
-                  className={`w-full px-3.5 py-2.5 bg-white rounded-xl outline outline-1 outline-offset-[-1px] text-xs text-slate-900 placeholder:text-slate-400 transition-colors ${
+                  placeholder="Contoh: Diskusi Evaluasi Mingguan"
+                  className={`self-stretch px-3.5 py-2.5 bg-white rounded-xl outline outline-1 outline-offset-[-1px] text-xs text-slate-900 placeholder:text-slate-400 font-normal transition-colors ${
                     agendaErrors.title ? "outline-red-400 focus:outline-red-400" : "outline-slate-200 focus:outline-blue-600"
                   }`}
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-2.5">
-                <div className="flex flex-col gap-1">
-                  <label className="text-xs font-semibold leading-4 text-slate-900">Tanggal</label>
-                  <div className="px-3.5 py-2.5 bg-slate-100 rounded-xl outline outline-1 outline-offset-[-1px] outline-slate-200 text-xs text-slate-700 font-medium truncate">
-                    {formattedActivityDate}
+              {/* Tanggal & Waktu (full width per Figma) */}
+              <div className="self-stretch flex flex-col justify-start items-start gap-2.5">
+                {/* Tanggal */}
+                <div className="self-stretch flex flex-col justify-start items-start gap-1.5">
+                  <label className="self-stretch text-slate-800 text-xs font-semibold leading-4">
+                    Tanggal
+                  </label>
+                  <div className="self-stretch relative inline-flex justify-start items-center">
+                    <div className="flex-1 pl-9 pr-3.5 py-2.5 bg-slate-50 rounded-xl outline outline-1 outline-offset-[-1px] outline-slate-200 inline-flex flex-col justify-start items-start overflow-hidden">
+                      <span className="self-stretch text-slate-900 text-xs font-medium leading-4 truncate">
+                        {formattedActivityDate}
+                      </span>
+                    </div>
+                    <div className="size-4 left-[14px] top-[11px] absolute overflow-hidden pointer-events-none flex items-center justify-center">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400">
+                        <rect x="3" y="4" width="18" height="18" rx="2" />
+                        <line x1="16" y1="2" x2="16" y2="6" />
+                        <line x1="8" y1="2" x2="8" y2="6" />
+                        <line x1="3" y1="10" x2="21" y2="10" />
+                      </svg>
+                    </div>
                   </div>
                 </div>
-                <div className="flex flex-col gap-1">
-                  <label className="text-xs font-semibold leading-4 text-slate-900">
+
+                {/* Waktu */}
+                <div className="self-stretch flex flex-col justify-start items-start gap-1.5">
+                  <label className="self-stretch text-slate-800 text-xs font-semibold leading-4">
                     Waktu <span className="text-rose-500">*</span>
                   </label>
-                  <input
-                    type="text"
-                    value={agendaTime}
-                    onChange={(e) => handleAgendaTimeChange(e.target.value)}
-                    placeholder="10:00"
-                    className={`w-full px-3.5 py-2.5 bg-white rounded-xl outline outline-1 outline-offset-[-1px] text-xs text-slate-900 placeholder:text-slate-400 transition-colors ${
-                      agendaErrors.time ? "outline-red-400 focus:outline-red-400" : "outline-slate-200 focus:outline-blue-600"
-                    }`}
-                  />
+                  <div className="self-stretch relative inline-flex justify-start items-center">
+                    <input
+                      type="text"
+                      value={agendaTime}
+                      onChange={(e) => handleAgendaTimeChange(e.target.value)}
+                      placeholder="-- . --"
+                      className={`flex-1 pl-3.5 pr-9 py-2.5 bg-white rounded-xl outline outline-1 outline-offset-[-1px] text-xs text-slate-900 placeholder:text-slate-400 font-normal transition-colors ${
+                        agendaErrors.time ? "outline-red-400 focus:outline-red-400" : "outline-slate-200 focus:outline-blue-600"
+                      }`}
+                    />
+                    <div className="size-4 right-[14px] top-[11px] absolute pointer-events-none flex items-center justify-center">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400">
+                        <circle cx="12" cy="12" r="10" />
+                        <polyline points="12 6 12 12 16 14" />
+                      </svg>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div className="flex flex-col gap-1">
-                <label className="text-xs font-semibold leading-4 text-slate-900">Catatan (Opsional)</label>
+              {/* Catatan */}
+              <div className="self-stretch flex flex-col justify-start items-start gap-1.5">
+                <div className="self-stretch inline-flex justify-between items-center">
+                  <label className="text-slate-800 text-xs font-semibold leading-4">
+                    Catatan
+                  </label>
+                  <span className="text-slate-400 text-[9px] font-medium font-mono font-['JetBrains_Mono'] leading-4">
+                    {agendaNotes.length}/300
+                  </span>
+                </div>
                 <textarea
                   rows={2}
-                  maxLength={120}
+                  maxLength={300}
                   value={agendaNotes}
-                  onChange={(e) => setAgendaNotes(e.target.value.slice(0, 120))}
-                  placeholder="Tuliskan catatan singkat…"
-                  className="w-full px-3.5 py-2.5 bg-white rounded-xl outline outline-1 outline-offset-[-1px] outline-slate-200 focus:outline-blue-600 text-xs text-slate-900 placeholder:text-slate-400 resize-none transition-colors"
+                  onChange={(e) => setAgendaNotes(capitalizeWords(e.target.value.slice(0, 300)))}
+                  placeholder="Tuliskan catatan tambahan..."
+                  className="self-stretch h-14 px-3.5 py-2 bg-white rounded-xl outline outline-1 outline-offset-[-1px] outline-slate-200 focus:outline-blue-600 text-xs text-slate-900 placeholder:text-slate-400 resize-none transition-colors leading-5 font-['Plus_Jakarta_Sans']"
                 />
+              </div>
+
+              {/* Aktifkan Pengingat Card */}
+              <div className="self-stretch p-3.5 bg-white rounded-2xl outline outline-1 outline-offset-[-1px] outline-slate-200/90 inline-flex justify-between items-center">
+                <div className="flex justify-start items-center gap-2.5">
+                  <div className="size-9 bg-blue-50 rounded-lg outline outline-1 outline-offset-[-1px] outline-blue-100/50 flex justify-center items-center shrink-0 text-blue-600">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                      <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                    </svg>
+                  </div>
+                  <div className="inline-flex flex-col justify-start items-start gap-0.5">
+                    <span className="justify-center text-slate-900 text-xs font-bold leading-4">
+                      Aktifkan Pengingat
+                    </span>
+                    <span className="justify-center text-gray-500 text-[9.5px] font-normal leading-4">
+                      Kirim notifikasi sebelum agenda dimulai
+                    </span>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={agendaReminder}
+                  onClick={() => setAgendaReminder(!agendaReminder)}
+                  className={`w-8 h-4.5 rounded-full relative flex items-center p-0.5 cursor-pointer transition-colors ${
+                    agendaReminder ? "bg-blue-600 justify-end" : "bg-slate-200 justify-start"
+                  }`}
+                >
+                  <div className={`size-3.5 rounded-full shadow-sm transition-all ${
+                    agendaReminder ? "bg-white border border-blue-600" : "bg-white border border-slate-300"
+                  }`} />
+                </button>
               </div>
             </div>
 
-            {/* Actions */}
-            <div className="px-5.5 py-3.5 bg-white border-t border-slate-200 flex items-center justify-end gap-2.5 shrink-0">
+            {/* Bottom Actions */}
+            <div className="self-stretch h-16 px-5 py-2.5 bg-white border-t border-slate-200 inline-flex justify-between items-center gap-2.5 shrink-0">
               <button
                 type="button"
                 onClick={() => switchDesktopView(false)}
-                className="h-9.5 px-4.5 py-2 bg-slate-50 hover:bg-slate-100 rounded-xl outline outline-1 outline-offset-[-1px] outline-slate-200 text-slate-600 text-xs font-semibold cursor-pointer transition-colors"
+                className="flex-1 h-10 px-5 py-2 bg-slate-50 hover:bg-slate-100 rounded-[10px] outline outline-1 outline-offset-[-1px] outline-slate-200 inline-flex justify-center items-center text-slate-600 text-xs font-semibold leading-4 cursor-pointer transition-colors"
               >
                 Batal
               </button>
               <button
                 type="button"
                 onClick={handleSaveAgenda}
-                className="h-9.5 px-5.5 py-2 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] rounded-xl text-white text-xs font-semibold cursor-pointer transition-all flex items-center justify-center"
+                className="flex-1 h-10 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] rounded-[10px] inline-flex justify-center items-center text-white text-xs font-semibold leading-4 cursor-pointer transition-all shadow-[0px_2px_4px_-2px_rgba(59,130,246,0.25)] shadow-[0px_4px_6px_-1px_rgba(59,130,246,0.25)]"
               >
                 Simpan
               </button>
