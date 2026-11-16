@@ -14,6 +14,7 @@ import FiturLandingFigma from "@/components/FiturLandingFigma";
 import FileContentPreview from "@/components/FileContentPreview";
 import PdfViewer from "@/components/PdfViewer";
 import PlusBadgeIcon from "@/components/PlusBadgeIcon";
+import AlerinBusinessModal from "@/components/AlerinBusinessModal";
 import { downloadAttachmentFile } from "@/utils/generateDownloadFile";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -5597,6 +5598,8 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
   const [searchOpen, setSearchOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [upgradeOpen, setUpgradeOpen] = useState(false);
+  const [upgradeDropdownOpen, setUpgradeDropdownOpen] = useState(false);
+  const [businessModalOpen, setBusinessModalOpen] = useState(false);
   const [creditsOpen, setCreditsOpen] = useState(false);
   const [calOpen, setCalOpen] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
@@ -6326,6 +6329,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
         />
       )}
       {upgradeOpen && <UpgradeModal onClose={() => setUpgradeOpen(false)} onToast={showToast} />}
+      {businessModalOpen && <AlerinBusinessModal onClose={() => setBusinessModalOpen(false)} onToast={showToast} />}
       {creditsOpen && <CreditsModal onClose={() => setCreditsOpen(false)} onUpgrade={() => { setCreditsOpen(false); navigate("/upgrade"); }} />}
       {calOpen && <CalendarModal onClose={() => setCalOpen(false)} onToast={showToast} />}
       {toast && <Toast msg={toast} onDone={() => setToast(null)} />}
@@ -6384,14 +6388,123 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
               <div className="w-4 h-0.5 bg-slate-800 rounded-full" />
               <div className="w-4 h-0.5 bg-slate-800 rounded-full" />
             </button>
-            <button
-              type="button"
-              onClick={() => navigate("/upgrade")}
-              className="h-10 px-4 py-2 rounded-full border border-slate-200/90 bg-white/70 backdrop-blur-sm flex items-center gap-1.5 hover:bg-blue-50/50 transition-colors shrink-0 shadow-xs"
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              <span className="text-blue-600 text-sm font-semibold leading-5">Upgrade</span>
-            </button>
+            {/* Mobile: Upgrade Button with Dropdown */}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setUpgradeDropdownOpen((o) => !o);
+                }}
+                className={`h-10 px-4 py-2 rounded-full border flex items-center gap-1.5 shrink-0 shadow-xs active:scale-95 transition-all cursor-pointer ${
+                  upgradeDropdownOpen
+                    ? "border-blue-400 bg-blue-100/90 text-blue-600"
+                    : "border-slate-200/90 bg-white/70 hover:bg-blue-50/50 text-blue-600"
+                }`}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2.5">
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+                <span className="text-blue-600 text-sm font-semibold leading-5">Upgrade</span>
+                <svg
+                  className={`w-3 h-3 text-blue-600 transition-transform duration-200 ${
+                    upgradeDropdownOpen ? "rotate-180" : ""
+                  }`}
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </button>
+
+              {/* Mobile Upgrade Dropdown */}
+              {upgradeDropdownOpen && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setUpgradeDropdownOpen(false)} />
+                  <div
+                    className="absolute top-full left-0 mt-2.5 w-72 max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-2xl border border-slate-200/90 p-2 z-50 text-left animate-[gemini-zoom-in_0.15s_ease-out]"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {/* Speech bubble pointer */}
+                    <div
+                      className="absolute -top-[5px] left-10 w-3 h-3 bg-white border-t border-l border-slate-200/90 rotate-45 rounded-tl-[1.5px] pointer-events-none z-10"
+                      aria-hidden="true"
+                    />
+
+                    <div className="space-y-1">
+                      {/* Option 1: Alerin Individual */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setUpgradeDropdownOpen(false);
+                          navigate("/upgrade");
+                        }}
+                        className="w-full flex items-center justify-between p-2.5 rounded-xl transition-all cursor-pointer hover:bg-blue-50/80 group text-left border border-transparent hover:border-blue-100"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <div className="size-9 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                              <circle cx="12" cy="7" r="4" />
+                            </svg>
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-xs font-bold text-slate-900">Alerin</span>
+                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#155dfc] text-white shadow-xs">
+                                Individual
+                              </span>
+                            </div>
+                            <p className="text-[10.5px] text-slate-500 mt-0.5 line-clamp-1">
+                              Riset & skripsi personal
+                            </p>
+                          </div>
+                        </div>
+                        <svg className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all shrink-0 ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                          <polyline points="9 18 15 12 9 6" />
+                        </svg>
+                      </button>
+
+                      {/* Option 2: Alerin Business */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setUpgradeDropdownOpen(false);
+                          setBusinessModalOpen(true);
+                        }}
+                        className="w-full flex items-center justify-between p-2.5 rounded-xl transition-all cursor-pointer hover:bg-slate-50 group text-left border border-transparent hover:border-slate-200"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <div className="size-9 rounded-xl bg-slate-900 text-white flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-xs">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+                              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                            </svg>
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-xs font-bold text-slate-900">Alerin</span>
+                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-900 text-white shadow-xs">
+                                Business
+                              </span>
+                            </div>
+                            <p className="text-[10.5px] text-slate-500 mt-0.5 line-clamp-1">
+                              Kampus, lab & tim institusi
+                            </p>
+                          </div>
+                        </div>
+                        <svg className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-900 group-hover:translate-x-0.5 transition-all shrink-0 ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                          <polyline points="9 18 15 12 9 6" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
           <div className="flex items-center gap-2">
             <button
@@ -7039,18 +7152,124 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
           {/* Floating top-right Upgrade & profile bar — desktop only (tersembunyi di Semua Fitur, Proyek Saya & Profil) */}
           {activeTab !== "fitur" && activeTab !== "proyek" && activeTab !== "profil" && (
           <div className="hidden md:flex items-center gap-2.5 absolute top-3.5 right-6 z-40">
-            <button
-              type="button"
-              onClick={() => navigate("/upgrade")}
-              className={`h-[46px] px-4 rounded-full backdrop-blur-md border flex items-center gap-1.5 transition-colors shrink-0 cursor-pointer ${
-                isDarkTheme
-                  ? "bg-slate-800/85 border-slate-700/80 hover:bg-slate-700/90 shadow-[0_6px_22px_rgba(0,0,0,0.35)] text-blue-400"
-                  : "bg-white/90 border-slate-200/85 hover:bg-blue-50/70 shadow-[0_4px_20px_rgba(15,23,42,0.08)] text-blue-600"
-              }`}
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              <span className="text-sm font-semibold leading-5">Upgrade</span>
-            </button>
+            {/* Desktop: Upgrade Button with Dropdown */}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setUpgradeDropdownOpen((o) => !o);
+                }}
+                className={`h-[46px] px-4 rounded-full backdrop-blur-md border flex items-center gap-2 transition-colors shrink-0 cursor-pointer ${
+                  upgradeDropdownOpen
+                    ? isDarkTheme
+                      ? "bg-slate-700/90 border-blue-500/80 text-blue-400"
+                      : "bg-blue-100/90 border-blue-400 text-blue-600"
+                    : isDarkTheme
+                    ? "bg-slate-800/85 border-slate-700/80 hover:bg-slate-700/90 shadow-[0_6px_22px_rgba(0,0,0,0.35)] text-blue-400"
+                    : "bg-white/90 border-slate-200/85 hover:bg-blue-50/70 shadow-[0_4px_20px_rgba(15,23,42,0.08)] text-blue-600"
+                }`}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <span className="text-sm font-semibold leading-5">Upgrade</span>
+                <svg
+                  className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                    upgradeDropdownOpen ? "rotate-180" : ""
+                  }`}
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </button>
+
+              {/* Desktop Upgrade Dropdown */}
+              {upgradeDropdownOpen && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setUpgradeDropdownOpen(false)} />
+                  <div
+                    className="absolute top-full right-0 mt-2.5 w-80 bg-white rounded-2xl shadow-2xl border border-slate-200/90 p-2 z-50 text-left animate-[gemini-zoom-in_0.15s_ease-out]"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {/* Speech bubble pointer */}
+                    <div
+                      className="absolute -top-[5px] right-10 w-3 h-3 bg-white border-t border-l border-slate-200/90 rotate-45 rounded-tl-[1.5px] pointer-events-none z-10"
+                      aria-hidden="true"
+                    />
+
+                    <div className="space-y-1">
+                      {/* Option 1: Alerin Individual */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setUpgradeDropdownOpen(false);
+                          navigate("/upgrade");
+                        }}
+                        className="w-full flex items-center justify-between p-2.5 rounded-xl transition-all cursor-pointer hover:bg-blue-50/80 group text-left border border-transparent hover:border-blue-100"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="size-9 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                              <circle cx="12" cy="7" r="4" />
+                            </svg>
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-sm font-bold text-slate-900">Alerin</span>
+                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#155dfc] text-white shadow-xs">
+                                Individual
+                              </span>
+                            </div>
+                            <p className="text-xs text-slate-500 mt-0.5 line-clamp-1">
+                              Riset, skripsi & tugas akademik personal
+                            </p>
+                          </div>
+                        </div>
+                        <svg className="w-4 h-4 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all shrink-0 ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                          <polyline points="9 18 15 12 9 6" />
+                        </svg>
+                      </button>
+
+                      {/* Option 2: Alerin Business */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setUpgradeDropdownOpen(false);
+                          setBusinessModalOpen(true);
+                        }}
+                        className="w-full flex items-center justify-between p-2.5 rounded-xl transition-all cursor-pointer hover:bg-slate-50 group text-left border border-transparent hover:border-slate-200"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="size-9 rounded-xl bg-slate-900 text-white flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-xs">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+                              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                            </svg>
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-sm font-bold text-slate-900">Alerin</span>
+                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-900 text-white shadow-xs">
+                                Business
+                              </span>
+                            </div>
+                            <p className="text-xs text-slate-500 mt-0.5 line-clamp-1">
+                              Kampus, lab riset & tim institusi
+                            </p>
+                          </div>
+                        </div>
+                        <svg className="w-4 h-4 text-slate-400 group-hover:text-slate-900 group-hover:translate-x-0.5 transition-all shrink-0 ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                          <polyline points="9 18 15 12 9 6" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
 
             <div
               className={`flex items-center gap-2 px-2.5 py-1.5 rounded-full backdrop-blur-md border transition-colors ${
