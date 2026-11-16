@@ -1,6 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap');
 @import 'tailwindcss';
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @font-face { font-family: 'Inter:Bold Italic'; src: url('https://static.figma.com/font/Inter_1') format('woff2'); font-style: italic; font-weight: 700; }
 @font-face { font-family: 'Inter:Bold'; src: url('https://static.figma.com/font/Inter_1') format('woff2'); font-style: normal; font-weight: 700; }
 @font-face { font-family: 'Inter:Extra Bold'; src: url('https://static.figma.com/font/Inter_1') format('woff2'); font-style: normal; font-weight: 800; }
@@ -1087,4 +1089,33 @@ body.dark {
 .dark .alerin-toast-card button:hover {
   background-color: #f1f5f9 !important;
   color: #334155 !important;
+}
+
+/* Alerin Edit Message Card (Always crisp white card) */
+.alerin-edit-card,
+.profile-dark .alerin-edit-card,
+.alerin-dark-theme .alerin-edit-card,
+.dark .alerin-edit-card {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  color: #0f172a !important;
+}
+
+.alerin-edit-card textarea,
+.profile-dark .alerin-edit-card textarea,
+.alerin-dark-theme .alerin-edit-card textarea,
+.dark .alerin-edit-card textarea {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #e2e8f0 !important;
+}
+
+.alerin-edit-card textarea:focus,
+.profile-dark .alerin-edit-card textarea:focus,
+.alerin-dark-theme .alerin-edit-card textarea:focus,
+.dark .alerin-edit-card textarea:focus {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  border-color: #3b82f6 !important;
 }

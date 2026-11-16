@@ -3960,16 +3960,19 @@ function InlineMessageEditor({
   }, []);
 
   return (
-    <div className="w-full max-w-[85vw] sm:max-w-[420px] md:max-w-[540px] bg-white dark:bg-[#1e293b] rounded-2xl rounded-tr-sm border-2 border-blue-500 shadow-md p-3.5 md:p-4 flex flex-col gap-2.5 md:gap-3 animate-in fade-in duration-150 text-left">
-      <div className="flex items-center justify-between pb-1.5 md:pb-2 border-b border-slate-100 dark:border-slate-700/60">
-        <span className="text-[12px] md:text-[13.5px] font-semibold text-blue-600 dark:text-blue-400 flex items-center gap-1.5">
+    <div
+      className="alerin-edit-card w-full max-w-[85vw] sm:max-w-[420px] md:max-w-[540px] bg-white rounded-2xl rounded-tr-sm border-2 border-blue-500 shadow-md p-3.5 md:p-4 flex flex-col gap-2.5 md:gap-3 animate-in fade-in duration-150 text-left"
+      style={{ backgroundColor: "#ffffff", color: "#0f172a" }}
+    >
+      <div className="flex items-center justify-between pb-1.5 md:pb-2 border-b border-slate-100">
+        <span className="text-[12px] md:text-[13.5px] font-semibold text-blue-600 flex items-center gap-1.5">
           <svg className="w-3.5 h-3.5 md:w-4 md:h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M12 20h9" />
             <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
           </svg>
           Edit Pesan
         </span>
-        <span className="text-[10px] md:text-[11.5px] text-slate-400 dark:text-slate-400">Tekan Simpan untuk memperbarui</span>
+        <span className="text-[10px] md:text-[11.5px] text-slate-400">Tekan Simpan untuk memperbarui</span>
       </div>
       <textarea
         ref={textareaRef}
@@ -3982,7 +3985,8 @@ function InlineMessageEditor({
         autoCapitalize="sentences"
         autoCorrect="on"
         spellCheck={false}
-        className="w-full min-h-[72px] md:min-h-[104px] max-h-[220px] md:max-h-[280px] p-2.5 md:p-3 text-sm md:text-[15px] text-slate-900 dark:text-slate-100 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white dark:focus:bg-slate-800 resize-y leading-relaxed"
+        className="w-full min-h-[72px] md:min-h-[104px] max-h-[220px] md:max-h-[280px] p-2.5 md:p-3 text-sm md:text-[15px] text-slate-900 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white resize-y leading-relaxed"
+        style={{ backgroundColor: "#ffffff", color: "#0f172a" }}
         autoFocus
         rows={Math.min(6, Math.max(2, value.split("\n").length))}
         onKeyDown={(e) => {
@@ -3999,7 +4003,7 @@ function InlineMessageEditor({
         <button
           type="button"
           onClick={onCancel}
-          className="px-3 py-1.5 md:px-4 md:py-2 text-xs md:text-[13px] font-medium text-slate-600 dark:text-slate-300 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700 active:bg-slate-200 rounded-xl transition-colors cursor-pointer"
+          className="px-3 py-1.5 md:px-4 md:py-2 text-xs md:text-[13px] font-medium text-slate-600 hover:text-slate-800 hover:bg-slate-100 active:bg-slate-200 rounded-xl transition-colors cursor-pointer"
         >
           Batal
         </button>
