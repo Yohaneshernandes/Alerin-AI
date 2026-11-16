@@ -497,11 +497,11 @@ export default function UpgradePage() {
             <div
               className="h-10 px-4 py-2 rounded-full border border-blue-200/90 bg-blue-50/80 backdrop-blur-sm flex items-center gap-1.5 shrink-0 shadow-xs"
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2.5">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#155dfc" strokeWidth="2.5">
                 <line x1="12" y1="5" x2="12" y2="19" />
                 <line x1="5" y1="12" x2="19" y2="12" />
               </svg>
-              <span className="text-blue-600 text-sm font-semibold leading-5">Upgrade</span>
+              <span className="text-[#155dfc] text-sm font-semibold leading-5">Upgrade</span>
             </div>
           </div>
 
@@ -566,9 +566,9 @@ export default function UpgradePage() {
           {/* Right: Floating pill group persis seperti di ClaroPage */}
           <div className="flex items-center gap-2.5">
             <div
-              className="h-[46px] px-4 rounded-full backdrop-blur-md border border-blue-200/90 bg-blue-50/80 flex items-center gap-1.5 transition-colors shrink-0 shadow-[0_4px_20px_rgba(37,99,235,0.08)] text-blue-600 font-semibold text-sm leading-5"
+              className="h-[46px] px-4 rounded-full backdrop-blur-md border border-blue-200/90 bg-blue-50/80 flex items-center gap-1.5 transition-colors shrink-0 shadow-[0_4px_20px_rgba(21,93,252,0.08)] text-[#155dfc] font-semibold text-sm leading-5 cursor-default"
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#155dfc" strokeWidth="2.5">
                 <line x1="12" y1="5" x2="12" y2="19" />
                 <line x1="5" y1="12" x2="19" y2="12" />
               </svg>
@@ -644,7 +644,7 @@ export default function UpgradePage() {
                   onClick={() => setOpenDropdown((prev) => (prev === "7d" ? null : "7d"))}
                   className={`duration-btn relative px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
                     currentDuration === "7d"
-                      ? `font-bold bg-white ${currentTier === "pro" ? "text-slate-900" : "text-blue-600"} shadow-sm`
+                      ? `font-bold bg-white ${currentTier === "pro" ? "text-slate-900" : "text-[#155dfc]"} shadow-sm`
                       : "font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-200/50"
                   }`}
                 >
@@ -654,7 +654,7 @@ export default function UpgradePage() {
                       className={`text-[9.5px] font-bold uppercase px-1.5 py-0.5 rounded-md ${
                         currentTier === "pro"
                           ? "bg-slate-100 text-slate-900 border border-slate-300"
-                          : "bg-blue-100 text-blue-700"
+                          : "bg-blue-100 text-[#155dfc]"
                       }`}
                     >
                       {currentTier === "pro" ? "Pro" : "Plus"}
@@ -700,9 +700,9 @@ export default function UpgradePage() {
                       <div>
                         <div className="flex items-center gap-1.5">
                           <p className="text-xs font-bold text-slate-900">
-                            7 Hari <span className="text-blue-600">Plus</span>
+                            7 Hari <span className="text-[#155dfc]">Plus</span>
                           </p>
-                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-blue-700">
+                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-[#155dfc]">
                             Plus
                           </span>
                         </div>
@@ -714,7 +714,7 @@ export default function UpgradePage() {
                           height="16"
                           viewBox="0 0 24 24"
                           fill="none"
-                          stroke="#2563eb"
+                          stroke="#155dfc"
                           strokeWidth="2.5"
                           className="shrink-0 ml-2"
                         >
@@ -774,7 +774,7 @@ export default function UpgradePage() {
                   onClick={() => setOpenDropdown((prev) => (prev === "30d" ? null : "30d"))}
                   className={`duration-btn relative px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
                     currentDuration === "30d"
-                      ? `font-bold bg-white ${currentTier === "pro" ? "text-slate-900" : "text-blue-600"} shadow-sm`
+                      ? `font-bold bg-white ${currentTier === "pro" ? "text-slate-900" : "text-[#155dfc]"} shadow-sm`
                       : "font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-200/50"
                   }`}
                 >
@@ -784,7 +784,7 @@ export default function UpgradePage() {
                       className={`text-[9.5px] font-bold uppercase px-1.5 py-0.5 rounded-md ${
                         currentTier === "pro"
                           ? "bg-slate-100 text-slate-900 border border-slate-300"
-                          : "bg-blue-100 text-blue-700"
+                          : "bg-blue-100 text-[#155dfc]"
                       }`}
                     >
                       {currentTier === "pro" ? "Pro" : "Plus"}
@@ -830,9 +830,9 @@ export default function UpgradePage() {
                       <div>
                         <div className="flex items-center gap-1.5">
                           <p className="text-xs font-bold text-slate-900">
-                            30 Hari <span className="text-blue-600">Plus</span>
+                            30 Hari <span className="text-[#155dfc]">Plus</span>
                           </p>
-                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-blue-700">
+                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-[#155dfc]">
                             Plus
                           </span>
                         </div>
@@ -844,7 +844,7 @@ export default function UpgradePage() {
                           height="16"
                           viewBox="0 0 24 24"
                           fill="none"
-                          stroke="#2563eb"
+                          stroke="#155dfc"
                           strokeWidth="2.5"
                           className="shrink-0 ml-2"
                         >
@@ -904,7 +904,7 @@ export default function UpgradePage() {
                   onClick={() => setOpenDropdown((prev) => (prev === "1y" ? null : "1y"))}
                   className={`duration-btn relative px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
                     currentDuration === "1y"
-                      ? `font-bold bg-white ${currentTier === "pro" ? "text-slate-900" : "text-blue-600"} shadow-sm`
+                      ? `font-bold bg-white ${currentTier === "pro" ? "text-slate-900" : "text-[#155dfc]"} shadow-sm`
                       : "font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-200/50"
                   }`}
                 >
@@ -914,7 +914,7 @@ export default function UpgradePage() {
                       className={`text-[9.5px] font-bold uppercase px-1.5 py-0.5 rounded-md ${
                         currentTier === "pro"
                           ? "bg-slate-100 text-slate-900 border border-slate-300"
-                          : "bg-blue-100 text-blue-700"
+                          : "bg-blue-100 text-[#155dfc]"
                       }`}
                     >
                       {currentTier === "pro" ? "Pro" : "Plus"}
@@ -960,9 +960,9 @@ export default function UpgradePage() {
                       <div>
                         <div className="flex items-center gap-1.5">
                           <p className="text-xs font-bold text-slate-900">
-                            1 Tahun <span className="text-blue-600">Plus</span>
+                            1 Tahun <span className="text-[#155dfc]">Plus</span>
                           </p>
-                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-blue-700">
+                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-[#155dfc]">
                             Plus
                           </span>
                         </div>
@@ -974,7 +974,7 @@ export default function UpgradePage() {
                           height="16"
                           viewBox="0 0 24 24"
                           fill="none"
-                          stroke="#2563eb"
+                          stroke="#155dfc"
                           strokeWidth="2.5"
                           className="shrink-0 ml-2"
                         >
@@ -1039,7 +1039,7 @@ export default function UpgradePage() {
             {/* BUNDLING PROMO BANNER */}
             <div className="bg-gradient-to-r from-blue-50 to-indigo-50/70 border border-blue-200/80 rounded-2xl p-4 sm:p-5 flex items-start sm:items-center justify-between gap-4 shadow-subtle transition-all">
               <div className="flex items-start gap-3.5">
-                <div className="hidden sm:flex w-10 h-10 rounded-xl bg-blue-600 text-white items-center justify-center shrink-0 shadow-sm">
+                <div className="hidden sm:flex w-10 h-10 rounded-xl bg-[#155dfc] text-white items-center justify-center shrink-0 shadow-sm">
                   <svg
                     className="w-5 h-5"
                     viewBox="0 0 24 24"
@@ -1104,7 +1104,7 @@ export default function UpgradePage() {
                       isSingleSpan ? "sm:col-span-2 md:col-span-1" : ""
                     } ${
                       isSelected
-                        ? "border-2 border-brand-600 ring-2 ring-brand-500/10 shadow-card"
+                        ? "border-2 border-[#155dfc] ring-2 ring-[#155dfc]/10 shadow-card"
                         : "border-2 border-slate-200 shadow-subtle hover:border-slate-300"
                     }`}
                   >
@@ -1114,7 +1114,7 @@ export default function UpgradePage() {
                           <div
                             className={`w-5 h-5 rounded-md flex items-center justify-center transition-colors shadow-sm shrink-0 ${
                               isSelected
-                                ? "bg-brand-600 text-white"
+                                ? "bg-[#155dfc] text-white"
                                 : "border-2 border-slate-300 bg-white text-transparent"
                             }`}
                           >
@@ -1129,7 +1129,7 @@ export default function UpgradePage() {
                             </svg>
                           </div>
                           <div className="min-w-0">
-                            <h3 className="text-base sm:text-lg font-extrabold text-slate-900 group-hover:text-brand-600 transition-colors tracking-tight truncate">
+                            <h3 className="text-base sm:text-lg font-extrabold text-slate-900 group-hover:text-[#155dfc] transition-colors tracking-tight truncate">
                               {item.name}
                             </h3>
                           </div>
@@ -1155,7 +1155,7 @@ export default function UpgradePage() {
                       {/* Redaksi: Sudah termasuk Alerin Chat */}
                       <div className="mt-2.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-[11px] font-semibold text-slate-700 shadow-sm">
                         <svg
-                          className="w-3.5 h-3.5 text-brand-600 shrink-0"
+                          className="w-3.5 h-3.5 text-[#155dfc] shrink-0"
                           viewBox="0 0 24 24"
                           fill="none"
                           stroke="currentColor"
@@ -1182,7 +1182,7 @@ export default function UpgradePage() {
                           e.stopPropagation();
                           setActiveModalFeatureKey(key);
                         }}
-                        className="inline-flex items-center gap-1.5 text-[11px] font-bold text-white bg-brand-600 hover:bg-brand-700 px-3 py-1.5 rounded-lg shadow-sm transition-all shrink-0 active:scale-95 cursor-pointer"
+                        className="inline-flex items-center gap-1.5 text-[11px] font-bold text-white bg-[#155dfc] hover:bg-[#124ecc] px-3 py-1.5 rounded-lg shadow-sm transition-all shrink-0 active:scale-95 cursor-pointer"
                       >
                         <span>Detail Paket</span>
                         <svg
@@ -1420,7 +1420,7 @@ export default function UpgradePage() {
               <button
                 type="button"
                 onClick={() => setIsCheckoutModalOpen(true)}
-                className="w-full py-4 px-6 bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm sm:text-base rounded-2xl shadow-lg shadow-brand-600/25 transition-all flex items-center justify-center gap-2 group active:scale-[0.98] cursor-pointer"
+                className="w-full py-4 px-6 bg-[#155dfc] hover:bg-[#124ecc] text-white font-bold text-sm sm:text-base rounded-2xl shadow-lg shadow-[#155dfc]/25 transition-all flex items-center justify-center gap-2 group active:scale-[0.98] cursor-pointer"
               >
                 <span>Lanjut ke Pembayaran</span>
                 <svg
@@ -1462,7 +1462,7 @@ export default function UpgradePage() {
           <button
             type="button"
             onClick={() => setIsCheckoutModalOpen(true)}
-            className="px-5 py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs rounded-xl shadow-md shadow-brand-600/25 transition-all shrink-0 flex items-center gap-1.5 active:scale-95 cursor-pointer"
+            className="px-5 py-3 bg-[#155dfc] hover:bg-[#124ecc] text-white font-bold text-xs rounded-xl shadow-md shadow-[#155dfc]/25 transition-all shrink-0 flex items-center gap-1.5 active:scale-95 cursor-pointer"
           >
             <span>Lanjut Bayar</span>
             <svg
@@ -1748,7 +1748,7 @@ export default function UpgradePage() {
                     type="button"
                     disabled={isPaymentProcessing}
                     onClick={handleExecutePayment}
-                    className="w-full py-3.5 px-6 bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm rounded-2xl shadow-lg shadow-brand-600/25 transition-all flex items-center justify-center gap-2 active:scale-[0.98] cursor-pointer disabled:opacity-75"
+                    className="w-full py-3.5 px-6 bg-[#155dfc] hover:bg-[#124ecc] text-white font-bold text-sm rounded-2xl shadow-lg shadow-[#155dfc]/25 transition-all flex items-center justify-center gap-2 active:scale-[0.98] cursor-pointer disabled:opacity-75"
                   >
                     {isPaymentProcessing ? (
                       <>
@@ -1996,7 +1996,7 @@ export default function UpgradePage() {
                     className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                       isSelected
                         ? "bg-slate-200 text-slate-700 hover:bg-slate-300"
-                        : "bg-brand-600 hover:bg-brand-700 text-white shadow-md shadow-brand-600/20"
+                        : "bg-[#155dfc] hover:bg-[#124ecc] text-white shadow-md shadow-[#155dfc]/20"
                     }`}
                   >
                     <svg
