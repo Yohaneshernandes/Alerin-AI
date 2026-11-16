@@ -20706,9 +20706,11 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                 <button
                   type="button"
                   onClick={() => {
-                    onToast("Menghubungkan ke Google Kalender…");
-                    setTimeout(() => onToast("Berhasil! Google Kalender tersinkron ✓"), 1500);
-                    setGoogleConnected(true);
+                    if (googleConnected) {
+                      setGoogleSuccessModal(true);
+                      return;
+                    }
+                    setGoogleConnectModal(true);
                   }}
                   className="h-7 px-3 py-[5px] bg-slate-50 hover:bg-slate-100 rounded-[10px] outline outline-1 outline-offset-[-1px] outline-slate-200 flex justify-start items-center gap-[5px] transition-colors cursor-pointer"
                 >
@@ -21109,6 +21111,309 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                       Ya, Hapus
                     </button>
                   </div>
+                </div>
+              </div>
+            )}
+
+            {/* Pop-up Hubungkan Google Kalender (Mobile, sesuai desain Figma 100%) */}
+            {googleConnectModal && (
+              <div
+                className="absolute inset-0 z-50 flex items-center justify-center p-3.5 bg-slate-900/25 backdrop-blur-[1px] rounded-2xl animate-[gemini-fade-in_0.15s_ease-out]"
+                onClick={() => setGoogleConnectModal(false)}
+              >
+                <div
+                  role="dialog"
+                  aria-modal="true"
+                  aria-labelledby="mobile-google-connect-title"
+                  onClick={(e) => e.stopPropagation()}
+                  className="relative w-72 max-w-[calc(100%-16px)] p-5 bg-white rounded-2xl outline outline-1 outline-offset-[-1px] outline-slate-200/90 shadow-[0px_22.7px_45.4px_0px_rgba(2,6,23,0.30)] flex flex-col justify-start items-center font-['Plus_Jakarta_Sans'] animate-[gemini-zoom-in_0.15s_ease-out]"
+                >
+                  {/* Close button X */}
+                  <button
+                    type="button"
+                    onClick={() => setGoogleConnectModal(false)}
+                    aria-label="Tutup"
+                    className="size-7 right-2 top-2 absolute rounded-full inline-flex justify-center items-center text-neutral-400 hover:text-neutral-600 hover:bg-slate-100 transition-colors cursor-pointer"
+                  >
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                      <line x1="18" y1="6" x2="6" y2="18" />
+                      <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                  </button>
+
+                  {/* Logos: Alerin <-> Exchange <-> Google */}
+                  <div className="pb-4 flex items-center justify-center gap-3">
+                    <div className="size-12 bg-blue-50 rounded-2xl outline outline-1 outline-offset-[-1px] outline-blue-100 flex justify-center items-center shrink-0">
+                      <img
+                        src="/assets/alerin-logo-only.png"
+                        alt="Alerin"
+                        className="size-6 object-contain"
+                      />
+                    </div>
+
+                    <div className="size-6 bg-slate-100 rounded-full inline-flex justify-center items-center text-slate-400 shrink-0">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="m8 7-5 5 5 5" />
+                        <path d="M21 12H3" />
+                        <path d="m16 7 5 5-5 5" />
+                      </svg>
+                    </div>
+
+                    <div className="size-12 bg-blue-50 rounded-2xl outline outline-1 outline-offset-[-1px] outline-blue-100 inline-flex justify-center items-center shrink-0">
+                      <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" className="size-6">
+                        <path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z" />
+                        <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96H1.29v3.09C3.26 21.3 7.31 24 12 24z" />
+                        <path fill="#FBBC05" d="M5.27 14.29c-.25-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.98-3.09z" />
+                        <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.98 3.09c.95-2.85 3.6-4.96 6.73-4.96z" />
+                      </svg>
+                    </div>
+                  </div>
+
+                  {/* Title */}
+                  <div className="pb-2 flex flex-col justify-start items-center">
+                    <h3
+                      id="mobile-google-connect-title"
+                      className="text-center justify-center text-slate-900 text-xs sm:text-sm font-bold font-['Plus_Jakarta_Sans'] leading-6"
+                    >
+                      Hubungkan dengan Google Kalender?
+                    </h3>
+                  </div>
+
+                  {/* Description */}
+                  <div className="w-64 max-w-full pb-3 flex flex-col justify-start items-center">
+                    <p className="w-full text-center justify-center text-slate-600 text-xs font-normal font-['Plus_Jakarta_Sans'] leading-4">
+                      Alerin akan mengakses dan membagikan informasi agenda akademik ke Google Kalender Anda secara dua arah.
+                    </p>
+                  </div>
+
+                  {/* Privacy Notice Box */}
+                  <div className="w-64 max-w-full pb-4 flex flex-col justify-start items-start">
+                    <div className="self-stretch px-2.5 py-1.5 bg-slate-50 rounded-lg outline outline-1 outline-offset-[-1px] outline-slate-200/80 inline-flex justify-start items-start gap-2">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400 shrink-0 mt-0.5">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                      </svg>
+                      <p className="flex-1 text-slate-500 text-[9px] font-normal font-['Plus_Jakarta_Sans'] leading-4">
+                        Dengan melanjutkan, Anda menyetujui sinkronisasi jadwal yang aman sesuai Kebijakan Privasi Alerin.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Actions: Batal & Ya, Hubungkan */}
+                  <div className="self-stretch inline-flex justify-start items-center gap-2.5">
+                    <button
+                      type="button"
+                      onClick={() => setGoogleConnectModal(false)}
+                      className="flex-1 py-2.5 bg-white hover:bg-slate-50 rounded-xl outline outline-1 outline-offset-[-1px] outline-slate-200 inline-flex flex-col justify-center items-center cursor-pointer transition-colors"
+                    >
+                      <span className="text-center justify-center text-slate-600 text-xs font-semibold font-['Plus_Jakarta_Sans'] leading-4">
+                        Batal
+                      </span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleConfirmGoogleConnect}
+                      className="flex-1 py-2.5 relative bg-blue-600 hover:bg-blue-700 active:scale-[0.98] rounded-xl inline-flex justify-center items-center shadow-[0px_2px_4px_-2px_rgba(59,130,246,0.20)] shadow-[0px_4px_6px_-1px_rgba(59,130,246,0.20)] transition-all cursor-pointer"
+                    >
+                      <span className="text-center justify-center text-white text-xs font-semibold font-['Plus_Jakarta_Sans'] leading-4">
+                        Ya, Hubungkan
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Pop-up Loading Sinkronisasi Google Kalender (Mobile) */}
+            {googleSyncingModal && (
+              <div
+                className="absolute inset-0 z-50 flex items-center justify-center p-3.5 bg-slate-900/25 backdrop-blur-[1px] rounded-2xl animate-[gemini-fade-in_0.15s_ease-out]"
+                onClick={cancelGoogleSync}
+              >
+                <div
+                  role="dialog"
+                  aria-modal="true"
+                  aria-labelledby="mobile-google-syncing-title"
+                  onClick={(e) => e.stopPropagation()}
+                  className="relative w-72 max-w-[calc(100%-16px)] p-5 bg-white rounded-2xl outline outline-1 outline-offset-[-1px] outline-slate-200/90 shadow-[0px_22.7px_45.4px_0px_rgba(2,6,23,0.35)] flex flex-col justify-start items-center font-['Plus_Jakarta_Sans'] animate-[gemini-zoom-in_0.15s_ease-out]"
+                >
+                  {/* Close button X */}
+                  <button
+                    type="button"
+                    onClick={cancelGoogleSync}
+                    aria-label="Tutup"
+                    className="size-7 right-2 top-2 absolute rounded-full inline-flex justify-center items-center text-neutral-400 hover:text-neutral-600 hover:bg-slate-100 transition-colors cursor-pointer"
+                  >
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                      <line x1="18" y1="6" x2="6" y2="18" />
+                      <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                  </button>
+
+                  {/* Logo Alerin <-> Sync (Spinning) <-> Google */}
+                  <div className="pb-3.5 flex items-center justify-center gap-3">
+                    <div className="size-12 bg-blue-50 rounded-2xl outline outline-1 outline-offset-[-1px] outline-blue-100 flex justify-center items-center shrink-0">
+                      <img
+                        src="/assets/alerin-logo-only.png"
+                        alt="Alerin"
+                        className="size-6 object-contain"
+                      />
+                    </div>
+
+                    <div className="size-6 bg-blue-50 rounded-full shadow-[0px_0.67px_1.33px_0px_rgba(0,0,0,0.05)] outline outline-[0.67px] outline-offset-[-0.67px] outline-blue-600 flex justify-center items-center shrink-0 text-blue-600">
+                      <svg
+                        width="11"
+                        height="11"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.4"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="animate-spin"
+                      >
+                        <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                        <path d="M3 3v5h5" />
+                        <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16" />
+                        <path d="M21 21v-5h-5" />
+                      </svg>
+                    </div>
+
+                    <div className="size-12 bg-blue-50 rounded-2xl outline outline-1 outline-offset-[-1px] outline-blue-100 inline-flex justify-center items-center shrink-0">
+                      <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" className="size-6">
+                        <path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z" />
+                        <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96H1.29v3.09C3.26 21.3 7.31 24 12 24z" />
+                        <path fill="#FBBC05" d="M5.27 14.29c-.25-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.98-3.09z" />
+                        <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.98 3.09c.95-2.85 3.6-4.96 6.73-4.96z" />
+                      </svg>
+                    </div>
+                  </div>
+
+                  {/* Title */}
+                  <div className="pb-1 flex flex-col justify-start items-center">
+                    <h3
+                      id="mobile-google-syncing-title"
+                      className="text-center justify-center text-slate-900 text-xs sm:text-sm font-bold font-['Plus_Jakarta_Sans'] leading-6"
+                    >
+                      Menghubungkan ke Google Kalender...
+                    </h3>
+                  </div>
+
+                  {/* Description */}
+                  <div className="pb-4 px-1 flex flex-col justify-start items-center">
+                    <p className="text-center justify-center text-gray-500 text-[11px] font-normal font-['Plus_Jakarta_Sans'] leading-4">
+                      Mohon tunggu sebentar, Alerin sedang menyinkronkan jadwal bimbingan dan agenda akademikmu.
+                    </p>
+                  </div>
+
+                  {/* Progress Bar */}
+                  <div className="self-stretch h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                    <div
+                      style={{ width: `${syncProgress}%` }}
+                      className="h-1.5 bg-blue-600 rounded-full transition-all duration-200 ease-out"
+                    />
+                  </div>
+
+                  {/* Stage Text & Percentage */}
+                  <div className="self-stretch pt-2 pb-4 flex items-center justify-between">
+                    <span className="text-gray-500 text-[11px] font-normal font-['Plus_Jakarta_Sans'] leading-4 transition-all truncate pr-2">
+                      {syncStageText}
+                    </span>
+                    <span className="text-slate-700 text-xs font-semibold font-['Plus_Jakarta_Sans'] leading-4 shrink-0">
+                      {syncProgress}%
+                    </span>
+                  </div>
+
+                  {/* Cancel Button */}
+                  <button
+                    type="button"
+                    onClick={cancelGoogleSync}
+                    className="w-full py-2 bg-red-50 hover:bg-red-100/70 active:scale-[0.99] rounded-xl outline outline-1 outline-offset-[-1px] outline-red-200 flex justify-center items-center transition-all cursor-pointer"
+                  >
+                    <span className="text-center justify-center text-red-600 text-xs font-semibold font-['Plus_Jakarta_Sans'] leading-4">
+                      Batalkan Proses
+                    </span>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Pop-up Berhasil Terhubung Google Kalender (Mobile) */}
+            {googleSuccessModal && (
+              <div
+                className="absolute inset-0 z-50 flex items-center justify-center p-3.5 bg-slate-900/25 backdrop-blur-[1px] rounded-2xl animate-[gemini-fade-in_0.15s_ease-out]"
+                onClick={() => setGoogleSuccessModal(false)}
+              >
+                <div
+                  role="dialog"
+                  aria-modal="true"
+                  aria-labelledby="mobile-google-success-title"
+                  onClick={(e) => e.stopPropagation()}
+                  className="relative w-72 max-w-[calc(100%-16px)] p-5 bg-white rounded-2xl outline outline-1 outline-offset-[-1px] outline-slate-200/90 shadow-[0px_22.7px_45.4px_0px_rgba(2,6,23,0.35)] flex flex-col justify-start items-center font-['Plus_Jakarta_Sans'] animate-[gemini-zoom-in_0.15s_ease-out]"
+                >
+                  {/* Close button X */}
+                  <button
+                    type="button"
+                    onClick={() => setGoogleSuccessModal(false)}
+                    aria-label="Tutup"
+                    className="size-7 right-2 top-2 absolute rounded-full inline-flex justify-center items-center text-neutral-400 hover:text-neutral-600 hover:bg-slate-100 transition-colors cursor-pointer"
+                  >
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                      <line x1="18" y1="6" x2="6" y2="18" />
+                      <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                  </button>
+
+                  {/* Icon Checkmark */}
+                  <div className="pb-3 flex flex-col justify-start items-center">
+                    <div className="size-11 bg-emerald-50/80 rounded-xl shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] outline outline-1 outline-offset-[-1px] outline-emerald-200/60 inline-flex justify-center items-center">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                    </div>
+                  </div>
+
+                  {/* Title */}
+                  <div className="pb-1.5 flex flex-col justify-start items-center">
+                    <h3
+                      id="mobile-google-success-title"
+                      className="text-center justify-center text-slate-900 text-xs sm:text-sm font-bold font-['Plus_Jakarta_Sans'] leading-6"
+                    >
+                      Berhasil Terhubung!
+                    </h3>
+                  </div>
+
+                  {/* Description */}
+                  <div className="w-64 max-w-full pb-3 flex flex-col justify-start items-center">
+                    <p className="w-full text-center justify-center text-gray-500 text-[11px] font-normal font-['Plus_Jakarta_Sans'] leading-4">
+                      Akun Google Kalender Anda telah tersinkronisasi. Semua agenda sekarang akan terbarui otomatis.
+                    </p>
+                  </div>
+
+                  {/* 2-way sync notice banner */}
+                  <div className="self-stretch pb-4 flex flex-col justify-start items-start">
+                    <div className="self-stretch px-3 py-2 bg-emerald-50/70 rounded-[10px] outline outline-1 outline-offset-[-1px] outline-emerald-200/80 inline-flex justify-center items-center gap-2">
+                      <div className="size-3.5 bg-emerald-600 rounded-full shadow-[0px_0.82px_1.65px_0px_rgba(0,0,0,0.05)] flex justify-center items-center text-white shrink-0">
+                        <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                      </div>
+                      <span className="justify-center text-emerald-800 text-[11px] font-semibold font-['Plus_Jakarta_Sans'] leading-4">
+                        Sinkronisasi otomatis aktif 2 arah
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Selesai Button */}
+                  <button
+                    type="button"
+                    onClick={() => setGoogleSuccessModal(false)}
+                    className="w-full py-2.5 relative bg-blue-600 hover:bg-blue-700 active:scale-[0.98] rounded-xl inline-flex justify-center items-center shadow-[0px_2px_4px_-2px_rgba(59,130,246,0.20)] transition-all cursor-pointer"
+                  >
+                    <span className="text-center justify-center text-white text-xs font-semibold font-['Plus_Jakarta_Sans'] leading-4">
+                      Selesai
+                    </span>
+                  </button>
                 </div>
               </div>
             )}
