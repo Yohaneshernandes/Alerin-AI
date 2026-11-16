@@ -1,0 +1,701 @@
+/* Gaya tambahan untuk elemen yang hanya ada di logika Claude (kalender lengkap, pilihan tautan,
+   kerangka berpikir, outline, panel uji, pesan galat kolom). Tampilan utama memakai CSS site GPT;
+   berkas ini dimuat paling akhir dan hanya menambah, tidak mengganti aturan GPT. */
+:root{--surface:#fff;--surface-2:#f8fafc;--text-2:#4c5b70;--amber-line:#f0d5a8;--red-bg:#fdf0f0}
+body.dark{--surface:#182538;--surface-2:#132033;--text-2:#c3d0e2;--amber-line:#6b5130;--red-bg:#3a2226;--green-bg:#183b33;--amber-bg:#44331e}
+[hidden]{display:none!important}
+
+.empty-mini {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: #f7f9fc;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+.empty-mini > .ico {
+  width: 18px;
+  height: 18px;
+  color: #8da6c9;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.empty-mini p {
+  font-size: 12px;
+  line-height: 1.8;
+}
+.field-error {
+  color: var(--red);
+  font-size: 13px;
+  margin: 2px 0 0;
+  font-weight: 500;
+}
+.field-error:empty {
+  display: none;
+}
+.fab-dot {
+  position: absolute;
+  top: 6px;
+  right: 5px;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  background: #d64545;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-style: normal;
+  padding: 0 4px;
+}
+.file-list:empty {
+  display: none;
+}
+.file-list {
+  display: grid;
+  gap: 6px;
+  margin-top: 8px;
+}
+.linked {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  font-size: 13.5px;
+  color: var(--green);
+  font-weight: 600;
+}
+.choices {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+.choice {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px 14px;
+  cursor: pointer;
+  min-height: 56px;
+}
+.choice:has(input:checked) {
+  border-color: var(--blue);
+  background: #f7faff;
+}
+.choice input {
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  accent-color: var(--blue);
+}
+.choice strong {
+  display: block;
+  font-size: 14.5px;
+  color: var(--navy);
+}
+.choice small {
+  display: block;
+  font-size: 13px;
+  color: var(--muted);
+}
+.danger-text {
+  color: var(--red) !important;
+}
+.check {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 14px;
+  color: var(--ink);
+  cursor: pointer;
+  min-height: 40px;
+  padding: 6px 0;
+}
+.check input {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+  margin-top: 1px;
+  accent-color: var(--blue);
+}
+.ok-line {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  color: var(--green) !important;
+  font-weight: 600;
+  font-size: 13.5px;
+}
+.wait-line {
+  color: var(--amber) !important;
+  font-weight: 600;
+  font-size: 13.5px;
+  margin: 2px 0 0;
+}
+.uji-panel {
+  position: fixed;
+  left: 16px;
+  bottom: 16px;
+  z-index: 60;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: 0 12px 30px #14213a24;
+  max-width: 300px;
+  font-size: 13px;
+}
+.uji-panel summary {
+  padding: 10px 14px;
+  cursor: pointer;
+  font-weight: 650;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+.uji-body {
+  display: grid;
+  gap: 6px;
+  padding: 0 12px 12px;
+  max-height: 60vh;
+  overflow: auto;
+}
+.uji-body label {
+  display: grid;
+  gap: 4px;
+}
+.uji-body select {
+  min-height: 40px;
+}
+@media (max-width: 760px) {
+  .uji-panel {
+    left: 8px;
+    bottom: 84px;
+    max-width: calc(100vw - 16px);
+  }
+}
+body.dark .choice:has(input:checked) {
+  background: #17294a;
+}
+.stage-line {
+  margin: -8px 0 16px;
+  font-size: 14px;
+  color: var(--text-2);
+}
+.stage-line strong {
+  color: var(--navy);
+}
+.calendar-modal {
+  max-width: 720px;
+}
+.cal-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.cal-title {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+.cal-badge {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: #2563eb;
+  color: #fff;
+  display: grid;
+  place-items: center;
+}
+.cal-badge .ico {
+  width: 20px;
+  height: 20px;
+}
+.cal-title h3 {
+  font-size: 20px;
+}
+.cal-title p {
+  font-size: 11px;
+  color: #8c99ac;
+  margin-top: 2px;
+}
+.cal-nav {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.cal-nav .btn.text {
+  font-weight: 600;
+}
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  text-align: center;
+}
+.cal-dow {
+  font-size: 11px;
+  color: #8c99ac;
+  font-weight: 600;
+  padding: 6px 0 8px;
+}
+.cal-day {
+  border: 0;
+  background: none;
+  border-radius: 11px;
+  padding: 10px 0 14px;
+  font-size: 14px;
+  font-weight: 620;
+  color: var(--navy);
+  position: relative;
+  min-height: 46px;
+}
+.cal-day:hover {
+  background: var(--soft);
+}
+.cal-day.today {
+  box-shadow: inset 0 0 0 1.5px #a9c8f3;
+}
+.cal-day.selected {
+  background: #3b82f6;
+  color: #fff;
+  box-shadow: none;
+}
+.cal-dots {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 6px;
+  display: flex;
+  justify-content: center;
+  gap: 3px;
+}
+.cal-dots i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+}
+.cal-agenda {
+  border-top: 1px solid var(--line);
+  margin-top: 14px;
+  padding-top: 16px;
+}
+.cal-agenda h4 {
+  font-size: 13px;
+  color: #5b6b82;
+}
+.agenda-item {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  border-radius: 12px;
+  padding: 13px 14px;
+  margin-top: 10px;
+}
+.agenda-item .bar {
+  width: 4px;
+  align-self: stretch;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+.agenda-item > div {
+  flex: 1;
+  min-width: 0;
+}
+.agenda-item strong {
+  display: block;
+  font-size: 13px;
+  color: var(--navy);
+}
+.agenda-item small {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  font-size: 11px;
+  color: #8c99ac;
+  margin-top: 3px;
+}
+.agenda-item small .ico {
+  width: 13px;
+  height: 13px;
+}
+.agenda-item .icon-btn {
+  min-width: 30px;
+  min-height: 30px;
+  padding: 5px;
+}
+.agenda-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+.agenda-item .pill {
+  margin-top: 6px;
+}
+.agenda-note {
+  font-size: 12px;
+  color: #4c5b70;
+  margin-top: 4px;
+}
+.agenda-item.past strong {
+  color: #4c5b70;
+}
+.cal-next {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--surface-2);
+  color: var(--text-2);
+}
+.cal-next .ico {
+  width: 16px;
+  height: 16px;
+  color: #d9534f;
+  flex-shrink: 0;
+}
+.cal-suggest {
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  padding: 12px 14px;
+  margin-top: 16px;
+}
+.cal-suggest summary {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--blue-dark);
+  cursor: pointer;
+}
+.cal-suggest > p {
+  margin: 10px 0 6px;
+  font-size: 11px;
+}
+.suggest-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 12px;
+  color: #4c5b70;
+}
+.suggest-row:last-of-type {
+  border-bottom: 0;
+}
+.suggest-row span {
+  flex: 1;
+  min-width: 0;
+}
+.suggest-row small {
+  color: #8c99ac;
+  font-size: 11px;
+  white-space: nowrap;
+}
+.cal-google {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-top: 1px solid var(--line);
+  margin-top: 18px;
+  padding-top: 16px;
+}
+.cal-google strong {
+  display: block;
+  font-size: 13px;
+  color: var(--navy);
+}
+.cal-google small {
+  display: block;
+  font-size: 11px;
+  color: #8c99ac;
+}
+.g-badge {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  border: 1px solid var(--line);
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  color: #4285f4;
+  background: #fff;
+}
+.field-help {
+  margin-top: 6px;
+}
+.case-hint {
+  margin: 8px 0 0;
+  align-items: flex-start;
+}
+.dp-found {
+  margin: 4px 0 8px;
+}
+.plain-list {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.plain-list li {
+  display: grid;
+  gap: 2px;
+  font-size: 14px;
+}
+.plain-list small {
+  color: var(--muted);
+}
+@media (max-width: 760px) {
+  .cal-day {
+    min-height: 40px;
+    font-size: 13px;
+    padding: 8px 0 12px;
+  }
+  .cal-google {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .cal-top {
+    align-items: flex-start;
+  }
+  .cal-title {
+    gap: 10px;
+  }
+  .cal-badge {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+  }
+  .cal-title h3 {
+    font-size: 16px;
+    white-space: nowrap;
+  }
+  .cal-title p {
+    font-size: 10px;
+  }
+  .cal-agenda .between {
+    flex-wrap: wrap;
+  }
+  .outline-sub > div {
+    grid-template-columns: 1fr;
+    gap: 3px;
+    padding-left: 12px;
+  }
+  .frame-node {
+    grid-template-columns: 30px minmax(0, 1fr);
+    gap: 11px;
+    padding: 13px 13px;
+  }
+  .frame-num {
+    width: 28px;
+    height: 28px;
+    font-size: 10px;
+  }
+  .history-go {
+    display: none;
+  }
+}
+.cal-nav .btn {
+  white-space: nowrap;
+}
+.outline-ch {
+  padding: 16px 0;
+}
+.outline-ch h4 {
+  font-size: 13px;
+  color: var(--navy);
+  margin-bottom: 4px;
+}
+.outline-sub {
+  margin: 0;
+  display: grid;
+  gap: 2px;
+}
+.outline-sub > div {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  gap: 14px;
+  padding: 9px 0 9px 14px;
+  border-left: 2px solid #dbe8fa;
+}
+.outline-sub dt {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.8;
+}
+.outline-sub dd {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.85;
+  color: #56647a;
+}
+.frame-flow {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  margin: 14px 0 10px;
+}
+.frame-node {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr);
+  gap: 14px;
+  padding: 15px 17px;
+  border: 1px solid #d6e3f5;
+  border-radius: 12px;
+  background: #fbfdff;
+}
+.frame-node:last-child {
+  background: #f3f8ff;
+  border-color: #c9dbf5;
+}
+.frame-num {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--navy);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 650;
+}
+.frame-node h4 {
+  font-size: 13px;
+  margin: 6px 0 6px;
+  color: var(--navy);
+}
+.frame-node p {
+  font-size: 11px;
+  line-height: 1.9;
+  margin: 0;
+  color: #4f5d72;
+}
+.frame-node ol {
+  margin: 4px 0 0;
+  padding-left: 18px;
+}
+.frame-node li {
+  font-size: 11px;
+  line-height: 1.85;
+  color: #4f5d72;
+  margin: 3px 0;
+}
+.frame-arrow {
+  display: flex;
+  justify-content: center;
+  padding: 4px 0;
+  color: #9bb4d6;
+}
+.frame-arrow .ico {
+  width: 16px;
+  height: 16px;
+}
+.history-go {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  color: var(--blue);
+  white-space: nowrap;
+  align-self: center;
+}
+.history-go .ico {
+  width: 13px;
+  height: 13px;
+}
+.disc {
+  max-width: 88%;
+  border-radius: 12px;
+  padding: 9px 12px;
+  font-size: 14px;
+}
+.disc p {
+  color: inherit;
+}
+.disc.user {
+  justify-self: end;
+  background: var(--blue);
+  color: #fff;
+}
+.disc.alerin {
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  color: var(--ink);
+}
+.order-change {
+  display: grid;
+  gap: 8px;
+  justify-items: start;
+  margin-top: 12px;
+}
+.order-change > div {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 14px;
+  width: 100%;
+}
+body.dark .cal-day {
+  color: var(--ink);
+}
+body.dark .agenda-item {
+  color: #14213a;
+}
+/* Galat kolom: kotak .field tidak diberi garis; kontrol di dalamnya yang bergaris merah (pola site GPT). */
+.field.invalid{box-shadow:none;border-color:transparent!important}
+.field.invalid input,.field.invalid textarea,.field.invalid select{border-color:#b32a38!important;box-shadow:0 0 0 1px #b32a3822}
+.field-error{color:#b32a38!important;font-size:12px!important;line-height:1.5;margin:6px 0 0;font-weight:500}
+body.dark .field-error{color:#ffb4bf!important}
+.qc14-source-form>.field>:not(label){grid-column:2}
+.qc14-source-form .field-help{margin:2px 0 0;font-size:12px;line-height:1.6}
+/* Beranda */
+.next-step-meta{margin-top:6px}
+.target-card .target-days{font-weight:650}
+.target-card.warn .target-days{color:var(--amber)}
+.position-ask{flex-basis:100%;display:flex;flex-wrap:wrap;align-items:center;gap:10px;border-top:1px solid var(--line);padding-top:12px;font-size:13px}
+.position-ask label{font-weight:600}
+.position-ask select{min-height:40px;padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;max-width:100%}
+/* Hasil periksa dan Progres */
+.repair-card.crit{border-color:#f0d5a8}
+.review-observation.strength h3{display:flex;align-items:center;gap:6px}
+.review-observation.strength h3 .ico{color:var(--green);width:16px;height:16px}
+.handoff-list{margin:12px 0 4px;padding-left:20px;font-size:13px;line-height:1.8}
+.repair-card .linked{display:flex;align-items:center;gap:6px;margin-top:10px}
+.repair-card .linked .ico{width:14px;height:14px;color:var(--green)}
+.slot-empty{border-style:dashed!important;box-shadow:none!important}
+.slot-empty p{margin-top:12px}
+.v6-direction-excerpt .ok-line,.v6-direction-excerpt .wait-line{margin-top:6px}
+.v6-discussion-log .chat-message{margin-bottom:10px}
+.v6-work-status+.v3-guidance{margin-top:14px}
+/* Peta */
+.sync-phase.done .timeline-number{background:var(--green-bg);color:var(--green)}
+.sync-phase .timeline-number .ico{width:15px;height:15px}
+.sync-phase-detail h4{font-size:13px;margin-bottom:6px}
+.sync-phase-detail .inline-link{font-weight:650;text-align:left}
+/* Revisi */
+.v6-revision.is-done{opacity:.92}
+.v6-options .danger-text{color:var(--red)}
+.v6-original .actions{margin-top:10px}
+/* Daftar Pustaka */
+.dp-found{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.v6-citation-preview .body{line-height:1.8}
+.v6-folder-grid .v6-folder strong{display:block}
+/* Mode gelap: beberapa komponen GPT belum punya warna gelap sehingga teksnya sulit dibaca. */
+body.dark .v6-source-title{color:#a9cdfb}
+body.dark .search-field{background:#132033;border-color:#4e6580}
+body.dark .search-field input{border:0!important;background:transparent!important}
+body.dark .date-square{background:#20354f;border-color:#34465d;color:#e4ebf5}
+body.dark .date-square span{color:#b2c2d8}
+body.dark .position-ask select{background:#132033;color:#e4ebf5;border-color:#4e6580}
+.peta-head{flex-wrap:wrap;gap:8px 16px;align-items:flex-start}
+.peta-head>p{flex:1 1 280px}

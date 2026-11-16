@@ -10,6 +10,7 @@ import penguinGradImg from "@/imports/image-2.png";
 import aleriniWelcomeImg from "@/imports/WebsiteForClassProgram/eeec25fee4848e457348b9a4e108c0ec19fb79ad.png";
 import ParafraseFigmaPanel from "@/components/ParafraseFigmaPanel";
 import CariJurnalFigmaPanel from "@/components/CariJurnalFigmaPanel";
+import AlerinSkripsiPanel from "@/components/AlerinSkripsiPanel";
 import FiturLandingFigma from "@/components/FiturLandingFigma";
 import FileContentPreview from "@/components/FileContentPreview";
 import PdfViewer from "@/components/PdfViewer";
@@ -15883,9 +15884,10 @@ function PlagiasPanel({ onBack }: { onBack: () => void }) {
 }
 
 function resolveFeatureShortcut(key?: FeatureKey): ShortcutType | null {
+  if (!key) return null;
   if (key === "matakuliah") return "mata-kuliah";
   if (key === "tugas") return "tugas";
-  if (key === "skripsi" || key === "tesis" || key === "disertasi") return "skripsi";
+  if (key === "tesis" || key === "disertasi") return "skripsi";
   return null;
 }
 
@@ -15895,6 +15897,7 @@ function FiturTab({ onChat, openFeatureKey, onFeatureOpened }: { onChat: (prompt
   const [showPlagiasi, setShowPlagiasi] = useState(openFeatureKey === "plagiasi");
   const [showJurnal, setShowJurnal] = useState(openFeatureKey === "jurnal");
   const [showCariJudul, setShowCariJudul] = useState(openFeatureKey === "judul");
+  const [showSkripsi, setShowSkripsi] = useState(openFeatureKey === "skripsi");
   const [shortcutModal, setShortcutModal] = useState<ShortcutType | null>(() => resolveFeatureShortcut(openFeatureKey));
 
   useEffect(() => {
@@ -15904,6 +15907,7 @@ function FiturTab({ onChat, openFeatureKey, onFeatureOpened }: { onChat: (prompt
     setShowPlagiasi(openFeatureKey === "plagiasi");
     setShowJurnal(openFeatureKey === "jurnal");
     setShowCariJudul(openFeatureKey === "judul");
+    setShowSkripsi(openFeatureKey === "skripsi");
     const shortcut = resolveFeatureShortcut(openFeatureKey);
     if (shortcut) setShortcutModal(shortcut);
     onFeatureOpened?.();
@@ -15913,6 +15917,7 @@ function FiturTab({ onChat, openFeatureKey, onFeatureOpened }: { onChat: (prompt
   if (showParafrase) return <ParafraseFigmaPanel onBack={() => setShowParafrase(false)} />;
   if (showGrammar) return <GrammarPanel onBack={() => setShowGrammar(false)} />;
   if (showPlagiasi) return <PlagiasPanel onBack={() => setShowPlagiasi(false)} />;
+  if (showSkripsi) return <AlerinSkripsiPanel onBack={() => setShowSkripsi(false)} />;
   if (showJurnal) {
     return (
       <CariJurnalFigmaPanel
@@ -15931,7 +15936,7 @@ function FiturTab({ onChat, openFeatureKey, onFeatureOpened }: { onChat: (prompt
       <FiturLandingFigma
         onChat={() => onChat()}
         onJurnal={() => setShowJurnal(true)}
-        onSkripsi={() => setShortcutModal("skripsi")}
+        onSkripsi={() => setShowSkripsi(true)}
         onParafrase={() => setShowParafrase(true)}
       />
       {shortcutModal && (

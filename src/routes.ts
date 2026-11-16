@@ -9,6 +9,7 @@ import PPTPage from "./pages/PPTPage";
 import PlagiasPage from "./pages/PlagiasPage";
 import NotFound from "./pages/NotFound";
 import UpgradePage from "./pages/UpgradePage";
+import SkripsiPage from "./pages/SkripsiPage";
 
 export const router = createBrowserRouter([
   {
@@ -18,6 +19,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, Component: ClaroPage },
       { path: "parafrase", Component: ParafrasePage },
+      { path: "skripsi", Component: SkripsiPage },
       { path: "claro", Component: ClaroPage },
       { path: "simulasi", Component: SimulasiPage },
       { path: "grammar", Component: GrammarPage },

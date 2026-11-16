@@ -1,0 +1,875 @@
+'use strict';
+/* Halaman hasil-awal. */
+function lastDraftResult() {
+  if (S.draftReady) {
+    go('hasil-awal');
+    return;
+  }
+  modal(
+    'Hasil Pemeriksaan Terakhir',
+    `<div class="empty-mini">${I('info')}<p>Maaf, kami tidak memiliki data apapun di sini.</p></div>`,
+    B('Tutup', 'close-modal', 'primary'),
+  );
+}
+function rangkumanRows() {
+  const d = S.draft;
+  return [
+    ['Topik atau bidang yang ingin diteliti', d.topic],
+    ['Fenomena atau masalah yang dilihat', d.phenomenon],
+    ['Objek, subjek, atau lokasi penelitian', d.location],
+    ['Teori, jurnal, atau metode yang sudah terpikirkan', d.idea],
+    ['Target waktu awal', S.target.date ? dateLong(S.target.date) : ''],
+  ].map(([h, v]) => [h, String(v || '').trim() || 'Belum diisi.']);
+}
+const SAMPLE_DESIGN = [
+  [
+    'Fokus dan tujuan',
+    'Mendeskripsikan hambatan mahasiswa memperoleh pendidikan seksual, menganalisis pemanfaatan film sebagai media edukasi seksual, dan menjelaskan tindakan pengendalian diri. Ketiga fokus menjadi dasar pemilihan informan, penyusunan instrumen, dan arah pembahasan.',
+  ],
+  [
+    'Pendekatan dan urutan pelaksanaan',
+    'Metode campuran exploratory sequential: wawancara dan observasi lebih dahulu untuk menggali pengalaman mahasiswa, lalu kuesioner memberi dukungan deskriptif. Pada akhir analisis, kedua jenis data dipertemukan menurut rumusan masalah.',
+  ],
+  [
+    'Instrumen dan pengumpulan data',
+    'Wawancara semi terstruktur dan observasi melibatkan 16 informan dari empat kampus. Kuesioner daring 17 butir skala 1–5 direncanakan untuk 400 responden; penyajian contoh memakai kode informan.',
+  ],
+  [
+    'Rencana analisis dan integrasi',
+    'Analisis kualitatif mengacu pada Miles dan Huberman dengan triangulasi sumber. Data kuantitatif disajikan sebagai distribusi frekuensi dan persentase (SPSS 25); validitas dan reliabilitas dilaporkan terpisah. Konstruktivisme Jean Piaget dipakai untuk menafsirkan pembentukan pengetahuan.',
+  ],
+  [
+    'Hasil yang diharapkan',
+    'Arah penelitian yang dapat ditinjau pembimbing: masalah, tujuan, dan sumber bukti selaras serta batas penafsiran jelas. Rancangan tidak memuat hasil survei, kutipan wawancara, atau simpulan akhir sebagai fakta.',
+  ],
+];
+function consistencyModal() {
+  const d = S.draft,
+    b = selectedBundle() || currentBundle(0);
+  const missing = [
+    ['topik', d.topic],
+    ['fenomena', d.phenomenon],
+    ['objek/lokasi', d.location],
+    ['teori/metode', d.idea],
+  ]
+    .filter(([, v]) => !String(v || '').trim())
+    .map(([n]) => n);
+  const rows = boundedRows([
+    [
+      'Kelengkapan isian',
+      missing.length
+        ? 'Masih perlu dilengkapi: ' +
+          missing.join(', ') +
+          '. Kolom kosong tidak menghentikan rancangan, tetapi ditandai untuk ditinjau.'
+        : 'Empat isian utama telah terisi. Kelengkapan tidak menentukan kelayakan akademik.',
+    ],
+    ['Judul dan fokus', b ? `${b.title}. Fokus: ${b.focus}` : 'Belum ada rancangan untuk diperiksa.'],
+    ['Pertanyaan penelitian', b?.questions || 'Belum dirumuskan.'],
+    [
+      'Metode dan data',
+      b
+        ? b.alternative
+          ? 'Kandidat ini mengubah fokus dari contoh sumber. ' + b.method
+          : b.method
+        : 'Pendekatan belum ditentukan.',
+    ],
+    ['Teori dan kerangka', b?.theory || 'Teori belum ditentukan.'],
+  ]);
+  modal(
+    'Periksa Konsistensi',
+    `${b ? `<div class="candidate-context"><span class="eyebrow">${S.title === b.title ? 'JUDUL AKTIF' : 'RANCANGAN AWAL'}</span><h3>${e(b.title)}</h3></div>` : ''}<p>Bandingkan komponen berikut sebelum melanjutkan. Pemeriksaan prototipe menampilkan kelengkapan dan perbedaan rancangan; penilaian akademik AI belum terhubung.</p><div data-output="consistency" data-character-count="${rowText(rows).length}">${outputRows(rows, false)}</div><p class="small muted">${rowText(rows).length}/${OUTPUT_MAX} karakter</p>`,
+    B('Kembali', 'close-modal') + B('Edit Isian', 'enter-wizard', 'primary', 'edit'),
+    true,
+  );
+}
+const chosenTitle = () => selectedBundle()?.title || '';
+const OUT = (b1, b2, b3) => [
+  ['Bab I · Pendahuluan', b1],
+  ['Bab II · Kajian Pustaka', b2],
+  ['Bab III · Metode Penelitian', b3],
+];
+const SAMPLE_SET = [
+  {
+    method:
+      'Metode campuran exploratory sequential: kualitatif lebih dahulu, didukung kuantitatif deskriptif dengan 16 informan dan 400 responden dari empat kampus.',
+    questions: [
+      'Hambatan apa saja yang dihadapi mahasiswa di Kota Malang dalam upaya memperoleh pendidikan seksual?',
+      'Bagaimana peran film dalam memberikan informasi mengenai pendidikan seksual pada mahasiswa di Kota Malang?',
+      'Bagaimana tindakan mahasiswa di Kota Malang setelah mendapatkan edukasi seksual dari film sebagai upaya pengendalian diri dari perilaku seksual yang tidak sehat?',
+    ],
+    outline: OUT(
+      [
+        [
+          'Latar Belakang',
+          'Uraikan pentingnya pendidikan seksual, sumber informasi dari keluarga dan sekolah, hambatan berupa anggapan tabu serta keterbatasan informasi, kebutuhan mahasiswa untuk belajar mandiri, dan posisi film sebagai salah satu media belajar. Tempatkan penelitian terdahulu dan celah penelitian sesuai konteks mahasiswa di Kota Malang.',
+        ],
+        [
+          'Rumusan Masalah',
+          'Gunakan tiga pertanyaan mengenai hambatan memperoleh pendidikan seksual, peran film dalam memberikan informasi, dan tindakan pengendalian diri. Pertahankan keselarasan dengan judul.',
+        ],
+        [
+          'Tujuan Penelitian',
+          'Deskripsikan hambatan, analisis pemanfaatan film sebagai media edukasi seksual, dan jelaskan pengendalian diri berdasarkan temuan lapangan.',
+        ],
+        [
+          'Manfaat Penelitian',
+          'Pisahkan manfaat teoretis bagi wawasan bidang pendidikan dan manfaat praktis bagi belajar mandiri mahasiswa serta masyarakat.',
+        ],
+      ],
+      [
+        [
+          'Pemahaman Pendidikan Seksual',
+          'Bahas ruang lingkup pendidikan seksual sesuai materi sumber, termasuk hubungan antarpribadi, kesehatan seksual, moral serta etika, dan informasi tentang kekerasan seksual. Penjelasan konseptual tidak diperlakukan sebagai temuan responden.',
+        ],
+        [
+          'Pengendalian Diri',
+          'Jelaskan konsep pengelolaan perilaku, pemahaman baik dan buruk, kemampuan menempatkan diri, dan tanggung jawab sebagaimana digunakan dalam naskah. Bagian ini muncul sebelum pembahasan Media Film.',
+        ],
+        [
+          'Media Film dan Efektivitas Media Film',
+          'Bahas film sebagai media komunikasi dan pendidikan; lanjutkan aspek akses, kejelasan, interaksi, relevansi, dan manfaat yang terdapat dalam kajian sumber. Judul penelitian tetap Peran Film.',
+        ],
+        [
+          'Teori Konstruktivisme',
+          'Jelaskan skema, asimilasi, akomodasi, dan ekuilibrasi serta keterkaitannya dengan proses belajar mahasiswa melalui film.',
+        ],
+      ],
+      [
+        [
+          'Desain Penelitian',
+          'Metode campuran; kualitatif terlebih dahulu, kemudian dukungan kuantitatif sesuai exploratory sequential design.',
+        ],
+        [
+          'Populasi dan Sampel',
+          'Cantumkan populasi tertulis 124.211 mahasiswa, 400 responden, sampling kuota, 16 informan, empat kampus, dan kriteria partisipan sesuai proposal.',
+        ],
+        [
+          'Teknik Pengambilan Data',
+          'Wawancara semi terstruktur, observasi, dan kuesioner daring 17 butir dengan skala 1–5.',
+        ],
+        [
+          'Teknik Analisis Data',
+          'Paparkan analisis kualitatif sesuai uraian sumber; distribusi frekuensi dan persentase kuantitatif; serta cara mempertemukan kedua jenis bukti untuk menjawab rumusan masalah.',
+        ],
+      ],
+    ),
+    framework: [
+      [
+        '01 Fenomena dan fokus',
+        'Pendidikan seksual masih dianggap tabu dan informasi yang diperoleh mahasiswa dari keluarga serta lingkungan dapat terbatas. Penelitian berfokus pada hambatan memperoleh pendidikan seksual, peran film sebagai sumber informasi, dan tindakan pengendalian diri mahasiswa di Kota Malang.',
+      ],
+      [
+        '02 Teori dan hubungan konsep',
+        'Konstruktivisme Jean Piaget digunakan untuk menelaah hubungan pengetahuan awal mahasiswa dengan informasi pendidikan seksual yang diperoleh melalui film. Konsep skema, asimilasi, akomodasi, dan ekuilibrasi membantu membaca proses pembentukan serta penyesuaian pemahaman, termasuk penjelasan mahasiswa mengenai pengendalian diri.',
+      ],
+      [
+        '03 Argumen / alur berpikir',
+        'Keterbatasan informasi pendidikan seksual mendorong kebutuhan belajar mandiri. Film dikaji sebagai salah satu sumber informasi yang dipertemukan dengan pengetahuan awal mahasiswa. Proses pemahaman tersebut ditelaah melalui konstruktivisme, lalu dikaitkan dengan tindakan pengendalian diri yang dijelaskan mahasiswa. Hubungan ini menjadi arah penelaahan, belum merupakan bukti pengaruh sebab akibat.',
+      ],
+      [
+        '04 Rancangan metode dan data',
+        'Gunakan metode campuran dengan kualitatif terlebih dahulu, kemudian didukung kuantitatif. Wawancara dan observasi melibatkan 16 informan dari empat kampus; hasil kualitatif menjadi dasar tahap kuesioner pada 400 responden. Kuesioner memuat 17 butir skala 1–5. Analisis kualitatif dipertemukan dengan distribusi frekuensi dan persentase untuk membahas tiga rumusan masalah.',
+      ],
+    ],
+  },
+  {
+    method:
+      'Kualitatif: wawancara semi terstruktur dan observasi pada mahasiswa dewasa di Kota Malang. Jumlah dan kriteria informan ditetapkan bersama pembimbing.',
+    questions: [
+      'Bagaimana mahasiswa di Kota Malang memilih film sebagai sumber informasi pendidikan seksual?',
+      'Bagaimana mahasiswa menafsirkan informasi pendidikan seksual yang diperoleh dari film?',
+      'Bagaimana mahasiswa menilai kegunaan informasi tersebut bagi kehidupannya?',
+    ],
+    outline: OUT(
+      [
+        [
+          'Latar Belakang',
+          'Kebutuhan informasi pendidikan seksual, anggapan tabu, dan kebiasaan mahasiswa memakai film sebagai sumber belajar mandiri; tempatkan studi terdahulu tentang pengalaman menonton.',
+        ],
+        ['Rumusan Masalah', 'Tiga pertanyaan tentang memilih, menafsirkan, dan menilai informasi dari film.'],
+        [
+          'Tujuan Penelitian',
+          'Memahami pengalaman mahasiswa memanfaatkan film sebagai sumber informasi pendidikan seksual.',
+        ],
+        ['Manfaat Penelitian', 'Teoretis bagi kajian media dan pendidikan; praktis bagi literasi media mahasiswa.'],
+      ],
+      [
+        ['Pendidikan Seksual', 'Ruang lingkup pendidikan seksual sesuai sumber yang dirujuk.'],
+        ['Film sebagai Sumber Informasi', 'Akses, kejelasan, dan relevansi pesan film.'],
+        ['Pengalaman dan Pemaknaan Audiens', 'Cara audiens menafsirkan pesan media.'],
+        ['Teori Konstruktivisme', 'Skema, asimilasi, dan akomodasi sebagai lensa penafsiran.'],
+      ],
+      [
+        ['Desain Penelitian', 'Kualitatif dengan fokus pengalaman informan.'],
+        ['Informan Penelitian', 'Mahasiswa dewasa di Kota Malang; jumlah dan kriteria ditetapkan bersama pembimbing.'],
+        ['Teknik Pengambilan Data', 'Wawancara semi terstruktur dan observasi.'],
+        ['Teknik Analisis Data', 'Reduksi, penyajian, dan penarikan kesimpulan dengan triangulasi sumber.'],
+      ],
+    ),
+    framework: [
+      [
+        '01 Fenomena dan fokus',
+        'Mahasiswa mencari informasi pendidikan seksual secara mandiri karena pembahasannya masih dianggap tabu. Fokus: pengalaman memilih, menafsirkan, dan menilai informasi dari film.',
+      ],
+      [
+        '02 Teori dan hubungan konsep',
+        'Konstruktivisme Jean Piaget membaca bagaimana pengalaman menonton bertemu pengetahuan awal mahasiswa melalui skema, asimilasi, dan akomodasi.',
+      ],
+      [
+        '03 Argumen / alur berpikir',
+        'Kebutuhan informasi → pemilihan film → penafsiran pesan → penilaian kegunaan. Alur ini menelaah pengalaman, bukan mengukur pengaruh film.',
+      ],
+      [
+        '04 Rancangan metode dan data',
+        'Kualitatif: wawancara semi terstruktur dan observasi pada mahasiswa dewasa di Kota Malang. Jumlah dan kriteria informan ditetapkan bersama pembimbing; analisis mengikuti tema pengalaman.',
+      ],
+    ],
+  },
+  {
+    method:
+      'Kualitatif: wawancara semi terstruktur dan observasi. Batas populasi dan lokasi penelitian perlu ditegaskan kembali bersama pembimbing.',
+    questions: [
+      'Hambatan apa yang dihadapi mahasiswa dalam mengakses pendidikan seksual?',
+      'Mengapa mahasiswa memilih film sebagai sumber belajar mandiri tentang pendidikan seksual?',
+      'Bagaimana hambatan akses berkaitan dengan cara mahasiswa memanfaatkan film?',
+    ],
+    outline: OUT(
+      [
+        [
+          'Latar Belakang',
+          'Hambatan akses pendidikan seksual dari keluarga, sekolah, dan lingkungan, serta munculnya film sebagai sumber belajar mandiri.',
+        ],
+        ['Rumusan Masalah', 'Tiga pertanyaan tentang hambatan akses, alasan memilih film, dan keterkaitannya.'],
+        [
+          'Tujuan Penelitian',
+          'Mendeskripsikan hambatan akses dan menjelaskan pemanfaatan film sebagai sumber belajar mandiri.',
+        ],
+        ['Manfaat Penelitian', 'Teoretis bagi kajian pendidikan; praktis bagi penyedia informasi pendidikan seksual.'],
+      ],
+      [
+        ['Akses Pendidikan Seksual', 'Sumber informasi formal dan informal serta hambatannya.'],
+        ['Belajar Mandiri', 'Cara mahasiswa memilih sumber belajar.'],
+        ['Media Film', 'Film sebagai sumber belajar: akses, kejelasan, dan relevansi.'],
+        ['Teori Konstruktivisme', 'Pembentukan pemahaman dari sumber yang tersedia.'],
+      ],
+      [
+        ['Desain Penelitian', 'Kualitatif deskriptif.'],
+        ['Lokasi dan Informan', 'Batas populasi dan lokasi ditegaskan bersama pembimbing.'],
+        ['Teknik Pengambilan Data', 'Wawancara semi terstruktur dan observasi.'],
+        ['Teknik Analisis Data', 'Analisis tematik dengan triangulasi sumber.'],
+      ],
+    ),
+    framework: [
+      [
+        '01 Fenomena dan fokus',
+        'Akses pendidikan seksual dari keluarga, sekolah, dan lingkungan dapat terbatas. Fokus: hambatan akses dan alasan mahasiswa memilih film sebagai sumber belajar mandiri.',
+      ],
+      [
+        '02 Teori dan hubungan konsep',
+        'Konstruktivisme Jean Piaget menempatkan mahasiswa sebagai pembelajar yang membangun pemahaman dari sumber yang tersedia, termasuk film.',
+      ],
+      [
+        '03 Argumen / alur berpikir',
+        'Hambatan akses → kebutuhan belajar mandiri → pemilihan film → cara memanfaatkannya. Hubungan ditelaah dari penjelasan informan, bukan diuji sebab akibat.',
+      ],
+      [
+        '04 Rancangan metode dan data',
+        'Kualitatif: wawancara semi terstruktur dan observasi. Batas populasi dan lokasi penelitian perlu ditegaskan kembali bersama pembimbing.',
+      ],
+    ],
+  },
+  {
+    method:
+      'Kualitatif: wawancara mendalam dan observasi pada mahasiswa dewasa; pedoman wawancara mengikuti konsep Piaget. Jumlah informan ditetapkan bersama pembimbing.',
+    questions: [
+      'Bagaimana skema awal mahasiswa tentang pendidikan seksual sebelum menonton film?',
+      'Bagaimana asimilasi dan akomodasi terjadi ketika mahasiswa menerima informasi dari film?',
+      'Bagaimana mahasiswa mencapai ekuilibrasi dalam memaknai pendidikan seksual dan pengendalian diri?',
+    ],
+    outline: OUT(
+      [
+        [
+          'Latar Belakang',
+          'Keterbatasan informasi pendidikan seksual dan film sebagai sumber pemaknaan; tunjukkan alasan memilih perspektif konstruktivisme.',
+        ],
+        ['Rumusan Masalah', 'Tiga pertanyaan mengikuti skema, asimilasi–akomodasi, dan ekuilibrasi.'],
+        [
+          'Tujuan Penelitian',
+          'Menjelaskan proses pemaknaan pendidikan seksual melalui film dalam perspektif konstruktivisme.',
+        ],
+        [
+          'Manfaat Penelitian',
+          'Teoretis bagi penerapan konstruktivisme; praktis bagi pendidikan seksual berbasis media.',
+        ],
+      ],
+      [
+        ['Teori Konstruktivisme Jean Piaget', 'Skema, asimilasi, akomodasi, dan ekuilibrasi sebagai kerangka utama.'],
+        ['Pendidikan Seksual', 'Ruang lingkup sesuai sumber yang dirujuk.'],
+        ['Film sebagai Media Belajar', 'Film sebagai sumber informasi yang dimaknai mahasiswa.'],
+        ['Pengendalian Diri', 'Konsep pengendalian diri sebagai hasil pemaknaan.'],
+      ],
+      [
+        ['Desain Penelitian', 'Kualitatif dengan lensa konstruktivisme.'],
+        ['Informan Penelitian', 'Mahasiswa dewasa di Kota Malang; kriteria ditetapkan bersama pembimbing.'],
+        ['Teknik Pengambilan Data', 'Wawancara mendalam dan observasi berpedoman konsep Piaget.'],
+        ['Teknik Analisis Data', 'Pengodean berdasarkan konsep teori, lalu pemeriksaan silang antarinforman.'],
+      ],
+    ),
+    framework: [
+      [
+        '01 Fenomena dan fokus',
+        'Informasi pendidikan seksual terbatas dan dianggap tabu, sehingga film menjadi salah satu sumber pemaknaan. Fokus: proses pembentukan dan penyesuaian pengetahuan mahasiswa di Kota Malang.',
+      ],
+      [
+        '02 Teori dan hubungan konsep',
+        'Konstruktivisme Jean Piaget menjadi pusat penelaahan: skema awal, asimilasi informasi baru, akomodasi saat informasi berbeda, dan ekuilibrasi sebagai pemahaman yang lebih stabil.',
+      ],
+      [
+        '03 Argumen / alur berpikir',
+        'Skema awal → bertemu informasi dari film → asimilasi atau akomodasi → ekuilibrasi → penjelasan pengendalian diri. Kecukupan bukti untuk setiap konsep perlu dipastikan.',
+      ],
+      [
+        '04 Rancangan metode dan data',
+        'Kualitatif: wawancara mendalam dan observasi pada mahasiswa dewasa; pedoman wawancara disusun mengikuti konsep Piaget. Jumlah informan ditetapkan bersama pembimbing.',
+      ],
+    ],
+  },
+  {
+    method:
+      'Metode campuran exploratory sequential: 16 informan dari empat kampus lebih dahulu, lalu kuesioner 17 butir skala 1–5 pada 400 responden.',
+    questions: [
+      'Bagaimana mahasiswa menjelaskan peran film sebagai sumber informasi pendidikan seksual?',
+      'Bagaimana gambaran deskriptif pemanfaatan film dan pengendalian diri berdasarkan kuesioner?',
+      'Bagaimana bukti kualitatif dan kuantitatif saling melengkapi dalam menjelaskan pengendalian diri mahasiswa?',
+    ],
+    outline: OUT(
+      [
+        [
+          'Latar Belakang',
+          'Pendidikan seksual, anggapan tabu, film sebagai sumber informasi, dan alasan memakai metode campuran.',
+        ],
+        ['Rumusan Masalah', 'Tiga pertanyaan: kualitatif, kuantitatif deskriptif, dan integrasi.'],
+        ['Tujuan Penelitian', 'Menjelaskan peran film dan pengendalian diri melalui dua jenis bukti.'],
+        ['Manfaat Penelitian', 'Teoretis bagi kajian media pendidikan; praktis bagi program edukasi kampus.'],
+      ],
+      [
+        ['Pendidikan Seksual dan Pengendalian Diri', 'Konsep dan indikator yang dipakai.'],
+        ['Media Film', 'Akses, kejelasan, interaksi, relevansi, dan manfaat.'],
+        ['Teori Konstruktivisme', 'Lensa penafsiran pembentukan pemahaman.'],
+        ['Kerangka Integrasi', 'Cara temuan kualitatif membentuk instrumen kuantitatif.'],
+      ],
+      [
+        ['Desain Penelitian', 'Metode campuran exploratory sequential.'],
+        ['Populasi dan Sampel', '16 informan dan 400 responden dari empat kampus; dasar pemilihan dikonfirmasi.'],
+        ['Teknik Pengambilan Data', 'Wawancara, observasi, dan kuesioner 17 butir skala 1–5.'],
+        ['Teknik Analisis Data', 'Analisis kualitatif, frekuensi dan persentase, lalu integrasi per rumusan masalah.'],
+      ],
+    ),
+    framework: [
+      [
+        '01 Fenomena dan fokus',
+        'Pendidikan seksual masih dianggap tabu, sementara film menjadi salah satu sumber informasi mahasiswa. Fokus: peran film, informasi pendidikan seksual, dan pengendalian diri di Kota Malang.',
+      ],
+      [
+        '02 Teori dan hubungan konsep',
+        'Konstruktivisme Jean Piaget menafsirkan pembentukan pemahaman; konsep pengendalian diri menjadi dasar indikator kuesioner.',
+      ],
+      [
+        '03 Argumen / alur berpikir',
+        'Pengalaman informan → indikator kuesioner → gambaran deskriptif responden → integrasi dua jenis bukti. Integrasi menjelaskan pola, bukan membuktikan sebab akibat.',
+      ],
+      [
+        '04 Rancangan metode dan data',
+        'Metode campuran exploratory sequential: 16 informan dari empat kampus lebih dahulu, lalu kuesioner 17 butir skala 1–5 pada 400 responden; frekuensi dan persentase dipertemukan dengan temuan kualitatif.',
+      ],
+    ],
+  },
+];
+const numberedQuestions = qs => qs.map((q, i) => `${i + 1}. ${q}`).join('\n');
+function outlineText(outline) {
+  return outline.map(([ch, subs]) => ch + '\n' + subs.map(([h, p]) => h + '\n' + p).join('\n')).join('\n');
+}
+function outlineHtml(outline) {
+  return outline
+    .map(
+      ([ch, subs]) =>
+        `<div class="component outline-ch"><h4>${e(ch)}</h4><dl class="outline-sub">${subs.map(([h, p]) => `<div><dt>${e(h)}</dt><dd>${e(p)}</dd></div>`).join('')}</dl></div>`,
+    )
+    .join('');
+}
+function frameworkHtml(rows) {
+  return `<div class="frame-flow">${rows
+    .map(([label, text], i) => {
+      const [num, ...rest] = label.split(' ');
+      return `${i ? `<span class="frame-arrow" aria-hidden="true">${I('arrowDown')}</span>` : ''}<section class="frame-node"><span class="frame-num">${e(num)}</span><div><h4>${e(rest.join(' '))}</h4>${
+        /\n/.test(text)
+          ? `<ol>${text
+              .split('\n')
+              .map(q => `<li>${e(q.replace(/^\d+\.\s*/, ''))}</li>`)
+              .join('')}</ol>`
+          : `<p>${e(text)}</p>`
+      }</div></section>`;
+    })
+    .join('')}</div>`;
+}
+function currentBundle(index) {
+  const options = titleOptions();
+  index = Number(index);
+  const t = options[index];
+  if (!t) return null;
+  const d = S.draft,
+    sample = S.draftSample;
+  const signature = JSON.stringify(['output-v4', t[0], d, sample, S.plan]);
+  const key = hashKey(t[0]);
+  S.researchBundles ??= {};
+  if (S.researchBundles[key]?.signature === signature) return S.researchBundles[key];
+  let focus, questions, method, theory, design, outline, framework;
+  if (sample) {
+    const set = SAMPLE_SET[index] || SAMPLE_SET[0];
+    questions = numberedQuestions(set.questions);
+    method = set.method;
+    theory = ALERIN.draft.theory;
+    outline = set.outline;
+    framework = [...set.framework, ['05 Rumusan masalah yang ditelaah', questions]];
+    focus = set.framework[0][1].replace(/^.*(Fokus:|berfokus pada)\s*/, '');
+    const tujuan = set.outline[0][1].find(x => x[0] === 'Tujuan Penelitian')?.[1] || '';
+    design =
+      index === 0
+        ? SAMPLE_DESIGN
+        : [
+            ['Fokus dan tujuan', tujuan + ' Fokus: ' + focus],
+            ['Pendekatan dan urutan pelaksanaan', method],
+            [
+              'Instrumen dan pengumpulan data',
+              set.outline[2][1].find(x => x[0] === 'Teknik Pengambilan Data')[1] + ' ' + set.outline[2][1][1][1],
+            ],
+            [
+              'Rencana analisis dan integrasi',
+              set.outline[2][1].find(x => x[0] === 'Teknik Analisis Data')[1] + ' ' + set.framework[1][1],
+            ],
+            [
+              'Hasil yang diharapkan',
+              'Usulan arah yang perlu ditinjau pembimbing. Perubahan dari rancangan sumber tidak memuat hasil lapangan baru atau jaminan judul diterima.',
+            ],
+          ];
+  } else {
+    const topic = trimDot(d.topic),
+      phen = trimDot(d.phenomenon),
+      loc = trimDot(d.location),
+      idea = trimDot(d.idea),
+      mLabel = detectMethod(idea);
+    const lc = v => (v ? v.charAt(0).toLowerCase() + v.slice(1) : '');
+    focus = topic && phen ? `${capitalize(topic)}: ${lc(phen)}.` : capitalize(topic || phen) + '.';
+    const subj = loc
+      ? `Penelitian diarahkan pada ${lc(loc)}.`
+      : 'Objek, subjek, atau lokasi penelitian belum ditentukan.';
+    method =
+      mLabel === 'Belum ditentukan'
+        ? 'Pendekatan belum disebutkan. Tentukan setelah rumusan masalah jelas: kualitatif untuk menggali pengalaman, kuantitatif untuk mengukur hubungan, atau metode campuran bila keduanya dibutuhkan.'
+        : `Isianmu mengarah pada pendekatan ${mLabel.toLowerCase()}. Pastikan pendekatan ini dapat menjawab rumusan masalah dan sesuai data yang dapat diakses.`;
+    theory = idea
+      ? `Gagasan yang sudah terpikirkan: ${idea}. Gunakan sebagai lensa penafsiran, bukan kesimpulan awal.`
+      : 'Teori belum ditentukan. Telusuri literatur melalui Validasi Literatur pada Opsi Judul.';
+    const target = loc ? lc(loc) : 'subjek penelitian';
+    questions = numberedQuestions([
+      `Bagaimana gambaran ${lc(topic) || 'topik penelitian'} pada ${target}?`,
+      `Faktor apa saja yang berkaitan dengan ${lc(phen) || 'fenomena yang diamati'}?`,
+      `Bagaimana ${target} menjelaskan atau menyikapi fenomena tersebut?`,
+    ]);
+    const dataTech =
+      mLabel === 'Kuantitatif'
+        ? 'Kuesioner dengan indikator yang diturunkan dari teori.'
+        : mLabel === 'Kualitatif'
+          ? 'Wawancara dan observasi sesuai fokus penelitian.'
+          : mLabel === 'Metode campuran'
+            ? 'Wawancara, observasi, dan kuesioner sesuai urutan desain.'
+            : 'Ditentukan setelah pendekatan dipilih.';
+    const anaTech =
+      mLabel === 'Kuantitatif'
+        ? 'Statistik deskriptif atau inferensial sesuai rumusan masalah.'
+        : mLabel === 'Kualitatif'
+          ? 'Reduksi, penyajian, dan penarikan kesimpulan dengan triangulasi.'
+          : mLabel === 'Metode campuran'
+            ? 'Analisis kualitatif dan kuantitatif, lalu integrasi temuan.'
+            : 'Dicocokkan dengan pertanyaan dan karakter data.';
+    design = [
+      [
+        'Fokus dan tujuan',
+        `Penelitian berangkat dari ${lc(topic) || 'topik yang diminati'}${phen ? ` dengan fenomena: ${lc(phen)}` : ''}. Fokus dan tujuan perlu dirumuskan lebih spesifik bersama pembimbing.`,
+      ],
+      ['Pendekatan dan urutan pelaksanaan', method],
+      ['Instrumen dan pengumpulan data', `${subj} ${dataTech} Akses data dan izin perlu dipastikan.`],
+      ['Rencana analisis dan integrasi', `${anaTech} ${theory}`],
+      [
+        'Hasil yang diharapkan',
+        'Arah penelitian awal yang dapat dibawa ke pembimbing. Rancangan ini tidak memuat data, kutipan, atau simpulan sebagai fakta.',
+      ],
+    ];
+    outline = OUT(
+      [
+        [
+          'Latar Belakang',
+          phen
+            ? `Uraikan fenomena: ${lc(phen)}. Jelaskan pentingnya ${lc(topic) || 'topik ini'} dan tempatkan penelitian terdahulu sebelum menyatakan celah.`
+            : `Jelaskan pentingnya ${lc(topic) || 'topik ini'} dan tempatkan penelitian terdahulu sebelum menyatakan celah.`,
+        ],
+        ['Rumusan Masalah', 'Susun dua sampai tiga pertanyaan yang menjawab fenomena utama dan selaras dengan judul.'],
+        ['Tujuan Penelitian', 'Turunkan tujuan dari setiap rumusan masalah.'],
+        ['Manfaat Penelitian', 'Pisahkan manfaat teoretis dan praktis.'],
+      ],
+      [
+        ['Konsep Utama', `Bahas konsep ${lc(topic) || 'utama penelitian'} dari sumber yang dapat ditelusuri.`],
+        [
+          'Teori Pendukung',
+          idea
+            ? `Kembangkan gagasan yang sudah terpikirkan: ${idea}.`
+            : 'Teori belum ditentukan; telusuri melalui Validasi Literatur.',
+        ],
+        ['Penelitian Terdahulu', 'Bandingkan studi relevan untuk menunjukkan posisi penelitian.'],
+        ['Kerangka Berpikir', 'Hubungkan fenomena, konsep, dan pertanyaan penelitian.'],
+      ],
+      [
+        ['Desain Penelitian', mLabel === 'Belum ditentukan' ? 'Pendekatan belum ditentukan.' : mLabel + '.'],
+        ['Subjek dan Lokasi', loc ? capitalize(loc) + '.' : 'Belum ditentukan.'],
+        ['Teknik Pengambilan Data', dataTech],
+        ['Teknik Analisis Data', anaTech],
+      ],
+    );
+    framework = [
+      [
+        '01 Fenomena dan fokus',
+        `${phen ? capitalize(phen) + '.' : 'Fenomena belum diisi.'} Fokus awal: ${lc(topic) || 'belum ditentukan'}.`,
+      ],
+      ['02 Teori dan hubungan konsep', theory],
+      [
+        '03 Argumen / alur berpikir',
+        `${phen ? 'Fenomena yang diamati' : 'Topik yang diminati'} → konsep utama ${lc(topic) || 'penelitian'} → penelaahan melalui ${idea ? 'teori atau metode yang dipilih' : 'teori yang akan ditentukan'} → arah pertanyaan penelitian. Belum merupakan bukti sebab akibat.`,
+      ],
+      ['04 Rancangan metode dan data', `${method} ${subj}`],
+      ['05 Rumusan masalah yang ditelaah', questions],
+    ];
+  }
+  return (S.researchBundles[key] = {
+    key,
+    index,
+    title: t[0],
+    signature,
+    focus,
+    questions,
+    method,
+    theory,
+    design: boundedRows(design),
+    outline,
+    framework,
+    summary: rangkumanRows(),
+    sample,
+    alternative: sample && index > 0,
+  });
+}
+function designRows(bundle) {
+  const active = selectedBundle();
+  return boundedRows(
+    active && bundle.key === active.key ? [['Judul penelitian', bundle.title], ...bundle.design] : bundle.design,
+  );
+}
+function candidateModal(index, type) {
+  const b = currentBundle(index);
+  if (!b) return;
+  const isFrame = type === 'framework',
+    isActive = chosenTitle() === b.title;
+  const text = isFrame ? rowText(b.framework) : outlineText(b.outline);
+  modal(
+    isFrame ? 'Kerangka Berpikir' : 'Outline Judul',
+    `<div class="candidate-context">${badge(isActive ? 'Judul dipilih' : 'Pratinjau kandidat', 'blue')}<h3>${e(b.title)}</h3><p>${b.alternative ? 'Penyesuaian kandidat merupakan usulan berdasarkan konteks dokumen fitur; kebutuhan metode dan data perlu ditinjau kembali.' : S.draftSample ? 'Disusun mengikuti fokus, metode, dan sumber penelitian pada dokumen fitur.' : 'Disusun dari ide penelitian yang kamu isi; bagian yang belum diisi ditandai untuk dilengkapi.'}</p></div>${isFrame ? `<div data-output="framework" data-character-count="${text.length}">${frameworkHtml(b.framework)}</div><p class="small muted">Bagan arah penelaahan. Hubungan antarkonsep belum merupakan bukti sebab akibat.</p>` : `<div data-output="outline" data-character-count="${text.length}">${outlineHtml(b.outline)}</div><p class="small muted">Arahan isi setiap subbab disusun dari ide penelitian dan perlu dikembangkan bersama pembimbing.</p>`}`,
+    B('Kembali', 'close-modal') +
+      (isActive
+        ? B('Unduh Outline Penelitian', 'export-draft', 'primary', 'download')
+        : B('Pilih Judul', 'choose-title:' + index, 'primary', 'check')),
+    true,
+  );
+}
+async function frameworkImage(b) {
+  const { Paragraph, ImageRun } = docx;
+  const width = 780,
+    sections = b.framework.map(([l, t]) => [l, t.split('\n').flatMap(p => wrapSvg(p, 69))]);
+  let total = 35;
+  for (const [, lines] of sections) total += 64 + lines.length * 21 + 44;
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = total;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, width, total);
+  let y = 35;
+  for (let i = 0; i < sections.length; i++) {
+    const [label, lines] = sections[i],
+      height = 64 + lines.length * 21;
+    ctx.strokeStyle = '#263344';
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(65, y, 650, height);
+    ctx.fillStyle = '#172437';
+    ctx.textAlign = 'center';
+    ctx.font = 'bold 15px Arial';
+    ctx.fillText(label, 390, y + 29);
+    ctx.font = '14px Arial';
+    ctx.fillStyle = '#27374a';
+    lines.forEach((line, j) => ctx.fillText(line, 390, y + 54 + j * 21));
+    y += height;
+    if (i < sections.length - 1) {
+      ctx.beginPath();
+      ctx.moveTo(390, y + 3);
+      ctx.lineTo(390, y + 31);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(386, y + 26);
+      ctx.lineTo(390, y + 33);
+      ctx.lineTo(394, y + 26);
+      ctx.fill();
+      y += 44;
+    }
+  }
+  const imageBlob = await new Promise((resolve, reject) =>
+    canvas.toBlob(blob => (blob ? resolve(blob) : reject(new Error('Bagan belum dapat disiapkan.'))), 'image/png'),
+  );
+  const bytes = new Uint8Array(await imageBlob.arrayBuffer()),
+    scale = Math.min(600 / canvas.height, 470 / canvas.width);
+  return new Paragraph({
+    children: [
+      new ImageRun({
+        type: 'png',
+        data: bytes,
+        transformation: { width: Math.round(canvas.width * scale), height: Math.round(canvas.height * scale) },
+        altText: { title: 'Kerangka berpikir', description: b.title, name: 'Kerangka berpikir' },
+      }),
+    ],
+  });
+}
+async function exportResearch() {
+  const b = selectedBundle();
+  if (!b) {
+    modal(
+      'Pilih judul yang dipilih terlebih dahulu',
+      '<p>Pilih salah satu opsi judul. Unduhan mengikuti judul yang dipilih, bukan kandidat yang sedang dipratinjau.</p>',
+      B('Tutup', 'close-modal') + B('Lihat Opsi Judul', 'v2-show-titles', 'primary'),
+    );
+    return;
+  }
+  modal(
+    'Menyiapkan Outline Penelitian',
+    '<div class="process-state"><h3>Menyusun DOCX</h3><p>Rangkuman, outline, dan kerangka berpikir judul yang dipilih sedang disatukan.</p></div>',
+  );
+  modalBusy = true;
+  try {
+    await loadScript('vendor/docx.js');
+    const { Document, Packer, Paragraph, TextRun, HeadingLevel } = docx;
+    const P = (t, after = 140) => new Paragraph({ children: [new TextRun(t)], spacing: { after } });
+    const image = await frameworkImage(b),
+      rangkuman = rangkumanRows(),
+      ch = [
+        new Paragraph({ text: 'Outline Penelitian', heading: HeadingLevel.TITLE }),
+        new Paragraph({ text: b.title, heading: HeadingLevel.HEADING_1 }),
+        new Paragraph({ text: 'Rangkuman Penelitian Awal', heading: HeadingLevel.HEADING_1 }),
+      ];
+    for (const [h, p] of rangkuman) ch.push(new Paragraph({ text: h, heading: HeadingLevel.HEADING_3 }), P(p));
+    ch.push(new Paragraph({ text: 'Outline Judul', heading: HeadingLevel.HEADING_1, pageBreakBefore: true }));
+    for (const [chap, subs] of b.outline) {
+      ch.push(new Paragraph({ text: chap, heading: HeadingLevel.HEADING_2 }));
+      for (const [h, p] of subs) ch.push(new Paragraph({ text: h, heading: HeadingLevel.HEADING_3 }), P(p));
+    }
+    ch.push(
+      new Paragraph({ text: 'Kerangka Berpikir', heading: HeadingLevel.HEADING_1, pageBreakBefore: true }),
+      image,
+    );
+    for (const [h, p] of b.framework) {
+      ch.push(new Paragraph({ text: h, heading: HeadingLevel.HEADING_3 }));
+      for (const line of p.split('\n')) ch.push(P(line, 80));
+    }
+    ch.push(
+      P('Rancangan untuk ditinjau bersama pembimbing. Bagan tidak menyatakan hubungan sebab akibat telah terbukti.'),
+    );
+    const blob = await Packer.toBlob(
+      new Document({
+        creator: 'Alerin Skripsi',
+        title: b.title,
+        sections: [
+          { properties: { page: { margin: { top: 960, right: 1000, bottom: 960, left: 1000 } } }, children: ch },
+        ],
+      }),
+    );
+    const filename = 'Outline_Penelitian_' + b.title.replace(/[^a-z0-9]+/gi, '_').slice(0, 85) + '.docx';
+    exportResearch.last = { blob, filename };
+    modalBusy = false;
+    closeModal(true);
+    modal(
+      'Outline Penelitian Siap Diunduh',
+      `<div class="candidate-context"><span class="eyebrow">JUDUL AKTIF</span><h3>${e(b.title)}</h3></div><p>Isi DOCX sama dengan yang tampil di situs:</p><ul><li><strong>Rangkuman Penelitian Awal</strong> · ${rangkuman.length} isian</li><li><strong>Outline Judul</strong> · ${b.outline.map(r => e(r[0])).join(', ')}</li><li><strong>Kerangka Berpikir</strong> · bagan dan ${b.framework.length} bagian penjelasan</li></ul><p class="small muted">DOCX · ${Math.ceil(blob.size / 1024)} KB</p>`,
+      B('Tutup', 'close-modal') + B('Unduh DOCX', 'save-export', 'primary', 'download'),
+      true,
+    );
+  } catch (error) {
+    modalBusy = false;
+    closeModal(true);
+    modal(
+      'Outline belum dapat disiapkan',
+      `<p>${e(error.message || 'Coba unduh kembali.')}</p>`,
+      B('Tutup', 'close-modal'),
+    );
+  }
+}
+function selectedBundle() {
+  const a = S.activeResearch;
+  if (!a || a.title !== S.title || !(a.index >= 0)) return null;
+  const b = currentBundle(a.index);
+  return b ? { ...b, title: S.title } : null;
+}
+function hasilAwalPage() {
+  if (!S.draftReady)
+    return (
+      pageHead('Arah penelitian awal', 'Isi ide penelitianmu dulu di Mulai Skripsi.') +
+      pageEmpty('Rancangan belum disusun', 'Draf isianmu tetap tersimpan.', 'guide-view:idea', 'Lanjutkan draf', 'compass')
+    );
+  outputTab = outputTab === 'titles' ? 'titles' : 'design';
+  const active = selectedBundle(),
+    bundle = active || currentBundle(0),
+    rows = designRows(bundle),
+    opts = titleOptions();
+  const design = `<section class="output-section"><div class="section-head"><div><h3>Rancangan Penelitian</h3><p class="small">${active ? 'Mengikuti judul yang kamu pilih.' : 'Arah awal dari isianmu. Pilih satu judul di tab Opsi Judul.'} Disusun dari isianmu, belum analisis AI.</p></div>${badge('Contoh', '')}</div><div data-output="design">${outputRows(rows, false)}</div></section>`;
+  const titles = opts
+    .map((t, i) => {
+      const on = active && active.index === i;
+      return `<article class="title-option ${on ? 'selected' : ''}" data-title-option="${i}"><div class="between"><span class="eyebrow">OPSI ${String(i + 1).padStart(2, '0')} · ${e(t[1])}</span>${on ? badge('Judul dipilih', 'blue') : badge('Contoh', '')}</div><h3>${e(on ? S.title : t[0])}</h3><p>${e(t[2])}</p><p><strong>Kebutuhan:</strong> Ketepatan rumusan dan dukungan sumber perlu dibahas dengan pembimbing.</p><div class="actions">${B('Validasi Literatur', 'literature:' + i, '', 'book')}${B('Kerangka Berpikir', 'candidate-framework:' + i, '', 'map')}${B('Outline Judul', 'candidate-outline:' + i, '', 'document')}${on ? B('Buka Bab I', 'guide-view:guide', 'primary') : B('Pilih Judul', 'choose-title:' + i, 'primary')}</div></article>`;
+    })
+    .join('');
+  const banner = S.title
+    ? `<section class="active-research-banner"><div><span class="eyebrow">JUDUL YANG KAMU PILIH</span><h3>${e(S.title)}</h3><p>Persetujuan pembimbing: belum dicatat. Pemilihan judul disimpan terpisah.</p></div>${B('Lanjutkan ke Bab I', 'guide-view:guide', 'primary')}</section>`
+    : '';
+  return (
+    pageHead('Arah penelitian awal', 'Tinjau rancangan, bandingkan judul, lalu pilih arah yang akan dikembangkan.', 'guide-view:idea', 'Edit isian', 'edit') +
+    banner +
+    `<div class="result-banner">${badge(S.draftSample ? 'Contoh' : 'Berdasarkan isian pengguna', 'blue')}<h2>${e(S.draft?.topic || 'Rancangan penelitianmu')}</h2><p>Rancangan merupakan bahan diskusi pembimbing. Outline dan kerangka berpikir tersedia pada setiap opsi judul.</p></div>` +
+    `<div class="tabs" role="tablist" aria-label="Hasil arah penelitian">${[
+      ['design', 'Rancangan'],
+      ['titles', 'Opsi Judul (' + opts.length + ')'],
+    ]
+      .map(
+        ([k, t]) =>
+          `<button role="tab" aria-selected="${outputTab === k}" class="${outputTab === k ? 'active' : ''}" data-action="output-tab:${k}">${t}</button>`,
+      )
+      .join('')}</div><div role="tabpanel">${outputTab === 'design' ? design : titles}</div>` +
+    `<div class="actions research-footer">${B('Simpan Draft', 'save-draft', '', 'save')}${B('Periksa Konsistensi', 'consistency', '', 'checklist')}${active ? B('Unduh Outline Penelitian', 'export-draft', 'primary', 'download') : B('Unduh Outline Penelitian', 'export-locked', 'primary', 'download', 'aria-disabled="true" title="Pilih judul aktif terlebih dahulu"')}</div>`
+  );
+}
+function chooseTitleModal(i) {
+  const t = titleOptions()[+i];
+  if (!t) return;
+  modal(
+    'Tinjau Judul Pilihan',
+    `${badge('Contoh', 'blue')}${S.title ? `<p class="small muted mt">Judul aktif saat ini: ${e(S.title)}. Judul lama tetap tersimpan di riwayat.</p>` : ''}<div class="field"><label for="title-edit">Judul penelitian <span class="required-label">Wajib</span></label><textarea id="title-edit" maxlength="220" placeholder="Tinjau atau edit sebelum dikonfirmasi." rows="3">${e(t[0])}</textarea><div class="field-meta"><span>Boleh kamu sesuaikan dulu sebelum dipilih.</span><span data-count="title-edit">${t[0].length}/220</span></div></div><p class="small muted mt">Judul dipilih oleh pengguna. Diskusikan kelayakannya dengan pembimbing. Setelah ini, pekerjaan pertamamu muncul di Progres Aktif.</p>`,
+    B('Kembali', 'close-modal') + B('Pilih Judul', 'confirm-title:' + i, 'primary'),
+    true,
+  );
+}
+function confirmTitle(i) {
+  clearErrors();
+  const el = $('#title-edit');
+  const raw = (el?.value || '').trim();
+  if (!checkRequired('title-edit')) return focusFirstError();
+  if (raw.split(/\s+/).length < 4) {
+    fieldError('title-edit', 'Judul terlalu pendek. Tulis judul lengkap, ya.');
+    return focusFirstError();
+  }
+  const title = titleCase(raw),
+    b = currentBundle(+i),
+    old = S.title;
+  if (old && old !== title) {
+    (S.titleVersions ??= []).push({ title: old, time: new Date().toISOString() });
+    S.needsReview = true;
+  }
+  S.title = title;
+  S.activeResearch = { key: b?.key, title, index: +i };
+  S.review.title = title;
+  S.sample = false;
+  S.titleChosenAt = new Date().toISOString();
+  S.stageLog = (S.stageLog || []).filter(x => x.stage !== 0);
+  S.stageLog.unshift({ stage: 0, text: 'Judul dipilih', by: 'menurut pengguna', date: isoToday() });
+  const sp = splitTheoryMethod(S.draft?.idea);
+  if (sp.method && !S.profile.method) S.profile.method = detectMethod(sp.method);
+  ensureGuide();
+  S.guide.view = 'guide';
+  S.guide.part = 'background';
+  guideSeed();
+  const t = partTask('background', {
+    source: 'mulai',
+    reason: 'Judul sudah dipilih. Latar belakang menjadi dasar rumusan masalah dan bab berikutnya.',
+  });
+  reorderTasks(false);
+  record(old && old !== title ? 'Judul diganti' : 'Judul dipilih', title);
+  synchronizeResearch();
+  persist();
+  closeModal(true);
+  const k = S.profile.kondisi,
+    stage = kondisiOf(k)?.stage;
+  if (!k || k === 'belum' || k === 'judul' || k === 'terhenti' || stage === 0) {
+    modal(
+      'Perbarui kondisi skripsimu?',
+      `<p>Judul sudah dipilih. Perbarui kondisi skripsimu menjadi <strong>Penyusunan proposal</strong>?</p><p class="small muted">Kondisi ini dipakai Beranda dan Peta Skripsi untuk menentukan langkahmu.</p>`,
+      B('Nanti saja', 'close-modal') + B('Perbarui', 'kondisi-up:proposal', 'primary'),
+    );
+  }
+  render();
+  toast(`Judul dipilih. “${t.title}” sudah ada di Progres Aktif.`, '', 6000);
+}
+
+Object.assign(ACTIONS, {
+  'v2-show-titles': () => {
+    outputTab = 'titles';
+    go('hasil-awal');
+  },
+  'candidate-outline': arg => {
+    candidateModal(arg, 'outline');
+  },
+  'candidate-framework': arg => {
+    candidateModal(arg, 'framework');
+  },
+  literature: arg => {
+    relevantLiterature(arg);
+  },
+  'copy-literature': async arg => {
+    const a = ALERIN.literature.find(x => x.id === arg);
+    if (a) await copyText(a.title);
+  },
+  consistency: () => {
+    if (S.needsReview) {
+      S.needsReview = false;
+      persist();
+      render();
+    }
+    consistencyModal();
+  },
+  'export-draft': async () => {
+    await exportResearch();
+  },
+  'save-export': async () => {
+    if (exportResearch.last) {
+      await saveFile(exportResearch.last.filename, exportResearch.last.blob);
+    }
+  },
+  'copy-keyword': async arg => {
+    const [i, idx] = arg.split(':');
+    const b = currentBundle(+idx);
+    if (b) await copyText(literatureKeywords(b)[+i] || '');
+  },
+  'output-tab': arg => {
+    outputTab = arg;
+    render();
+  },
+  'export-locked': () => {
+    toast('Pilih satu judul dulu di tab Opsi Judul.', 'error');
+  },
+  'choose-title': arg => {
+    chooseTitleModal(arg);
+  },
+  'confirm-title': arg => {
+    confirmTitle(arg);
+  },
+});
