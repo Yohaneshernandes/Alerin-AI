@@ -8,6 +8,7 @@ import GrammarPage from "./pages/GrammarPage";
 import PPTPage from "./pages/PPTPage";
 import PlagiasPage from "./pages/PlagiasPage";
 import NotFound from "./pages/NotFound";
+import UpgradePage from "./pages/UpgradePage";
 
 export const router = createBrowserRouter([
   {
@@ -22,6 +23,8 @@ export const router = createBrowserRouter([
       { path: "grammar", Component: GrammarPage },
       { path: "ppt", Component: PPTPage },
       { path: "plagiasi", Component: PlagiasPage },
+      { path: "upgrade", Component: UpgradePage },
+      { path: "langganan", Component: UpgradePage },
       { path: "*", Component: NotFound },
     ],
   },

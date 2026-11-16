@@ -75,7 +75,7 @@ export function RootErrorBoundary() {
 
 export default function Root() {
   const { pathname } = useLocation();
-  const hideFloat = pathname === "/claro" || pathname === "/";
+  const hideFloat = pathname === "/claro" || pathname === "/" || pathname === "/upgrade" || pathname === "/langganan";
 
   return (
     <>

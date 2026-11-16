@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo, useLayoutEffect, createContext, useContext } from "react";
 import { createPortal } from "react-dom";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import katex from "katex";
 import maskotImg from "@/imports/Animasi_Maskot_Buku_31_Agu_2026.png";
 import owlGradImg from "@/imports/image-6.png";
@@ -5230,6 +5230,7 @@ function NotifPanel({ onClose, onNavigate }: { onClose: () => void; onNavigate: 
 
 // ─── Upgrade modal ────────────────────────────────────────────────────────────
 function UpgradeModal({ onClose, onToast }: { onClose: () => void; onToast: (m: string) => void }) {
+  const navigate = useNavigate();
   const plans = [
     {
       id: "gratis", name: "Gratis", tagline: "Mulai tanpa biaya",
@@ -5366,7 +5367,7 @@ function UpgradeModal({ onClose, onToast }: { onClose: () => void; onToast: (m: 
 
                 {/* CTA */}
                 <button
-                  onClick={() => { if (!p.current) { onToast("Fitur upgrade segera hadir!"); onClose(); } }}
+                  onClick={() => { if (!p.current) { onClose(); navigate("/upgrade"); } }}
                   className="w-full py-2.5 rounded-xl text-sm font-bold transition-all mb-5"
                   style={p.current
                     ? { background: "#e2e8f0", color: "#94a3b8", cursor: "default" }
@@ -5592,6 +5593,7 @@ function AddTargetModal({ onClose, onToast }: { onClose: () => void; onToast: (m
 const ShellDrawerContext = createContext<() => void>(() => {});
 
 function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActiveChat = false }: { children: React.ReactNode; activeTab: NavTab; onTab: (t: NavTab) => void; onOpenHistory: (msgs: ChatMsg[]) => void; onNewChat: () => void; hasActiveChat?: boolean }) {
+  const navigate = useNavigate();
   const [searchOpen, setSearchOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [upgradeOpen, setUpgradeOpen] = useState(false);
@@ -5839,10 +5841,10 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
   }, [showToast]);
 
   useEffect(() => {
-    const handleOpenUpgrade = () => setUpgradeOpen(true);
+    const handleOpenUpgrade = () => navigate("/upgrade");
     window.addEventListener("alerin-open-upgrade", handleOpenUpgrade);
     return () => window.removeEventListener("alerin-open-upgrade", handleOpenUpgrade);
-  }, []);
+  }, [navigate]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -6324,7 +6326,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
         />
       )}
       {upgradeOpen && <UpgradeModal onClose={() => setUpgradeOpen(false)} onToast={showToast} />}
-      {creditsOpen && <CreditsModal onClose={() => setCreditsOpen(false)} onUpgrade={() => { setCreditsOpen(false); setUpgradeOpen(true); }} />}
+      {creditsOpen && <CreditsModal onClose={() => setCreditsOpen(false)} onUpgrade={() => { setCreditsOpen(false); navigate("/upgrade"); }} />}
       {calOpen && <CalendarModal onClose={() => setCalOpen(false)} onToast={showToast} />}
       {toast && <Toast msg={toast} onDone={() => setToast(null)} />}
       {logoutConfirmOpen && (
@@ -6384,7 +6386,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
             </button>
             <button
               type="button"
-              onClick={() => setUpgradeOpen(true)}
+              onClick={() => navigate("/upgrade")}
               className="h-10 px-4 py-2 rounded-full border border-slate-200/90 bg-white/70 backdrop-blur-sm flex items-center gap-1.5 hover:bg-blue-50/50 transition-colors shrink-0 shadow-xs"
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -7039,7 +7041,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
           <div className="hidden md:flex items-center gap-2.5 absolute top-3.5 right-6 z-40">
             <button
               type="button"
-              onClick={() => setUpgradeOpen(true)}
+              onClick={() => navigate("/upgrade")}
               className={`h-[46px] px-4 rounded-full backdrop-blur-md border flex items-center gap-1.5 transition-colors shrink-0 cursor-pointer ${
                 isDarkTheme
                   ? "bg-slate-800/85 border-slate-700/80 hover:bg-slate-700/90 shadow-[0_6px_22px_rgba(0,0,0,0.35)] text-blue-400"
@@ -24061,6 +24063,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
 }
 
 function ProfilTab({ onTab, onRegister }: { onTab: (t: NavTab) => void; onRegister: () => void }) {
+  const navigate = useNavigate();
   type ProfileView = "main" | "profile-photo" | "memory-summary" | "edit-profile" | "manage-data" | "account-security" | "password" | "package" | "stage-detail" | "reset-plan" | "notifications" | "privacy-policy" | "terms" | "privacy" | "about";
   type ProfileSubTab = "profil" | "progres" | "personalisasi" | "umum";
   const registrationProfile = (() => {
@@ -24544,8 +24547,7 @@ function ProfilTab({ onTab, onRegister }: { onTab: (t: NavTab) => void; onRegist
                 type="button"
                 onClick={() => {
                   setUpgradeModalOpen(false);
-                  setNotice(`Paket ${upgradeBillingCycle === "yearly" ? "tahunan" : "bulanan"} Alerin Max siap dilanjutkan ke pembayaran.`);
-                  window.setTimeout(() => setNotice(""), 2800);
+                  navigate("/upgrade");
                 }}
                 className="mt-5 w-full rounded-xl bg-[#347CEA] px-5 py-3.5 text-sm font-bold text-white transition-colors hover:bg-blue-700"
               >
@@ -25468,7 +25470,7 @@ function ProfilTab({ onTab, onRegister }: { onTab: (t: NavTab) => void; onRegist
                         <button type="button" onClick={() => setPackageModalOpen(true)} className="flex items-center justify-center rounded-lg border border-[#347CEA] bg-white px-5 py-3 text-xs font-bold uppercase text-[#347CEA] transition-colors hover:bg-blue-50">
                           Kelola Paket
                         </button>
-                        <button type="button" onClick={() => setUpgradeModalOpen(true)} className="flex items-center justify-center rounded-lg bg-[#347CEA] px-5 py-3 text-xs font-bold uppercase text-white transition-colors hover:bg-blue-700">
+                        <button type="button" onClick={() => navigate("/upgrade")} className="flex items-center justify-center rounded-lg bg-[#347CEA] px-5 py-3 text-xs font-bold uppercase text-white transition-colors hover:bg-blue-700">
                           Upgrade Paket
                         </button>
                       </div>
