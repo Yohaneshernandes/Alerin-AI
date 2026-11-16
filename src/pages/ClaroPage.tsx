@@ -20103,26 +20103,26 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
         )}
       </div>
 
-      {/* ── MOBILE POPUP (Sesuai Desain Figma Mobile 100%) ── */}
+      {/* ── MOBILE POPUP (Sesuai Desain Figma Mobile 100% - Ukuran Dioptimalkan Lebih Proporsional) ── */}
       <div
-        className="flex md:hidden min-h-full items-center justify-center p-4"
+        className="flex md:hidden min-h-full items-center justify-center p-3.5"
         onClick={onClose}
       >
         {addingAgenda ? (
           <div
-            className="w-80 max-w-[512px] bg-white rounded-2xl shadow-xl shadow-[0px_10px_30px_rgba(15,23,42,0.15)] flex flex-col overflow-hidden relative font-['Plus_Jakarta_Sans']"
+            className="w-[356px] max-w-[calc(100vw-28px)] sm:w-[370px] bg-white rounded-2xl shadow-xl shadow-[0px_10px_30px_rgba(15,23,42,0.15)] flex flex-col overflow-hidden relative font-['Plus_Jakarta_Sans']"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header Tambah Agenda Mobile */}
-            <div className="px-5 py-3.5 bg-white border-b border-slate-200 flex items-center justify-between shrink-0">
+            <div className="px-5.5 py-4 bg-white border-b border-slate-200 flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2.5">
                 <button
                   type="button"
                   onClick={() => switchDesktopView(false, "back")}
-                  className="size-7 bg-slate-50 hover:bg-slate-100 rounded-lg outline outline-1 outline-offset-[-1px] outline-slate-200 flex items-center justify-center text-slate-500 cursor-pointer transition-colors shrink-0"
+                  className="size-7.5 bg-slate-50 hover:bg-slate-100 rounded-lg outline outline-1 outline-offset-[-1px] outline-slate-200 flex items-center justify-center text-slate-500 cursor-pointer transition-colors shrink-0"
                   aria-label="Kembali ke kalender"
                 >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                     <line x1="19" y1="12" x2="5" y2="12" />
                     <polyline points="12 19 5 12 12 5" />
                   </svg>
@@ -20137,10 +20137,10 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
               <button
                 type="button"
                 onClick={onClose}
-                className="w-6 h-6 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+                className="w-7 h-7 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
                 aria-label="Tutup"
               >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
                   <line x1="18" y1="6" x2="6" y2="18" />
                   <line x1="6" y1="6" x2="18" y2="18" />
                 </svg>
@@ -20148,7 +20148,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
             </div>
 
             {/* Form Fields Mobile */}
-            <div className="p-4 bg-slate-50 flex flex-col gap-3 max-h-[60vh] overflow-y-auto">
+            <div className="p-4.5 bg-slate-50 flex flex-col gap-3.5 max-h-[60vh] overflow-y-auto">
               <div className="flex flex-col gap-1">
                 <label className="text-xs font-semibold leading-4 text-slate-900">
                   Judul Agenda <span className="text-rose-500">*</span>
@@ -20162,7 +20162,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                     if (agendaErrors.title) setAgendaErrors((prev) => ({ ...prev, title: false }));
                   }}
                   placeholder="Contoh: Bimbingan Bab 4"
-                  className={`w-full px-3 py-2 bg-white rounded-xl outline outline-1 outline-offset-[-1px] text-xs text-slate-900 placeholder:text-slate-400 transition-colors ${
+                  className={`w-full px-3.5 py-2.5 bg-white rounded-xl outline outline-1 outline-offset-[-1px] text-xs text-slate-900 placeholder:text-slate-400 transition-colors ${
                     agendaErrors.title ? "outline-red-400 focus:outline-red-400" : "outline-slate-200 focus:outline-blue-600"
                   }`}
                 />
@@ -20171,7 +20171,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
               <div className="grid grid-cols-2 gap-2.5">
                 <div className="flex flex-col gap-1">
                   <label className="text-xs font-semibold leading-4 text-slate-900">Tanggal</label>
-                  <div className="px-3 py-2 bg-slate-100 rounded-xl outline outline-1 outline-offset-[-1px] outline-slate-200 text-xs text-slate-700 font-medium truncate">
+                  <div className="px-3.5 py-2.5 bg-slate-100 rounded-xl outline outline-1 outline-offset-[-1px] outline-slate-200 text-xs text-slate-700 font-medium truncate">
                     {formattedActivityDate}
                   </div>
                 </div>
@@ -20184,7 +20184,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                     value={agendaTime}
                     onChange={(e) => handleAgendaTimeChange(e.target.value)}
                     placeholder="10:00"
-                    className={`w-full px-3 py-2 bg-white rounded-xl outline outline-1 outline-offset-[-1px] text-xs text-slate-900 placeholder:text-slate-400 transition-colors ${
+                    className={`w-full px-3.5 py-2.5 bg-white rounded-xl outline outline-1 outline-offset-[-1px] text-xs text-slate-900 placeholder:text-slate-400 transition-colors ${
                       agendaErrors.time ? "outline-red-400 focus:outline-red-400" : "outline-slate-200 focus:outline-blue-600"
                     }`}
                   />
@@ -20199,24 +20199,24 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                   value={agendaNotes}
                   onChange={(e) => setAgendaNotes(e.target.value.slice(0, 120))}
                   placeholder="Tuliskan catatan singkat…"
-                  className="w-full px-3 py-2 bg-white rounded-xl outline outline-1 outline-offset-[-1px] outline-slate-200 focus:outline-blue-600 text-xs text-slate-900 placeholder:text-slate-400 resize-none transition-colors"
+                  className="w-full px-3.5 py-2.5 bg-white rounded-xl outline outline-1 outline-offset-[-1px] outline-slate-200 focus:outline-blue-600 text-xs text-slate-900 placeholder:text-slate-400 resize-none transition-colors"
                 />
               </div>
             </div>
 
             {/* Actions */}
-            <div className="px-5 py-3 bg-white border-t border-slate-200 flex items-center justify-end gap-2 shrink-0">
+            <div className="px-5.5 py-3.5 bg-white border-t border-slate-200 flex items-center justify-end gap-2.5 shrink-0">
               <button
                 type="button"
                 onClick={() => switchDesktopView(false)}
-                className="h-9 px-4 py-1.5 bg-slate-50 hover:bg-slate-100 rounded-xl outline outline-1 outline-offset-[-1px] outline-slate-200 text-slate-600 text-xs font-semibold cursor-pointer transition-colors"
+                className="h-9.5 px-4.5 py-2 bg-slate-50 hover:bg-slate-100 rounded-xl outline outline-1 outline-offset-[-1px] outline-slate-200 text-slate-600 text-xs font-semibold cursor-pointer transition-colors"
               >
                 Batal
               </button>
               <button
                 type="button"
                 onClick={handleSaveAgenda}
-                className="h-9 px-5 py-1.5 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] rounded-xl text-white text-xs font-semibold cursor-pointer transition-all flex items-center justify-center"
+                className="h-9.5 px-5.5 py-2 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] rounded-xl text-white text-xs font-semibold cursor-pointer transition-all flex items-center justify-center"
               >
                 Simpan
               </button>
@@ -20224,7 +20224,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
           </div>
         ) : (
           <div
-            className="w-80 max-w-[512px] max-h-[813.28px] relative bg-white rounded-2xl shadow-xl shadow-[0px_-10px_30px_-5px_rgba(15,23,42,0.15)] flex flex-col justify-start items-start overflow-hidden font-['Plus_Jakarta_Sans']"
+            className="w-[356px] max-w-[calc(100vw-28px)] sm:w-[370px] relative bg-white rounded-2xl shadow-xl shadow-[0px_10px_30px_rgba(15,23,42,0.15)] flex flex-col justify-start items-start overflow-hidden font-['Plus_Jakarta_Sans']"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Tombol Tutup X (posisi sesuai Figma) */}
@@ -20241,7 +20241,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
             </button>
 
             {/* Header Section */}
-            <div className="self-stretch px-5 pt-3.5 pb-2.5 border-b border-slate-100 flex flex-col justify-start items-start gap-3">
+            <div className="self-stretch px-5.5 pt-4 pb-3 border-b border-slate-100 flex flex-col justify-start items-start gap-3">
               {/* Hubungkan Google Kalender */}
               <div className="self-stretch inline-flex justify-start items-start">
                 <button
@@ -20280,8 +20280,8 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
               <div className="self-stretch flex flex-col justify-start items-start gap-1.5">
                 <div className="self-stretch pb-[0.75px] flex flex-col justify-start items-start gap-[5px]">
                   <div className="self-stretch inline-flex justify-start items-center gap-2.5">
-                    <div className="size-7 bg-blue-100 rounded-lg flex justify-center items-center shrink-0 text-blue-600">
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <div className="size-7.5 bg-blue-100 rounded-lg flex justify-center items-center shrink-0 text-blue-600">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <rect x="3" y="4" width="18" height="18" rx="2" />
                         <line x1="16" y1="2" x2="16" y2="6" />
                         <line x1="8" y1="2" x2="8" y2="6" />
@@ -20303,7 +20303,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
             </div>
 
             {/* Calendar Body Section */}
-            <div className="self-stretch px-5 pt-[5px] pb-3.5 flex flex-col justify-start items-start gap-2.5 overflow-hidden">
+            <div className="self-stretch px-5.5 pt-2 pb-4 flex flex-col justify-start items-start gap-2.5 overflow-hidden">
               {/* Month Navigation */}
               <div className="self-stretch inline-flex justify-between items-center">
                 <div className="inline-flex flex-col justify-start items-start">
@@ -20316,7 +20316,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                     type="button"
                     onClick={() => setCursor(new Date(year, month - 1, 1))}
                     aria-label="Bulan Sebelumnya"
-                    className="w-7 h-6 bg-blue-100/30 hover:bg-blue-100/60 rounded-md flex justify-center items-center cursor-pointer transition-colors text-gray-700"
+                    className="w-7.5 h-6.5 bg-blue-100/30 hover:bg-blue-100/60 rounded-md flex justify-center items-center cursor-pointer transition-colors text-gray-700"
                   >
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M15 18l-6-6 6-6" /></svg>
                   </button>
@@ -20327,7 +20327,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                       setCursor(new Date(now.getFullYear(), now.getMonth(), 1));
                       setSelected(new Date(now.getFullYear(), now.getMonth(), now.getDate()));
                     }}
-                    className="h-6 px-2.5 py-0.5 bg-blue-100 hover:bg-blue-200/80 rounded-md inline-flex flex-col justify-center items-center cursor-pointer transition-colors"
+                    className="h-6.5 px-2.5 py-0.5 bg-blue-100 hover:bg-blue-200/80 rounded-md inline-flex flex-col justify-center items-center cursor-pointer transition-colors"
                   >
                     <span className="w-10 h-5 text-center justify-center text-blue-600 text-xs font-semibold font-['Plus_Jakarta_Sans'] leading-4 tracking-tight">Hari Ini</span>
                   </button>
@@ -20335,7 +20335,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                     type="button"
                     onClick={() => setCursor(new Date(year, month + 1, 1))}
                     aria-label="Bulan Berikutnya"
-                    className="w-7 h-6 bg-blue-100/30 hover:bg-blue-100/60 rounded-md flex justify-center items-center cursor-pointer transition-colors text-gray-700"
+                    className="w-7.5 h-6.5 bg-blue-100/30 hover:bg-blue-100/60 rounded-md flex justify-center items-center cursor-pointer transition-colors text-gray-700"
                   >
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M9 18l6-6-6-6" /></svg>
                   </button>
@@ -20343,7 +20343,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
               </div>
 
               {/* Grid Box */}
-              <div className="self-stretch p-2 bg-slate-50 rounded-xl outline outline-1 outline-offset-[-1px] outline-slate-200 flex flex-col justify-start items-start gap-1">
+              <div className="self-stretch p-2.5 bg-slate-50 rounded-xl outline outline-1 outline-offset-[-1px] outline-slate-200 flex flex-col justify-start items-start gap-1">
                 {/* Days of week header */}
                 <div className="self-stretch inline-flex justify-center items-start">
                   <div className="flex-1 py-1 inline-flex flex-col justify-start items-center">
@@ -20421,10 +20421,10 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                               setCursor(new Date(year, month + 1, 1));
                             }
                           }}
-                          className="self-stretch h-9 flex items-center justify-center relative cursor-pointer"
+                          className="self-stretch h-9.5 sm:h-10 flex items-center justify-center relative cursor-pointer"
                         >
                           {isSel ? (
-                            <div className="size-8 bg-blue-600 rounded-lg inline-flex flex-col justify-center items-center shadow-sm">
+                            <div className="size-8.5 bg-blue-600 rounded-lg inline-flex flex-col justify-center items-center shadow-sm">
                               <span className="text-center justify-center text-white text-xs font-bold font-['Plus_Jakarta_Sans'] leading-3">
                                 {c.day}
                               </span>
@@ -20433,7 +20433,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                               )}
                             </div>
                           ) : (
-                            <div className="self-stretch h-9 py-2.5 inline-flex flex-col justify-center items-center relative">
+                            <div className="self-stretch h-9.5 sm:h-10 py-2 inline-flex flex-col justify-center items-center relative">
                               <span
                                 className={`text-center justify-center text-xs font-['Plus_Jakarta_Sans'] ${
                                   c.type !== "current"
@@ -20463,11 +20463,11 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
             </div>
 
             {/* Bottom Button: Tambah Agenda Baru */}
-            <div className="self-stretch h-16 px-5 py-2.5 bg-white border-t border-slate-200 flex flex-col justify-start items-start">
+            <div className="self-stretch h-17 px-5.5 py-3 bg-white border-t border-slate-200 flex flex-col justify-start items-start">
               <button
                 type="button"
                 onClick={() => switchDesktopView(true)}
-                className="self-stretch h-11 relative bg-blue-600 hover:bg-blue-700 active:scale-[0.99] rounded-xl inline-flex justify-center items-center gap-2 shadow-[0px_2px_4px_-2px_rgba(59,130,246,0.25)] shadow-[0px_4px_6px_-1px_rgba(59,130,246,0.25)] transition-all cursor-pointer text-white"
+                className="self-stretch h-11.5 relative bg-blue-600 hover:bg-blue-700 active:scale-[0.99] rounded-xl inline-flex justify-center items-center gap-2 shadow-[0px_2px_4px_-2px_rgba(59,130,246,0.25)] shadow-[0px_4px_6px_-1px_rgba(59,130,246,0.25)] transition-all cursor-pointer text-white"
               >
                 <div className="size-3 relative overflow-hidden flex items-center justify-center">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
