@@ -16190,6 +16190,7 @@ function ProyekTab({
 
   const [searchQuery, setSearchQuery] = useState("");
   const [newProjectOpen, setNewProjectOpen] = useState(false);
+  const [proPlanPreviewMode, setProPlanPreviewMode] = useState(true);
   const [projectName, setProjectName] = useState("");
   const [toast, setToast] = useState<string | null>(null);
 
@@ -16532,13 +16533,16 @@ function ProyekTab({
   const sourceFileInputRef = useRef<HTMLInputElement>(null);
 
   const getUserPlanInfo = () => {
+    if (proPlanPreviewMode) {
+      return { label: "Pro", limit: 50, maxFolders: 50 };
+    }
     if (typeof window !== "undefined") {
       try {
         const saved = localStorage.getItem("alerin_user_package") || localStorage.getItem("alerin_user_plan");
         if (saved) {
           const lower = saved.toLowerCase();
           if (lower.includes("pro") || lower.includes("max")) {
-            return { label: "Pro", limit: 50, maxFolders: null as number | null };
+            return { label: "Pro", limit: 50, maxFolders: 50 };
           }
           if (lower.includes("plus")) {
             return { label: "Plus", limit: 20, maxFolders: 25 };
@@ -17108,7 +17112,8 @@ function ProyekTab({
       {/* ── Modal Pop-up 'Buat Proyek' ── */}
       {newProjectOpen && (() => {
         const userPlanInfo = getUserPlanInfo();
-        const isFolderLimitReached = userPlanInfo.maxFolders !== null && projects.length >= userPlanInfo.maxFolders;
+        const isFolderLimitReached = proPlanPreviewMode || (userPlanInfo.maxFolders !== null && projects.length >= userPlanInfo.maxFolders);
+        const isPro = userPlanInfo.label === "Pro";
 
         return (
           <div
@@ -17122,7 +17127,20 @@ function ProyekTab({
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between">
-                <h3 className="text-base md:text-lg font-bold text-neutral-900">Buat Proyek</h3>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-base md:text-lg font-bold text-neutral-900">Buat Proyek</h3>
+                  <button
+                    type="button"
+                    onClick={() => setProPlanPreviewMode((p) => !p)}
+                    title="Klik untuk beralih simulasi antara Akun Pro dan Akun Gratis"
+                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold border transition-colors cursor-pointer bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100"
+                  >
+                    <span>{proPlanPreviewMode ? "Mode: Akun Pro" : "Mode: Akun Gratis"}</span>
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <path d="M7 16V4M7 4L3 8M7 4L11 8M17 8V20M17 20L21 16M17 20L13 16" />
+                    </svg>
+                  </button>
+                </div>
                 <button
                   type="button"
                   onClick={() => setNewProjectOpen(false)}
@@ -17179,23 +17197,39 @@ function ProyekTab({
                         Batas maksimal {userPlanInfo.maxFolders} proyek untuk Akun {userPlanInfo.label} sudah tercapai, sehingga tidak bisa membuat proyek baru.
                       </p>
                       <p className="text-xs md:text-[13px] leading-relaxed font-normal text-blue-900/80">
-                        Upgrade paket untuk meningkatkan batas pembuatan proyek
+                        {isPro
+                          ? "Hapus beberapa folder proyek lama kamu untuk dapat membuat folder proyek baru."
+                          : "Upgrade paket untuk meningkatkan batas pembuatan proyek"}
                       </p>
                     </div>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setNewProjectOpen(false);
-                      window.dispatchEvent(new CustomEvent("alerin-open-upgrade"));
-                    }}
-                    className="w-full py-2 md:py-2.5 px-3 rounded-lg bg-[#1A73E8] hover:bg-[#1557b0] active:scale-[0.99] text-white text-xs md:text-[13px] font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-2xs"
-                  >
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="none">
-                      <path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z" />
-                    </svg>
-                    <span>Upgrade Paket</span>
-                  </button>
+                  {isPro ? (
+                    <button
+                      type="button"
+                      onClick={() => setNewProjectOpen(false)}
+                      className="w-full py-2 md:py-2.5 px-3 rounded-lg bg-[#1A73E8] hover:bg-[#1557b0] active:scale-[0.99] text-white text-xs md:text-[13px] font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-2xs"
+                    >
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="3 6 5 6 21 6" />
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                      </svg>
+                      <span>Kelola Folder Proyek</span>
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setNewProjectOpen(false);
+                        window.dispatchEvent(new CustomEvent("alerin-open-upgrade"));
+                      }}
+                      className="w-full py-2 md:py-2.5 px-3 rounded-lg bg-[#1A73E8] hover:bg-[#1557b0] active:scale-[0.99] text-white text-xs md:text-[13px] font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-2xs"
+                    >
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                        <path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z" />
+                      </svg>
+                      <span>Upgrade Paket</span>
+                    </button>
+                  )}
                 </div>
               ) : (
                 <div className="rounded-xl bg-neutral-50 px-3.5 py-2.5 md:px-4 md:py-3 border border-neutral-100">
