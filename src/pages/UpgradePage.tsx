@@ -1136,7 +1136,7 @@ export default function UpgradePage() {
                         </div>
 
                         <div className="text-right shrink-0">
-                          <div className="flex items-baseline justify-end gap-1 flex-wrap">
+                          <div className="flex items-baseline justify-end gap-1.5 whitespace-nowrap">
                             {currentDuration === "1y" && (
                               <span className="text-[11px] text-slate-400 line-through mr-0.5">
                                 {formatRupiah(item.original_yearly)}
