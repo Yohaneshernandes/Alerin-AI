@@ -17176,7 +17176,7 @@ function ProyekTab({
                     </svg>
                     <div className="flex flex-col gap-1">
                       <p className="text-xs md:text-[13px] text-blue-950 leading-relaxed font-medium">
-                        Batas maksimal {userPlanInfo.maxFolders} proyek untuk Akun {userPlanInfo.label} sudah tercapai, sehingga tidak bisa membuat proyek baru lagi.
+                        Batas maksimal {userPlanInfo.maxFolders} proyek untuk Akun {userPlanInfo.label} sudah tercapai, sehingga tidak bisa membuat proyek baru.
                       </p>
                       <p className="text-xs md:text-[13px] leading-relaxed font-normal text-blue-900/80">
                         Upgrade paket untuk meningkatkan batas pembuatan proyek
