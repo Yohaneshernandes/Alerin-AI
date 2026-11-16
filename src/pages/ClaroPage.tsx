@@ -20955,7 +20955,11 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                   </div>
                 </div>
 
-                <div className="self-stretch max-h-36 overflow-y-auto flex flex-col gap-2 pr-0.5">
+                <div
+                  onWheel={(e) => e.stopPropagation()}
+                  className="calendar-agenda-scrollbar self-stretch max-h-[148px] overflow-y-auto overscroll-contain touch-pan-y flex flex-col gap-2 pr-1.5"
+                  style={{ WebkitOverflowScrolling: "touch" }}
+                >
                   {selectedEvents.map((ev, ei) => (
                     <div
                       key={`${ev.source}-${ev.sourceIndex}-${ei}`}
