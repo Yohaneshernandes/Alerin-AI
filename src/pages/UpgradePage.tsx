@@ -1443,11 +1443,11 @@ export default function UpgradePage() {
         <div className="flex items-center justify-between gap-3 max-w-md mx-auto">
           <div className="min-w-0">
             <div className="flex items-center gap-1.5">
-              <span className="text-[10px] font-bold text-brand-700 bg-brand-50 px-1.5 py-0.2 rounded border border-brand-200">
-                {selectedFeatures.size} Fitur
-              </span>
-              <span className="text-[11px] text-slate-500">
+              <span className="text-[11px] font-semibold text-slate-700">
                 {getDurationReadable(currentDuration, currentTier)}
+              </span>
+              <span className="text-[10px] font-bold text-[#155dfc] bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200">
+                {selectedFeatures.size} Fitur
               </span>
             </div>
             <div className="flex items-baseline gap-1.5 mt-0.5">
