@@ -6414,7 +6414,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                 <>
                   <div className="fixed inset-0 z-40" onClick={() => setUpgradeDropdownOpen(false)} />
                   <div
-                    className="absolute top-full left-0 mt-2.5 w-72 max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-2xl border border-slate-200/90 p-2 z-50 text-left animate-[gemini-zoom-in_0.15s_ease-out]"
+                    className="absolute top-full left-0 mt-2.5 w-[228px] max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-2xl border border-slate-200/90 p-1.5 z-50 text-left animate-[gemini-zoom-in_0.15s_ease-out]"
                     onClick={(e) => e.stopPropagation()}
                   >
                     {/* Speech bubble pointer */}
@@ -6423,7 +6423,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                       aria-hidden="true"
                     />
 
-                    <div className="space-y-1">
+                    <div className="space-y-0.5">
                       {/* Option 1: Alerin Individual */}
                       <button
                         type="button"
@@ -6431,12 +6431,12 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                           setUpgradeDropdownOpen(false);
                           navigate("/upgrade");
                         }}
-                        className="w-full flex items-center justify-between p-2.5 rounded-xl transition-all cursor-pointer hover:bg-blue-50/80 group text-left border border-transparent hover:border-blue-100"
+                        className="w-full flex items-center justify-between px-2.5 py-2 rounded-xl transition-all cursor-pointer hover:bg-blue-50/80 group text-left border border-transparent hover:border-blue-100"
                       >
-                        <div>
+                        <div className="min-w-0 pr-1">
                           <div className="flex items-center gap-1.5">
                             <span className="text-xs font-bold text-slate-900">Alerin</span>
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#155dfc] text-white shadow-xs">
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#155dfc] text-white shadow-xs shrink-0">
                               Individual
                             </span>
                           </div>
@@ -6456,12 +6456,12 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                           setUpgradeDropdownOpen(false);
                           setBusinessModalOpen(true);
                         }}
-                        className="w-full flex items-center justify-between p-2.5 rounded-xl transition-all cursor-pointer hover:bg-slate-50 group text-left border border-transparent hover:border-slate-200"
+                        className="w-full flex items-center justify-between px-2.5 py-2 rounded-xl transition-all cursor-pointer hover:bg-slate-50 group text-left border border-transparent hover:border-slate-200"
                       >
-                        <div>
+                        <div className="min-w-0 pr-1">
                           <div className="flex items-center gap-1.5">
                             <span className="text-xs font-bold text-slate-900">Alerin</span>
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-900 text-white shadow-xs">
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-900 text-white shadow-xs shrink-0">
                               Business
                             </span>
                           </div>
@@ -7152,7 +7152,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                 <>
                   <div className="fixed inset-0 z-40" onClick={() => setUpgradeDropdownOpen(false)} />
                   <div
-                    className="absolute top-full right-0 mt-2.5 w-80 bg-white rounded-2xl shadow-2xl border border-slate-200/90 p-2 z-50 text-left animate-[gemini-zoom-in_0.15s_ease-out]"
+                    className="absolute top-full right-0 mt-2.5 w-[240px] bg-white rounded-2xl shadow-2xl border border-slate-200/90 p-1.5 z-50 text-left animate-[gemini-zoom-in_0.15s_ease-out]"
                     onClick={(e) => e.stopPropagation()}
                   >
                     {/* Speech bubble pointer */}
@@ -7161,7 +7161,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                       aria-hidden="true"
                     />
 
-                    <div className="space-y-1">
+                    <div className="space-y-0.5">
                       {/* Option 1: Alerin Individual */}
                       <button
                         type="button"
@@ -7169,20 +7169,20 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                           setUpgradeDropdownOpen(false);
                           navigate("/upgrade");
                         }}
-                        className="w-full flex items-center justify-between p-2.5 rounded-xl transition-all cursor-pointer hover:bg-blue-50/80 group text-left border border-transparent hover:border-blue-100"
+                        className="w-full flex items-center justify-between px-2.5 py-2 rounded-xl transition-all cursor-pointer hover:bg-blue-50/80 group text-left border border-transparent hover:border-blue-100"
                       >
-                        <div>
+                        <div className="min-w-0 pr-1">
                           <div className="flex items-center gap-1.5">
-                            <span className="text-sm font-bold text-slate-900">Alerin</span>
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#155dfc] text-white shadow-xs">
+                            <span className="text-xs font-bold text-slate-900">Alerin</span>
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#155dfc] text-white shadow-xs shrink-0">
                               Individual
                             </span>
                           </div>
-                          <p className="text-xs text-slate-500 mt-0.5 line-clamp-1">
-                            Riset, skripsi & tugas akademik personal
+                          <p className="text-[10.5px] text-slate-500 mt-0.5 line-clamp-1">
+                            Riset & skripsi personal
                           </p>
                         </div>
-                        <svg className="w-4 h-4 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all shrink-0 ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <svg className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all shrink-0 ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                           <polyline points="9 18 15 12 9 6" />
                         </svg>
                       </button>
@@ -7194,20 +7194,20 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                           setUpgradeDropdownOpen(false);
                           setBusinessModalOpen(true);
                         }}
-                        className="w-full flex items-center justify-between p-2.5 rounded-xl transition-all cursor-pointer hover:bg-slate-50 group text-left border border-transparent hover:border-slate-200"
+                        className="w-full flex items-center justify-between px-2.5 py-2 rounded-xl transition-all cursor-pointer hover:bg-slate-50 group text-left border border-transparent hover:border-slate-200"
                       >
-                        <div>
+                        <div className="min-w-0 pr-1">
                           <div className="flex items-center gap-1.5">
-                            <span className="text-sm font-bold text-slate-900">Alerin</span>
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-900 text-white shadow-xs">
+                            <span className="text-xs font-bold text-slate-900">Alerin</span>
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-900 text-white shadow-xs shrink-0">
                               Business
                             </span>
                           </div>
-                          <p className="text-xs text-slate-500 mt-0.5 line-clamp-1">
-                            Kampus, lab riset & tim institusi
+                          <p className="text-[10.5px] text-slate-500 mt-0.5 line-clamp-1">
+                            Kampus, lab & tim institusi
                           </p>
                         </div>
-                        <svg className="w-4 h-4 text-slate-400 group-hover:text-slate-900 group-hover:translate-x-0.5 transition-all shrink-0 ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <svg className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-900 group-hover:translate-x-0.5 transition-all shrink-0 ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                           <polyline points="9 18 15 12 9 6" />
                         </svg>
                       </button>
