@@ -2224,7 +2224,7 @@ export default function UpgradePage() {
                           e.stopPropagation();
                           setActiveModalFeatureKey(key);
                         }}
-                        className="inline-flex items-center gap-1.5 text-[11px] font-bold text-white bg-[#155dfc] hover:bg-[#124ecc] px-3 py-1.5 rounded-lg shadow-sm transition-all shrink-0 active:scale-95 cursor-pointer"
+                        className="inline-flex items-center gap-1.5 text-[11px] font-bold text-white bg-[#1A73E8] hover:bg-[#1557b0] px-3 py-1.5 rounded-lg shadow-sm shadow-[#1A73E8]/20 transition-all shrink-0 active:scale-95 cursor-pointer"
                       >
                         <span>Detail Paket</span>
                         <svg
@@ -2462,7 +2462,7 @@ export default function UpgradePage() {
               <button
                 type="button"
                 onClick={() => setIsCheckoutModalOpen(true)}
-                className="w-full py-4 px-6 bg-[#155dfc] hover:bg-[#124ecc] text-white font-bold text-sm sm:text-base rounded-2xl shadow-lg shadow-[#155dfc]/25 transition-all flex items-center justify-center gap-2 group active:scale-[0.98] cursor-pointer"
+                className="w-full py-4 px-6 bg-[#1A73E8] hover:bg-[#1557b0] text-white font-bold text-sm sm:text-base rounded-2xl shadow-lg shadow-[#1A73E8]/25 transition-all flex items-center justify-center gap-2 group active:scale-[0.98] cursor-pointer"
               >
                 <span>Lanjut ke Pembayaran</span>
                 <svg
@@ -2504,7 +2504,7 @@ export default function UpgradePage() {
           <button
             type="button"
             onClick={() => setIsCheckoutModalOpen(true)}
-            className="px-5 py-3 bg-[#155dfc] hover:bg-[#124ecc] text-white font-bold text-xs rounded-xl shadow-md shadow-[#155dfc]/25 transition-all shrink-0 flex items-center gap-1.5 active:scale-95 cursor-pointer"
+            className="px-5 py-3 bg-[#1A73E8] hover:bg-[#1557b0] text-white font-bold text-xs rounded-xl shadow-md shadow-[#1A73E8]/25 transition-all shrink-0 flex items-center gap-1.5 active:scale-95 cursor-pointer"
           >
             <span>Lanjut Bayar</span>
             <svg
@@ -2790,7 +2790,7 @@ export default function UpgradePage() {
                     type="button"
                     disabled={isPaymentProcessing}
                     onClick={handleExecutePayment}
-                    className="w-full py-3.5 px-6 bg-[#155dfc] hover:bg-[#124ecc] text-white font-bold text-sm rounded-2xl shadow-lg shadow-[#155dfc]/25 transition-all flex items-center justify-center gap-2 active:scale-[0.98] cursor-pointer disabled:opacity-75"
+                    className="w-full py-3.5 px-6 bg-[#1A73E8] hover:bg-[#1557b0] text-white font-bold text-sm rounded-2xl shadow-lg shadow-[#1A73E8]/25 transition-all flex items-center justify-center gap-2 active:scale-[0.98] cursor-pointer disabled:opacity-75"
                   >
                     {isPaymentProcessing ? (
                       <>
@@ -3038,7 +3038,7 @@ export default function UpgradePage() {
                     className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                       isSelected
                         ? "bg-slate-200 text-slate-700 hover:bg-slate-300"
-                        : "bg-[#155dfc] hover:bg-[#124ecc] text-white shadow-md shadow-[#155dfc]/20"
+                        : "bg-[#1A73E8] hover:bg-[#1557b0] text-white shadow-md shadow-[#1A73E8]/20"
                     }`}
                   >
                     <svg
