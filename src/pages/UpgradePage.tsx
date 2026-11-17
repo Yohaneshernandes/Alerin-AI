@@ -2226,7 +2226,7 @@ export default function UpgradePage() {
               <div className="flex items-center justify-between pb-4 border-b border-slate-100">
                 <div>
                   <h3 className="text-base font-bold text-slate-900">Ringkasan Paket</h3>
-                  <p className="text-xs text-slate-500">Konfigurasi langganan Alerin</p>
+                  <p className="text-xs text-slate-500">Pastikan sudah sesuai.</p>
                 </div>
                 <span className="text-xs font-bold text-brand-700 bg-brand-50 border border-brand-200 px-3 py-1 rounded-full">
                   {getDurationReadable(currentDuration, currentTier)}
