@@ -667,32 +667,38 @@ export default function UpgradePage() {
   const [bizForm, setBizForm] = useState({
     name: "",
     email: "",
-    phone: "",
     institution: "",
-    role: "",
-    faculty: "",
-    seats: "5 - 20 Akun",
-    needs: ["Asistensi Skripsi & Tesis"],
-    notes: "",
+    purpose: "",
+    features: ["Chat", "Jurnal", "Paraprase", "Skripsi"] as string[],
   });
   const [bizSubmitting, setBizSubmitting] = useState(false);
-  const [bizSubmitted, setBizSubmitted] = useState(false);
+  const [bizConfirmModalOpen, setBizConfirmModalOpen] = useState(false);
+  const [lastSubmittedData, setLastSubmittedData] = useState<{
+    name: string;
+    email: string;
+    institution: string;
+    purpose: string;
+    features: string[];
+  } | null>(null);
   const [bizErrors, setBizErrors] = useState<{
     name?: boolean;
     email?: boolean;
-    phone?: boolean;
     institution?: boolean;
-    role?: boolean;
+    purpose?: boolean;
+    features?: boolean;
   }>({});
 
-  const toggleBizNeed = (need: string) => {
+  const toggleBizFeature = (featureName: string) => {
     setBizForm((prev) => {
-      const exists = prev.needs.includes(need);
-      return {
-        ...prev,
-        needs: exists ? prev.needs.filter((n) => n !== need) : [...prev.needs, need],
-      };
+      const exists = prev.features.includes(featureName);
+      const updated = exists
+        ? prev.features.filter((f) => f !== featureName)
+        : [...prev.features, featureName];
+      return { ...prev, features: updated };
     });
+    if (bizErrors.features) {
+      setBizErrors((prev) => ({ ...prev, features: false }));
+    }
   };
 
   const handleBizSubmit = (e: React.FormEvent) => {
@@ -700,24 +706,36 @@ export default function UpgradePage() {
     const errors: typeof bizErrors = {};
     if (!bizForm.name.trim()) errors.name = true;
     if (!bizForm.email.trim() || !bizForm.email.includes("@")) errors.email = true;
-    if (!bizForm.phone.trim()) errors.phone = true;
     if (!bizForm.institution.trim()) errors.institution = true;
-    if (!bizForm.role.trim()) errors.role = true;
+    if (!bizForm.purpose.trim()) errors.purpose = true;
+    if (bizForm.features.length === 0) errors.features = true;
 
     if (Object.keys(errors).length > 0) {
       setBizErrors(errors);
-      showToast("Harap lengkapi semua kolom yang bertanda bintang (*)", "warning");
+      showToast("Harap lengkapi semua kolom formulir yang bertanda bintang (*)", "warning");
       return;
     }
 
     setBizErrors({});
     setBizSubmitting(true);
+
+    // Alur Pengiriman: Otomatis dikirim ke email admin@alerin.id
+    console.log("Mengirim formulir kemitraan business ke admin@alerin.id:", bizForm);
+
     setTimeout(() => {
       setBizSubmitting(false);
-      setBizSubmitted(true);
-      showToast("Formulir Alerin Business berhasil dikirim!", "success");
-      window.scrollTo({ top: 150, behavior: "smooth" });
-    }, 850);
+      setLastSubmittedData({ ...bizForm });
+      setBizConfirmModalOpen(true);
+      // Reset form
+      setBizForm({
+        name: "",
+        email: "",
+        institution: "",
+        purpose: "",
+        features: ["Chat", "Jurnal", "Paraprase", "Skripsi"],
+      });
+      showToast("Berhasil mengirim formulir ke admin@alerin.id", "success");
+    }, 700);
   };
 
   const showToast = useCallback(
@@ -2613,348 +2631,276 @@ export default function UpgradePage() {
             </div>
           </div>
 
-          {/* FORMULIR / SUCCESS VIEW */}
-          {bizSubmitted ? (
-            <div className="bg-white rounded-3xl border border-slate-200/90 p-8 sm:p-10 text-center shadow-lg max-w-2xl mx-auto animate-[gemini-zoom-in_0.2s_ease-out]">
-              <div className="w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-200 mx-auto flex items-center justify-center mb-4 shadow-sm">
-                <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                  <polyline points="20 6 9 17 4 12" />
-                </svg>
+          {/* FORMULIR KHUSUS BUSINESS */}
+          <div className="bg-white rounded-3xl border border-slate-200/90 shadow-xl overflow-hidden">
+            <div className="p-6 sm:p-8 border-b border-slate-100 bg-gradient-to-r from-slate-50/80 via-white to-blue-50/30">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="size-2 rounded-full bg-blue-600" />
+                <span className="text-xs font-bold uppercase tracking-wider text-blue-600">Formulir Khusus Business</span>
               </div>
-
-              <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
-                Pengajuan Terkirim
-              </span>
-
-              <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900 mt-3">
-                Terima Kasih, {bizForm.name}!
+              <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
+                Pengajuan Kemitraan & Paket Business
               </h3>
-              <p className="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed max-w-lg mx-auto">
-                Pengajuan paket institusi untuk <strong className="text-slate-800">{bizForm.institution}</strong> telah berhasil kami terima. Account Manager Alerin Business akan segera menghubungi Anda dalam 1x24 jam kerja.
+              <p className="text-xs sm:text-sm text-slate-500 mt-1">
+                Lengkapi formulir khusus calon mitra di bawah ini. Data akan otomatis dikirimkan ke <strong className="text-slate-700 font-semibold">admin@alerin.id</strong>.
               </p>
-
-              <div className="mt-6 p-4 bg-slate-50 rounded-2xl border border-slate-200 text-left text-xs space-y-2">
-                <div className="flex justify-between border-b border-slate-200/70 pb-2">
-                  <span className="text-slate-500">PIC Penanggung Jawab:</span>
-                  <span className="font-bold text-slate-800">{bizForm.name} ({bizForm.role})</span>
-                </div>
-                <div className="flex justify-between border-b border-slate-200/70 pb-2">
-                  <span className="text-slate-500">Institusi / Lembaga:</span>
-                  <span className="font-bold text-slate-800">{bizForm.institution} {bizForm.faculty ? `• ${bizForm.faculty}` : ""}</span>
-                </div>
-                <div className="flex justify-between border-b border-slate-200/70 pb-2">
-                  <span className="text-slate-500">Estimasi Kebutuhan:</span>
-                  <span className="font-bold text-brand-600">{bizForm.seats}</span>
-                </div>
-                <div className="flex justify-between border-b border-slate-200/70 pb-2">
-                  <span className="text-slate-500">Kontak WhatsApp:</span>
-                  <span className="font-bold text-slate-800">{bizForm.phone}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-500">Email Resmi:</span>
-                  <span className="font-bold text-slate-800">{bizForm.email}</span>
-                </div>
-              </div>
-
-              <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
-                <a
-                  href={`https://wa.me/6281234567890?text=Halo%20Tim%20Alerin%20Business%2C%20saya%20${encodeURIComponent(bizForm.name)}%20dari%20${encodeURIComponent(bizForm.institution)}%20telah%20mengisi%20formulir%20pengajuan%20Business.`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-6 py-3 rounded-xl bg-[#25D366] hover:bg-[#20ba59] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md transition-all cursor-pointer"
-                >
-                  <svg className="w-4 h-4 fill-white" viewBox="0 0 24 24">
-                    <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z" />
-                  </svg>
-                  <span>Konfirmasi via WhatsApp</span>
-                </a>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setBizSubmitted(false);
-                    setBizForm({
-                      name: "",
-                      email: "",
-                      phone: "",
-                      institution: "",
-                      role: "",
-                      faculty: "",
-                      seats: "5 - 20 Akun",
-                      needs: ["Asistensi Skripsi & Tesis"],
-                      notes: "",
-                    });
-                  }}
-                  className="px-5 py-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs transition-all cursor-pointer"
-                >
-                  Kirim Pengajuan Baru
-                </button>
-              </div>
             </div>
-          ) : (
-            <div className="bg-white rounded-3xl border border-slate-200/90 shadow-xl overflow-hidden">
-              <div className="p-6 sm:p-8 border-b border-slate-100 bg-gradient-to-r from-slate-50/80 via-white to-blue-50/30">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="size-2 rounded-full bg-blue-600" />
-                  <span className="text-xs font-bold uppercase tracking-wider text-blue-600">Formulir Pendaftaran Institusi</span>
+
+            <form onSubmit={handleBizSubmit} className="p-6 sm:p-8 space-y-5">
+              {/* 1. Nama */}
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                  1. Nama <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder="Masukkan nama lengkap Anda"
+                  value={bizForm.name}
+                  onChange={(e) => {
+                    setBizForm({ ...bizForm, name: e.target.value });
+                    if (bizErrors.name) setBizErrors({ ...bizErrors, name: false });
+                  }}
+                  className={`w-full px-4 py-2.5 text-xs sm:text-sm rounded-xl border transition-all ${
+                    bizErrors.name
+                      ? "border-red-400 bg-red-50/30 focus:border-red-500 focus:ring-2 focus:ring-red-200"
+                      : "border-slate-200 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                  }`}
+                />
+                {bizErrors.name && (
+                  <p className="text-[11px] text-red-500 mt-1 font-medium">Nama wajib diisi</p>
+                )}
+              </div>
+
+              {/* 2. Email */}
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                  2. Email <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="email"
+                  placeholder="nama@instansi.ac.id atau nama@email.com"
+                  value={bizForm.email}
+                  onChange={(e) => {
+                    setBizForm({ ...bizForm, email: e.target.value });
+                    if (bizErrors.email) setBizErrors({ ...bizErrors, email: false });
+                  }}
+                  className={`w-full px-4 py-2.5 text-xs sm:text-sm rounded-xl border transition-all ${
+                    bizErrors.email
+                      ? "border-red-400 bg-red-50/30 focus:border-red-500 focus:ring-2 focus:ring-red-200"
+                      : "border-slate-200 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                  }`}
+                />
+                {bizErrors.email && (
+                  <p className="text-[11px] text-red-500 mt-1 font-medium">Email valid wajib diisi</p>
+                )}
+              </div>
+
+              {/* 3. Instansi */}
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                  3. Instansi <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder="Nama universitas, fakultas, sekolah, atau instansi"
+                  value={bizForm.institution}
+                  onChange={(e) => {
+                    setBizForm({ ...bizForm, institution: e.target.value });
+                    if (bizErrors.institution) setBizErrors({ ...bizErrors, institution: false });
+                  }}
+                  className={`w-full px-4 py-2.5 text-xs sm:text-sm rounded-xl border transition-all ${
+                    bizErrors.institution
+                      ? "border-red-400 bg-red-50/30 focus:border-red-500 focus:ring-2 focus:ring-red-200"
+                      : "border-slate-200 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                  }`}
+                />
+                {bizErrors.institution && (
+                  <p className="text-[11px] text-red-500 mt-1 font-medium">Instansi wajib diisi</p>
+                )}
+              </div>
+
+              {/* 4. Tujuan Penggunaan Alerin */}
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                  4. Tujuan Penggunaan Alerin <span className="text-red-500">*</span>
+                </label>
+                <textarea
+                  rows={3}
+                  placeholder="Jelaskan kebutuhan atau tujuan penggunaan Alerin di instansi Anda..."
+                  value={bizForm.purpose}
+                  onChange={(e) => {
+                    setBizForm({ ...bizForm, purpose: e.target.value });
+                    if (bizErrors.purpose) setBizErrors({ ...bizErrors, purpose: false });
+                  }}
+                  className={`w-full px-4 py-2.5 text-xs sm:text-sm rounded-xl border transition-all resize-y ${
+                    bizErrors.purpose
+                      ? "border-red-400 bg-red-50/30 focus:border-red-500 focus:ring-2 focus:ring-red-200"
+                      : "border-slate-200 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                  }`}
+                />
+                {bizErrors.purpose && (
+                  <p className="text-[11px] text-red-500 mt-1 font-medium">Tujuan penggunaan Alerin wajib diisi</p>
+                )}
+              </div>
+
+              {/* 5. Pilihan Fitur yang Ingin Digunakan */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="block text-xs font-bold text-slate-700">
+                    5. Pilihan Fitur yang Ingin Digunakan <span className="text-red-500">*</span>
+                  </label>
+                  <span className="text-[11px] text-slate-400">Pilih fitur yang dibutuhkan</span>
                 </div>
-                <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
-                  Pengajuan Paket Alerin Business
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-500 mt-1">
-                  Lengkapi data berikut untuk mendapatkan proposal resmi, demo sistem, dan kalkulasi diskon kuota multi-user.
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                  {[
+                    { key: "Chat", label: "Chat", desc: "Obrolan AI Riset" },
+                    { key: "Jurnal", label: "Jurnal", desc: "Sintesis Literatur" },
+                    { key: "Paraprase", label: "Paraprase", desc: "Anti Plagiasi" },
+                    { key: "Skripsi", label: "Skripsi", desc: "Penyusunan Bab" },
+                  ].map((feature) => {
+                    const isChecked = bizForm.features.includes(feature.key);
+                    return (
+                      <label
+                        key={feature.key}
+                        onClick={() => toggleBizFeature(feature.key)}
+                        className={`flex items-start gap-2.5 p-3 rounded-2xl border cursor-pointer transition-all ${
+                          isChecked
+                            ? "bg-blue-50/80 border-[#155dfc] text-blue-900 shadow-sm ring-1 ring-[#155dfc]/20"
+                            : "bg-white border-slate-200 hover:border-slate-300 text-slate-700 hover:bg-slate-50/50"
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={() => {}} // handled by label onClick
+                          className="w-4 h-4 mt-0.5 rounded text-[#155dfc] focus:ring-blue-500 cursor-pointer"
+                        />
+                        <div className="min-w-0">
+                          <span className="text-xs font-bold text-slate-900 block">{feature.label}</span>
+                          <span className="text-[10.5px] text-slate-500 block truncate">{feature.desc}</span>
+                        </div>
+                      </label>
+                    );
+                  })}
+                </div>
+                {bizErrors.features && (
+                  <p className="text-[11px] text-red-500 mt-1.5 font-medium">Pilih minimal 1 fitur yang ingin digunakan</p>
+                )}
+              </div>
+
+              {/* Info Pengiriman ke admin@alerin.id */}
+              <div className="bg-slate-50 rounded-2xl p-3.5 border border-slate-200/80 flex items-center gap-3">
+                <div className="w-8 h-8 rounded-xl bg-blue-100 text-[#155dfc] flex items-center justify-center shrink-0">
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                    <polyline points="22,6 12,13 2,6" />
+                  </svg>
+                </div>
+                <p className="text-[11px] text-slate-600 leading-normal">
+                  Data formulir yang diisi akan otomatis dikirim ke email <strong className="text-slate-800 font-semibold">admin@alerin.id</strong>. Tim Alerin akan menghubungi Anda kembali maksimal dalam 3 x 24 jam.
                 </p>
               </div>
 
-              <form onSubmit={handleBizSubmit} className="p-6 sm:p-8 space-y-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
-                  {/* Nama PIC */}
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                      Nama Lengkap PIC / Pemohon <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Contoh: Dr. Rian Pratama, M.Kom"
-                      value={bizForm.name}
-                      onChange={(e) => {
-                        setBizForm({ ...bizForm, name: e.target.value });
-                        if (bizErrors.name) setBizErrors({ ...bizErrors, name: false });
-                      }}
-                      className={`w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border transition-all ${
-                        bizErrors.name
-                          ? "border-red-400 bg-red-50/30 focus:border-red-500 focus:ring-2 focus:ring-red-200"
-                          : "border-slate-200 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                      }`}
-                    />
-                    {bizErrors.name && (
-                      <p className="text-[11px] text-red-500 mt-1 font-medium">Nama lengkap wajib diisi</p>
-                    )}
-                  </div>
+              {/* Submit Action */}
+              <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setPlanType("individual")}
+                  className="w-full sm:w-auto px-5 py-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs transition-all cursor-pointer"
+                >
+                  Kembali ke Paket Individu
+                </button>
+                <button
+                  type="submit"
+                  disabled={bizSubmitting}
+                  className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 active:scale-98 text-white font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer disabled:opacity-75"
+                >
+                  {bizSubmitting ? (
+                    <>
+                      <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                      <span>Mengirim ke admin@alerin.id...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Kirim Formulir Pengajuan</span>
+                      <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <path d="M5 12h14m-7-7 7 7-7 7" />
+                      </svg>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
 
-                  {/* Jabatan / Peran */}
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                      Jabatan / Peran Institusi <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Contoh: Dosen Pembina / Kaprodi / Peneliti"
-                      value={bizForm.role}
-                      onChange={(e) => {
-                        setBizForm({ ...bizForm, role: e.target.value });
-                        if (bizErrors.role) setBizErrors({ ...bizErrors, role: false });
-                      }}
-                      className={`w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border transition-all ${
-                        bizErrors.role
-                          ? "border-red-400 bg-red-50/30 focus:border-red-500 focus:ring-2 focus:ring-red-200"
-                          : "border-slate-200 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                      }`}
-                    />
-                    {bizErrors.role && (
-                      <p className="text-[11px] text-red-500 mt-1 font-medium">Jabatan / peran wajib diisi</p>
-                    )}
-                  </div>
-
-                  {/* Email Resmi */}
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                      Email Resmi Institusi <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="email"
-                      placeholder="nama@universitas.ac.id"
-                      value={bizForm.email}
-                      onChange={(e) => {
-                        setBizForm({ ...bizForm, email: e.target.value });
-                        if (bizErrors.email) setBizErrors({ ...bizErrors, email: false });
-                      }}
-                      className={`w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border transition-all ${
-                        bizErrors.email
-                          ? "border-red-400 bg-red-50/30 focus:border-red-500 focus:ring-2 focus:ring-red-200"
-                          : "border-slate-200 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                      }`}
-                    />
-                    {bizErrors.email && (
-                      <p className="text-[11px] text-red-500 mt-1 font-medium">Email valid wajib diisi</p>
-                    )}
-                  </div>
-
-                  {/* WhatsApp */}
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                      Nomor WhatsApp Aktif <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="tel"
-                      placeholder="Contoh: 081234567890"
-                      value={bizForm.phone}
-                      onChange={(e) => {
-                        setBizForm({ ...bizForm, phone: e.target.value });
-                        if (bizErrors.phone) setBizErrors({ ...bizErrors, phone: false });
-                      }}
-                      className={`w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border transition-all ${
-                        bizErrors.phone
-                          ? "border-red-400 bg-red-50/30 focus:border-red-500 focus:ring-2 focus:ring-red-200"
-                          : "border-slate-200 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                      }`}
-                    />
-                    {bizErrors.phone && (
-                      <p className="text-[11px] text-red-500 mt-1 font-medium">Nomor WhatsApp wajib diisi</p>
-                    )}
-                  </div>
-
-                  {/* Nama Institusi / Universitas */}
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                      Nama Institusi / Universitas / Lembaga <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Contoh: Universitas Indonesia"
-                      value={bizForm.institution}
-                      onChange={(e) => {
-                        setBizForm({ ...bizForm, institution: e.target.value });
-                        if (bizErrors.institution) setBizErrors({ ...bizErrors, institution: false });
-                      }}
-                      className={`w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border transition-all ${
-                        bizErrors.institution
-                          ? "border-red-400 bg-red-50/30 focus:border-red-500 focus:ring-2 focus:ring-red-200"
-                          : "border-slate-200 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                      }`}
-                    />
-                    {bizErrors.institution && (
-                      <p className="text-[11px] text-red-500 mt-1 font-medium">Nama institusi wajib diisi</p>
-                    )}
-                  </div>
-
-                  {/* Fakultas / Jurusan */}
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                      Fakultas / Program Studi / Divisi <span className="text-slate-400 font-normal">(Opsional)</span>
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Contoh: Fakultas Ilmu Komputer"
-                      value={bizForm.faculty}
-                      onChange={(e) => setBizForm({ ...bizForm, faculty: e.target.value })}
-                      className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all"
-                    />
-                  </div>
+          {/* POP-UP KONFIRMASI PENGIRIMAN FORMULIR BUSINESS */}
+          {bizConfirmModalOpen && (
+            <div
+              className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm p-4 sm:p-6 flex items-center justify-center animate-[gemini-fade-in_0.2s_ease-out]"
+              onClick={() => setBizConfirmModalOpen(false)}
+            >
+              <div
+                onClick={(e) => e.stopPropagation()}
+                className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 text-center shadow-2xl border border-slate-200 animate-[gemini-zoom-in_0.15s_ease-out]"
+              >
+                <div className="w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-200 mx-auto flex items-center justify-center mb-4 shadow-sm">
+                  <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
                 </div>
 
-                {/* Estimasi Jumlah Akun */}
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-2">
-                    Estimasi Jumlah Akun / Lisensi Pengguna
-                  </label>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                    {["5 - 20 Akun", "21 - 50 Akun", "51 - 100 Akun", "100+ Akun (Kampus)"].map((seat) => (
-                      <button
-                        key={seat}
-                        type="button"
-                        onClick={() => setBizForm({ ...bizForm, seats: seat })}
-                        className={`p-3 rounded-xl border text-xs font-bold transition-all text-center cursor-pointer ${
-                          bizForm.seats === seat
-                            ? "bg-slate-900 text-white border-slate-900 shadow-sm"
-                            : "bg-white text-slate-700 border-slate-200 hover:border-slate-300 hover:bg-slate-50"
-                        }`}
-                      >
-                        {seat}
-                      </button>
-                    ))}
-                  </div>
-                </div>
+                <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+                  Konfirmasi Pengiriman
+                </span>
 
-                {/* Kebutuhan Utama Fitur */}
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-2">
-                    Fokus Kebutuhan Akademik / Fitur Utama
-                  </label>
-                  <div className="flex flex-wrap gap-2">
-                    {[
-                      "Asistensi Skripsi & Tesis",
-                      "Pencarian & Sintesis Jurnal Scopus",
-                      "Parafrase & Anti Plagiasi Turnitin",
-                      "Disertasi & Novelty Generator",
-                      "Analisis Data Riset & Metodologi",
-                      "Integrasi API & Custom Model",
-                    ].map((need) => {
-                      const isSelected = bizForm.needs.includes(need);
-                      return (
-                        <button
-                          key={need}
-                          type="button"
-                          onClick={() => toggleBizNeed(need)}
-                          className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer flex items-center gap-1.5 ${
-                            isSelected
-                              ? "bg-blue-50 text-[#155dfc] border border-blue-200 font-bold"
-                              : "bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200/70"
-                          }`}
-                        >
-                          <span className={`w-3.5 h-3.5 rounded flex items-center justify-center text-[10px] ${
-                            isSelected ? "bg-[#155dfc] text-white" : "border border-slate-300"
-                          }`}>
-                            {isSelected && "✓"}
-                          </span>
-                          <span>{need}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
+                <h3 className="text-lg sm:text-xl font-extrabold text-slate-900 mt-3 leading-snug">
+                  Berhasil mengirim. Mohon ditunggu maksimal 3 x 24 jam
+                </h3>
 
-                {/* Catatan Tambahan */}
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                    Catatan atau Kebutuhan Tambahan <span className="text-slate-400 font-normal">(Opsional)</span>
-                  </label>
-                  <textarea
-                    rows={3}
-                    placeholder="Sampaikan jika ada persyaratan penagihan termin, MoU khusus, atau jadwal presentasi / demo sistem..."
-                    value={bizForm.notes}
-                    onChange={(e) => setBizForm({ ...bizForm, notes: e.target.value })}
-                    className="w-full px-3.5 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all resize-y"
-                  />
-                </div>
+                <p className="text-xs text-slate-600 mt-2.5 leading-relaxed">
+                  Data formulir Anda telah otomatis dikirim ke email{" "}
+                  <strong className="text-slate-900 font-semibold">admin@alerin.id</strong>. Tim Alerin akan segera meninjau dan menghubungi Anda kembali.
+                </p>
 
-                {/* Action Buttons */}
-                <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-slate-100">
-                  <p className="text-[11px] text-slate-400 text-center sm:text-left">
-                    Data pengajuan dilindungi privasi institusi dan hanya digunakan untuk keperluan penawaran resmi Alerin.
-                  </p>
-                  <div className="flex items-center gap-3 w-full sm:w-auto">
-                    <button
-                      type="button"
-                      onClick={() => setPlanType("individual")}
-                      className="flex-1 sm:flex-none px-5 py-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs transition-all cursor-pointer"
-                    >
-                      Batal
-                    </button>
-                    <button
-                      type="submit"
-                      disabled={bizSubmitting}
-                      className="flex-1 sm:flex-none px-7 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 active:scale-98 text-white font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer disabled:opacity-75"
-                    >
-                      {bizSubmitting ? (
-                        <>
-                          <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                          </svg>
-                          <span>Mengirim Pengajuan...</span>
-                        </>
-                      ) : (
-                        <>
-                          <span>Kirim Formulir Pengajuan</span>
-                          <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                            <path d="M5 12h14m-7-7 7 7-7 7" />
-                          </svg>
-                        </>
-                      )}
-                    </button>
+                {lastSubmittedData && (
+                  <div className="mt-4 p-4 bg-slate-50 rounded-2xl border border-slate-200/80 text-left text-xs space-y-2">
+                    <div className="flex justify-between border-b border-slate-200/60 pb-1.5">
+                      <span className="text-slate-500">Nama:</span>
+                      <span className="font-bold text-slate-800">{lastSubmittedData.name}</span>
+                    </div>
+                    <div className="flex justify-between border-b border-slate-200/60 pb-1.5">
+                      <span className="text-slate-500">Email:</span>
+                      <span className="font-bold text-slate-800">{lastSubmittedData.email}</span>
+                    </div>
+                    <div className="flex justify-between border-b border-slate-200/60 pb-1.5">
+                      <span className="text-slate-500">Instansi:</span>
+                      <span className="font-bold text-slate-800">{lastSubmittedData.institution}</span>
+                    </div>
+                    <div className="flex justify-between border-b border-slate-200/60 pb-1.5">
+                      <span className="text-slate-500">Fitur:</span>
+                      <span className="font-bold text-[#155dfc]">{lastSubmittedData.features.join(", ")}</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-500 block mb-0.5">Tujuan:</span>
+                      <p className="text-slate-700 italic bg-white p-2 rounded-lg border border-slate-200 text-[11px] leading-relaxed">
+                        "{lastSubmittedData.purpose}"
+                      </p>
+                    </div>
                   </div>
-                </div>
-              </form>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => setBizConfirmModalOpen(false)}
+                  className="w-full mt-6 py-3 px-5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer active:scale-95"
+                >
+                  Tutup
+                </button>
+              </div>
             </div>
           )}
         </main>
