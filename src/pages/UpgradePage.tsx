@@ -861,13 +861,13 @@ export default function UpgradePage() {
               onClick={() => {
                 window.scrollTo({ top: 0, behavior: "smooth" });
               }}
-              className="h-10 px-4 py-2 rounded-full border border-blue-200/90 bg-blue-50/80 hover:bg-blue-100/70 text-[#155dfc] flex items-center gap-1.5 shrink-0 shadow-xs active:scale-95 transition-all cursor-pointer"
+              className="h-10 px-4 py-2 rounded-full border border-blue-200/90 bg-blue-50/80 hover:bg-blue-100/70 text-[#1A73E8] flex items-center gap-1.5 shrink-0 shadow-xs active:scale-95 transition-all cursor-pointer"
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#155dfc" strokeWidth="2.5">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1A73E8" strokeWidth="2.5">
                 <line x1="12" y1="5" x2="12" y2="19" />
                 <line x1="5" y1="12" x2="19" y2="12" />
               </svg>
-              <span className="text-[#155dfc] text-sm font-semibold leading-5">Upgrade</span>
+              <span className="text-[#1A73E8] text-sm font-semibold leading-5">Upgrade</span>
             </button>
           </div>
 
@@ -946,9 +946,9 @@ export default function UpgradePage() {
               onClick={() => {
                 window.scrollTo({ top: 0, behavior: "smooth" });
               }}
-              className="h-[46px] px-4 rounded-full backdrop-blur-md border border-blue-200/90 bg-blue-50/80 hover:bg-blue-100/70 flex items-center gap-2 transition-colors shrink-0 shadow-[0_4px_20px_rgba(21,93,252,0.08)] text-[#155dfc] font-semibold text-sm leading-5 cursor-pointer active:scale-95"
+              className="h-[46px] px-4 rounded-full backdrop-blur-md border border-blue-200/90 bg-blue-50/80 hover:bg-blue-100/70 flex items-center gap-2 transition-colors shrink-0 shadow-[0_4px_20px_rgba(21,93,252,0.08)] text-[#1A73E8] font-semibold text-sm leading-5 cursor-pointer active:scale-95"
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#155dfc" strokeWidth="2.5">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1A73E8" strokeWidth="2.5">
                 <line x1="12" y1="5" x2="12" y2="19" />
                 <line x1="5" y1="12" x2="19" y2="12" />
               </svg>
@@ -1461,7 +1461,7 @@ export default function UpgradePage() {
                 }}
                 className={`px-4 sm:px-5 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-xs sm:text-[13px] font-bold transition-all cursor-pointer flex items-center gap-1.5 sm:gap-2 ${
                   planType === "individual"
-                    ? "bg-[#155dfc] text-white shadow-sm shadow-[#155dfc]/25"
+                    ? "bg-[#1A73E8] text-white shadow-sm shadow-[#1A73E8]/25"
                     : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/50"
                 }`}
               >
@@ -1507,7 +1507,7 @@ export default function UpgradePage() {
                   onClick={() => setOpenDropdown((prev) => (prev === "7d" ? null : "7d"))}
                   className={`duration-btn relative px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
                     currentDuration === "7d"
-                      ? `font-bold bg-white ${currentTier === "pro" ? "text-slate-900" : "text-[#155dfc]"} shadow-sm`
+                      ? `font-bold bg-white ${currentTier === "pro" ? "text-slate-900" : "text-[#1A73E8]"} shadow-sm`
                       : "font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-200/50"
                   }`}
                 >
@@ -1517,7 +1517,7 @@ export default function UpgradePage() {
                       className={`text-[9.5px] font-bold uppercase px-1.5 py-0.5 rounded-md ${
                         currentTier === "pro"
                           ? "bg-slate-100 text-slate-900 border border-slate-300"
-                          : "bg-blue-100 text-[#155dfc]"
+                          : "bg-blue-100 text-[#1A73E8]"
                       }`}
                     >
                       {currentTier === "pro" ? "Pro" : "Plus"}
@@ -1565,7 +1565,7 @@ export default function UpgradePage() {
                           <p className="text-xs font-bold text-slate-900">
                             7 Hari <span className="text-slate-900">Plus</span>
                           </p>
-                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-[#155dfc]">
+                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-[#1A73E8]">
                             Plus
                           </span>
                         </div>
@@ -1577,7 +1577,7 @@ export default function UpgradePage() {
                           height="16"
                           viewBox="0 0 24 24"
                           fill="none"
-                          stroke="#155dfc"
+                          stroke="#1A73E8"
                           strokeWidth="2.5"
                           className="shrink-0 ml-2"
                         >
@@ -1637,7 +1637,7 @@ export default function UpgradePage() {
                   onClick={() => setOpenDropdown((prev) => (prev === "30d" ? null : "30d"))}
                   className={`duration-btn relative px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
                     currentDuration === "30d"
-                      ? `font-bold bg-white ${currentTier === "pro" ? "text-slate-900" : "text-[#155dfc]"} shadow-sm`
+                      ? `font-bold bg-white ${currentTier === "pro" ? "text-slate-900" : "text-[#1A73E8]"} shadow-sm`
                       : "font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-200/50"
                   }`}
                 >
@@ -1647,7 +1647,7 @@ export default function UpgradePage() {
                       className={`text-[9.5px] font-bold uppercase px-1.5 py-0.5 rounded-md ${
                         currentTier === "pro"
                           ? "bg-slate-100 text-slate-900 border border-slate-300"
-                          : "bg-blue-100 text-[#155dfc]"
+                          : "bg-blue-100 text-[#1A73E8]"
                       }`}
                     >
                       {currentTier === "pro" ? "Pro" : "Plus"}
@@ -1695,7 +1695,7 @@ export default function UpgradePage() {
                           <p className="text-xs font-bold text-slate-900">
                             30 Hari <span className="text-slate-900">Plus</span>
                           </p>
-                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-[#155dfc]">
+                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-[#1A73E8]">
                             Plus
                           </span>
                         </div>
@@ -1707,7 +1707,7 @@ export default function UpgradePage() {
                           height="16"
                           viewBox="0 0 24 24"
                           fill="none"
-                          stroke="#155dfc"
+                          stroke="#1A73E8"
                           strokeWidth="2.5"
                           className="shrink-0 ml-2"
                         >
@@ -1767,7 +1767,7 @@ export default function UpgradePage() {
                   onClick={() => setOpenDropdown((prev) => (prev === "1y" ? null : "1y"))}
                   className={`duration-btn relative px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
                     currentDuration === "1y"
-                      ? `font-bold bg-white ${currentTier === "pro" ? "text-slate-900" : "text-[#155dfc]"} shadow-sm`
+                      ? `font-bold bg-white ${currentTier === "pro" ? "text-slate-900" : "text-[#1A73E8]"} shadow-sm`
                       : "font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-200/50"
                   }`}
                 >
@@ -1777,7 +1777,7 @@ export default function UpgradePage() {
                       className={`text-[9.5px] font-bold uppercase px-1.5 py-0.5 rounded-md ${
                         currentTier === "pro"
                           ? "bg-slate-100 text-slate-900 border border-slate-300"
-                          : "bg-blue-100 text-[#155dfc]"
+                          : "bg-blue-100 text-[#1A73E8]"
                       }`}
                     >
                       {currentTier === "pro" ? "Pro" : "Plus"}
@@ -1825,7 +1825,7 @@ export default function UpgradePage() {
                           <p className="text-xs font-bold text-slate-900">
                             1 Tahun <span className="text-slate-900">Plus</span>
                           </p>
-                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-[#155dfc]">
+                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-[#1A73E8]">
                             Plus
                           </span>
                         </div>
@@ -1837,7 +1837,7 @@ export default function UpgradePage() {
                           height="16"
                           viewBox="0 0 24 24"
                           fill="none"
-                          stroke="#155dfc"
+                          stroke="#1A73E8"
                           strokeWidth="2.5"
                           className="shrink-0 ml-2"
                         >
@@ -1904,7 +1904,7 @@ export default function UpgradePage() {
             {/* BUNDLING PROMO BANNER */}
             <div className="bg-gradient-to-r from-blue-50 to-indigo-50/70 border border-blue-200/80 rounded-2xl p-4 sm:p-5 flex items-start sm:items-center justify-between gap-4 shadow-subtle transition-all">
               <div className="flex items-start gap-3.5">
-                <div className="hidden sm:flex w-10 h-10 rounded-xl bg-[#155dfc] text-white items-center justify-center shrink-0 shadow-sm">
+                <div className="hidden sm:flex w-10 h-10 rounded-xl bg-[#1A73E8] text-white items-center justify-center shrink-0 shadow-sm">
                   <svg
                     className="w-5 h-5"
                     viewBox="0 0 24 24"
@@ -1946,7 +1946,7 @@ export default function UpgradePage() {
                 </h2>
                 <span className="text-xs font-semibold text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-full border border-slate-200/80 inline-flex items-center gap-1 shadow-2xs">
                   <span>Terpilih:</span>
-                  <strong className="text-[#155dfc] font-bold">{selectedFeatures.size}</strong>
+                  <strong className="text-[#1A73E8] font-bold">{selectedFeatures.size}</strong>
                   <span className="text-slate-400">/4</span>
                 </span>
               </div>
@@ -1969,7 +1969,7 @@ export default function UpgradePage() {
                     onClick={() => toggleFeature(key)}
                     className={`feature-card cursor-pointer group relative bg-white rounded-2xl p-4 sm:p-5 transition-all flex flex-col justify-between ${
                       isSelected
-                        ? "border-2 border-[#155dfc] ring-2 ring-[#155dfc]/10 shadow-card bg-blue-50/10"
+                        ? "border-2 border-[#1A73E8] ring-2 ring-[#1A73E8]/10 shadow-card bg-blue-50/10"
                         : "border-2 border-slate-300 shadow-subtle hover:border-slate-400 hover:shadow-md"
                     }`}
                   >
@@ -1981,7 +1981,7 @@ export default function UpgradePage() {
                           <div
                             className={`w-5 h-5 rounded-md flex items-center justify-center transition-all shrink-0 ${
                               isSelected
-                                ? "bg-[#155dfc] text-white border-2 border-[#155dfc] shadow-xs"
+                                ? "bg-[#1A73E8] text-white border-2 border-[#1A73E8] shadow-xs"
                                 : "border-2 border-slate-300 bg-white group-hover:border-slate-400"
                             }`}
                           >
@@ -2000,7 +2000,7 @@ export default function UpgradePage() {
                             )}
                           </div>
                           <div className="min-w-0">
-                            <h3 className="text-base sm:text-lg font-extrabold text-slate-900 group-hover:text-[#155dfc] transition-colors tracking-tight truncate">
+                            <h3 className="text-base sm:text-lg font-extrabold text-slate-900 group-hover:text-[#1A73E8] transition-colors tracking-tight truncate">
                               {item.name}
                             </h3>
                           </div>
@@ -2046,7 +2046,7 @@ export default function UpgradePage() {
                           e.stopPropagation();
                           setActiveModalFeatureKey(key);
                         }}
-                        className="inline-flex items-center gap-1.5 text-[11px] font-bold text-white bg-[#155dfc] hover:bg-blue-700 px-3 py-1.5 rounded-lg shadow-sm shadow-blue-500/20 transition-all shrink-0 active:scale-95 cursor-pointer"
+                        className="inline-flex items-center gap-1.5 text-[11px] font-bold text-white bg-[#1A73E8] hover:bg-[#1557b0] px-3 py-1.5 rounded-lg shadow-sm shadow-[#1A73E8]/20 transition-all shrink-0 active:scale-95 cursor-pointer"
                       >
                         <span>Detail Paket</span>
                         <svg
@@ -2252,7 +2252,7 @@ export default function UpgradePage() {
                         {formatRupiah(currentDuration === "1y" ? originalTotal : subtotal)}
                       </span>
                     )}
-                    <span className="text-2xl sm:text-3xl font-extrabold text-[#155dfc] tracking-tight">
+                    <span className="text-2xl sm:text-3xl font-extrabold text-[#1A73E8] tracking-tight">
                       {formatRupiah(grandTotal)}
                     </span>
                   </div>
@@ -2263,7 +2263,7 @@ export default function UpgradePage() {
               <button
                 type="button"
                 onClick={() => setIsCheckoutModalOpen(true)}
-                className="w-full py-4 px-6 bg-[#155dfc] hover:bg-[#124bcf] text-white font-bold text-sm sm:text-base rounded-2xl shadow-lg shadow-[#155dfc]/25 transition-all flex items-center justify-center gap-2 group active:scale-[0.98] cursor-pointer"
+                className="w-full py-4 px-6 bg-[#1A73E8] hover:bg-[#1557b0] text-white font-bold text-sm sm:text-base rounded-2xl shadow-lg shadow-[#1A73E8]/25 transition-all flex items-center justify-center gap-2 group active:scale-[0.98] cursor-pointer"
               >
                 <span>Lanjut ke Pembayaran</span>
                 <svg
@@ -2291,7 +2291,7 @@ export default function UpgradePage() {
                 <span className="text-[11px] font-semibold text-slate-700">
                   {getDurationReadable(currentDuration, currentTier)}
                 </span>
-                <span className="text-[10px] font-bold text-[#155dfc] bg-blue-50 px-1.5 py-0.5 rounded-md border border-blue-200">
+                <span className="text-[10px] font-bold text-[#1A73E8] bg-blue-50 px-1.5 py-0.5 rounded-md border border-blue-200">
                   {selectedFeatures.size} Fitur
                 </span>
               </div>
@@ -2307,7 +2307,7 @@ export default function UpgradePage() {
             <button
               type="button"
               onClick={() => setIsCheckoutModalOpen(true)}
-              className="px-5 py-3 bg-[#155dfc] hover:bg-[#124bcf] text-white font-bold text-xs rounded-xl shadow-md shadow-[#155dfc]/25 transition-all shrink-0 flex items-center gap-1.5 active:scale-95 cursor-pointer"
+              className="px-5 py-3 bg-[#1A73E8] hover:bg-[#1557b0] text-white font-bold text-xs rounded-xl shadow-md shadow-[#1A73E8]/25 transition-all shrink-0 flex items-center gap-1.5 active:scale-95 cursor-pointer"
             >
               <span>Lanjut Bayar</span>
               <svg
@@ -2474,7 +2474,7 @@ export default function UpgradePage() {
                         onClick={() => toggleBizFeature(feature.key)}
                         className={`flex items-center justify-between gap-4 p-4 rounded-2xl border cursor-pointer transition-all ${
                           isChecked
-                            ? "bg-blue-50/90 border-[#155dfc] text-blue-900 shadow-sm ring-1 ring-[#155dfc]/30"
+                            ? "bg-blue-50/90 border-[#1A73E8] text-blue-900 shadow-sm ring-1 ring-[#1A73E8]/30"
                             : "bg-white border-slate-200/90 hover:border-slate-300 text-slate-700 hover:bg-slate-50/60 shadow-2xs"
                         }`}
                       >
@@ -2487,7 +2487,7 @@ export default function UpgradePage() {
                         <div
                           className={`w-5 h-5 rounded-md flex items-center justify-center transition-all shrink-0 ${
                             isChecked
-                              ? "bg-[#155dfc] text-white border-2 border-[#155dfc] shadow-xs"
+                              ? "bg-[#1A73E8] text-white border-2 border-[#1A73E8] shadow-xs"
                               : "border-2 border-slate-300 bg-white group-hover:border-slate-400"
                           }`}
                         >
@@ -2508,7 +2508,7 @@ export default function UpgradePage() {
 
               {/* Info Pengiriman ke admin@alerin.id */}
               <div className="bg-slate-50 rounded-2xl p-4 sm:p-5 border border-slate-200/80 flex items-center gap-3.5">
-                <div className="w-9 h-9 rounded-xl bg-blue-100 text-[#155dfc] flex items-center justify-center shrink-0">
+                <div className="w-9 h-9 rounded-xl bg-blue-100 text-[#1A73E8] flex items-center justify-center shrink-0">
                   <svg className="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
                     <polyline points="22,6 12,13 2,6" />
@@ -2524,7 +2524,7 @@ export default function UpgradePage() {
                 <button
                   type="submit"
                   disabled={bizSubmitting}
-                  className="w-full sm:w-auto px-8 py-3.5 sm:py-4 rounded-2xl bg-[#155dfc] hover:bg-[#124bcf] active:scale-98 text-white font-bold text-sm flex items-center justify-center gap-2.5 transition-all shadow-md shadow-[#155dfc]/25 cursor-pointer disabled:opacity-75"
+                  className="w-full sm:w-auto px-8 py-3.5 sm:py-4 rounded-2xl bg-[#1A73E8] hover:bg-[#1557b0] active:scale-98 text-white font-bold text-sm flex items-center justify-center gap-2.5 transition-all shadow-md shadow-[#1A73E8]/25 cursor-pointer disabled:opacity-75"
                 >
                   {bizSubmitting ? (
                     <>
@@ -2557,13 +2557,13 @@ export default function UpgradePage() {
                 onClick={(e) => e.stopPropagation()}
                 className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 text-center shadow-2xl border border-slate-200 animate-[gemini-zoom-in_0.15s_ease-out]"
               >
-                <div className="w-16 h-16 rounded-2xl bg-blue-50 text-[#155dfc] border border-blue-200 mx-auto flex items-center justify-center mb-4 shadow-sm">
+                <div className="w-16 h-16 rounded-2xl bg-blue-50 text-[#1A73E8] border border-blue-200 mx-auto flex items-center justify-center mb-4 shadow-sm">
                   <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="20 6 9 17 4 12" />
                   </svg>
                 </div>
 
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[#155dfc] bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#1A73E8] bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
                   Konfirmasi Pengiriman
                 </span>
 
@@ -2579,7 +2579,7 @@ export default function UpgradePage() {
                 <button
                   type="button"
                   onClick={() => setBizConfirmModalOpen(false)}
-                  className="w-full mt-6 py-3.5 px-5 bg-[#155dfc] hover:bg-[#124bcf] active:scale-95 text-white font-bold text-sm rounded-xl shadow-md shadow-[#155dfc]/25 transition-all cursor-pointer"
+                  className="w-full mt-6 py-3.5 px-5 bg-[#1A73E8] hover:bg-[#1557b0] active:scale-95 text-white font-bold text-sm rounded-xl shadow-md shadow-[#1A73E8]/25 transition-all cursor-pointer"
                 >
                   Tutup
                 </button>
@@ -2625,7 +2625,7 @@ export default function UpgradePage() {
                     <h3 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight">
                       Pembayaran
                     </h3>
-                    <span className="text-[10px] font-bold bg-blue-50 text-[#155dfc] px-2 py-0.5 rounded-full border border-blue-200 shrink-0">
+                    <span className="text-[10px] font-bold bg-blue-50 text-[#1A73E8] px-2 py-0.5 rounded-full border border-blue-200 shrink-0">
                       2 dari 2
                     </span>
                   </div>
@@ -2672,7 +2672,7 @@ export default function UpgradePage() {
                             className="flex justify-between items-center text-slate-700"
                           >
                             <span className="flex items-center gap-1.5 font-medium truncate">
-                              <span className="w-1.5 h-1.5 rounded-full bg-[#155dfc] shrink-0" />
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#1A73E8] shrink-0" />
                               {item.name}
                             </span>
                             <span className="font-semibold shrink-0 ml-2">
@@ -2691,13 +2691,13 @@ export default function UpgradePage() {
                       <span>{formatRupiah(subtotal)}</span>
                     </div>
                     {bundlingDiscount > 0 && (
-                      <div className="flex justify-between text-[#155dfc] font-semibold">
+                      <div className="flex justify-between text-[#1A73E8] font-semibold">
                         <span>Potongan Bundling Hemat:</span>
                         <span>-{formatRupiah(bundlingDiscount)}</span>
                       </div>
                     )}
                     {appliedVoucher && voucherDiscount > 0 && (
-                      <div className="flex justify-between text-[#155dfc] font-semibold">
+                      <div className="flex justify-between text-[#1A73E8] font-semibold">
                         <span>Potongan Voucher:</span>
                         <span>-{formatRupiah(voucherDiscount)}</span>
                       </div>
@@ -2707,7 +2707,7 @@ export default function UpgradePage() {
                   {/* Grand total in modal */}
                   <div className="pt-3 border-t-2 border-dashed border-slate-200 flex justify-between items-baseline">
                     <span className="text-xs font-bold text-slate-700">Total Akhir:</span>
-                    <span className="text-lg sm:text-xl font-black text-[#155dfc]">
+                    <span className="text-lg sm:text-xl font-black text-[#1A73E8]">
                       {formatRupiah(grandTotal)}
                     </span>
                   </div>
@@ -2726,7 +2726,7 @@ export default function UpgradePage() {
                     onClick={() => setSelectedPaymentMethod("qris")}
                     className={`payment-method-card flex items-center justify-between p-3 sm:p-3.5 rounded-2xl cursor-pointer transition-all ${
                       selectedPaymentMethod === "qris"
-                        ? "border-2 border-[#155dfc] bg-blue-50/40 shadow-xs"
+                        ? "border-2 border-[#1A73E8] bg-blue-50/40 shadow-xs"
                         : "border border-slate-200 hover:border-slate-300 bg-white"
                     }`}
                   >
@@ -2734,7 +2734,7 @@ export default function UpgradePage() {
                       <div
                         className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 transition-all ${
                           selectedPaymentMethod === "qris"
-                            ? "border-[#155dfc] bg-[#155dfc]"
+                            ? "border-[#1A73E8] bg-[#1A73E8]"
                             : "border-slate-300 bg-white"
                         }`}
                       >
@@ -2751,7 +2751,7 @@ export default function UpgradePage() {
                         </span>
                       </div>
                     </div>
-                    <span className="text-[10px] font-extrabold uppercase bg-blue-100 text-[#155dfc] px-2 py-0.5 rounded shrink-0 ml-2">
+                    <span className="text-[10px] font-extrabold uppercase bg-blue-100 text-[#1A73E8] px-2 py-0.5 rounded shrink-0 ml-2">
                       Instan
                     </span>
                   </label>
@@ -2761,7 +2761,7 @@ export default function UpgradePage() {
                     onClick={() => setSelectedPaymentMethod("va")}
                     className={`payment-method-card flex items-center justify-between p-3 sm:p-3.5 rounded-2xl cursor-pointer transition-all ${
                       selectedPaymentMethod === "va"
-                        ? "border-2 border-[#155dfc] bg-blue-50/40 shadow-xs"
+                        ? "border-2 border-[#1A73E8] bg-blue-50/40 shadow-xs"
                         : "border border-slate-200 hover:border-slate-300 bg-white"
                     }`}
                   >
@@ -2769,7 +2769,7 @@ export default function UpgradePage() {
                       <div
                         className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 transition-all ${
                           selectedPaymentMethod === "va"
-                            ? "border-[#155dfc] bg-[#155dfc]"
+                            ? "border-[#1A73E8] bg-[#1A73E8]"
                             : "border-slate-300 bg-white"
                         }`}
                       >
@@ -2794,7 +2794,7 @@ export default function UpgradePage() {
                     onClick={() => setSelectedPaymentMethod("ewallet")}
                     className={`payment-method-card flex items-center justify-between p-3 sm:p-3.5 rounded-2xl cursor-pointer transition-all ${
                       selectedPaymentMethod === "ewallet"
-                        ? "border-2 border-[#155dfc] bg-blue-50/40 shadow-xs"
+                        ? "border-2 border-[#1A73E8] bg-blue-50/40 shadow-xs"
                         : "border border-slate-200 hover:border-slate-300 bg-white"
                     }`}
                   >
@@ -2802,7 +2802,7 @@ export default function UpgradePage() {
                       <div
                         className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 transition-all ${
                           selectedPaymentMethod === "ewallet"
-                            ? "border-[#155dfc] bg-[#155dfc]"
+                            ? "border-[#1A73E8] bg-[#1A73E8]"
                             : "border-slate-300 bg-white"
                         }`}
                       >
@@ -2825,7 +2825,7 @@ export default function UpgradePage() {
                     onClick={() => setSelectedPaymentMethod("cc")}
                     className={`payment-method-card flex items-center justify-between p-3 sm:p-3.5 rounded-2xl cursor-pointer transition-all ${
                       selectedPaymentMethod === "cc"
-                        ? "border-2 border-[#155dfc] bg-blue-50/40 shadow-xs"
+                        ? "border-2 border-[#1A73E8] bg-blue-50/40 shadow-xs"
                         : "border border-slate-200 hover:border-slate-300 bg-white"
                     }`}
                   >
@@ -2833,7 +2833,7 @@ export default function UpgradePage() {
                       <div
                         className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 transition-all ${
                           selectedPaymentMethod === "cc"
-                            ? "border-[#155dfc] bg-[#155dfc]"
+                            ? "border-[#1A73E8] bg-[#1A73E8]"
                             : "border-slate-300 bg-white"
                         }`}
                       >
@@ -2860,7 +2860,7 @@ export default function UpgradePage() {
                     type="button"
                     disabled={isPaymentProcessing}
                     onClick={handleExecutePayment}
-                    className="w-full py-3.5 px-6 bg-[#155dfc] hover:bg-[#124bcf] active:scale-[0.98] text-white font-bold text-sm rounded-xl sm:rounded-2xl shadow-lg shadow-[#155dfc]/25 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75"
+                    className="w-full py-3.5 px-6 bg-[#1A73E8] hover:bg-[#1557b0] active:scale-[0.98] text-white font-bold text-sm rounded-xl sm:rounded-2xl shadow-lg shadow-[#1A73E8]/25 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75"
                   >
                     {isPaymentProcessing ? (
                       <>
@@ -3095,7 +3095,7 @@ export default function UpgradePage() {
                     className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                       isSelected
                         ? "bg-slate-200 text-slate-700 hover:bg-slate-300"
-                        : "bg-[#155dfc] hover:bg-[#124bcf] text-white shadow-md shadow-[#155dfc]/25"
+                        : "bg-[#1A73E8] hover:bg-[#1557b0] text-white shadow-md shadow-[#1A73E8]/25"
                     }`}
                   >
                     <svg
