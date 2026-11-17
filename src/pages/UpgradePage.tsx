@@ -2390,13 +2390,10 @@ export default function UpgradePage() {
       {planType === "business" && (
         <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 flex-1 w-full animate-[gemini-fade-in_0.2s_ease-out]">
           <div className="bg-white rounded-3xl border border-slate-200/90 shadow-xl overflow-hidden">
-            <div className="p-6 sm:p-8 border-b border-slate-100 bg-gradient-to-r from-slate-50/80 via-white to-blue-50/30">
+            <div className="p-6 sm:p-7 border-b border-slate-100 bg-gradient-to-r from-slate-50/80 via-white to-blue-50/30">
               <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
                 Pengajuan Kemitraan & Paket Business
               </h3>
-              <p className="text-sm text-slate-500 mt-1.5 leading-relaxed">
-                Lengkapi formulir khusus calon mitra di bawah ini. Data akan otomatis dikirimkan ke <strong className="text-slate-700 font-semibold">admin@alerin.id</strong>.
-              </p>
             </div>
 
             <form onSubmit={handleBizSubmit} className="p-6 sm:p-9 space-y-6 sm:space-y-7">
