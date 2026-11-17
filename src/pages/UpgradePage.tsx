@@ -668,7 +668,12 @@ export default function UpgradePage() {
     email: "",
     institution: "",
     purpose: "",
-    features: ["Chat", "Jurnal", "Paraprase", "Skripsi"] as string[],
+    features: [
+      "Alerin Chat",
+      "Alerin Jurnal",
+      "Alerin Parafrase",
+      "Alerin Skripsi",
+    ] as string[],
   });
   const [bizSubmitting, setBizSubmitting] = useState(false);
   const [bizConfirmModalOpen, setBizConfirmModalOpen] = useState(false);
@@ -2510,39 +2515,57 @@ export default function UpgradePage() {
                 {/* List fitur: kebawah pada mobile (grid-cols-1) */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-3.5">
                   {[
-                    { key: "Chat", label: "Chat", desc: "Obrolan AI Riset" },
-                    { key: "Jurnal", label: "Jurnal", desc: "Sintesis Literatur" },
-                    { key: "Paraprase", label: "Paraprase", desc: "Anti Plagiasi" },
-                    { key: "Skripsi", label: "Skripsi", desc: "Penyusunan Bab" },
+                    {
+                      key: "Alerin Chat",
+                      label: "Alerin Chat",
+                      desc: "AI asisten untuk riset akademik dan diskusi topik.",
+                    },
+                    {
+                      key: "Alerin Jurnal",
+                      label: "Alerin Jurnal",
+                      desc: "Temukan referensi akademik terindeks Scopus & Sinta.",
+                    },
+                    {
+                      key: "Alerin Parafrase",
+                      label: "Alerin Parafrase",
+                      desc: "Ubah teks skripsi otomatis dengan pilihan gaya & intensitas.",
+                    },
+                    {
+                      key: "Alerin Skripsi",
+                      label: "Alerin Skripsi",
+                      desc: "Dapatkan arahan sesuai tahap penelitian dan revisi kamu.",
+                    },
                   ].map((feature) => {
                     const isChecked = bizForm.features.includes(feature.key);
                     return (
                       <label
                         key={feature.key}
                         onClick={() => toggleBizFeature(feature.key)}
-                        className={`flex items-center gap-3.5 p-4 rounded-2xl border cursor-pointer transition-all ${
+                        className={`flex items-center justify-between gap-4 p-4 rounded-2xl border cursor-pointer transition-all ${
                           isChecked
                             ? "bg-blue-50/90 border-[#155dfc] text-blue-900 shadow-sm ring-1 ring-[#155dfc]/30"
                             : "bg-white border-slate-200/90 hover:border-slate-300 text-slate-700 hover:bg-slate-50/60 shadow-2xs"
                         }`}
                       >
-                        <input
-                          type="checkbox"
-                          checked={isChecked}
-                          onChange={() => {}} // handled by label onClick
-                          className="w-5 h-5 rounded text-[#155dfc] focus:ring-blue-500 cursor-pointer shrink-0"
-                        />
                         <div className="min-w-0 flex-1">
                           <span className="text-sm font-bold text-slate-900 block">{feature.label}</span>
-                          <span className="text-xs text-slate-500 block mt-0.5">{feature.desc}</span>
+                          <span className="text-xs text-slate-500 block mt-0.5 leading-relaxed">{feature.desc}</span>
                         </div>
-                        {isChecked && (
-                          <div className="w-5 h-5 rounded-full bg-[#155dfc] text-white flex items-center justify-center shrink-0">
-                            <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+
+                        {/* Tombol centang di samping kanan */}
+                        <div
+                          className={`w-5 h-5 rounded-md flex items-center justify-center transition-all shrink-0 ${
+                            isChecked
+                              ? "bg-[#155dfc] text-white border-2 border-[#155dfc] shadow-xs"
+                              : "border-2 border-slate-300 bg-white group-hover:border-slate-400"
+                          }`}
+                        >
+                          {isChecked && (
+                            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                               <polyline points="20 6 9 17 4 12" />
                             </svg>
-                          </div>
-                        )}
+                          )}
+                        </div>
                       </label>
                     );
                   })}
