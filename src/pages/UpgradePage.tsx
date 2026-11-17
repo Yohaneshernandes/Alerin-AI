@@ -2408,15 +2408,15 @@ export default function UpgradePage() {
         </div>
       </main>
 
-      {/* MOBILE FLOATING BOTTOM BAR */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 px-4 py-3 shadow-sticky">
-        <div className="flex items-center justify-between gap-3 max-w-md mx-auto">
-          <div className="min-w-0">
+      {/* MOBILE FLOATING BOTTOM BAR (MELAYANG & BULAT) */}
+      <div className="lg:hidden fixed bottom-3.5 inset-x-3.5 sm:bottom-5 sm:inset-x-4 max-w-md mx-auto z-40 bg-white/95 backdrop-blur-md border border-slate-200/90 rounded-full px-5 py-2.5 sm:py-3 shadow-[0_12px_32px_rgba(15,23,42,0.18),0_4px_12px_rgba(15,23,42,0.08)]">
+        <div className="flex items-center justify-between gap-3">
+          <div className="min-w-0 pl-1">
             <div className="flex items-center gap-1.5">
               <span className="text-[11px] font-semibold text-slate-700">
                 {getDurationReadable(currentDuration, currentTier)}
               </span>
-              <span className="text-[10px] font-bold text-[#155dfc] bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200">
+              <span className="text-[10px] font-bold text-[#155dfc] bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
                 {selectedFeatures.size} Fitur
               </span>
             </div>
@@ -2432,7 +2432,7 @@ export default function UpgradePage() {
           <button
             type="button"
             onClick={() => setIsCheckoutModalOpen(true)}
-            className="px-5 py-3 bg-[#1A73E8] hover:bg-[#1557b0] text-white font-bold text-xs rounded-xl shadow-md shadow-[#1A73E8]/25 transition-all shrink-0 flex items-center gap-1.5 active:scale-95 cursor-pointer"
+            className="px-5 py-2.5 sm:py-3 bg-[#1A73E8] hover:bg-[#1557b0] text-white font-bold text-xs rounded-full shadow-md shadow-[#1A73E8]/25 transition-all shrink-0 flex items-center gap-1.5 active:scale-95 cursor-pointer"
           >
             <span>Lanjut Bayar</span>
             <svg
