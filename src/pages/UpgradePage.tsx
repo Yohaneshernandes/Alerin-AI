@@ -2241,7 +2241,7 @@ export default function UpgradePage() {
                             <span className="text-sm sm:text-base font-extrabold text-slate-900 whitespace-nowrap">
                               {formatRupiah(price)}
                             </span>
-                            <span className="text-[11px] text-slate-500 font-normal whitespace-nowrap">
+                            <span className="text-sm sm:text-base text-slate-500 font-normal whitespace-nowrap">
                               {durationLabel}
                             </span>
                           </div>
