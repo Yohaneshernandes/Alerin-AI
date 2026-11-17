@@ -1511,7 +1511,9 @@ export default function UpgradePage() {
       )}
 
       {/* DURATION SELECTOR SECTION */}
-      <section className="relative pt-6 pb-4 sm:pt-8 sm:pb-6 bg-gradient-to-b from-white via-white to-[#F8FAFC]">
+      <section className={`relative pt-6 sm:pt-8 bg-gradient-to-b from-white via-white to-[#F8FAFC] ${
+        planType === "individual" ? "pb-4 sm:pb-6" : "pb-2 sm:pb-3"
+      }`}>
         <div className="max-w-5xl mx-auto px-4 sm:px-6 text-center">
           <div className="mb-4">
             <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
@@ -1525,7 +1527,7 @@ export default function UpgradePage() {
           </div>
 
           {/* PILIHAN INDIVIDU & BUSINESS */}
-          <div className="flex justify-center mb-5">
+          <div className={`flex justify-center ${planType === "individual" ? "mb-5" : "mb-1 sm:mb-2"}`}>
             <div className="bg-slate-100 p-1.5 rounded-2xl border border-slate-200/80 inline-flex shadow-inner max-w-full gap-1 sm:gap-1.5">
               <button
                 type="button"
@@ -2388,7 +2390,7 @@ export default function UpgradePage() {
 
       {/* BUSINESS / INSTITUTION VIEW (Mengisi Form Pengajuan Institusi) */}
       {planType === "business" && (
-        <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 flex-1 w-full animate-[gemini-fade-in_0.2s_ease-out]">
+        <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-1 sm:pt-2 pb-24 flex-1 w-full animate-[gemini-fade-in_0.2s_ease-out]">
           <div className="bg-white rounded-3xl border border-slate-200/90 shadow-xl overflow-hidden">
             <div className="p-6 sm:p-8 border-b border-slate-100 bg-gradient-to-r from-slate-50/80 via-white to-blue-50/30">
               <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
