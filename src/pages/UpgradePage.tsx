@@ -2331,12 +2331,9 @@ export default function UpgradePage() {
 
               {/* Total Due */}
               <div className="pt-4 border-t-2 border-dashed border-slate-200">
-                <div className="flex items-baseline justify-between">
+                <div className="flex items-center justify-between">
                   <div>
-                    <span className="text-xs text-slate-500 block">Total Biaya Pembayaran</span>
-                    <span className="text-[11px] text-slate-400 font-normal">
-                      Sudah termasuk seluruh PPN
-                    </span>
+                    <span className="text-xs sm:text-sm font-bold text-slate-800 block">Total Biaya Pembayaran</span>
                   </div>
                   <div className="text-right">
                     {(bundlingDiscount > 0 || voucherDiscount > 0 || currentDuration === "1y") && (
