@@ -2516,7 +2516,7 @@ export default function UpgradePage() {
                   </svg>
                 </div>
                 <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                  Data formulir yang diisi akan otomatis dikirim ke email <strong className="text-slate-800 font-semibold">admin@alerin.id</strong>. Tim Alerin akan menghubungi Anda kembali maksimal dalam 3 x 24 jam.
+                  Data formulir yang diisi akan otomatis dikirim ke email <strong className="text-slate-800 font-semibold">admin@alerin.id</strong>. Tim Alerin akan menghubungi Anda kembali maksimal dalam 3x24 jam.
                 </p>
               </div>
 
@@ -2569,7 +2569,7 @@ export default function UpgradePage() {
                 </span>
 
                 <h3 className="text-lg sm:text-xl font-extrabold text-slate-900 mt-3 leading-snug">
-                  Berhasil mengirim. Mohon ditunggu maksimal 3 x 24 jam
+                  Berhasil mengirim. Mohon ditunggu maksimal 3x24 jam
                 </h3>
 
                 <p className="text-xs text-slate-600 mt-2.5 leading-relaxed">
