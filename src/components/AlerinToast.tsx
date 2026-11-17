@@ -22,7 +22,7 @@ export function parseAlerinToast(
     return { title: "Paket Berhasil Dipilih", description: cleanDesc };
   if (lower.includes("voucher") && lower.includes("berhasil"))
     return { title: "Voucher Diterapkan", description: cleanDesc };
-  if (lower.includes("lapor")) return { title: "Laporan Diterima", description: cleanDesc };
+  if (lower.includes("lapor")) return { title: "Laporan Respon Diterima", description: "Terima kasih telah melaporkan" };
   if (lower.includes("disalin") || lower.includes("salin"))
     return { title: "Berhasil Disalin", description: cleanDesc };
   if (lower.includes("dihapus")) return { title: "Berhasil Dihapus", description: cleanDesc };

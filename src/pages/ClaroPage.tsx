@@ -4049,7 +4049,7 @@ function parseClaroToast(rawMsg: string | { title: string; description?: string 
   const lower = raw.toLowerCase();
   const cleanDesc = raw.endsWith(".") || raw.endsWith("!") ? raw : `${raw}.`;
 
-  if (lower.includes("lapor")) return { title: "Laporan Diterima", description: cleanDesc };
+  if (lower.includes("lapor")) return { title: "Laporan Respon Diterima", description: "Terima kasih telah melaporkan" };
   if (lower.includes("disalin") || lower.includes("salin")) return { title: "Berhasil Disalin", description: cleanDesc };
   if (lower.includes("dihapus")) return { title: "Berhasil Dihapus", description: cleanDesc };
   if (lower.includes("disimpan") || lower.includes("simpan")) return { title: "Berhasil Disimpan", description: cleanDesc };
@@ -13176,7 +13176,7 @@ function PercakapanTab({
                               onClose={() => setMoreMenuIdx(null)}
                               onReport={() => {
                                 setMoreMenuIdx(null);
-                                showActionToast("Laporan respon diterima. Terima kasih!");
+                                showActionToast("Terima kasih telah melaporkan");
                               }}
                             />
                           )}
@@ -18187,7 +18187,7 @@ function ProyekTab({
                                   onClose={() => setProjMoreMenuIdx(null)}
                                   onReport={() => {
                                     setProjMoreMenuIdx(null);
-                                    setToast("Laporan respon diterima. Terima kasih!");
+                                    setToast("Terima kasih telah melaporkan");
                                   }}
                                 />
                               )}
