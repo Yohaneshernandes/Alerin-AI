@@ -1702,15 +1702,6 @@ export default function UpgradePage() {
                   <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
                 </svg>
                 <span>Business</span>
-                <span
-                  className={`text-[9.5px] font-bold px-1.5 py-0.5 rounded-md ${
-                    planType === "business"
-                      ? "bg-white/20 text-white"
-                      : "bg-blue-100 text-[#155dfc]"
-                  }`}
-                >
-                  Institusi
-                </span>
               </button>
             </div>
           </div>
