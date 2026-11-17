@@ -20188,14 +20188,16 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                 </div>
 
                 {/* Deskripsi */}
-                <div className="w-72 max-w-full pb-3 flex flex-col justify-start items-start">
-                  <p className="w-full text-center justify-center text-gray-500 text-xs font-medium font-['Plus_Jakarta_Sans'] leading-4">
-                    Akun Google Kalender Anda telah tersinkronisasi.<br />
-                    Semua agenda sekarang akan terbarui otomatis.
+                <div className="w-full max-w-xs pb-3 flex flex-col justify-start items-center space-y-1">
+                  <p className="w-full text-center text-gray-500 text-xs font-medium font-['Plus_Jakarta_Sans'] leading-relaxed">
+                    Akun Google Kalender Anda telah terhubung.
+                  </p>
+                  <p className="w-full text-center text-gray-500 text-xs font-medium font-['Plus_Jakarta_Sans'] leading-relaxed">
+                    Semua agenda sekarang akan diperbarui otomatis.
                   </p>
                 </div>
 
-                {/* Banner Sinkronisasi Otomatis 2 Arah */}
+                {/* Banner Sinkronisasi Otomatis */}
                 <div className="self-stretch h-14 pb-5 flex flex-col justify-start items-start">
                   <div className="self-stretch h-10 px-4 py-[5px] bg-emerald-50/70 rounded-[10px] outline outline-1 outline-offset-[-1px] outline-emerald-200/80 inline-flex justify-center items-center gap-2.5">
                     <div className="size-4 bg-emerald-600 rounded-full shadow-[0px_0.82px_1.65px_0px_rgba(0,0,0,0.05)] flex justify-center items-center text-white shrink-0">
@@ -20204,7 +20206,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                       </svg>
                     </div>
                     <span className="justify-center text-emerald-800 text-xs font-semibold font-['Plus_Jakarta_Sans'] leading-5">
-                      Sinkronisasi otomatis aktif 2 arah
+                      Sinkronisasi otomatis aktif
                     </span>
                   </div>
                 </div>
@@ -21466,13 +21468,16 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                   </div>
 
                   {/* Description */}
-                  <div className="w-full pb-4 px-1 flex flex-col justify-start items-center">
-                    <p className="w-full text-center justify-center text-gray-500 text-xs sm:text-[12.5px] font-normal font-['Plus_Jakarta_Sans'] leading-5">
-                      Akun Google Kalender Anda telah tersinkronisasi. Semua agenda sekarang akan terbarui otomatis.
+                  <div className="w-full pb-4 px-2 flex flex-col justify-start items-center space-y-1">
+                    <p className="w-full text-center text-gray-500 text-xs sm:text-[12.5px] font-normal font-['Plus_Jakarta_Sans'] leading-relaxed">
+                      Akun Google Kalender Anda telah terhubung.
+                    </p>
+                    <p className="w-full text-center text-gray-500 text-xs sm:text-[12.5px] font-normal font-['Plus_Jakarta_Sans'] leading-relaxed">
+                      Semua agenda sekarang akan diperbarui otomatis.
                     </p>
                   </div>
 
-                  {/* 2-way sync notice banner */}
+                  {/* Sync notice banner */}
                   <div className="self-stretch pb-5 flex flex-col justify-start items-start">
                     <div className="self-stretch px-3.5 py-2.5 bg-emerald-50/70 rounded-xl outline outline-1 outline-offset-[-1px] outline-emerald-200/80 inline-flex justify-center items-center gap-2">
                       <div className="size-4 bg-emerald-600 rounded-full shadow-[0px_0.82px_1.65px_0px_rgba(0,0,0,0.05)] flex justify-center items-center text-white shrink-0">
@@ -21481,7 +21486,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                         </svg>
                       </div>
                       <span className="justify-center text-emerald-800 text-xs font-semibold font-['Plus_Jakarta_Sans'] leading-4">
-                        Sinkronisasi otomatis aktif 2 arah
+                        Sinkronisasi otomatis aktif
                       </span>
                     </div>
                   </div>
