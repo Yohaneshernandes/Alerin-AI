@@ -19194,7 +19194,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
 
     const stages: { min: number; text: string }[] = [
       { min: 0, text: "Menghubungkan ke server Google..." },
-      { min: 28, text: "Menyinkronkan dengan Google Kalender..." },
+      { min: 28, text: "Menghubungkan dengan Google Kalender..." },
       { min: 68, text: "Memverifikasi izin akses kalender..." },
       { min: 96, text: "Sinkronisasi selesai!" },
     ];
@@ -20160,19 +20160,6 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                 onClick={(e) => e.stopPropagation()}
                 className="relative w-96 max-w-[calc(100%-32px)] p-6 bg-white rounded-2xl outline outline-1 outline-offset-[-1px] outline-slate-200/90 shadow-[0px_22.7px_45.4px_0px_rgba(2,6,23,0.35)] flex flex-col justify-start items-center animate-[gemini-zoom-in_0.16s_ease-out]"
               >
-                {/* Tombol Tutup X */}
-                <button
-                  type="button"
-                  onClick={cancelGoogleSync}
-                  aria-label="Tutup"
-                  className="size-7 right-2.5 top-2.5 absolute rounded-full inline-flex justify-center items-center text-neutral-400 hover:text-neutral-600 hover:bg-slate-100 transition-colors cursor-pointer"
-                >
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-                    <line x1="18" y1="6" x2="6" y2="18" />
-                    <line x1="6" y1="6" x2="18" y2="18" />
-                  </svg>
-                </button>
-
                 {/* Logo Alerin <-> Sync (Spinning) <-> Google */}
                 <div className="pb-4 flex items-center justify-center gap-3">
                   <div className="size-12 bg-blue-50 rounded-2xl outline outline-1 outline-offset-[-1px] outline-blue-100 flex justify-center items-center shrink-0">
@@ -20225,7 +20212,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                 {/* Deskripsi */}
                 <div className="pb-5 px-1.5 flex flex-col justify-start items-center">
                   <p className="text-center justify-center text-gray-500 text-xs font-normal font-['Plus_Jakarta_Sans'] leading-5">
-                    Mohon tunggu sebentar, Alerin sedang menyinkronkan jadwal bimbingan dan agenda akademikmu.
+                    Mohon tunggu sebentar, Alerin sedang menghubungkan jadwal bimbingan dan agenda akademikmu.
                   </p>
                 </div>
 
@@ -21451,19 +21438,6 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                   onClick={(e) => e.stopPropagation()}
                   className="relative w-[324px] max-w-[calc(100%-18px)] p-6 bg-white rounded-2xl outline outline-1 outline-offset-[-1px] outline-slate-200/90 shadow-[0px_22.7px_45.4px_0px_rgba(2,6,23,0.35)] flex flex-col justify-start items-center font-['Plus_Jakarta_Sans'] animate-[gemini-zoom-in_0.15s_ease-out]"
                 >
-                  {/* Close button X */}
-                  <button
-                    type="button"
-                    onClick={cancelGoogleSync}
-                    aria-label="Tutup"
-                    className="size-7.5 right-2.5 top-2.5 absolute rounded-full inline-flex justify-center items-center text-neutral-400 hover:text-neutral-600 hover:bg-slate-100 transition-colors cursor-pointer"
-                  >
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-                      <line x1="18" y1="6" x2="6" y2="18" />
-                      <line x1="6" y1="6" x2="18" y2="18" />
-                    </svg>
-                  </button>
-
                   {/* Logo Alerin <-> Sync (Spinning) <-> Google */}
                   <div className="pb-4 flex items-center justify-center gap-3.5">
                     <div className="size-13 bg-blue-50 rounded-2xl outline outline-1 outline-offset-[-1px] outline-blue-100 flex justify-center items-center shrink-0">
@@ -21516,7 +21490,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                   {/* Description */}
                   <div className="pb-4.5 px-1 flex flex-col justify-start items-center">
                     <p className="text-center justify-center text-gray-500 text-xs font-normal font-['Plus_Jakarta_Sans'] leading-5">
-                      Mohon tunggu sebentar, Alerin sedang menyinkronkan jadwal bimbingan dan agenda akademikmu.
+                      Mohon tunggu sebentar, Alerin sedang menghubungkan jadwal bimbingan dan agenda akademikmu.
                     </p>
                   </div>
 
