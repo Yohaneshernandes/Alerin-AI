@@ -1942,18 +1942,20 @@ export default function UpgradePage() {
             </div>
 
             {/* SECTION TITLE: FEATURE PICKER */}
-            <div className="flex items-center justify-between pt-1">
-              <div>
-                <h2 className="text-lg sm:text-xl font-bold text-slate-900">
+            <div className="pt-1">
+              <div className="flex items-center gap-2.5 flex-wrap">
+                <h2 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
                   Pilih Fitur yang Diinginkan
                 </h2>
-                <p className="text-xs sm:text-sm text-slate-500">
-                  Pilih minimal 1 fitur atau kombinasikan beberapa fitur sesuai kebutuhan akademik Anda.
-                </p>
+                <span className="text-xs font-semibold text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-full border border-slate-200/80 inline-flex items-center gap-1 shadow-2xs">
+                  <span>Terpilih:</span>
+                  <strong className="text-[#155dfc] font-bold">{selectedFeatures.size}</strong>
+                  <span className="text-slate-400">/4</span>
+                </span>
               </div>
-              <span className="text-xs font-semibold text-slate-400 bg-slate-100 px-2.5 py-1 rounded-lg">
-                Terpilih: <strong className="text-brand-600">{selectedFeatures.size}</strong>/4
-              </span>
+              <p className="text-xs sm:text-sm text-slate-500 mt-1">
+                Pilih minimal 1 fitur atau kombinasikan beberapa fitur sesuai kebutuhan akademik Anda.
+              </p>
             </div>
 
             {/* 4 FEATURE CARDS: 2-COLUMN GRID */}
