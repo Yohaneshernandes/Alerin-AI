@@ -2568,7 +2568,7 @@ export default function UpgradePage() {
                 <button
                   type="submit"
                   disabled={bizSubmitting}
-                  className="w-full sm:w-auto px-8 py-3.5 sm:py-4 rounded-2xl bg-slate-900 hover:bg-slate-800 active:scale-98 text-white font-bold text-sm flex items-center justify-center gap-2.5 transition-all shadow-md cursor-pointer disabled:opacity-75"
+                  className="w-full sm:w-auto px-8 py-3.5 sm:py-4 rounded-2xl bg-[#155dfc] hover:bg-[#124bcf] active:scale-98 text-white font-bold text-sm flex items-center justify-center gap-2.5 transition-all shadow-md shadow-[#155dfc]/25 cursor-pointer disabled:opacity-75"
                 >
                   {bizSubmitting ? (
                     <>
