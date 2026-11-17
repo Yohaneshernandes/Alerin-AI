@@ -11841,8 +11841,8 @@ function SharedChatPreviewView({
               />
             )}
             <div className="min-w-0 flex items-center gap-2">
-              <h1 className="text-[15px] md:text-base font-bold text-slate-900 truncate">
-                Dibagikan ke Anda
+              <h1 className="text-[15px] md:text-base font-bold text-slate-900 truncate" title={activeFolderChat?.title || preview.title}>
+                {activeFolderChat?.title || preview.title || "Dibagikan ke Anda"}
               </h1>
               <span className="shrink-0 inline-flex items-center px-2 py-0.5 rounded-full bg-[#EAF2FF] text-[#1A73E8] text-[10px] font-semibold">
                 Pratinjau
@@ -12016,6 +12016,7 @@ function PercakapanTab({
   onPendingPromptConsumed,
   onPendingDraftConsumed,
   onChatModeChange,
+  onOpenSharedChat,
 }: {
   onFeatureClick: (f: string) => void;
   onTab: (t: NavTab) => void;
@@ -12026,6 +12027,7 @@ function PercakapanTab({
   onPendingPromptConsumed?: () => void;
   onPendingDraftConsumed?: () => void;
   onChatModeChange?: (active: boolean) => void;
+  onOpenSharedChat?: (preview: SharedChatPreviewData) => void;
 }) {
   const [msgs, setMsgs] = useState<ChatMsg[]>(initialMsgs ?? []);
   const [input, setInput] = useState(pendingDraft ?? "");
@@ -12165,16 +12167,42 @@ function PercakapanTab({
     }
   }, [showActionToast]);
 
-  const handleShareMessage = useCallback((text: string) => {
-    const cleanText = cleanMarkdownForCopy(text);
-    if (navigator.share) {
-      navigator.share({ title: "Jawaban Alerin AI", text: cleanText }).catch(() => {});
-    } else if (navigator?.clipboard?.writeText) {
-      navigator.clipboard.writeText(cleanText).then(() => {
-        showActionToast("Teks respon disalin!");
-      });
+  const handleShareMessage = useCallback((text: string, msgIndex?: number) => {
+    const firstUserMsg = msgs.find((m) => m.role === "user");
+    const chatTitle = firstUserMsg?.text
+      ? (firstUserMsg.text.trim().length > 40 ? firstUserMsg.text.trim().slice(0, 40) + "..." : firstUserMsg.text.trim())
+      : "Obrolan Alerin AI";
+
+    // Mekanisme: semua pesan chat dibagikan (hingga respon yang dipilih atau seluruh percakapan)
+    const messagesToShare = (msgIndex !== undefined ? msgs.slice(0, msgIndex + 1) : msgs).filter(
+      (m) => m.text || m.files?.length || m.imageUrl || m.paraphrase
+    );
+
+    const shareId = `chat-${Date.now()}`;
+    const shareUrl = `${window.location.origin}/share/${shareId}`;
+
+    if (navigator?.clipboard?.writeText) {
+      navigator.clipboard.writeText(shareUrl).catch(() => {});
     }
-  }, [showActionToast]);
+
+    if (onOpenSharedChat) {
+      onOpenSharedChat({
+        id: shareId,
+        title: chatTitle,
+        msgs: messagesToShare.map((m) => ({ ...m })),
+        shareUrl,
+        ctaLabel: "Lanjutkan Obrolan",
+      });
+      showActionToast("Tautan obrolan berhasil disalin!");
+    } else {
+      const cleanText = cleanMarkdownForCopy(text);
+      if (navigator.share) {
+        navigator.share({ title: chatTitle, text: cleanText }).catch(() => {});
+      } else {
+        showActionToast("Teks respon disalin!");
+      }
+    }
+  }, [msgs, onOpenSharedChat, showActionToast]);
 
   const handleReadAloud = useCallback((text: string) => {
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
@@ -12989,9 +13017,10 @@ function PercakapanTab({
                         {/* 3. Share */}
                         <button
                           type="button"
-                          onClick={() => handleShareMessage(m.text)}
-                          title="Bagikan respon"
-                          className="size-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100/90 active:scale-95 transition-all"
+                          onClick={() => handleShareMessage(m.text, i)}
+                          title="Bagikan obrolan"
+                          aria-label="Bagikan obrolan"
+                          className="size-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100/90 active:scale-95 transition-all cursor-pointer"
                         >
                           <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M4 12v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-6" />
@@ -16950,15 +16979,32 @@ function ProyekTab({
     setTimeout(() => setProjCopiedIdx(null), 1800);
   }, []);
 
-  const handleProjShareMessage = useCallback((text: string) => {
+  const handleProjShareMessage = useCallback((text: string, msgIdx?: number) => {
+    if (!selectedProjectChat) return;
+    const targetMsgs = (msgIdx !== undefined ? selectedProjectChat.msgs.slice(0, msgIdx + 1) : selectedProjectChat.msgs).filter(
+      (m) => m.text || m.files?.length || m.imageUrl || m.paraphrase
+    );
+    const shareUrl = `${window.location.origin}/proyek/${selectedProject?.id || "detail"}/${selectedProjectChat.id}`;
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(shareUrl).catch(() => {});
+    }
+    if (onOpenSharedChat) {
+      onOpenSharedChat({
+        id: selectedProjectChat.id,
+        title: selectedProjectChat.title,
+        msgs: targetMsgs.map((m) => ({ ...m })),
+        shareUrl,
+        ctaLabel: "Lanjutkan Obrolan",
+      });
+      return;
+    }
     const cleanText = cleanMarkdownForCopy(text);
     if (navigator.share) {
       navigator.share({ title: selectedProject?.title || "Alerin", text: cleanText }).catch(() => {});
     } else {
-      navigator.clipboard?.writeText(cleanText);
-      setToast("Tautan / teks respon disalin!");
+      setToast("Tautan obrolan disalin!");
     }
-  }, [selectedProject]);
+  }, [selectedProject, selectedProjectChat, onOpenSharedChat]);
 
   const handleRenameChat = () => {
     const trimmed = renameChatInput.trim().slice(0, 25);
@@ -18000,8 +18046,9 @@ function ProyekTab({
                             {/* 3. Share */}
                             <button
                               type="button"
-                              onClick={() => handleProjShareMessage(m.text)}
-                              title="Bagikan respon"
+                              onClick={() => handleProjShareMessage(m.text, idx)}
+                              title="Bagikan obrolan"
+                              aria-label="Bagikan obrolan"
                               className="size-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100/90 active:scale-95 transition-all cursor-pointer"
                             >
                               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -26121,6 +26168,7 @@ export default function AlerinPage() {
           onPendingPromptConsumed={() => setPendingPrompt(undefined)}
           onPendingDraftConsumed={() => setPendingDraft(undefined)}
           onChatModeChange={setHasActiveChat}
+          onOpenSharedChat={setSharedPreview}
         />
       )}
       {tab === "fitur" && <FiturTab onChat={goToChat} openFeatureKey={pendingFeature} onFeatureOpened={() => setPendingFeature(undefined)} />}
