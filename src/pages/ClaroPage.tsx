@@ -19393,10 +19393,20 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                 : "outline-slate-200 focus:outline-[#1A73E8]"
             }`}
           />
+          {agendaErrors.title && (
+            <div className="flex items-center gap-1.5 text-red-500 text-xs font-normal leading-4 animate-[gemini-fade-in_0.15s_ease-out]">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="shrink-0" aria-hidden="true">
+                <circle cx="12" cy="12" r="10" fill="#EF4444" />
+                <line x1="12" y1="7.5" x2="12" y2="12.5" stroke="#ffffff" strokeWidth="2.2" strokeLinecap="round" />
+                <circle cx="12" cy="16.5" r="1.2" fill="#ffffff" />
+              </svg>
+              <span>Kamu belum mengisi judul agenda</span>
+            </div>
+          )}
         </div>
 
         {/* Row: Tanggal (otomatis & terkunci) & Waktu */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-4 items-start">
           <div className="flex flex-col gap-1.5">
             <label className="text-slate-900 text-xs font-semibold leading-4">
               Tanggal
@@ -19486,6 +19496,16 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                 </svg>
               </button>
             </div>
+            {agendaErrors.time && (
+              <div className="flex items-center gap-1.5 text-red-500 text-xs font-normal leading-4 animate-[gemini-fade-in_0.15s_ease-out]">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="shrink-0" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10" fill="#EF4444" />
+                  <line x1="12" y1="7.5" x2="12" y2="12.5" stroke="#ffffff" strokeWidth="2.2" strokeLinecap="round" />
+                  <circle cx="12" cy="16.5" r="1.2" fill="#ffffff" />
+                </svg>
+                <span>Kamu belum mengisi waktu kegiatan</span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -20608,6 +20628,16 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                     agendaErrors.title ? "outline-red-400 focus:outline-red-400" : "outline-slate-200 focus:outline-blue-600"
                   }`}
                 />
+                {agendaErrors.title && (
+                  <div className="self-stretch flex items-center gap-1.5 text-red-500 text-[11px] font-normal leading-4 animate-[gemini-fade-in_0.15s_ease-out]">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" className="shrink-0" aria-hidden="true">
+                      <circle cx="12" cy="12" r="10" fill="#EF4444" />
+                      <line x1="12" y1="7.5" x2="12" y2="12.5" stroke="#ffffff" strokeWidth="2.2" strokeLinecap="round" />
+                      <circle cx="12" cy="16.5" r="1.2" fill="#ffffff" />
+                    </svg>
+                    <span>Kamu belum mengisi judul agenda</span>
+                  </div>
+                )}
               </div>
 
               {/* Tanggal & Waktu (full width per Figma) */}
@@ -20670,6 +20700,16 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                       </svg>
                     </div>
                   </div>
+                  {agendaErrors.time && (
+                    <div className="self-stretch flex items-center gap-1.5 text-red-500 text-[11px] font-normal leading-4 animate-[gemini-fade-in_0.15s_ease-out]">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" className="shrink-0" aria-hidden="true">
+                        <circle cx="12" cy="12" r="10" fill="#EF4444" />
+                        <line x1="12" y1="7.5" x2="12" y2="12.5" stroke="#ffffff" strokeWidth="2.2" strokeLinecap="round" />
+                        <circle cx="12" cy="16.5" r="1.2" fill="#ffffff" />
+                      </svg>
+                      <span>Kamu belum mengisi waktu kegiatan</span>
+                    </div>
+                  )}
 
                   {/* Mobile Time Picker Dropdown Popover */}
                   {mobileTimePickerOpen && (
