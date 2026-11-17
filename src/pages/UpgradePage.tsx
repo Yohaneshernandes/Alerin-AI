@@ -610,13 +610,6 @@ export default function UpgradePage() {
   });
   const [bizSubmitting, setBizSubmitting] = useState(false);
   const [bizConfirmModalOpen, setBizConfirmModalOpen] = useState(false);
-  const [lastSubmittedData, setLastSubmittedData] = useState<{
-    name: string;
-    email: string;
-    institution: string;
-    purpose: string;
-    features: string[];
-  } | null>(null);
   const [bizErrors, setBizErrors] = useState<{
     name?: boolean;
     email?: boolean;
@@ -661,7 +654,6 @@ export default function UpgradePage() {
 
     setTimeout(() => {
       setBizSubmitting(false);
-      setLastSubmittedData({ ...bizForm });
       setBizConfirmModalOpen(true);
       // Reset form
       setBizForm({
@@ -2596,33 +2588,6 @@ export default function UpgradePage() {
                   Data formulir Anda telah otomatis dikirim ke email{" "}
                   <strong className="text-slate-900 font-semibold">admin@alerin.id</strong>. Tim Alerin akan segera meninjau dan menghubungi Anda kembali.
                 </p>
-
-                {lastSubmittedData && (
-                  <div className="mt-4 p-4 bg-slate-50 rounded-2xl border border-slate-200/80 text-left text-xs space-y-2">
-                    <div className="flex justify-between border-b border-slate-200/60 pb-1.5">
-                      <span className="text-slate-500">Nama:</span>
-                      <span className="font-bold text-slate-800">{lastSubmittedData.name}</span>
-                    </div>
-                    <div className="flex justify-between border-b border-slate-200/60 pb-1.5">
-                      <span className="text-slate-500">Email:</span>
-                      <span className="font-bold text-slate-800">{lastSubmittedData.email}</span>
-                    </div>
-                    <div className="flex justify-between border-b border-slate-200/60 pb-1.5">
-                      <span className="text-slate-500">Instansi:</span>
-                      <span className="font-bold text-slate-800">{lastSubmittedData.institution}</span>
-                    </div>
-                    <div className="flex justify-between border-b border-slate-200/60 pb-1.5">
-                      <span className="text-slate-500">Fitur:</span>
-                      <span className="font-bold text-[#155dfc]">{lastSubmittedData.features.join(", ")}</span>
-                    </div>
-                    <div>
-                      <span className="text-slate-500 block mb-0.5">Tujuan:</span>
-                      <p className="text-slate-700 italic bg-white p-2 rounded-lg border border-slate-200 text-[11px] leading-relaxed">
-                        "{lastSubmittedData.purpose}"
-                      </p>
-                    </div>
-                  </div>
-                )}
 
                 <button
                   type="button"
