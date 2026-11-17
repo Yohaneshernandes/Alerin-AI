@@ -2044,7 +2044,7 @@ export default function UpgradePage() {
                     } ${
                       isSelected
                         ? "border-2 border-[#155dfc] ring-2 ring-[#155dfc]/10 shadow-card"
-                        : "border-2 border-slate-200 shadow-subtle hover:border-slate-300"
+                        : "border-2 border-slate-300 shadow-subtle hover:border-slate-400"
                     }`}
                   >
                     <div>
@@ -2054,7 +2054,7 @@ export default function UpgradePage() {
                             className={`w-5 h-5 rounded-md flex items-center justify-center transition-colors shadow-sm shrink-0 ${
                               isSelected
                                 ? "bg-[#155dfc] text-white"
-                                : "border-2 border-slate-300 bg-white text-transparent"
+                                : "border-2 border-slate-400/80 bg-white text-transparent"
                             }`}
                           >
                             <svg
@@ -2096,10 +2096,10 @@ export default function UpgradePage() {
                       </p>
                     </div>
 
-                    <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between gap-2">
+                    <div className="mt-3 pt-2.5 border-t border-slate-200 flex items-center justify-between gap-2">
                       <div className="flex flex-wrap gap-1.5 text-[10px] font-medium text-slate-500">
                         {item.badges.map((b) => (
-                          <span key={b} className="bg-slate-100 px-2 py-0.5 rounded">
+                          <span key={b} className="bg-slate-100 px-2 py-0.5 rounded border border-slate-200/80">
                             {b}
                           </span>
                         ))}
@@ -2131,7 +2131,7 @@ export default function UpgradePage() {
             </div>
 
             {/* VOUCHER CODE BOX */}
-            <div className="bg-white border border-slate-200/90 rounded-2xl p-4 sm:p-5 shadow-subtle">
+            <div className="bg-white border border-slate-300 rounded-2xl p-4 sm:p-5 shadow-subtle">
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
                 Punya Kode Promo / Voucher?
               </label>
@@ -2195,8 +2195,8 @@ export default function UpgradePage() {
 
           {/* RIGHT COLUMN: STICKY ORDER SUMMARY */}
           <div className="lg:col-span-5 xl:col-span-4 sticky top-24">
-            <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-card space-y-5">
-              <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+            <div className="bg-white border border-slate-300 rounded-3xl p-6 shadow-card space-y-5">
+              <div className="flex items-center justify-between pb-4 border-b border-slate-200">
                 <div>
                   <h3 className="text-base font-bold text-slate-900">Ringkasan Paket</h3>
                   <p className="text-xs text-slate-500">Pastikan sudah sesuai.</p>
@@ -2243,7 +2243,7 @@ export default function UpgradePage() {
               </div>
 
               {/* Price Calculation Breakdown */}
-              <div className="pt-4 border-t border-slate-100 space-y-2.5 text-xs text-slate-600">
+              <div className="pt-4 border-t border-slate-200 space-y-2.5 text-xs text-slate-600">
                 {/* Subtotal */}
                 <div className="flex justify-between items-center">
                   <span>Subtotal Harga Normal</span>
@@ -2303,7 +2303,7 @@ export default function UpgradePage() {
               </div>
 
               {/* Total Due */}
-              <div className="pt-4 border-t-2 border-dashed border-slate-200">
+              <div className="pt-4 border-t-2 border-dashed border-slate-300">
                 <div className="flex items-center justify-between">
                   <div>
                     <span className="text-xs sm:text-sm font-bold text-slate-800 block">Total Biaya Pembayaran</span>
@@ -2346,7 +2346,7 @@ export default function UpgradePage() {
 
       {/* MOBILE FLOATING BOTTOM BAR (MELAYANG & AGAK KOTAK / ROUNDED-2XL) - HANYA INDIVIDU */}
       {planType === "individual" && (
-        <div className="lg:hidden fixed bottom-3.5 inset-x-3.5 sm:bottom-5 sm:inset-x-4 max-w-md mx-auto z-40 bg-white/95 backdrop-blur-md border border-slate-200/90 rounded-2xl px-4.5 py-3 shadow-[0_12px_32px_rgba(15,23,42,0.16),0_4px_12px_rgba(15,23,42,0.06)]">
+        <div className="lg:hidden fixed bottom-3.5 inset-x-3.5 sm:bottom-5 sm:inset-x-4 max-w-md mx-auto z-40 bg-white/95 backdrop-blur-md border border-slate-300 rounded-2xl px-4.5 py-3 shadow-[0_12px_32px_rgba(15,23,42,0.16),0_4px_12px_rgba(15,23,42,0.06)]">
           <div className="flex items-center justify-between gap-3">
             <div className="min-w-0">
               <div className="flex items-center gap-1.5">
