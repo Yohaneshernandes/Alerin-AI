@@ -604,8 +604,8 @@ export default function UpgradePage() {
     features: [
       "Alerin Chat",
       "Alerin Jurnal",
-      "Alerin Parafrase",
       "Alerin Skripsi",
+      "Alerin Parafrase",
     ] as string[],
   });
   const [bizSubmitting, setBizSubmitting] = useState(false);
@@ -661,7 +661,12 @@ export default function UpgradePage() {
         email: "",
         institution: "",
         purpose: "",
-        features: ["Chat", "Jurnal", "Paraprase", "Skripsi"],
+        features: [
+          "Alerin Chat",
+          "Alerin Jurnal",
+          "Alerin Skripsi",
+          "Alerin Parafrase",
+        ],
       });
       showToast("Berhasil mengirim formulir ke admin@alerin.id", "success");
     }, 700);
@@ -2470,14 +2475,14 @@ export default function UpgradePage() {
                       desc: "Temukan referensi akademik terindeks Scopus & Sinta.",
                     },
                     {
-                      key: "Alerin Parafrase",
-                      label: "Alerin Parafrase",
-                      desc: "Ubah teks skripsi otomatis dengan pilihan gaya & intensitas.",
-                    },
-                    {
                       key: "Alerin Skripsi",
                       label: "Alerin Skripsi",
                       desc: "Dapatkan arahan sesuai tahap penelitian dan revisi kamu.",
+                    },
+                    {
+                      key: "Alerin Parafrase",
+                      label: "Alerin Parafrase",
+                      desc: "Ubah teks skripsi otomatis dengan pilihan gaya & intensitas.",
                     },
                   ].map((feature) => {
                     const isChecked = bizForm.features.includes(feature.key);
