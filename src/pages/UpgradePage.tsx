@@ -540,7 +540,6 @@ export default function UpgradePage() {
   const [currentDuration, setCurrentDuration] = useState<"7d" | "30d" | "1y">("30d");
   const [currentTier, setCurrentTier] = useState<"plus" | "pro">("plus");
   const [openDropdown, setOpenDropdown] = useState<"7d" | "30d" | "1y" | null>(null);
-  const [upgradeDropdownOpen, setUpgradeDropdownOpen] = useState(false);
   const [businessModalOpen, setBusinessModalOpen] = useState(false);
 
   // Header Interactive States (Persis Header Alerin Chat)
@@ -932,98 +931,20 @@ export default function UpgradePage() {
               <div className="w-4 h-0.5 bg-slate-800 rounded-full" />
               <div className="w-4 h-0.5 bg-slate-800 rounded-full" />
             </button>
-            {/* Mobile: Upgrade Button with Dropdown */}
-            <div className="relative">
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setUpgradeDropdownOpen((o) => !o);
-                  setOpenDropdown(null);
-                }}
-                className={`h-10 px-4 py-2 rounded-full border flex items-center gap-1.5 shrink-0 shadow-xs active:scale-95 transition-all cursor-pointer ${
-                  upgradeDropdownOpen
-                    ? "border-blue-400 bg-blue-100/90 text-[#155dfc]"
-                    : "border-blue-200/90 bg-blue-50/80 hover:bg-blue-100/70 text-[#155dfc]"
-                }`}
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#155dfc" strokeWidth="2.5">
-                  <line x1="12" y1="5" x2="12" y2="19" />
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
-                <span className="text-[#155dfc] text-sm font-semibold leading-5">Upgrade</span>
-              </button>
-
-              {/* Mobile Upgrade Dropdown: Alerin Individual vs Alerin Business */}
-              {upgradeDropdownOpen && (
-                <div
-                  className="absolute top-full left-0 mt-2.5 w-[228px] max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-2xl border border-slate-200/90 p-1.5 z-50 text-left animate-[gemini-zoom-in_0.15s_ease-out]"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  {/* Speech bubble pointer */}
-                  <div
-                    className="absolute -top-[5px] left-10 w-3 h-3 bg-white border-t border-l border-slate-200/90 rotate-45 rounded-tl-[1.5px] pointer-events-none z-10"
-                    aria-hidden="true"
-                  />
-
-                  <div className="space-y-0.5">
-                    {/* Option 1: Alerin Individual */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setUpgradeDropdownOpen(false);
-                        setPlanType("individual");
-                        window.scrollTo({ top: 0, behavior: "smooth" });
-                        showToast("Paket Alerin Individual dipilih", "success");
-                      }}
-                      className="w-full flex items-center justify-between px-2.5 py-2 rounded-xl transition-all cursor-pointer hover:bg-blue-50/80 group text-left border border-transparent hover:border-blue-100"
-                    >
-                      <div className="min-w-0 pr-1">
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-xs font-bold text-slate-900">Alerin</span>
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#155dfc] text-white shadow-xs shrink-0">
-                            Individual
-                          </span>
-                        </div>
-                        <p className="text-[10.5px] text-slate-500 mt-0.5 line-clamp-1">
-                          Riset & skripsi personal
-                        </p>
-                      </div>
-                      <svg className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#155dfc] group-hover:translate-x-0.5 transition-all shrink-0 ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                        <polyline points="9 18 15 12 9 6" />
-                      </svg>
-                    </button>
-
-                    {/* Option 2: Alerin Business */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setUpgradeDropdownOpen(false);
-                        setPlanType("business");
-                        window.scrollTo({ top: 0, behavior: "smooth" });
-                        showToast("Paket Alerin Business dipilih", "info");
-                      }}
-                      className="w-full flex items-center justify-between px-2.5 py-2 rounded-xl transition-all cursor-pointer hover:bg-slate-50 group text-left border border-transparent hover:border-slate-200"
-                    >
-                      <div className="min-w-0 pr-1">
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-xs font-bold text-slate-900">Alerin</span>
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-900 text-white shadow-xs shrink-0">
-                            Business
-                          </span>
-                        </div>
-                        <p className="text-[10.5px] text-slate-500 mt-0.5 line-clamp-1">
-                          Kampus, lab & tim institusi
-                        </p>
-                      </div>
-                      <svg className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-900 group-hover:translate-x-0.5 transition-all shrink-0 ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                        <polyline points="9 18 15 12 9 6" />
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
+            {/* Mobile: Upgrade Button */}
+            <button
+              type="button"
+              onClick={() => {
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }}
+              className="h-10 px-4 py-2 rounded-full border border-blue-200/90 bg-blue-50/80 hover:bg-blue-100/70 text-[#155dfc] flex items-center gap-1.5 shrink-0 shadow-xs active:scale-95 transition-all cursor-pointer"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#155dfc" strokeWidth="2.5">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+              <span className="text-[#155dfc] text-sm font-semibold leading-5">Upgrade</span>
+            </button>
           </div>
 
           <div className="flex items-center gap-2">
@@ -1095,98 +1016,20 @@ export default function UpgradePage() {
 
           {/* Right: Floating pill group persis seperti di ClaroPage */}
           <div className="flex items-center gap-2.5">
-            {/* Desktop: Upgrade Button with Dropdown */}
-            <div className="relative">
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setUpgradeDropdownOpen((o) => !o);
-                  setOpenDropdown(null);
-                }}
-                className={`h-[46px] px-4 rounded-full backdrop-blur-md border flex items-center gap-2 transition-colors shrink-0 shadow-[0_4px_20px_rgba(21,93,252,0.08)] text-[#155dfc] font-semibold text-sm leading-5 cursor-pointer active:scale-95 ${
-                  upgradeDropdownOpen
-                    ? "border-blue-400 bg-blue-100/90"
-                    : "border-blue-200/90 bg-blue-50/80 hover:bg-blue-100/70"
-                }`}
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#155dfc" strokeWidth="2.5">
-                  <line x1="12" y1="5" x2="12" y2="19" />
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
-                <span>Upgrade</span>
-              </button>
-
-              {/* Desktop Upgrade Dropdown: Alerin Individual vs Alerin Business */}
-              {upgradeDropdownOpen && (
-                <div
-                  className="absolute top-full right-0 mt-2.5 w-[240px] bg-white rounded-2xl shadow-2xl border border-slate-200/90 p-1.5 z-50 text-left animate-[gemini-zoom-in_0.15s_ease-out]"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  {/* Speech bubble pointer */}
-                  <div
-                    className="absolute -top-[5px] right-10 w-3 h-3 bg-white border-t border-l border-slate-200/90 rotate-45 rounded-tl-[1.5px] pointer-events-none z-10"
-                    aria-hidden="true"
-                  />
-
-                  <div className="space-y-0.5">
-                    {/* Option 1: Alerin Individual */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setUpgradeDropdownOpen(false);
-                        setPlanType("individual");
-                        window.scrollTo({ top: 0, behavior: "smooth" });
-                        showToast("Paket Alerin Individual dipilih", "success");
-                      }}
-                      className="w-full flex items-center justify-between px-2.5 py-2 rounded-xl transition-all cursor-pointer hover:bg-blue-50/80 group text-left border border-transparent hover:border-blue-100"
-                    >
-                      <div className="min-w-0 pr-1">
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-xs font-bold text-slate-900">Alerin</span>
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#155dfc] text-white shadow-xs shrink-0">
-                            Individual
-                          </span>
-                        </div>
-                        <p className="text-[10.5px] text-slate-500 mt-0.5 line-clamp-1">
-                          Riset & skripsi personal
-                        </p>
-                      </div>
-                      <svg className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#155dfc] group-hover:translate-x-0.5 transition-all shrink-0 ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                        <polyline points="9 18 15 12 9 6" />
-                      </svg>
-                    </button>
-
-                    {/* Option 2: Alerin Business */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setUpgradeDropdownOpen(false);
-                        setPlanType("business");
-                        window.scrollTo({ top: 0, behavior: "smooth" });
-                        showToast("Paket Alerin Business dipilih", "info");
-                      }}
-                      className="w-full flex items-center justify-between px-2.5 py-2 rounded-xl transition-all cursor-pointer hover:bg-slate-50 group text-left border border-transparent hover:border-slate-200"
-                    >
-                      <div className="min-w-0 pr-1">
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-xs font-bold text-slate-900">Alerin</span>
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-900 text-white shadow-xs shrink-0">
-                            Business
-                          </span>
-                        </div>
-                        <p className="text-[10.5px] text-slate-500 mt-0.5 line-clamp-1">
-                          Kampus, lab & tim institusi
-                        </p>
-                      </div>
-                      <svg className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-900 group-hover:translate-x-0.5 transition-all shrink-0 ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                        <polyline points="9 18 15 12 9 6" />
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
+            {/* Desktop: Upgrade Button */}
+            <button
+              type="button"
+              onClick={() => {
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }}
+              className="h-[46px] px-4 rounded-full backdrop-blur-md border border-blue-200/90 bg-blue-50/80 hover:bg-blue-100/70 flex items-center gap-2 transition-colors shrink-0 shadow-[0_4px_20px_rgba(21,93,252,0.08)] text-[#155dfc] font-semibold text-sm leading-5 cursor-pointer active:scale-95"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#155dfc" strokeWidth="2.5">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+              <span>Upgrade</span>
+            </button>
 
             <div
               className="flex items-center gap-2 px-2.5 py-1.5 rounded-full backdrop-blur-md border border-slate-200/85 bg-white/90 shadow-[0_4px_20px_rgba(15,23,42,0.08)] transition-colors"
