@@ -2187,16 +2187,16 @@ export default function UpgradePage() {
                 <button
                   type="button"
                   onClick={handleApplyVoucher}
-                  className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs sm:text-sm rounded-xl transition-all shadow-sm active:scale-95 shrink-0 cursor-pointer"
+                  className="px-5 py-2.5 bg-[#1A73E8] hover:bg-[#1557b0] text-white font-semibold text-xs sm:text-sm rounded-xl transition-all shadow-sm shadow-[#1A73E8]/20 active:scale-95 shrink-0 cursor-pointer"
                 >
                   Terapkan
                 </button>
               </div>
 
-              {/* Applied Voucher Notification / Hints */}
-              <div className="mt-2 text-xs flex items-center justify-between">
-                {appliedVoucher ? (
-                  <span className="text-brand-600 font-bold flex items-center gap-1">
+              {/* Applied Voucher Notification */}
+              {appliedVoucher && (
+                <div className="mt-2 text-xs flex items-center justify-between">
+                  <span className="text-[#1A73E8] font-bold flex items-center gap-1">
                     <svg
                       className="w-4 h-4"
                       viewBox="0 0 24 24"
@@ -2206,38 +2206,17 @@ export default function UpgradePage() {
                     >
                       <polyline points="20 6 9 17 4 12" />
                     </svg>
-                    Kupon {appliedVoucher.code} berhasil dipasang (Hemat Rp 25.000)
+                    Kupon {appliedVoucher.code} berhasil dipasang (Hemat {formatRupiah(voucherDiscount)})
                   </span>
-                ) : (
-                  <span className="text-slate-400">
-                    Gunakan kode{" "}
-                    <strong
-                      className="text-brand-600 cursor-pointer underline"
-                      onClick={() => {
-                        setVoucherInput("ALLERIHEMAT");
-                        setAppliedVoucher({
-                          code: "ALLERIHEMAT",
-                          amount: 25000,
-                          type: "fixed",
-                        });
-                        showToast("Voucher ALLERIHEMAT berhasil diterapkan!", "success");
-                      }}
-                    >
-                      ALLERIHEMAT
-                    </strong>{" "}
-                    untuk potongan Rp 25.000 ekstra.
-                  </span>
-                )}
-                {appliedVoucher && (
                   <button
                     type="button"
                     onClick={handleRemoveVoucher}
-                    className="text-xs text-red-500 hover:underline cursor-pointer"
+                    className="text-xs text-red-500 hover:underline cursor-pointer font-medium"
                   >
                     Hapus
                   </button>
-                )}
-              </div>
+                </div>
+              )}
             </div>
           </div>
 
