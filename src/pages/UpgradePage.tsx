@@ -2648,7 +2648,7 @@ export default function UpgradePage() {
             </div>
 
             {/* Modal Body */}
-            <div className="p-4 sm:p-6 overflow-y-auto flex-1 grid grid-cols-1 md:grid-cols-12 gap-5 sm:gap-6">
+            <div className="p-3.5 sm:p-6 overflow-y-auto flex-1 grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-6">
               {/* Left Sub-column: Detail Item & Diskon */}
               <div className="md:col-span-6 space-y-3.5 sm:space-y-4">
                 <h4 className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">
@@ -2713,24 +2713,6 @@ export default function UpgradePage() {
                     <span className="text-lg sm:text-xl font-black text-[#155dfc]">
                       {formatRupiah(grandTotal)}
                     </span>
-                  </div>
-                </div>
-
-                {/* Account recipient info */}
-                <div className="p-3 bg-blue-50/40 rounded-xl border border-blue-100/80 flex items-center gap-3">
-                  <div
-                    className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0 shadow-xs"
-                    style={{ background: "linear-gradient(135deg,#f59e0b,#d97706)" }}
-                  >
-                    RA
-                  </div>
-                  <div className="text-xs min-w-0">
-                    <p className="font-bold text-slate-800 truncate">
-                      Raka Aditya (Akun Utama)
-                    </p>
-                    <p className="text-slate-500 truncate text-[11px]">
-                      rakaaditya@gmail.com
-                    </p>
                   </div>
                 </div>
               </div>
