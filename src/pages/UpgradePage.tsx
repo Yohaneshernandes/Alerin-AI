@@ -149,11 +149,8 @@ const PRICING_DATABASE: Record<
 const FEATURE_KEYS = ["chat", "jurnal", "skripsi", "parafrase"];
 
 function formatRupiah(num: number): string {
-  return new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR",
-    maximumFractionDigits: 0,
-  }).format(num);
+  const absFormatted = new Intl.NumberFormat("id-ID").format(Math.abs(num));
+  return num < 0 ? `-Rp${absFormatted}` : `Rp${absFormatted}`;
 }
 
 function getDurationReadable(dur: "7d" | "30d" | "1y", tier?: "plus" | "pro"): string {
@@ -804,7 +801,7 @@ export default function UpgradePage() {
         amount: 25000,
         type: "fixed",
       });
-      showToast(`Voucher ${code} berhasil diterapkan! (Hemat Rp 25.000)`, "success");
+      showToast(`Voucher ${code} berhasil diterapkan! (Hemat Rp25.000)`, "success");
     } else {
       showToast("Kode voucher tidak valid atau sudah kedaluwarsa.", "error");
     }
