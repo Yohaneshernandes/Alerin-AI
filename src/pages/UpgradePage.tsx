@@ -2608,13 +2608,13 @@ export default function UpgradePage() {
                 onClick={(e) => e.stopPropagation()}
                 className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 text-center shadow-2xl border border-slate-200 animate-[gemini-zoom-in_0.15s_ease-out]"
               >
-                <div className="w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-200 mx-auto flex items-center justify-center mb-4 shadow-sm">
+                <div className="w-16 h-16 rounded-2xl bg-blue-50 text-[#155dfc] border border-blue-200 mx-auto flex items-center justify-center mb-4 shadow-sm">
                   <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="20 6 9 17 4 12" />
                   </svg>
                 </div>
 
-                <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#155dfc] bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
                   Konfirmasi Pengiriman
                 </span>
 
@@ -2657,7 +2657,7 @@ export default function UpgradePage() {
                 <button
                   type="button"
                   onClick={() => setBizConfirmModalOpen(false)}
-                  className="w-full mt-6 py-3 px-5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer active:scale-95"
+                  className="w-full mt-6 py-3.5 px-5 bg-[#155dfc] hover:bg-[#124bcf] active:scale-95 text-white font-bold text-sm rounded-xl shadow-md shadow-[#155dfc]/25 transition-all cursor-pointer"
                 >
                   Tutup
                 </button>
