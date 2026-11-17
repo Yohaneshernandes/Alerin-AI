@@ -2121,20 +2121,6 @@ export default function UpgradePage() {
                       <p className="text-xs text-slate-600 mt-2.5 leading-relaxed">
                         {item.description}
                       </p>
-
-                      {/* Redaksi: Sudah termasuk Alerin Chat */}
-                      <div className="mt-2.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-[11px] font-semibold text-slate-700 shadow-sm">
-                        <svg
-                          className="w-3.5 h-3.5 text-[#155dfc] shrink-0"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2.2"
-                        >
-                          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                        </svg>
-                        <span>Sudah termasuk Alerin Chat</span>
-                      </div>
                     </div>
 
                     <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between gap-2">
