@@ -4049,6 +4049,7 @@ function parseClaroToast(rawMsg: string | { title: string; description?: string 
   const lower = raw.toLowerCase();
   const cleanDesc = raw.endsWith(".") || raw.endsWith("!") ? raw : `${raw}.`;
 
+  if (lower.includes("terputus")) return { title: "Koneksi dengan Google Kalender berhasil terputus" };
   if (lower.includes("lapor")) return { title: "Laporan Respon Diterima", description: "Terima kasih telah melaporkan" };
   if (lower.includes("disalin") || lower.includes("salin")) return { title: "Berhasil Disalin", description: cleanDesc };
   if (lower.includes("dihapus")) return { title: "Berhasil Dihapus", description: cleanDesc };
@@ -18736,10 +18737,17 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
   const today = useMemo(() => new Date(), []);
   const [cursor, setCursor] = useState(() => new Date(today.getFullYear(), today.getMonth(), 1));
   const [selected, setSelected] = useState<Date | null>(() => new Date(today.getFullYear(), today.getMonth(), today.getDate()));
-  const [googleConnected, setGoogleConnected] = useState(false);
+  const [googleConnected, setGoogleConnected] = useState(() => {
+    try {
+      return localStorage.getItem("alerin_google_calendar_connected") === "true";
+    } catch {
+      return false;
+    }
+  });
   const [googleConnectModal, setGoogleConnectModal] = useState(false);
   const [googleSyncingModal, setGoogleSyncingModal] = useState(false);
   const [googleSuccessModal, setGoogleSuccessModal] = useState(false);
+  const [googleDisconnectModal, setGoogleDisconnectModal] = useState(false);
   const [syncProgress, setSyncProgress] = useState(0);
   const [syncStageText, setSyncStageText] = useState("Menghubungkan ke server Google...");
   const syncIntervalRef = useRef<number | null>(null);
@@ -18816,6 +18824,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
     }
     setGoogleSyncingModal(false);
     setGoogleSuccessModal(false);
+    setGoogleDisconnectModal(false);
     setAgendaErrors({});
     setAddingAgenda((prevAdding) => {
       if (prevAdding === nextAdding) return prevAdding;
@@ -18861,7 +18870,8 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        if (googleSuccessModal) setGoogleSuccessModal(false);
+        if (googleDisconnectModal) setGoogleDisconnectModal(false);
+        else if (googleSuccessModal) setGoogleSuccessModal(false);
         else if (googleSyncingModal) cancelGoogleSync();
         else if (googleConnectModal) setGoogleConnectModal(false);
         else if (deleteAgendaConfirm) setDeleteAgendaConfirm(null);
@@ -18875,7 +18885,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [googleSuccessModal, googleSyncingModal, googleConnectModal, deleteAgendaConfirm, addingAgenda, reminderMenuOpen, mobileReminderDropdown, timePickerOpen, mobileTimePickerOpen, switchDesktopView, onClose]);
+  }, [googleDisconnectModal, googleSuccessModal, googleSyncingModal, googleConnectModal, deleteAgendaConfirm, addingAgenda, reminderMenuOpen, mobileReminderDropdown, timePickerOpen, mobileTimePickerOpen, switchDesktopView, onClose]);
 
   const year = cursor.getFullYear();
   const month = cursor.getMonth();
@@ -19074,6 +19084,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
     }
     setGoogleSyncingModal(false);
     setGoogleSuccessModal(false);
+    setGoogleDisconnectModal(false);
     showCalNotice("Sinkronisasi Google Kalender dibatalkan", "info");
   }, [showCalNotice]);
 
@@ -19111,6 +19122,9 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
           syncTimeoutRef.current = window.setTimeout(() => {
             setGoogleSyncingModal(false);
             setGoogleConnected(true);
+            try {
+              localStorage.setItem("alerin_google_calendar_connected", "true");
+            } catch {}
             setGoogleSuccessModal(true);
             showCalNotice("Google Kalender berhasil terhubung", "success");
             syncTimeoutRef.current = null;
@@ -19125,6 +19139,15 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
   const handleConfirmGoogleConnect = () => {
     setGoogleConnectModal(false);
     startGoogleSync();
+  };
+
+  const handleConfirmDisconnectGoogle = () => {
+    setGoogleConnected(false);
+    try {
+      localStorage.removeItem("alerin_google_calendar_connected");
+    } catch {}
+    setGoogleDisconnectModal(false);
+    showCalNotice("Koneksi dengan Google Kalender berhasil terputus", "success");
   };
 
   const handleSaveAgenda = () => {
@@ -19561,7 +19584,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
               type="button"
               onClick={() => {
                 if (googleConnected) {
-                  setGoogleSuccessModal(true);
+                  setGoogleDisconnectModal(true);
                   return;
                 }
                 setGoogleConnectModal(true);
@@ -20224,6 +20247,58 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
               </div>
             </div>
           )}
+
+          {/* Pop-up Konfirmasi Putuskan Google Kalender (Desktop - Sesuai Mockup) */}
+          {googleDisconnectModal && (
+            <div
+              className="absolute inset-0 z-40 flex items-center justify-center p-4 bg-slate-950/20 backdrop-blur-[2px] animate-[gemini-fade-in_0.15s_ease-out]"
+              onClick={() => setGoogleDisconnectModal(false)}
+            >
+              <div
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="desktop-google-disconnect-title"
+                onClick={(e) => e.stopPropagation()}
+                className="relative w-[390px] max-w-[calc(100%-32px)] p-6 bg-white rounded-2xl outline outline-1 outline-offset-[-1px] outline-slate-200/90 shadow-[0px_20px_45px_rgba(2,6,23,0.22)] flex flex-col justify-start items-stretch font-['Plus_Jakarta_Sans'] animate-[gemini-zoom-in_0.16s_ease-out]"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="size-10 bg-red-50 text-red-500 rounded-xl flex items-center justify-center shrink-0 border border-red-100/90 shadow-2xs">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+                      <line x1="12" y1="9" x2="12" y2="13" />
+                      <line x1="12" y1="17" x2="12.01" y2="17" />
+                    </svg>
+                  </div>
+                  <h3 id="desktop-google-disconnect-title" className="text-[15px] sm:text-base font-bold text-slate-900 leading-snug">
+                    Memutuskan dengan Google Kalender?
+                  </h3>
+                </div>
+
+                <div className="mt-4 p-3.5 bg-slate-50/70 rounded-xl border border-slate-200/80">
+                  <p className="text-xs sm:text-[12.5px] text-slate-600 leading-relaxed font-normal">
+                    Akun <strong className="font-semibold text-slate-900">putra.andhika@gmail.com</strong> tidak akan lagi menerima sinkronisasi otomatis. Agenda yang sudah ada di Alerin Kalender tetap tersimpan.
+                  </p>
+                </div>
+
+                <div className="flex items-center justify-end gap-2.5 mt-5">
+                  <button
+                    type="button"
+                    onClick={() => setGoogleDisconnectModal(false)}
+                    className="px-4 py-2 bg-white hover:bg-slate-50 active:scale-98 rounded-xl border border-slate-200 text-slate-700 text-xs sm:text-sm font-semibold transition-all cursor-pointer shadow-2xs"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleConfirmDisconnectGoogle}
+                    className="px-4.5 py-2 bg-[#dc2626] hover:bg-[#b91c1c] active:scale-95 text-white text-xs sm:text-sm font-semibold rounded-xl transition-all cursor-pointer shadow-sm shadow-red-500/20"
+                  >
+                    Ya, Putuskan
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {timePickerOpen && timePickerPos && typeof document !== "undefined" && createPortal(
@@ -20362,75 +20437,40 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
         )}
 
         {calNotice && typeof document !== "undefined" && createPortal(
-          <>
-            {/* Desktop Toast */}
-            <div
-              key={`desk-${calNotice.id}`}
-              role="status"
-              aria-live="polite"
-              onClick={(e) => {
-                e.stopPropagation();
-                setCalNotice(null);
-              }}
-              className="hidden md:flex fixed top-5 right-5 z-[310] bg-white rounded-2xl border border-slate-200/75 shadow-[0_14px_34px_-6px_rgba(15,23,42,0.18),0_4px_12px_-2px_rgba(15,23,42,0.06)] pl-3 pr-5 py-2.5 items-center gap-3 font-['Plus_Jakarta_Sans'] cursor-pointer select-none animate-[gemini-fade-in_0.18s_ease-out]"
+          <div
+            key={calNotice.id}
+            role="status"
+            aria-live="polite"
+            onClick={(e) => {
+              e.stopPropagation();
+              setCalNotice(null);
+            }}
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[310] bg-white rounded-2xl border border-slate-200/85 shadow-[0_14px_36px_rgba(15,23,42,0.18),0_4px_12px_rgba(15,23,42,0.06)] pl-3.5 pr-5 py-2.5 flex items-center gap-3 font-['Plus_Jakarta_Sans'] cursor-pointer select-none animate-[gemini-fade-in_0.18s_ease-out] max-w-[90vw]"
+          >
+            <span
+              className={`size-8 rounded-full flex items-center justify-center shrink-0 text-white ${
+                calNotice.tone === "error" ? "bg-rose-500" : "bg-blue-600"
+              }`}
             >
-              <span
-                className={`size-8 rounded-full flex items-center justify-center shrink-0 text-white ${
-                  calNotice.tone === "error" ? "bg-rose-500" : "bg-blue-600"
-                }`}
-              >
-                {calNotice.tone === "error" ? (
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <line x1="12" y1="8" x2="12" y2="12" />
-                    <line x1="12" y1="16" x2="12.01" y2="16" />
-                  </svg>
-                ) : calNotice.tone === "info" ? (
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" className="animate-spin" aria-hidden="true">
-                    <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-                  </svg>
-                ) : (
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                )}
-              </span>
-              <span className="text-neutral-900 text-[13px] font-semibold leading-5 tracking-[-0.01em] whitespace-nowrap">
-                {calNotice.text}
-              </span>
-            </div>
-
-            {/* Mobile Toast (sesuai screenshot media_1794799946322_6e2cde65.png) */}
-            <div
-              key={`mob-${calNotice.id}`}
-              role="status"
-              aria-live="polite"
-              onClick={(e) => {
-                e.stopPropagation();
-                setCalNotice(null);
-              }}
-              className="flex md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-[310] bg-white rounded-2xl border border-slate-200/85 shadow-[0_12px_32px_rgba(15,23,42,0.18)] pl-3 pr-5 py-2.5 items-center gap-3 font-['Plus_Jakarta_Sans'] cursor-pointer select-none animate-[gemini-fade-in_0.18s_ease-out] max-w-[90vw]"
-            >
-              <span
-                className={`size-8 rounded-full flex items-center justify-center shrink-0 text-white ${
-                  calNotice.tone === "error" ? "bg-rose-500" : "bg-blue-600"
-                }`}
-              >
-                {calNotice.tone === "error" ? (
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="12" y1="8" x2="12" y2="12" />
-                    <line x1="12" y1="16" x2="12.01" y2="16" />
-                  </svg>
-                ) : (
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                )}
-              </span>
-              <span className="text-slate-900 text-xs font-semibold leading-5 tracking-[-0.01em] whitespace-nowrap">
-                {calNotice.text}
-              </span>
-            </div>
-          </>,
+              {calNotice.tone === "error" ? (
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <line x1="12" y1="8" x2="12" y2="12" />
+                  <line x1="12" y1="16" x2="12.01" y2="16" />
+                </svg>
+              ) : calNotice.tone === "info" ? (
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" className="animate-spin" aria-hidden="true">
+                  <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                </svg>
+              ) : (
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              )}
+            </span>
+            <span className="text-slate-900 text-xs sm:text-[13px] font-semibold leading-5 tracking-[-0.01em] whitespace-nowrap">
+              {calNotice.text}
+            </span>
+          </div>,
           document.body
         )}
       </div>
@@ -20804,7 +20844,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                   type="button"
                   onClick={() => {
                     if (googleConnected) {
-                      setGoogleSuccessModal(true);
+                      setGoogleDisconnectModal(true);
                       return;
                     }
                     setGoogleConnectModal(true);
@@ -20824,13 +20864,17 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                       {googleConnected ? "Google Kalender Terhubung" : "Hubungkan Google Kalender"}
                     </span>
                   </div>
-                  <div className="h-3 inline-flex flex-col justify-start items-start">
-                    <div className="h-3 pt-[0.84px] flex flex-col justify-center items-center">
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="text-gray-700">
-                        <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2" />
-                      </svg>
+                  {googleConnected ? (
+                    <span className="size-1.5 bg-blue-600 rounded-full shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]" />
+                  ) : (
+                    <div className="h-3 inline-flex flex-col justify-start items-start">
+                      <div className="h-3 pt-[0.84px] flex flex-col justify-center items-center">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="text-gray-700">
+                          <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2" />
+                        </svg>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </button>
               </div>
 
@@ -21501,6 +21545,58 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                       Selesai
                     </span>
                   </button>
+                </div>
+              </div>
+            )}
+
+            {/* Pop-up Konfirmasi Putuskan Google Kalender (Mobile - Sesuai Mockup) */}
+            {googleDisconnectModal && (
+              <div
+                className="absolute inset-0 z-40 flex items-center justify-center p-4 bg-slate-950/20 backdrop-blur-[2px] animate-[gemini-fade-in_0.15s_ease-out]"
+                onClick={() => setGoogleDisconnectModal(false)}
+              >
+                <div
+                  role="dialog"
+                  aria-modal="true"
+                  aria-labelledby="mobile-google-disconnect-title"
+                  onClick={(e) => e.stopPropagation()}
+                  className="relative w-full max-w-[340px] p-5.5 bg-white rounded-2xl outline outline-1 outline-offset-[-1px] outline-slate-200/90 shadow-[0px_20px_45px_rgba(2,6,23,0.22)] flex flex-col justify-start items-stretch font-['Plus_Jakarta_Sans'] animate-[gemini-zoom-in_0.16s_ease-out]"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="size-10 bg-red-50 text-red-500 rounded-xl flex items-center justify-center shrink-0 border border-red-100/90 shadow-2xs">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+                        <line x1="12" y1="9" x2="12" y2="13" />
+                        <line x1="12" y1="17" x2="12.01" y2="17" />
+                      </svg>
+                    </div>
+                    <h3 id="mobile-google-disconnect-title" className="text-[15px] font-bold text-slate-900 leading-snug">
+                      Memutuskan dengan Google Kalender?
+                    </h3>
+                  </div>
+
+                  <div className="mt-3.5 p-3.5 bg-slate-50/70 rounded-xl border border-slate-200/80">
+                    <p className="text-xs text-slate-600 leading-relaxed font-normal">
+                      Akun <strong className="font-semibold text-slate-900">putra.andhika@gmail.com</strong> tidak akan lagi menerima sinkronisasi otomatis. Agenda yang sudah ada di Alerin Kalender tetap tersimpan.
+                    </p>
+                  </div>
+
+                  <div className="flex items-center justify-end gap-2.5 mt-5">
+                    <button
+                      type="button"
+                      onClick={() => setGoogleDisconnectModal(false)}
+                      className="px-4 py-2 bg-white hover:bg-slate-50 active:scale-98 rounded-xl border border-slate-200 text-slate-700 text-xs font-semibold transition-all cursor-pointer shadow-2xs"
+                    >
+                      Batal
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleConfirmDisconnectGoogle}
+                      className="px-4 py-2 bg-[#dc2626] hover:bg-[#b91c1c] active:scale-95 text-white text-xs font-semibold rounded-xl transition-all cursor-pointer shadow-sm shadow-red-500/20"
+                    >
+                      Ya, Putuskan
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
