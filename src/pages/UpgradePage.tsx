@@ -14,52 +14,16 @@ const FEATURE_DETAILS: Record<
     capabilities: string[];
   }
 > = {
-  skripsi: {
-    name: "Alerin Skripsi",
-    tag: "Sarjana (S1)",
-    desc: "Dirancang spesifik untuk mahasiswa tingkat sarjana yang sedang menyusun Tugas Akhir atau Skripsi sesuai standar buku pedoman kampus di Indonesia.",
+  chat: {
+    name: "Alerin Chat",
+    tag: "AI Asisten Riset",
+    desc: "Asisten AI cerdas untuk diskusi topik penelitian, eksplorasi ide akademik, penyusunan outline, dan bimbingan interaktif 24/7.",
     capabilities: [
-      "Asistensi Bab 1 hingga Bab 5 terstruktur (Latar Belakang hingga Kesimpulan)",
-      "Review metodologi penelitian kualitatif, kuantitatif, dan R&D",
-      "Sudah termasuk Alerin Chat interaktif untuk konsultasi rumusan masalah 24/7",
-      "Pengecekan keselarasan rumusan masalah, tujuan, dan instrumen riset",
-      "Panduan format penulisan, daftar pustaka otomatis, dan lampiran",
-    ],
-  },
-  tesis: {
-    name: "Alerin Tesis",
-    tag: "Magister (S2)",
-    desc: "Dikhususkan untuk mahasiswa pascasarjana S2 yang membutuhkan penguatan sintesis teoritis, analisis data kuantitatif/kualitatif mendalam, dan pembahasan empiris.",
-    capabilities: [
-      "Bimbingan kerangka konseptual teoritis dan model hipotesis",
-      "Asistensi analisis data riset tingkat lanjut (SEM PLS, SPSS, AMOS, NVivo)",
-      "Sudah termasuk Alerin Chat interaktif untuk diskusi temuan lapangan",
-      "Formulasi interpretasi data statistik dan uji validitas-reliabilitas",
-      "Penyusunan implikasi teoritis dan praktis berbobot magister",
-    ],
-  },
-  disertasi: {
-    name: "Alerin Disertasi",
-    tag: "Doktoral (S3)",
-    desc: "Tingkat tertinggi untuk kandidat doktor S3 yang membutuhkan formulasi State-of-the-Art, novelty ilmiah, dan kontribusi orisinal pada kebaruan ilmu.",
-    capabilities: [
-      "Eksplorasi dan formulasi Novelty (Kebaruan Ilmiah) terukur",
-      "State-of-the-Art gap analysis dari literatur global bereputasi tinggi",
-      "Sudah termasuk Alerin Chat interaktif untuk asistensi filosofi keilmuan",
-      "Kritik metodologis mendalam dan ketahanan uji sidang promosi doktor",
-      "Rekomendasi pemetaan kontribusi epistemologis bagi dunia akademik",
-    ],
-  },
-  parafrase: {
-    name: "Alerin Parafrase",
-    tag: "Humanized AI",
-    desc: "Mesin parafrase cerdas berbasis gaya penulisan ilmiah bahasa Indonesia baku (PUEBI) dan Academic English yang meloloskan naskah dari deteksi AI dan Turnitin.",
-    capabilities: [
-      "Humanized rewriting yang mempertahankan makna asli tanpa distorsi ide",
-      "Optimasi lolos Turnitin Similarity Index dan AI Detector kampus",
-      "Sudah termasuk Alerin Chat untuk modifikasi kata dan diksi sinonim cepat",
-      "Pilihan nada bahasa: Formal Akademik, Ringkas, Luwes, atau Bahasa Baku",
-      "Dukungan dokumen penuh hingga 10.000 kata per proses",
+      "Brainstorming topik dan rumusan masalah riset interaktif",
+      "Penyusunan outline bab dan struktur argumen akademik",
+      "Tanya-jawab konsep teori dan metodologi penelitian",
+      "Asistensi persiapan presentasi dan seminar proposal",
+      "Dukungan obrolan tanpa batas waktu 24/7",
     ],
   },
   jurnal: {
@@ -74,33 +38,33 @@ const FEATURE_DETAILS: Record<
       "Sinkronisasi satu klik ke Mendeley, Zotero, dan EndNote",
     ],
   },
-  matakuliah: {
-    name: "Alerin Mata Kuliah",
-    tag: "Silabus & Konsep",
-    desc: "Asisten belajar semesteran yang memecah materi perkuliahan yang rumit menjadi konsep sederhana yang mudah dipahami per pertemuan silabus.",
+  skripsi: {
+    name: "Alerin Skripsi",
+    tag: "Sarjana (S1)",
+    desc: "Dirancang spesifik untuk mahasiswa tingkat sarjana yang sedang menyusun Tugas Akhir atau Skripsi sesuai standar buku pedoman kampus di Indonesia.",
     capabilities: [
-      "Rangkuman silabus dan bahan ajar kuliah mingguan secara otomatis",
-      "Simulasi pemahaman materi dengan studi kasus kontekstual",
-      "Sudah termasuk Alerin Chat untuk tutor pribadi sebelum UTS dan UAS",
-      "Generator bank soal latihan lengkap dengan pembahasan langkah-demi-langkah",
-      "Mind-mapping konsep kunci per modul mata kuliah",
+      "Asistensi Bab 1 hingga Bab 5 terstruktur (Latar Belakang hingga Kesimpulan)",
+      "Review metodologi penelitian kualitatif, kuantitatif, dan R&D",
+      "Sudah termasuk Alerin Chat interaktif untuk konsultasi rumusan masalah 24/7",
+      "Pengecekan keselarasan rumusan masalah, tujuan, dan instrumen riset",
+      "Panduan format penulisan, daftar pustaka otomatis, dan lampiran",
     ],
   },
-  tugaskuliah: {
-    name: "Alerin Tugas Kuliah",
-    tag: "Paper & Proyek",
-    desc: "Membantu pengerjaan tugas rutin mahasiswa, mulai dari esai mingguan, makalah kelompok, studi kasus korporat, hingga draf slide presentasi.",
+  parafrase: {
+    name: "Alerin Parafrase",
+    tag: "Humanized AI",
+    desc: "Mesin parafrase cerdas berbasis gaya penulisan ilmiah bahasa Indonesia baku (PUEBI) dan Academic English yang meloloskan naskah dari deteksi AI dan Turnitin.",
     capabilities: [
-      "Penyusunan outline terstruktur untuk esai, resensi, dan paper kuliah",
-      "Asistensi analisis studi kasus dan formulasi solusi pemecahan masalah",
-      "Sudah termasuk Alerin Chat untuk brainstorming ide proyek kelompok",
-      "Penyusunan poin-poin utama untuk slide presentasi PowerPoint",
-      "Pengecekan ejaan dan kerapian format laporan tugas kuliah",
+      "Humanized rewriting yang mempertahankan makna asli tanpa distorsi ide",
+      "Optimasi lolos Turnitin Similarity Index dan AI Detector kampus",
+      "Sudah termasuk Alerin Chat untuk modifikasi kata dan diksi sinonim cepat",
+      "Pilihan nada bahasa: Formal Akademik, Ringkas, Luwes, atau Bahasa Baku",
+      "Dukungan dokumen penuh hingga 10.000 kata per proses",
     ],
   },
 };
 
-// Database harga 7 fitur Alerin per durasi
+// Database harga 4 fitur Alerin per durasi
 const PRICING_DATABASE: Record<
   string,
   {
@@ -110,59 +74,27 @@ const PRICING_DATABASE: Record<
     original_yearly: number;
     description: string;
     badges: string[];
+    icon: string;
+    mobileIcon?: string;
+    iconClass?: string;
+    framedIcon?: boolean;
   }
 > = {
-  skripsi: {
-    name: "Alerin Skripsi",
-    tag: "Sarjana (S1)",
+  chat: {
+    name: "Alerin Chat",
+    tag: "AI Asisten Riset",
     prices: {
-      "7d": 35000,
-      "30d": 79000,
-      "1y": 758000,
+      "7d": 25000,
+      "30d": 59000,
+      "1y": 566000,
     },
-    original_yearly: 948000,
-    description:
-      "Asisten komprehensif Bab 1–5, evaluasi metodologi, cek keselarasan rumusan masalah, dan template buku panduan kampus.",
-    badges: ["Review Metodologi", "Format Bab 1-5"],
-  },
-  tesis: {
-    name: "Alerin Tesis",
-    tag: "Magister (S2)",
-    prices: {
-      "7d": 39000,
-      "30d": 89000,
-      "1y": 854000,
-    },
-    original_yearly: 1068000,
-    description:
-      "Analisis data riset tingkat lanjut (SEM, SPSS, NVivo), kerangka konseptual teoritis, serta pembahasan temuan empiris.",
-    badges: ["Analisis Data Riset", "Diskusi Empiris S2"],
-  },
-  disertasi: {
-    name: "Alerin Disertasi",
-    tag: "Doktoral (S3)",
-    prices: {
-      "7d": 49000,
-      "30d": 109000,
-      "1y": 1046000,
-    },
-    original_yearly: 1308000,
-    description:
-      "Formulasi novelty ilmiah, evaluasi State-of-the-Art gap analysis, dan penajaman kontribusi teoritis doktoral.",
-    badges: ["Novelty Formulator", "Gap Analysis S3"],
-  },
-  parafrase: {
-    name: "Alerin Parafrase",
-    tag: "Humanized AI",
-    prices: {
-      "7d": 29000,
-      "30d": 69000,
-      "1y": 662000,
-    },
-    original_yearly: 828000,
-    description:
-      "Parafrase multi-gaya akademik, penurun skor kesamaan Turnitin, dan optimasi struktur kalimat baku PUEBI & Formal English.",
-    badges: ["Bypass AI Detector", "Bebas Plagiasi"],
+    original_yearly: 708000,
+    description: "AI asisten untuk riset akademik dan diskusi topik.",
+    badges: ["Obrolan Riset Cerdas", "Brainstorming 24/7"],
+    icon: "05de5.svg",
+    mobileIcon: "17983.svg",
+    iconClass: "h-[44px] w-[44px]",
+    framedIcon: false,
   },
   jurnal: {
     name: "Alerin Jurnal",
@@ -173,47 +105,48 @@ const PRICING_DATABASE: Record<
       "1y": 758000,
     },
     original_yearly: 948000,
-    description:
-      "Pencarian 200M+ literatur global, sintesis matriks penelitian otomatis, sitasi instan APA 7, IEEE, dan ekspor Mendeley.",
+    description: "Temukan referensi akademik terindeks Scopus & Sinta.",
     badges: ["Akses 200M+ Paper", "Ekspor Sitasi Instan"],
+    icon: "5ad2c.svg",
+    mobileIcon: "0a094.svg",
+    iconClass: "h-[44px] w-[44px]",
+    framedIcon: false,
   },
-  matakuliah: {
-    name: "Alerin Mata Kuliah",
-    tag: "Silabus & Konsep",
+  skripsi: {
+    name: "Alerin Skripsi",
+    tag: "Sarjana (S1)",
     prices: {
-      "7d": 25000,
-      "30d": 59000,
-      "1y": 566000,
+      "7d": 35000,
+      "30d": 79000,
+      "1y": 758000,
     },
-    original_yearly: 708000,
-    description:
-      "Pemecahan materi kuliah rumit per modul, rangkuman silabus, bank soal UTS/UAS, dan simulasi pemahaman materi.",
-    badges: ["Rangkuman Silabus", "Bank Soal & Quiz"],
+    original_yearly: 948000,
+    description: "Dapatkan arahan sesuai tahap penelitian dan revisi kamu.",
+    badges: ["Review Metodologi", "Format Bab 1-5"],
+    icon: "4d2e9.svg",
+    mobileIcon: "52023.svg",
+    iconClass: "h-[16.6px] w-[20.3px]",
+    framedIcon: true,
   },
-  tugaskuliah: {
-    name: "Alerin Tugas Kuliah",
-    tag: "Paper & Proyek",
+  parafrase: {
+    name: "Alerin Parafrase",
+    tag: "Humanized AI",
     prices: {
-      "7d": 25000,
-      "30d": 59000,
-      "1y": 566000,
+      "7d": 29000,
+      "30d": 69000,
+      "1y": 662000,
     },
-    original_yearly: 708000,
-    description:
-      "Pembuatan outline esai, studi kasus komprehensif, penyusunan paper kelompok, dan pembuatan ringkasan slide presentasi.",
-    badges: ["Asisten Esai & Paper", "Studi Kasus Cepat"],
+    original_yearly: 828000,
+    description: "Ubah teks skripsi otomatis dengan pilihan gaya & intensitas.",
+    badges: ["Bypass AI Detector", "Bebas Plagiasi"],
+    icon: "377ce.svg",
+    mobileIcon: "bff8f.svg",
+    iconClass: "h-[16.1px] w-[18.1px]",
+    framedIcon: true,
   },
 };
 
-const FEATURE_KEYS = [
-  "skripsi",
-  "tesis",
-  "disertasi",
-  "parafrase",
-  "jurnal",
-  "matakuliah",
-  "tugaskuliah",
-];
+const FEATURE_KEYS = ["chat", "jurnal", "skripsi", "parafrase"];
 
 function formatRupiah(num: number): string {
   return new Intl.NumberFormat("id-ID", {
@@ -796,15 +729,12 @@ export default function UpgradePage() {
     if (count === 2) {
       rate = 0.15;
       label = "Diskon 15%";
-    } else if (count >= 3 && count <= 4) {
+    } else if (count === 3) {
       rate = 0.25;
       label = "Hemat 25%";
-    } else if (count >= 5 && count <= 6) {
+    } else if (count === 4) {
       rate = 0.35;
-      label = "Super Bundling 35%";
-    } else if (count === 7) {
-      rate = 0.45;
-      label = "Paket Komplit 45%";
+      label = "Paket Komplit 35%";
     }
 
     const bDiscount = Math.round(sub * rate);
@@ -827,28 +757,23 @@ export default function UpgradePage() {
       infoBadge = "Harga Normal (1 Fitur)";
       infoBadgeClass = "bg-slate-200 text-slate-700";
       infoDesc =
-        "Pilih 2 fitur untuk diskon 15%, 3-4 fitur hemat 25%, atau ambil seluruh fitur hemat hingga 45%.";
+        "Pilih 2 fitur untuk diskon 15%, 3 fitur hemat 25%, atau ambil seluruh 4 fitur hemat hingga 35%.";
     } else if (count === 2) {
       infoTitle = "Bundling 2 Fitur Aktif";
       infoBadge = "Diskon Bundling 15%";
       infoBadgeClass = "bg-brand-100 text-brand-700 border border-brand-200";
       infoDesc = "Diskon 15% aktif! Tambah 1 fitur lagi untuk membuka diskon 25%.";
-    } else if (count >= 3 && count <= 4) {
-      infoTitle = `Bundling ${count} Fitur Aktif`;
+    } else if (count === 3) {
+      infoTitle = "Bundling 3 Fitur Aktif";
       infoBadge = "Diskon Hemat 25%";
       infoBadgeClass = "bg-brand-100 text-brand-700 border border-brand-200";
-      infoDesc = "Potongan 25% langsung dipotong dari total tagihan Anda.";
-    } else if (count >= 5 && count <= 6) {
-      infoTitle = `Super Bundling ${count} Fitur`;
-      infoBadge = "Super Hemat 35%";
-      infoBadgeClass = "bg-brand-600 text-white shadow-sm";
-      infoDesc = "Hampir semua fitur terbuka dengan diskon super hemat 35%!";
+      infoDesc = "Potongan 25% aktif! Tambah 1 fitur lagi untuk paket komplit hemat 35%.";
     } else {
       infoTitle = "Akses Komplit Semua Fitur Alerin";
-      infoBadge = "Diskon Maksimal 45%";
+      infoBadge = "Diskon Maksimal 35%";
       infoBadgeClass = "bg-brand-700 text-white shadow-sm";
       infoDesc =
-        "Paket all-in-one terlengkap untuk riset, penulisan, jurnal, dan perkuliahan!";
+        "Paket all-in-one terlengkap untuk riset akademik, pencarian jurnal, bimbingan skripsi, dan parafrase!";
     }
 
     return {
@@ -2030,70 +1955,91 @@ export default function UpgradePage() {
                 </p>
               </div>
               <span className="text-xs font-semibold text-slate-400 bg-slate-100 px-2.5 py-1 rounded-lg">
-                Terpilih: <strong className="text-brand-600">{selectedFeatures.size}</strong>/7
+                Terpilih: <strong className="text-brand-600">{selectedFeatures.size}</strong>/4
               </span>
             </div>
 
-            {/* 7 FEATURE CARDS: 2-COLUMN GRID */}
+            {/* 4 FEATURE CARDS: 2-COLUMN GRID */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
               {FEATURE_KEYS.map((key) => {
                 const item = PRICING_DATABASE[key];
+                if (!item) return null;
                 const isSelected = selectedFeatures.has(key);
                 const price = getPrice(key);
-                const isSingleSpan = key === "tugaskuliah";
 
                 return (
                   <div
                     key={key}
                     onClick={() => toggleFeature(key)}
-                    className={`feature-card cursor-pointer group relative bg-white rounded-2xl p-4 transition-all flex flex-col justify-between ${
-                      isSingleSpan ? "sm:col-span-2 md:col-span-1" : ""
-                    } ${
+                    className={`feature-card cursor-pointer group relative bg-white rounded-2xl p-4 sm:p-5 transition-all flex flex-col justify-between ${
                       isSelected
-                        ? "border-2 border-[#155dfc] ring-2 ring-[#155dfc]/10 shadow-card"
-                        : "border-2 border-slate-300 shadow-subtle hover:border-slate-400"
+                        ? "border-2 border-[#155dfc] ring-2 ring-[#155dfc]/10 shadow-card bg-blue-50/10"
+                        : "border-2 border-slate-300 shadow-subtle hover:border-slate-400 hover:shadow-md"
                     }`}
                   >
                     <div>
-                      <div className="flex items-start justify-between gap-2.5">
+                      {/* Top row: Icon + Title & Tag on left; Price + Checkbox on right */}
+                      <div className="flex items-start justify-between gap-3">
                         <div className="flex items-center gap-3 min-w-0">
-                          <div
-                            className={`w-5 h-5 rounded-md flex items-center justify-center transition-colors shadow-sm shrink-0 ${
-                              isSelected
-                                ? "bg-[#155dfc] text-white"
-                                : "border-2 border-slate-400/80 bg-white text-transparent"
+                          <span
+                            className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl transition-transform group-hover:scale-105 ${
+                              item.framedIcon ? "bg-[#eff6ff]" : ""
                             }`}
                           >
-                            <svg
-                              className="w-3.5 h-3.5"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="3"
-                            >
-                              <polyline points="20 6 9 17 4 12" />
-                            </svg>
-                          </div>
+                            <img
+                              src={`/assets/fitur-design/${item.icon}`}
+                              alt=""
+                              className={item.iconClass || "h-11 w-11"}
+                            />
+                          </span>
                           <div className="min-w-0">
                             <h3 className="text-base sm:text-lg font-extrabold text-slate-900 group-hover:text-[#155dfc] transition-colors tracking-tight truncate">
                               {item.name}
                             </h3>
+                            <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-100 inline-block mt-0.5">
+                              {item.tag}
+                            </span>
                           </div>
                         </div>
 
-                        <div className="text-right shrink-0">
-                          <div className="flex items-baseline justify-end whitespace-nowrap">
+                        <div className="flex items-center gap-2.5 shrink-0">
+                          <div className="text-right">
                             {currentDuration === "1y" && (
-                              <span className="text-[11px] text-slate-400 line-through mr-1.5">
+                              <span className="text-[11px] text-slate-400 line-through mr-1 block">
                                 {formatRupiah(item.original_yearly)}
                               </span>
                             )}
-                            <span className="text-sm sm:text-base font-extrabold text-slate-900 whitespace-nowrap">
-                              {formatRupiah(price)}
-                            </span>
-                            <span className="text-sm sm:text-base text-slate-500 font-normal whitespace-nowrap">
-                              {durationLabel}
-                            </span>
+                            <div className="flex items-baseline justify-end whitespace-nowrap">
+                              <span className="text-sm sm:text-base font-extrabold text-slate-900 whitespace-nowrap">
+                                {formatRupiah(price)}
+                              </span>
+                              <span className="text-xs sm:text-sm text-slate-500 font-normal whitespace-nowrap">
+                                {durationLabel}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Tombol centang di samping kanan */}
+                          <div
+                            className={`w-5 h-5 rounded-md flex items-center justify-center transition-all shrink-0 ${
+                              isSelected
+                                ? "bg-[#155dfc] text-white border-2 border-[#155dfc] shadow-xs"
+                                : "border-2 border-slate-300 bg-white group-hover:border-slate-400"
+                            }`}
+                          >
+                            {isSelected && (
+                              <svg
+                                className="w-3.5 h-3.5"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="3"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
+                                <polyline points="20 6 9 17 4 12" />
+                              </svg>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -2103,10 +2049,13 @@ export default function UpgradePage() {
                       </p>
                     </div>
 
-                    <div className="mt-3 pt-2.5 border-t border-slate-200 flex items-center justify-between gap-2">
+                    <div className="mt-3.5 pt-2.5 border-t border-slate-200 flex items-center justify-between gap-2">
                       <div className="flex flex-wrap gap-1.5 text-[10px] font-medium text-slate-500">
                         {item.badges.map((b) => (
-                          <span key={b} className="bg-slate-100 px-2 py-0.5 rounded border border-slate-200/80">
+                          <span
+                            key={b}
+                            className="bg-slate-100 px-2 py-0.5 rounded border border-slate-200/80"
+                          >
                             {b}
                           </span>
                         ))}
@@ -2118,7 +2067,7 @@ export default function UpgradePage() {
                           e.stopPropagation();
                           setActiveModalFeatureKey(key);
                         }}
-                        className="inline-flex items-center gap-1.5 text-[11px] font-bold text-white bg-[#1A73E8] hover:bg-[#1557b0] px-3 py-1.5 rounded-lg shadow-sm shadow-[#1A73E8]/20 transition-all shrink-0 active:scale-95 cursor-pointer"
+                        className="inline-flex items-center gap-1.5 text-[11px] font-bold text-white bg-[#155dfc] hover:bg-blue-700 px-3 py-1.5 rounded-lg shadow-sm shadow-blue-500/20 transition-all shrink-0 active:scale-95 cursor-pointer"
                       >
                         <span>Detail Paket</span>
                         <svg
@@ -2127,6 +2076,8 @@ export default function UpgradePage() {
                           fill="none"
                           stroke="currentColor"
                           strokeWidth="2.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
                         >
                           <path d="m9 18 6-6-6-6" />
                         </svg>
@@ -2221,6 +2172,7 @@ export default function UpgradePage() {
                 <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
                   {Array.from(selectedFeatures).map((key) => {
                     const item = PRICING_DATABASE[key];
+                    if (!item) return null;
                     return (
                       <div
                         key={key}
@@ -2755,6 +2707,7 @@ export default function UpgradePage() {
                     <ul className="space-y-1.5 max-h-36 overflow-y-auto pr-1">
                       {Array.from(selectedFeatures).map((key) => {
                         const item = PRICING_DATABASE[key];
+                        if (!item) return null;
                         return (
                           <li
                             key={key}
@@ -3047,8 +3000,8 @@ export default function UpgradePage() {
               <div className="flex justify-between">
                 <span className="text-slate-500">Paket Baru:</span>
                 <span className="font-bold text-brand-600">
-                  {selectedFeatures.size === 7
-                    ? "Alerin Complete Suite (7 Fitur)"
+                  {selectedFeatures.size === 4
+                    ? "Alerin Complete Suite (4 Fitur)"
                     : `Alerin Bundling (${selectedFeatures.size} Fitur)`}
                 </span>
               </div>
@@ -3094,17 +3047,17 @@ export default function UpgradePage() {
                 {/* Modal Header */}
                 <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-2xl bg-brand-600 text-white flex items-center justify-center font-bold shadow-sm">
-                      <svg
-                        className="w-5 h-5"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      >
-                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-                      </svg>
-                    </div>
+                    <span
+                      className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl ${
+                        pricing.framedIcon ? "bg-[#eff6ff]" : ""
+                      }`}
+                    >
+                      <img
+                        src={`/assets/fitur-design/${pricing.icon}`}
+                        alt=""
+                        className={pricing.iconClass || "h-11 w-11"}
+                      />
+                    </span>
                     <div>
                       <div className="flex items-center gap-2">
                         <h3 className="text-base font-extrabold text-slate-900">{detail.name}</h3>
