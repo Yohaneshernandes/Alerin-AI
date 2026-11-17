@@ -2389,26 +2389,21 @@ export default function UpgradePage() {
       {/* BUSINESS / INSTITUTION VIEW (Mengisi Form Pengajuan Institusi) */}
       {planType === "business" && (
         <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 flex-1 w-full animate-[gemini-fade-in_0.2s_ease-out]">
-          {/* FORMULIR KHUSUS BUSINESS */}
           <div className="bg-white rounded-3xl border border-slate-200/90 shadow-xl overflow-hidden">
             <div className="p-6 sm:p-8 border-b border-slate-100 bg-gradient-to-r from-slate-50/80 via-white to-blue-50/30">
-              <div className="flex items-center gap-2 mb-1">
-                <span className="size-2 rounded-full bg-blue-600" />
-                <span className="text-xs font-bold uppercase tracking-wider text-blue-600">Formulir Khusus Business</span>
-              </div>
               <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
                 Pengajuan Kemitraan & Paket Business
               </h3>
-              <p className="text-xs sm:text-sm text-slate-500 mt-1">
+              <p className="text-sm text-slate-500 mt-1.5 leading-relaxed">
                 Lengkapi formulir khusus calon mitra di bawah ini. Data akan otomatis dikirimkan ke <strong className="text-slate-700 font-semibold">admin@alerin.id</strong>.
               </p>
             </div>
 
-            <form onSubmit={handleBizSubmit} className="p-6 sm:p-8 space-y-5">
-              {/* 1. Nama */}
+            <form onSubmit={handleBizSubmit} className="p-6 sm:p-9 space-y-6 sm:space-y-7">
+              {/* Nama */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                  1. Nama <span className="text-red-500">*</span>
+                <label className="block text-sm sm:text-[15px] font-bold text-slate-800 mb-2">
+                  Nama <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -2418,21 +2413,21 @@ export default function UpgradePage() {
                     setBizForm({ ...bizForm, name: e.target.value });
                     if (bizErrors.name) setBizErrors({ ...bizErrors, name: false });
                   }}
-                  className={`w-full px-4 py-2.5 text-xs sm:text-sm rounded-xl border transition-all ${
+                  className={`w-full px-4.5 py-3.5 sm:py-4 text-sm sm:text-base rounded-2xl border transition-all placeholder:text-slate-400 ${
                     bizErrors.name
-                      ? "border-red-400 bg-red-50/30 focus:border-red-500 focus:ring-2 focus:ring-red-200"
-                      : "border-slate-200 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                      ? "border-red-400 bg-red-50/30 focus:border-red-500 focus:ring-4 focus:ring-red-100"
+                      : "border-slate-200 bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                   }`}
                 />
                 {bizErrors.name && (
-                  <p className="text-[11px] text-red-500 mt-1 font-medium">Nama wajib diisi</p>
+                  <p className="text-xs text-red-500 mt-1.5 font-medium">Nama wajib diisi</p>
                 )}
               </div>
 
-              {/* 2. Email */}
+              {/* Email */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                  2. Email <span className="text-red-500">*</span>
+                <label className="block text-sm sm:text-[15px] font-bold text-slate-800 mb-2">
+                  Email <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="email"
@@ -2442,21 +2437,21 @@ export default function UpgradePage() {
                     setBizForm({ ...bizForm, email: e.target.value });
                     if (bizErrors.email) setBizErrors({ ...bizErrors, email: false });
                   }}
-                  className={`w-full px-4 py-2.5 text-xs sm:text-sm rounded-xl border transition-all ${
+                  className={`w-full px-4.5 py-3.5 sm:py-4 text-sm sm:text-base rounded-2xl border transition-all placeholder:text-slate-400 ${
                     bizErrors.email
-                      ? "border-red-400 bg-red-50/30 focus:border-red-500 focus:ring-2 focus:ring-red-200"
-                      : "border-slate-200 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                      ? "border-red-400 bg-red-50/30 focus:border-red-500 focus:ring-4 focus:ring-red-100"
+                      : "border-slate-200 bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                   }`}
                 />
                 {bizErrors.email && (
-                  <p className="text-[11px] text-red-500 mt-1 font-medium">Email valid wajib diisi</p>
+                  <p className="text-xs text-red-500 mt-1.5 font-medium">Email valid wajib diisi</p>
                 )}
               </div>
 
-              {/* 3. Instansi */}
+              {/* Instansi */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                  3. Instansi <span className="text-red-500">*</span>
+                <label className="block text-sm sm:text-[15px] font-bold text-slate-800 mb-2">
+                  Instansi <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -2466,51 +2461,52 @@ export default function UpgradePage() {
                     setBizForm({ ...bizForm, institution: e.target.value });
                     if (bizErrors.institution) setBizErrors({ ...bizErrors, institution: false });
                   }}
-                  className={`w-full px-4 py-2.5 text-xs sm:text-sm rounded-xl border transition-all ${
+                  className={`w-full px-4.5 py-3.5 sm:py-4 text-sm sm:text-base rounded-2xl border transition-all placeholder:text-slate-400 ${
                     bizErrors.institution
-                      ? "border-red-400 bg-red-50/30 focus:border-red-500 focus:ring-2 focus:ring-red-200"
-                      : "border-slate-200 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                      ? "border-red-400 bg-red-50/30 focus:border-red-500 focus:ring-4 focus:ring-red-100"
+                      : "border-slate-200 bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                   }`}
                 />
                 {bizErrors.institution && (
-                  <p className="text-[11px] text-red-500 mt-1 font-medium">Instansi wajib diisi</p>
+                  <p className="text-xs text-red-500 mt-1.5 font-medium">Instansi wajib diisi</p>
                 )}
               </div>
 
-              {/* 4. Tujuan Penggunaan Alerin */}
+              {/* Tujuan Penggunaan Alerin */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                  4. Tujuan Penggunaan Alerin <span className="text-red-500">*</span>
+                <label className="block text-sm sm:text-[15px] font-bold text-slate-800 mb-2">
+                  Tujuan Penggunaan Alerin <span className="text-red-500">*</span>
                 </label>
                 <textarea
-                  rows={3}
+                  rows={4}
                   placeholder="Jelaskan kebutuhan atau tujuan penggunaan Alerin di instansi Anda..."
                   value={bizForm.purpose}
                   onChange={(e) => {
                     setBizForm({ ...bizForm, purpose: e.target.value });
                     if (bizErrors.purpose) setBizErrors({ ...bizErrors, purpose: false });
                   }}
-                  className={`w-full px-4 py-2.5 text-xs sm:text-sm rounded-xl border transition-all resize-y ${
+                  className={`w-full px-4.5 py-3.5 sm:py-4 text-sm sm:text-base rounded-2xl border transition-all resize-y placeholder:text-slate-400 ${
                     bizErrors.purpose
-                      ? "border-red-400 bg-red-50/30 focus:border-red-500 focus:ring-2 focus:ring-red-200"
-                      : "border-slate-200 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                      ? "border-red-400 bg-red-50/30 focus:border-red-500 focus:ring-4 focus:ring-red-100"
+                      : "border-slate-200 bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                   }`}
                 />
                 {bizErrors.purpose && (
-                  <p className="text-[11px] text-red-500 mt-1 font-medium">Tujuan penggunaan Alerin wajib diisi</p>
+                  <p className="text-xs text-red-500 mt-1.5 font-medium">Tujuan penggunaan Alerin wajib diisi</p>
                 )}
               </div>
 
-              {/* 5. Pilihan Fitur yang Ingin Digunakan */}
+              {/* Pilihan Fitur yang Ingin Digunakan */}
               <div>
-                <div className="flex items-center justify-between mb-2">
-                  <label className="block text-xs font-bold text-slate-700">
-                    5. Pilihan Fitur yang Ingin Digunakan <span className="text-red-500">*</span>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-2.5">
+                  <label className="block text-sm sm:text-[15px] font-bold text-slate-800">
+                    Pilihan Fitur yang Ingin Digunakan <span className="text-red-500">*</span>
                   </label>
-                  <span className="text-[11px] text-slate-400">Pilih fitur yang dibutuhkan</span>
+                  <span className="text-xs text-slate-400">Pilih fitur yang dibutuhkan</span>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                {/* List fitur: kebawah pada mobile (grid-cols-1) */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-3.5">
                   {[
                     { key: "Chat", label: "Chat", desc: "Obrolan AI Riset" },
                     { key: "Jurnal", label: "Jurnal", desc: "Sintesis Literatur" },
@@ -2522,57 +2518,64 @@ export default function UpgradePage() {
                       <label
                         key={feature.key}
                         onClick={() => toggleBizFeature(feature.key)}
-                        className={`flex items-start gap-2.5 p-3 rounded-2xl border cursor-pointer transition-all ${
+                        className={`flex items-center gap-3.5 p-4 rounded-2xl border cursor-pointer transition-all ${
                           isChecked
-                            ? "bg-blue-50/80 border-[#155dfc] text-blue-900 shadow-sm ring-1 ring-[#155dfc]/20"
-                            : "bg-white border-slate-200 hover:border-slate-300 text-slate-700 hover:bg-slate-50/50"
+                            ? "bg-blue-50/90 border-[#155dfc] text-blue-900 shadow-sm ring-1 ring-[#155dfc]/30"
+                            : "bg-white border-slate-200/90 hover:border-slate-300 text-slate-700 hover:bg-slate-50/60 shadow-2xs"
                         }`}
                       >
                         <input
                           type="checkbox"
                           checked={isChecked}
                           onChange={() => {}} // handled by label onClick
-                          className="w-4 h-4 mt-0.5 rounded text-[#155dfc] focus:ring-blue-500 cursor-pointer"
+                          className="w-5 h-5 rounded text-[#155dfc] focus:ring-blue-500 cursor-pointer shrink-0"
                         />
-                        <div className="min-w-0">
-                          <span className="text-xs font-bold text-slate-900 block">{feature.label}</span>
-                          <span className="text-[10.5px] text-slate-500 block truncate">{feature.desc}</span>
+                        <div className="min-w-0 flex-1">
+                          <span className="text-sm font-bold text-slate-900 block">{feature.label}</span>
+                          <span className="text-xs text-slate-500 block mt-0.5">{feature.desc}</span>
                         </div>
+                        {isChecked && (
+                          <div className="w-5 h-5 rounded-full bg-[#155dfc] text-white flex items-center justify-center shrink-0">
+                            <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                              <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                          </div>
+                        )}
                       </label>
                     );
                   })}
                 </div>
                 {bizErrors.features && (
-                  <p className="text-[11px] text-red-500 mt-1.5 font-medium">Pilih minimal 1 fitur yang ingin digunakan</p>
+                  <p className="text-xs text-red-500 mt-2 font-medium">Pilih minimal 1 fitur yang ingin digunakan</p>
                 )}
               </div>
 
               {/* Info Pengiriman ke admin@alerin.id */}
-              <div className="bg-slate-50 rounded-2xl p-3.5 border border-slate-200/80 flex items-center gap-3">
-                <div className="w-8 h-8 rounded-xl bg-blue-100 text-[#155dfc] flex items-center justify-center shrink-0">
-                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <div className="bg-slate-50 rounded-2xl p-4 sm:p-5 border border-slate-200/80 flex items-center gap-3.5">
+                <div className="w-9 h-9 rounded-xl bg-blue-100 text-[#155dfc] flex items-center justify-center shrink-0">
+                  <svg className="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
                     <polyline points="22,6 12,13 2,6" />
                   </svg>
                 </div>
-                <p className="text-[11px] text-slate-600 leading-normal">
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                   Data formulir yang diisi akan otomatis dikirim ke email <strong className="text-slate-800 font-semibold">admin@alerin.id</strong>. Tim Alerin akan menghubungi Anda kembali maksimal dalam 3 x 24 jam.
                 </p>
               </div>
 
               {/* Submit Action */}
-              <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-slate-100">
+              <div className="pt-3 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-slate-100">
                 <button
                   type="button"
                   onClick={() => setPlanType("individual")}
-                  className="w-full sm:w-auto px-5 py-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs transition-all cursor-pointer"
+                  className="w-full sm:w-auto px-6 py-3.5 sm:py-4 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-sm transition-all cursor-pointer"
                 >
                   Kembali ke Paket Individu
                 </button>
                 <button
                   type="submit"
                   disabled={bizSubmitting}
-                  className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 active:scale-98 text-white font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer disabled:opacity-75"
+                  className="w-full sm:w-auto px-8 py-3.5 sm:py-4 rounded-2xl bg-slate-900 hover:bg-slate-800 active:scale-98 text-white font-bold text-sm flex items-center justify-center gap-2.5 transition-all shadow-md cursor-pointer disabled:opacity-75"
                 >
                   {bizSubmitting ? (
                     <>
@@ -2585,7 +2588,7 @@ export default function UpgradePage() {
                   ) : (
                     <>
                       <span>Kirim Formulir Pengajuan</span>
-                      <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                         <path d="M5 12h14m-7-7 7 7-7 7" />
                       </svg>
                     </>
