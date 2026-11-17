@@ -1454,21 +1454,21 @@ export default function UpgradePage() {
           </div>
 
           {/* PILIHAN INDIVIDU & BUSINESS */}
-          <div className={`flex justify-center ${planType === "individual" ? "mb-5" : "mb-1 sm:mb-2"}`}>
-            <div className="bg-slate-100 p-1.5 rounded-2xl border border-slate-200/80 inline-flex shadow-inner max-w-full gap-1 sm:gap-1.5">
+          <div className={`flex justify-center ${planType === "individual" ? "mb-4 sm:mb-5" : "mb-1 sm:mb-2"}`}>
+            <div className="bg-slate-100 p-1 sm:p-1.5 rounded-xl sm:rounded-2xl border border-slate-200/80 inline-flex shadow-inner max-w-full gap-1">
               <button
                 type="button"
                 onClick={() => {
                   setPlanType("individual");
                   setOpenDropdown(null);
                 }}
-                className={`px-5 sm:px-7 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-2 ${
+                className={`px-4 sm:px-5 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-xs sm:text-[13px] font-bold transition-all cursor-pointer flex items-center gap-1.5 sm:gap-2 ${
                   planType === "individual"
-                    ? "bg-[#1A73E8] text-white shadow-md shadow-[#1A73E8]/25"
+                    ? "bg-[#155dfc] text-white shadow-sm shadow-[#155dfc]/25"
                     : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/50"
                 }`}
               >
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                   <circle cx="12" cy="7" r="4" />
                 </svg>
@@ -1481,13 +1481,13 @@ export default function UpgradePage() {
                   setPlanType("business");
                   setOpenDropdown(null);
                 }}
-                className={`px-5 sm:px-7 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-2 ${
+                className={`px-4 sm:px-5 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-xs sm:text-[13px] font-bold transition-all cursor-pointer flex items-center gap-1.5 sm:gap-2 ${
                   planType === "business"
-                    ? "bg-slate-900 text-white shadow-md shadow-slate-900/25"
+                    ? "bg-slate-900 text-white shadow-sm shadow-slate-900/25"
                     : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/50"
                 }`}
               >
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
                   <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
                 </svg>
