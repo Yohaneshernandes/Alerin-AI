@@ -826,7 +826,7 @@ export default function UpgradePage() {
   };
 
   const durationLabel =
-    currentDuration === "7d" ? "/ 7 hari" : currentDuration === "30d" ? "/ 30 hari" : "/ tahun";
+    currentDuration === "7d" ? "/7 hari" : currentDuration === "30d" ? "/30 hari" : "/tahun";
 
   return (
     <div
@@ -2102,9 +2102,9 @@ export default function UpgradePage() {
                         </div>
 
                         <div className="text-right shrink-0">
-                          <div className="flex items-baseline justify-end gap-1.5 whitespace-nowrap">
+                          <div className="flex items-baseline justify-end whitespace-nowrap">
                             {currentDuration === "1y" && (
-                              <span className="text-[11px] text-slate-400 line-through mr-0.5">
+                              <span className="text-[11px] text-slate-400 line-through mr-1.5">
                                 {formatRupiah(item.original_yearly)}
                               </span>
                             )}
