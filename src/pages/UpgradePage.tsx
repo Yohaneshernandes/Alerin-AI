@@ -2247,7 +2247,7 @@ export default function UpgradePage() {
               <div className="pt-4 border-t-2 border-dashed border-slate-300">
                 <div className="flex items-center justify-between">
                   <div>
-                    <span className="text-xs sm:text-sm font-bold text-slate-800 block">Total Biaya Pembayaran</span>
+                    <span className="text-base sm:text-lg font-bold text-slate-900 block">Total Biaya</span>
                   </div>
                   <div className="text-right">
                     {(bundlingDiscount > 0 || voucherDiscount > 0 || currentDuration === "1y") && (
@@ -2255,7 +2255,7 @@ export default function UpgradePage() {
                         {formatRupiah(currentDuration === "1y" ? originalTotal : subtotal)}
                       </span>
                     )}
-                    <span className="text-2xl sm:text-3xl font-extrabold text-brand-700 tracking-tight">
+                    <span className="text-2xl sm:text-3xl font-extrabold text-[#155dfc] tracking-tight">
                       {formatRupiah(grandTotal)}
                     </span>
                   </div>
@@ -2266,7 +2266,7 @@ export default function UpgradePage() {
               <button
                 type="button"
                 onClick={() => setIsCheckoutModalOpen(true)}
-                className="w-full py-4 px-6 bg-[#1A73E8] hover:bg-[#1557b0] text-white font-bold text-sm sm:text-base rounded-2xl shadow-lg shadow-[#1A73E8]/25 transition-all flex items-center justify-center gap-2 group active:scale-[0.98] cursor-pointer"
+                className="w-full py-4 px-6 bg-[#155dfc] hover:bg-[#124bcf] text-white font-bold text-sm sm:text-base rounded-2xl shadow-lg shadow-[#155dfc]/25 transition-all flex items-center justify-center gap-2 group active:scale-[0.98] cursor-pointer"
               >
                 <span>Lanjut ke Pembayaran</span>
                 <svg
@@ -2310,7 +2310,7 @@ export default function UpgradePage() {
             <button
               type="button"
               onClick={() => setIsCheckoutModalOpen(true)}
-              className="px-5 py-3 bg-[#1A73E8] hover:bg-[#1557b0] text-white font-bold text-xs rounded-xl shadow-md shadow-[#1A73E8]/25 transition-all shrink-0 flex items-center gap-1.5 active:scale-95 cursor-pointer"
+              className="px-5 py-3 bg-[#155dfc] hover:bg-[#124bcf] text-white font-bold text-xs rounded-xl shadow-md shadow-[#155dfc]/25 transition-all shrink-0 flex items-center gap-1.5 active:scale-95 cursor-pointer"
             >
               <span>Lanjut Bayar</span>
               <svg
