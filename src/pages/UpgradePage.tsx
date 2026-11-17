@@ -2593,20 +2593,21 @@ export default function UpgradePage() {
       {/* STEP 2: CHECKOUT & PAYMENT MODAL */}
       {isCheckoutModalOpen && (
         <div
-          className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm p-4 sm:p-6 lg:p-8 flex items-center justify-center animate-[gemini-fade-in_0.2s_ease-out]"
+          className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm p-3 sm:p-6 lg:p-8 flex items-center justify-center animate-[gemini-fade-in_0.2s_ease-out]"
           onClick={() => setIsCheckoutModalOpen(false)}
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="bg-white rounded-3xl max-w-3xl w-full shadow-2xl border border-slate-200 overflow-hidden transform transition-all animate-[gemini-zoom-in_0.15s_ease-out]"
+            className="bg-white rounded-2xl sm:rounded-3xl max-w-3xl w-full max-h-[92vh] sm:max-h-[90vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden transform transition-all animate-[gemini-zoom-in_0.15s_ease-out]"
           >
             {/* Modal Header */}
-            <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
-              <div className="flex items-center gap-3">
+            <div className="px-4 sm:px-6 py-3.5 sm:py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/80 shrink-0">
+              <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
                 <button
                   type="button"
                   onClick={() => setIsCheckoutModalOpen(false)}
-                  className="p-1.5 rounded-xl hover:bg-slate-200/70 text-slate-500 transition-colors cursor-pointer"
+                  className="w-8 h-8 rounded-xl bg-white sm:bg-transparent border border-slate-200/80 sm:border-transparent hover:bg-slate-200/70 text-slate-600 flex items-center justify-center transition-colors shrink-0 cursor-pointer shadow-2xs sm:shadow-none"
+                  aria-label="Kembali"
                 >
                   <svg
                     className="w-5 h-5"
@@ -2614,18 +2615,22 @@ export default function UpgradePage() {
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                   >
                     <path d="m15 18-6-6 6-6" />
                   </svg>
                 </button>
-                <div>
+                <div className="min-w-0">
                   <div className="flex items-center gap-2">
-                    <h3 className="text-lg font-extrabold text-slate-900">Ringkasan Pembayaran</h3>
-                    <span className="text-[10px] font-bold bg-brand-50 text-brand-700 px-2 py-0.5 rounded-full border border-brand-200">
-                      Step 2 dari 2
+                    <h3 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight">
+                      Pembayaran
+                    </h3>
+                    <span className="text-[10px] font-bold bg-blue-50 text-[#155dfc] px-2 py-0.5 rounded-full border border-blue-200 shrink-0">
+                      2 dari 2
                     </span>
                   </div>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-[11px] sm:text-xs text-slate-500 truncate sm:whitespace-normal">
                     Konfirmasi detail pesanan dan pilih opsi pembayaran Anda
                   </p>
                 </div>
@@ -2633,24 +2638,25 @@ export default function UpgradePage() {
               <button
                 type="button"
                 onClick={() => setIsCheckoutModalOpen(false)}
-                className="w-8 h-8 rounded-full bg-slate-200/60 text-slate-500 hover:text-slate-800 hover:bg-slate-200 flex items-center justify-center transition-colors cursor-pointer"
+                className="w-8 h-8 rounded-full bg-slate-200/70 text-slate-500 hover:text-slate-800 hover:bg-slate-200 flex items-center justify-center transition-colors shrink-0 ml-2 cursor-pointer"
+                aria-label="Tutup"
               >
                 ✕
               </button>
             </div>
 
             {/* Modal Body */}
-            <div className="p-6 grid grid-cols-1 md:grid-cols-12 gap-6">
+            <div className="p-4 sm:p-6 overflow-y-auto flex-1 grid grid-cols-1 md:grid-cols-12 gap-5 sm:gap-6">
               {/* Left Sub-column: Detail Item & Diskon */}
-              <div className="md:col-span-6 space-y-4">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+              <div className="md:col-span-6 space-y-3.5 sm:space-y-4">
+                <h4 className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">
                   Rincian Akses Alerin
                 </h4>
 
-                <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200/80 space-y-3">
+                <div className="bg-slate-50 rounded-2xl p-3.5 sm:p-4 border border-slate-200/80 space-y-3">
                   <div className="flex justify-between items-center text-xs pb-2 border-b border-slate-200/60">
                     <span className="text-slate-500">Durasi Langganan:</span>
-                    <span className="font-bold text-slate-900 bg-white px-2.5 py-1 rounded-md border border-slate-200">
+                    <span className="font-bold text-slate-900 bg-white px-2.5 py-1 rounded-md border border-slate-200 shadow-2xs">
                       {getDurationReadable(currentDuration, currentTier)}
                     </span>
                   </div>
@@ -2667,7 +2673,7 @@ export default function UpgradePage() {
                             className="flex justify-between items-center text-slate-700"
                           >
                             <span className="flex items-center gap-1.5 font-medium truncate">
-                              <span className="w-1.5 h-1.5 rounded-full bg-brand-600 shrink-0" />
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#155dfc] shrink-0" />
                               {item.name}
                             </span>
                             <span className="font-semibold shrink-0 ml-2">
@@ -2686,13 +2692,13 @@ export default function UpgradePage() {
                       <span>{formatRupiah(subtotal)}</span>
                     </div>
                     {bundlingDiscount > 0 && (
-                      <div className="flex justify-between text-brand-600 font-semibold">
+                      <div className="flex justify-between text-[#155dfc] font-semibold">
                         <span>Potongan Bundling Hemat:</span>
                         <span>-{formatRupiah(bundlingDiscount)}</span>
                       </div>
                     )}
                     {appliedVoucher && voucherDiscount > 0 && (
-                      <div className="flex justify-between text-brand-600 font-semibold">
+                      <div className="flex justify-between text-[#155dfc] font-semibold">
                         <span>Potongan Voucher:</span>
                         <span>-{formatRupiah(voucherDiscount)}</span>
                       </div>
@@ -2702,14 +2708,14 @@ export default function UpgradePage() {
                   {/* Grand total in modal */}
                   <div className="pt-3 border-t-2 border-dashed border-slate-200 flex justify-between items-baseline">
                     <span className="text-xs font-bold text-slate-700">Total Akhir:</span>
-                    <span className="text-xl font-black text-brand-700">
+                    <span className="text-lg sm:text-xl font-black text-[#155dfc]">
                       {formatRupiah(grandTotal)}
                     </span>
                   </div>
                 </div>
 
                 {/* Account recipient info */}
-                <div className="p-3 bg-brand-50/50 rounded-xl border border-brand-100 flex items-center gap-3">
+                <div className="p-3 bg-blue-50/40 rounded-xl border border-blue-100/80 flex items-center gap-3">
                   <div
                     className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0 shadow-xs"
                     style={{ background: "linear-gradient(135deg,#f59e0b,#d97706)" }}
@@ -2728,40 +2734,43 @@ export default function UpgradePage() {
               </div>
 
               {/* Right Sub-column: Metode Pembayaran */}
-              <div className="md:col-span-6 space-y-4">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+              <div className="md:col-span-6 space-y-3.5 sm:space-y-4">
+                <h4 className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">
                   Pilih Metode Pembayaran
                 </h4>
 
-                <div className="space-y-2.5 text-xs">
+                <div className="space-y-2 sm:space-y-2.5 text-xs">
                   {/* Method 1: QRIS Instant (Default) */}
                   <label
                     onClick={() => setSelectedPaymentMethod("qris")}
-                    className={`payment-method-card flex items-center justify-between p-3.5 rounded-2xl cursor-pointer transition-all ${
+                    className={`payment-method-card flex items-center justify-between p-3 sm:p-3.5 rounded-2xl cursor-pointer transition-all ${
                       selectedPaymentMethod === "qris"
-                        ? "border-2 border-brand-600 bg-brand-50/30"
+                        ? "border-2 border-[#155dfc] bg-blue-50/40 shadow-xs"
                         : "border border-slate-200 hover:border-slate-300 bg-white"
                     }`}
                   >
-                    <div className="flex items-center gap-3">
-                      <input
-                        type="radio"
-                        name="payment_method"
-                        value="qris"
-                        checked={selectedPaymentMethod === "qris"}
-                        onChange={() => setSelectedPaymentMethod("qris")}
-                        className="w-4 h-4 text-brand-600 focus:ring-brand-500 cursor-pointer"
-                      />
-                      <div>
-                        <span className="font-bold text-slate-900 block">
+                    <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                      <div
+                        className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 transition-all ${
+                          selectedPaymentMethod === "qris"
+                            ? "border-[#155dfc] bg-[#155dfc]"
+                            : "border-slate-300 bg-white"
+                        }`}
+                      >
+                        {selectedPaymentMethod === "qris" && (
+                          <div className="w-1.5 h-1.5 rounded-full bg-white" />
+                        )}
+                      </div>
+                      <div className="min-w-0">
+                        <span className="font-bold text-slate-900 block truncate">
                           QRIS (GoPay, OVO, ShopeePay, BCA)
                         </span>
-                        <span className="text-[11px] text-slate-500">
+                        <span className="text-[11px] text-slate-500 block">
                           Scan cepat, verifikasi otomatis 5 detik
                         </span>
                       </div>
                     </div>
-                    <span className="text-[10px] font-extrabold uppercase bg-brand-100 text-brand-700 px-2 py-0.5 rounded">
+                    <span className="text-[10px] font-extrabold uppercase bg-blue-100 text-[#155dfc] px-2 py-0.5 rounded shrink-0 ml-2">
                       Instan
                     </span>
                   </label>
@@ -2769,99 +2778,108 @@ export default function UpgradePage() {
                   {/* Method 2: Virtual Account */}
                   <label
                     onClick={() => setSelectedPaymentMethod("va")}
-                    className={`payment-method-card flex items-center justify-between p-3.5 rounded-2xl cursor-pointer transition-all ${
+                    className={`payment-method-card flex items-center justify-between p-3 sm:p-3.5 rounded-2xl cursor-pointer transition-all ${
                       selectedPaymentMethod === "va"
-                        ? "border-2 border-brand-600 bg-brand-50/30"
+                        ? "border-2 border-[#155dfc] bg-blue-50/40 shadow-xs"
                         : "border border-slate-200 hover:border-slate-300 bg-white"
                     }`}
                   >
-                    <div className="flex items-center gap-3">
-                      <input
-                        type="radio"
-                        name="payment_method"
-                        value="va"
-                        checked={selectedPaymentMethod === "va"}
-                        onChange={() => setSelectedPaymentMethod("va")}
-                        className="w-4 h-4 text-brand-600 focus:ring-brand-500 cursor-pointer"
-                      />
-                      <div>
-                        <span className="font-bold text-slate-900 block">
+                    <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                      <div
+                        className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 transition-all ${
+                          selectedPaymentMethod === "va"
+                            ? "border-[#155dfc] bg-[#155dfc]"
+                            : "border-slate-300 bg-white"
+                        }`}
+                      >
+                        {selectedPaymentMethod === "va" && (
+                          <div className="w-1.5 h-1.5 rounded-full bg-white" />
+                        )}
+                      </div>
+                      <div className="min-w-0">
+                        <span className="font-bold text-slate-900 block truncate">
                           Virtual Account (Bank Transfer)
                         </span>
-                        <span className="text-[11px] text-slate-500">
+                        <span className="text-[11px] text-slate-500 block">
                           BCA, Mandiri, BNI, BRI, Permata
                         </span>
                       </div>
                     </div>
-                    <span className="text-xs font-semibold text-slate-400">VA</span>
+                    <span className="text-xs font-semibold text-slate-400 shrink-0 ml-2">VA</span>
                   </label>
 
                   {/* Method 3: E-Wallet Langsung */}
                   <label
                     onClick={() => setSelectedPaymentMethod("ewallet")}
-                    className={`payment-method-card flex items-center justify-between p-3.5 rounded-2xl cursor-pointer transition-all ${
+                    className={`payment-method-card flex items-center justify-between p-3 sm:p-3.5 rounded-2xl cursor-pointer transition-all ${
                       selectedPaymentMethod === "ewallet"
-                        ? "border-2 border-brand-600 bg-brand-50/30"
+                        ? "border-2 border-[#155dfc] bg-blue-50/40 shadow-xs"
                         : "border border-slate-200 hover:border-slate-300 bg-white"
                     }`}
                   >
-                    <div className="flex items-center gap-3">
-                      <input
-                        type="radio"
-                        name="payment_method"
-                        value="ewallet"
-                        checked={selectedPaymentMethod === "ewallet"}
-                        onChange={() => setSelectedPaymentMethod("ewallet")}
-                        className="w-4 h-4 text-brand-600 focus:ring-brand-500 cursor-pointer"
-                      />
-                      <div>
-                        <span className="font-bold text-slate-900 block">E-Wallet Direct</span>
-                        <span className="text-[11px] text-slate-500">
+                    <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                      <div
+                        className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 transition-all ${
+                          selectedPaymentMethod === "ewallet"
+                            ? "border-[#155dfc] bg-[#155dfc]"
+                            : "border-slate-300 bg-white"
+                        }`}
+                      >
+                        {selectedPaymentMethod === "ewallet" && (
+                          <div className="w-1.5 h-1.5 rounded-full bg-white" />
+                        )}
+                      </div>
+                      <div className="min-w-0">
+                        <span className="font-bold text-slate-900 block truncate">E-Wallet Direct</span>
+                        <span className="text-[11px] text-slate-500 block">
                           DANA, GoPay Saldo, OVO Direct
                         </span>
                       </div>
                     </div>
-                    <span className="text-xs font-semibold text-slate-400">App</span>
+                    <span className="text-xs font-semibold text-slate-400 shrink-0 ml-2">App</span>
                   </label>
 
                   {/* Method 4: Kartu Kredit / Debit Online */}
                   <label
                     onClick={() => setSelectedPaymentMethod("cc")}
-                    className={`payment-method-card flex items-center justify-between p-3.5 rounded-2xl cursor-pointer transition-all ${
+                    className={`payment-method-card flex items-center justify-between p-3 sm:p-3.5 rounded-2xl cursor-pointer transition-all ${
                       selectedPaymentMethod === "cc"
-                        ? "border-2 border-brand-600 bg-brand-50/30"
+                        ? "border-2 border-[#155dfc] bg-blue-50/40 shadow-xs"
                         : "border border-slate-200 hover:border-slate-300 bg-white"
                     }`}
                   >
-                    <div className="flex items-center gap-3">
-                      <input
-                        type="radio"
-                        name="payment_method"
-                        value="cc"
-                        checked={selectedPaymentMethod === "cc"}
-                        onChange={() => setSelectedPaymentMethod("cc")}
-                        className="w-4 h-4 text-brand-600 focus:ring-brand-500 cursor-pointer"
-                      />
-                      <div>
-                        <span className="font-bold text-slate-900 block">
+                    <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                      <div
+                        className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 transition-all ${
+                          selectedPaymentMethod === "cc"
+                            ? "border-[#155dfc] bg-[#155dfc]"
+                            : "border-slate-300 bg-white"
+                        }`}
+                      >
+                        {selectedPaymentMethod === "cc" && (
+                          <div className="w-1.5 h-1.5 rounded-full bg-white" />
+                        )}
+                      </div>
+                      <div className="min-w-0">
+                        <span className="font-bold text-slate-900 block truncate">
                           Kartu Kredit / Debit Online
                         </span>
-                        <span className="text-[11px] text-slate-500">
+                        <span className="text-[11px] text-slate-500 block">
                           Visa, Mastercard, JCB (3D Secure)
                         </span>
                       </div>
                     </div>
-                    <span className="text-xs font-semibold text-slate-400">Card</span>
+                    <span className="text-xs font-semibold text-slate-400 shrink-0 ml-2">Card</span>
                   </label>
                 </div>
 
                 {/* Simulation Pay Button */}
-                <div className="pt-2">
+                <div className="pt-2 sm:pt-3">
                   <button
                     type="button"
                     disabled={isPaymentProcessing}
                     onClick={handleExecutePayment}
-                    className="w-full py-3.5 px-6 bg-[#1A73E8] hover:bg-[#1557b0] text-white font-bold text-sm rounded-2xl shadow-lg shadow-[#1A73E8]/25 transition-all flex items-center justify-center gap-2 active:scale-[0.98] cursor-pointer disabled:opacity-75"
+                    className="w-full py-3.5 px-6 bg-[#155dfc] hover:bg-[#124bcf] active:scale-[0.98] text-white font-bold text-sm rounded-xl sm:rounded-2xl shadow-lg shadow-[#155dfc]/25 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75"
                   >
                     {isPaymentProcessing ? (
                       <>
@@ -2894,6 +2912,8 @@ export default function UpgradePage() {
                           fill="none"
                           stroke="currentColor"
                           strokeWidth="2.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
                         >
                           <polyline points="20 6 9 17 4 12" />
                         </svg>
@@ -2901,7 +2921,7 @@ export default function UpgradePage() {
                       </>
                     )}
                   </button>
-                  <p className="text-[11px] text-center text-slate-400 mt-2">
+                  <p className="text-[11px] text-center text-slate-400 mt-2.5 pb-2 leading-relaxed">
                     Dengan mengklik tombol, Anda menyetujui Ketentuan Layanan & Privasi Alerin.
                   </p>
                 </div>
