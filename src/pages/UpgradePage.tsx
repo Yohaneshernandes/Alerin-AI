@@ -2070,7 +2070,7 @@ export default function UpgradePage() {
             {/* VOUCHER CODE BOX */}
             <div className="bg-white border border-slate-300 rounded-2xl p-4 sm:p-5 shadow-subtle">
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
-                Punya Kode Promo / Voucher?
+                Punya Kode Promo/Voucher?
               </label>
               <div className="flex gap-2">
                 <div className="relative flex-1">
@@ -2843,7 +2843,7 @@ export default function UpgradePage() {
                       </div>
                       <div className="min-w-0">
                         <span className="font-bold text-slate-900 block truncate">
-                          Kartu Kredit / Debit Online
+                          Kartu Kredit/Debit Online
                         </span>
                         <span className="text-[11px] text-slate-500 block">
                           Visa, Mastercard, JCB (3D Secure)
@@ -3030,8 +3030,7 @@ export default function UpgradePage() {
                     <div>
                       <h3 className="text-base font-extrabold text-slate-900">{detail.name}</h3>
                       <p className="text-xs font-bold text-brand-600 mt-0.5">
-                        {formatRupiah(getPrice(activeModalFeatureKey || ""))} /{" "}
-                        {getDurationReadable(currentDuration, currentTier)}
+                        {formatRupiah(getPrice(activeModalFeatureKey || ""))}/{getDurationReadable(currentDuration, currentTier)}
                       </p>
                     </div>
                   </div>
