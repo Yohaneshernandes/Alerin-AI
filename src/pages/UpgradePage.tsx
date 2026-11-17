@@ -1979,15 +1979,30 @@ export default function UpgradePage() {
                       <div className="flex items-start justify-between gap-3">
                         <div className="flex items-center gap-3 min-w-0">
                           <span
-                            className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl transition-transform group-hover:scale-105 ${
-                              item.framedIcon ? "bg-[#eff6ff]" : ""
+                            className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#eff6ff] transition-transform group-hover:scale-105 ${
+                              item.framedIcon ? "" : "md:bg-transparent"
                             }`}
                           >
-                            <img
-                              src={`/assets/fitur-design/${item.icon}`}
-                              alt=""
-                              className={item.iconClass || "h-11 w-11"}
-                            />
+                            {item.mobileIcon ? (
+                              <>
+                                <img
+                                  src={`/assets/fitur-design/${item.mobileIcon}`}
+                                  alt=""
+                                  className="md:hidden"
+                                />
+                                <img
+                                  src={`/assets/fitur-design/${item.icon}`}
+                                  alt=""
+                                  className={`hidden md:block ${item.iconClass || "h-11 w-11"}`}
+                                />
+                              </>
+                            ) : (
+                              <img
+                                src={`/assets/fitur-design/${item.icon}`}
+                                alt=""
+                                className={item.iconClass || "h-11 w-11"}
+                              />
+                            )}
                           </span>
                           <div className="min-w-0">
                             <h3 className="text-base sm:text-lg font-extrabold text-slate-900 group-hover:text-[#155dfc] transition-colors tracking-tight truncate">
@@ -3018,23 +3033,33 @@ export default function UpgradePage() {
                 <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
                   <div className="flex items-center gap-3">
                     <span
-                      className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl ${
-                        pricing.framedIcon ? "bg-[#eff6ff]" : ""
+                      className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#eff6ff] ${
+                        pricing.framedIcon ? "" : "md:bg-transparent"
                       }`}
                     >
-                      <img
-                        src={`/assets/fitur-design/${pricing.icon}`}
-                        alt=""
-                        className={pricing.iconClass || "h-11 w-11"}
-                      />
+                      {pricing.mobileIcon ? (
+                        <>
+                          <img
+                            src={`/assets/fitur-design/${pricing.mobileIcon}`}
+                            alt=""
+                            className="md:hidden"
+                          />
+                          <img
+                            src={`/assets/fitur-design/${pricing.icon}`}
+                            alt=""
+                            className={`hidden md:block ${pricing.iconClass || "h-11 w-11"}`}
+                          />
+                        </>
+                      ) : (
+                        <img
+                          src={`/assets/fitur-design/${pricing.icon}`}
+                          alt=""
+                          className={pricing.iconClass || "h-11 w-11"}
+                        />
+                      )}
                     </span>
                     <div>
-                      <div className="flex items-center gap-2">
-                        <h3 className="text-base font-extrabold text-slate-900">{detail.name}</h3>
-                        <span className="text-[10px] font-bold text-brand-700 bg-brand-50 px-2 py-0.5 rounded-full border border-brand-200">
-                          {detail.tag}
-                        </span>
-                      </div>
+                      <h3 className="text-base font-extrabold text-slate-900">{detail.name}</h3>
                       <p className="text-xs font-bold text-brand-600 mt-0.5">
                         {formatRupiah(getPrice(activeModalFeatureKey || ""))} /{" "}
                         {getDurationReadable(currentDuration, currentTier)}
@@ -3052,30 +3077,6 @@ export default function UpgradePage() {
 
                 {/* Modal Body */}
                 <div className="p-6 space-y-4">
-                  {/* Alerin Chat Highlight Box */}
-                  <div className="p-3.5 rounded-2xl bg-brand-50 border border-brand-200 flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-xl bg-brand-600 text-white flex items-center justify-center shrink-0 shadow-sm">
-                      <svg
-                        className="w-5 h-5"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2.2"
-                      >
-                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                      </svg>
-                    </div>
-                    <div>
-                      <span className="text-xs font-bold text-brand-900 block">
-                        Sudah Termasuk Alerin Chat Induk
-                      </span>
-                      <span className="text-[11px] text-brand-700">
-                        AI chat akademis interaktif tanpa batas untuk diskusi materi & asistensi
-                        penulisan real-time.
-                      </span>
-                    </div>
-                  </div>
-
                   <div>
                     <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
                       Deskripsi & Ruang Lingkup
@@ -3126,7 +3127,7 @@ export default function UpgradePage() {
                     className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                       isSelected
                         ? "bg-slate-200 text-slate-700 hover:bg-slate-300"
-                        : "bg-[#1A73E8] hover:bg-[#1557b0] text-white shadow-md shadow-[#1A73E8]/20"
+                        : "bg-[#155dfc] hover:bg-[#124bcf] text-white shadow-md shadow-[#155dfc]/25"
                     }`}
                   >
                     <svg
