@@ -1975,63 +1975,10 @@ export default function UpgradePage() {
                     }`}
                   >
                     <div>
-                      {/* Top row: Icon + Title & Tag on left; Price + Checkbox on right */}
+                      {/* Top row: Checkbox + Title on left; Price on right */}
                       <div className="flex items-start justify-between gap-3">
                         <div className="flex items-center gap-3 min-w-0">
-                          <span
-                            className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#eff6ff] transition-transform group-hover:scale-105 ${
-                              item.framedIcon ? "" : "md:bg-transparent"
-                            }`}
-                          >
-                            {item.mobileIcon ? (
-                              <>
-                                <img
-                                  src={`/assets/fitur-design/${item.mobileIcon}`}
-                                  alt=""
-                                  className="md:hidden"
-                                />
-                                <img
-                                  src={`/assets/fitur-design/${item.icon}`}
-                                  alt=""
-                                  className={`hidden md:block ${item.iconClass || "h-11 w-11"}`}
-                                />
-                              </>
-                            ) : (
-                              <img
-                                src={`/assets/fitur-design/${item.icon}`}
-                                alt=""
-                                className={item.iconClass || "h-11 w-11"}
-                              />
-                            )}
-                          </span>
-                          <div className="min-w-0">
-                            <h3 className="text-base sm:text-lg font-extrabold text-slate-900 group-hover:text-[#155dfc] transition-colors tracking-tight truncate">
-                              {item.name}
-                            </h3>
-                            <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-100 inline-block mt-0.5">
-                              {item.tag}
-                            </span>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-2.5 shrink-0">
-                          <div className="text-right">
-                            {currentDuration === "1y" && (
-                              <span className="text-[11px] text-slate-400 line-through mr-1 block">
-                                {formatRupiah(item.original_yearly)}
-                              </span>
-                            )}
-                            <div className="flex items-baseline justify-end whitespace-nowrap">
-                              <span className="text-sm sm:text-base font-extrabold text-slate-900 whitespace-nowrap">
-                                {formatRupiah(price)}
-                              </span>
-                              <span className="text-xs sm:text-sm text-slate-500 font-normal whitespace-nowrap">
-                                {durationLabel}
-                              </span>
-                            </div>
-                          </div>
-
-                          {/* Tombol centang di samping kanan */}
+                          {/* Tombol centang di depan */}
                           <div
                             className={`w-5 h-5 rounded-md flex items-center justify-center transition-all shrink-0 ${
                               isSelected
@@ -2052,6 +1999,27 @@ export default function UpgradePage() {
                                 <polyline points="20 6 9 17 4 12" />
                               </svg>
                             )}
+                          </div>
+                          <div className="min-w-0">
+                            <h3 className="text-base sm:text-lg font-extrabold text-slate-900 group-hover:text-[#155dfc] transition-colors tracking-tight truncate">
+                              {item.name}
+                            </h3>
+                          </div>
+                        </div>
+
+                        <div className="text-right shrink-0">
+                          {currentDuration === "1y" && (
+                            <span className="text-[11px] text-slate-400 line-through mr-1 block">
+                              {formatRupiah(item.original_yearly)}
+                            </span>
+                          )}
+                          <div className="flex items-baseline justify-end whitespace-nowrap">
+                            <span className="text-sm sm:text-base font-extrabold text-slate-900 whitespace-nowrap">
+                              {formatRupiah(price)}
+                            </span>
+                            <span className="text-xs sm:text-sm text-slate-500 font-normal whitespace-nowrap">
+                              {durationLabel}
+                            </span>
                           </div>
                         </div>
                       </div>
