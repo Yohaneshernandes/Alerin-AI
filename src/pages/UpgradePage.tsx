@@ -1053,6 +1053,74 @@ export default function UpgradePage() {
     }
   };
 
+  const handleDownloadInvoice = () => {
+    try {
+      const canvas = document.createElement("canvas");
+      canvas.width = 720;
+      canvas.height = 560;
+      const ctx = canvas.getContext("2d");
+      if (ctx) {
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = "#1A73E8";
+        ctx.fillRect(0, 0, canvas.width, 96);
+
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 28px sans-serif";
+        ctx.fillText("INVOICE PEMBAYARAN ALERIN", 40, 58);
+
+        ctx.fillStyle = "#0f172a";
+        ctx.font = "bold 20px sans-serif";
+        ctx.fillText("Status: LUNAS", 40, 148);
+
+        ctx.fillStyle = "#475569";
+        ctx.font = "18px sans-serif";
+        const methodLabel =
+          mobilePaymentType === "va_bca"
+            ? "BCA Virtual Account"
+            : mobilePaymentType === "shopeepay"
+            ? "ShopeePay/SPayLater"
+            : "QRIS";
+        ctx.fillText(`ID Transaksi   : ALR-2026-8891B`, 40, 204);
+        ctx.fillText(
+          `Paket Aktif    : Alerin ${currentTier === "pro" ? "Pro" : "Plus"} (${selectedFeatures.size} Fitur)`,
+          40,
+          244
+        );
+        ctx.fillText(`Masa Berlaku   : ${getDurationReadable(currentDuration, currentTier)}`, 40, 284);
+        ctx.fillText(`Metode Bayar   : ${methodLabel}`, 40, 324);
+
+        ctx.strokeStyle = "#cbd5e1";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(40, 368);
+        ctx.lineTo(680, 368);
+        ctx.stroke();
+
+        ctx.fillStyle = "#0f172a";
+        ctx.font = "bold 24px sans-serif";
+        ctx.fillText(`Total Dibayar`, 40, 420);
+        ctx.fillStyle = "#1A73E8";
+        ctx.textAlign = "right";
+        ctx.fillText(formatRupiah(grandTotal), 680, 420);
+
+        ctx.textAlign = "left";
+        ctx.fillStyle = "#64748b";
+        ctx.font = "14px sans-serif";
+        ctx.fillText("Terima kasih telah berlangganan Alerin AI.", 40, 500);
+
+        const link = document.createElement("a");
+        link.download = "Invoice-Alerin.png";
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+      }
+      showToast("Invoice berhasil diunduh", "success");
+    } catch {
+      showToast("Gagal mengunduh invoice", "warning");
+    }
+  };
+
   const durationLabel =
     currentDuration === "7d" ? "/7 hari" : currentDuration === "30d" ? "/30 hari" : "/tahun";
 
@@ -4617,85 +4685,71 @@ export default function UpgradePage() {
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="bg-white rounded-[26px] max-w-[380px] w-full p-6 text-center shadow-2xl border border-slate-200/80 animate-[gemini-zoom-in_0.18s_ease-out]"
+            className="bg-white rounded-[24px] max-w-[360px] w-full px-6 py-8 text-center shadow-2xl border border-slate-100 animate-[gemini-zoom-in_0.18s_ease-out]"
           >
-            {/* Success Checkmark */}
-            <div className="size-16 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-600 mx-auto flex items-center justify-center shadow-2xs">
-              <svg
-                className="w-8 h-8"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <polyline points="20 6 9 17 4 12" />
-              </svg>
-            </div>
+            {/* 3D Blue Verified Checkmark Badge */}
+            <img
+              src="/assets/payment-logos/verified-badge.png"
+              alt="Pembayaran Berhasil"
+              className="w-28 h-28 mx-auto object-contain drop-shadow-sm select-none"
+            />
 
-            <h3 className="text-[21px] font-extrabold text-slate-950 tracking-tight mt-4">
-              Pembayaran Berhasil!
+            <h3 className="text-[23px] font-extrabold text-black tracking-tight mt-4 leading-tight">
+              Pembayaran Berhasil
             </h3>
-            <p className="text-[13px] text-slate-600 mt-2 leading-relaxed">
-              Terima kasih! Paket langganan kamu sudah aktif. Sekarang kamu bisa langsung menikmati seluruh fitur pilihan Alerin untuk mendampingi riset dan penulisan akademikmu.
+            <p className="text-[13.5px] text-slate-800 mt-2.5 leading-relaxed max-w-[290px] mx-auto">
+              Terima kasih telah melakukan pembayaran. Paket kamu sudah aktif, silakan mulai nikmati fitur Alerin.
             </p>
 
-            {/* Clean Receipt Summary */}
-            <div className="mt-5 rounded-2xl border border-slate-200/80 bg-slate-50/70 overflow-hidden text-left">
-              <div className="px-4 py-3 space-y-2 text-xs">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-slate-500">Paket Aktif</span>
-                  <span className="font-semibold text-slate-900">
-                    Alerin {currentTier === "pro" ? "Pro" : "Plus"} · {selectedFeatures.size} Fitur
-                  </span>
-                </div>
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-slate-500">Masa Berlaku</span>
-                  <span className="font-semibold text-slate-900">
-                    {getDurationReadable(currentDuration, currentTier)}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-slate-500">Metode</span>
-                  <span className="font-semibold text-slate-900">
-                    {mobilePaymentType === "va_bca"
-                      ? "BCA Virtual Account"
-                      : mobilePaymentType === "shopeepay"
-                      ? "ShopeePay/SPayLater"
-                      : "QRIS"}
-                  </span>
-                </div>
+            {/* Email Konfirmasi Info Box */}
+            <div className="mt-6 rounded-2xl bg-[#EEF4FF] px-4 py-3.5 flex items-center gap-3.5 text-left">
+              <div className="size-10 rounded-full bg-[#3374E4] text-white flex items-center justify-center shrink-0">
+                <svg
+                  className="w-5 h-5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M2 8h3" />
+                  <path d="M1 12h4" />
+                  <path d="M2 16h3" />
+                  <rect x="7" y="6" width="15" height="12" rx="2" />
+                  <path d="m7 8 7.5 5L22 8" />
+                </svg>
               </div>
-              <div className="px-4 py-3 border-t border-slate-200/70 bg-white flex items-center justify-between gap-2">
-                <span className="text-xs font-bold text-slate-900">Total Dibayar</span>
-                <span className="text-sm font-extrabold text-slate-950 tabular-nums">
-                  {formatRupiah(grandTotal)}
-                </span>
+              <div className="min-w-0">
+                <h4 className="text-[13.5px] font-bold text-slate-900 leading-snug">
+                  Email Konfirmasi
+                </h4>
+                <p className="text-[12px] text-slate-600 leading-snug mt-0.5">
+                  Cek email kamu untuk melihat hasil verifikasi
+                </p>
               </div>
             </div>
 
-            <button
-              type="button"
-              onClick={() => {
-                setIsSuccessModalOpen(false);
-                navigate("/");
-              }}
-              className="w-full mt-5 py-3.5 px-5 bg-[#1A73E8] hover:bg-[#1557b0] active:scale-[0.98] text-white font-bold text-sm rounded-2xl shadow-md shadow-[#1A73E8]/25 transition-all flex items-center justify-center gap-2 cursor-pointer"
-            >
-              <span>Mulai Nikmati Alerin</span>
-              <svg
-                className="w-4 h-4"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+            {/* Action Buttons */}
+            <div className="mt-6 space-y-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsSuccessModalOpen(false);
+                  navigate("/");
+                }}
+                className="w-full py-3.5 px-5 bg-[#1A73E8] hover:bg-[#1557b0] active:scale-[0.98] text-white font-bold text-sm rounded-xl shadow-xs transition-all cursor-pointer"
               >
-                <path d="M5 12h14m-7-7 7 7-7 7" />
-              </svg>
-            </button>
+                Mulai Nikmati Alerin
+              </button>
+              <button
+                type="button"
+                onClick={handleDownloadInvoice}
+                className="w-full py-3.5 px-5 bg-[#5E6D7E] hover:bg-[#4e5b6a] active:scale-[0.98] text-white font-bold text-sm rounded-xl shadow-xs transition-all cursor-pointer"
+              >
+                Download Invoice
+              </button>
+            </div>
           </div>
         </div>
       )}
