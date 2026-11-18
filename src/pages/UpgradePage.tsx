@@ -651,9 +651,13 @@ export default function UpgradePage() {
   const [activeModalFeatureKey, setActiveModalFeatureKey] = useState<string | null>(null);
   const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
   const [isQrisModalOpen, setIsQrisModalOpen] = useState(false);
-  const [mobilePaymentType, setMobilePaymentType] = useState<"qris" | "va_bca" | "shopeepay">("qris");
+  const [mobilePaymentType, setMobilePaymentType] = useState<"qris" | "va_bca" | "shopeepay" | "card">("qris");
   const [bcaGuideTab, setBcaGuideTab] = useState<"atm" | "klikbca" | "mbca" | null>("atm");
   const [shopeeGuideOpen, setShopeeGuideOpen] = useState(true);
+  const [cardGuideOpen, setCardGuideOpen] = useState(true);
+  const [cardNumber, setCardNumber] = useState("");
+  const [cardExpiry, setCardExpiry] = useState("");
+  const [cardCvv, setCardCvv] = useState("");
   const [isQrisLoading, setIsQrisLoading] = useState(false);
   const [cancelPaymentModalOpen, setCancelPaymentModalOpen] = useState(false);
   const [cancelPaymentReason, setCancelPaymentReason] = useState<string>("Saya berubah pikiran");
@@ -965,8 +969,8 @@ export default function UpgradePage() {
   };
 
   // Payment Execution Simulation
-  const handleExecutePayment = () => {
-    if (typeof window !== "undefined" && window.innerWidth < 768) {
+  const handleExecutePayment = (forceMobile = false) => {
+    if (forceMobile || (typeof window !== "undefined" && window.innerWidth < 768)) {
       if (selectedPaymentMethod === "qris") {
         setMobilePaymentType("qris");
         setQrisGuideOpen(true);
@@ -988,6 +992,15 @@ export default function UpgradePage() {
       if (selectedPaymentMethod === "shopeepay") {
         setMobilePaymentType("shopeepay");
         setShopeeGuideOpen(true);
+        setQrisSecondsLeft(3 * 3600 + 54 * 60 + 57);
+        setIsQrisLoading(true);
+        setIsQrisModalOpen(true);
+        checkoutScrollRef.current?.scrollTo({ top: 0 });
+        return;
+      }
+      if (selectedPaymentMethod === "cc") {
+        setMobilePaymentType("card");
+        setCardGuideOpen(true);
         setQrisSecondsLeft(3 * 3600 + 54 * 60 + 57);
         setIsQrisLoading(true);
         setIsQrisModalOpen(true);
@@ -1081,6 +1094,8 @@ export default function UpgradePage() {
             ? "BCA Virtual Account"
             : mobilePaymentType === "shopeepay"
             ? "ShopeePay/SPayLater"
+            : mobilePaymentType === "card"
+            ? "Card Payment"
             : "QRIS";
         ctx.fillText(`ID Transaksi   : ALR-2026-8891B`, 40, 204);
         ctx.fillText(
@@ -3171,6 +3186,58 @@ export default function UpgradePage() {
                           <div className="mt-5 h-12 w-full rounded-2xl bg-slate-200/85 shimmer-sweep" />
                           <div className="mt-3 h-12 w-full rounded-2xl bg-slate-200/80 shimmer-sweep" />
                         </div>
+                      ) : mobilePaymentType === "card" ? (
+                        <div className="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-2xs">
+                          {/* Back + Title */}
+                          <div className="flex items-center gap-2.5">
+                            <div className="size-6 rounded-md bg-slate-200/80 shimmer-sweep" />
+                            <div className="h-5 w-36 rounded-md bg-slate-200/85 shimmer-sweep" />
+                          </div>
+                          {/* 5 Card Logos */}
+                          <div className="mt-4 flex items-center gap-2.5">
+                            <div className="h-5 w-12 rounded bg-slate-200/85 shimmer-sweep" />
+                            <div className="h-5 w-8 rounded bg-slate-200/85 shimmer-sweep" />
+                            <div className="h-5 w-8 rounded bg-slate-200/80 shimmer-sweep" />
+                            <div className="h-5 w-7 rounded bg-slate-200/80 shimmer-sweep" />
+                            <div className="h-5 w-9 rounded bg-slate-200/80 shimmer-sweep" />
+                          </div>
+                          {/* Description lines */}
+                          <div className="mt-4 space-y-2">
+                            <div className="h-3 w-full rounded-md bg-slate-200/75 shimmer-sweep" />
+                            <div className="h-3 w-11/12 rounded-md bg-slate-200/75 shimmer-sweep" />
+                            <div className="h-3 w-2/3 rounded-md bg-slate-200/70 shimmer-sweep" />
+                          </div>
+                          {/* 3 Input fields */}
+                          <div className="mt-5 space-y-4">
+                            <div className="space-y-2">
+                              <div className="h-3.5 w-24 rounded bg-slate-200/85 shimmer-sweep" />
+                              <div className="h-12 w-full rounded-xl bg-slate-200/75 shimmer-sweep" />
+                            </div>
+                            <div className="space-y-2">
+                              <div className="h-3.5 w-28 rounded bg-slate-200/85 shimmer-sweep" />
+                              <div className="h-12 w-full rounded-xl bg-slate-200/75 shimmer-sweep" />
+                            </div>
+                            <div className="space-y-2">
+                              <div className="h-3.5 w-12 rounded bg-slate-200/85 shimmer-sweep" />
+                              <div className="h-12 w-full rounded-xl bg-slate-200/75 shimmer-sweep" />
+                            </div>
+                          </div>
+                          {/* Petunjuk Penggunaan */}
+                          <div className="mt-5 space-y-3">
+                            <div className="flex items-center gap-2">
+                              <div className="size-5 rounded-full bg-slate-200/85 shimmer-sweep shrink-0" />
+                              <div className="h-4 w-40 rounded-md bg-slate-200/80 shimmer-sweep" />
+                            </div>
+                            <div className="p-4 rounded-xl bg-slate-100/90 space-y-2.5">
+                              <div className="h-3 w-11/12 rounded-md bg-slate-200/80 shimmer-sweep" />
+                              <div className="h-3 w-full rounded-md bg-slate-200/80 shimmer-sweep" />
+                              <div className="h-3 w-4/5 rounded-md bg-slate-200/80 shimmer-sweep" />
+                              <div className="h-3 w-5/6 rounded-md bg-slate-200/80 shimmer-sweep" />
+                            </div>
+                          </div>
+                          {/* Bayar Sekarang button */}
+                          <div className="mt-5 h-12 w-full rounded-2xl bg-slate-200/85 shimmer-sweep" />
+                        </div>
                       ) : (
                         <div className="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-2xs">
                           {/* Logo shape */}
@@ -3570,6 +3637,207 @@ export default function UpgradePage() {
                           Batalkan
                         </button>
                       </div>
+                    ) : mobilePaymentType === "card" ? (
+                      <div className="bg-white rounded-3xl p-5 border border-slate-200/75 shadow-2xs">
+                        {/* Header: Back arrow + Card Payment */}
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setIsQrisModalOpen(false)}
+                            aria-label="Kembali ke metode pembayaran"
+                            className="size-8 -ml-1.5 rounded-full flex items-center justify-center text-black hover:bg-slate-100 active:scale-95 transition-all cursor-pointer shrink-0"
+                          >
+                            <svg
+                              className="w-5 h-5"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2.4"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <path d="m15 18-6-6 6-6" />
+                            </svg>
+                          </button>
+                          <h3 className="text-[19px] font-bold text-black tracking-tight">
+                            Card Payment
+                          </h3>
+                        </div>
+
+                        {/* 5 Card Network Logos: VISA, Mastercard, JCB, AMEX, UnionPay */}
+                        <div className="mt-4 flex items-center gap-3 flex-wrap">
+                          <img
+                            src="/assets/payment-logos/visa.png"
+                            alt="VISA"
+                            className="h-5 w-auto object-contain shrink-0"
+                          />
+                          {/* Mastercard */}
+                          <svg
+                            className="w-9 h-6 shrink-0"
+                            viewBox="0 0 32 20"
+                            fill="none"
+                            aria-label="Mastercard"
+                          >
+                            <circle cx="11" cy="10" r="8" fill="#EB001B" />
+                            <circle cx="21" cy="10" r="8" fill="#F79E1B" />
+                            <path
+                              d="M16 3.7a8 8 0 0 1 0 12.6 8 8 0 0 1 0-12.6z"
+                              fill="#FF5F00"
+                            />
+                          </svg>
+                          {/* JCB */}
+                          <span className="inline-flex items-center gap-[2px] bg-white p-[1.5px] rounded-[4px] border border-slate-200/80 shrink-0">
+                            <span className="w-[10px] h-[20px] rounded-[2px] bg-gradient-to-b from-[#1D4ED8] to-[#0284C7] text-[8.5px] font-black text-white flex items-center justify-center leading-none">
+                              J
+                            </span>
+                            <span className="w-[10px] h-[20px] rounded-[2px] bg-gradient-to-b from-[#991B1B] to-[#E11D48] text-[8.5px] font-black text-white flex items-center justify-center leading-none">
+                              C
+                            </span>
+                            <span className="w-[10px] h-[20px] rounded-[2px] bg-gradient-to-b from-[#15803D] to-[#65A30D] text-[8.5px] font-black text-white flex items-center justify-center leading-none">
+                              B
+                            </span>
+                          </span>
+                          {/* American Express */}
+                          <span className="inline-flex flex-col items-center justify-center w-[26px] h-[24px] rounded-[3px] bg-[#2E77BC] text-white font-extrabold leading-none tracking-tighter shrink-0">
+                            <span className="text-[4.5px]">AMERICAN</span>
+                            <span className="text-[5px] mt-[1px]">EXPRESS</span>
+                          </span>
+                          {/* UnionPay */}
+                          <span className="inline-flex items-center justify-center h-[24px] px-1.5 rounded-[4px] bg-gradient-to-r from-[#E21836] via-[#00447C] to-[#007B84] text-white font-bold text-[7px] italic tracking-tight leading-none shrink-0">
+                            UnionPay
+                          </span>
+                        </div>
+
+                        {/* Deskripsi */}
+                        <p className="text-[13px] leading-[1.6] text-neutral-700 mt-4">
+                          Masukkan detail kartu kredit atau debit Anda di bawah ini. Pastikan informasi yang dimasukkan sudah benar untuk memproses transaksi.
+                        </p>
+
+                        {/* Form Kartu */}
+                        <div className="mt-4 space-y-3.5">
+                          {/* Card Number */}
+                          <div>
+                            <label className="block text-[14px] font-bold text-black mb-1.5">
+                              Card Number
+                            </label>
+                            <input
+                              type="text"
+                              inputMode="numeric"
+                              autoComplete="cc-number"
+                              value={cardNumber}
+                              onChange={(e) => {
+                                const digits = e.target.value.replace(/\D/g, "").slice(0, 16);
+                                const formatted = digits.replace(/(\d{4})(?=\d)/g, "$1 ");
+                                setCardNumber(formatted);
+                              }}
+                              placeholder="1234 1234 1234 1234"
+                              className="w-full px-4 py-3 rounded-xl border border-neutral-400/90 text-[14px] font-medium text-neutral-800 placeholder:text-neutral-500/90 focus:outline-none focus:border-[#1A73E8] focus:ring-2 focus:ring-[#1A73E8]/15 transition-all"
+                            />
+                          </div>
+
+                          {/* Expiration Date */}
+                          <div>
+                            <label className="block text-[14px] font-semibold text-neutral-950 mb-1.5">
+                              Expiration Date
+                            </label>
+                            <input
+                              type="text"
+                              inputMode="numeric"
+                              autoComplete="cc-exp"
+                              value={cardExpiry}
+                              onChange={(e) => {
+                                const digits = e.target.value.replace(/\D/g, "").slice(0, 4);
+                                const formatted =
+                                  digits.length > 2
+                                    ? `${digits.slice(0, 2)}/${digits.slice(2)}`
+                                    : digits;
+                                setCardExpiry(formatted);
+                              }}
+                              placeholder="MM/YY"
+                              className="w-full px-4 py-3 rounded-xl border border-neutral-400/90 text-[14px] font-medium text-neutral-800 placeholder:text-neutral-500/90 focus:outline-none focus:border-[#1A73E8] focus:ring-2 focus:ring-[#1A73E8]/15 transition-all"
+                            />
+                          </div>
+
+                          {/* CVV */}
+                          <div>
+                            <label className="block text-[14px] font-semibold text-neutral-950 mb-1.5">
+                              CVV
+                            </label>
+                            <input
+                              type="password"
+                              inputMode="numeric"
+                              autoComplete="cc-csc"
+                              maxLength={4}
+                              value={cardCvv}
+                              onChange={(e) => {
+                                const digits = e.target.value.replace(/\D/g, "").slice(0, 4);
+                                setCardCvv(digits);
+                              }}
+                              placeholder="1234"
+                              className="w-full px-4 py-3 rounded-xl border border-neutral-400/90 text-[14px] font-medium text-neutral-800 placeholder:text-neutral-500/90 focus:outline-none focus:border-[#1A73E8] focus:ring-2 focus:ring-[#1A73E8]/15 transition-all"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Petunjuk Penggunaan */}
+                        <div className="mt-5">
+                          <button
+                            type="button"
+                            onClick={() => setCardGuideOpen((prev) => !prev)}
+                            className="flex items-center gap-2 text-left cursor-pointer group"
+                          >
+                            <span className="size-5 rounded-full bg-sky-900 text-white text-[11px] font-bold flex items-center justify-center shrink-0">
+                              ?
+                            </span>
+                            <span className="text-[13.5px] font-bold text-sky-900">
+                              Petunjuk Penggunaan
+                            </span>
+                            <svg
+                              className="w-3.5 h-3.5 text-sky-900/70 group-hover:text-sky-900 transition-colors"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2.3"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <path d="m7 15 5 5 5-5" />
+                              <path d="m7 9 5-5 5 5" />
+                            </svg>
+                          </button>
+
+                          {cardGuideOpen && (
+                            <ol className="mt-3 py-4 pr-4 pl-8 rounded-xl bg-blue-500/15 text-[12.5px] text-black font-medium leading-relaxed space-y-2 list-decimal list-outside">
+                              <li>Masukkan 16 digit nomor kartu kredit atau debit Anda.</li>
+                              <li>
+                                Isi masa berlaku kartu (Bulan/Tahun) serta 3 digit kode CVV/CVC yang tertera di belakang kartu Anda.
+                              </li>
+                              <li>Klik tombol bayar untuk melanjutkan transaksi.</li>
+                              <li>
+                                Masukkan kode OTP yang dikirimkan melalui SMS oleh bank penerbit kartu Anda (jika diminta).
+                              </li>
+                              <li>
+                                Transaksi selesai! Halaman akan otomatis dialihkan setelah pembayaran terverifikasi.
+                              </li>
+                            </ol>
+                          )}
+                        </div>
+
+                        {/* Tombol Biru Bayar Sekarang */}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setIsQrisModalOpen(false);
+                            setIsCheckoutModalOpen(false);
+                            setCurrentAccountPlan(currentTier === "pro" ? "Paket: Pro" : "Paket: Plus");
+                            setIsSuccessModalOpen(true);
+                          }}
+                          className="mt-5 w-full py-3.5 px-6 rounded-2xl bg-[#1A73E8] hover:bg-[#1557b0] active:scale-[0.98] text-white font-bold text-sm shadow-sm transition-all cursor-pointer"
+                        >
+                          Bayar Sekarang
+                        </button>
+                      </div>
                     ) : (
                     <div className="bg-white rounded-3xl p-5 border border-slate-200/75 shadow-2xs">
                       {/* Logo QRIS (klik untuk simulasi pembayaran berhasil) */}
@@ -3753,6 +4021,7 @@ export default function UpgradePage() {
                             onClick={() => {
                               setSelectedPaymentMethod("va");
                               setSelectedVaBank("bca");
+                              setMobilePaymentType("va_bca");
                             }}
                             className={`h-11 px-2.5 rounded-lg flex items-center justify-center transition-all cursor-pointer active:scale-[0.98] ${
                               selectedPaymentMethod === "va" && selectedVaBank === "bca"
@@ -3956,6 +4225,7 @@ export default function UpgradePage() {
                       type="button"
                       onClick={() => {
                         setSelectedPaymentMethod("qris");
+                        setMobilePaymentType("qris");
                         setVaDropdownOpen(false);
                       }}
                       className={`w-full flex items-center justify-between gap-2 px-3 py-3.5 rounded-xl transition-all cursor-pointer active:scale-[0.99] ${
@@ -4024,6 +4294,7 @@ export default function UpgradePage() {
                       type="button"
                       onClick={() => {
                         setSelectedPaymentMethod("shopeepay");
+                        setMobilePaymentType("shopeepay");
                         setVaDropdownOpen(false);
                       }}
                       className={`w-full flex items-center justify-between gap-2 px-3 py-3.5 rounded-xl transition-all cursor-pointer active:scale-[0.99] ${
@@ -4191,6 +4462,7 @@ export default function UpgradePage() {
                       type="button"
                       onClick={() => {
                         setSelectedPaymentMethod("cc");
+                        setMobilePaymentType("card");
                         setVaDropdownOpen(false);
                       }}
                       className={`w-full flex items-center justify-between gap-2 px-3 py-3.5 rounded-xl transition-all cursor-pointer active:scale-[0.99] ${
@@ -4475,7 +4747,7 @@ export default function UpgradePage() {
                   <button
                     type="button"
                     disabled={isPaymentProcessing}
-                    onClick={handleExecutePayment}
+                    onClick={() => handleExecutePayment(false)}
                     className="w-full py-3.5 px-6 bg-[#1A73E8] hover:bg-[#1557b0] active:scale-[0.98] text-white font-bold text-sm rounded-2xl shadow-lg shadow-[#1A73E8]/25 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75"
                   >
                     {isPaymentProcessing ? (
@@ -4544,7 +4816,7 @@ export default function UpgradePage() {
                   <button
                     type="button"
                     disabled={isPaymentProcessing}
-                    onClick={handleExecutePayment}
+                    onClick={() => handleExecutePayment(true)}
                     className="px-5 py-3 bg-[#1A73E8] hover:bg-[#1557b0] text-white font-bold text-xs rounded-xl shadow-md shadow-[#1A73E8]/25 transition-all shrink-0 flex items-center gap-1.5 active:scale-95 cursor-pointer disabled:opacity-75"
                   >
                     {isPaymentProcessing ? (
