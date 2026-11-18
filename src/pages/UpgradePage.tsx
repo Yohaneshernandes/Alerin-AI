@@ -4,6 +4,72 @@ import PlusBadgeIcon from "@/components/PlusBadgeIcon";
 import AlerinBusinessModal from "@/components/AlerinBusinessModal";
 import AlerinToast from "@/components/AlerinToast";
 
+// Deterministic QR Code matrix (33x33) untuk tampilan pembayaran QRIS
+const QR_SIZE = 33;
+const QR_MATRIX: boolean[][] = (() => {
+  const grid: boolean[][] = Array.from({ length: QR_SIZE }, () =>
+    Array.from({ length: QR_SIZE }, () => false)
+  );
+  const reserved: boolean[][] = Array.from({ length: QR_SIZE }, () =>
+    Array.from({ length: QR_SIZE }, () => false)
+  );
+
+  const setFinder = (row: number, col: number) => {
+    for (let r = -1; r <= 7; r++) {
+      for (let c = -1; c <= 7; c++) {
+        const rr = row + r;
+        const cc = col + c;
+        if (rr < 0 || rr >= QR_SIZE || cc < 0 || cc >= QR_SIZE) continue;
+        reserved[rr][cc] = true;
+        if (r === -1 || r === 7 || c === -1 || c === 7) {
+          grid[rr][cc] = false;
+        } else if (
+          r === 0 ||
+          r === 6 ||
+          c === 0 ||
+          c === 6 ||
+          (r >= 2 && r <= 4 && c >= 2 && c <= 4)
+        ) {
+          grid[rr][cc] = true;
+        } else {
+          grid[rr][cc] = false;
+        }
+      }
+    }
+  };
+
+  setFinder(0, 0);
+  setFinder(0, QR_SIZE - 7);
+  setFinder(QR_SIZE - 7, 0);
+
+  for (let r = -2; r <= 2; r++) {
+    for (let c = -2; c <= 2; c++) {
+      const rr = 24 + r;
+      const cc = 24 + c;
+      reserved[rr][cc] = true;
+      grid[rr][cc] =
+        Math.abs(r) === 2 || Math.abs(c) === 2 || (r === 0 && c === 0);
+    }
+  }
+
+  for (let i = 8; i < QR_SIZE - 8; i++) {
+    reserved[6][i] = true;
+    grid[6][i] = i % 2 === 0;
+    reserved[i][6] = true;
+    grid[i][6] = i % 2 === 0;
+  }
+
+  let seed = 20261118;
+  for (let r = 0; r < QR_SIZE; r++) {
+    for (let c = 0; c < QR_SIZE; c++) {
+      if (reserved[r][c]) continue;
+      seed = (seed * 1664525 + 1013904223) >>> 0;
+      grid[r][c] = (seed & 0x10000) !== 0;
+    }
+  }
+  return grid;
+})();
+
 // Database rincian detail paket fitur
 const FEATURE_DETAILS: Record<
   string,
@@ -548,7 +614,6 @@ export default function UpgradePage() {
   useEffect(() => {
     const handleOutsideClick = () => {
       setOpenDropdown(null);
-      setUpgradeDropdownOpen(false);
     };
     window.addEventListener("click", handleOutsideClick);
     return () => window.removeEventListener("click", handleOutsideClick);
@@ -585,7 +650,55 @@ export default function UpgradePage() {
 
   const [activeModalFeatureKey, setActiveModalFeatureKey] = useState<string | null>(null);
   const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<"qris" | "va" | "ewallet" | "cc">("qris");
+  const [isQrisModalOpen, setIsQrisModalOpen] = useState(false);
+  const [mobilePaymentType, setMobilePaymentType] = useState<"qris" | "va_bca" | "shopeepay">("qris");
+  const [bcaGuideTab, setBcaGuideTab] = useState<"atm" | "klikbca" | "mbca" | null>("atm");
+  const [shopeeGuideOpen, setShopeeGuideOpen] = useState(true);
+  const [isQrisLoading, setIsQrisLoading] = useState(false);
+  const [cancelPaymentModalOpen, setCancelPaymentModalOpen] = useState(false);
+  const [cancelPaymentReason, setCancelPaymentReason] = useState<string>("Saya berubah pikiran");
+  const [qrisGuideOpen, setQrisGuideOpen] = useState(true);
+  const [qrisSecondsLeft, setQrisSecondsLeft] = useState(3 * 3600 + 54 * 60 + 57);
+  const checkoutScrollRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!isQrisModalOpen) {
+      setIsQrisLoading(false);
+      return;
+    }
+    setIsQrisLoading(true);
+    const loadTimer = window.setTimeout(() => {
+      setIsQrisLoading(false);
+    }, 900);
+    return () => window.clearTimeout(loadTimer);
+  }, [isQrisModalOpen]);
+
+  useEffect(() => {
+    if (!isQrisModalOpen || isQrisLoading) return;
+    const timer = window.setInterval(() => {
+      setQrisSecondsLeft((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+    return () => window.clearInterval(timer);
+  }, [isQrisModalOpen, isQrisLoading]);
+
+  const qrisHours = Math.floor(qrisSecondsLeft / 3600);
+  const qrisMinutes = Math.floor((qrisSecondsLeft % 3600) / 60);
+  const qrisSeconds = qrisSecondsLeft % 60;
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<
+    | "va"
+    | "qris"
+    | "dana"
+    | "shopeepay"
+    | "gopay"
+    | "alfa"
+    | "indomaret"
+    | "cc"
+    | "akulaku"
+    | "kredivo"
+    | "ewallet"
+  >("qris");
+  const [vaDropdownOpen, setVaDropdownOpen] = useState(false);
+  const [selectedVaBank, setSelectedVaBank] = useState<string>("bca");
   const [isPaymentProcessing, setIsPaymentProcessing] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 
@@ -598,12 +711,7 @@ export default function UpgradePage() {
     email: "",
     institution: "",
     purpose: "",
-    features: [
-      "Alerin Chat",
-      "Alerin Jurnal",
-      "Alerin Skripsi",
-      "Alerin Parafrase",
-    ] as string[],
+    features: [] as string[],
   });
   const [bizSubmitting, setBizSubmitting] = useState(false);
   const [bizConfirmModalOpen, setBizConfirmModalOpen] = useState(false);
@@ -614,6 +722,54 @@ export default function UpgradePage() {
     purpose?: boolean;
     features?: boolean;
   }>({});
+
+  const isAnyModalOpen = Boolean(
+    activeModalFeatureKey ||
+      isCheckoutModalOpen ||
+      isQrisModalOpen ||
+      isSuccessModalOpen ||
+      bizConfirmModalOpen ||
+      businessModalOpen ||
+      notifOpen ||
+      mobileDrawerOpen
+  );
+
+  useEffect(() => {
+    if (!isAnyModalOpen) return;
+    const scrollY = window.scrollY;
+    const prevHtmlOverflow = document.documentElement.style.overflow;
+    const prevHtmlScrollBehavior = document.documentElement.style.scrollBehavior;
+    const prevBodyOverflow = document.body.style.overflow;
+    const prevBodyPosition = document.body.style.position;
+    const prevBodyTop = document.body.style.top;
+    const prevBodyLeft = document.body.style.left;
+    const prevBodyRight = document.body.style.right;
+    const prevBodyWidth = document.body.style.width;
+    const prevBodyOverscroll = document.body.style.overscrollBehavior;
+
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.left = "0";
+    document.body.style.right = "0";
+    document.body.style.width = "100%";
+    document.body.style.overscrollBehavior = "none";
+
+    return () => {
+      document.documentElement.style.overflow = prevHtmlOverflow;
+      document.body.style.overflow = prevBodyOverflow;
+      document.body.style.position = prevBodyPosition;
+      document.body.style.top = prevBodyTop;
+      document.body.style.left = prevBodyLeft;
+      document.body.style.right = prevBodyRight;
+      document.body.style.width = prevBodyWidth;
+      document.body.style.overscrollBehavior = prevBodyOverscroll;
+      document.documentElement.style.scrollBehavior = "auto";
+      window.scrollTo(0, scrollY);
+      document.documentElement.style.scrollBehavior = prevHtmlScrollBehavior;
+    };
+  }, [isAnyModalOpen]);
 
   const toggleBizFeature = (featureName: string) => {
     setBizForm((prev) => {
@@ -658,12 +814,7 @@ export default function UpgradePage() {
         email: "",
         institution: "",
         purpose: "",
-        features: [
-          "Alerin Chat",
-          "Alerin Jurnal",
-          "Alerin Skripsi",
-          "Alerin Parafrase",
-        ],
+        features: [],
       });
       showToast("Berhasil mengirim formulir ke admin@alerin.id", "success");
     }, 700);
@@ -815,13 +966,91 @@ export default function UpgradePage() {
 
   // Payment Execution Simulation
   const handleExecutePayment = () => {
+    if (typeof window !== "undefined" && window.innerWidth < 768) {
+      if (selectedPaymentMethod === "qris") {
+        setMobilePaymentType("qris");
+        setQrisGuideOpen(true);
+        setQrisSecondsLeft(3 * 3600 + 54 * 60 + 57);
+        setIsQrisLoading(true);
+        setIsQrisModalOpen(true);
+        checkoutScrollRef.current?.scrollTo({ top: 0 });
+        return;
+      }
+      if (selectedPaymentMethod === "va" && selectedVaBank === "bca") {
+        setMobilePaymentType("va_bca");
+        setBcaGuideTab("atm");
+        setQrisSecondsLeft(3 * 3600 + 54 * 60 + 57);
+        setIsQrisLoading(true);
+        setIsQrisModalOpen(true);
+        checkoutScrollRef.current?.scrollTo({ top: 0 });
+        return;
+      }
+      if (selectedPaymentMethod === "shopeepay") {
+        setMobilePaymentType("shopeepay");
+        setShopeeGuideOpen(true);
+        setQrisSecondsLeft(3 * 3600 + 54 * 60 + 57);
+        setIsQrisLoading(true);
+        setIsQrisModalOpen(true);
+        checkoutScrollRef.current?.scrollTo({ top: 0 });
+        return;
+      }
+    }
+
     setIsPaymentProcessing(true);
     setTimeout(() => {
       setIsPaymentProcessing(false);
+      setIsQrisModalOpen(false);
       setIsCheckoutModalOpen(false);
       setIsSuccessModalOpen(true);
       setCurrentAccountPlan("Paket: Pro");
     }, 1400);
+  };
+
+  const handleCopyVaNumber = (vaNumber: string) => {
+    if (typeof navigator !== "undefined" && navigator.clipboard) {
+      navigator.clipboard
+        .writeText(vaNumber)
+        .then(() => showToast("Nomor Virtual Account berhasil disalin", "success"))
+        .catch(() => showToast("Nomor Virtual Account disalin", "success"));
+    } else {
+      showToast("Nomor Virtual Account disalin", "success");
+    }
+  };
+
+  const handleDownloadQris = () => {
+    try {
+      const size = 600;
+      const margin = 48;
+      const cell = (size - margin * 2) / QR_SIZE;
+      const canvas = document.createElement("canvas");
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext("2d");
+      if (ctx) {
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, size, size);
+        ctx.fillStyle = "#000000";
+        for (let r = 0; r < QR_SIZE; r++) {
+          for (let c = 0; c < QR_SIZE; c++) {
+            if (QR_MATRIX[r][c]) {
+              ctx.fillRect(
+                Math.floor(margin + c * cell),
+                Math.floor(margin + r * cell),
+                Math.ceil(cell),
+                Math.ceil(cell)
+              );
+            }
+          }
+        }
+        const link = document.createElement("a");
+        link.download = "QRIS-Alerin.png";
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+      }
+      showToast("Kode QR berhasil diunduh", "success");
+    } catch {
+      showToast("Gagal mengunduh kode QR", "warning");
+    }
   };
 
   const durationLabel =
@@ -2550,7 +2779,7 @@ export default function UpgradePage() {
           {/* POP-UP KONFIRMASI PENGIRIMAN FORMULIR BUSINESS */}
           {bizConfirmModalOpen && (
             <div
-              className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm p-4 sm:p-6 flex items-center justify-center animate-[gemini-fade-in_0.2s_ease-out]"
+              className="fixed inset-0 z-50 overflow-hidden overscroll-none bg-slate-900/60 backdrop-blur-sm p-4 sm:p-6 flex items-center justify-center animate-[gemini-fade-in_0.2s_ease-out]"
               onClick={() => setBizConfirmModalOpen(false)}
             >
               <div
@@ -2589,23 +2818,32 @@ export default function UpgradePage() {
         </main>
       )}
 
-      {/* STEP 2: CHECKOUT & PAYMENT MODAL */}
+      {/* STEP 2: CHECKOUT & PAYMENT (Full Page di Mobile, Pop-up Modal di Desktop) */}
       {isCheckoutModalOpen && (
         <div
-          className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm p-3 sm:p-6 lg:p-8 flex items-center justify-center animate-[gemini-fade-in_0.2s_ease-out]"
-          onClick={() => setIsCheckoutModalOpen(false)}
+          className="fixed inset-0 z-50 overflow-hidden overscroll-none bg-[#F8FAFC] md:bg-slate-900/60 md:backdrop-blur-sm p-0 md:p-6 lg:p-8 flex flex-col md:items-center md:justify-center animate-[gemini-fade-in_0.18s_ease-out]"
+          onClick={() => {
+            setIsQrisModalOpen(false);
+            setIsCheckoutModalOpen(false);
+          }}
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="bg-white rounded-2xl sm:rounded-3xl max-w-3xl w-full max-h-[92vh] sm:max-h-[90vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden transform transition-all animate-[gemini-zoom-in_0.15s_ease-out]"
+            className="w-full h-full md:h-auto md:max-h-[90vh] md:max-w-3xl bg-[#F8FAFC] md:bg-white rounded-none md:rounded-3xl flex flex-col shadow-none md:shadow-2xl border-0 md:border md:border-slate-200 overflow-hidden transform transition-all md:animate-[gemini-zoom-in_0.15s_ease-out]"
           >
-            {/* Modal Header */}
-            <div className="px-4 sm:px-6 py-3.5 sm:py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/80 shrink-0">
-              <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+            {/* Header (Sticky Top Bar di Mobile, Modal Header di Desktop) */}
+            <div className="px-4 md:px-6 pt-[max(0.875rem,env(safe-area-inset-top))] md:pt-4 pb-3.5 md:pb-4 border-b border-slate-200/80 md:border-slate-100 flex items-center justify-between bg-white md:bg-slate-50/80 shrink-0">
+              <div className="flex items-center gap-3 min-w-0">
                 <button
                   type="button"
-                  onClick={() => setIsCheckoutModalOpen(false)}
-                  className="w-8 h-8 rounded-xl bg-white sm:bg-transparent border border-slate-200/80 sm:border-transparent hover:bg-slate-200/70 text-slate-600 flex items-center justify-center transition-colors shrink-0 cursor-pointer shadow-2xs sm:shadow-none"
+                  onClick={() => {
+                    if (isQrisModalOpen) {
+                      setIsQrisModalOpen(false);
+                      return;
+                    }
+                    setIsCheckoutModalOpen(false);
+                  }}
+                  className="w-9 h-9 md:w-8 md:h-8 rounded-full md:rounded-xl bg-slate-100/80 md:bg-transparent border border-slate-200/70 md:border-transparent hover:bg-slate-200/70 text-slate-700 md:text-slate-600 flex items-center justify-center transition-colors shrink-0 cursor-pointer active:scale-95"
                   aria-label="Kembali"
                 >
                   <svg
@@ -2622,92 +2860,152 @@ export default function UpgradePage() {
                 </button>
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
-                    <h3 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight">
+                    <h3 className="text-base md:text-lg font-extrabold text-slate-900 tracking-tight">
                       Pembayaran
                     </h3>
                     <span className="text-[10px] font-bold bg-blue-50 text-[#1A73E8] px-2 py-0.5 rounded-full border border-blue-200 shrink-0">
                       2 dari 2
                     </span>
                   </div>
-                  <p className="text-[11px] sm:text-xs text-slate-500 truncate sm:whitespace-normal">
+                  <p className="text-[11px] md:text-xs text-slate-500 truncate md:whitespace-normal">
                     Konfirmasi detail pesanan dan pilih opsi pembayaran Anda
                   </p>
                 </div>
               </div>
               <button
                 type="button"
-                onClick={() => setIsCheckoutModalOpen(false)}
-                className="w-8 h-8 rounded-full bg-slate-200/70 text-slate-500 hover:text-slate-800 hover:bg-slate-200 flex items-center justify-center transition-colors shrink-0 ml-2 cursor-pointer"
+                onClick={() => {
+                  setIsQrisModalOpen(false);
+                  setIsCheckoutModalOpen(false);
+                }}
+                className="hidden md:flex w-8 h-8 rounded-full bg-slate-200/70 text-slate-500 hover:text-slate-800 hover:bg-slate-200 items-center justify-center transition-colors shrink-0 ml-2 cursor-pointer"
                 aria-label="Tutup"
               >
                 ✕
               </button>
             </div>
 
-            {/* Modal Body */}
-            <div className="p-3.5 sm:p-6 overflow-y-auto flex-1 grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-6">
-              {/* Left Sub-column: Detail Item & Diskon */}
-              <div className="md:col-span-6 space-y-3.5 sm:space-y-4">
-                <h4 className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">
-                  Rincian Akses Alerin
-                </h4>
+            {/* Body (Halaman Scrollable di Mobile, 2-Kolom Modal di Desktop) */}
+            <div
+              ref={checkoutScrollRef}
+              className={`px-4 pt-4 ${isQrisModalOpen ? "pb-10" : "pb-28"} md:p-6 overflow-y-auto overscroll-contain flex-1 grid grid-cols-1 md:grid-cols-12 gap-5 md:gap-6 content-start`}
+            >
+              {/* Left Sub-column: Ringkasan Pesanan */}
+              <div className="md:col-span-6">
+                {isQrisModalOpen && isQrisLoading ? (
+                  /* Skeleton Shimmer: Ringkasan Pesanan (Mobile) */
+                  <div className="md:hidden bg-white rounded-2xl border border-slate-200/80 shadow-[0_1px_3px_rgba(15,23,42,0.04)] overflow-hidden">
+                    <div className="px-4 py-3.5 border-b border-slate-100 flex items-center justify-between gap-3">
+                      <div className="h-4 w-36 rounded-md bg-slate-200/80 shimmer-sweep" />
+                      <div className="h-6 w-24 rounded-full bg-slate-200/70 shimmer-sweep" />
+                    </div>
+                    <div className="px-4 py-3.5 space-y-3">
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="h-3.5 w-28 rounded-md bg-slate-200/75 shimmer-sweep" />
+                        <div className="h-3.5 w-16 rounded-md bg-slate-200/80 shimmer-sweep" />
+                      </div>
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="h-3.5 w-32 rounded-md bg-slate-200/75 shimmer-sweep" />
+                        <div className="h-3.5 w-16 rounded-md bg-slate-200/80 shimmer-sweep" />
+                      </div>
+                    </div>
+                    <div className="px-4 py-3 bg-slate-50/70 border-t border-slate-100 space-y-2.5">
+                      <div className="flex items-center justify-between">
+                        <div className="h-3 w-16 rounded-md bg-slate-200/70 shimmer-sweep" />
+                        <div className="h-3 w-16 rounded-md bg-slate-200/75 shimmer-sweep" />
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="h-3 w-24 rounded-md bg-slate-200/70 shimmer-sweep" />
+                        <div className="h-3 w-16 rounded-md bg-slate-200/75 shimmer-sweep" />
+                      </div>
+                    </div>
+                    <div className="px-4 py-3.5 border-t border-slate-200/70 bg-white flex items-center justify-between gap-3">
+                      <div className="space-y-1.5">
+                        <div className="h-3.5 w-20 rounded-md bg-slate-200/80 shimmer-sweep" />
+                        <div className="h-2.5 w-24 rounded-md bg-slate-200/65 shimmer-sweep" />
+                      </div>
+                      <div className="h-6 w-24 rounded-md bg-slate-200/85 shimmer-sweep" />
+                    </div>
+                  </div>
+                ) : null}
 
-                <div className="bg-slate-50 rounded-2xl p-3.5 sm:p-4 border border-slate-200/80 space-y-3">
-                  <div className="flex justify-between items-center text-xs pb-2 border-b border-slate-200/60">
-                    <span className="text-slate-500">Durasi Langganan:</span>
-                    <span className="font-bold text-slate-900 bg-white px-2.5 py-1 rounded-md border border-slate-200 shadow-2xs">
+                <div
+                  className={`${
+                    isQrisModalOpen && isQrisLoading ? "hidden md:block" : "block"
+                  } bg-white rounded-2xl border border-slate-200/80 shadow-[0_1px_3px_rgba(15,23,42,0.04)] overflow-hidden ${
+                    isQrisModalOpen ? "animate-[gemini-fade-in_0.25s_ease-out]" : ""
+                  }`}
+                >
+                  {/* Header Card */}
+                  <div className="px-4 py-3.5 border-b border-slate-100 flex items-center justify-between gap-3">
+                    <h4 className="text-sm font-bold text-slate-900 tracking-tight">
+                      Ringkasan Pesanan
+                    </h4>
+                    <span className="text-[11px] font-semibold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-full shrink-0">
                       {getDurationReadable(currentDuration, currentTier)}
                     </span>
                   </div>
 
-                  <div className="space-y-2 text-xs">
-                    <span className="text-slate-500 block font-medium">Fitur yang diaktifkan:</span>
-                    <ul className="space-y-1.5 max-h-36 overflow-y-auto pr-1">
-                      {Array.from(selectedFeatures).map((key) => {
-                        const item = PRICING_DATABASE[key];
-                        if (!item) return null;
-                        return (
-                          <li
-                            key={key}
-                            className="flex justify-between items-center text-slate-700"
-                          >
-                            <span className="flex items-center gap-1.5 font-medium truncate">
-                              <span className="w-1.5 h-1.5 rounded-full bg-[#1A73E8] shrink-0" />
-                              {item.name}
-                            </span>
-                            <span className="font-semibold shrink-0 ml-2">
-                              {formatRupiah(getPrice(key))}
-                            </span>
-                          </li>
-                        );
-                      })}
-                    </ul>
+                  {/* Daftar Fitur */}
+                  <div className="px-4 py-3.5 space-y-2.5 max-h-44 overflow-y-auto">
+                    {Array.from(selectedFeatures).map((key) => {
+                      const item = PRICING_DATABASE[key];
+                      if (!item) return null;
+                      return (
+                        <div
+                          key={key}
+                          className="flex items-center justify-between gap-3"
+                        >
+                          <span className="text-[13px] font-medium text-slate-700 truncate">
+                            {item.name}
+                          </span>
+                          <span className="text-[13px] font-semibold text-slate-900 tabular-nums shrink-0">
+                            {formatRupiah(getPrice(key))}
+                          </span>
+                        </div>
+                      );
+                    })}
                   </div>
 
-                  {/* Discount detail in modal */}
-                  <div className="pt-2 border-t border-slate-200/60 space-y-1.5 text-xs">
-                    <div className="flex justify-between text-slate-600">
-                      <span>Subtotal Normal:</span>
-                      <span>{formatRupiah(subtotal)}</span>
+                  {/* Rincian Subtotal & Diskon */}
+                  <div className="px-4 py-3 bg-slate-50/70 border-t border-slate-100 space-y-2">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-slate-500">Subtotal</span>
+                      <span className="font-medium text-slate-700 tabular-nums">
+                        {formatRupiah(subtotal)}
+                      </span>
                     </div>
                     {bundlingDiscount > 0 && (
-                      <div className="flex justify-between text-[#1A73E8] font-semibold">
-                        <span>Potongan Bundling Hemat:</span>
-                        <span>-{formatRupiah(bundlingDiscount)}</span>
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-slate-500">Diskon Bundling</span>
+                        <span className="font-semibold text-emerald-600 tabular-nums">
+                          -{formatRupiah(bundlingDiscount)}
+                        </span>
                       </div>
                     )}
                     {appliedVoucher && voucherDiscount > 0 && (
-                      <div className="flex justify-between text-[#1A73E8] font-semibold">
-                        <span>Potongan Voucher:</span>
-                        <span>-{formatRupiah(voucherDiscount)}</span>
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-slate-500">Voucher ({appliedVoucher.code})</span>
+                        <span className="font-semibold text-emerald-600 tabular-nums">
+                          -{formatRupiah(voucherDiscount)}
+                        </span>
                       </div>
                     )}
                   </div>
 
-                  {/* Grand total in modal */}
-                  <div className="pt-3 border-t-2 border-dashed border-slate-200 flex justify-between items-baseline">
-                    <span className="text-xs font-bold text-slate-700">Total Akhir:</span>
-                    <span className="text-lg sm:text-xl font-black text-[#1A73E8]">
+                  {/* Total Biaya */}
+                  <div className="px-4 py-3.5 border-t border-slate-200/70 bg-white flex items-center justify-between gap-3">
+                    <div>
+                      <span className="text-[13px] font-bold text-slate-900 block">
+                        Total Biaya
+                      </span>
+                      {bundlingDiscount + voucherDiscount > 0 && (
+                        <span className="text-[11px] font-medium text-emerald-600 block mt-0.5">
+                          Hemat {formatRupiah(bundlingDiscount + voucherDiscount)}
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-[19px] font-extrabold text-slate-950 tracking-tight tabular-nums">
                       {formatRupiah(grandTotal)}
                     </span>
                   </div>
@@ -2716,11 +3014,1261 @@ export default function UpgradePage() {
 
               {/* Right Sub-column: Metode Pembayaran */}
               <div className="md:col-span-6 space-y-3.5 sm:space-y-4">
-                <h4 className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">
+                {/* Mobile View: QRIS Payment (Skeleton -> Timer + QRIS Card) ATAU Metode Pembayaran List */}
+                {isQrisModalOpen ? (
+                  isQrisLoading ? (
+                    <div className="md:hidden space-y-3.5">
+                      {/* Skeleton Shimmer: Countdown Timer Card */}
+                      <div className="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-2xs">
+                        <div className="flex items-center gap-3">
+                          <div className="size-10 rounded-full bg-slate-200/85 shimmer-sweep shrink-0" />
+                          <div className="flex-1 space-y-2">
+                            <div className="h-3.5 w-11/12 rounded-md bg-slate-200/85 shimmer-sweep" />
+                            <div className="h-2.5 w-3/5 rounded-md bg-slate-200/70 shimmer-sweep" />
+                          </div>
+                        </div>
+                        <div className="border-t border-slate-100 my-3" />
+                        <div className="grid grid-cols-3 gap-2.5">
+                          <div className="h-9 rounded-lg bg-slate-200/80 shimmer-sweep" />
+                          <div className="h-9 rounded-lg bg-slate-200/80 shimmer-sweep" />
+                          <div className="h-9 rounded-lg bg-slate-200/80 shimmer-sweep" />
+                        </div>
+                      </div>
+
+                      {/* Skeleton Shimmer: Payment Detail Card (BCA VA atau QRIS) */}
+                      {mobilePaymentType === "va_bca" ? (
+                        <div className="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-2xs">
+                          {/* Logo BCA shape */}
+                          <div className="h-8 w-28 rounded-lg bg-slate-200/85 shimmer-sweep" />
+                          {/* Description lines */}
+                          <div className="mt-4 space-y-2">
+                            <div className="h-3 w-full rounded-md bg-slate-200/75 shimmer-sweep" />
+                            <div className="h-3 w-11/12 rounded-md bg-slate-200/75 shimmer-sweep" />
+                            <div className="h-3 w-4/5 rounded-md bg-slate-200/70 shimmer-sweep" />
+                          </div>
+                          {/* Virtual Account title & number box */}
+                          <div className="mt-5 space-y-2.5">
+                            <div className="h-4 w-32 rounded-md bg-slate-200/85 shimmer-sweep" />
+                            <div className="h-12 w-full rounded-xl bg-slate-200/75 shimmer-sweep" />
+                          </div>
+                          {/* Petunjuk Penggunaan + Accordion shapes */}
+                          <div className="mt-5 space-y-3">
+                            <div className="flex items-center gap-2">
+                              <div className="size-5 rounded-full bg-slate-200/85 shimmer-sweep shrink-0" />
+                              <div className="h-4 w-40 rounded-md bg-slate-200/80 shimmer-sweep" />
+                            </div>
+                            <div className="h-5 w-24 rounded-md bg-slate-200/80 shimmer-sweep" />
+                            <div className="p-4 rounded-xl bg-slate-100/90 space-y-2.5">
+                              <div className="h-3 w-11/12 rounded-md bg-slate-200/80 shimmer-sweep" />
+                              <div className="h-3 w-full rounded-md bg-slate-200/80 shimmer-sweep" />
+                              <div className="h-3 w-5/6 rounded-md bg-slate-200/80 shimmer-sweep" />
+                              <div className="h-3 w-4/5 rounded-md bg-slate-200/80 shimmer-sweep" />
+                              <div className="h-3 w-2/3 rounded-md bg-slate-200/80 shimmer-sweep" />
+                            </div>
+                            <div className="h-10 w-full rounded-lg bg-slate-200/65 shimmer-sweep" />
+                            <div className="h-10 w-full rounded-lg bg-slate-200/65 shimmer-sweep" />
+                          </div>
+                          {/* Batalkan Button shape */}
+                          <div className="mt-5 h-12 w-full rounded-2xl bg-slate-200/85 shimmer-sweep" />
+                        </div>
+                      ) : mobilePaymentType === "shopeepay" ? (
+                        <div className="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-2xs">
+                          {/* Logos shape */}
+                          <div className="flex items-center gap-3">
+                            <div className="h-7 w-20 rounded-lg bg-slate-200/85 shimmer-sweep" />
+                            <div className="h-7 w-28 rounded-lg bg-slate-200/85 shimmer-sweep" />
+                          </div>
+                          {/* Description lines */}
+                          <div className="mt-4 space-y-2">
+                            <div className="h-3 w-full rounded-md bg-slate-200/75 shimmer-sweep" />
+                            <div className="h-3 w-11/12 rounded-md bg-slate-200/75 shimmer-sweep" />
+                            <div className="h-3 w-4/5 rounded-md bg-slate-200/70 shimmer-sweep" />
+                          </div>
+                          {/* Petunjuk Penggunaan shape */}
+                          <div className="mt-5 space-y-3">
+                            <div className="flex items-center gap-2">
+                              <div className="size-5 rounded-full bg-slate-200/85 shimmer-sweep shrink-0" />
+                              <div className="h-4 w-40 rounded-md bg-slate-200/80 shimmer-sweep" />
+                            </div>
+                            <div className="p-4 rounded-xl bg-slate-100/90 space-y-2.5">
+                              <div className="h-3 w-11/12 rounded-md bg-slate-200/80 shimmer-sweep" />
+                              <div className="h-3 w-4/5 rounded-md bg-slate-200/80 shimmer-sweep" />
+                              <div className="h-3 w-full rounded-md bg-slate-200/80 shimmer-sweep" />
+                              <div className="h-3 w-5/6 rounded-md bg-slate-200/80 shimmer-sweep" />
+                              <div className="h-3 w-3/4 rounded-md bg-slate-200/80 shimmer-sweep" />
+                              <div className="h-3 w-11/12 rounded-md bg-slate-200/80 shimmer-sweep" />
+                            </div>
+                          </div>
+                          {/* Action buttons shape */}
+                          <div className="mt-5 h-12 w-full rounded-2xl bg-slate-200/85 shimmer-sweep" />
+                          <div className="mt-3 h-12 w-full rounded-2xl bg-slate-200/80 shimmer-sweep" />
+                        </div>
+                      ) : (
+                        <div className="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-2xs">
+                          {/* Logo shape */}
+                          <div className="h-7 w-24 rounded-lg bg-slate-200/85 shimmer-sweep" />
+
+                          {/* Description lines */}
+                          <div className="mt-4 space-y-2">
+                            <div className="h-3 w-full rounded-md bg-slate-200/75 shimmer-sweep" />
+                            <div className="h-3 w-11/12 rounded-md bg-slate-200/75 shimmer-sweep" />
+                            <div className="h-3 w-4/5 rounded-md bg-slate-200/70 shimmer-sweep" />
+                          </div>
+
+                          {/* QR Code Square shape */}
+                          <div className="my-6 flex justify-center">
+                            <div className="w-[220px] h-[220px] rounded-2xl bg-slate-200/80 shimmer-sweep" />
+                          </div>
+
+                          {/* Download QR Button shape */}
+                          <div className="h-12 w-full rounded-2xl bg-slate-200/85 shimmer-sweep" />
+
+                          {/* Petunjuk Penggunaan shape */}
+                          <div className="mt-5 space-y-3">
+                            <div className="flex items-center gap-2">
+                              <div className="size-5 rounded-full bg-slate-200/85 shimmer-sweep shrink-0" />
+                              <div className="h-4 w-40 rounded-md bg-slate-200/80 shimmer-sweep" />
+                            </div>
+                            <div className="p-4 rounded-xl bg-slate-100/90 space-y-2.5">
+                              <div className="h-3 w-11/12 rounded-md bg-slate-200/80 shimmer-sweep" />
+                              <div className="h-3 w-4/5 rounded-md bg-slate-200/80 shimmer-sweep" />
+                              <div className="h-3 w-full rounded-md bg-slate-200/80 shimmer-sweep" />
+                              <div className="h-3 w-5/6 rounded-md bg-slate-200/80 shimmer-sweep" />
+                              <div className="h-3 w-2/3 rounded-md bg-slate-200/80 shimmer-sweep" />
+                            </div>
+                          </div>
+
+                          {/* Batalkan Button shape */}
+                          <div className="mt-5 h-12 w-full rounded-2xl bg-slate-200/85 shimmer-sweep" />
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                  <div className="md:hidden space-y-3.5 animate-[gemini-fade-in_0.25s_ease-out]">
+                    {/* Blue Countdown Timer Card */}
+                    <div className="bg-[#3E76BE] rounded-2xl p-4 text-white shadow-sm">
+                      <div className="flex items-center gap-3">
+                        <div className="size-10 rounded-full bg-white text-[#3E76BE] flex items-center justify-center shrink-0 shadow-2xs">
+                          <svg
+                            className="w-6 h-6"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2.3"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <circle cx="12" cy="12" r="9" />
+                            <polyline points="12 7 12 12 15.5 14" />
+                          </svg>
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-[12.5px] font-bold leading-snug text-white">
+                            Bayar sebelum waktu habis dan simpan bukti sebagai konfirmasi.
+                          </p>
+                          <p className="text-[10.5px] text-white/75 mt-0.5 leading-tight">
+                            *Voucher hangus jika terlambat bayar
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="border-t border-dashed border-white/30 my-3" />
+
+                      <div className="grid grid-cols-3 gap-2.5">
+                        <div className="bg-white rounded-lg py-2 px-2 flex items-baseline justify-center gap-1 shadow-2xs">
+                          <span className="text-sm font-extrabold text-slate-900 tabular-nums">
+                            {qrisHours}
+                          </span>
+                          <span className="text-xs font-bold text-[#C26B27]">Jam</span>
+                        </div>
+                        <div className="bg-white rounded-lg py-2 px-2 flex items-baseline justify-center gap-1 shadow-2xs">
+                          <span className="text-sm font-extrabold text-slate-900 tabular-nums">
+                            {String(qrisMinutes).padStart(2, "0")}
+                          </span>
+                          <span className="text-xs font-bold text-[#C26B27]">Menit</span>
+                        </div>
+                        <div className="bg-white rounded-lg py-2 px-2 flex items-baseline justify-center gap-1 shadow-2xs">
+                          <span className="text-sm font-extrabold text-slate-900 tabular-nums">
+                            {String(qrisSeconds).padStart(2, "0")}
+                          </span>
+                          <span className="text-xs font-bold text-[#C26B27]">Detik</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* White Payment Card: BCA Virtual Account ATAU QRIS */}
+                    {mobilePaymentType === "va_bca" ? (
+                      <div className="bg-white rounded-3xl p-5 border border-slate-200/75 shadow-2xs">
+                        {/* Logo BCA (klik untuk simulasi pembayaran berhasil) */}
+                        <div className="flex items-center">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setIsQrisModalOpen(false);
+                              setIsCheckoutModalOpen(false);
+                              setCurrentAccountPlan(currentTier === "pro" ? "Paket: Pro" : "Paket: Plus");
+                              setIsSuccessModalOpen(true);
+                            }}
+                            title="Simulasi Pembayaran Berhasil"
+                            className="cursor-pointer active:scale-95 transition-transform"
+                          >
+                            <img
+                              src="/assets/payment-logos/bca.png"
+                              alt="BCA"
+                              className="h-8 w-auto object-contain shrink-0"
+                            />
+                          </button>
+                        </div>
+
+                        {/* Deskripsi */}
+                        <p className="text-[13px] leading-[1.6] text-neutral-700 mt-4">
+                          Gunakan nomor BCA Virtual Account di bawah ini untuk melakukan pembayaran. Pastikan nominal transfer sesuai hingga digit terakhir agar transaksi terverifikasi otomatis.
+                        </p>
+
+                        {/* Virtual Account Section */}
+                        <div className="mt-5">
+                          <h5 className="text-[15px] font-bold text-black leading-snug">
+                            Virtual Account
+                          </h5>
+                          <div className="mt-2.5 px-3.5 py-3 rounded-xl border-[1.5px] border-indigo-200 bg-white flex items-center justify-between gap-2">
+                            <span className="text-[13.5px] sm:text-[14.5px] font-bold text-blue-800 tracking-wide tabular-nums truncate select-all">
+                              077434423784279374928453
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => handleCopyVaNumber("077434423784279374928453")}
+                              aria-label="Salin nomor Virtual Account"
+                              className="p-1.5 rounded-lg text-blue-800 hover:bg-blue-50 active:scale-95 transition-all shrink-0 cursor-pointer"
+                            >
+                              <svg
+                                className="w-5 h-5"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                              </svg>
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Petunjuk Penggunaan */}
+                        <div className="mt-5">
+                          <div className="flex items-center gap-2">
+                            <span className="size-5 rounded-full bg-sky-900 text-white text-[11px] font-bold flex items-center justify-center shrink-0">
+                              ?
+                            </span>
+                            <span className="text-[13.5px] font-bold text-sky-900">
+                              Petunjuk Penggunaan
+                            </span>
+                            <svg
+                              className="w-3.5 h-3.5 text-sky-900/70"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2.3"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <path d="m7 15 5 5 5-5" />
+                              <path d="m7 9 5-5 5 5" />
+                            </svg>
+                          </div>
+
+                          {/* 1. ATM BCA */}
+                          <div className="mt-3.5">
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setBcaGuideTab((prev) => (prev === "atm" ? null : "atm"))
+                              }
+                              className="w-full py-2 flex items-center justify-between text-left cursor-pointer"
+                            >
+                              <span className="text-[14px] font-bold text-neutral-900">
+                                ATM BCA
+                              </span>
+                              <svg
+                                className={`w-4 h-4 text-black transition-transform ${
+                                  bcaGuideTab === "atm" ? "rotate-90" : ""
+                                }`}
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2.3"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
+                                <path d="m9 18 6-6-6-6" />
+                              </svg>
+                            </button>
+                            {bcaGuideTab === "atm" && (
+                              <ol className="mt-2 mb-3.5 py-4 pr-4 pl-8 rounded-xl bg-blue-500/15 text-[12.5px] text-black font-medium leading-relaxed space-y-2 list-decimal list-outside">
+                                <li>Masukkan kartu ATM dan PIN BCA Kamu.</li>
+                                <li>
+                                  Pilih menu Transaksi Lainnya lalu Transfer lalu Ke Rekening BCA Virtual Account.
+                                </li>
+                                <li>
+                                  Masukkan nomor Virtual Account yang tertera di atas, lalu tekan Benar.
+                                </li>
+                                <li>
+                                  Periksa rincian pembayaran pada layar, lalu pilih Ya untuk mengonfirmasi.
+                                </li>
+                                <li>
+                                  Transaksi selesai, simpan struk sebagai bukti pembayaran.
+                                </li>
+                              </ol>
+                            )}
+                          </div>
+
+                          {/* 2. Klik BCA */}
+                          <div className="border-t border-neutral-800/40">
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setBcaGuideTab((prev) => (prev === "klikbca" ? null : "klikbca"))
+                              }
+                              className="w-full py-3.5 flex items-center justify-between text-left cursor-pointer"
+                            >
+                              <span className="text-[14px] font-bold text-neutral-900">
+                                Klik BCA
+                              </span>
+                              <svg
+                                className={`w-4 h-4 text-black transition-transform ${
+                                  bcaGuideTab === "klikbca" ? "rotate-90" : ""
+                                }`}
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2.3"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
+                                <path d="m9 18 6-6-6-6" />
+                              </svg>
+                            </button>
+                            {bcaGuideTab === "klikbca" && (
+                              <ol className="mb-3.5 py-4 pr-4 pl-8 rounded-xl bg-blue-500/15 text-[12.5px] text-black font-medium leading-relaxed space-y-2 list-decimal list-outside">
+                                <li>Login ke situs KlikBCA Individual dengan User ID dan PIN kamu.</li>
+                                <li>Pilih menu Transfer Dana lalu pilih Transfer ke BCA Virtual Account.</li>
+                                <li>Masukkan nomor Virtual Account di atas, lalu klik Lanjutkan.</li>
+                                <li>Periksa rincian pembayaran, masukkan respon KeyBCA, lalu klik Kirim.</li>
+                                <li>Transaksi selesai, simpan bukti pembayaran kamu.</li>
+                              </ol>
+                            )}
+                          </div>
+
+                          {/* 3. m-BCA */}
+                          <div className="border-t border-b border-neutral-800/40">
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setBcaGuideTab((prev) => (prev === "mbca" ? null : "mbca"))
+                              }
+                              className="w-full py-3.5 flex items-center justify-between text-left cursor-pointer"
+                            >
+                              <span className="text-[14px] font-bold text-neutral-900">
+                                m-BCA
+                              </span>
+                              <svg
+                                className={`w-4 h-4 text-black transition-transform ${
+                                  bcaGuideTab === "mbca" ? "rotate-90" : ""
+                                }`}
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2.3"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
+                                <path d="m9 18 6-6-6-6" />
+                              </svg>
+                            </button>
+                            {bcaGuideTab === "mbca" && (
+                              <ol className="mb-3.5 py-4 pr-4 pl-8 rounded-xl bg-blue-500/15 text-[12.5px] text-black font-medium leading-relaxed space-y-2 list-decimal list-outside">
+                                <li>Buka aplikasi BCA mobile, pilih menu m-BCA, lalu masukkan Kode Akses.</li>
+                                <li>Pilih menu m-Transfer lalu pilih BCA Virtual Account.</li>
+                                <li>Masukkan nomor Virtual Account di atas, lalu tekan OK dan Send.</li>
+                                <li>Periksa rincian pembayaran yang muncul, tekan OK, lalu masukkan PIN m-BCA.</li>
+                                <li>Transaksi selesai, simpan bukti transaksi kamu.</li>
+                              </ol>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Tombol Batalkan */}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setCancelPaymentReason("Saya berubah pikiran");
+                            setCancelPaymentModalOpen(true);
+                          }}
+                          className="mt-5 w-full py-3.5 px-6 rounded-2xl bg-[#F42B2B] hover:bg-[#dc2626] active:scale-[0.98] text-white font-bold text-sm transition-all cursor-pointer shadow-sm"
+                        >
+                          Batalkan
+                        </button>
+                      </div>
+                    ) : mobilePaymentType === "shopeepay" ? (
+                      <div className="bg-white rounded-3xl p-5 border border-slate-200/75 shadow-2xs">
+                        {/* Logos ShopeePay & SPayLater */}
+                        <div className="flex items-center gap-3.5">
+                          <img
+                            src="/assets/payment-logos/shopeepay.png"
+                            alt="ShopeePay"
+                            className="h-7 w-auto object-contain shrink-0"
+                          />
+                          <img
+                            src="/assets/payment-logos/spaylater.png"
+                            alt="SPayLater"
+                            className="h-7 w-auto object-contain shrink-0"
+                          />
+                        </div>
+
+                        {/* Deskripsi */}
+                        <p className="text-[13px] leading-[1.6] text-neutral-700 mt-4">
+                          Tekan tombol di bawah ini untuk membuka aplikasi Shopee dan menyelesaikan pembayaran menggunakan ShopeePay atau SPayLater. Pastikan saldo atau limit Anda mencukupi.
+                        </p>
+
+                        {/* Petunjuk Penggunaan */}
+                        <div className="mt-5">
+                          <button
+                            type="button"
+                            onClick={() => setShopeeGuideOpen((prev) => !prev)}
+                            className="flex items-center gap-2 text-left cursor-pointer group"
+                          >
+                            <span className="size-5 rounded-full bg-sky-900 text-white text-[11px] font-bold flex items-center justify-center shrink-0">
+                              ?
+                            </span>
+                            <span className="text-[13.5px] font-bold text-sky-900">
+                              Petunjuk Penggunaan
+                            </span>
+                            <svg
+                              className="w-3.5 h-3.5 text-sky-900/70 group-hover:text-sky-900 transition-colors"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2.3"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <path d="m7 15 5 5 5-5" />
+                              <path d="m7 9 5-5 5 5" />
+                            </svg>
+                          </button>
+
+                          {shopeeGuideOpen && (
+                            <ol className="mt-3 py-4 pr-4 pl-8 rounded-xl bg-blue-500/15 text-[12.5px] text-black font-medium leading-relaxed space-y-2 list-decimal list-outside">
+                              <li>Tekan tombol &quot;Bayar dengan ShopeePay/SPayLater&quot;.</li>
+                              <li>Anda akan otomatis diarahkan ke aplikasi Shopee.</li>
+                              <li>
+                                Pilih metode pembayaran yang ingin digunakan (ShopeePay atau SPayLater).
+                              </li>
+                              <li>Periksa kembali total tagihan, lalu tekan Bayar Sekarang.</li>
+                              <li>Masukkan PIN ShopeePay Anda untuk mengonfirmasi transaksi.</li>
+                              <li>
+                                Pembayaran berhasil! Anda akan otomatis dialihkan kembali ke halaman transaksi.
+                              </li>
+                            </ol>
+                          )}
+                        </div>
+
+                        {/* Tombol Biru Bayar dengan ShopeePay */}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setIsQrisModalOpen(false);
+                            setIsCheckoutModalOpen(false);
+                            setCurrentAccountPlan(currentTier === "pro" ? "Paket: Pro" : "Paket: Plus");
+                            setIsSuccessModalOpen(true);
+                          }}
+                          className="mt-5 w-full py-3.5 px-6 rounded-2xl bg-[#1A73E8] hover:bg-[#1557b0] active:scale-[0.98] text-white font-bold text-sm shadow-sm transition-all cursor-pointer"
+                        >
+                          Bayar dengan ShopeePay
+                        </button>
+
+                        {/* Tombol Merah Batalkan */}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setCancelPaymentReason("Saya berubah pikiran");
+                            setCancelPaymentModalOpen(true);
+                          }}
+                          className="mt-3 w-full py-3.5 px-6 rounded-2xl bg-[#F42B2B] hover:bg-[#dc2626] active:scale-[0.98] text-white font-bold text-sm transition-all cursor-pointer shadow-sm"
+                        >
+                          Batalkan
+                        </button>
+                      </div>
+                    ) : (
+                    <div className="bg-white rounded-3xl p-5 border border-slate-200/75 shadow-2xs">
+                      {/* Logo QRIS (klik untuk simulasi pembayaran berhasil) */}
+                      <div className="flex items-center justify-between">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setIsQrisModalOpen(false);
+                            setIsCheckoutModalOpen(false);
+                            setCurrentAccountPlan(currentTier === "pro" ? "Paket: Pro" : "Paket: Plus");
+                            setIsSuccessModalOpen(true);
+                          }}
+                          title="Simulasi Pembayaran Berhasil"
+                          className="cursor-pointer active:scale-95 transition-transform"
+                        >
+                          <img
+                            src="/assets/payment-logos/qris.png"
+                            alt="QRIS"
+                            className="h-7 w-auto object-contain shrink-0"
+                          />
+                        </button>
+                      </div>
+
+                      {/* Deskripsi */}
+                      <p className="text-[13px] leading-[1.6] text-neutral-700 mt-4">
+                        Scan kode QR di bawah ini menggunakan aplikasi e-wallet atau m-banking pilihan kamu{" "}
+                        <strong className="font-bold text-neutral-800">
+                          (GPay, GoPay, OVO, Dana, BCA, dll.).
+                        </strong>{" "}
+                        Pastikan nominal pembayaran sesuai hingga digit terakhir agar transaksi terverifikasi secara otomatis.
+                      </p>
+
+                      {/* Kode QR (klik juga bisa untuk simulasi pembayaran berhasil) */}
+                      <div className="my-6 flex justify-center">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setIsQrisModalOpen(false);
+                            setIsCheckoutModalOpen(false);
+                            setCurrentAccountPlan(currentTier === "pro" ? "Paket: Pro" : "Paket: Plus");
+                            setIsSuccessModalOpen(true);
+                          }}
+                          title="Simulasi Pembayaran Berhasil"
+                          className="p-2 bg-white rounded-xl cursor-pointer active:scale-[0.98] transition-transform"
+                        >
+                          <svg
+                            className="w-[220px] h-[220px] block"
+                            viewBox={`0 0 ${QR_SIZE} ${QR_SIZE}`}
+                            shapeRendering="crispEdges"
+                            aria-label="Kode QR Pembayaran QRIS"
+                          >
+                            <rect width={QR_SIZE} height={QR_SIZE} fill="#FFFFFF" />
+                            {QR_MATRIX.map((row, r) =>
+                              row.map((filled, c) =>
+                                filled ? (
+                                  <rect
+                                    key={`${r}-${c}`}
+                                    x={c}
+                                    y={r}
+                                    width={1}
+                                    height={1}
+                                    fill="#000000"
+                                  />
+                                ) : null
+                              )
+                            )}
+                          </svg>
+                        </button>
+                      </div>
+
+                      {/* Tombol Download QR */}
+                      <button
+                        type="button"
+                        onClick={handleDownloadQris}
+                        className="w-full py-3.5 px-6 rounded-2xl bg-[#475D85] hover:bg-[#3a4d70] active:scale-[0.98] text-white font-bold text-sm shadow-sm transition-all cursor-pointer"
+                      >
+                        Download QR
+                      </button>
+
+                      {/* Petunjuk Penggunaan */}
+                      <div className="mt-5">
+                        <button
+                          type="button"
+                          onClick={() => setQrisGuideOpen((prev) => !prev)}
+                          className="flex items-center gap-2 text-left cursor-pointer group"
+                        >
+                          <span className="size-5 rounded-full bg-sky-900 text-white text-[11px] font-bold flex items-center justify-center shrink-0">
+                            ?
+                          </span>
+                          <span className="text-[13.5px] font-bold text-sky-900">
+                            Petunjuk Penggunaan
+                          </span>
+                          <svg
+                            className="w-3.5 h-3.5 text-sky-900/70 group-hover:text-sky-900 transition-colors"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2.3"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="m7 15 5 5 5-5" />
+                            <path d="m7 9 5-5 5 5" />
+                          </svg>
+                        </button>
+
+                        {qrisGuideOpen && (
+                          <ol className="mt-3 py-4 pr-4 pl-8 rounded-xl bg-blue-500/15 text-[12.5px] text-black font-medium leading-relaxed space-y-2 list-decimal list-outside">
+                            <li>Buka aplikasi m-banking atau e-wallet pilihan Kamu.</li>
+                            <li>Pilih menu Scan/QRIS pada aplikasi.</li>
+                            <li>
+                              Arahkan kamera ke kode QR di atas (atau unggah dari galeri jika kode QR sudah disimpan).
+                            </li>
+                            <li>
+                              Periksa nama penerima dan nominal, lalu konfirmasi pembayaran.
+                            </li>
+                            <li>Pembayaran selesai! Simpan bukti transaksi kamu.</li>
+                          </ol>
+                        )}
+                      </div>
+
+                      {/* Tombol Batalkan */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setCancelPaymentReason("Saya berubah pikiran");
+                          setCancelPaymentModalOpen(true);
+                        }}
+                        className="mt-5 w-full py-3.5 px-6 rounded-2xl bg-[#F42B2B] hover:bg-[#dc2626] active:scale-[0.98] text-white font-bold text-sm transition-all cursor-pointer shadow-sm"
+                      >
+                        Batalkan
+                      </button>
+                    </div>
+                    )}
+                  </div>
+                  )
+                ) : (
+                <div className="md:hidden bg-white rounded-3xl p-4 border border-slate-200/75 shadow-2xs">
+                  <div className="mb-4">
+                    <h4 className="text-[17px] font-bold text-black leading-snug tracking-tight">
+                      Metode Pembayaran
+                    </h4>
+                    <p className="text-xs text-slate-700 leading-relaxed mt-1">
+                      Pilih metode pembayaran yang kamu inginkan untuk menyelesaikan transaksi dengan cepat dan aman.
+                    </p>
+                  </div>
+
+                  <div className="space-y-2.5">
+                    {/* 1. Virtual Account (Expandable Dropdown sesuai referensi) */}
+                    {vaDropdownOpen ? (
+                      <div className="w-full rounded-xl border border-[#3B7CE2] bg-white overflow-hidden shadow-[0_3px_12px_rgba(59,124,226,0.12)] transition-all">
+                        {/* Blue Accordion Header */}
+                        <button
+                          type="button"
+                          onClick={() => setVaDropdownOpen(false)}
+                          className="w-full flex items-center justify-between px-4 py-3.5 bg-[#3B7CE2] text-white cursor-pointer"
+                        >
+                          <span className="text-[13px] font-bold tracking-tight">
+                            Virtual Account
+                          </span>
+                          <svg
+                            className="w-4 h-4 text-white shrink-0"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2.4"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="m6 9 6 6 6-6" />
+                          </svg>
+                        </button>
+
+                        {/* 2x4 Grid of 8 Banks */}
+                        <div className="p-3.5 grid grid-cols-2 gap-2.5 bg-white">
+                          {/* 1. BCA */}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSelectedPaymentMethod("va");
+                              setSelectedVaBank("bca");
+                            }}
+                            className={`h-11 px-2.5 rounded-lg flex items-center justify-center transition-all cursor-pointer active:scale-[0.98] ${
+                              selectedPaymentMethod === "va" && selectedVaBank === "bca"
+                                ? "bg-blue-50/40 border-2 border-[#1A73E8] shadow-2xs"
+                                : "bg-white border border-slate-300/90 hover:border-[#3B7CE2]"
+                            }`}
+                          >
+                            <img
+                              src="/assets/payment-logos/bca.png"
+                              alt="BCA"
+                              className="h-5 w-auto max-w-[96px] object-contain"
+                            />
+                          </button>
+
+                          {/* 2. Mandiri */}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSelectedPaymentMethod("va");
+                              setSelectedVaBank("mandiri");
+                            }}
+                            className={`h-11 px-2.5 rounded-lg flex items-center justify-center transition-all cursor-pointer active:scale-[0.98] ${
+                              selectedPaymentMethod === "va" && selectedVaBank === "mandiri"
+                                ? "bg-blue-50/40 border-2 border-[#1A73E8] shadow-2xs"
+                                : "bg-white border border-slate-300/90 hover:border-[#3B7CE2]"
+                            }`}
+                          >
+                            <img
+                              src="/assets/payment-logos/mandiri.png"
+                              alt="Mandiri"
+                              className="h-6 w-auto max-w-[100px] object-contain"
+                            />
+                          </button>
+
+                          {/* 3. BNI */}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSelectedPaymentMethod("va");
+                              setSelectedVaBank("bni");
+                            }}
+                            className={`h-11 px-2.5 rounded-lg flex items-center justify-center transition-all cursor-pointer active:scale-[0.98] ${
+                              selectedPaymentMethod === "va" && selectedVaBank === "bni"
+                                ? "bg-blue-50/40 border-2 border-[#1A73E8] shadow-2xs"
+                                : "bg-white border border-slate-300/90 hover:border-[#3B7CE2]"
+                            }`}
+                          >
+                            <img
+                              src="/assets/payment-logos/bni.png"
+                              alt="BNI"
+                              className="h-4.5 w-auto max-w-[84px] object-contain"
+                            />
+                          </button>
+
+                          {/* 4. Permata Bank */}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSelectedPaymentMethod("va");
+                              setSelectedVaBank("permata");
+                            }}
+                            className={`h-11 px-2.5 rounded-lg flex items-center justify-center transition-all cursor-pointer active:scale-[0.98] ${
+                              selectedPaymentMethod === "va" && selectedVaBank === "permata"
+                                ? "bg-blue-50/40 border-2 border-[#1A73E8] shadow-2xs"
+                                : "bg-white border border-slate-300/90 hover:border-[#3B7CE2]"
+                            }`}
+                          >
+                            <img
+                              src="/assets/payment-logos/permata.png"
+                              alt="Permata Bank"
+                              className="h-5.5 w-auto max-w-[112px] object-contain"
+                            />
+                          </button>
+
+                          {/* 5. CIMB NIAGA */}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSelectedPaymentMethod("va");
+                              setSelectedVaBank("cimb");
+                            }}
+                            className={`h-11 px-2.5 rounded-lg flex items-center justify-center transition-all cursor-pointer active:scale-[0.98] ${
+                              selectedPaymentMethod === "va" && selectedVaBank === "cimb"
+                                ? "bg-blue-50/40 border-2 border-[#1A73E8] shadow-2xs"
+                                : "bg-white border border-slate-300/90 hover:border-[#3B7CE2]"
+                            }`}
+                          >
+                            <span className="inline-flex items-center gap-1.5">
+                              <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <rect width="24" height="24" rx="3" fill="#790008" />
+                                <path d="M7 7l6 5-6 5h5l6-5-6-5H7z" fill="#FFFFFF" />
+                              </svg>
+                              <span className="text-[11px] tracking-tight leading-none whitespace-nowrap">
+                                <span className="font-black text-[#790008]">CIMB</span>{" "}
+                                <span className="font-medium text-[#790008]">NIAGA</span>
+                              </span>
+                            </span>
+                          </button>
+
+                          {/* 6. BANK BRI */}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSelectedPaymentMethod("va");
+                              setSelectedVaBank("bri");
+                            }}
+                            className={`h-11 px-2.5 rounded-lg flex items-center justify-center transition-all cursor-pointer active:scale-[0.98] ${
+                              selectedPaymentMethod === "va" && selectedVaBank === "bri"
+                                ? "bg-blue-50/40 border-2 border-[#1A73E8] shadow-2xs"
+                                : "bg-white border border-slate-300/90 hover:border-[#3B7CE2]"
+                            }`}
+                          >
+                            <img
+                              src="/assets/payment-logos/bri.png"
+                              alt="BANK BRI"
+                              className="h-4.5 w-auto max-w-[100px] object-contain"
+                            />
+                          </button>
+
+                          {/* 7. SeaBank */}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSelectedPaymentMethod("va");
+                              setSelectedVaBank("seabank");
+                            }}
+                            className={`h-11 px-2.5 rounded-lg flex items-center justify-center transition-all cursor-pointer active:scale-[0.98] ${
+                              selectedPaymentMethod === "va" && selectedVaBank === "seabank"
+                                ? "bg-blue-50/40 border-2 border-[#1A73E8] shadow-2xs"
+                                : "bg-white border border-slate-300/90 hover:border-[#3B7CE2]"
+                            }`}
+                          >
+                            <span className="inline-flex items-center gap-1.5">
+                              <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <circle cx="12" cy="11" r="8.5" fill="#FF6600" />
+                                <path d="M14.3 8.6c-.5-.5-1.2-.7-2.1-.7-1.2 0-2 .6-2 1.4 0 .8.7 1.1 1.9 1.4 1.4.3 2.3.7 2.3 1.9 0 1.1-1 1.9-2.5 1.9-1 0-2-.3-2.6-.9l.7-.9c.5.4 1.2.7 1.9.7.9 0 1.3-.3 1.3-.9 0-.5-.4-.7-1.5-1-1.5-.3-2.6-.7-2.6-2 0-1.2 1-2 2.6-2 1 0 1.8.2 2.4.7l-.8.4z" fill="#FFFFFF" />
+                                <path d="M4.5 18.5C7 17 9.5 17 12 18.5C14.5 20 17 20 19.5 18.5" stroke="#0072CE" strokeWidth="2" strokeLinecap="round" />
+                              </svg>
+                              <span className="text-[12px] font-extrabold tracking-tight leading-none text-[#FF6600]">
+                                SeaBank
+                              </span>
+                            </span>
+                          </button>
+
+                          {/* 8. BSI */}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSelectedPaymentMethod("va");
+                              setSelectedVaBank("bsi");
+                            }}
+                            className={`h-11 px-2.5 rounded-lg flex items-center justify-center transition-all cursor-pointer active:scale-[0.98] ${
+                              selectedPaymentMethod === "va" && selectedVaBank === "bsi"
+                                ? "bg-blue-50/40 border-2 border-[#1A73E8] shadow-2xs"
+                                : "bg-white border border-slate-300/90 hover:border-[#3B7CE2]"
+                            }`}
+                          >
+                            <span className="inline-flex items-center gap-1">
+                              <span className="relative text-[15px] font-black tracking-tight leading-none text-[#00A39D] pr-1">
+                                BSI
+                                <span className="absolute -top-1 right-0 text-[8px] text-[#F9AD19] leading-none">✦</span>
+                              </span>
+                              <span className="flex flex-col leading-none text-left text-[6px] font-bold text-[#00A39D] uppercase">
+                                <span>BANK SYARIAH</span>
+                                <span>INDONESIA</span>
+                              </span>
+                            </span>
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectedPaymentMethod("va");
+                          setVaDropdownOpen(true);
+                        }}
+                        className={`w-full flex items-center justify-between gap-1.5 px-3 py-3.5 rounded-xl transition-all cursor-pointer active:scale-[0.99] ${
+                          selectedPaymentMethod === "va"
+                            ? "bg-blue-50/25 border-2 border-[#0095FF] shadow-[0_2px_10px_rgba(0,149,255,0.12)]"
+                            : "bg-white border-[1.5px] border-indigo-200 hover:border-indigo-300"
+                        }`}
+                      >
+                        <span className="text-[12.5px] font-bold text-black/75 whitespace-nowrap">
+                          Virtual Account
+                        </span>
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          <img src="/assets/payment-logos/bca.png" alt="BCA" className="h-3.5 w-auto object-contain" />
+                          <img src="/assets/payment-logos/bni.png" alt="BNI" className="h-3 w-auto object-contain" />
+                          <img src="/assets/payment-logos/bri.png" alt="BANK BRI" className="h-3.5 w-auto object-contain" />
+                          <span className="text-[11.5px] font-bold text-black">+7</span>
+                          <svg className="w-4 h-4 text-black shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="m9 18 6-6-6-6" />
+                          </svg>
+                        </div>
+                      </button>
+                    )}
+
+                    {/* 2. QRIS */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedPaymentMethod("qris");
+                        setVaDropdownOpen(false);
+                      }}
+                      className={`w-full flex items-center justify-between gap-2 px-3 py-3.5 rounded-xl transition-all cursor-pointer active:scale-[0.99] ${
+                        selectedPaymentMethod === "qris"
+                          ? "bg-blue-50/25 border-2 border-[#1A73E8] shadow-[0_2px_10px_rgba(26,115,232,0.12)]"
+                          : "bg-white border-[1.5px] border-indigo-200 hover:border-indigo-300"
+                      }`}
+                    >
+                      <span className="text-[12.5px] font-bold text-black/75 whitespace-nowrap">
+                        QRIS
+                      </span>
+                      <div className="flex items-center gap-2.5 shrink-0">
+                        <img src="/assets/payment-logos/qris.png" alt="QRIS" className="h-[19px] w-auto object-contain" />
+                        <span
+                          className={`w-[17px] h-[17px] rounded-full flex items-center justify-center shrink-0 transition-all ${
+                            selectedPaymentMethod === "qris"
+                              ? "bg-[#1A73E8] border-[1.5px] border-[#1A73E8] text-white"
+                              : "bg-white border-[1.5px] border-slate-300"
+                          }`}
+                        >
+                          {selectedPaymentMethod === "qris" && (
+                            <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
+                              <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                          )}
+                        </span>
+                      </div>
+                    </button>
+
+                    {/* 3. Dana */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedPaymentMethod("dana");
+                        setVaDropdownOpen(false);
+                      }}
+                      className={`w-full flex items-center justify-between gap-2 px-3 py-3.5 rounded-xl transition-all cursor-pointer active:scale-[0.99] ${
+                        selectedPaymentMethod === "dana"
+                          ? "bg-blue-50/25 border-2 border-[#1A73E8] shadow-[0_2px_10px_rgba(26,115,232,0.12)]"
+                          : "bg-white border-[1.5px] border-indigo-200 hover:border-indigo-300"
+                      }`}
+                    >
+                      <span className="text-[12.5px] font-bold text-black/75 whitespace-nowrap">
+                        Dana
+                      </span>
+                      <div className="flex items-center gap-2.5 shrink-0">
+                        <img src="/assets/payment-logos/dana.png" alt="DANA" className="h-5 w-auto object-contain" />
+                        <span
+                          className={`w-[17px] h-[17px] rounded-full flex items-center justify-center shrink-0 transition-all ${
+                            selectedPaymentMethod === "dana"
+                              ? "bg-[#1A73E8] border-[1.5px] border-[#1A73E8] text-white"
+                              : "bg-white border-[1.5px] border-slate-300"
+                          }`}
+                        >
+                          {selectedPaymentMethod === "dana" && (
+                            <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
+                              <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                          )}
+                        </span>
+                      </div>
+                    </button>
+
+                    {/* 4. ShopeePay (ShopeePay + SPayLater) */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedPaymentMethod("shopeepay");
+                        setVaDropdownOpen(false);
+                      }}
+                      className={`w-full flex items-center justify-between gap-2 px-3 py-3.5 rounded-xl transition-all cursor-pointer active:scale-[0.99] ${
+                        selectedPaymentMethod === "shopeepay"
+                          ? "bg-blue-50/25 border-2 border-[#1A73E8] shadow-[0_2px_10px_rgba(26,115,232,0.12)]"
+                          : "bg-white border-[1.5px] border-indigo-200 hover:border-indigo-300"
+                      }`}
+                    >
+                      <span className="text-[12.5px] font-bold text-black/75 whitespace-nowrap">
+                        ShopeePay
+                      </span>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <img
+                          src="/assets/payment-logos/shopeepay.png"
+                          alt="ShopeePay"
+                          className="h-5 w-auto object-contain"
+                        />
+                        <img
+                          src="/assets/payment-logos/spaylater.png"
+                          alt="SPayLater"
+                          className="h-5 w-auto object-contain"
+                        />
+                        <span
+                          className={`w-[17px] h-[17px] rounded-full flex items-center justify-center shrink-0 transition-all ml-0.5 ${
+                            selectedPaymentMethod === "shopeepay"
+                              ? "bg-[#1A73E8] border-[1.5px] border-[#1A73E8] text-white"
+                              : "bg-white border-[1.5px] border-slate-300"
+                          }`}
+                        >
+                          {selectedPaymentMethod === "shopeepay" && (
+                            <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
+                              <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                          )}
+                        </span>
+                      </div>
+                    </button>
+
+                    {/* 5. Gopay (gopay + gopaylater) */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedPaymentMethod("gopay");
+                        setVaDropdownOpen(false);
+                      }}
+                      className={`w-full flex items-center justify-between gap-2 px-3 py-3.5 rounded-xl transition-all cursor-pointer active:scale-[0.99] ${
+                        selectedPaymentMethod === "gopay" || selectedPaymentMethod === "ewallet"
+                          ? "bg-blue-50/25 border-2 border-[#1A73E8] shadow-[0_2px_10px_rgba(26,115,232,0.12)]"
+                          : "bg-white border-[1.5px] border-indigo-200 hover:border-indigo-300"
+                      }`}
+                    >
+                      <span className="text-[12.5px] font-bold text-black/75 whitespace-nowrap">
+                        Gopay
+                      </span>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <img
+                          src="/assets/payment-logos/gopay.png"
+                          alt="GoPay"
+                          className="h-4 w-auto object-contain"
+                        />
+                        <img
+                          src="/assets/payment-logos/gopaylater.png"
+                          alt="GoPayLater"
+                          className="h-4.5 w-auto object-contain"
+                        />
+                        <span
+                          className={`w-[17px] h-[17px] rounded-full flex items-center justify-center shrink-0 transition-all ml-0.5 ${
+                            selectedPaymentMethod === "gopay" || selectedPaymentMethod === "ewallet"
+                              ? "bg-[#1A73E8] border-[1.5px] border-[#1A73E8] text-white"
+                              : "bg-white border-[1.5px] border-slate-300"
+                          }`}
+                        >
+                          {(selectedPaymentMethod === "gopay" || selectedPaymentMethod === "ewallet") && (
+                            <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
+                              <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                          )}
+                        </span>
+                      </div>
+                    </button>
+
+                    {/* 6. Alfa Group (Alfamart + Alfamidi) */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedPaymentMethod("alfa");
+                        setVaDropdownOpen(false);
+                      }}
+                      className={`w-full flex items-center justify-between gap-2 px-3 py-3.5 rounded-xl transition-all cursor-pointer active:scale-[0.99] ${
+                        selectedPaymentMethod === "alfa"
+                          ? "bg-blue-50/25 border-2 border-[#1A73E8] shadow-[0_2px_10px_rgba(26,115,232,0.12)]"
+                          : "bg-white border-[1.5px] border-indigo-200 hover:border-indigo-300"
+                      }`}
+                    >
+                      <span className="text-[12.5px] font-bold text-black/75 whitespace-nowrap">
+                        Alfa Group
+                      </span>
+                      <div className="flex items-center gap-2.5 shrink-0">
+                        <img
+                          src="/assets/payment-logos/alfamart.png"
+                          alt="Alfamart"
+                          className="h-5 w-auto object-contain"
+                        />
+                        <img
+                          src="/assets/payment-logos/alfamidi.png"
+                          alt="Alfamidi"
+                          className="h-4.5 w-auto object-contain"
+                        />
+                        <span
+                          className={`w-[17px] h-[17px] rounded-full flex items-center justify-center shrink-0 transition-all ${
+                            selectedPaymentMethod === "alfa"
+                              ? "bg-[#1A73E8] border-[1.5px] border-[#1A73E8] text-white"
+                              : "bg-white border-[1.5px] border-slate-300"
+                          }`}
+                        >
+                          {selectedPaymentMethod === "alfa" && (
+                            <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
+                              <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                          )}
+                        </span>
+                      </div>
+                    </button>
+
+                    {/* 7. Indomaret */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedPaymentMethod("indomaret");
+                        setVaDropdownOpen(false);
+                      }}
+                      className={`w-full flex items-center justify-between gap-2 px-3 py-3.5 rounded-xl transition-all cursor-pointer active:scale-[0.99] ${
+                        selectedPaymentMethod === "indomaret"
+                          ? "bg-blue-50/25 border-2 border-[#1A73E8] shadow-[0_2px_10px_rgba(26,115,232,0.12)]"
+                          : "bg-white border-[1.5px] border-indigo-200 hover:border-indigo-300"
+                      }`}
+                    >
+                      <span className="text-[12.5px] font-bold text-black/75 whitespace-nowrap">
+                        Indomaret
+                      </span>
+                      <div className="flex items-center gap-2.5 shrink-0">
+                        <img
+                          src="/assets/payment-logos/indomaret.png"
+                          alt="Indomaret"
+                          className="h-5.5 w-auto object-contain"
+                        />
+                        <span
+                          className={`w-[17px] h-[17px] rounded-full flex items-center justify-center shrink-0 transition-all ${
+                            selectedPaymentMethod === "indomaret"
+                              ? "bg-[#1A73E8] border-[1.5px] border-[#1A73E8] text-white"
+                              : "bg-white border-[1.5px] border-slate-300"
+                          }`}
+                        >
+                          {selectedPaymentMethod === "indomaret" && (
+                            <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
+                              <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                          )}
+                        </span>
+                      </div>
+                    </button>
+
+                    {/* 8. Card Payment (VISA, Mastercard, JCB, +2) */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedPaymentMethod("cc");
+                        setVaDropdownOpen(false);
+                      }}
+                      className={`w-full flex items-center justify-between gap-2 px-3 py-3.5 rounded-xl transition-all cursor-pointer active:scale-[0.99] ${
+                        selectedPaymentMethod === "cc"
+                          ? "bg-blue-50/25 border-2 border-[#1A73E8] shadow-[0_2px_10px_rgba(26,115,232,0.12)]"
+                          : "bg-white border-[1.5px] border-indigo-200 hover:border-indigo-300"
+                      }`}
+                    >
+                      <span className="text-[12.5px] font-bold text-black/75 whitespace-nowrap">
+                        Card Payment
+                      </span>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <img
+                          src="/assets/payment-logos/visa.png"
+                          alt="VISA"
+                          className="h-3.5 w-auto object-contain"
+                        />
+                        {/* Mastercard */}
+                        <svg className="w-6 h-4 shrink-0" viewBox="0 0 32 20" fill="none" aria-label="Mastercard">
+                          <circle cx="11" cy="10" r="8" fill="#EB001B" />
+                          <circle cx="21" cy="10" r="8" fill="#F79E1B" />
+                          <path d="M16 3.7a8 8 0 0 1 0 12.6 8 8 0 0 1 0-12.6z" fill="#FF5F00" />
+                        </svg>
+                        {/* JCB */}
+                        <span className="inline-flex items-center gap-[1.5px] bg-white p-[1px] rounded-[3px] border border-slate-200/70">
+                          <span className="w-[7px] h-[14px] rounded-[2px] bg-gradient-to-b from-[#1D4ED8] to-[#0284C7] text-[6.5px] font-black text-white flex items-center justify-center leading-none">
+                            J
+                          </span>
+                          <span className="w-[7px] h-[14px] rounded-[2px] bg-gradient-to-b from-[#991B1B] to-[#E11D48] text-[6.5px] font-black text-white flex items-center justify-center leading-none">
+                            C
+                          </span>
+                          <span className="w-[7px] h-[14px] rounded-[2px] bg-gradient-to-b from-[#15803D] to-[#65A30D] text-[6.5px] font-black text-white flex items-center justify-center leading-none">
+                            B
+                          </span>
+                        </span>
+                        <span className="text-[11.5px] font-bold text-black">+2</span>
+                        <span
+                          className={`w-[17px] h-[17px] rounded-full flex items-center justify-center shrink-0 transition-all ml-0.5 ${
+                            selectedPaymentMethod === "cc"
+                              ? "bg-[#1A73E8] border-[1.5px] border-[#1A73E8] text-white"
+                              : "bg-white border-[1.5px] border-slate-300"
+                          }`}
+                        >
+                          {selectedPaymentMethod === "cc" && (
+                            <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
+                              <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                          )}
+                        </span>
+                      </div>
+                    </button>
+
+                    {/* 9. Akulaku Paylater */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedPaymentMethod("akulaku");
+                        setVaDropdownOpen(false);
+                      }}
+                      className={`w-full flex items-center justify-between gap-2 px-3 py-3.5 rounded-xl transition-all cursor-pointer active:scale-[0.99] ${
+                        selectedPaymentMethod === "akulaku"
+                          ? "bg-blue-50/25 border-2 border-[#1A73E8] shadow-[0_2px_10px_rgba(26,115,232,0.12)]"
+                          : "bg-white border-[1.5px] border-indigo-200 hover:border-indigo-300"
+                      }`}
+                    >
+                      <span className="text-[12.5px] font-bold text-black/75 whitespace-nowrap">
+                        Akulaku Paylater
+                      </span>
+                      <div className="flex items-center gap-2.5 shrink-0">
+                        <img
+                          src="/assets/payment-logos/akulaku.png"
+                          alt="Akulaku PayLater"
+                          className="h-6.5 w-auto object-contain"
+                        />
+                        <span
+                          className={`w-[17px] h-[17px] rounded-full flex items-center justify-center shrink-0 transition-all ${
+                            selectedPaymentMethod === "akulaku"
+                              ? "bg-[#1A73E8] border-[1.5px] border-[#1A73E8] text-white"
+                              : "bg-white border-[1.5px] border-slate-300"
+                          }`}
+                        >
+                          {selectedPaymentMethod === "akulaku" && (
+                            <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
+                              <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                          )}
+                        </span>
+                      </div>
+                    </button>
+
+                    {/* 10. Kredivo */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedPaymentMethod("kredivo");
+                        setVaDropdownOpen(false);
+                      }}
+                      className={`w-full flex items-center justify-between gap-2 px-3 py-3.5 rounded-xl transition-all cursor-pointer active:scale-[0.99] ${
+                        selectedPaymentMethod === "kredivo"
+                          ? "bg-blue-50/25 border-2 border-[#1A73E8] shadow-[0_2px_10px_rgba(26,115,232,0.12)]"
+                          : "bg-white border-[1.5px] border-indigo-200 hover:border-indigo-300"
+                      }`}
+                    >
+                      <span className="text-[12.5px] font-bold text-black/75 whitespace-nowrap">
+                        Kredivo
+                      </span>
+                      <div className="flex items-center gap-2.5 shrink-0">
+                        <span className="inline-flex items-center gap-0.5">
+                          <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <path d="M5 4h3.5v16H5V4z" fill="#25A9E0" />
+                            <path d="M8.5 12L17 4h4l-8.5 8 8.5 8h-4l-8.5-8z" fill="#F48120" />
+                          </svg>
+                          <span className="flex flex-col leading-none text-left">
+                            <span className="text-[12px] font-extrabold tracking-tight text-[#25A9E0] leading-none">
+                              redivo
+                            </span>
+                            <span className="text-[6px] font-bold text-[#F48120] leading-tight">
+                              Buy now, Pay later
+                            </span>
+                          </span>
+                        </span>
+                        <span
+                          className={`w-[17px] h-[17px] rounded-full flex items-center justify-center shrink-0 transition-all ${
+                            selectedPaymentMethod === "kredivo"
+                              ? "bg-[#1A73E8] border-[1.5px] border-[#1A73E8] text-white"
+                              : "bg-white border-[1.5px] border-slate-300"
+                          }`}
+                        >
+                          {selectedPaymentMethod === "kredivo" && (
+                            <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
+                              <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                          )}
+                        </span>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+                )}
+
+                {/* Desktop Heading & List */}
+                <h4 className="hidden md:block text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">
                   Pilih Metode Pembayaran
                 </h4>
 
-                <div className="space-y-2 sm:space-y-2.5 text-xs">
+                <div className="hidden md:block space-y-2 sm:space-y-2.5 text-xs">
                   {/* Method 1: QRIS Instant (Default) */}
                   <label
                     onClick={() => setSelectedPaymentMethod("qris")}
@@ -2854,13 +4402,13 @@ export default function UpgradePage() {
                   </label>
                 </div>
 
-                {/* Simulation Pay Button */}
-                <div className="pt-2 sm:pt-3">
+                {/* Simulation Pay Button (Desktop inside right column) */}
+                <div className="hidden md:block pt-3">
                   <button
                     type="button"
                     disabled={isPaymentProcessing}
                     onClick={handleExecutePayment}
-                    className="w-full py-3.5 px-6 bg-[#1A73E8] hover:bg-[#1557b0] active:scale-[0.98] text-white font-bold text-sm rounded-xl sm:rounded-2xl shadow-lg shadow-[#1A73E8]/25 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75"
+                    className="w-full py-3.5 px-6 bg-[#1A73E8] hover:bg-[#1557b0] active:scale-[0.98] text-white font-bold text-sm rounded-2xl shadow-lg shadow-[#1A73E8]/25 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75"
                   >
                     {isPaymentProcessing ? (
                       <>
@@ -2902,12 +4450,161 @@ export default function UpgradePage() {
                       </>
                     )}
                   </button>
-                  <p className="text-[11px] text-center text-slate-400 mt-2.5 pb-2 leading-relaxed">
-                    Dengan mengklik tombol, Anda menyetujui Ketentuan Layanan & Privasi Alerin.
-                  </p>
                 </div>
               </div>
             </div>
+
+            {/* Floating Bottom Bar (Mobile Full Page - melayang dengan harga di kiri & tombol Lanjutkan di kanan) */}
+            {!isQrisModalOpen && (
+              <div className="md:hidden fixed bottom-3.5 inset-x-3.5 sm:bottom-5 sm:inset-x-4 max-w-md mx-auto z-[60] bg-white/95 backdrop-blur-md border border-slate-300 rounded-2xl px-4.5 py-3 shadow-[0_12px_32px_rgba(15,23,42,0.16),0_4px_12px_rgba(15,23,42,0.06)]">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <span className="text-[11px] font-semibold text-slate-500 block">
+                      Total Biaya
+                    </span>
+                    <div className="flex items-baseline gap-1.5 mt-0.5">
+                      <span className="text-lg font-extrabold text-slate-900 leading-tight">
+                        {formatRupiah(grandTotal)}
+                      </span>
+                      {(bundlingDiscount > 0 || voucherDiscount > 0) && (
+                        <span className="text-xs text-slate-400 line-through">
+                          {formatRupiah(subtotal)}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    disabled={isPaymentProcessing}
+                    onClick={handleExecutePayment}
+                    className="px-5 py-3 bg-[#1A73E8] hover:bg-[#1557b0] text-white font-bold text-xs rounded-xl shadow-md shadow-[#1A73E8]/25 transition-all shrink-0 flex items-center gap-1.5 active:scale-95 cursor-pointer disabled:opacity-75"
+                  >
+                    {isPaymentProcessing ? (
+                      <>
+                        <svg
+                          className="animate-spin h-3.5 w-3.5 text-white"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          />
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          />
+                        </svg>
+                        <span>Memproses...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>Lanjutkan</span>
+                        <svg
+                          className="w-3.5 h-3.5"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.5"
+                        >
+                          <path d="M5 12h14m-7-7 7 7-7 7" />
+                        </svg>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* POP-UP KONFIRMASI BATALKAN PEMBAYARAN (sesuai referensi desain) */}
+      {cancelPaymentModalOpen && (
+        <div
+          className="fixed inset-0 z-[70] bg-black/50 backdrop-blur-[2px] flex items-center justify-center p-5 overflow-hidden overscroll-none animate-[gemini-fade-in_0.18s_ease-out]"
+          onClick={() => setCancelPaymentModalOpen(false)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="relative w-full max-w-[360px] bg-white rounded-[24px] p-6 shadow-2xl animate-[gemini-zoom-in_0.16s_ease-out]"
+          >
+            {/* Close Button X di dalam pojok kanan atas kartu */}
+            <button
+              type="button"
+              onClick={() => setCancelPaymentModalOpen(false)}
+              aria-label="Tutup"
+              className="absolute top-4 right-4 size-7 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-800 active:scale-95 flex items-center justify-center transition-all cursor-pointer"
+            >
+              <svg
+                className="w-3.5 h-3.5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+
+            <h3 className="text-[21px] font-bold text-black leading-[1.22] tracking-tight pr-8">
+              Yakin ingin membatalkan pembayaran?
+            </h3>
+              <p className="text-[13px] text-neutral-700 leading-[1.55] mt-3">
+                Mohon beri tahu kami alasan kamu membatalkan pembayaran ini. Masukan kamu sangat berharga untuk membantu kami meningkatkan kualitas layanan di masa mendatang.
+              </p>
+
+              {/* 4 Pill Alasan Pembatalan */}
+              <div className="mt-5 space-y-2.5">
+                {[
+                  "Saya berubah pikiran",
+                  "Gunakan metode pembayaran lain",
+                  "Terjadi kendala saat pembayaran",
+                  "Saya ingin mengubah pesanan",
+                ].map((reason) => {
+                  const isActive = cancelPaymentReason === reason;
+                  return (
+                    <button
+                      key={reason}
+                      type="button"
+                      onClick={() => setCancelPaymentReason(reason)}
+                      className={`w-full py-3 px-4 rounded-full text-center text-[13px] transition-all cursor-pointer active:scale-[0.99] ${
+                        isActive
+                          ? "bg-[#3E82D6] border-[1.5px] border-[#3E82D6] text-white font-semibold shadow-xs"
+                          : "bg-white border-[1.5px] border-stone-400/60 text-neutral-800 font-medium hover:border-slate-500"
+                      }`}
+                    >
+                      {reason}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Tombol Merah Batalkan Pembayaran */}
+              <button
+                type="button"
+                onClick={() => {
+                  setCancelPaymentModalOpen(false);
+                  setIsQrisModalOpen(false);
+                  if (cancelPaymentReason === "Gunakan metode pembayaran lain") {
+                    showToast("Silakan pilih metode pembayaran lainnya", "info");
+                  } else {
+                    setIsCheckoutModalOpen(false);
+                    showToast("Pembayaran berhasil dibatalkan", "info");
+                  }
+                }}
+                className="mt-5 w-full py-3.5 px-5 bg-[#F42B2B] hover:bg-[#dc2626] active:scale-[0.98] text-white font-bold text-[14px] rounded-2xl shadow-sm transition-all cursor-pointer"
+              >
+                Batalkan Pembayaran
+              </button>
           </div>
         </div>
       )}
@@ -2915,54 +4612,65 @@ export default function UpgradePage() {
       {/* TRANSACTION SUCCESS MODAL */}
       {isSuccessModalOpen && (
         <div
-          className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm p-4 flex items-center justify-center animate-[gemini-fade-in_0.2s_ease-out]"
+          className="fixed inset-0 z-[80] overflow-hidden overscroll-none bg-slate-900/60 backdrop-blur-sm p-5 flex items-center justify-center animate-[gemini-fade-in_0.2s_ease-out]"
           onClick={() => setIsSuccessModalOpen(false)}
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="bg-white rounded-3xl max-w-md w-full p-6 text-center shadow-2xl border border-slate-200 animate-[gemini-zoom-in_0.15s_ease-out]"
+            className="bg-white rounded-[26px] max-w-[380px] w-full p-6 text-center shadow-2xl border border-slate-200/80 animate-[gemini-zoom-in_0.18s_ease-out]"
           >
-            <div className="w-16 h-16 rounded-2xl bg-brand-100 text-brand-600 mx-auto flex items-center justify-center mb-4 shadow-sm">
+            {/* Success Checkmark */}
+            <div className="size-16 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-600 mx-auto flex items-center justify-center shadow-2xs">
               <svg
                 className="w-8 h-8"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                strokeWidth="3"
+                strokeWidth="2.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               >
                 <polyline points="20 6 9 17 4 12" />
               </svg>
             </div>
 
-            <span className="text-[11px] font-bold uppercase tracking-wider text-brand-700 bg-brand-50 px-2.5 py-1 rounded-full border border-brand-200">
-              Pembayaran Berhasil Diverifikasi
-            </span>
-
-            <h3 className="text-xl font-extrabold text-slate-900 mt-3">
-              Selamat Datang di Alerin Pro!
+            <h3 className="text-[21px] font-extrabold text-slate-950 tracking-tight mt-4">
+              Pembayaran Berhasil!
             </h3>
-            <p className="text-xs text-slate-600 mt-1.5 leading-relaxed">
-              Fitur yang Anda pilih telah aktif di akun Anda. Faktur resmi telah dikirim ke{" "}
-              <span className="font-semibold text-slate-800">reyhan@universitas.ac.id</span>.
+            <p className="text-[13px] text-slate-600 mt-2 leading-relaxed">
+              Terima kasih! Paket langganan kamu sudah aktif. Sekarang kamu bisa langsung menikmati seluruh fitur pilihan Alerin untuk mendampingi riset dan penulisan akademikmu.
             </p>
 
-            <div className="mt-5 p-3.5 bg-slate-50 rounded-2xl border border-slate-200/80 text-left text-xs space-y-1.5">
-              <div className="flex justify-between">
-                <span className="text-slate-500">ID Referensi:</span>
-                <span className="font-mono font-bold text-slate-800">ALR-2026-8891B</span>
+            {/* Clean Receipt Summary */}
+            <div className="mt-5 rounded-2xl border border-slate-200/80 bg-slate-50/70 overflow-hidden text-left">
+              <div className="px-4 py-3 space-y-2 text-xs">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-slate-500">Paket Aktif</span>
+                  <span className="font-semibold text-slate-900">
+                    Alerin {currentTier === "pro" ? "Pro" : "Plus"} · {selectedFeatures.size} Fitur
+                  </span>
+                </div>
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-slate-500">Masa Berlaku</span>
+                  <span className="font-semibold text-slate-900">
+                    {getDurationReadable(currentDuration, currentTier)}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-slate-500">Metode</span>
+                  <span className="font-semibold text-slate-900">
+                    {mobilePaymentType === "va_bca"
+                      ? "BCA Virtual Account"
+                      : mobilePaymentType === "shopeepay"
+                      ? "ShopeePay/SPayLater"
+                      : "QRIS"}
+                  </span>
+                </div>
               </div>
-              <div className="flex justify-between">
-                <span className="text-slate-500">Paket Baru:</span>
-                <span className="font-bold text-brand-600">
-                  {selectedFeatures.size === 4
-                    ? "Alerin Complete Suite (4 Fitur)"
-                    : `Alerin Bundling (${selectedFeatures.size} Fitur)`}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-500">Masa Berlaku:</span>
-                <span className="font-bold text-slate-800">
-                  Aktif selama {getDurationReadable(currentDuration, currentTier)}
+              <div className="px-4 py-3 border-t border-slate-200/70 bg-white flex items-center justify-between gap-2">
+                <span className="text-xs font-bold text-slate-900">Total Dibayar</span>
+                <span className="text-sm font-extrabold text-slate-950 tabular-nums">
+                  {formatRupiah(grandTotal)}
                 </span>
               </div>
             </div>
@@ -2973,9 +4681,20 @@ export default function UpgradePage() {
                 setIsSuccessModalOpen(false);
                 navigate("/");
               }}
-              className="w-full mt-6 py-3 px-5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer"
+              className="w-full mt-5 py-3.5 px-5 bg-[#1A73E8] hover:bg-[#1557b0] active:scale-[0.98] text-white font-bold text-sm rounded-2xl shadow-md shadow-[#1A73E8]/25 transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
-              Buka Dashboard Alerin
+              <span>Mulai Nikmati Alerin</span>
+              <svg
+                className="w-4 h-4"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M5 12h14m-7-7 7 7-7 7" />
+              </svg>
             </button>
           </div>
         </div>
@@ -2984,7 +4703,7 @@ export default function UpgradePage() {
       {/* MODAL: DETAIL PAKET FITUR ALERIN */}
       {activeModalFeatureKey && (
         <div
-          className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm p-4 sm:p-6 flex items-center justify-center animate-[gemini-fade-in_0.2s_ease-out]"
+          className="fixed inset-0 z-50 overflow-hidden overscroll-none bg-slate-900/60 backdrop-blur-sm p-4 sm:p-6 flex items-center justify-center animate-[gemini-fade-in_0.2s_ease-out]"
           onClick={() => setActiveModalFeatureKey(null)}
         >
           {(() => {
@@ -2996,10 +4715,10 @@ export default function UpgradePage() {
             return (
               <div
                 onClick={(e) => e.stopPropagation()}
-                className="bg-white rounded-3xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden transform transition-all animate-[gemini-zoom-in_0.15s_ease-out]"
+                className="bg-white rounded-3xl max-w-lg w-full max-h-[90vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden transform transition-all animate-[gemini-zoom-in_0.15s_ease-out]"
               >
                 {/* Modal Header */}
-                <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
+                <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/70 shrink-0">
                   <div className="flex items-center gap-3">
                     <span
                       className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#eff6ff] ${
@@ -3044,7 +4763,7 @@ export default function UpgradePage() {
                 </div>
 
                 {/* Modal Body */}
-                <div className="p-6 space-y-4">
+                <div className="p-6 space-y-4 overflow-y-auto overscroll-contain flex-1">
                   <div>
                     <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
                       Deskripsi & Ruang Lingkup
@@ -3078,7 +4797,7 @@ export default function UpgradePage() {
                 </div>
 
                 {/* Modal Footer */}
-                <div className="px-6 py-4 bg-slate-50/80 border-t border-slate-100 flex items-center justify-between gap-3">
+                <div className="px-6 py-4 bg-slate-50/80 border-t border-slate-100 flex items-center justify-between gap-3 shrink-0">
                   <button
                     type="button"
                     onClick={() => setActiveModalFeatureKey(null)}
@@ -3094,19 +4813,24 @@ export default function UpgradePage() {
                     }}
                     className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                       isSelected
-                        ? "bg-slate-200 text-slate-700 hover:bg-slate-300"
+                        ? "bg-slate-100 text-slate-700 border border-slate-200 hover:bg-red-50 hover:text-red-600 hover:border-red-200"
                         : "bg-[#1A73E8] hover:bg-[#1557b0] text-white shadow-md shadow-[#1A73E8]/25"
                     }`}
                   >
-                    <svg
-                      className="w-3.5 h-3.5"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="3"
-                    >
-                      <polyline points="20 6 9 17 4 12" />
-                    </svg>
+                    {isSelected && (
+                      <svg
+                        className="w-3.5 h-3.5"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                      </svg>
+                    )}
                     <span>{isSelected ? "Batal Pilih Fitur" : "Pilih Fitur Ini"}</span>
                   </button>
                 </div>
