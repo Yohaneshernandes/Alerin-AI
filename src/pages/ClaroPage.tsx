@@ -19966,19 +19966,6 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                 onClick={(e) => e.stopPropagation()}
                 className="relative w-[400px] max-w-[calc(100%-32px)] p-6 bg-white rounded-2xl outline outline-1 outline-offset-[-1px] outline-slate-200/90 shadow-[0px_22.7px_45.4px_0px_rgba(2,6,23,0.30)] flex flex-col justify-start items-center animate-[gemini-zoom-in_0.16s_ease-out]"
               >
-                {/* Tombol Tutup X */}
-                <button
-                  type="button"
-                  onClick={() => setGoogleConnectModal(false)}
-                  aria-label="Tutup"
-                  className="size-7 right-2.5 top-2.5 absolute rounded-full inline-flex justify-center items-center text-neutral-400 hover:text-neutral-600 hover:bg-slate-100 transition-colors cursor-pointer"
-                >
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-                    <line x1="18" y1="6" x2="6" y2="18" />
-                    <line x1="6" y1="6" x2="18" y2="18" />
-                  </svg>
-                </button>
-
                 {/* Logo Alerin <-> Google */}
                 <div className="pb-4 flex items-center justify-center gap-3">
                   <div className="size-12 bg-blue-50 rounded-2xl outline outline-1 outline-offset-[-1px] outline-blue-100 flex justify-center items-center shrink-0">
@@ -20028,13 +20015,13 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
 
                 {/* Kotak Kebijakan Privasi */}
                 <div className="w-full pb-5 flex flex-col justify-start items-start">
-                  <div className="w-full p-2.5 bg-slate-50 rounded-xl outline outline-1 outline-offset-[-1px] outline-slate-200/80 inline-flex justify-start items-start gap-2">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400 shrink-0 mt-0.5">
+                  <div className="w-full p-3 bg-slate-50 rounded-xl outline outline-1 outline-offset-[-1px] outline-slate-200/90 inline-flex justify-start items-start gap-2.5">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400 shrink-0 mt-0.5">
                       <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
                       <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                     </svg>
-                    <p className="text-slate-500 text-xs font-normal font-['Plus_Jakarta_Sans'] leading-4">
-                      Dengan melanjutkan, Anda menyetujui sinkronisasi<br className="hidden sm:inline" />jadwal yang aman sesuai Kebijakan Privasi Alerin.
+                    <p className="text-slate-600 text-xs font-normal font-['Plus_Jakarta_Sans'] leading-relaxed">
+                      Dengan melanjutkan, Anda menyetujui sinkronisasi jadwal yang aman sesuai Kebijakan Privasi Alerin.
                     </p>
                   </div>
                 </div>
@@ -20176,21 +20163,8 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                 aria-modal="true"
                 aria-labelledby="google-success-title"
                 onClick={(e) => e.stopPropagation()}
-                className="relative w-80 max-w-[calc(100%-32px)] p-6 bg-white rounded-2xl outline outline-1 outline-offset-[-1px] outline-slate-200/90 shadow-[0px_22.7px_45.4px_0px_rgba(2,6,23,0.35)] flex flex-col justify-start items-center animate-[gemini-zoom-in_0.16s_ease-out]"
+                className="relative w-[340px] max-w-[calc(100%-32px)] p-6 bg-white rounded-2xl outline outline-1 outline-offset-[-1px] outline-slate-200/90 shadow-[0px_22.7px_45.4px_0px_rgba(2,6,23,0.35)] flex flex-col justify-start items-center animate-[gemini-zoom-in_0.16s_ease-out]"
               >
-                {/* Tombol Tutup X */}
-                <button
-                  type="button"
-                  onClick={() => setGoogleSuccessModal(false)}
-                  aria-label="Tutup"
-                  className="size-7 right-2.5 top-2.5 absolute rounded-full inline-flex justify-center items-center text-neutral-400 hover:text-neutral-600 hover:bg-slate-100 transition-colors cursor-pointer"
-                >
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-                    <line x1="18" y1="6" x2="6" y2="18" />
-                    <line x1="6" y1="6" x2="18" y2="18" />
-                  </svg>
-                </button>
-
                 {/* Icon Centang Hijau */}
                 <div className="pb-4 flex flex-col justify-start items-start">
                   <div className="size-12 bg-emerald-50/80 rounded-[10px] shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] outline outline-1 outline-offset-[-1px] outline-emerald-200/60 inline-flex justify-center items-center">
@@ -20211,12 +20185,14 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                 </div>
 
                 {/* Deskripsi */}
-                <div className="w-full max-w-xs pb-3 flex flex-col justify-start items-center space-y-1">
-                  <p className="w-full text-center text-gray-500 text-xs font-medium font-['Plus_Jakarta_Sans'] leading-relaxed">
-                    Akun Google Kalender Anda telah terhubung.
-                  </p>
-                  <p className="w-full text-center text-gray-500 text-xs font-medium font-['Plus_Jakarta_Sans'] leading-relaxed">
-                    Semua agenda sekarang akan diperbarui otomatis.
+                <div className="w-full pb-4 flex flex-col justify-start items-center">
+                  <p className="w-full text-center text-gray-500 text-xs sm:text-[12.5px] font-normal font-['Plus_Jakarta_Sans'] leading-relaxed">
+                    <span className="block">
+                      Akun Google Kalender Anda telah terhubung.
+                    </span>
+                    <span className="block mt-0.5">
+                      Semua agenda sekarang akan diperbarui otomatis.
+                    </span>
                   </p>
                 </div>
 
@@ -21267,21 +21243,8 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                   aria-modal="true"
                   aria-labelledby="mobile-google-connect-title"
                   onClick={(e) => e.stopPropagation()}
-                  className="relative w-[324px] max-w-[calc(100%-18px)] p-6 bg-white rounded-2xl outline outline-1 outline-offset-[-1px] outline-slate-200/90 shadow-[0px_22.7px_45.4px_0px_rgba(2,6,23,0.30)] flex flex-col justify-start items-center font-['Plus_Jakarta_Sans'] animate-[gemini-zoom-in_0.15s_ease-out]"
+                  className="relative w-[340px] max-w-[calc(100%-20px)] p-6 bg-white rounded-2xl outline outline-1 outline-offset-[-1px] outline-slate-200/90 shadow-[0px_22.7px_45.4px_0px_rgba(2,6,23,0.30)] flex flex-col justify-start items-center font-['Plus_Jakarta_Sans'] animate-[gemini-zoom-in_0.15s_ease-out]"
                 >
-                  {/* Close button X */}
-                  <button
-                    type="button"
-                    onClick={() => setGoogleConnectModal(false)}
-                    aria-label="Tutup"
-                    className="size-7.5 right-2.5 top-2.5 absolute rounded-full inline-flex justify-center items-center text-neutral-400 hover:text-neutral-600 hover:bg-slate-100 transition-colors cursor-pointer"
-                  >
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-                      <line x1="18" y1="6" x2="6" y2="18" />
-                      <line x1="6" y1="6" x2="18" y2="18" />
-                    </svg>
-                  </button>
-
                   {/* Logos: Alerin <-> Exchange <-> Google */}
                   <div className="pb-4 flex items-center justify-center gap-3.5">
                     <div className="size-13 bg-blue-50 rounded-2xl outline outline-1 outline-offset-[-1px] outline-blue-100 flex justify-center items-center shrink-0">
@@ -21328,13 +21291,13 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                   </div>
 
                   {/* Privacy Notice Box */}
-                  <div className="w-full pb-4.5 flex flex-col justify-start items-start">
-                    <div className="self-stretch px-3 py-2 bg-slate-50 rounded-xl outline outline-1 outline-offset-[-1px] outline-slate-200/80 inline-flex justify-start items-start gap-2.5">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400 shrink-0 mt-0.5">
+                  <div className="w-full pb-5 flex flex-col justify-start items-start">
+                    <div className="self-stretch p-3 sm:p-3.5 bg-slate-50 rounded-xl outline outline-1 outline-offset-[-1px] outline-slate-200/90 inline-flex justify-start items-start gap-2.5">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400 shrink-0 mt-0.5">
                         <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
                         <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                       </svg>
-                      <p className="flex-1 text-slate-500 text-[10px] sm:text-[10.5px] font-normal font-['Plus_Jakarta_Sans'] leading-4.5">
+                      <p className="flex-1 text-slate-600 text-xs sm:text-[13px] font-normal font-['Plus_Jakarta_Sans'] leading-relaxed">
                         Dengan melanjutkan, Anda menyetujui sinkronisasi jadwal yang aman sesuai Kebijakan Privasi Alerin.
                       </p>
                     </div>
@@ -21376,7 +21339,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                   aria-modal="true"
                   aria-labelledby="mobile-google-syncing-title"
                   onClick={(e) => e.stopPropagation()}
-                  className="relative w-[324px] max-w-[calc(100%-18px)] p-6 bg-white rounded-2xl outline outline-1 outline-offset-[-1px] outline-slate-200/90 shadow-[0px_22.7px_45.4px_0px_rgba(2,6,23,0.35)] flex flex-col justify-start items-center font-['Plus_Jakarta_Sans'] animate-[gemini-zoom-in_0.15s_ease-out]"
+                  className="relative w-[340px] max-w-[calc(100%-20px)] p-6 bg-white rounded-2xl outline outline-1 outline-offset-[-1px] outline-slate-200/90 shadow-[0px_22.7px_45.4px_0px_rgba(2,6,23,0.35)] flex flex-col justify-start items-center font-['Plus_Jakarta_Sans'] animate-[gemini-zoom-in_0.15s_ease-out]"
                 >
                   {/* Logo Alerin <-> Sync (Spinning) <-> Google */}
                   <div className="pb-4 flex items-center justify-center gap-3.5">
@@ -21477,21 +21440,8 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                   aria-modal="true"
                   aria-labelledby="mobile-google-success-title"
                   onClick={(e) => e.stopPropagation()}
-                  className="relative w-[324px] max-w-[calc(100%-18px)] p-6 bg-white rounded-2xl outline outline-1 outline-offset-[-1px] outline-slate-200/90 shadow-[0px_22.7px_45.4px_0px_rgba(2,6,23,0.35)] flex flex-col justify-start items-center font-['Plus_Jakarta_Sans'] animate-[gemini-zoom-in_0.15s_ease-out]"
+                  className="relative w-full max-w-[340px] px-4.5 py-6 bg-white rounded-2xl outline outline-1 outline-offset-[-1px] outline-slate-200/90 shadow-[0px_22.7px_45.4px_0px_rgba(2,6,23,0.35)] flex flex-col justify-start items-center font-['Plus_Jakarta_Sans'] animate-[gemini-zoom-in_0.15s_ease-out]"
                 >
-                  {/* Close button X */}
-                  <button
-                    type="button"
-                    onClick={() => setGoogleSuccessModal(false)}
-                    aria-label="Tutup"
-                    className="size-7.5 right-2.5 top-2.5 absolute rounded-full inline-flex justify-center items-center text-neutral-400 hover:text-neutral-600 hover:bg-slate-100 transition-colors cursor-pointer"
-                  >
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-                      <line x1="18" y1="6" x2="6" y2="18" />
-                      <line x1="6" y1="6" x2="18" y2="18" />
-                    </svg>
-                  </button>
-
                   {/* Icon Checkmark */}
                   <div className="pb-3.5 flex flex-col justify-start items-center">
                     <div className="size-12 bg-emerald-50/80 rounded-xl shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] outline outline-1 outline-offset-[-1px] outline-emerald-200/60 inline-flex justify-center items-center">
@@ -21512,12 +21462,14 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                   </div>
 
                   {/* Description */}
-                  <div className="w-full pb-4 px-2 flex flex-col justify-start items-center space-y-1">
-                    <p className="w-full text-center text-gray-500 text-xs sm:text-[12.5px] font-normal font-['Plus_Jakarta_Sans'] leading-relaxed">
-                      Akun Google Kalender Anda telah terhubung.
-                    </p>
-                    <p className="w-full text-center text-gray-500 text-xs sm:text-[12.5px] font-normal font-['Plus_Jakarta_Sans'] leading-relaxed">
-                      Semua agenda sekarang akan diperbarui otomatis.
+                  <div className="w-full pb-4.5 flex flex-col justify-start items-center">
+                    <p className="w-full text-center text-gray-500 text-[12px] sm:text-[13px] font-normal font-['Plus_Jakarta_Sans'] leading-relaxed">
+                      <span className="block">
+                        Akun Google Kalender Anda telah terhubung.
+                      </span>
+                      <span className="block mt-0.5">
+                        Semua agenda sekarang akan diperbarui otomatis.
+                      </span>
                     </p>
                   </div>
 
