@@ -1,3 +1,3 @@
 /* Token: font dan variabel warna — disalin dari site GPT (Studio Baru) dan digabung tanpa selector ganda. */
 @font-face{font-family:Inter;src:url("assets/inter.woff2");font-weight:100 900;font-style:normal;font-display:swap}
-:root{--navy:#142238;--ink:#202e42;--soft:#edf4ff;--green:#258975;--green-bg:#eaf7f1;--amber:#b77926;--amber-bg:#fff6e8;--red:#bd4e4e;--sidebar:250px;--shadow:0 12px 45px #18365c0d;--radius:16px}
+:root{--navy:#142238;--ink:#202e42;--soft:#edf4ff;--green:#258975;--green-bg:#eaf7f1;--amber:#b77926;--amber-bg:#fff6e8;--red:#bd4e4e;--sidebar:260px;--shadow:0 12px 45px #18365c0d;--radius:16px}

@@ -101,3 +101,13 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
  .qc14-source-form>.v6-three-fields{gap:10px}
  .qc14-calendar-day{min-height:42px;padding:6px}
 }
+.dark .brand-name{color:#e4ebf5}
+.dark .brand-action-btn{color:#94a3b8}
+.dark .brand-action-btn:hover{background:#20354f;color:#e4ebf5}
+.dark .brand-icon-box{background:#253e61}
+.dark .plan-subtitle{color:#94a3b8}
+.dark .plan-title{color:#e4ebf5}
+.dark .plan-btn{background:#223754;border-color:#435b7d;color:#e4ebf5}
+.dark .plan-btn:hover{background:#294366;border-color:#5a769e}
+.dark .plan-btn .ico{color:#e4ebf5}
+.dark .nav-sep{border-color:#34465d}
