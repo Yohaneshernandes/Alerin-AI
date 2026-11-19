@@ -118,6 +118,8 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
 .dark .brand-action-btn{color:#94a3b8}
 .dark .brand-action-btn:hover{background:#20354f;color:#e4ebf5}
 .dark .brand-icon-box{background:#253e61}
+.dark .brand-icon-box:hover{background:#324f7a}
+.dark .sidebar-tooltip{background:#182538;border-color:#34465d;color:#e4ebf5;box-shadow:0 10px 25px -5px rgba(0,0,0,0.5)}
 .dark .plan-subtitle{color:#94a3b8}
 .dark .plan-title{color:#e4ebf5}
 .dark .plan-btn{background:#223754;border-color:#435b7d;color:#e4ebf5}
@@ -147,6 +149,18 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
 .pustaka-field-row label .req,.pustaka-col-field label .req{color:#c53645;font-size:12px;font-weight:600}
 .pustaka-field-row label .opt,.pustaka-col-field label .opt,.pustaka-doi-label-row .opt{color:#52647d;font-size:10px;font-weight:400;line-height:15px}
 .pustaka-input-wrap{min-width:0;width:100%}
+.pustaka-custom-dropdown{position:relative;width:100%}
+.pustaka-dropdown-trigger{width:100%;min-height:44px;height:44px;padding:10px 14px;background:#fff;border:1px solid #dfe5ee;border-radius:8px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;box-sizing:border-box;transition:border-color .15s ease,box-shadow .15s ease}
+.pustaka-dropdown-trigger:hover{border-color:#cbd5e1}
+.pustaka-custom-dropdown.open .pustaka-dropdown-trigger,.pustaka-dropdown-trigger:focus-visible{border-color:#347cea!important;outline:none}
+.pustaka-dropdown-val{font-size:13px;color:#202e42;font-weight:400;line-height:1.4}
+.pustaka-dropdown-arrow{display:inline-flex;align-items:center;justify-content:center;color:#657a96}
+.pustaka-dropdown-arrow .ico{width:14px;height:14px;color:#657a96;stroke:#657a96}
+.pustaka-dropdown-menu{display:none;position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1px solid #dfe5ee;border-radius:12px;box-shadow:0 10px 25px -5px rgba(20,34,56,.1),0 8px 10px -6px rgba(20,34,56,.04);padding:6px 8px;z-index:100;flex-direction:column;gap:2px;box-sizing:border-box}
+.pustaka-custom-dropdown.open .pustaka-dropdown-menu{display:flex}
+.pustaka-dropdown-item{width:100%;text-align:left;background:transparent;border:none;border-radius:8px;padding:10px 14px;font-size:13px;font-weight:400;color:#202e42;cursor:pointer;transition:background-color .15s ease,color .15s ease;line-height:1.4;display:block}
+.pustaka-dropdown-item:hover{background:#f8fafc}
+.pustaka-dropdown-item.active{background:#eff6ff;color:#202e42;font-weight:500}
 .pustaka-select-wrap{position:relative;display:flex;align-items:center;width:100%}
 .pustaka-select-wrap select{width:100%;min-height:44px;height:44px;padding:10px 36px 10px 14px;background:#fff;border:1px solid #dfe5ee;border-radius:8px;font-size:12px;color:#334359;-webkit-appearance:none!important;-moz-appearance:none!important;appearance:none!important;background-image:none!important;cursor:pointer;box-sizing:border-box}
 .pustaka-select-wrap select::-ms-expand{display:none}
@@ -223,6 +237,13 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
 .dark .btn-cari-jurnal .ico{color:#7cb2ff;stroke:#7cb2ff}
 .dark .pustaka-field-row label,.dark .pustaka-col-field label,.dark .pustaka-doi-label{color:#b2c2d8}
 .dark .pustaka-select-wrap select{background:#132033;border-color:#4e6580;color:#e4ebf5}
+.dark .pustaka-dropdown-trigger{background:#132033;border-color:#4e6580}
+.dark .pustaka-dropdown-val{color:#e4ebf5}
+.dark .pustaka-dropdown-arrow,.dark .pustaka-dropdown-arrow .ico{color:#92a4bd;stroke:#92a4bd}
+.dark .pustaka-dropdown-menu{background:#182538;border-color:#34465d;box-shadow:0 12px 30px rgba(0,0,0,.45)}
+.dark .pustaka-dropdown-item{color:#e4ebf5}
+.dark .pustaka-dropdown-item:hover{background:#20354f}
+.dark .pustaka-dropdown-item.active{background:#264367;color:#d8e9ff}
 .dark .pustaka-input{background:#132033;border-color:#4e6580;color:#e4ebf5}
 .dark .pustaka-doi-box{background:#132033;border-color:#4e6580}
 .dark .pustaka-doi-box input{color:#e4ebf5}

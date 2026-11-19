@@ -1,5 +1,13 @@
 'use strict';
 /* Halaman pustaka. */
+document.addEventListener('click', ev => {
+  const dd = document.querySelector('.pustaka-custom-dropdown.open');
+  if (dd && !ev.target.closest('.pustaka-custom-dropdown')) {
+    dd.classList.remove('open');
+    const trigger = dd.querySelector('.pustaka-dropdown-trigger');
+    if (trigger) trigger.setAttribute('aria-expanded', 'false');
+  }
+});
 function previewHtml() {
   const p = previewSource();
   if (!p) return '<span class="pustaka-preview-placeholder">Lengkapi identitas sumber untuk melihat pratinjau.</span>';
@@ -163,11 +171,19 @@ function pustakaPage() {
 
       <div class="field pustaka-field-row">
         <label for="dp-type">Jenis Sumber <span class="req">*</span></label>
-        <div class="pustaka-select-wrap">
-          <select id="dp-type" data-dp="type" class="pustaka-select" style="-webkit-appearance:none!important;-moz-appearance:none!important;appearance:none!important;background-image:none!important;">
-            ${typeOpts.map(o => `<option ${f.type === o ? 'selected' : ''} value="${e(o)}">${e(o)}</option>`).join('')}
-          </select>
-          <span class="pustaka-select-chevron">${I('down')}</span>
+        <div class="pustaka-custom-dropdown">
+          <button type="button" class="pustaka-dropdown-trigger" data-action="dp-type-toggle" aria-haspopup="listbox" aria-expanded="false">
+            <span class="pustaka-dropdown-val">${e(f.type || 'Jurnal')}</span>
+            <span class="pustaka-dropdown-arrow">${I('down')}</span>
+          </button>
+          <input type="hidden" id="dp-type" data-dp="type" value="${e(f.type || 'Jurnal')}">
+          <div class="pustaka-dropdown-menu" role="listbox" aria-label="Pilih Jenis Sumber">
+            ${typeOpts.map(o => `
+              <button type="button" class="pustaka-dropdown-item ${f.type === o ? 'active' : ''}" data-action="dp-type-select:${e(o)}" role="option" aria-selected="${f.type === o}">
+                ${e(o)}
+              </button>
+            `).join('')}
+          </div>
         </div>
       </div>
 
@@ -355,6 +371,18 @@ function onSourceInput(el) {
 }
 
 Object.assign(ACTIONS, {
+  'dp-type-toggle': (_arg, btn) => {
+    const wrap = btn?.closest('.pustaka-custom-dropdown') || document.querySelector('.pustaka-custom-dropdown');
+    if (!wrap) return;
+    const isOpen = wrap.classList.toggle('open');
+    const trigger = wrap.querySelector('.pustaka-dropdown-trigger');
+    if (trigger) trigger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  },
+  'dp-type-select': arg => {
+    S.biblio.form.type = arg;
+    persist();
+    render();
+  },
   'dp-style': arg => {
     S.biblio.style = arg;
     persist();
