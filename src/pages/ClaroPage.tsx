@@ -19892,18 +19892,6 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                 onClick={(e) => e.stopPropagation()}
                 className="relative w-96 max-w-[calc(100%-32px)] px-6 py-4 bg-white rounded-2xl border border-zinc-200 shadow-[0px_22.71739px_45.43478px_0px_rgba(2,6,23,0.35)] flex flex-col justify-start items-center gap-3.5 animate-[gemini-zoom-in_0.16s_ease-out]"
               >
-                <button
-                  type="button"
-                  onClick={() => setDeleteAgendaConfirm(null)}
-                  aria-label="Tutup"
-                  className="size-7 right-2.5 top-2 absolute rounded-full inline-flex justify-center items-center text-neutral-400 hover:text-neutral-600 hover:bg-slate-100 transition-colors cursor-pointer"
-                >
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="18" y1="6" x2="6" y2="18" />
-                    <line x1="6" y1="6" x2="18" y2="18" />
-                  </svg>
-                </button>
-
                 <div className="self-stretch flex justify-start items-start">
                   <div className="size-11 bg-blue-100 rounded-2xl shadow-[0px_0.9086957px_1.8173914px_0px_rgba(0,0,0,0.05)] border border-blue-200/70 flex justify-center items-center shrink-0">
                     <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
@@ -21164,19 +21152,6 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                   onClick={(e) => e.stopPropagation()}
                   className="relative w-72 max-w-[calc(100%-16px)] px-6 py-4 bg-white rounded-2xl outline outline-1 outline-offset-[-1px] outline-zinc-200 shadow-[0px_22.7px_45.4px_0px_rgba(2,6,23,0.35)] flex flex-col justify-start items-center gap-2.5 font-['Plus_Jakarta_Sans'] animate-[gemini-zoom-in_0.15s_ease-out]"
                 >
-                  {/* Close button X */}
-                  <button
-                    type="button"
-                    onClick={() => setDeleteAgendaConfirm(null)}
-                    aria-label="Tutup"
-                    className="size-7 right-2 top-2 absolute rounded-full inline-flex justify-center items-center text-neutral-400 hover:text-neutral-600 hover:bg-slate-100 transition-colors cursor-pointer"
-                  >
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <line x1="18" y1="6" x2="6" y2="18" />
-                      <line x1="6" y1="6" x2="18" y2="18" />
-                    </svg>
-                  </button>
-
                   {/* Header: Icon + Title */}
                   <div className="self-stretch inline-flex justify-start items-start">
                     <div className="size-8 bg-blue-100 rounded-xl shadow-[0px_0.69px_1.38px_0px_rgba(0,0,0,0.05)] outline outline-[0.69px] outline-offset-[-0.69px] outline-blue-200 flex justify-center items-center shrink-0">
