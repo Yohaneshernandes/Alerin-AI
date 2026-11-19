@@ -43,45 +43,6 @@ const SAMPLE_DESIGN = [
     'Arah penelitian yang dapat ditinjau pembimbing: masalah, tujuan, dan sumber bukti selaras serta batas penafsiran jelas. Rancangan tidak memuat hasil survei, kutipan wawancara, atau simpulan akhir sebagai fakta.',
   ],
 ];
-function consistencyModal() {
-  const d = S.draft,
-    b = selectedBundle() || currentBundle(0);
-  const missing = [
-    ['topik', d.topic],
-    ['fenomena', d.phenomenon],
-    ['objek/lokasi', d.location],
-    ['teori/metode', d.idea],
-  ]
-    .filter(([, v]) => !String(v || '').trim())
-    .map(([n]) => n);
-  const rows = boundedRows([
-    [
-      'Kelengkapan isian',
-      missing.length
-        ? 'Masih perlu dilengkapi: ' +
-          missing.join(', ') +
-          '. Kolom kosong tidak menghentikan rancangan, tetapi ditandai untuk ditinjau.'
-        : 'Empat isian utama telah terisi. Kelengkapan tidak menentukan kelayakan akademik.',
-    ],
-    ['Judul dan fokus', b ? `${b.title}. Fokus: ${b.focus}` : 'Belum ada rancangan untuk diperiksa.'],
-    ['Pertanyaan penelitian', b?.questions || 'Belum dirumuskan.'],
-    [
-      'Metode dan data',
-      b
-        ? b.alternative
-          ? 'Kandidat ini mengubah fokus dari contoh sumber. ' + b.method
-          : b.method
-        : 'Pendekatan belum ditentukan.',
-    ],
-    ['Teori dan kerangka', b?.theory || 'Teori belum ditentukan.'],
-  ]);
-  modal(
-    'Periksa Konsistensi',
-    `${b ? `<div class="candidate-context"><span class="eyebrow">${S.title === b.title ? 'JUDUL AKTIF' : 'RANCANGAN AWAL'}</span><h3>${e(b.title)}</h3></div>` : ''}<p>Bandingkan komponen berikut sebelum melanjutkan. Pemeriksaan prototipe menampilkan kelengkapan dan perbedaan rancangan; penilaian akademik AI belum terhubung.</p><div data-output="consistency" data-character-count="${rowText(rows).length}">${outputRows(rows, false)}</div><p class="small muted">${rowText(rows).length}/${OUTPUT_MAX} karakter</p>`,
-    B('Kembali', 'close-modal') + B('Edit Isian', 'enter-wizard', 'primary', 'edit'),
-    true,
-  );
-}
 const chosenTitle = () => selectedBundle()?.title || '';
 const OUT = (b1, b2, b3) => [
   ['Bab I · Pendahuluan', b1],
@@ -419,7 +380,7 @@ function currentBundle(index) {
   if (!t) return null;
   const d = S.draft,
     sample = S.draftSample;
-  const signature = JSON.stringify(['output-v4', t[0], d, sample, S.plan]);
+  const signature = JSON.stringify(['output-v5', t[0], d, sample, S.plan, konteksMethodLabel()]);
   const key = hashKey(t[0]);
   S.researchBundles ??= {};
   if (S.researchBundles[key]?.signature === signature) return S.researchBundles[key];
@@ -457,25 +418,55 @@ function currentBundle(index) {
       phen = trimDot(d.phenomenon),
       loc = trimDot(d.location),
       idea = trimDot(d.idea),
-      mLabel = detectMethod(idea);
+      mLabel = konteksMethodLabel(),
+      fromKonteks = /kualitatif|kuantitatif|campuran|r&d|pengembangan/i.test(S.konteks?.method || '');
     const lc = v => (v ? v.charAt(0).toLowerCase() + v.slice(1) : '');
     focus = topic && phen ? `${capitalize(topic)}: ${lc(phen)}.` : capitalize(topic || phen) + '.';
     const subj = loc
       ? `Penelitian diarahkan pada ${lc(loc)}.`
       : 'Objek, subjek, atau lokasi penelitian belum ditentukan.';
-    method =
-      mLabel === 'Belum ditentukan'
-        ? 'Pendekatan belum disebutkan. Tentukan setelah rumusan masalah jelas: kualitatif untuk menggali pengalaman, kuantitatif untuk mengukur hubungan, atau metode campuran bila keduanya dibutuhkan.'
-        : `Isianmu mengarah pada pendekatan ${mLabel.toLowerCase()}. Pastikan pendekatan ini dapat menjawab rumusan masalah dan sesuai data yang dapat diakses.`;
+    const mText = {
+      Kuantitatif: 'pendekatan kuantitatif: mengukur variabel lalu menganalisis hubungannya secara statistik',
+      Kualitatif: 'pendekatan kualitatif: menggali pengalaman, proses, atau makna secara mendalam',
+      'Metode campuran': 'metode campuran: memadukan data kuantitatif dan kualitatif dengan urutan yang jelas',
+      'R&D': 'penelitian dan pengembangan (R&D): mengembangkan produk lalu menguji kelayakan dan penggunaannya',
+    }[mLabel];
+    method = !mText
+      ? 'Pendekatan belum disebutkan. Tentukan setelah rumusan masalah jelas: kualitatif untuk menggali pengalaman, kuantitatif untuk mengukur hubungan, atau metode campuran bila keduanya dibutuhkan.'
+      : fromKonteks
+        ? `Mengikuti metode di Konteks, rancangan memakai ${mText}. Pastikan pendekatan ini dapat menjawab rumusan masalah dan sesuai data yang dapat diakses.`
+        : `Isianmu mengarah pada ${mText}. Pastikan pendekatan ini dapat menjawab rumusan masalah, lalu tetapkan metodenya di Konteks.`;
     theory = idea
       ? `Gagasan yang sudah terpikirkan: ${idea}. Gunakan sebagai lensa penafsiran, bukan kesimpulan awal.`
       : 'Teori belum ditentukan. Telusuri literatur melalui Validasi Literatur pada Opsi Judul.';
     const target = loc ? lc(loc) : 'subjek penelitian';
-    questions = numberedQuestions([
-      `Bagaimana gambaran ${lc(topic) || 'topik penelitian'} pada ${target}?`,
-      `Faktor apa saja yang berkaitan dengan ${lc(phen) || 'fenomena yang diamati'}?`,
-      `Bagaimana ${target} menjelaskan atau menyikapi fenomena tersebut?`,
-    ]);
+    const tp = lc(topic) || 'topik penelitian',
+      ph = lc(phen) || 'fenomena yang diamati';
+    questions = numberedQuestions(
+      mLabel === 'Kuantitatif'
+        ? [
+            `Bagaimana gambaran ${tp} pada ${target}?`,
+            `Apakah terdapat pengaruh faktor yang berkaitan dengan ${ph} pada ${target}?`,
+            `Seberapa besar pengaruh faktor tersebut secara bersama-sama?`,
+          ]
+        : mLabel === 'Metode campuran'
+          ? [
+              `Bagaimana gambaran ${tp} pada ${target} berdasarkan data pengukuran?`,
+              `Bagaimana ${target} memaknai ${ph}?`,
+              `Bagaimana temuan kualitatif menjelaskan hasil pengukuran?`,
+            ]
+          : mLabel === 'R&D'
+            ? [
+                `Bagaimana kebutuhan ${target} terkait ${tp}?`,
+                `Bagaimana kelayakan produk yang dikembangkan menurut validator ahli?`,
+                `Bagaimana kepraktisan dan keefektifan produk bagi ${target}?`,
+              ]
+            : [
+                `Bagaimana gambaran ${tp} pada ${target}?`,
+                `Faktor apa saja yang berkaitan dengan ${ph}?`,
+                `Bagaimana ${target} menjelaskan atau menyikapi fenomena tersebut?`,
+              ],
+    );
     const dataTech =
       mLabel === 'Kuantitatif'
         ? 'Kuesioner dengan indikator yang diturunkan dari teori.'
@@ -483,7 +474,9 @@ function currentBundle(index) {
           ? 'Wawancara dan observasi sesuai fokus penelitian.'
           : mLabel === 'Metode campuran'
             ? 'Wawancara, observasi, dan kuesioner sesuai urutan desain.'
-            : 'Ditentukan setelah pendekatan dipilih.';
+            : mLabel === 'R&D'
+              ? 'Lembar validasi ahli, angket respons pengguna, dan tes sesuai tahap pengembangan.'
+              : 'Ditentukan setelah pendekatan dipilih.';
     const anaTech =
       mLabel === 'Kuantitatif'
         ? 'Statistik deskriptif atau inferensial sesuai rumusan masalah.'
@@ -491,7 +484,9 @@ function currentBundle(index) {
           ? 'Reduksi, penyajian, dan penarikan kesimpulan dengan triangulasi.'
           : mLabel === 'Metode campuran'
             ? 'Analisis kualitatif dan kuantitatif, lalu integrasi temuan.'
-            : 'Dicocokkan dengan pertanyaan dan karakter data.';
+            : mLabel === 'R&D'
+              ? 'Analisis kelayakan, kepraktisan, dan keefektifan produk sesuai model pengembangan.'
+              : 'Dicocokkan dengan pertanyaan dan karakter data.';
     design = [
       [
         'Fokus dan tujuan',
@@ -529,7 +524,15 @@ function currentBundle(index) {
         ['Kerangka Berpikir', 'Hubungkan fenomena, konsep, dan pertanyaan penelitian.'],
       ],
       [
-        ['Desain Penelitian', mLabel === 'Belum ditentukan' ? 'Pendekatan belum ditentukan.' : mLabel + '.'],
+        [
+          'Desain Penelitian',
+          {
+            Kuantitatif: 'Kuantitatif · survei atau desain pengukuran lain yang sesuai rumusan masalah.',
+            Kualitatif: 'Kualitatif · studi kasus, fenomenologi, atau desain lain yang sesuai fokus.',
+            'Metode campuran': 'Metode campuran · tentukan urutan kuantitatif dan kualitatif serta titik integrasinya.',
+            'R&D': 'Penelitian dan pengembangan (R&D) · tentukan model pengembangan, validasi ahli, dan uji coba.',
+          }[mLabel] || 'Pendekatan belum ditentukan. Pilih metode di Konteks.',
+        ],
         ['Subjek dan Lokasi', loc ? capitalize(loc) + '.' : 'Belum ditentukan.'],
         ['Teknik Pengambilan Data', dataTech],
         ['Teknik Analisis Data', anaTech],
@@ -582,139 +585,9 @@ function candidateModal(index, type) {
     isFrame ? 'Kerangka Berpikir' : 'Outline Judul',
     `<div class="candidate-context">${badge(isActive ? 'Judul dipilih' : 'Pratinjau kandidat', 'blue')}<h3>${e(b.title)}</h3><p>${b.alternative ? 'Penyesuaian kandidat merupakan usulan berdasarkan konteks dokumen fitur; kebutuhan metode dan data perlu ditinjau kembali.' : S.draftSample ? 'Disusun mengikuti fokus, metode, dan sumber penelitian pada dokumen fitur.' : 'Disusun dari ide penelitian yang kamu isi; bagian yang belum diisi ditandai untuk dilengkapi.'}</p></div>${isFrame ? `<div data-output="framework" data-character-count="${text.length}">${frameworkHtml(b.framework)}</div><p class="small muted">Bagan arah penelaahan. Hubungan antarkonsep belum merupakan bukti sebab akibat.</p>` : `<div data-output="outline" data-character-count="${text.length}">${outlineHtml(b.outline)}</div><p class="small muted">Arahan isi setiap subbab disusun dari ide penelitian dan perlu dikembangkan bersama pembimbing.</p>`}`,
     B('Kembali', 'close-modal') +
-      (isActive
-        ? B('Unduh Outline Penelitian', 'export-draft', 'primary', 'download')
-        : B('Pilih Judul', 'choose-title:' + index, 'primary', 'check')),
+      (isActive ? B('Buka Bab I', 'guide-view:guide', 'primary') : B('Pilih Judul', 'choose-title:' + index, 'primary', 'check')),
     true,
   );
-}
-async function frameworkImage(b) {
-  const { Paragraph, ImageRun } = docx;
-  const width = 780,
-    sections = b.framework.map(([l, t]) => [l, t.split('\n').flatMap(p => wrapSvg(p, 69))]);
-  let total = 35;
-  for (const [, lines] of sections) total += 64 + lines.length * 21 + 44;
-  const canvas = document.createElement('canvas');
-  canvas.width = width;
-  canvas.height = total;
-  const ctx = canvas.getContext('2d');
-  ctx.fillStyle = '#ffffff';
-  ctx.fillRect(0, 0, width, total);
-  let y = 35;
-  for (let i = 0; i < sections.length; i++) {
-    const [label, lines] = sections[i],
-      height = 64 + lines.length * 21;
-    ctx.strokeStyle = '#263344';
-    ctx.lineWidth = 1.5;
-    ctx.strokeRect(65, y, 650, height);
-    ctx.fillStyle = '#172437';
-    ctx.textAlign = 'center';
-    ctx.font = 'bold 15px Arial';
-    ctx.fillText(label, 390, y + 29);
-    ctx.font = '14px Arial';
-    ctx.fillStyle = '#27374a';
-    lines.forEach((line, j) => ctx.fillText(line, 390, y + 54 + j * 21));
-    y += height;
-    if (i < sections.length - 1) {
-      ctx.beginPath();
-      ctx.moveTo(390, y + 3);
-      ctx.lineTo(390, y + 31);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(386, y + 26);
-      ctx.lineTo(390, y + 33);
-      ctx.lineTo(394, y + 26);
-      ctx.fill();
-      y += 44;
-    }
-  }
-  const imageBlob = await new Promise((resolve, reject) =>
-    canvas.toBlob(blob => (blob ? resolve(blob) : reject(new Error('Bagan belum dapat disiapkan.'))), 'image/png'),
-  );
-  const bytes = new Uint8Array(await imageBlob.arrayBuffer()),
-    scale = Math.min(600 / canvas.height, 470 / canvas.width);
-  return new Paragraph({
-    children: [
-      new ImageRun({
-        type: 'png',
-        data: bytes,
-        transformation: { width: Math.round(canvas.width * scale), height: Math.round(canvas.height * scale) },
-        altText: { title: 'Kerangka berpikir', description: b.title, name: 'Kerangka berpikir' },
-      }),
-    ],
-  });
-}
-async function exportResearch() {
-  const b = selectedBundle();
-  if (!b) {
-    modal(
-      'Pilih judul yang dipilih terlebih dahulu',
-      '<p>Pilih salah satu opsi judul. Unduhan mengikuti judul yang dipilih, bukan kandidat yang sedang dipratinjau.</p>',
-      B('Tutup', 'close-modal') + B('Lihat Opsi Judul', 'v2-show-titles', 'primary'),
-    );
-    return;
-  }
-  modal(
-    'Menyiapkan Outline Penelitian',
-    '<div class="process-state"><h3>Menyusun DOCX</h3><p>Rangkuman, outline, dan kerangka berpikir judul yang dipilih sedang disatukan.</p></div>',
-  );
-  modalBusy = true;
-  try {
-    await loadScript('vendor/docx.js');
-    const { Document, Packer, Paragraph, TextRun, HeadingLevel } = docx;
-    const P = (t, after = 140) => new Paragraph({ children: [new TextRun(t)], spacing: { after } });
-    const image = await frameworkImage(b),
-      rangkuman = rangkumanRows(),
-      ch = [
-        new Paragraph({ text: 'Outline Penelitian', heading: HeadingLevel.TITLE }),
-        new Paragraph({ text: b.title, heading: HeadingLevel.HEADING_1 }),
-        new Paragraph({ text: 'Rangkuman Penelitian Awal', heading: HeadingLevel.HEADING_1 }),
-      ];
-    for (const [h, p] of rangkuman) ch.push(new Paragraph({ text: h, heading: HeadingLevel.HEADING_3 }), P(p));
-    ch.push(new Paragraph({ text: 'Outline Judul', heading: HeadingLevel.HEADING_1, pageBreakBefore: true }));
-    for (const [chap, subs] of b.outline) {
-      ch.push(new Paragraph({ text: chap, heading: HeadingLevel.HEADING_2 }));
-      for (const [h, p] of subs) ch.push(new Paragraph({ text: h, heading: HeadingLevel.HEADING_3 }), P(p));
-    }
-    ch.push(
-      new Paragraph({ text: 'Kerangka Berpikir', heading: HeadingLevel.HEADING_1, pageBreakBefore: true }),
-      image,
-    );
-    for (const [h, p] of b.framework) {
-      ch.push(new Paragraph({ text: h, heading: HeadingLevel.HEADING_3 }));
-      for (const line of p.split('\n')) ch.push(P(line, 80));
-    }
-    ch.push(
-      P('Rancangan untuk ditinjau bersama pembimbing. Bagan tidak menyatakan hubungan sebab akibat telah terbukti.'),
-    );
-    const blob = await Packer.toBlob(
-      new Document({
-        creator: 'Alerin Skripsi',
-        title: b.title,
-        sections: [
-          { properties: { page: { margin: { top: 960, right: 1000, bottom: 960, left: 1000 } } }, children: ch },
-        ],
-      }),
-    );
-    const filename = 'Outline_Penelitian_' + b.title.replace(/[^a-z0-9]+/gi, '_').slice(0, 85) + '.docx';
-    exportResearch.last = { blob, filename };
-    modalBusy = false;
-    closeModal(true);
-    modal(
-      'Outline Penelitian Siap Diunduh',
-      `<div class="candidate-context"><span class="eyebrow">JUDUL AKTIF</span><h3>${e(b.title)}</h3></div><p>Isi DOCX sama dengan yang tampil di situs:</p><ul><li><strong>Rangkuman Penelitian Awal</strong> · ${rangkuman.length} isian</li><li><strong>Outline Judul</strong> · ${b.outline.map(r => e(r[0])).join(', ')}</li><li><strong>Kerangka Berpikir</strong> · bagan dan ${b.framework.length} bagian penjelasan</li></ul><p class="small muted">DOCX · ${Math.ceil(blob.size / 1024)} KB</p>`,
-      B('Tutup', 'close-modal') + B('Unduh DOCX', 'save-export', 'primary', 'download'),
-      true,
-    );
-  } catch (error) {
-    modalBusy = false;
-    closeModal(true);
-    modal(
-      'Outline belum dapat disiapkan',
-      `<p>${e(error.message || 'Coba unduh kembali.')}</p>`,
-      B('Tutup', 'close-modal'),
-    );
-  }
 }
 function selectedBundle() {
   const a = S.activeResearch;
@@ -755,8 +628,7 @@ function hasilAwalPage() {
         ([k, t]) =>
           `<button role="tab" aria-selected="${outputTab === k}" class="${outputTab === k ? 'active' : ''}" data-action="output-tab:${k}">${t}</button>`,
       )
-      .join('')}</div><div role="tabpanel">${outputTab === 'design' ? design : titles}</div>` +
-    `<div class="actions research-footer">${B('Simpan Draft', 'save-draft', '', 'save')}${B('Periksa Konsistensi', 'consistency', '', 'checklist')}${active ? B('Unduh Outline Penelitian', 'export-draft', 'primary', 'download') : B('Unduh Outline Penelitian', 'export-locked', 'primary', 'download', 'aria-disabled="true" title="Pilih judul aktif terlebih dahulu"')}</div>`
+      .join('')}</div><div role="tabpanel">${outputTab === 'design' ? design : titles}</div>`
   );
 }
 function chooseTitleModal(i) {
@@ -798,26 +670,38 @@ function confirmTitle(i) {
   S.guide.view = 'guide';
   S.guide.part = 'background';
   guideSeed();
-  const t = partTask('background', {
-    source: 'mulai',
-    reason: 'Judul sudah dipilih. Latar belakang menjadi dasar rumusan masalah dan bab berikutnya.',
-  });
+  /* Latar Belakang yang sudah selesai tidak dibuat ulang; pengguna bisa membukanya lagi dari Progres Aktif. */
+  const doneBg = !S.tasks.some(x => x.part === 'background' && x.status !== 'done') &&
+    S.tasks.find(x => x.part === 'background' && x.status === 'done');
+  const t =
+    doneBg ||
+    partTask('background', {
+      source: 'mulai',
+      reason: 'Judul sudah dipilih. Latar belakang menjadi dasar rumusan masalah dan bab berikutnya.',
+    });
   reorderTasks(false);
+  fillSlots();
   record(old && old !== title ? 'Judul diganti' : 'Judul dipilih', title);
   synchronizeResearch();
   persist();
   closeModal(true);
-  const k = S.profile.kondisi,
-    stage = kondisiOf(k)?.stage;
-  if (!k || k === 'belum' || k === 'judul' || k === 'terhenti' || stage === 0) {
+  /* Revisi 18 November: yang diperbarui adalah posisi penelitian tersimpan, dan hanya setelah pengguna setuju. */
+  const pos = stageInfo().idx;
+  if (pos === null || pos < 1) {
     modal(
-      'Perbarui kondisi skripsimu?',
-      `<p>Judul sudah dipilih. Perbarui kondisi skripsimu menjadi <strong>Penyusunan proposal</strong>?</p><p class="small muted">Kondisi ini dipakai Beranda dan Peta Skripsi untuk menentukan langkahmu.</p>`,
+      'Perbarui posisi penelitianmu?',
+      `<p>Judul sudah dipilih. Perbarui posisi penelitianmu menjadi <strong>${e(positionLabel(1))}</strong>?</p><p class="small muted">Posisi ini dipakai Beranda dan Peta Skripsi untuk menentukan langkahmu.</p>`,
       B('Nanti saja', 'close-modal') + B('Perbarui', 'kondisi-up:proposal', 'primary'),
     );
   }
   render();
-  toast(`Judul dipilih. “${t.title}” sudah ada di Progres Aktif.`, '', 6000);
+  toast(
+    doneBg
+      ? `Judul dipilih. “${t.title}” sudah selesai; buka lagi dari Progres Aktif bila perlu disesuaikan dengan judul baru.`
+      : `Judul dipilih. “${t.title}” sudah ada di Progres Aktif.`,
+    '',
+    6000,
+  );
 }
 
 Object.assign(ACTIONS, {
@@ -838,22 +722,6 @@ Object.assign(ACTIONS, {
     const a = ALERIN.literature.find(x => x.id === arg);
     if (a) await copyText(a.title);
   },
-  consistency: () => {
-    if (S.needsReview) {
-      S.needsReview = false;
-      persist();
-      render();
-    }
-    consistencyModal();
-  },
-  'export-draft': async () => {
-    await exportResearch();
-  },
-  'save-export': async () => {
-    if (exportResearch.last) {
-      await saveFile(exportResearch.last.filename, exportResearch.last.blob);
-    }
-  },
   'copy-keyword': async arg => {
     const [i, idx] = arg.split(':');
     const b = currentBundle(+idx);
@@ -862,9 +730,6 @@ Object.assign(ACTIONS, {
   'output-tab': arg => {
     outputTab = arg;
     render();
-  },
-  'export-locked': () => {
-    toast('Pilih satu judul dulu di tab Opsi Judul.', 'error');
   },
   'choose-title': arg => {
     chooseTitleModal(arg);

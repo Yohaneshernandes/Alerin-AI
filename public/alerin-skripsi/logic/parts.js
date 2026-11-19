@@ -1,5 +1,5 @@
 'use strict';
-/* Struktur Bab I–V dan subbagiannya. */
+/* Subbagian skripsi dan susunan babnya (Umum 5 bab atau templat 6 bab dari Konteks Skripsi). */
 function detectMethod(text) {
   const t = String(text || '').toLowerCase();
   if (/campuran|mixed|kombinasi|sequential/.test(t)) return 'Metode campuran';
@@ -88,7 +88,7 @@ const CHAPTERS = [
     'V',
     'Penutup',
     [
-      ['conclusion', 'Kesimpulan', ['Rumusan masalah yang dijawab', 'Temuan Bab IV yang menjawabnya']],
+      ['conclusion', 'Kesimpulan', ['Rumusan masalah yang dijawab', 'Temuan hasil penelitian yang menjawabnya']],
       ['limitations', 'Keterbatasan', ['Keterbatasan yang dialami', 'Dampak terhadap penafsiran']],
       ['recommendations', 'Saran', ['Pihak yang dituju', 'Dasar saran', 'Tindakan yang disarankan|optional']],
     ],
@@ -99,9 +99,73 @@ const PARTS = Object.fromEntries(
     c[2].map(p => [p[0], { id: p[0], name: p[1], fields: p[2], chapter: i + 1, roman: c[0], chapterName: c[1] }]),
   ),
 );
+/* Nama Keabsahan Data dipakai untuk kualitatif; kuantitatif memakai Kualitas Data. */
+Object.defineProperty(PARTS.quality, 'name', {
+  get: () => (methodKind() === 'kuantitatif' ? 'Kualitas Data dan Etika' : 'Keabsahan Data dan Etika'),
+  enumerable: true,
+});
 const PART_ORDER = CHAPTERS.flatMap(c => c[2].map(p => p[0]));
+/* Subbagian proposal (sampai Teknik Analisis) tidak bergantung pada nomor bab. */
+const PROPOSAL_PARTS = new Set(CHAPTERS.slice(0, 3).flatMap(c => c[2].map(p => p[0])));
+const PART_DEF = Object.fromEntries(CHAPTERS.flatMap(c => c[2].map(p => [p[0], p])));
+/* Susunan bab kampus (QC 17 November). Isi subbagian tetap; yang berubah hanya letak babnya. */
+const SUSUNAN = {
+  umum: {
+    label: 'Umum · 5 bab',
+    bab: [
+      ['Pendahuluan', ['background', 'questions', 'objectives', 'benefits', 'boundaries']],
+      ['Tinjauan Pustaka', ['theory', 'prior', 'framework', 'hypothesis']],
+      ['Metode Penelitian', ['design', 'location', 'population', 'participants', 'collection', 'quality', 'analysis']],
+      ['Hasil dan Pembahasan', ['data', 'results', 'discussion']],
+      ['Penutup', ['conclusion', 'limitations', 'recommendations']],
+    ],
+  },
+  hasil6: {
+    label: '6 bab · Hasil dan Pembahasan terpisah',
+    bab: [
+      ['Pendahuluan', ['background', 'questions', 'objectives', 'benefits', 'boundaries']],
+      ['Tinjauan Pustaka', ['theory', 'prior', 'framework', 'hypothesis']],
+      ['Metode Penelitian', ['design', 'location', 'population', 'participants', 'collection', 'quality', 'analysis']],
+      ['Hasil Penelitian', ['data', 'results']],
+      ['Pembahasan', ['discussion']],
+      ['Penutup', ['conclusion', 'limitations', 'recommendations']],
+    ],
+  },
+  konsep6: {
+    label: '6 bab · Kerangka Konseptual terpisah',
+    bab: [
+      ['Pendahuluan', ['background', 'questions', 'objectives', 'benefits', 'boundaries']],
+      ['Tinjauan Pustaka', ['theory', 'prior']],
+      ['Kerangka Konseptual dan Hipotesis', ['framework', 'hypothesis']],
+      ['Metode Penelitian', ['design', 'location', 'population', 'participants', 'collection', 'quality', 'analysis']],
+      ['Hasil dan Pembahasan', ['data', 'results', 'discussion']],
+      ['Penutup', ['conclusion', 'limitations', 'recommendations']],
+    ],
+  },
+};
+const ROMAWI = ['I', 'II', 'III', 'IV', 'V', 'VI'];
+const susunanId = () => (SUSUNAN[S?.konteks?.susunan] ? S.konteks.susunan : 'umum');
+/* Menata ulang CHAPTERS dan nomor bab setiap subbagian sesuai susunan yang dipilih. Dipanggil setiap render. */
+function applySusunan() {
+  const sus = SUSUNAN[susunanId()],
+    noHyp = typeof S !== 'undefined' && methodKind() === 'kualitatif';
+  const next = sus.bab.map(([name, ids], i) => [
+    ROMAWI[i],
+    name === 'Kerangka Konseptual dan Hipotesis' && noHyp ? 'Kerangka Konseptual' : name,
+    ids.map(id => PART_DEF[id]),
+  ]);
+  CHAPTERS.length = 0;
+  CHAPTERS.push(...next);
+  CHAPTERS.forEach((c, i) =>
+    c[2].forEach(d => Object.assign(PARTS[d[0]], { chapter: i + 1, roman: c[0], chapterName: c[1] })),
+  );
+}
+/* Bab yang termasuk proposal (seluruh subbagiannya subbagian proposal). */
+const proposalChapters = () => CHAPTERS.map((c, i) => i + 1).filter(n => CHAPTERS[n - 1][2].every(d => PROPOSAL_PARTS.has(d[0])));
+const lastRoman = () => CHAPTERS[CHAPTERS.length - 1][0];
+const proposalRoman = () => CHAPTERS[proposalChapters().slice(-1)[0] - 1][0];
 const partLabel = id => (PARTS[id] ? `Bab ${PARTS[id].roman} · ${PARTS[id].name}` : '');
-const partPhase = id => (PARTS[id] ? (PARTS[id].chapter <= 3 ? 1 : 7) : 1);
+const partPhase = id => (PARTS[id] ? (PROPOSAL_PARTS.has(id) ? 1 : 7) : 1);
 function methodKind() {
   const m = (S.profile.method || S.review?.method || detectMethod(S.draft?.idea || '') || '').toLowerCase();
   return /campuran|mixed/.test(m)
@@ -111,6 +175,15 @@ function methodKind() {
       : /kualitatif/.test(m)
         ? 'kualitatif'
         : '';
+}
+/* Metode dari Konteks menjadi acuan rancangan, outline, dan opsi judul. Isian ide hanya cadangan. */
+function konteksMethodLabel() {
+  const m = (S.konteks?.method || S.profile?.method || '').toLowerCase();
+  if (/r&d|pengembangan/.test(m)) return 'R&D';
+  if (/campuran|mixed/.test(m)) return 'Metode campuran';
+  if (/kuantitatif/.test(m)) return 'Kuantitatif';
+  if (/kualitatif/.test(m)) return 'Kualitatif';
+  return detectMethod(S.draft?.idea || '') === 'Lainnya' ? 'R&D' : detectMethod(S.draft?.idea || '');
 }
 function partApplies(id) {
   const k = methodKind();

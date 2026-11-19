@@ -3,6 +3,9 @@
 let calYear, calMonth, calSel;
 /* Agenda bertanggal lewat yang menunggu jawaban "simpan sebagai catatan?". Tidak ikut disimpan. */
 let pendingAgenda = null;
+/* Asal formulir agenda. 'beranda': dibuka dari kartu Target terdekat di Beranda, jadi setelah disimpan kembali ke Beranda
+   tanpa membuka kalender kedua (Revisi 18 November). */
+let agendaFrom = '';
 const AGENDA_COLORS = {
   user: ['#f0a92a', '#fff8ec'],
   alerin: ['#347cea', '#f0f6ff'],
@@ -136,7 +139,8 @@ function agendaModal(date, a = null, phase) {
   modal(
     a ? 'Ubah agenda' : 'Tambah agenda',
     `<div class="field"><label for="agenda-title">Judul agenda <span class="required-label">Wajib</span></label><input id="agenda-title" type="text" maxlength="120" placeholder="Contoh: Bimbingan Bab I" value="${e(judul)}"></div><div class="field-grid"><div class="field"><label for="agenda-date">Tanggal <span class="required-label">Wajib</span></label><input id="agenda-date" type="date" max="${DATE_MAX}" value="${e(tanggal)}"></div><div class="field"><label for="agenda-time">Jam <span>Opsional</span></label><input id="agenda-time" type="time" value="${e((a?.time || '').replace('.', ':'))}"></div></div><div class="field"><label for="agenda-phase">Tahap terkait <span>Opsional</span></label><select id="agenda-phase">${tahap}</select><p class="small muted">Agenda yang dikaitkan tampil di tahap itu pada Peta Skripsi.</p></div><div class="field"><label for="agenda-note">Catatan <span>Opsional</span></label><textarea id="agenda-note" rows="2" maxlength="300" placeholder="Hal yang perlu disiapkan.">${e(a?.note || '')}</textarea></div><label class="check"><input type="checkbox" id="agenda-remind" ${!a || a.remind !== false ? 'checked' : ''}><span>Ingatkan aku lewat Alerin Chat</span></label>`,
-    B('Kembali', 'calendar') + B(a ? 'Simpan perubahan' : 'Simpan agenda', a ? 'cal-save:' + a.id : 'cal-save', 'primary'),
+    (agendaFrom === 'beranda' ? B('Batal', 'close-modal') : B('Kembali', 'calendar')) +
+      B(a ? 'Simpan perubahan' : 'Simpan agenda', a ? 'cal-save:' + a.id : 'cal-save', 'primary'),
   );
 }
 function readAgenda(editId) {
@@ -152,7 +156,6 @@ function readAgenda(editId) {
     remind: $('#agenda-remind').checked,
     phase: ph === '' ? undefined : +ph,
   };
-  if (!old || old.date !== a.date) delete a.pushedKey;
   delete a.log;
   return a;
 }
@@ -189,11 +192,13 @@ function commitAgenda(a, asLog = false) {
     a.title + ' · ' + dateLong(a.date),
   );
   pendingAgenda = null;
-  pushDueReminders();
   persist();
   calGoto(a.date);
+  const fromHome = agendaFrom === 'beranda';
+  agendaFrom = '';
+  if (fromHome) closeModal(true);
   render();
-  calendarModal();
+  if (!fromHome) calendarModal();
   toast(
     (asLog ? 'Disimpan sebagai catatan bimbingan.' : old ? 'Agenda diperbarui.' : 'Agenda tersimpan di Kalender Alerin.') +
       targetChangeNote(before),
@@ -207,9 +212,16 @@ function targetChangeNote(before) {
 }
 function targetModal(pre = {}) {
   const tg = S.target || {};
+  /* Target kecil bisa ditautkan ke pekerjaan aktif (Revisi 18 November, pilihan "Tidak sempat" di Beranda). */
+  const act = activeTasks(),
+    linkId = pre.taskId ?? tg.taskId ?? '',
+    link =
+      (pre.link || tg.taskId) && act.length
+        ? selectField('target-task', 'Tautkan ke pekerjaan aktif (opsional)', [['', 'Tidak ditautkan'], ...act.map(t => [t.id, t.title])], linkId)
+        : '';
   modal(
-    'Target terdekat',
-    `<div class="field"><label for="target-text">Yang ingin dicapai <span class="required-label">Wajib</span></label><textarea id="target-text" rows="2" maxlength="200" placeholder="Contoh: Selesaikan draf Bab I">${e(pre.text ?? tg.text ?? '')}</textarea></div><div class="field"><label for="target-date">Tanggal <span class="required-label">Wajib</span></label><input id="target-date" type="date" min="${isoToday()}" max="${DATE_MAX}" value="${e(pre.date ?? (tg.date >= isoToday() ? tg.date : ''))}"></div><p class="small muted">Target muncul di Beranda, Peta Skripsi, dan Kalender Alerin. Kalau ada agenda yang lebih dekat, agenda itu yang tampil sebagai target terdekat.</p>`,
+    pre.title || 'Target terdekat',
+    `<div class="field"><label for="target-text">Yang ingin dicapai <span class="required-label">Wajib</span></label><textarea id="target-text" rows="2" maxlength="200" placeholder="Contoh: Selesaikan draf Bab I">${e(pre.text ?? tg.text ?? '')}</textarea></div><div class="field"><label for="target-date">Tanggal <span class="required-label">Wajib</span></label><input id="target-date" type="date" min="${isoToday()}" max="${DATE_MAX}" value="${e(pre.date ?? (tg.date >= isoToday() ? tg.date : ''))}"></div>${link}<p class="small muted">Target muncul di Beranda, Peta Skripsi, dan Kalender Alerin. Kalau ada agenda yang lebih dekat, agenda itu yang tampil sebagai target terdekat.</p>`,
     B('Batal', 'close-modal') +
       (tg.text ? B('Hapus target', 'target-clear', 'text') : '') +
       B('Simpan Target', 'save-target', 'primary'),
@@ -220,7 +232,9 @@ function saveTarget() {
   let ok = checkRequired('target-text');
   if (!checkFutureDate('target-date', { required: true })) ok = false;
   if (!ok) return focusFirstError();
-  S.target = { date: $('#target-date').value, text: capitalize($('#target-text').value) };
+  const sel = $('#target-task'),
+    taskId = sel ? sel.value : S.target?.taskId || '';
+  S.target = { date: $('#target-date').value, text: capitalize($('#target-text').value), ...(taskId ? { taskId } : {}) };
   record('Target terdekat dipasang', dateLong(S.target.date) + ' · ' + S.target.text);
   closeModal(true);
   persist();
@@ -230,6 +244,7 @@ function saveTarget() {
 
 Object.assign(ACTIONS, {
   calendar: () => {
+    agendaFrom = '';
     calendarModal();
   },
   'cal-prev': (arg, button, key) => {
@@ -257,12 +272,15 @@ Object.assign(ACTIONS, {
     calendarModal();
   },
   'cal-add': () => {
+    agendaFrom = '';
     agendaModal(calSel);
   },
   'cal-add-stage': arg => {
+    agendaFrom = '';
     agendaModal(isoToday(), null, +arg);
   },
   'cal-edit': arg => {
+    agendaFrom = '';
     const a = S.agendas.find(x => x.id === arg);
     if (a) agendaModal(a.date, a);
   },

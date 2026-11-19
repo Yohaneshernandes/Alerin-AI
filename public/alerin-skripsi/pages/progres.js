@@ -1,6 +1,9 @@
 'use strict';
-/* Halaman progres. */
-function relatedBlocks(t, compact = false) {
+/* Halaman Progres Aktif (Revisi 18 November).
+   Mahasiswa melihat apa yang bisa dikerjakan sekarang, apa yang masih menunggu, mengapa urutannya demikian,
+   dan hasil seperti apa yang dianggap selesai. Kartu antrean dan kartu yang menunggu prasyarat hanya bisa
+   dipratinjau; pengerjaan, Tinjauan Alerin, dan penyelesaian tersedia setelah kartu aktif dan siap. */
+function relatedBlocks(t, compact = false, inModal = false) {
   const revs = taskRevs(t),
     fs = taskFindings(t);
   const revItem = r => {
@@ -14,43 +17,59 @@ function relatedBlocks(t, compact = false) {
     return `<div class="v6-direction-excerpt"><p class="small muted">Catatan asli · Bimbingan ${dateLong(r.date)}</p><p>“${e(kutipan)}”</p>${compact ? '' : `<p class="small"><strong>Pemahaman:</strong> ${e(r.understanding?.maksud || '')}</p>`}${status}</div>`;
   };
   const allDone = revs.length && revs.every(r => r.status === 'done');
-  const rev = `<section class="v6-linked-directions"><div class="between"><h4>Arahan dosen terkait (${revs.length})</h4>${revs.length ? badge(allDone ? 'Sudah ditindaklanjuti' : 'Menunggu tindak lanjut', allDone ? 'green' : 'amber') : ''}</div>${revs.length ? revs.map(revItem).join('') : '<p class="small muted">Belum ada arahan dosen untuk pekerjaan ini.</p>'}<div class="actions">${revs.length ? B('Lihat di Revisi Dosen', 'nav:revisi', 'text', 'link') : ''}${B('Tambah arahan', 'add-revision:' + t.id, 'text', 'plus')}</div></section>`;
+  const rev = `<section class="v6-linked-directions"><div class="between"><h4>Arahan dosen terkait (${revs.length})</h4>${revs.length ? badge(allDone ? 'Sudah ditindaklanjuti' : 'Menunggu tindak lanjut', allDone ? 'green' : 'amber') : ''}</div>${revs.length ? revs.map(revItem).join('') : '<p class="small muted">Tidak ada arahan tertaut.</p>'}<div class="actions">${revs.length ? B('Lihat di Revisi Dosen', 'nav:revisi', 'text', 'link') : ''}${inModal || ['done', 'queued'].includes(t.status) ? '' : B('Tambah arahan', 'add-revision:' + t.id, 'text', 'plus')}</div></section>`;
   const fin = fs.length
     ? `<section class="v6-linked-directions"><h4>Temuan pemeriksaan terkait (${fs.length})</h4>${fs.map(f => `<div class="v6-direction-excerpt"><strong>${e(f.title)}</strong><p class="small">${e(f.fix)}</p><p class="small muted">${e(f.location || '')}</p></div>`).join('')}${B('Lihat Pemeriksaan', 'nav:hasil-periksa', 'text', 'link')}</section>`
     : '';
   return rev + fin;
 }
-/* Tombol "Catat Sebagai Selesai". Saat terkunci tetap bisa ditekan supaya alasannya muncul. */
+/* Tombol "Catat Sebagai Selesai". Saat terkunci tetap bisa ditekan supaya syarat yang belum terpenuhi muncul. */
 function completeButton(t, cls, locked) {
   return locked
     ? `<button type="button" class="btn ${cls} locked" data-action="complete:${t.id}" aria-disabled="true">${I('check')}Catat Sebagai Selesai</button>`
     : B('Catat Sebagai Selesai', 'complete:' + t.id, cls, 'check');
 }
-function taskCard(t, slot = '') {
+const critList = t => taskCriteria(t);
+/* Fakta tugas yang selalu tampil sebelum pengguna mengisi hasil: Yang Dikerjakan, Hasil yang Disiapkan, Selesai Bila. */
+function taskFacts(t, tag = 'dl') {
+  const crit = critList(t);
+  const items = [
+    ['Yang dikerjakan', e(t.doing || t.reason || '')],
+    ['Hasil yang disiapkan', e(t.deliverable || '')],
+    ['Selesai bila', crit.length ? `<ul class="b19-criteria">${crit.map(c => `<li>${e(c)}</li>`).join('')}</ul>` : 'Belum ada kriteria.'],
+  ];
+  return tag === 'dl'
+    ? `<dl class="v6-task-facts">${items.map(([h, v]) => `<dt>${h}</dt><dd>${v}</dd>`).join('')}</dl>`
+    : `<div class="v6-task-facts">${items.map(([h, v]) => `<strong>${h}</strong><div class="b19-fact">${v}</div>`).join('')}</div>`;
+}
+function approvalLine(t) {
+  return t.approval
+    ? `<p class="small ok-line">${I('check')} Disetujui pembimbing · ${dateLong(t.approval.date)} · dicatat pengguna</p>`
+    : `<p class="small muted">Persetujuan dosen: belum dicatat. Selesai Dikerjakan tidak sama dengan persetujuan dosen.</p>`;
+}
+function taskCard(t, role = '') {
   const st = taskState(t),
     ph = +t.phase || 0,
-    lead = slot === SLOTS[0];
-  const crit = Array.isArray(t.criteria) ? t.criteria.join(' ') : t.criteria || '';
-  const eyebrow =
-    t.status === 'done' ? 'SELESAI DIKERJAKAN' : t.status === 'deferred' ? 'DITUNDA' : !slot ? 'MENUNGGU SLOT' : slot.toUpperCase();
+    ready = taskReady(t),
+    active = !!role;
+  const eyebrow = t.status === 'done' ? 'SELESAI DIKERJAKAN' : t.status === 'deferred' ? 'DITUNDA' : active ? role.toUpperCase() : 'ANTREAN';
   const nFiles = S.files.filter(f => f.context === 'task-' + t.id).length;
   let acts;
   if (t.status === 'done')
-    acts = `<div class="actions mt">${B('Lihat Pekerjaan', 'task:' + t.id, 'primary', 'arrow')}${B('Buka Lagi', 'reopen:' + t.id, 'text')}</div><p class="small muted">Selesai menurut pengguna${taskRevs(t).length ? ' · sesuai arahan dosen' : ''}${t.completedAt ? ' · ' + dateLong(t.completedAt.slice(0, 10)) : ''}. Persetujuan pembimbing dicatat terpisah.</p>`;
+    acts = `<div class="actions mt">${B('Lihat Pekerjaan', 'task:' + t.id, 'primary', 'arrow')}${B('Buka Lagi', 'reopen:' + t.id, 'text')}${t.approval ? '' : B('Catat Persetujuan Dosen', 'approve:' + t.id, 'text', 'check')}</div><p class="small muted">Selesai Dikerjakan${t.completedAt ? ' · ' + dateLong(t.completedAt.slice(0, 10)) : ''}.</p>${approvalLine(t)}`;
   else if (t.status === 'deferred')
-    acts = `<div class="actions mt">${B('Lanjutkan', 'restore:' + t.id, 'primary')}</div><p class="small muted">Ditunda${t.deferReason ? ' · ' + e(t.deferReason) : ''}${t.resumeDate ? ' · lanjut ' + dateLong(t.resumeDate) : ''}</p>`;
-  else if (!slot)
-    acts = `<div class="actions mt">${B('Lihat', 'task:' + t.id, '')}</div><p class="small muted">Masuk antrean karena sudah ada tiga pekerjaan aktif. Kartu ini naik otomatis saat ada slot kosong.</p>`;
+    acts = `<div class="actions mt">${B('Lanjutkan', 'restore:' + t.id, 'primary', 'refresh')}${B('Lihat', 'task-preview:' + t.id, 'text')}</div><p class="small muted">Ditunda${t.deferReason ? ' · ' + e(t.deferReason) : ''}${t.resumeDate ? ' · rencana lanjut ' + dateLong(t.resumeDate) : ''}</p>`;
+  else if (!active) acts = `<div class="actions mt">${B('Lihat', 'task-preview:' + t.id, '', 'arrow')}</div><p class="small muted">Pratinjau saja. Pengerjaan, pemeriksaan, dan penyelesaian tersedia setelah kartu aktif dan siap dikerjakan.</p>`;
+  else if (!ready)
+    acts = `<div class="actions mt">${B('Lihat Detail', 'task-preview:' + t.id, '', 'arrow')}${completeButton(t, '', true)}${B('Tunda', 'defer:' + t.id, 'text')}</div><p class="small muted help">Periksa Pekerjaan dan Catat Sebagai Selesai terbuka setelah prasyaratnya selesai.</p>`;
   else {
     const block = completionBlock(t);
-    const bantuan = !block
-      ? ''
-      : block.kind === 'arahan'
-        ? `${block.text} Catat Sebagai Selesai terbuka setelah arahan di kartu ini ditandai sudah ditindaklanjuti.`
-        : `${block.text} Lengkapi lewat tombol Kerjakan.`;
-    acts = `<div class="actions mt">${B('Kerjakan', 'task:' + t.id, 'primary', 'arrow')}${completeButton(t, '', !!block)}${B('Tunda', 'defer:' + t.id, 'text')}</div>${bantuan ? `<p class="small muted help">${e(bantuan)}</p>` : ''}`;
+    acts = `<div class="actions mt">${B('Kerjakan', 'task:' + t.id, 'primary', 'arrow')}${completeButton(t, '', !!block)}${B('Tunda', 'defer:' + t.id, 'text')}</div>${block ? `<p class="small muted help"><strong>Belum bisa dicatat selesai:</strong> ${e(block.text)}</p>` : ''}`;
   }
-  return `<article class="task-card v6-task ${lead ? 'lead' : ''} ${t.status}" data-task="${e(t.id)}"><div class="between"><span class="eyebrow">${e(eyebrow)}</span>${badge(st[1], t.status === 'done' ? 'green' : st[0] === 'warn' ? 'amber' : 'blue')}</div><button class="sync-stage-link" data-action="peta-focus:${ph}">Tahap ${e(stageName(ph))}</button><h3>${e(t.title)}</h3>${t.part && PARTS[t.part] ? `<p class="small muted">${e(partLabel(t.part))}</p>` : ''}<dl class="v6-task-facts"><dt>Yang dikerjakan</dt><dd>${e(t.doing || t.reason || '')}</dd><dt>Hasil yang disiapkan</dt><dd>${e(t.deliverable || '')}</dd>${crit ? `<dt>Selesai bila</dt><dd>${e(crit)}</dd>` : ''}</dl><p class="small muted">Sumber: ${taskSource(t)} · ${nFiles} berkas bukti</p>${t.status === 'done' ? '' : relatedBlocks(t, true)}${acts}</article>`;
+  const reason = priorityReason(t, role),
+    early = earlierStageNote(t);
+  const limit = t.kind === 'parallel' && t.limit && t.status !== 'done' ? `<p class="small b19-limit"><strong>Batas pekerjaan:</strong> ${e(t.limit)}</p>` : '';
+  return `<article class="task-card v6-task ${role === SLOTS[0] ? 'lead' : ''} ${t.status} ${!ready && t.status !== 'done' ? 'b19-waiting' : ''}" data-task="${e(t.id)}"><div class="between"><span class="eyebrow">${e(eyebrow)}</span>${badge(st[1], t.status === 'done' ? 'green' : st[0] === 'warn' ? 'amber' : 'blue')}</div><button class="sync-stage-link" data-action="peta-focus:${ph}">Tahap ${e(stageName(ph))}</button><h3>${e(t.title)}</h3><p class="small muted b19-meta">Bagian: ${e(taskBagian(t))} · Sumber: ${e(taskSource(t))} · ${nFiles} berkas bukti</p>${reason ? `<p class="small b19-reason"><strong>Alasan prioritas:</strong> ${e(reason)}</p>` : ''}${early ? `<p class="small muted b19-early">${e(early)}</p>` : ''}${limit}${taskFacts(t)}${t.status === 'done' ? '' : relatedBlocks(t, true)}${acts}</article>`;
 }
 /* Empat tab hanya untuk tampilan. Status pekerjaan berubah lewat tombol kartu dan aturan kunci. */
 const PROGRESS_TABS = [
@@ -69,42 +88,69 @@ function progressLists() {
   };
 }
 function progressShortcuts() {
-  return `<section class="card mt"><h3>Perbarui konteks pekerjaan</h3><div class="actions mt">${B('Mulai Menyusun', S.title ? 'guide-view:guide' : 'nav:mulai', '', 'compass')}${B('Periksa Draf Terbaru', 'nav:periksa', '', 'document')}${B('Tambah Arahan Dosen', 'add-revision', '', 'edit')}${B('Dukungan Mentor', 'nav:mentor', 'text', 'people')}</div></section>`;
+  /* Tambah arahan ada di setiap kartu dan Dukungan Mentor ada di sidebar, jadi tidak diulang di sini. */
+  return `<section class="card mt"><h3>Perbarui konteks pekerjaan</h3><div class="actions mt">${B('Mulai Menyusun', S.title ? 'guide-view:guide' : 'nav:mulai', '', 'compass')}${B('Periksa Draf Terbaru', 'nav:periksa', '', 'document')}</div></section>`;
 }
+/* Tiga slot: Prioritas Utama, Prioritas Berikutnya, Pekerjaan Paralel. Slot tanpa calon yang siap dibiarkan kosong. */
 function activeSlots(list) {
-  const kosong = [
-    '',
-    'Terisi otomatis dari antrean, temuan pemeriksaan, atau subbagian berikutnya.',
-    'Untuk pekerjaan yang aman dikerjakan sambil menunggu dosen.',
-  ];
-  return SLOTS.map((nama, i) => {
-    const t = list[i];
-    if (t) return taskCard(t, slotName(t, i));
-    return `<article class="task-card v6-task slot-empty"><div class="between"><span class="eyebrow">${e(nama.toUpperCase())}</span>${badge('Kosong', '')}</div><p class="small muted">Slot ini masih kosong. ${kosong[i]}</p></article>`;
-  }).join('');
+  const r = slotRoles(list),
+    cells = [...(r.pu ? [[r.pu, SLOTS[0]]] : []), ...r.pb.map(t => [t, SLOTS[1]]), ...r.par.map(t => [t, SLOTS[2]])];
+  const waitingQ = S.tasks.filter(t => t.status === 'queued' && !taskReady(t));
+  const emptyWhy = waitingQ.length
+    ? `Belum ada pekerjaan di antrean yang siap dikerjakan. “${waitingQ[0].title}” masih ${waitLabel(waitingQ[0]).charAt(0).toLowerCase() + waitLabel(waitingQ[0]).slice(1)}.`
+    : 'Belum ada pekerjaan di antrean yang siap dikerjakan, jadi slot ini dibiarkan kosong.';
+  const want = [SLOTS[1], SLOTS[2]].filter(n => !cells.some(c => c[1] === n));
+  const pads = [];
+  while (cells.length + pads.length < 3) pads.push(want.shift() || 'Slot kosong');
+  const readyPar = r.par.find(taskReady);
+  const noPu = !r.pu && list.length
+    ? `<div class="mb">${note(`<strong>Belum ada Prioritas Utama yang siap dikerjakan.</strong> ${r.pb[0] ? e(`“${r.pb[0].title}” ${waitLabel(r.pb[0]).charAt(0).toLowerCase() + waitLabel(r.pb[0]).slice(1)}.`) : ''} ${readyPar ? e(`Kerjakan dulu “${readyPar.title}” di slot Pekerjaan Paralel.`) : ''}`, 'amber')}</div>`
+    : '';
+  return (
+    noPu +
+    `<div class="task-grid">${cells.map(([t, n]) => taskCard(t, n)).join('')}${pads
+      .map(
+        n =>
+          `<article class="task-card v6-task slot-empty"><div class="between"><span class="eyebrow">${e(n.toUpperCase())}</span>${badge('Kosong', '')}</div><p class="small muted">${e(n === SLOTS[2] && !waitingQ.length ? 'Slot untuk pekerjaan yang aman dikerjakan sambil menunggu. Belum ada calon yang siap.' : emptyWhy)}</p></article>`,
+      )
+      .join('')}</div>`
+  );
 }
 function progresPage() {
+  if (S.title && activeTasks().length < 3) {
+    const n = S.tasks.length;
+    fillSlots();
+    if (S.tasks.length !== n) persist();
+  }
   const tabs = progressLists();
   if (!tabs[progressTab]) progressTab = 'aktif';
   const list = tabs[progressTab];
   const empty = {
     aktif: pageEmpty(
-      'Belum ada pekerjaan aktif',
-      'Pekerjaan muncul setelah kamu memilih judul, mengerjakan panduan, atau menambahkan temuan dan arahan dosen.',
-      'nav:mulai',
-      'Mulai Menyusun',
+      S.tasks.length ? 'Tidak ada pekerjaan aktif' : 'Belum ada pekerjaan',
+      S.tasks.length
+        ? 'Pekerjaan yang tersisa sudah selesai, ditunda, atau masih menunggu prasyarat. Lihat tab Antrean dan Ditunda.'
+        : 'Pekerjaan muncul di sini dari rencana penelitian yang kamu pilih di Mulai Skripsi, temuan pemeriksaan yang kamu jadikan pekerjaan, atau arahan dosen yang sudah dikonfirmasi.',
+      S.tasks.length ? '' : 'nav:mulai',
+      'Mulai Skripsi',
       'checklist',
     ),
-    antre: '<div class="card empty"><p class="muted">Antrean kosong. Pekerjaan keempat dan seterusnya menunggu di sini.</p></div>',
-    selesai: '<div class="card empty"><p class="muted">Belum ada pekerjaan yang dicatat selesai.</p></div>',
+    antre: '<div class="card empty"><p class="muted">Antrean kosong. Pekerjaan yang belum mendapat slot atau masih menunggu prasyarat tampil di sini.</p></div>',
+    selesai: '<div class="card empty"><p class="muted">Belum ada pekerjaan yang dicatat Selesai Dikerjakan.</p></div>',
     tunda: '<div class="card empty"><p class="muted">Tidak ada pekerjaan yang ditunda.</p></div>',
   };
   const body = !list.length
     ? empty[progressTab]
-    : `<div class="task-grid">${progressTab === 'aktif' ? activeSlots(list) : list.map(t => taskCard(t)).join('')}</div>`;
+    : progressTab === 'aktif'
+      ? activeSlots(list)
+      : `<div class="task-grid">${list.map(t => taskCard(t)).join('')}</div>`;
+  const sim = S.sample
+    ? `<div class="b19-simbar">${badge('Mode Simulasi', 'amber')}<span>Contoh penelitian Naya. Arahan reliabilitas, tiga kartu aktif, dan antrean adalah skenario contoh, bukan data penelitianmu. Mulai ruang kosong lewat Pengaturan.</span></div>`
+    : '';
   return (
     pageHead('Progres Aktif', 'Kerjakan prioritasmu, diskusikan perbaikan, dan simpan bukti dalam satu alur.') +
-    `<div class="sync-context"><div><strong>Tiga hal yang paling penting dikerjakan</strong><p>${tabs.aktif.length}/3 pekerjaan aktif. Arahan dosen dan temuan pemeriksaan terhubung ke pekerjaan yang sama.</p></div>${B('Buka Peta Skripsi', 'nav:peta', 'soft', 'map')}</div>` +
+    sim +
+    `<div class="sync-context"><div><strong>Tiga hal yang paling penting dikerjakan</strong><p>${tabs.aktif.length}/3 pekerjaan aktif · ${tabs.antre.length} di antrean. Arahan dosen dan temuan pemeriksaan terhubung ke pekerjaan yang sama.</p></div>${B('Buka Peta Skripsi', 'nav:peta', 'soft', 'map')}</div>` +
     `<div class="tabs v4-progress-tabs" role="tablist" aria-label="Status pekerjaan">${PROGRESS_TABS.map(([k, l]) =>
       B(`${l} (${tabs[k].length})`, 'progress-tab:' + k, progressTab === k ? 'primary' : 'text', '', `role="tab" aria-selected="${progressTab === k}"`),
     ).join('')}</div>` +
@@ -133,23 +179,73 @@ function discussionReply(t, q) {
   return `${base} Coba tulis satu paragraf dengan kalimatmu sendiri, lalu kirim ke sini bila ingin dibahas lagi.${/contoh|buatkan|tuliskan/i.test(q) ? ' Alerin tidak menuliskan bagian skripsimu, tetapi bisa menunjukkan arah dan memeriksa tulisanmu.' : ''}`;
 }
 let taskTab = 'work';
+/* Dari fitur lain, pengguna diantar ke halaman Progres Aktif dan kartunya disorot.
+   Ruang kerja penelitian hanya dibuka dari Progres Aktif (QC 17 November). */
+let pendingTaskFocus = null;
+function tabOfTask(t) {
+  const tabs = progressLists();
+  return Object.keys(tabs).find(k => tabs[k].includes(t)) || 'aktif';
+}
+function highlightTask(id) {
+  const card = document.querySelector(`[data-task="${CSS.escape(id)}"]`);
+  if (!card) return;
+  card.classList.add('task-focus');
+  card.scrollIntoView({ block: 'start', behavior: S.settings.motion ? 'smooth' : 'auto' });
+  card.querySelector('[data-action^="task:"],[data-action^="task-preview:"],[data-action^="restore:"]')?.focus({ preventScroll: true });
+  setTimeout(() => card.classList.remove('task-focus'), 2600);
+}
+function focusTaskInProgres(id) {
+  const t = S.tasks.find(x => x.id === id);
+  progressTab = t ? tabOfTask(t) : 'aktif';
+  closeModal(true);
+  if (route === 'progres' && location.hash === '#progres') {
+    render();
+    highlightTask(id);
+    return;
+  }
+  pendingTaskFocus = id;
+  go('progres');
+}
+/* Pratinjau untuk kartu antrean, kartu yang menunggu prasyarat, dan kartu yang ditunda. Tanpa isian. */
+function previewTask(id) {
+  const t = S.tasks.find(x => x.id === id);
+  if (!t) return;
+  const st = taskState(t),
+    ph = +t.phase || 0,
+    ready = taskReady(t);
+  const why =
+    t.status === 'deferred'
+      ? 'Kartu ini ditunda. Tekan Lanjutkan untuk mengaktifkannya kembali; isian dan buktinya tetap tersimpan.'
+      : t.status === 'queued'
+        ? 'Kartu ini masih di Antrean. Pengerjaan, pemeriksaan, dan penyelesaian tersedia setelah kartu aktif dan siap dikerjakan.'
+        : `${waitLabel(t)}. Periksa Pekerjaan dan Catat Sebagai Selesai terbuka setelah prasyaratnya selesai.`;
+  modal(
+    'Pratinjau pekerjaan',
+    `<div class="between"><span class="pill blue">Tahap ${e(stageName(ph))}</span>${badge(st[1], st[0] === 'warn' ? 'amber' : '')}</div><h2 class="workspace-title mt">${e(t.title)}</h2><p class="small muted">Bagian: ${e(taskBagian(t))} · Sumber: ${e(taskSource(t))}</p><div class="mt">${note(e(why), ready && t.status !== 'deferred' ? '' : 'amber')}</div><p class="small b19-reason mt"><strong>Alasan prioritas:</strong> ${e(priorityReason(t))}</p>${t.kind === 'parallel' && t.limit ? `<p class="small b19-limit"><strong>Batas pekerjaan:</strong> ${e(t.limit)}</p>` : ''}${taskFacts(t)}${relatedBlocks(t, true, true)}`,
+    B('Tutup', 'close-modal') + (t.status === 'deferred' ? B('Lanjutkan', 'restore:' + id, 'primary', 'refresh') : ''),
+    true,
+  );
+}
+/* Ruang kerja kartu aktif yang siap. Kartu lain diarahkan ke pratinjau. */
 function showTask(id, alasan = '') {
   const t = S.tasks.find(x => x.id === id);
   if (!t) return;
+  if (t.status !== 'done' && (!activeTasks().includes(t) || !taskReady(t))) return previewTask(id);
   ensureGuide();
   if (alasan) taskTab = 'work';
   const st = taskState(t),
     ph = +t.phase || 0,
     p = t.part && PARTS[t.part],
     v = p ? S.guide.fields[t.part] || {} : {},
-    revs = taskRevs(t);
+    done = t.status === 'done';
   const meta = (fid, val, max, opt) =>
     `<div class="field-meta"><span>${opt ? 'Boleh dilengkapi kemudian.' : ''}</span><span data-count="${fid}">${String(val || '').length}/${max}</span></div>`;
-  const crit = Array.isArray(t.criteria) ? t.criteria.join(' ') : t.criteria || '';
-  const facts = `<div class="v6-task-facts"><strong>Alasan prioritas</strong><p>${e(t.reason || t.doing || '')}</p>${t.doing && t.doing !== t.reason ? `<strong>Yang dikerjakan</strong><p>${e(t.doing)}</p>` : ''}<strong>Hasil yang disiapkan</strong><p>${e(t.deliverable || '')}</p>${crit ? `<strong>Selesai bila</strong><p>${e(crit)}</p>` : ''}</div>`;
-  const steps = (t.steps || []).length
-    ? `<h3 class="mt">Periksa hasil pekerjaanmu</h3><div class="checklist">${t.steps.map((s, i) => `<label class="checkbox"><input type="checkbox" name="task-check" value="${i}" ${(t.checks || []).includes(i) ? 'checked' : ''}>${e(s)}</label>`).join('')}</div>`
-    : '';
+  const facts = `<section class="b19-brief"><span class="eyebrow">TUGAS INI</span><p class="small b19-reason"><strong>Alasan prioritas:</strong> ${e(priorityReason(t) || t.reason || '')}</p>${t.kind === 'parallel' && t.limit ? `<p class="small b19-limit"><strong>Batas pekerjaan:</strong> ${e(t.limit)}</p>` : ''}${taskFacts(t, 'div')}</section>`;
+  const kendala = String(ensureKonteks().kendala || '').trim();
+  const kendalaNote =
+    kendala && t.part && kendalaPart(kendala) === t.part
+      ? `<div class="mt">${note(`<strong>Kendalamu dari Konteks:</strong> “${e(kendala)}” ${B('Lihat Saran Alerin', 'struktur:' + t.part, 'text small')}`)}</div>`
+      : '';
   const guide = p
     ? `<div class="between mt"><h3>Isian panduan · ${e(p.name)}</h3>${B('Buka di Mulai Skripsi', 'guide-part:' + t.part, 'text', 'arrow')}</div>${p.fields
         .map((f, i) => {
@@ -159,27 +255,27 @@ function showTask(id, alasan = '') {
         })
         .join('')}`
     : '';
-  const ev = `<div class="field"><label for="task-evidence">Bukti perubahan atau hasil pekerjaan${p ? OPT : REQ}</label><textarea id="task-evidence" maxlength="1500" placeholder="Catat apa yang berubah, dasar, dan lokasi buktinya." rows="3">${e(t.evidence || '')}</textarea>${meta('task-evidence', t.evidence, 1500, !!p)}</div>${uploadZone('task-' + id, 'Tambahkan bukti pekerjaan', 'PDF, DOCX, JPG, PNG')}${fileList('task-' + id)}`;
-  const catatan = t.koreksi || [];
-  const korStatus = !t.koreksi ? 'belum diminta' : !catatan.length ? 'tidak ada catatan' : t.koreksiOk ? `${catatan.length} catatan · sudah ditinjau` : `${catatan.length} catatan · perlu ditinjau`;
-  const revStatus = !revs.length
-    ? 'belum ada arahan tertaut'
-    : revs.every(r => r.status === 'done')
-      ? 'sudah ditindaklanjuti'
-      : `${revs.filter(r => r.status !== 'done').length} arahan menunggu tindak lanjut`;
-  const korList = catatan.length
-    ? `<div class="v3-guidance"><span class="eyebrow">KOREKSI ALERIN · CONTOH, BELUM ANALISIS AI</span>${outputRows(catatan.map(f => [f.title, f.fix]), false)}${t.koreksiOk ? `<p class="small ok-line">${I('check')} Catatan koreksi sudah kamu tinjau</p>` : `<div class="actions">${B('Tandai Sudah Ditinjau', 'task-koreksi-ok:' + id, 'soft', 'check')}</div>`}</div>`
-    : '';
-  const status = `<div class="v6-work-status" id="ws-koreksi">${revs.length ? B('Tinjau Revisi Dosen', 'nav:revisi', 'text') : ''}<p>Koreksi Alerin: <strong>${korStatus}</strong></p><p>Revisi Dosen: <strong>${revStatus}</strong></p></div>${korList}`;
+  const hint = taskRevs(t).length
+    ? 'Jelaskan perubahan yang menjawab catatan dosen dan letaknya di naskah.'
+    : (t.findingIds || []).length
+      ? 'Jelaskan perbaikan atas temuan pemeriksaan dan letaknya di naskah.'
+      : p
+        ? 'Isian panduan di atas adalah hasil kerjanya. Tambahkan bukti bila ada, misalnya lampiran draf.'
+        : 'Tunjukkan hasil sesuai “Hasil yang disiapkan”, letaknya di naskah, dan dasar yang dipakai.';
+  const ev = `<h3 class="mt">${p ? 'Bukti tambahan' : 'Hasil dan bukti pekerjaan'}</h3><p class="small muted">${e(hint)}</p><div class="field"><label for="task-evidence">${p ? 'Catatan bukti' : 'Hasil atau bukti pekerjaan'}${p ? OPT : REQ}</label><textarea id="task-evidence" data-task-evidence="${e(id)}" maxlength="1500" placeholder="Contoh: bagian apa yang kamu ubah, letaknya (bab/halaman), dan dasar yang dipakai." rows="4">${e(t.evidence || '')}</textarea>${meta('task-evidence', t.evidence, 1500, !!p)}</div>${uploadZone('task-' + id, 'Tambahkan bukti pekerjaan', 'PDF, DOCX, JPG, PNG')}${fileList('task-' + id)}<p class="small muted">Lampiran PDF dan DOCX dibaca saat Periksa Pekerjaan bila teksnya bisa diakses. Gambar belum bisa dibaca.</p>`;
+  const checks = completionChecks(t);
+  const status = `<section class="b19-checks" id="ws-koreksi"><div class="between"><h3>Syarat Catat Sebagai Selesai</h3>${t.review ? B('Lihat Tinjauan Alerin', 'task-review:' + id, 'text small') : ''}</div><ul>${checks
+    .map(c => `<li class="${c.ok ? 'ok' : ''}">${I(c.ok ? 'check' : 'info')}<span><strong>${c.label}:</strong> ${e(c.text)}${!c.ok && c.next ? `<small>${e(c.next)}</small>` : ''}</span></li>`)
+    .join('')}</ul>${done ? approvalLine(t) : ''}</section>`;
   const banner = alasan ? `<div class="mt">${note(`<strong>Belum bisa dicatat selesai.</strong> ${e(alasan)}`, 'amber')}</div>` : '';
-  const work = banner + facts + steps + relatedBlocks(t) + guide + ev + status;
+  const work = banner + facts + kendalaNote + relatedBlocks(t, false, true) + guide + ev + status + `<p class="small muted mt" data-autosave="1">Isian dan bukti tersimpan otomatis.</p>`;
   const disc = `<section class="v6-discussion"><p class="small muted">Tanyakan hal yang membuatmu ragu di pekerjaan ini. Jawaban berupa contoh panduan lokal, belum terhubung ke model AI.</p><div class="v6-discussion-log" role="log">${(t.discussion || []).map(m => `<div class="chat-message ${m.who === 'user' ? 'user' : ''}">${e(m.text)}</div>`).join('')}</div><div class="field disc-input"><label for="disc-text">Pertanyaan atau catatan tambahan <span>Opsional</span></label><textarea id="disc-text" maxlength="500" placeholder="Contoh: Rumusan masalahku sudah cukup spesifik?" rows="3" data-nocap="1"></textarea>${meta('disc-text', '', 500, true)}</div><div class="actions">${B('Kirim Pertanyaan', 'task-disc:' + id, 'primary', 'send')}${B('Konsultasikan ke Mentor', 'nav:mentor', 'text', 'people')}</div></section>`;
-  const head = `<div class="between"><span class="pill blue">Tahap ${e(stageName(ph))}${p ? ' · ' + e(p.name) : ''}</span>${badge(st[1], t.status === 'done' ? 'green' : st[0] === 'warn' ? 'amber' : '')}</div><h2 class="workspace-title mt">${e(t.title)}</h2><p class="small muted">Sumber: ${taskSource(t)}</p><div class="tabs v6-work-tabs">${B('Pengerjaan', 'task-tab:' + id + ':work', taskTab === 'work' ? 'primary' : 'text')}${B('Diskusi terkait pekerjaan', 'task-tab:' + id + ':disc', taskTab === 'disc' ? 'primary' : 'text')}</div>`;
-  const terkunci = completionBlock(t)?.kind === 'arahan';
+  const head = `<div class="between"><span class="pill blue">Tahap ${e(stageName(ph))}${p ? ' · ' + e(p.name) : ''}</span>${badge(st[1], done ? 'green' : st[0] === 'warn' ? 'amber' : '')}</div><h2 class="workspace-title mt">${e(t.title)}</h2><p class="small muted">Bagian: ${e(taskBagian(t))} · Sumber: ${e(taskSource(t))}</p><div class="tabs v6-work-tabs">${B('Pengerjaan', 'task-tab:' + id + ':work', taskTab === 'work' ? 'primary' : 'text')}${B('Diskusi terkait pekerjaan', 'task-tab:' + id + ':disc', taskTab === 'disc' ? 'primary' : 'text')}</div>`;
+  const locked = !!completionBlock(t);
   modal(
     'Ruang kerja penelitian',
     head + (taskTab === 'disc' ? disc : work),
-    `<div class="workspace-actions">${t.status === 'done' ? B('Kembali ke Progres', 'close-modal') : completeButton(t, 'primary', terkunci)}${B('Simpan untuk Ditinjau', 'task-save:' + id, '', 'save')}${B('Tambahkan Revisi Dosen', 'add-revision:' + id, '', 'edit')}${B('Periksa Pekerjaan', 'task-koreksi:' + id, '', 'checklist')}</div>`,
+    `<div class="workspace-actions">${done ? B('Kembali ke Progres', 'close-modal') + B('Buka Lagi', 'reopen:' + id, '') + (t.approval ? '' : B('Catat Persetujuan Dosen', 'approve:' + id, '', 'check')) : completeButton(t, 'primary', locked) + B('Periksa Pekerjaan', 'task-koreksi:' + id, '', 'checklist')}</div>`,
     true,
   );
   $('#overlay-root .modal')?.classList.add('workspace-modal');
@@ -188,10 +284,9 @@ function collectTask(id) {
   const t = S.tasks.find(x => x.id === id);
   if (!t) return null;
   if ($('#task-evidence')) t.evidence = $('#task-evidence').value.trim();
-  if ($$('[name="task-check"]').length) t.checks = $$('[name="task-check"]:checked').map(x => +x.value);
   return t;
 }
-/* Menolak dengan alasan yang sebenarnya; pesan muncul di bawah kolom yang bermasalah. */
+/* Menolak dengan alasan yang sebenarnya; pesan muncul di bawah kolom atau di daftar syarat. */
 function completeTask(id) {
   const t = collectTask(id);
   if (!t) return;
@@ -200,8 +295,17 @@ function completeTask(id) {
   if (!block) {
     modal(
       'Catat pekerjaan ini selesai?',
-      `<p><strong>${e(t.title)}</strong></p><p>Statusnya: Selesai menurut pengguna.</p><p class="small muted">Kamu bisa membukanya lagi kapan saja.</p>`,
+      `<p><strong>${e(t.title)}</strong></p><p>Statusnya menjadi <strong>Selesai Dikerjakan</strong>.</p><p class="small muted">Persetujuan dosen tidak berubah dan dicatat terpisah setelah dosen mengonfirmasi. Kamu bisa membuka kartu ini lagi kapan saja.</p>`,
       B('Batal', 'close-modal') + B('Catat Selesai', 'confirm-complete:' + id, 'primary'),
+    );
+    return;
+  }
+  if (block.kind === 'prasyarat') {
+    const par = activeTasks().find(x => x !== t && taskReady(x));
+    modal(
+      'Belum bisa dicatat selesai',
+      `<p>${e(waitLabel(t))}.</p><p class="small muted">Periksa Pekerjaan dan Catat Sebagai Selesai terbuka setelah prasyaratnya selesai.${par ? ` Sementara itu, “${e(par.title)}” siap dikerjakan.` : ''}</p>`,
+      B('Kembali', 'close-modal') + (par ? B('Kerjakan ' + par.title, 'task:' + par.id, 'primary') : ''),
     );
     return;
   }
@@ -209,47 +313,54 @@ function completeTask(id) {
     const belum = taskPendingRevs(t).some(r => !revUnderstood(r));
     modal(
       'Belum bisa dicatat selesai',
-      `<p>${e(block.text)}</p><p class="small muted">${belum ? 'Setujui dulu pemahaman Alerin atas arahan itu, lalu tandai sudah ditindaklanjuti di Revisi Dosen.' : 'Tandai arahannya sebagai sudah ditindaklanjuti di Revisi Dosen dulu.'}</p>`,
+      `<p>${e(block.text)}</p><p class="small muted">${belum ? 'Setujui dulu pemahaman Alerin atas arahan itu, lalu laporkan tindak lanjutnya di Revisi Dosen.' : 'Laporkan tindak lanjut arahannya di Revisi Dosen dulu.'}</p>`,
       B('Kembali', 'close-modal') + B('Lihat di Revisi Dosen', 'nav:revisi', 'primary'),
     );
     return;
   }
   showTask(id, block.text);
   if (block.kind === 'kolom') {
-    const ids = block.empty.length ? block.empty : PARTS[t.part].fields.map((f, i) => i).filter(i => !PARTS[t.part].fields[i].includes('|optional'));
+    const ids = block.empty?.length ? block.empty : PARTS[t.part].fields.map((f, i) => i).filter(i => !PARTS[t.part].fields[i].includes('|optional'));
     for (const i of ids)
-      fieldError(
-        `guide-${t.part}-${i}`,
-        block.empty.length ? 'Kolom ini masih kosong. Isi dulu sebelum mencatat selesai.' : 'Tulis lebih jelas dengan kalimat biasa.',
-      );
-  } else if (block.kind === 'bukti')
-    fieldError('task-evidence', 'Tulis bukti perubahan minimal 20 karakter, atau lampirkan berkas.');
-  else $('#ws-koreksi')?.scrollIntoView({ block: 'center' });
-  focusFirstError();
+      fieldError(`guide-${t.part}-${i}`, block.empty?.length ? 'Kolom ini masih kosong. Isi dulu sebelum mencatat selesai.' : 'Tulis lebih jelas dengan kalimat biasa.');
+    focusFirstError();
+  } else if (block.kind === 'bukti') {
+    fieldError('task-evidence', 'Tulis hasil atau bukti pekerjaanmu, atau lampirkan berkasnya.');
+    focusFirstError();
+  } else $('#ws-koreksi')?.scrollIntoView({ block: 'center' });
 }
 function confirmComplete(id) {
   const t = S.tasks.find(x => x.id === id);
   if (!t) return;
+  const waiting = taskDependents(t).map(x => x.id);
   t.status = 'done';
   t.completedAt = new Date().toISOString();
   t.reopenReason = '';
   for (const f of taskFindings(t)) f.resolved = true;
-  fillSlots();
   reorderTasks(false);
-  record('Pekerjaan selesai', t.title + ' · menurut pengguna');
+  fillSlots();
+  record('Pekerjaan selesai', t.title + ' · Selesai Dikerjakan');
   synchronizeResearch();
   persist();
   closeModal(true);
   render();
+  const opened = waiting.map(i => S.tasks.find(x => x.id === i)).filter(x => x && taskReady(x));
   const nx = t.part && nextPart(t.part),
     has = nx && S.tasks.some(x => x.part === nx && x.status !== 'done');
   modal(
     'Pekerjaan dicatat selesai',
-    `<p><strong>${e(t.title)}</strong> dicatat selesai menurut pengguna.</p>${nx && !has ? `<p>Langkah berikutnya: <strong>${e(partLabel(nx))}</strong>.</p>` : ''}`,
+    `<p><strong>${e(t.title)}</strong> berstatus Selesai Dikerjakan.</p>${opened.length ? `<p>Sekarang terbuka: <strong>${opened.map(x => e(x.title)).join(', ')}</strong>.</p>` : ''}${nx && !has && t.source === 'mulai' ? `<p>Langkah berikutnya dalam rencana: <strong>${e(partLabel(nx))}</strong>.</p>` : ''}<p class="small muted">Persetujuan dosen belum dicatat. Catat terpisah setelah dosen mengonfirmasi.</p>`,
     B('Tutup', 'close-modal') +
-      (nx && !has
-        ? B('Kerjakan ' + PARTS[nx].name, 'guide-next:' + nx, 'primary')
-        : B('Lihat Progres Aktif', 'progress-tab:aktif', 'primary')),
+      (nx && !has && t.source === 'mulai' ? B('Lanjut ke ' + PARTS[nx].name, 'guide-next:' + nx, 'primary') : B('Lihat Progres Aktif', 'progress-tab:aktif', 'primary')),
+  );
+}
+function approvalModal(id) {
+  const t = S.tasks.find(x => x.id === id);
+  if (!t) return;
+  modal(
+    'Catat persetujuan dosen',
+    `<p><strong>${e(t.title)}</strong></p><p class="small muted">Catat hanya setelah dosen benar-benar mengonfirmasi. Status Selesai Dikerjakan tidak sama dengan persetujuan dosen.</p><div class="field"><label for="ap-date">Tanggal konfirmasi <span class="required-label">Wajib</span></label><input id="ap-date" type="date" max="${isoToday()}" value="${isoToday()}"></div><div class="field"><label for="ap-note">Catatan konfirmasi <span>Opsional</span></label><textarea id="ap-note" rows="2" maxlength="300" placeholder="Misalnya: disetujui saat bimbingan, lanjut ke bab berikutnya."></textarea></div><label class="check"><input type="checkbox" id="ap-ok"><span>Dosen sudah mengonfirmasi pekerjaan ini</span></label>`,
+    B('Batal', 'close-modal') + B('Simpan Persetujuan', 'approve-save:' + id, 'primary', 'check'),
   );
 }
 
@@ -259,6 +370,7 @@ Object.assign(ACTIONS, {
   },
   'save-defer': async arg => {
     const t = S.tasks.find(t => t.id === arg);
+    if (!t) return;
     t.beforeDefer = t.status;
     t.status = 'deferred';
     t.deferReason = $('#defer-reason').value;
@@ -266,32 +378,54 @@ Object.assign(ACTIONS, {
     fillSlots();
     record('Pekerjaan ditunda', t.title);
     synchronizeResearch();
-    if (persist()) {
-      closeModal(true);
-      toast('Pekerjaan tersimpan di daftar Ditunda.');
-    }
+    if (!persist()) return render();
+    closeModal(true);
     render();
+    const dep = taskDependents(t).filter(x => x.status !== 'deferred'),
+      par = activeTasks().find(x => taskReady(x));
+    if (dep.length)
+      return modal(
+        'Pekerjaan ditunda',
+        `<p><strong>${e(t.title)}</strong> tersimpan di Ditunda beserta isian, bukti, dan tautan arahannya.</p><p class="mt">${dep.map(x => '“' + e(x.title) + '”').join(', ')} tetap menunggu sampai pekerjaan ini selesai.</p>${par ? `<p class="mt">Yang siap dikerjakan sekarang: <strong>${e(par.title)}</strong>.</p>` : ''}`,
+        B('Tutup', 'close-modal') + (par ? B('Kerjakan ' + par.title, 'task:' + par.id, 'primary', 'arrow') : ''),
+      );
+    toast('Pekerjaan tersimpan di daftar Ditunda.');
   },
   restore: arg => {
-    restoreTask(arg);
+    restoreTask(arg, 'restore');
   },
-  'confirm-restore': async arg => {
-    const t = S.tasks.find(t => t.id === arg);
-    const replace = $('#replace-task')?.value;
-    if (replace) {
-      const old = S.tasks.find(t => t.id === replace);
-      old.beforeDefer = old.status;
-      old.status = 'deferred';
-      old.deferReason = 'Ditunda saat mengaktifkan kembali pekerjaan lain.';
+  reopen: arg => {
+    restoreTask(arg, 'reopen');
+  },
+  'restore-go': arg => {
+    const [id, mode] = arg.split(':'),
+      t = S.tasks.find(x => x.id === id);
+    if (!t) return closeModal(true);
+    clearErrors();
+    if (mode === 'reopen') {
+      const why = ($('#reopen-reason')?.value || '').trim();
+      if (!why) return fieldError('reopen-reason', 'Tulis alasan membuka lagi pekerjaan ini.') || focusFirstError();
+      if (why.replace(/\s/g, '').length < 5 || isAsalShort(why)) {
+        fieldError('reopen-reason', 'Isiannya belum bisa Alerin pahami. Coba tulis dengan kalimat biasa.');
+        return focusFirstError();
+      }
+      t.reopenDraft = why;
     }
-    t.status = t.beforeDefer && t.beforeDefer !== 'deferred' ? t.beforeDefer : 'todo';
-    record('Pekerjaan diaktifkan kembali', t.title);
-    synchronizeResearch();
-    persist();
-    closeModal(true);
-    go('progres');
-    render();
-    toast('Antrean aktif diperbarui. Maksimal tiga pekerjaan.');
+    const how = $('input[name="rs-mode"]:checked')?.value || 'free',
+      rep = $('#replace-task')?.value || '';
+    if (how === 'swap' && taskReady(t)) {
+      const old = S.tasks.find(x => x.id === rep);
+      return modal(
+        'Ganti pekerjaan aktif?',
+        `<div class="order-change"><div><span class="eyebrow">DIPINDAHKAN KE ANTREAN</span><p>${e(old?.title || '')}</p></div>${I('arrowDown')}<div><span class="eyebrow">MENJADI AKTIF</span><p><strong>${e(t.title)}</strong></p></div></div><p class="small muted mt">Isian, bukti, dan tautan arahan kartu yang dipindahkan tetap tersimpan. Kartu itu naik lagi saat ada slot kosong.</p>`,
+        B('Batal', 'close-modal') + B('Ya, Ganti', 'restore-swap:' + id + ':' + mode + ':' + rep, 'primary'),
+      );
+    }
+    applyRestore(id, mode, how === 'free' ? 'free' : 'queue');
+  },
+  'restore-swap': arg => {
+    const [id, mode, rep] = arg.split(':');
+    applyRestore(id, mode, 'swap', rep);
   },
   'order-keep': () => {
     pendingOrder = null;
@@ -307,6 +441,7 @@ Object.assign(ACTIONS, {
       .filter(Boolean)
       .concat(S.tasks.filter(t => !ids.includes(t.id)));
     pendingOrder = null;
+    applyOrder();
     fillSlots();
     persist();
     closeModal(true);
@@ -317,6 +452,9 @@ Object.assign(ACTIONS, {
     taskTab = 'work';
     showTask(arg);
   },
+  'task-preview': arg => {
+    previewTask(arg);
+  },
   'task-tab': arg => {
     const [id, tab] = arg.split(':');
     collectTask(id);
@@ -324,30 +462,14 @@ Object.assign(ACTIONS, {
     taskTab = tab === 'disc' ? 'disc' : 'work';
     showTask(id);
   },
-  'task-save': arg => {
-    collectTask(arg);
-    persist();
-    closeModal(true);
-    render();
-    toast('Pekerjaan tersimpan.');
-  },
   complete: arg => {
     completeTask(arg);
   },
   'confirm-complete': arg => {
-    confirmComplete(arg);
-  },
-  reopen: arg => {
     const t = S.tasks.find(x => x.id === arg);
-    t.status = activeTasks().length >= 3 ? 'queued' : 'todo';
-    t.reopenReason = 'Dibuka lagi olehmu';
-    t.completedAt = null;
-    record('Pekerjaan dibuka lagi', t.title);
-    synchronizeResearch();
-    persist();
-    progressTab = 'aktif';
-    render();
-    toast('Pekerjaan dibuka lagi.');
+    /* Syarat dicek ulang saat konfirmasi, supaya kunci tidak terlewati. */
+    if (t && completionBlock(t)) return completeTask(arg);
+    confirmComplete(arg);
   },
   'task-disc': arg => {
     const t = collectTask(arg),
@@ -363,35 +485,58 @@ Object.assign(ACTIONS, {
     showTask(arg);
     $('#disc-text')?.focus();
   },
-  'task-koreksi': arg => {
+  /* Periksa Pekerjaan: Tinjauan Alerin per kriteria Selesai Bila. */
+  'task-koreksi': async arg => {
     const t = collectTask(arg);
-    if (taskTab !== 'work') {
-      taskTab = 'work';
-      showTask(arg);
-    }
-    const v = t.part ? Object.values(S.guide.fields[t.part] || {}).join('\n') : '';
-    const text = [v, t.evidence].join('\n').trim();
-    if (text.replace(/\s/g, '').length < 20) {
-      clearErrors();
-      fieldError('task-evidence', 'Tulis isian atau bukti dulu, minimal satu kalimat, supaya bisa dikoreksi.');
-      return focusFirstError();
-    }
-    t.koreksi = findIssues(text, { chapters: [], title: '', method: methodKind() }).map(f => ({ title: f.title, fix: f.fix }));
-    if (isAsal(text.slice(0, 120)))
-      t.koreksi.unshift({ title: 'Isian belum bisa dipahami', fix: 'Tulis ulang dengan kalimat biasa.' });
-    t.koreksiOk = false;
-    record('Koreksi Alerin diminta', `${t.title} · ${t.koreksi.length} catatan`);
+    if (!t) return;
     persist();
-    showTask(arg);
-    $('#ws-koreksi')?.scrollIntoView({ block: 'nearest' });
+    if (!taskReady(t) || !activeTasks().includes(t)) return previewTask(arg);
+    await processing('Meninjau hasil kerjamu', async () => {
+      t.review = await runReview(t);
+      const met = t.review.items.filter(i => i.status === 'met').length;
+      record('Tinjauan Alerin dijalankan', `${t.title} · ${met}/${t.review.items.length} kriteria terpenuhi`);
+      persist();
+      render();
+      reviewModal(arg);
+    });
   },
-  'task-koreksi-ok': arg => {
-    const t = collectTask(arg);
-    t.koreksiOk = true;
+  'task-review': arg => {
+    collectTask(arg);
     persist();
-    showTask(arg);
-    $('#ws-koreksi')?.scrollIntoView({ block: 'nearest' });
-    toast('Catatan koreksi ditandai sudah ditinjau.');
+    reviewModal(arg);
+  },
+  'rv-note': arg => {
+    const [id, nid] = arg.split(':'),
+      t = S.tasks.find(x => x.id === id),
+      n = t?.review?.notes?.find(x => x.id === nid);
+    if (!n) return;
+    n.done = !n.done;
+    record(n.done ? 'Koreksi Alerin ditandai tuntas' : 'Koreksi Alerin dibuka lagi', n.title);
+    persist();
+    render();
+    reviewModal(id);
+  },
+  approve: arg => {
+    approvalModal(arg);
+  },
+  'approve-save': arg => {
+    const t = S.tasks.find(x => x.id === arg);
+    if (!t) return closeModal(true);
+    clearErrors();
+    let ok = checkDate('ap-date', { required: true, future: false });
+    if (ok && $('#ap-date').value > isoToday()) ok = fieldError('ap-date', 'Tanggal konfirmasi belum terjadi. Periksa lagi, ya.');
+    if (!$('#ap-ok').checked) {
+      const w = $('#ap-ok').closest('label');
+      w.insertAdjacentHTML('afterend', '<p class="field-error">Centang dulu bila dosen sudah mengonfirmasi.</p>');
+      ok = false;
+    }
+    if (!ok) return focusFirstError();
+    t.approval = { date: $('#ap-date').value, note: $('#ap-note').value.trim(), by: 'pengguna' };
+    record('Persetujuan dosen dicatat', t.title + ' · ' + dateLong(t.approval.date));
+    persist();
+    closeModal(true);
+    render();
+    toast('Persetujuan dosen tercatat terpisah dari status Selesai Dikerjakan.');
   },
   'progress-tab': arg => {
     progressTab = arg;

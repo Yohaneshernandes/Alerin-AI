@@ -101,19 +101,6 @@ function boundedRows(rows, max = OUTPUT_MAX) {
 function rowText(rows) {
   return rows.map(x => x.join('\n')).join('\n');
 }
-function wrapSvg(text, width = 55) {
-  const words = String(text).split(/\s+/);
-  let lines = [],
-    line = '';
-  for (const word of words) {
-    if ((line + ' ' + word).trim().length > width && line) {
-      lines.push(line);
-      line = word;
-    } else line = (line + ' ' + word).trim();
-  }
-  if (line) lines.push(line);
-  return lines;
-}
 function toast(msg, type = '', ms = 4800) {
   clearTimeout(toastTimer);
   $('#toast-root').innerHTML =

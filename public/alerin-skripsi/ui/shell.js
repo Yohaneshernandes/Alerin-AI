@@ -1,5 +1,5 @@
 'use strict';
-/* Kerangka halaman: sidebar, kepala halaman, pencarian, pengingat, Alerin Chat, dan panel uji. */
+/* Kerangka halaman: sidebar, kepala halaman, pencarian, notifikasi, pintasan Alerin Chat, dan panel uji. */
 function searchModal() {
   modal(
     'Cari di ruang skripsimu',
@@ -45,12 +45,12 @@ function shell(content) {
     `<button class="nav-btn ${isActive(r) ? 'active' : ''}" data-action="nav:${r}" ${isActive(r) ? 'aria-current="page"' : ''} title="${label}">${I(ico)}<span>${label}</span>${r === 'revisi' && pending ? `<span class="nav-count" aria-label="${pending} arahan belum ditindaklanjuti">${pending}</span>` : ''}</button>`;
   return `<button class="sidebar-scrim" data-action="sidebar" aria-label="Tutup navigasi"></button>
     <aside class="sidebar" aria-label="Navigasi penelitian"><div class="brand"><img src="assets/alerin.svg" alt=""><div class="brand-copy"><div class="brand-name">Alerin</div><div class="brand-sub"><i class="dot"></i>Asisten kampusmu</div></div><button class="sidebar-toggle" data-action="sidebar" aria-label="Tutup sidebar" title="Tutup atau ringkas sidebar">${I('chevronLeft')}</button></div><nav class="nav-group" aria-label="Navigasi utama">${NAV.map(navButton).join('')}</nav><div class="nav-sep"></div><div class="nav-label">BANTUAN TERHUBUNG</div><nav class="nav-group" aria-label="Bantuan terhubung">${NAV_HELP.map(navButton).join('')}</nav><div class="sidebar-bottom"><div class="plan-box"><div class="plan-line"><span class="small muted">Paket saat ini</span>${badge(S.plan, 'blue')}</div><strong>Alerin Skripsi ${e(S.plan)}</strong><p>Ruang untuk setiap langkah penelitianmu.</p>${B('Ubah Paket', 'nav:paket', '', 'layers')}</div><div class="side-foot"><span>Pendamping, bukan joki.</span><button data-action="nav:batasan">Batasan ${I('chevronRight')}</button></div></div></aside>
-    <div class="app-body"><header class="topbar"><button class="icon-btn mobile-menu" data-action="sidebar" aria-label="Buka sidebar" aria-expanded="false">${I('chevronRight')}</button><div class="mobile-brand"><img src="assets/alerin.svg" alt=""><strong>Alerin</strong><small>Skripsi</small></div><a class="btn qc14-back-home" href="/" onclick="if(window.parent && window.parent !== window){window.parent.postMessage('backToAlerin','*');event.preventDefault();}else{window.location.href='/';event.preventDefault();}">${I('back')}<span>Kembali ke Beranda</span></a><div class="header-actions"><button type="button" class="btn notification-button" data-action="notifs" aria-label="Buka notifikasi${unread ? ': ' + unread + ' baru' : ''}">${I('bell')}Notifikasi</button><button class="icon-btn header-search" data-action="search" aria-label="Cari halaman atau fitur" title="Cari · Ctrl K">${I('search')}</button><div class="header-divider"></div><button class="profile-button" data-action="profile-menu" aria-label="Buka menu profil" aria-expanded="${menuOpen}"><span class="avatar">${e((S.profile.name || 'K').slice(0, 1).toUpperCase())}</span><span class="profile-info"><strong>${e(S.profile.name || 'Kawan')}</strong><small>Mahasiswa · ${e(S.plan)}</small></span>${I('down')}</button></div></header><main id="main" class="main" tabindex="-1">${content}<footer class="global-footer"><span>Data penelitian tersimpan di perangkat ini.</span><button data-action="about">Tentang Alerin ${I('external')}</button></footer></main></div><button class="chat-fab" data-action="chat" aria-label="${chatOpen ? 'Tutup' : 'Buka'} Alerin Chat" title="Diskusi dengan Alerin">${I(chatOpen ? 'close' : 'chat')}${!chatOpen && S.chatUnread ? `<i class="fab-dot">${S.chatUnread}</i>` : ''}</button>${chatOpen ? chatPanel() : ''}${menuOpen ? profileMenu() : ''}${ujiPanel()}`;
+    <div class="app-body"><header class="topbar"><button class="icon-btn mobile-menu" data-action="sidebar" aria-label="Buka sidebar" aria-expanded="false">${I('chevronRight')}</button><div class="mobile-brand"><img src="assets/alerin.svg" alt=""><strong>Alerin</strong><small>Skripsi</small></div><a class="btn qc14-back-home" href="/" onclick="if(window.parent && window.parent !== window){window.parent.postMessage('backToAlerin','*');event.preventDefault();}else{window.location.href='/';event.preventDefault();}">${I('back')}<span>Kembali ke Beranda</span></a><div class="header-actions"><button type="button" class="btn notification-button" data-action="notifs" aria-label="Buka notifikasi${unread ? ': ' + unread + ' baru' : ''}">${I('bell')}Notifikasi</button><button class="icon-btn header-search" data-action="search" aria-label="Cari halaman atau fitur" title="Cari · Ctrl K">${I('search')}</button><div class="header-divider"></div><button class="profile-button" data-action="profile-menu" aria-label="Buka menu profil" aria-expanded="${menuOpen}"><span class="avatar">${e((S.profile.name || 'K').slice(0, 1).toUpperCase())}</span><span class="profile-info"><strong>${e(S.profile.name || 'Kawan')}</strong><small>Mahasiswa · ${e(S.plan)}</small></span>${I('down')}</button></div></header><main id="main" class="main" tabindex="-1">${content}<footer class="global-footer"><span>Data penelitian tersimpan di perangkat ini.</span><button data-action="about">Tentang Alerin ${I('external')}</button></footer></main></div><button class="chat-fab" data-action="chat" aria-label="${chatOpen ? 'Tutup' : 'Buka'} pintasan Alerin Chat" aria-expanded="${chatOpen}" title="Alerin Chat">${I(chatOpen ? 'close' : 'chat')}</button>${chatOpen ? chatPanel() : ''}${menuOpen ? profileMenu() : ''}${ujiPanel()}`;
 }
 function aboutModal() {
   modal(
     'Tentang Alerin Skripsi',
-    `<div class="flex mb"><img src="assets/alerin.svg" alt="" width="36" height="40"><div><h3>Ruang penelitian yang terhubung.</h3><p class="small">Revisi QC · 15 November 2026</p></div></div><p>Beranda, Mulai Skripsi, Periksa Skripsi, Progres Aktif, Peta Skripsi, Revisi Dosen, Daftar Pustaka, dan Dukungan Mentor memakai satu data penelitian yang sama di perangkat ini.</p><h3 class="mt">Yang dapat dicoba</h3><p>Pilih kondisi, susun opsi judul, periksa bab atau kesiapan sempro dan sidang, ubah temuan menjadi pekerjaan, catat arahan dosen, atur target, dan rapikan daftar pustaka.</p><h3 class="mt">Cakupan prototipe</h3><p>Analisis AI, transkripsi, pembayaran, sinkronisasi antarperangkat, Kalender Alerin Induk, dan pengiriman otomatis ke mentor belum terhubung. Hasil yang ditandai Contoh adalah contoh, bukan analisis naskahmu.</p><div class="mt">${note('Situs publik tidak membagikan isian atau unggahan antarpengunjung. Tiap peramban menyimpan datanya sendiri.')}</div>`,
+    `<div class="flex mb"><img src="assets/alerin.svg" alt="" width="36" height="40"><div><h3>Ruang penelitian yang terhubung.</h3><p class="small">Revisi QC · 15 November 2026</p></div></div><p>Beranda, Mulai Skripsi, Periksa Skripsi, Progres Aktif, Peta Skripsi, Revisi Dosen, Daftar Pustaka, dan Dukungan Mentor memakai satu data penelitian yang sama di perangkat ini.</p><h3 class="mt">Yang dapat dicoba</h3><p>Konfirmasi posisi penelitian, perbarui kondisi, susun opsi judul, periksa bab atau kesiapan sempro dan sidang, ubah temuan menjadi pekerjaan, catat arahan dosen, atur target, dan rapikan daftar pustaka.</p><h3 class="mt">Cakupan prototipe</h3><p>Analisis AI, transkripsi, pembayaran, sinkronisasi antarperangkat, Kalender Alerin Induk, dan pengiriman otomatis ke mentor belum terhubung. Hasil yang ditandai Contoh adalah contoh, bukan analisis naskahmu.</p><div class="mt">${note('Situs publik tidak membagikan isian atau unggahan antarpengunjung. Tiap peramban menyimpan datanya sendiri.')}</div>`,
     B('Mengerti', 'close-modal', 'primary'),
   );
 }
@@ -74,6 +74,8 @@ function ujiPanel() {
     ['prioritas', 'Kartu Prioritas Utama'],
     ['target3', 'Target tinggal 3 hari'],
     ['selisih', 'Selisih tahap'],
+    ['gagal', 'Progres Aktif gagal dimuat'],
+    ['baru', 'Pengguna baru dari personalisasi'],
   ]
     .map(([k, l]) => `<button class="btn small" data-action="uji:${k}">${l}</button>`)
     .join(
@@ -142,36 +144,11 @@ function notifsModal() {
     B('Tutup', 'close-modal'),
   );
 }
+/* Alerin Chat di Alerin Skripsi hanya pintasan ke Alerin Chat utama. Tidak ada percakapan di halaman ini. */
+const ALERIN_CHAT_URL = 'https://alerin.id/';
 function chatPanel() {
-  if (!chats.length)
-    chats = [
-      {
-        who: 'assistant',
-        text: `Halo, ${S.profile.name || 'Kawan'}. Kamu sedang membuka ${pageNames[route]}.${S.title ? '\nJudul: ' + S.title + '.' : ''}\n\nIni contoh percakapan. Untuk diskusi dengan AI, lanjutkan di Alerin Chat utama.`,
-      },
-    ];
-  const t = activeTasks()[0],
-    sug = [
-      t ? 'Apa yang harus kulakukan dulu di ' + t.title.toLowerCase() + '?' : 'Dari mana aku sebaiknya mulai?',
-      'Bagaimana menyiapkan bimbingan berikutnya?',
-    ];
-  return `<aside class="chat-panel" aria-label="Alerin Chat"><div class="chat-head"><img src="assets/alerin.svg" alt=""><div><strong>Alerin Chat</strong><p>Contoh percakapan · konteks halaman</p></div><button class="icon-btn" data-action="chat" aria-label="Tutup Alerin Chat">${I('close')}</button></div><div class="chat-messages" role="log" aria-live="polite">${chats.map(c => `<div class="chat-message ${c.who === 'user' ? 'user' : ''}">${e(c.text)}</div>`).join('')}</div><div class="chat-suggestions">${sug.map(s => `<button data-action="chat-ask:${e(s)}">${e(s)}</button>`).join('')}</div><form class="chat-input" id="chat-form"><input id="chat-text" aria-label="Pesan untuk Alerin" placeholder="Tulis pertanyaanmu…" maxlength="2000" autocomplete="off" data-nocap="1"><button type="submit" class="icon-btn" aria-label="Kirim">${I('send')}</button></form></aside>`;
-}
-function chatReply(text) {
-  if (!text.trim()) return;
-  chats.push({ who: 'user', text });
-  const t = activeTasks()[0];
-  chats.push({
-    who: 'assistant',
-    text: t
-      ? `Fokus dulu ke Prioritas Utama: ${t.title}. ${t.doing || ''}\n\nIni contoh jawaban, belum analisis AI.`
-      : `Mulai dari Beranda: pilih kondisi skripsimu, lalu ikuti satu langkah berikutnya yang muncul.\n\nIni contoh jawaban, belum analisis AI.`,
-  });
-  render();
-  requestAnimationFrame(() => {
-    const m = $('.chat-messages');
-    if (m) m.scrollTop = m.scrollHeight;
-  });
+  const judul = S.title ? `<strong>“${e(S.title)}”</strong>` : 'belum dipilih';
+  return `<aside class="chat-panel chat-shortcut" aria-label="Pintasan Alerin Chat"><div class="chat-head"><img src="assets/alerin.svg" alt=""><div><strong>Alerin Chat</strong></div><button class="icon-btn" data-action="chat" aria-label="Tutup pintasan Alerin Chat">${I('close')}</button></div><div class="chat-shortcut-body"><p>Kamu sedang di fitur <strong>${e(pageNames[route])}</strong>, judul penelitianmu ${judul}. Diskusikan kendalamu bersama Alerin Chat.</p><a class="btn primary chat-shortcut-link" href="${ALERIN_CHAT_URL}" onclick="if(window.parent && window.parent !== window){window.parent.postMessage('backToAlerin','*');event.preventDefault();}" target="_blank" rel="noopener">${I('external')}Buka Alerin Chat</a></div></aside>`;
 }
 function ujiAction(k) {
   const sample = initialState(false);
@@ -228,7 +205,15 @@ function ujiAction(k) {
     const keep = S.settings;
     S = initialState(true);
     S.settings = keep;
+    S.profile.kondisi = '';
+    delete S.profile.personalisasi;
   }
+  if (k === 'baru') {
+    const keep = S.settings;
+    S = initialState(true);
+    S.settings = keep;
+  }
+  if (k === 'gagal') ujiProgresGagal = !ujiProgresGagal;
   if (k === 'contoh') {
     const kk = kondisiOf(S.profile.kondisi) || kondisiOf('judul');
     S.profile.kondisi = kk.id;
@@ -329,7 +314,7 @@ Object.assign(ACTIONS, {
   chat: () => {
     chatOpen = !chatOpen;
     render();
-    if (chatOpen) $('#chat-text')?.focus();
+    if (chatOpen) $('.chat-shortcut-link')?.focus();
   },
   nav: arg => {
     if (unsaved) persist();
@@ -362,9 +347,6 @@ Object.assign(ACTIONS, {
     persist();
     refreshFileLists(f.context);
     toast('Berkas dihapus dari daftar.');
-  },
-  'chat-ask': arg => {
-    chatReply(arg);
   },
   'soon-sidang': () => {
     toast('Simulasi Sidang segera hadir untuk paket Premium.');

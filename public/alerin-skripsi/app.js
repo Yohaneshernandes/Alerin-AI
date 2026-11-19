@@ -54,7 +54,9 @@ document.addEventListener('input', ev => {
     S[group][k] = el.value;
     unsaved = true;
     if (group === 'draft') S.draftSample = false;
-  } else if (el.closest('#overlay-root') && el.matches('input,textarea,select')) modalDirty = true;
+  } else if (el.closest('#overlay-root') && el.matches('input,textarea,select') && !d.guide && !d.taskEvidence)
+    /* Kolom panduan dan bukti di Ruang kerja tersimpan otomatis, jadi tidak memicu peringatan "belum disimpan". */
+    modalDirty = true;
   const counter = $(`[data-count="${el.id}"]`);
   if (counter && el.maxLength > 0) counter.textContent = `${el.value.length}/${el.maxLength}`;
   if (el.id === 'command-search') $('#command-results').innerHTML = searchResults(el.value);
@@ -69,6 +71,13 @@ document.addEventListener('input', ev => {
     ensureGuide();
     (S.guide.fields[part] ??= {})[f] = el.value;
     unsaved = true;
+  }
+  if (d.taskEvidence) {
+    const t = S.tasks.find(x => x.id === d.taskEvidence);
+    if (t) {
+      t.evidence = el.value;
+      unsaved = true;
+    }
   }
   if (d.periksa && el.tagName !== 'SELECT') {
     ensurePeriksa()[d.periksa] = el.value;
@@ -87,6 +96,17 @@ document.addEventListener('input', ev => {
 document.addEventListener('change', async ev => {
   const el = ev.target;
   const d = el.dataset;
+  if (d.bind === 'konteks.susunan') {
+    /* Ganti susunan bab: bagian yang sedang dipilih ikut pindah ke nomor bab barunya. */
+    const c = ensureKonteks(),
+      first = CHAPTERS[+c.chapter - 1]?.[2][0]?.[0];
+    c.susunan = SUSUNAN[el.value] ? el.value : 'umum';
+    applySusunan();
+    if (first) c.chapter = String(PARTS[first].chapter);
+    persist();
+    refreshSusunanField();
+    return;
+  }
   if (d.bind) {
     const [group, k] = d.bind.split('.');
     S[group][k] = el.value;
@@ -168,7 +188,6 @@ document.addEventListener('drop', async ev => {
 
 document.addEventListener('submit', ev => {
   ev.preventDefault();
-  if (ev.target.id === 'chat-form') chatReply($('#chat-text').value);
 });
 
 document.addEventListener('keydown', ev => {
@@ -213,7 +232,17 @@ window.addEventListener('hashchange', () => {
   document.body.classList.remove('sidebar-open');
   render();
   window.scrollTo({ top: 0 });
-  $('#main')?.focus({ preventScroll: true });
+  if (pendingTaskFocus && route === 'progres') {
+    const id = pendingTaskFocus;
+    pendingTaskFocus = null;
+    highlightTask(id);
+    /* Tombol Kerjakan di Beranda: ruang kerja kartu yang sama langsung dibuka (arahan, bukti, dan status ikut). */
+    if (pendingTaskOpen === id) {
+      pendingTaskOpen = null;
+      taskTab = 'work';
+      showTask(id);
+    }
+  } else $('#main')?.focus({ preventScroll: true });
 });
 
 window.addEventListener('beforeunload', () => {
@@ -226,6 +255,6 @@ window.addEventListener('resize', () => {
 
 S = loadState();
 normalizeState();
+applySusunan();
 synchronizeResearch();
-pushDueReminders();
 render();

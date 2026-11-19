@@ -35,11 +35,27 @@ function normalizeState() {
   S.settings.theme ??= 'light';
   S.researchBundles ??= {};
   S.agendas ??= [];
+  for (const a of S.agendas) delete a.pushedKey;
   S.mentorNote ??= '';
+  delete S.chatUnread;
   S.reviews ??= [];
   S.stageLog ??= [];
   S.home ??= { step: 'card', ans: {} };
   S.konteks ??= { chapter: '', method: '', deadline: '', kendala: '', title: '', savedAt: '' };
+  /* Revisi 18 November: posisi penelitian dan kondisi pengerjaan disimpan terpisah.
+     Tahap terakhir yang dulu dipilih lewat "Progres terhenti" dipindahkan menjadi posisi tersimpan. */
+  if (S.position === undefined) {
+    const last = S.profile.lastStage;
+    S.position =
+      last !== undefined && last !== null && last !== ''
+        ? { stage: +last, date: new Date().toISOString(), from: 'pengguna' }
+        : S.sample
+          ? { stage: 7, date: addDaysIso(-2) + 'T09:00:00+07:00', from: 'pengguna' }
+          : null;
+  }
+  delete S.profile.lastStage;
+  S.situation ??= null;
+  if (S.sample && Array.isArray(S.tasks)) applySampleTasks(S);
   S.biblio ??= sampleBiblio(!S.sample);
   S.biblio.form ??= blankSource();
   S.biblio.items ??= [];
@@ -72,7 +88,6 @@ let route = '',
 const ACTIONS = {};
 
 let S;
-let chats = [];
 let modalDirty = false,
   suspendedOverlay = null;
 function persist(message) {
@@ -115,7 +130,13 @@ function initialState(empty = true) {
       semester: '7',
       campus: '',
       deadline: addDaysIso(150),
-      kondisi: '',
+      /* Contoh data personalisasi dari alerin.id. Beranda meminta pengguna mengonfirmasi tahapnya. */
+      kondisi: 'proposal',
+      personalisasi: {
+        topik: 'Film sebagai media pendidikan kesehatan reproduksi bagi mahasiswa',
+        judul: 'Peran Film sebagai Media Pendidikan Seksual pada Mahasiswa di Kota Malang',
+        contoh: true,
+      },
     },
     plan: 'Pro',
     title: '',
@@ -141,6 +162,8 @@ function initialState(empty = true) {
     home: { step: 'card', ans: {} },
     konteks: { chapter: '', method: '', deadline: '', kendala: '', title: '', savedAt: '' },
     stageLog: [],
+    position: null,
+    situation: null,
     v6: true,
   };
   if (empty) return base;
@@ -149,6 +172,7 @@ function initialState(empty = true) {
   s.title = ALERIN.title;
   s.profile.kondisi = 'babakhir';
   s.profile.method = 'Metode campuran';
+  s.position = { stage: 7, date: addDaysIso(-2) + 'T09:00:00+07:00', from: 'pengguna' };
   s.phase = 6;
   s.draftSample = true;
   s.draftReady = true;
@@ -163,6 +187,7 @@ function initialState(empty = true) {
     doing: t.reason,
     criteria: t.criteria || [],
   }));
+  applySampleTasks(s);
   s.revisions = [
     {
       id: 'rev-sample',
@@ -252,6 +277,52 @@ function initialState(empty = true) {
     },
   ];
   return s;
+}
+/* Skenario Mode Simulasi Naya untuk Progres Aktif (Revisi 18 November): bagian penelitian, prasyarat, batas
+   pekerjaan paralel, dan satu kartu antrean yang menunggu prasyarat. Aman dijalankan berulang. */
+const SAMPLE_TASK_EXTRA = {
+  reliabilitas: {
+    bagian: 'Bab III · Keabsahan Data dan Bab IV · Hasil',
+    doing: 'Cocokkan nilai alpha di naskah dengan keluaran pengujian, cantumkan dasar interpretasinya, lalu pisahkan penjelasan validitas dan reliabilitas.',
+  },
+  selaraskan: {
+    bagian: 'Bab III · Instrumen Penelitian dan lampiran pengujian',
+    doing: 'Cocokkan nama instrumen, jumlah butir, dan jenis pengujian di metode, tabel, narasi, dan lampiran.',
+    depends: 'reliabilitas',
+  },
+  outline: {
+    bagian: 'Bab IV · Hasil dan Pembahasan',
+    doing: 'Susun subbagian hasil dan pembahasan mengikuti tiga rumusan masalah, lengkap dengan sumber bukti untuk setiap fokus.',
+    limit: 'Subbagian yang memakai hasil uji instrumen diberi penanda “menunggu” sampai Selaraskan laporan pengujian instrumen selesai.',
+  },
+};
+function applySampleTasks(s) {
+  for (const t of s.tasks) {
+    const x = SAMPLE_TASK_EXTRA[t.id];
+    if (!x) continue;
+    for (const k of Object.keys(x)) if (t[k] === undefined || (k === 'doing' && t.doing === t.reason)) t[k] = x[k];
+  }
+  if (!s.tasks.some(t => t.id === 'narasi'))
+    s.tasks.push({
+      id: 'narasi',
+      title: 'Perbarui narasi hasil uji instrumen di Bab IV',
+      phase: 7,
+      kind: 'main',
+      status: 'queued',
+      depends: 'selaraskan',
+      bagian: 'Bab IV · Hasil',
+      reason: 'Narasi hasil memakai laporan instrumen yang sudah diselaraskan, jadi dikerjakan setelahnya.',
+      doing: 'Sesuaikan narasi dan tabel hasil uji instrumen di Bab IV dengan laporan pengujian yang sudah diselaraskan.',
+      deliverable: 'Narasi dan tabel hasil uji instrumen di Bab IV yang sesuai dengan laporan pengujian terbaru.',
+      criteria: ['Narasi hasil memakai nilai pengujian terbaru.', 'Tabel hasil sesuai dengan lampiran pengujian.'],
+      steps: [],
+      evidence: '',
+      checks: [],
+      findingIds: [],
+      discussion: [],
+      sample: true,
+      source: 'Skenario contoh',
+    });
 }
 function setHome(patch) {
   S.home = { ...(S.home || {}), ...patch };

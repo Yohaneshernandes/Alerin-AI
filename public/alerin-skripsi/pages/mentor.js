@@ -15,8 +15,12 @@ function mentorSummaryRows(r = latestReview()) {
   const rows = [
     ['Judul', S.title || 'Belum dipilih'],
     ['Tahap', stageText().full],
+    ['Metode', ensureKonteks().method || S.profile.method || 'Belum ditentukan'],
     ['Prioritas Utama', t ? t.title : 'Belum ada pekerjaan aktif'],
   ];
+  /* Kendala dari Konteks Skripsi ikut dikirim ke mentor (Revisi 16 November). */
+  const kendala = String(ensureKonteks().kendala || '').trim();
+  if (kendala) rows.push(['Kendala di Konteks', kendala]);
   if (r)
     rows.push([
       'Pemeriksaan terbaru',
@@ -39,7 +43,7 @@ function mentorSummaryRows(r = latestReview()) {
   return rows;
 }
 function mentorMessage(r, kendala = '') {
-  return `Halo Minma, saya ${S.profile.name || ''}, mahasiswa ${S.profile.level || 'S1'} ${S.profile.major || ''} semester ${S.profile.semester || '-'}. Saya ingin konsultasi dengan Mentor Class Program.\n\n${kendala ? 'Kendala:\n' + kendala + '\n\n' : ''}Ringkasan dari Alerin Skripsi:\n${mentorSummaryRows(
+  return `Halo Minma, saya ${S.profile.name || ''}, mahasiswa ${S.profile.level || 'S1'} ${S.profile.major || ''} semester ${S.profile.semester || '-'}. Saya ingin konsultasi dengan Mentor Class Program.\n\n${kendala ? 'Pertanyaan:\n' + kendala + '\n\n' : ''}Ringkasan dari Alerin Skripsi:\n${mentorSummaryRows(
     r,
   )
     .map(([h, v]) => `- ${h}: ${v}`)

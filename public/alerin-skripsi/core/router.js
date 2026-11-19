@@ -57,6 +57,8 @@ function render() {
   document.body.classList.toggle('no-motion', !S.settings.motion);
   document.body.classList.toggle('reading-large', S.settings.reading === 'large');
   document.body.classList.toggle('dark', S.settings.theme === 'dark');
+  applySusunan();
+  syncQueue();
   let content = pages[route]();
   /* Seperti site GPT: strip posisi di atas Progres, Peta, dan Mentor; catatan judul berubah di bawahnya. */
   const changed = ['hasil-awal', 'hasil-periksa', 'peta', 'progres'].includes(route) ? titleChangedNote() : '';

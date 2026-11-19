@@ -6,11 +6,11 @@ function literatureKeywords(b) {
     .replace(/\s+/g, ' ')
     .trim();
   const loc = trimDot(S.draft.location || '').replace(/^(pada|di)\s+/i, '');
-  const method = detectMethod(S.draft.idea);
+  const method = konteksMethodLabel();
   return [
     b.title,
     `${base}${loc ? ' ' + loc : ''}`.trim(),
-    `${base} ${method === 'Belum ditentukan' ? 'studi terdahulu' : method.toLowerCase()}`.trim(),
+    `${base} ${method === 'Belum ditentukan' ? 'studi terdahulu' : method === 'R&D' ? 'penelitian pengembangan' : method.toLowerCase()}`.trim(),
   ]
     .filter((v, i, a) => v && a.indexOf(v) === i)
     .slice(0, 3);
@@ -60,6 +60,15 @@ const LOWER_WORDS = new Set([
   'antara',
   'melalui',
   'atas',
+  /* Kata sambung bahasa Inggris pada nama variabel, misalnya Electronic Word of Mouth. */
+  'of',
+  'and',
+  'the',
+  'in',
+  'on',
+  'for',
+  'to',
+  'with',
 ]);
 function titleCase(s) {
   const words = String(s).replace(/\s+/g, ' ').trim().split(' ');
@@ -74,23 +83,61 @@ function titleCase(s) {
   }
   return out.join(' ');
 }
+/* Opsi judul mengikuti metode di Konteks. Hanya saat metode belum ditentukan Alerin menawarkan alternatif metode. */
 function makeTitles(d) {
   const topic = trimDot(d.topic || d.phenomenon || 'topik penelitian'),
     loc = trimDot(d.location || '').replace(/^(pada|di|bagi)\s+/i, '');
   const subj = loc || 'Mahasiswa',
-    m = detectMethod(d.idea || '');
-  const qual = /kualitatif/i.test(m) || !m || m === 'Belum ditentukan';
+    m = konteksMethodLabel();
+  const pm = topic.match(/^(?:pengaruh|hubungan|peran|dampak)\s+(.+?)\s+(?:terhadap|dengan|dalam)\s+(.+)$/i);
+  const a = pm ? pm[1] : topic.replace(/^(?:pengaruh|hubungan|peran|dampak)\s+/i, ''),
+    yv = pm ? pm[2] : '';
+  const T = (t, l, desc) => [titleCase(t), l, desc];
+  if (m === 'Kuantitatif')
+    return [
+      T(
+        pm ? `${topic} pada ${subj}` : `Pengaruh ${topic} terhadap ${subj}`,
+        'Paling realistis',
+        'Menguji pengaruh dengan pendekatan kuantitatif sesuai metode di Konteks.',
+      ),
+      T(`Persepsi ${subj} terhadap ${a}`, 'Alternatif fokus', 'Mengukur persepsi subjek melalui survei kuantitatif.'),
+      T(
+        yv ? `Efektivitas ${a} dalam Meningkatkan ${yv} pada ${subj}` : `Efektivitas ${a} bagi ${subj}`,
+        'Alternatif desain',
+        'Tetap kuantitatif, dengan desain lain seperti eksperimen semu atau uji efektivitas.',
+      ),
+    ];
+  if (m === 'Kualitatif')
+    return [
+      T(`Peran ${a}${yv ? ' dalam ' + yv : ''} bagi ${subj}`, 'Paling realistis', 'Menggali peran topik bagi subjek dengan pendekatan kualitatif sesuai Konteks.'),
+      T(`Pemaknaan ${subj} terhadap ${a}`, 'Alternatif fokus', 'Fokus pada cara subjek memaknai topikmu.'),
+      T(`Pengalaman ${subj} terkait ${a}`, 'Alternatif desain', 'Tetap kualitatif, dengan desain fenomenologi untuk menggali pengalaman.'),
+    ];
+  if (m === 'Metode campuran')
+    return [
+      T(
+        `${pm ? topic : 'Peran ' + topic} pada ${subj}: Pendekatan Metode Campuran`,
+        'Paling realistis',
+        'Memadukan pengukuran dan wawancara sesuai metode di Konteks.',
+      ),
+      T(`Persepsi dan Pengalaman ${subj} terhadap ${a}`, 'Alternatif fokus', 'Survei persepsi, lalu wawancara untuk memahami pengalaman.'),
+      T(`Analisis ${a} pada ${subj}: Studi Explanatory Sequential`, 'Alternatif desain', 'Tetap metode campuran: kuantitatif lebih dahulu, lalu kualitatif menjelaskan hasilnya.'),
+    ];
+  if (m === 'R&D')
+    return [
+      T(`Pengembangan ${a} bagi ${subj}`, 'Paling realistis', 'Mengembangkan produk sesuai metode R&D di Konteks.'),
+      T(`Pengembangan dan Uji Kelayakan ${a} bagi ${subj}`, 'Alternatif fokus', 'Fokus pada kelayakan produk menurut ahli dan pengguna.'),
+      T(`Efektivitas ${a} Hasil Pengembangan Model ADDIE bagi ${subj}`, 'Alternatif desain', 'Tetap R&D, dengan model ADDIE dan uji efektivitas.'),
+    ];
   const t1 = `Peran ${topic} bagi ${subj}`.replace(/^Peran peran/i, 'Peran');
-  const t2 = `Pemaknaan ${subj} terhadap ${topic}`;
-  const t3 = qual ? `Pengaruh ${topic} terhadap ${subj}` : `Pengalaman ${subj} dalam Memahami ${topic}`;
   return [
-    [titleCase(t1), 'Paling realistis', 'Sesuai topik dan subjek yang kamu ceritakan.'],
-    [titleCase(t2), 'Alternatif fokus', 'Fokus pada cara subjek memaknai topikmu.'],
-    [
-      titleCase(t3),
+    T(t1, 'Paling realistis', 'Sesuai topik dan subjek yang kamu ceritakan.'),
+    T(`Pemaknaan ${subj} terhadap ${topic}`, 'Alternatif fokus', 'Fokus pada cara subjek memaknai topikmu.'),
+    T(
+      `Pengaruh ${a} terhadap ${subj}`,
       'Alternatif metode',
-      qual ? 'Menguji hubungan dengan pendekatan kuantitatif.' : 'Menggali pengalaman dengan pendekatan kualitatif.',
-    ],
+      'Metode di Konteks belum ditentukan. Opsi ini menguji hubungan dengan pendekatan kuantitatif.',
+    ),
   ];
 }
 function titleOptions() {
