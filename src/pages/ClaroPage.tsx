@@ -24413,7 +24413,7 @@ function ProfilTab({ onTab, onRegister }: { onTab: (t: NavTab) => void; onRegist
 
   return (
     <div
-      className={`-mb-24 flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden p-0 transition-colors md:mb-0 ${themeMode === "dark" ? "profile-dark" : ""}`}
+      className={`flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden p-0 transition-colors ${themeMode === "dark" ? "profile-dark" : ""}`}
       style={{ background: themeMode === "dark" ? "#0f172a" : "#f0f2f5" }}
     >
       {logoutModalOpen && (
@@ -24662,7 +24662,7 @@ function ProfilTab({ onTab, onRegister }: { onTab: (t: NavTab) => void; onRegist
       )}
 
       <div className="min-h-0 flex-1 overflow-y-auto p-0">
-        <div className="mx-auto min-h-full max-w-5xl px-3 pt-20 pb-4 md:px-6 md:pt-16">
+        <div className="mx-auto min-h-full max-w-5xl px-3 pt-20 pb-32 md:px-6 md:pt-16 md:pb-12">
           {/* Profile summary — follows the supplied Alerin profile layout */}
           <div className="relative -mt-1 h-[272px] rounded-2xl bg-white shadow-sm md:mb-3 md:mt-0 md:h-auto md:px-7 md:py-6">
             <div className="relative mb-1 flex h-full flex-col items-center md:mb-0 md:h-auto md:flex-row md:gap-4">
