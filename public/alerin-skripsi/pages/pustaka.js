@@ -2,11 +2,11 @@
 /* Halaman pustaka. */
 function previewHtml() {
   const p = previewSource();
-  if (!p) return 'Lengkapi identitas sumber untuk melihat pratinjau.';
+  if (!p) return '<span class="pustaka-preview-placeholder">Lengkapi identitas sumber untuk melihat pratinjau.</span>';
   const notes = [p.label];
   if (['IEEE', 'Vancouver'].includes(S.biblio.style) && p.src.type === 'Jurnal')
     notes.push('Singkatan nama jurnal dibuat dari daftar kata umum. Cocokkan dengan singkatan resmi jurnalnya.');
-  return `<div class="body">${formatCitation(p.src, S.biblio.style, p.no).html}</div>${notes
+  return `<div class="pustaka-preview-text">${formatCitation(p.src, S.biblio.style, p.no).html}</div>${notes
     .filter(Boolean)
     .map(n => `<p class="small muted mt prev-note">${e(n)}</p>`)
     .join('')}`;
@@ -132,36 +132,208 @@ function dpValidate(f) {
 function pustakaPage() {
   const b = S.biblio,
     f = b.form,
-    rep = syncReport(),
     typeOpts = ['Jurnal', 'Buku', 'Bab Buku', 'Prosiding', 'Skripsi/Tesis', 'Situs Web'];
   const containerLabel =
     f.type === 'Jurnal'
-      ? 'Nama Jurnal / Buku / Penerbit'
+      ? 'Nama Jurnal/Buku/Penerbit'
       : f.type === 'Situs Web'
         ? 'Nama Situs'
         : f.type === 'Prosiding'
           ? 'Nama Prosiding'
           : 'Penerbit';
-  const inp = (k, label, req, ph, type = 'text', max = 300, help = '') =>
-    `<div class="field"><label for="dp-${k}">${label}${req ? REQ : OPT}</label><input id="dp-${k}" data-dp="${k}" data-nocap="1" type="${type}" value="${e(f[k] ?? '')}" placeholder="${e(ph)}" maxlength="${max}" ${req ? 'aria-required="true"' : ''}>${help}</div>`;
   const journal = f.type === 'Jurnal',
     web = f.type === 'Situs Web',
     pagesOnly = ['Bab Buku', 'Prosiding'].includes(f.type),
     withCity = !journal && !web;
-  const titleHelp = `<p class="small muted field-help">Huruf kapital hanya di awal judul, setelah titik dua, dan pada nama diri. Huruf kapital tiap kata untuk IEEE, MLA, dan Chicago dibuat otomatis.</p><div id="dp-case">${caseHint()}</div>`;
-  const inputCard = `<section class="card qc14-source-form"><div class="section-head"><div><h2>Input Sumber (Manual)</h2><p>Lengkapi identitas sumber pustaka untuk menambahkannya ke daftar.</p></div>${B('Alerin Cari Jurnal', 'dp-cari-jurnal', 'soft', 'search')}</div>${b.editing ? `<div class="mb">${note('Kamu sedang mengedit sumber tersimpan. Simpan untuk memperbarui daftar.')}</div>` : ''}<div class="field"><label for="dp-type">Jenis Sumber *</label><select id="dp-type" data-dp="type">${typeOpts.map(o => `<option ${f.type === o ? 'selected' : ''}>${o}</option>`).join('')}</select></div>${inp('title', 'Judul Sumber', true, 'Masukkan judul sumber', 'text', 300, titleHelp)}${inp('authors', 'Penulis', true, 'Mis. Putra, Adi; Sari, Bunga', 'text', 300, '<p class="small muted field-help">Nama belakang, lalu nama depan. Pisahkan penulis dengan titik koma.</p>')}<div class="field-grid">${inp('year', 'Tahun', true, String(new Date().getFullYear()), 'text', 4)}${inp('container', containerLabel, true, journal ? 'Nama publikasi' : 'Nama penerbit')}</div>${withCity ? inp('city', 'Kota terbit', false, 'Mis. Yogyakarta', 'text', 80) : ''}${journal ? `<div class="v6-three-fields">${inp('volume', 'Volume', false, '', 'text', 20)}${inp('issue', 'Nomor', false, '', 'text', 20)}${inp('pages', 'Halaman', false, '12–24', 'text', 30)}</div>` : pagesOnly ? inp('pages', 'Halaman', false, '101–120', 'text', 30) : ''}${web ? inp('url', 'Tautan Sumber', false, 'https://…', 'url', 400) : inp('doi', 'DOI', false, '10.xxxx/xxxxx', 'text', 200)}<div class="actions">${B('Reset', 'dp-reset')}${web ? '' : B('Cari DOI', 'dp-doi', 'soft', 'search')}</div><p class="small muted mt">${web ? 'Periksa nama situs dan tanggal akses sesuai pedoman kampus.' : 'DOI opsional. Periksa metadata pada halaman penerbit sebelum digunakan.'}</p></section>`;
-  const styleCard = `<section class="card"><h2>Format Output</h2><p class="small muted mt">Pilih gaya sitasi untuk memformat daftar pustaka.</p><div class="v6-citation-styles" role="group" aria-label="Gaya sitasi">${['APA 7', 'IEEE', 'MLA', 'Chicago', 'Harvard', 'Vancouver'].map(st => `<button type="button" class="btn ${b.style === st ? 'selected' : ''}" data-action="dp-style:${st}" aria-pressed="${b.style === st}">${st}</button>`).join('')}</div></section>`;
-  const previewCard = `<section class="card mt"><h2>Pratinjau Daftar Pustaka</h2><p class="small muted mt">Redaksi mengikuti format output yang dipilih.</p><div class="v6-preview-caption">Preview (${e(b.style)})</div><div id="dp-preview" class="v6-citation-preview">${previewHtml()}</div><p class="small muted mt">Periksa nama penulis, tanda baca, dan kelengkapan sesuai pedoman kampus.</p><div class="actions mt">${B('Salin', 'dp-copy', '', 'copy')}${B(b.editing ? 'Perbarui Daftar' : 'Simpan ke Daftar', 'dp-save', 'primary', 'save')}</div></section>`;
-  const listCard = `<section class="card mt"><div class="section-head"><div><h2>Daftar Pustaka Tersimpan</h2><p>Kelola sumber dan kelompokkan sesuai kebutuhan.</p></div>${badge(`${b.items.length}/${limit().refs} sumber · ${S.plan}`, 'blue')}</div><div class="between mt"><div class="tabs">${B('Semua Daftar Pustaka', 'dp-tab:all', b.tab === 'all' ? 'primary' : 'text')}${B('Folder', 'dp-tab:folder', b.tab === 'folder' ? 'primary' : 'text')}</div><label class="search-field">${I('search')}<input id="dp-search" data-nocap="1" placeholder="Cari sumber…" aria-label="Cari daftar pustaka tersimpan" value="${e(b.query || '')}"></label></div><div id="dp-list">${dpListHtml()}</div><div class="actions mt">${B(`Salin Daftar Pustaka (${e(b.style)})`, 'dp-copy-all', 'text', 'copy')}</div></section>`;
-  const syncCard = `<section class="card mt" id="dp-sync"><div class="section-head"><div><h2>Sinkronisasi Naskah</h2><p>Cocokkan kutipan dan daftar pustaka dengan sumber tersimpan.</p></div>${badge(rep ? `${rep.matched}/${rep.total} entri cocok` : '0/0 entri cocok', 'blue')}</div>${
-    rep
-      ? `<p class="small muted mt">${e(S.biblio.naskah.source)} · ${rep.total} kutipan terbaca</p><ul class="sync-task-list">${rep.rows.map(({ c, item }) => `<li><strong>${e(c.label)}</strong><span>${e(c.loc)} · ${item ? 'Tercatat ✓' : 'Belum ada di daftar'}</span></li>`).join('')}</ul>${rep.unused.length ? `<p class="small muted mt">${rep.unused.length} sumber tersimpan belum dikutip di naskah.</p>` : ''}`
-      : '<p class="muted mt">Belum ada naskah untuk dicocokkan.</p>'
-  }<div class="actions mt">${rep ? B('Tinjau Saran Sinkronisasi', 'dp-sync-review', 'soft', 'refresh') + B('Sinkronkan Semua', 'dp-sync-all', '', 'check') : ''}<label class="btn ${rep ? 'text' : 'soft'}">${I('upload')}${rep ? 'Ganti Naskah' : 'Unggah Naskah'}<input type="file" class="native-input" accept=".pdf,.docx,.txt" data-dp-naskah="true"></label>${B('Tempel Teks Naskah', 'dp-naskah-paste', 'text', 'edit')}${rep ? '' : B('Baca Naskah Terakhir', 'dp-naskah-latest', 'text')}</div><p class="small muted mt">Sinkronkan hanya menambah entri yang terbaca; metadata yang berbeda perlu ditinjau.</p></section>`;
-  return (
-    pageHead('Daftar Pustaka', 'Buat, kelola, dan format daftar pustaka sesuai gaya sitasi yang kamu pilih.') +
-    `<div class="v6-bib-grid">${inputCard}<div>${styleCard}${previewCard}</div></div>${listCard}${syncCard}`
-  );
+
+  /* Left Column: Input Sumber */
+  const inputCard = `
+    <section class="pustaka-card pustaka-source-card">
+      <div class="pustaka-card-header between">
+        <div>
+          <h2>Input Sumber</h2>
+          <p>Lengkapi identitas sumber pustaka untuk menambahkannya ke daftar.</p>
+        </div>
+        <button type="button" class="btn-cari-jurnal" data-action="dp-cari-jurnal">
+          ${I('search')}
+          <span>Alerin Cari Jurnal</span>
+        </button>
+      </div>
+      ${b.editing ? `<div class="pustaka-edit-note">${note('Kamu sedang mengedit sumber tersimpan. Simpan untuk memperbarui daftar.')} <button class="inline-link" data-action="dp-reset">Batal edit</button></div>` : ''}
+
+      <div class="field pustaka-field-row">
+        <label for="dp-type">Jenis Sumber <span class="req">*</span></label>
+        <div class="pustaka-select-wrap">
+          <select id="dp-type" data-dp="type">
+            ${typeOpts.map(o => `<option ${f.type === o ? 'selected' : ''} value="${e(o)}">${e(o)}</option>`).join('')}
+          </select>
+          <span class="pustaka-select-chevron">${I('down')}</span>
+        </div>
+      </div>
+
+      <div class="field pustaka-field-row">
+        <label for="dp-title">Judul Sumber <span class="req">*</span></label>
+        <div class="pustaka-input-wrap">
+          <input id="dp-title" data-dp="title" data-nocap="1" type="text" value="${e(f.title ?? '')}" placeholder="Masukkan judul sumber" maxlength="300" aria-required="true" class="pustaka-input">
+          <div id="dp-case">${caseHint()}</div>
+        </div>
+      </div>
+
+      <div class="field pustaka-field-row">
+        <label for="dp-authors">Penulis</label>
+        <input id="dp-authors" data-dp="authors" data-nocap="1" type="text" value="${e(f.authors ?? '')}" placeholder="Mis. Putra, Adi; Sari, Bunga" maxlength="300" class="pustaka-input">
+      </div>
+
+      <div class="pustaka-two-fields">
+        <div class="field pustaka-col-field">
+          <label for="dp-year">Tahun <span class="req">*</span></label>
+          <input id="dp-year" data-dp="year" data-nocap="1" type="text" value="${e(f.year ?? '')}" placeholder="2026" maxlength="4" aria-required="true" class="pustaka-input">
+        </div>
+        <div class="field pustaka-col-field">
+          <label for="dp-container">${containerLabel} <span class="req">*</span></label>
+          <input id="dp-container" data-dp="container" data-nocap="1" type="text" value="${e(f.container ?? '')}" placeholder="${journal ? 'Nama publikasi' : 'Nama penerbit'}" maxlength="300" aria-required="true" class="pustaka-input">
+        </div>
+      </div>
+
+      ${journal ? `
+      <div class="pustaka-three-fields">
+        <div class="field pustaka-col-field">
+          <label for="dp-volume">Volume <span class="opt">Opsional</span></label>
+          <input id="dp-volume" data-dp="volume" data-nocap="1" type="text" value="${e(f.volume ?? '')}" maxlength="20" class="pustaka-input">
+        </div>
+        <div class="field pustaka-col-field">
+          <label for="dp-issue">Nomor <span class="opt">Opsional</span></label>
+          <input id="dp-issue" data-dp="issue" data-nocap="1" type="text" value="${e(f.issue ?? '')}" maxlength="20" class="pustaka-input">
+        </div>
+        <div class="field pustaka-col-field">
+          <label for="dp-pages">Halaman <span class="opt">Opsional</span></label>
+          <input id="dp-pages" data-dp="pages" data-nocap="1" type="text" value="${e(f.pages ?? '')}" placeholder="12–24" maxlength="30" class="pustaka-input">
+        </div>
+      </div>
+      ` : pagesOnly ? `
+      <div class="field pustaka-col-field" style="margin-top:14px;">
+        <label for="dp-pages">Halaman <span class="opt">Opsional</span></label>
+        <input id="dp-pages" data-dp="pages" data-nocap="1" type="text" value="${e(f.pages ?? '')}" placeholder="101–120" maxlength="30" class="pustaka-input">
+      </div>
+      ` : withCity ? `
+      <div class="field pustaka-col-field" style="margin-top:14px;">
+        <label for="dp-city">Kota terbit <span class="opt">Opsional</span></label>
+        <input id="dp-city" data-dp="city" data-nocap="1" type="text" value="${e(f.city ?? '')}" placeholder="Mis. Yogyakarta" maxlength="80" class="pustaka-input">
+      </div>
+      ` : ''}
+
+      ${web ? `
+      <div class="field pustaka-doi-group">
+        <div class="pustaka-doi-label-row">
+          <label for="dp-url">Tautan Sumber</label>
+          <span class="opt">Opsional</span>
+        </div>
+        <input id="dp-url" data-dp="url" data-nocap="1" type="url" value="${e(f.url ?? '')}" placeholder="https://…" maxlength="400" class="pustaka-input">
+      </div>
+      ` : `
+      <div class="field pustaka-doi-group">
+        <div class="pustaka-doi-label-row">
+          <label for="dp-doi" class="pustaka-doi-label">DOI</label>
+          <span class="opt">Opsional</span>
+        </div>
+        <div class="pustaka-doi-box">
+          <input id="dp-doi" data-dp="doi" data-nocap="1" type="text" value="${e(f.doi ?? '')}" placeholder="10.xxxx/xxxxx" maxlength="200">
+          <button type="button" class="pustaka-btn-cari-doi" data-action="dp-doi">
+            ${I('search')}
+            <span>Cari DOI</span>
+          </button>
+        </div>
+      </div>
+      `}
+    </section>
+  `;
+
+  /* Right Stack: Format Output + Pratinjau */
+  const styleCard = `
+    <section class="pustaka-card pustaka-format-card">
+      <div class="pustaka-card-header">
+        <h2>Format Output</h2>
+        <p>Pilih gaya sitasi untuk memformat daftar pustaka.</p>
+      </div>
+      <div class="pustaka-styles-grid" role="group" aria-label="Gaya sitasi">
+        ${['APA 7', 'IEEE', 'MLA', 'Chicago', 'Harvard', 'Vancouver'].map(st => `
+          <button type="button" class="pustaka-style-btn ${b.style === st ? 'active' : ''}" data-action="dp-style:${st}" aria-pressed="${b.style === st}">
+            ${st}
+          </button>
+        `).join('')}
+      </div>
+    </section>
+  `;
+
+  const previewCard = `
+    <section class="pustaka-card pustaka-preview-card">
+      <div class="pustaka-card-header">
+        <h2>Pratinjau Daftar Pustaka</h2>
+        <p>Redaksi mengikuti format output yang dipilih.</p>
+      </div>
+      <div class="pustaka-preview-banner">
+        Periksa nama penulis, tanda baca, dan kelengkapan sesuai pedoman kampus.
+      </div>
+      <div id="dp-preview" class="pustaka-preview-box">
+        ${previewHtml()}
+      </div>
+      <div class="pustaka-preview-actions">
+        <button type="button" class="pustaka-btn-salin" data-action="dp-copy">
+          ${I('copy')}
+          <span>Salin</span>
+        </button>
+        <button type="button" class="pustaka-btn-simpan" data-action="dp-save">
+          ${I('save')}
+          <span>${b.editing ? 'Perbarui Daftar' : 'Simpan ke Daftar'}</span>
+        </button>
+      </div>
+    </section>
+  `;
+
+  /* Bottom Card: Daftar Pustaka Tersimpan */
+  const listCard = `
+    <section class="pustaka-card pustaka-saved-card">
+      <div class="pustaka-saved-head">
+        <div class="pustaka-saved-title-group">
+          <h2>Daftar Pustaka Tersimpan</h2>
+          <p>Kelola sumber dan kelompokkan sesuai kebutuhan.</p>
+        </div>
+        <div class="pustaka-saved-controls">
+          <div class="pustaka-tabs">
+            <button type="button" class="pustaka-tab-btn ${b.tab === 'all' ? 'active' : ''}" data-action="dp-tab:all">
+              Semua Daftar Pustaka
+            </button>
+            <button type="button" class="pustaka-tab-btn ${b.tab === 'folder' ? 'active' : ''}" data-action="dp-tab:folder">
+              Folder
+            </button>
+          </div>
+          <label class="pustaka-search-wrap">
+            ${I('search')}
+            <input id="dp-search" data-nocap="1" placeholder="Cari sumber…" aria-label="Cari daftar pustaka tersimpan" value="${e(b.query || '')}">
+          </label>
+        </div>
+      </div>
+      <div id="dp-list" class="pustaka-saved-body">
+        ${dpListHtml()}
+      </div>
+      ${b.items.length ? `<div class="actions mt">${B('Salin Daftar Pustaka (' + e(b.style) + ')', 'dp-copy-all', 'text', 'copy')}</div>` : ''}
+    </section>
+  `;
+
+  return `
+    <div class="pustaka-page-head">
+      <h1>Daftar Pustaka</h1>
+      <p>Buat, kelola, dan format daftar pustaka sesuai gaya sitasi yang kamu pilih.</p>
+    </div>
+    <div class="pustaka-top-grid">
+      ${inputCard}
+      <div class="pustaka-right-stack">
+        ${styleCard}
+        ${previewCard}
+      </div>
+    </div>
+    ${listCard}
+  `;
 }
 /* Saran huruf kalimat bila judul ditulis dengan huruf kapital di banyak kata. */
 function caseHint() {
