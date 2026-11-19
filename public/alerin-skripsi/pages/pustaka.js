@@ -164,7 +164,7 @@ function pustakaPage() {
       <div class="field pustaka-field-row">
         <label for="dp-type">Jenis Sumber <span class="req">*</span></label>
         <div class="pustaka-select-wrap">
-          <select id="dp-type" data-dp="type">
+          <select id="dp-type" data-dp="type" class="pustaka-select" style="-webkit-appearance:none!important;-moz-appearance:none!important;appearance:none!important;background-image:none!important;">
             ${typeOpts.map(o => `<option ${f.type === o ? 'selected' : ''} value="${e(o)}">${e(o)}</option>`).join('')}
           </select>
           <span class="pustaka-select-chevron">${I('down')}</span>
