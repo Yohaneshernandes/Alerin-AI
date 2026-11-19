@@ -147,7 +147,7 @@ function sampleBiblio(empty) {
     tab: 'all',
     folder: '',
     query: '',
-    folders: ['Bab I', 'Bab II', 'Bab III'],
+    folders: ['Bab I', 'Bab II', 'Bab III', 'Bab IV'],
     items: [],
     naskah: null,
   };

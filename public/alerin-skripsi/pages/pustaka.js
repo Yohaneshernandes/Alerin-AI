@@ -1,11 +1,59 @@
 'use strict';
 /* Halaman pustaka. */
+let openFolderMenuId = null;
+
+function folderPopoverHtml(it) {
+  const currentFolder = it.folder || '';
+  const folders = S.biblio?.folders || ['Bab I', 'Bab II', 'Bab III', 'Bab IV'];
+  const folderSvg = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>';
+  const plusSvg = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#125AB5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>';
+
+  let html = '<div class="pustaka-folder-popover" role="menu">';
+  
+  // 1. Belum masuk folder
+  const isNoneActive = !currentFolder;
+  html += `<button type="button" class="pustaka-folder-item ${isNoneActive ? 'active' : ''}" data-action="dp-folder-select:${it.id}:" role="menuitem">
+    ${folderSvg}
+    <span>Belum masuk folder</span>
+  </button>`;
+
+  // 2. Folder list
+  folders.forEach(fd => {
+    const isActive = currentFolder === fd;
+    html += `<button type="button" class="pustaka-folder-item ${isActive ? 'active' : ''}" data-action="dp-folder-select:${it.id}:${e(fd)}" role="menuitem">
+      ${folderSvg}
+      <span>${e(fd)}</span>
+    </button>`;
+  });
+
+  // 3. Divider
+  html += '<div class="pustaka-folder-divider"></div>';
+
+  // 4. Buat Folder Baru
+  html += `<button type="button" class="pustaka-folder-new-btn" data-action="dp-folder-new-modal:${it.id}" role="menuitem">
+    ${plusSvg}
+    <span>Buat Folder Baru</span>
+  </button>`;
+
+  html += '</div>';
+  return html;
+}
+
 document.addEventListener('click', ev => {
   const dd = document.querySelector('.pustaka-custom-dropdown.open');
   if (dd && !ev.target.closest('.pustaka-custom-dropdown')) {
     dd.classList.remove('open');
     const trigger = dd.querySelector('.pustaka-dropdown-trigger');
     if (trigger) trigger.setAttribute('aria-expanded', 'false');
+  }
+  if (openFolderMenuId && !ev.target.closest('.pustaka-item-folder-wrapper')) {
+    openFolderMenuId = null;
+    const pop = document.querySelector('.pustaka-folder-popover');
+    if (pop) pop.remove();
+    document.querySelectorAll('.pustaka-item-btn-folder.open').forEach(b => {
+      b.classList.remove('open');
+      b.setAttribute('aria-expanded', 'false');
+    });
   }
 });
 function previewHtml() {
@@ -85,12 +133,15 @@ function dpListHtml() {
                 </div>
                 <div class="pustaka-item-right">
                   <div class="pustaka-item-type-badge">${e(['Buku', 'Bab Buku'].includes(it.type) ? 'Buku' : it.type || 'Jurnal')}</div>
-                  <button type="button" class="pustaka-item-btn-folder" data-action="dp-folder-assign:${it.id}">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#125AB5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
-                    </svg>
-                    <span>${e(it.folder || 'Pilih Folder')}</span>
-                  </button>
+                  <div class="pustaka-item-folder-wrapper">
+                    <button type="button" class="pustaka-item-btn-folder ${openFolderMenuId === it.id ? 'open' : ''}" data-action="dp-folder-toggle:${it.id}" aria-haspopup="true" aria-expanded="${openFolderMenuId === it.id ? 'true' : 'false'}">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#125AB5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                      </svg>
+                      <span>${e(it.folder || 'Pilih Folder')}</span>
+                    </button>
+                    ${openFolderMenuId === it.id ? folderPopoverHtml(it) : ''}
+                  </div>
                   <div class="pustaka-item-actions">
                     <button type="button" class="pustaka-item-action-btn edit" data-action="dp-edit:${it.id}">
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -600,14 +651,80 @@ Object.assign(ACTIONS, {
     render();
     toast('Folder dibuat.');
   },
-  'dp-folder-assign': arg => {
+  'dp-folder-toggle': (arg, btn) => {
+    const wrapper = btn?.closest('.pustaka-item-folder-wrapper');
+    if (!wrapper) {
+      openFolderMenuId = openFolderMenuId === arg ? null : arg;
+      render();
+      return;
+    }
+    const existing = wrapper.querySelector('.pustaka-folder-popover');
+    document.querySelectorAll('.pustaka-folder-popover').forEach(el => el.remove());
+    document.querySelectorAll('.pustaka-item-btn-folder.open').forEach(b => {
+      b.classList.remove('open');
+      b.setAttribute('aria-expanded', 'false');
+    });
+
+    if (existing) {
+      openFolderMenuId = null;
+      return;
+    }
+
+    openFolderMenuId = arg;
+    btn.classList.add('open');
+    btn.setAttribute('aria-expanded', 'true');
     const it = S.biblio.items.find(x => x.id === arg);
     if (!it) return;
+    wrapper.insertAdjacentHTML('beforeend', folderPopoverHtml(it));
+  },
+  'dp-folder-assign': (arg, btn) => {
+    ACTIONS['dp-folder-toggle'](arg, btn);
+  },
+  'dp-folder-select': arg => {
+    const colonIdx = arg.indexOf(':');
+    const itemId = colonIdx === -1 ? arg : arg.slice(0, colonIdx);
+    const folderName = colonIdx === -1 ? '' : arg.slice(colonIdx + 1);
+    const it = S.biblio.items.find(x => x.id === itemId);
+    if (it) {
+      it.folder = folderName;
+      persist();
+    }
+    openFolderMenuId = null;
+    render();
+    toast(folderName ? `Dipindahkan ke ${folderName}.` : 'Dikeluarkan dari folder.');
+  },
+  'dp-folder-new-modal': arg => {
+    openFolderMenuId = null;
+    document.querySelectorAll('.pustaka-folder-popover').forEach(el => el.remove());
+    document.querySelectorAll('.pustaka-item-btn-folder.open').forEach(b => {
+      b.classList.remove('open');
+      b.setAttribute('aria-expanded', 'false');
+    });
     modal(
-      'Pindahkan ke folder',
-      `<h3>${e(it.title)}</h3><div class="mt">${selectField('folder-pick', 'Folder', [['', 'Belum masuk folder'], ...S.biblio.folders.map(f => [f, f])], it.folder || '')}</div>${field('folder-new', 'Atau buat folder baru', '', 'Mis. Bab IV', 40, 'text')}`,
-      B('Batal', 'close-modal') + B('Simpan folder', 'dp-save-folder:' + arg, 'primary', 'save'),
+      'Buat Folder Baru',
+      `<p class="small muted" style="margin-bottom:14px;">Buat folder baru untuk mengelompokkan daftar pustaka.</p>
+       <div class="mt">${field('folder-new-name', 'Nama Folder Baru', '', 'Mis. Bab V', 40, 'text')}</div>`,
+      B('Batal', 'close-modal') + B('Buat & Pindahkan', 'dp-folder-create-assign:' + arg, 'primary', 'plus'),
     );
+  },
+  'dp-folder-create-assign': arg => {
+    const input = $('#folder-new-name');
+    const nw = (input?.value || '').trim();
+    if (!nw) {
+      toast('Nama folder tidak boleh kosong.', 'error');
+      return;
+    }
+    if (!S.biblio.folders.includes(nw)) {
+      S.biblio.folders.push(nw);
+    }
+    const it = S.biblio.items.find(x => x.id === arg);
+    if (it) {
+      it.folder = nw;
+    }
+    persist();
+    closeModal(true);
+    render();
+    toast(`Folder "${nw}" dibuat dan sumber dipindahkan.`);
   },
   'dp-save-folder': arg => {
     const it = S.biblio.items.find(x => x.id === arg),

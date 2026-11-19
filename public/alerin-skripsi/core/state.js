@@ -62,7 +62,11 @@ function normalizeState() {
   if (!S.biblio.items.length || S.biblio.items.some(x => x.id === 'dp-orozco2019' || x.title === 'adasd' || x.title?.includes('Pengembangan Sistem Rekomendasi') || x.sample)) {
     S.biblio.items = sampleBiblio(false).items;
   }
-  S.biblio.folders ??= ['Bab I', 'Bab II', 'Bab III'];
+  S.biblio.folders ??= ['Bab I', 'Bab II', 'Bab III', 'Bab IV'];
+  if (Array.isArray(S.biblio.folders) && !S.biblio.folders.includes('Bab IV') && S.biblio.folders.includes('Bab III')) {
+    const b3Idx = S.biblio.folders.indexOf('Bab III');
+    S.biblio.folders.splice(b3Idx + 1, 0, 'Bab IV');
+  }
   ensureGuide();
   for (const k of ['_pastAgenda', '_pendingOrder', 'refs', 'updates', 'removedFiles', 'draftStep', 'selectedTitle', 'lastResearchUpdate'])
     delete S[k];
