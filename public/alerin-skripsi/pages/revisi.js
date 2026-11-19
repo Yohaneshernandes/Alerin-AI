@@ -111,20 +111,40 @@ function revisiPage() {
   if (!REV_TABS.some(x => x[0] === tab)) tab = 'semua';
   const n = { konfirmasi: 0, proses: 0, selesai: 0 };
   for (const r of all) n[revGroup(r)]++;
-  const head = pageHead(
-    'Arahan dosen dari setiap bimbingan',
-    'Pahami arahan, kerjakan perbaikan, dan simpan jejak bimbinganmu. Catatan asli dosen tetap utuh.',
-    'add-revision',
-    'Tambah Arahan',
-    'plus',
-    'REVISI DOSEN',
-  );
-  if (!all.length)
-    return (
-      head +
-      revContext() +
-      `<div class="rv-layout is-empty"><div class="rv-main"><div class="card empty">${I('edit')}<h3>Belum ada arahan dosen</h3><p>Catat arahan setiap selesai bimbingan. Alerin membantu memahami maksudnya dan menautkannya ke pekerjaan di Progres Aktif.</p>${B('Tambah Arahan', 'add-revision', 'primary', 'plus')}</div></div>${revFlow()}</div>`
-    );
+
+  if (!all.length) {
+    return `
+      <div class="revisi-page-head">
+        <h1>Arahan dosen dari setiap bimbingan</h1>
+        <p>Catatan asli dosen tetap utuh. Konfirmasikan pemahaman sebelum menghubungkannya ke Progres Aktif.</p>
+      </div>
+      <div class="revisi-layout">
+        <div class="revisi-main">
+          <div class="revisi-empty-card">
+            <div class="revisi-empty-icon-box">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#52647D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 20h9"></path>
+                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+              </svg>
+            </div>
+            <h3 class="revisi-empty-title">Belum ada arahan dosen</h3>
+            <p class="revisi-empty-desc">Catat arahan setiap selesai bimbingan. Alerin membantu memahami<br/>maksudnya dan menautkannya ke pekerjaan di Progres Aktif.</p>
+            <button type="button" class="revisi-btn-tambah" data-action="add-revision">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              <span>Tambah Arahan</span>
+            </button>
+          </div>
+        </div>
+        <aside class="revisi-sidebar">
+          ${revFlow()}
+        </aside>
+      </div>
+    `;
+  }
+
   const stats = [
     [all.length, 'Total arahan'],
     [n.konfirmasi, 'Perlu konfirmasi'],
@@ -134,12 +154,35 @@ function revisiPage() {
   const tabs = `<div class="tabs v4-progress-tabs rv-tabs" role="tablist" aria-label="Saring arahan">${REV_TABS.map(([k, l]) =>
     B(l, 'rev-filter:' + k, tab === k ? 'primary' : 'text', '', `role="tab" aria-selected="${tab === k}"`),
   ).join('')}</div>`;
-  return (
-    head +
-    revContext() +
-    `<div class="rv-stats">${stats.map(([v, l]) => `<div class="rv-stat"><strong>${v}</strong><span>${l}</span></div>`).join('')}</div>` +
-    `<div class="rv-layout"><div class="rv-main">${tabs}${tab === 'riwayat' ? revHistory() : revList(all, tab)}</div>${revNext(all)}${revFlow()}</div>`
-  );
+
+  return `
+    <div class="revisi-page-head">
+      <div class="revisi-head-text">
+        <h1>Arahan dosen dari setiap bimbingan</h1>
+        <p>Catatan asli dosen tetap utuh. Konfirmasikan pemahaman sebelum menghubungkannya ke Progres Aktif.</p>
+      </div>
+      <div class="revisi-head-action">
+        <button type="button" class="revisi-btn-tambah" data-action="add-revision">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          <span>Tambah Arahan</span>
+        </button>
+      </div>
+    </div>
+    <div class="rv-stats">${stats.map(([v, l]) => `<div class="rv-stat"><strong>${v}</strong><span>${l}</span></div>`).join('')}</div>
+    <div class="revisi-layout">
+      <div class="revisi-main">
+        ${tabs}
+        ${tab === 'riwayat' ? revHistory() : revList(all, tab)}
+      </div>
+      <aside class="revisi-sidebar">
+        ${revNext(all)}
+        ${revFlow()}
+      </aside>
+    </div>
+  `;
 }
 function revContext() {
   const st = stageInfo();
@@ -199,10 +242,26 @@ function revNext(all) {
   else [h, p, btn] = ['Semua arahan sudah ditindaklanjuti.', 'Catat arahan baru setiap selesai bimbingan.', B('Tambah Arahan', 'add-revision', 'primary')];
   return `<aside class="card rv-next" aria-label="Langkahmu berikutnya"><span class="eyebrow">LANGKAHMU BERIKUTNYA</span><h3>${h}</h3><p class="small">${p}</p>${btn}</aside>`;
 }
-const revFlow = () =>
-  `<aside class="card rv-flow" aria-label="Alur revisi"><h3>Alur revisi</h3><ol>${REV_FLOW.map(
-    ([h, p], i) => `<li><span class="rv-step-no">${i + 1}</span><div><strong>${h}</strong><p>${p}</p></div></li>`,
-  ).join('')}</ol><p class="small muted">Pemahaman dan Tinjauan Alerin masih contoh, belum analisis AI.</p></aside>`;
+function revFlow() {
+  return `
+    <div class="revisi-flow-card">
+      <h3 class="revisi-flow-head">Alur revisi</h3>
+      <div class="revisi-flow-list">
+        ${REV_FLOW.map(
+          ([h, p], i) => `
+          <div class="revisi-flow-item">
+            <div class="revisi-flow-badge">${i + 1}</div>
+            <div class="revisi-flow-content">
+              <h4 class="revisi-flow-title">${e(h)}</h4>
+              <p class="revisi-flow-desc">${e(p)}</p>
+            </div>
+          </div>
+        `,
+        ).join('')}
+      </div>
+    </div>
+  `;
+}
 
 /* ---------- Kartu arahan ---------- */
 function revTrail(r) {

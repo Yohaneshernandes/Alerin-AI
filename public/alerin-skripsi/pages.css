@@ -711,3 +711,220 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
 .dark .mentor-btn-web { background: #132033; border-color: #34465d; color: #7cb2ff; }
 .dark .mentor-btn-web:hover { background: #1a2a40; color: #9ec5fe; }
 .dark .mentor-footer-note { color: #7d90a8; }
+
+/* Revisi Dosen Page Redesign 2026-11-19 */
+.revisi-page-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 24px;
+  gap: 16px;
+}
+.revisi-page-head h1 {
+  color: #142238;
+  font-size: 30px;
+  font-weight: 650;
+  line-height: 37.5px;
+  margin: 0;
+  letter-spacing: -0.3px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+.revisi-page-head p {
+  color: #637087;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 22.75px;
+  margin: 4px 0 0;
+  max-width: 650px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+.revisi-head-text {
+  max-width: 650px;
+}
+.revisi-head-action {
+  flex-shrink: 0;
+}
+.revisi-layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  width: 100%;
+}
+.revisi-main {
+  flex: 1 1 0;
+  min-width: 0;
+}
+.revisi-sidebar {
+  width: 314px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.revisi-empty-card {
+  background: #ffffff;
+  box-shadow: 0px 2px 4px rgba(35, 58, 87, 0.01);
+  border-radius: 16px;
+  border: 1px solid #DCE4EF;
+  padding: 45px 25px;
+  box-sizing: border-box;
+  min-height: 414px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+}
+.revisi-empty-icon-box {
+  width: 34px;
+  height: 34px;
+  background: #ffffff;
+  box-shadow: 0px 1px 2px rgba(25, 55, 86, 0.05);
+  border-radius: 6px;
+  border: 1px solid #DCE4EF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+.revisi-empty-title {
+  color: #142238;
+  font-size: 18px;
+  font-weight: 640;
+  line-height: 26.1px;
+  margin: 0 0 8px 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+.revisi-empty-desc {
+  color: #637087;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 18px;
+  margin: 0 0 20px 0;
+  max-width: 420px;
+  text-align: center;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+.revisi-btn-tambah {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 11.8px 16px 12.2px;
+  background: #186DD8;
+  box-shadow: 0px 2px 5px rgba(24, 87, 155, 0.08);
+  border-radius: 9px;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 17.4px;
+  text-decoration: none;
+  border: 1px solid #186DD8;
+  cursor: pointer;
+  transition: background-color .15s ease, border-color .15s ease;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+.revisi-btn-tambah:hover {
+  background: #125AB5;
+  border-color: #125AB5;
+  color: #ffffff;
+}
+.revisi-flow-card {
+  background: #ffffff;
+  box-shadow: 0px 2px 4px rgba(35, 58, 87, 0.01);
+  border-radius: 16px;
+  border: 1px solid #DCE4EF;
+  padding: 26px 20px 20px 20px;
+  box-sizing: border-box;
+  width: 100%;
+}
+.revisi-flow-head {
+  color: #142238;
+  font-size: 15px;
+  font-weight: 640;
+  line-height: 21.75px;
+  margin: 0 0 12px 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+.revisi-flow-list {
+  display: flex;
+  flex-direction: column;
+}
+.revisi-flow-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  padding: 9px 0;
+}
+.revisi-flow-badge {
+  width: 24px;
+  height: 24px;
+  border-radius: 12px;
+  border: 1px solid #DCE4EF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #186DD8;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 19.2px;
+  flex-shrink: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+.revisi-flow-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+.revisi-flow-title {
+  color: #142238;
+  font-size: 13px;
+  font-weight: 620;
+  line-height: 20.8px;
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+.revisi-flow-desc {
+  color: #52647D;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 18.6px;
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+@media (max-width: 860px) {
+  .revisi-layout {
+    flex-direction: column;
+  }
+  .revisi-sidebar {
+    width: 100%;
+  }
+  .revisi-empty-card {
+    min-height: 320px;
+    padding: 32px 16px;
+  }
+  .revisi-page-head h1 {
+    font-size: 24px;
+    line-height: 30px;
+  }
+}
+
+.dark .revisi-page-head h1 { color: #e4ebf5; }
+.dark .revisi-page-head p { color: #92a4bd; }
+.dark .revisi-empty-card { background: #182538; border-color: #34465d; }
+.dark .revisi-empty-icon-box { background: #132033; border-color: #34465d; }
+.dark .revisi-empty-icon-box svg { stroke: #92a4bd; }
+.dark .revisi-empty-title { color: #e4ebf5; }
+.dark .revisi-empty-desc { color: #92a4bd; }
+.dark .revisi-btn-tambah { background: #186dd8; border-color: #186dd8; color: #fff; }
+.dark .revisi-btn-tambah:hover { background: #125ab5; border-color: #125ab5; }
+.dark .revisi-flow-card { background: #182538; border-color: #34465d; }
+.dark .revisi-flow-head { color: #e4ebf5; }
+.dark .revisi-flow-badge { border-color: #34465d; color: #7cb2ff; background: #20354f; }
+.dark .revisi-flow-title { color: #e4ebf5; }
+.dark .revisi-flow-desc { color: #92a4bd; }
