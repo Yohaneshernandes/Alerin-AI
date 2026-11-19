@@ -6374,7 +6374,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
       )}
 
       {/* Mobile top header */}
-      {activeTab === "percakapan" || activeTab === "fitur" ? (
+      {activeTab === "percakapan" || activeTab === "fitur" || activeTab === "profil" ? (
         <header
           className="md:hidden fixed top-0 left-0 right-0 flex items-center justify-between px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3 z-40 bg-white/80 backdrop-blur-xl border-b border-slate-200/40"
           style={{ WebkitBackdropFilter: "blur(20px)", backdropFilter: "blur(20px)" }}
@@ -24662,7 +24662,7 @@ function ProfilTab({ onTab, onRegister }: { onTab: (t: NavTab) => void; onRegist
       )}
 
       <div className="min-h-0 flex-1 overflow-y-auto p-0">
-        <div className="mx-auto min-h-full max-w-5xl px-3 py-4 md:px-6 md:pt-16">
+        <div className="mx-auto min-h-full max-w-5xl px-3 pt-20 pb-4 md:px-6 md:pt-16">
           {/* Profile summary — follows the supplied Alerin profile layout */}
           <div className="relative -mt-1 h-[272px] rounded-2xl bg-white shadow-sm md:mb-3 md:mt-0 md:h-auto md:px-7 md:py-6">
             <div className="relative mb-1 flex h-full flex-col items-center md:mb-0 md:h-auto md:flex-row md:gap-4">
