@@ -436,3 +436,278 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
 .dark .folder-modal-btn-submit{background:#186dd8!important;color:#fff!important}
 .dark .folder-modal-btn-submit:hover{background:#125ab5!important}
 .dark .pustaka-empty-msg{color:#92a4bd}
+
+/* Dukungan Mentor Page Redesign 2026-11-19 */
+.mentor-page-head {
+  margin-bottom: 24px;
+}
+.mentor-page-head h1 {
+  color: #142238;
+  font-size: 30px;
+  font-weight: 650;
+  line-height: 37.5px;
+  margin: 0;
+  letter-spacing: -0.3px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+.mentor-page-head p {
+  color: #637087;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 22.75px;
+  margin: 4px 0 0;
+  max-width: 650px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+.mentor-card {
+  background: #ffffff;
+  box-shadow: 0px 2px 4px rgba(35, 58, 87, 0.01);
+  border-radius: 16px;
+  border: 1px solid #DCE4EF;
+  padding: 20px 24px 24px 24px;
+  box-sizing: border-box;
+  width: 100%;
+}
+.mentor-card-title {
+  color: #142238;
+  font-size: 18px;
+  font-weight: 650;
+  line-height: 25.2px;
+  margin: 0 0 16px 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+.mentor-field {
+  margin: 0 0 14px 0;
+}
+.mentor-field-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.mentor-field-label {
+  color: #4C5B70;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 19.2px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+.mentor-field-label .req {
+  color: #C53645;
+  margin-left: 2px;
+}
+.mentor-counter {
+  color: #52647D;
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 16px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+.mentor-textarea {
+  width: 100%;
+  min-height: 144px;
+  height: 144px;
+  padding: 10px 12px;
+  background: #ffffff;
+  border-radius: 8px;
+  border: 1px solid #DFE5EE;
+  color: #202E42;
+  font-size: 12px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  line-height: 20.4px;
+  resize: vertical;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+.mentor-textarea::placeholder {
+  color: #A4AEBD;
+}
+.mentor-textarea:focus {
+  border-color: #186DD8;
+  box-shadow: 0 0 0 3px rgba(24, 109, 216, 0.12);
+}
+.mentor-field.invalid .mentor-textarea {
+  border-color: #C53645;
+}
+.mentor-field .field-error {
+  color: #C53645;
+  font-size: 11px;
+  margin: 6px 0 0 0;
+  line-height: 16px;
+}
+.mentor-attached-findings {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: #EFF6FF;
+  border: 1px solid #BFDBFE;
+  border-radius: 8px;
+  margin-bottom: 14px;
+  font-size: 12px;
+  color: #1E40AF;
+}
+.mentor-accordion {
+  width: 100%;
+  margin-top: 10px;
+}
+.mentor-accordion > summary.mentor-accordion-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 11.8px 16px 12.2px;
+  background: #ffffff;
+  border-radius: 9px;
+  border: 1px solid #DCE4EF;
+  color: #657A96;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 19.8px;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+  transition: background-color .15s ease, border-color .15s ease;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+.mentor-accordion > summary.mentor-accordion-toggle::-webkit-details-marker {
+  display: none;
+}
+.mentor-accordion > summary.mentor-accordion-toggle:hover {
+  background: #F8FAFC;
+  border-color: #CBD5E1;
+}
+.mentor-chevron {
+  transition: transform .2s ease;
+  color: #202E42;
+  stroke: currentColor;
+}
+.mentor-accordion[open] .mentor-chevron {
+  transform: rotate(0deg);
+}
+.mentor-accordion:not([open]) .mentor-chevron {
+  transform: rotate(180deg);
+}
+.mentor-summary-box {
+  margin-top: 12px;
+  padding: 19px 20px 20px 20px;
+  background: #F7F9FC;
+  border-radius: 10px;
+  border: 1px solid #DCE4EF;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  color: #29415E;
+  font-size: 12px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  line-height: 22.2px;
+  box-sizing: border-box;
+}
+.mentor-summary-item {
+  word-wrap: break-word;
+  line-height: 22.2px;
+}
+.mentor-actions {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+.mentor-btn-wa {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 11.8px 16px 12.2px;
+  background: #186DD8;
+  box-shadow: 0px 2px 5px rgba(24, 87, 155, 0.08);
+  border-radius: 9px;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 17.4px;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  transition: background-color .15s ease, transform .1s ease;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+.mentor-btn-wa:hover {
+  background: #125AB5;
+  color: #ffffff;
+}
+.mentor-btn-web {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 11.8px 16px 12.2px;
+  background: #ffffff;
+  border-radius: 9px;
+  border: 1px solid #DCE4EF;
+  color: #125AB5;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 17.4px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all .15s ease;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+.mentor-btn-web:hover {
+  background: #F8FAFC;
+  border-color: #CBD5E1;
+  color: #0E4890;
+}
+.mentor-footer-note {
+  margin: 20px 0 0 0;
+  color: #52647D;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 21px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+@media (max-width: 768px) {
+  .mentor-card {
+    padding: 16px;
+  }
+  .mentor-page-head h1 {
+    font-size: 24px;
+    line-height: 30px;
+  }
+  .mentor-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .mentor-btn-wa, .mentor-btn-web {
+    width: 100%;
+    justify-content: center;
+  }
+  .mentor-summary-box {
+    padding: 14px 16px;
+  }
+}
+
+.dark .mentor-page-head h1 { color: #e4ebf5; }
+.dark .mentor-page-head p { color: #92a4bd; }
+.dark .mentor-card { background: #182538; border-color: #34465d; }
+.dark .mentor-card-title { color: #e4ebf5; }
+.dark .mentor-field-label { color: #c4d4eb; }
+.dark .mentor-counter { color: #7d90a8; }
+.dark .mentor-textarea { background: #132033!important; border-color: #4e6580!important; color: #e4ebf5!important; }
+.dark .mentor-textarea::placeholder { color: #64748b; }
+.dark .mentor-textarea:focus { border-color: #7cb2ff!important; box-shadow: 0 0 0 3px rgba(124, 178, 255, .2); }
+.dark .mentor-accordion > summary.mentor-accordion-toggle { background: #132033; border-color: #34465d; color: #92a4bd; }
+.dark .mentor-accordion > summary.mentor-accordion-toggle:hover { background: #1a2a40; }
+.dark .mentor-chevron { color: #92a4bd; }
+.dark .mentor-summary-box { background: #132033; border-color: #34465d; color: #cbd5e1; }
+.dark .mentor-btn-wa { background: #186dd8; color: #fff; }
+.dark .mentor-btn-wa:hover { background: #125ab5; }
+.dark .mentor-btn-web { background: #132033; border-color: #34465d; color: #7cb2ff; }
+.dark .mentor-btn-web:hover { background: #1a2a40; color: #9ec5fe; }
+.dark .mentor-footer-note { color: #7d90a8; }
