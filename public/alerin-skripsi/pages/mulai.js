@@ -21,9 +21,9 @@ const konteksLengkap = () => semesterValid() && !!ensureKonteks().method && !!S.
 function mulaiView() {
   ensureGuide();
   const v = S.guide.view;
-  if (['konteks', 'idea', 'guide', 'saran'].includes(v)) return v;
-  if (!ensureKonteks().savedAt) return 'konteks';
-  return S.title ? 'guide' : 'idea';
+  if (v === 'konteks' || !v) return 'konteks';
+  if (['idea', 'guide', 'saran'].includes(v)) return v;
+  return 'konteks';
 }
 function mulaiPage() {
   const view = mulaiView();
@@ -31,7 +31,7 @@ function mulaiPage() {
   if (view === 'saran') return strukturView();
   if (view === 'idea')
     return pageHead('Mulai Skripsi', 'Tentukan topik atau judul sebagai awal penyusunan.') + chapterNav('idea') + ideaView();
-  return pageHead('Mulai Skripsi', `Panduan pengerjaan dari penentuan arah sampai Bab ${lastRoman()}.`) + konteksView();
+  return konteksView();
 }
 /* Pemilih bab dan subbagian (tampilan GPT: Peta Skripsi · Panduan Penyusunan).
    Dropdown hanya memuat subbagian bab yang sedang dipilih (QC 17 November). */
@@ -57,8 +57,20 @@ const SUSUNAN_NOTE = {
   hasil6: 'Hasil Penelitian dan Pembahasan menjadi dua bab.',
   konsep6: 'Kerangka Berpikir dan Hipotesis menjadi bab sendiri.',
 };
+const SUSUNAN_LABELS = {
+  umum: '5 bab · Umum',
+  hasil6: '6 bab · Hasil dan Pembahasan terpisah',
+  konsep6: '6 bab · Kerangka Konseptual terpisah',
+};
 function susunanPreview() {
-  return `<ol class="susunan-list" aria-label="Urutan bab ${e(SUSUNAN[susunanId()].label)}">${CHAPTERS.map(c => `<li><span>Bab ${c[0]}</span>${e(c[1])}</li>`).join('')}</ol>`;
+  return CHAPTERS.map(
+    c => `
+    <div class="mulai-chapter-pill">
+      <strong class="mulai-pill-bab">Bab ${c[0]}</strong>
+      <span class="mulai-pill-name">${e(c[1])}</span>
+    </div>
+  `,
+  ).join('');
 }
 function chapterOptions(val) {
   return `<option value="">Masih mencari ide</option>${CHAPTERS.map((ch, i) => `<option value="${i + 1}" ${String(val) === String(i + 1) ? 'selected' : ''}>Bab ${ch[0]} · ${e(ch[1])}</option>`).join('')}`;
@@ -68,31 +80,150 @@ function refreshSusunanField() {
     sel = $('#ctx-chapter');
   if (box) box.innerHTML = susunanPreview();
   if (sel) sel.innerHTML = chapterOptions(ensureKonteks().chapter);
-  $$('.susunan-option').forEach(l => l.classList.toggle('is-on', !!l.querySelector('input')?.checked));
-  const sub = $('#main .page-head p');
+  $$('.mulai-pedoman-card').forEach(l => {
+    const radio = l.querySelector('input');
+    l.classList.toggle('selected', !!radio?.checked);
+  });
+  const sub = $('.mulai-page-head p') || $('#main .page-head p');
   if (sub) sub.textContent = `Panduan pengerjaan dari penentuan arah sampai Bab ${lastRoman()}.`;
 }
 function konteksView() {
-  const c = ensureKonteks(),
-    saved = konteksLengkap();
+  const c = ensureKonteks();
   const opsi = (list, val, kosong) =>
     (kosong !== null ? `<option value="">${kosong}</option>` : '') +
     list.map(([v, l]) => `<option value="${e(v)}" ${String(val) === String(v) ? 'selected' : ''}>${e(l)}</option>`).join('');
   const titleVal = c.title || S.title || '';
-  return `<section class="card v3-context"><div class="section-head"><div><span class="eyebrow">LANGKAH AWAL</span><h2>Konteks Skripsi</h2></div>${badge(saved ? 'Konteks tersimpan' : 'Lengkapi konteks', saved ? 'green' : '')}</div><p>Tentukan bagian yang ingin dikerjakan. Semester tersinkron dengan personalisasi.</p><div class="context-identity"><strong>${e(S.profile.campus || 'Kampus belum tersedia')}</strong><p>${e(S.profile.major || 'Jurusan belum tersedia')}</p><p class="small muted">Identitas mengikuti Profil di Alerin Induk.</p></div><fieldset class="susunan-field"><legend>Susunan bab kampusmu</legend><div class="susunan-options">${Object.entries(SUSUNAN)
-    .map(
-      ([k, v]) =>
-        `<label class="susunan-option ${susunanId() === k ? 'is-on' : ''}"><input type="radio" name="ctx-susunan" value="${k}" data-bind="konteks.susunan" ${susunanId() === k ? 'checked' : ''}><span><strong>${e(v.label)}</strong><small>${e(SUSUNAN_NOTE[k])}</small></span></label>`,
-    )
-    .join('')}</div><div class="susunan-preview" id="susunan-preview" aria-live="polite">${susunanPreview()}</div><p class="field-hint">Pilih sesuai Pedoman Kampus. Isi setiap subbagian tetap sama; Alerin hanya memindahkan subbagian ke bab yang sesuai. Susunan bisa diganti kapan saja tanpa menghapus isian.</p></fieldset><div class="field-grid"><div class="field"><label for="ctx-semester">Semester · Wajib</label><select id="ctx-semester" aria-required="true">${opsi(
-    Array.from({ length: 14 }, (_, i) => [String(i + 1), String(i + 1)]),
-    semesterValid() ? S.profile.semester : '',
-    'Pilih semester',
-  )}</select></div><div class="field"><label for="ctx-chapter">Bagian yang ingin dikerjakan</label><select id="ctx-chapter" data-bind="konteks.chapter">${chapterOptions(c.chapter)}</select></div><div class="field"><label for="ctx-deadline">Target penyelesaian skripsi <span>Opsional</span></label><input id="ctx-deadline" type="date" max="${DATE_MAX}" min="${isoToday()}" data-bind="konteks.deadline" value="${e(c.deadline || '')}"></div><div class="field"><label for="ctx-method">Metode · Wajib</label><select id="ctx-method" data-bind="konteks.method" aria-required="true">${opsi(
-    METODE.map(m => [m, m]),
-    c.method,
-    'Pilih metode',
-  )}</select></div></div><div class="field"><label for="ctx-kendala">Kendala <span>Opsional</span></label><textarea id="ctx-kendala" maxlength="500" data-bind="konteks.kendala" placeholder="Bagian yang masih membingungkan" rows="3">${e(c.kendala || '')}</textarea><div class="field-meta"><span>Boleh dilengkapi kemudian.</span><span data-count="ctx-kendala">${String(c.kendala || '').length}/500</span></div></div><div class="field"><label for="ctx-title">Judul yang sudah dimiliki <span>Opsional</span></label><textarea id="ctx-title" maxlength="350" data-bind="konteks.title" placeholder="Kosongkan jika masih mencari judul." rows="3">${e(titleVal)}</textarea><div class="field-meta"><span>${S.title ? 'Mengubah judul di sini mengganti judul aktif.' : 'Boleh dilengkapi kemudian.'}</span><span data-count="ctx-title">${titleVal.length}/350</span></div></div><div class="actions">${B('Simpan dan Lanjutkan', 'konteks-save', 'primary')}</div>${c.savedAt ? `<p class="small muted mt">Disimpan ${e(savedStamp(c.savedAt))}.</p>` : ''}</section>`;
+  const campus = S.profile.campus || 'Universitas Indonesia';
+  const major = S.profile.major || 'Ilmu Komunikasi';
+  const semester = semesterValid() ? S.profile.semester : '7';
+
+  return `
+    <div class="mulai-page-head">
+      <h1>Mulai Skripsi</h1>
+      <p>Panduan pengerjaan dari penentuan arah sampai Bab ${lastRoman()}.</p>
+    </div>
+    <div class="mulai-main-card">
+      <div class="mulai-card-head">
+        <h2 class="mulai-card-title">Konteks Skripsi</h2>
+      </div>
+
+      <div class="mulai-identity-box">
+        <div class="mulai-identity-icon-box">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#186DD8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 21h18"></path>
+            <path d="M5 21V7l7-4 7 4v14"></path>
+            <path d="M9 10h1"></path>
+            <path d="M14 10h1"></path>
+            <path d="M9 14h1"></path>
+            <path d="M14 14h1"></path>
+          </svg>
+        </div>
+        <div class="mulai-identity-info">
+          <div class="mulai-identity-campus">${e(campus)}</div>
+          <div class="mulai-identity-major">${e(major)}</div>
+          <div class="mulai-identity-note">Identitas mengikuti Profil di Alerin Induk.</div>
+        </div>
+      </div>
+
+      <div class="mulai-pedoman-box">
+        <div class="mulai-pedoman-title">Pilih sesuai Pedoman Kampus</div>
+        <div class="mulai-pedoman-options">
+          ${Object.entries(SUSUNAN)
+            .map(([k, v]) => {
+              const isSel = susunanId() === k;
+              const label = SUSUNAN_LABELS[k] || v.label;
+              return `
+                <label class="mulai-pedoman-card ${isSel ? 'selected' : ''}">
+                  <input type="radio" name="ctx-susunan" value="${k}" data-bind="konteks.susunan" ${isSel ? 'checked' : ''} class="native-input">
+                  <div class="mulai-radio-indicator">
+                    <div class="mulai-radio-dot"></div>
+                  </div>
+                  <div class="mulai-pedoman-content">
+                    <div class="mulai-pedoman-name">${e(label)}</div>
+                    <div class="mulai-pedoman-desc">${e(SUSUNAN_NOTE[k])}</div>
+                  </div>
+                </label>
+              `;
+            })
+            .join('')}
+        </div>
+        <div class="mulai-chapter-pills" id="susunan-preview" aria-live="polite">
+          ${susunanPreview()}
+        </div>
+      </div>
+
+      <div class="mulai-form-grid">
+        <div class="field mulai-field">
+          <label for="ctx-semester" class="mulai-label">Semester<span class="mulai-req">*</span></label>
+          <select id="ctx-semester" class="mulai-select" aria-required="true">
+            ${opsi(
+              Array.from({ length: 14 }, (_, i) => [String(i + 1), String(i + 1)]),
+              semester,
+              'Pilih semester',
+            )}
+          </select>
+        </div>
+
+        <div class="field mulai-field">
+          <label for="ctx-chapter" class="mulai-label">Bagian yang ingin dikerjakan</label>
+          <select id="ctx-chapter" class="mulai-select" data-bind="konteks.chapter">
+            ${chapterOptions(c.chapter)}
+          </select>
+        </div>
+
+        <div class="field mulai-field">
+          <div class="mulai-label-row">
+            <label for="ctx-deadline" class="mulai-label">Target penyelesaian skripsi</label>
+            <span class="mulai-opt">Opsional</span>
+          </div>
+          <div class="mulai-date-wrap">
+            <input id="ctx-deadline" type="date" class="mulai-input mulai-date-input" max="${DATE_MAX}" min="${isoToday()}" data-bind="konteks.deadline" value="${e(c.deadline || '')}">
+            <svg class="mulai-date-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#202E42" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+          </div>
+        </div>
+
+        <div class="field mulai-field">
+          <label for="ctx-method" class="mulai-label">Metode<span class="mulai-req">*</span></label>
+          <select id="ctx-method" class="mulai-select" data-bind="konteks.method" aria-required="true">
+            ${opsi(
+              METODE.map(m => [m, m]),
+              c.method,
+              'Pilih metode',
+            )}
+          </select>
+        </div>
+      </div>
+
+      <div class="field mulai-field-full">
+        <div class="mulai-label-row">
+          <label for="ctx-kendala" class="mulai-label">Kendala</label>
+          <span class="mulai-opt">Opsional</span>
+          <span class="mulai-count" data-count="ctx-kendala">${String(c.kendala || '').length}/500</span>
+        </div>
+        <textarea id="ctx-kendala" maxlength="500" data-bind="konteks.kendala" placeholder="Bagian yang masih membingungkan" class="mulai-textarea" rows="3">${e(c.kendala || '')}</textarea>
+      </div>
+
+      <div class="field mulai-field-full">
+        <div class="mulai-label-row">
+          <label for="ctx-title" class="mulai-label">Judul yang sudah dimiliki</label>
+          <span class="mulai-opt">Opsional</span>
+          <span class="mulai-count" data-count="ctx-title">${titleVal.length}/350</span>
+        </div>
+        <textarea id="ctx-title" maxlength="350" data-bind="konteks.title" placeholder="Kosongkan jika masih mencari judul." class="mulai-textarea" rows="3">${e(titleVal)}</textarea>
+      </div>
+
+      <div class="mulai-submit-row">
+        <button type="button" class="mulai-btn-submit" data-action="konteks-save">
+          <span>Simpan dan Lanjutkan</span>
+        </button>
+      </div>
+    </div>
+  `;
 }
 function ideaView() {
   const d = S.draft || {};

@@ -1791,3 +1791,481 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
     gap: 4px;
   }
 }
+
+
+/* Mulai Skripsi — Konteks Skripsi (2026-11-19) */
+.mulai-page-head {
+  margin-bottom: 24px;
+}
+.mulai-page-head h1 {
+  color: #142238;
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 0 0 6px;
+  letter-spacing: -0.5px;
+}
+.mulai-page-head p {
+  color: #637087;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.6;
+  margin: 0;
+}
+.mulai-main-card {
+  width: 100%;
+  background: white;
+  box-shadow: 0px 2px 4px rgba(35, 58, 87, 0.01);
+  border-radius: 16px;
+  outline: 1px #DCE4EF solid;
+  outline-offset: -1px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  box-sizing: border-box;
+}
+.mulai-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.mulai-card-title {
+  color: #142238;
+  font-size: 18px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 650;
+  line-height: 25.2px;
+  margin: 0;
+}
+.mulai-identity-box {
+  align-self: stretch;
+  padding: 20px;
+  background: #F8FBFF;
+  border-radius: 12px;
+  outline: 1px #DCE4EF solid;
+  outline-offset: -1px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-sizing: border-box;
+}
+.mulai-identity-icon-box {
+  width: 32px;
+  height: 32px;
+  padding: 8px;
+  background: #EDF4FF;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+.mulai-identity-info {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.mulai-identity-campus {
+  color: #1E293B;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+}
+.mulai-identity-major {
+  color: #475569;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+}
+.mulai-identity-note {
+  color: #94A3B8;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+}
+.mulai-pedoman-box {
+  align-self: stretch;
+  padding: 16px;
+  background: #F8FBFF;
+  border-radius: 12px;
+  outline: 1px #DCE4EF solid;
+  outline-offset: -1px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-sizing: border-box;
+}
+.mulai-pedoman-title {
+  color: #1E293B;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 18px;
+}
+.mulai-pedoman-options {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  width: 100%;
+}
+.mulai-pedoman-card {
+  min-height: 74px;
+  padding: 12px;
+  background: white;
+  border-radius: 10px;
+  outline: 1px #E2E8F0 solid;
+  outline-offset: -1px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-sizing: border-box;
+  position: relative;
+}
+.mulai-pedoman-card.selected {
+  background: #F2F7FF;
+  outline: 1.5px #186DD8 solid;
+  outline-offset: -1.5px;
+}
+.mulai-pedoman-card .native-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+  height: 0;
+  margin: 0;
+}
+.mulai-radio-indicator {
+  width: 16px;
+  height: 16px;
+  border-radius: 9999px;
+  outline: 1.5px #CBD5E1 solid;
+  outline-offset: -1.5px;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+  transition: outline-color 0.15s ease;
+}
+.mulai-pedoman-card.selected .mulai-radio-indicator {
+  outline: 1.5px #186DD8 solid;
+}
+.mulai-radio-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: transparent;
+  transition: background-color 0.15s ease;
+}
+.mulai-pedoman-card.selected .mulai-radio-dot {
+  background: #186DD8;
+}
+.mulai-pedoman-content {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.mulai-pedoman-name {
+  color: #0F172A;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 18px;
+}
+.mulai-pedoman-desc {
+  color: #64748B;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 15px;
+}
+.mulai-chapter-pills {
+  align-self: stretch;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.mulai-chapter-pill {
+  padding: 6px 12px;
+  background: white;
+  border-radius: 9999px;
+  outline: 1px #D7E3F4 solid;
+  outline-offset: -1px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-sizing: border-box;
+}
+.mulai-pill-bab {
+  color: #142238;
+  font-size: 11px;
+  font-weight: 650;
+  line-height: 15.4px;
+}
+.mulai-pill-name {
+  color: #637087;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 15.4px;
+}
+.mulai-form-grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 20px;
+}
+.mulai-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+.mulai-field-full {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+.mulai-label-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+.mulai-label {
+  color: #142238;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 18.2px;
+  margin: 0;
+}
+.mulai-req {
+  color: #EF4444;
+  font-size: 13px;
+  font-weight: 600;
+}
+.mulai-opt {
+  color: #637087;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 15.4px;
+}
+.mulai-count {
+  margin-left: auto;
+  color: #637087;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 15.4px;
+}
+.mulai-input,
+.mulai-select {
+  height: 44px;
+  padding: 0 16px;
+  background: white;
+  border-radius: 10px;
+  outline: 1px #DCE4EF solid;
+  outline-offset: -1px;
+  border: none;
+  font-size: 13px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #142238;
+  width: 100%;
+  box-sizing: border-box;
+  transition: outline-color 0.15s ease;
+}
+.mulai-input:focus,
+.mulai-select:focus,
+.mulai-textarea:focus {
+  outline: 1.5px #186DD8 solid;
+  outline-offset: -1.5px;
+}
+.mulai-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23637087' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+  cursor: pointer;
+}
+.mulai-date-wrap {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+.mulai-date-input {
+  padding-right: 40px;
+}
+.mulai-date-input::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  cursor: pointer;
+}
+.mulai-date-icon {
+  position: absolute;
+  right: 14px;
+  pointer-events: none;
+}
+.mulai-textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 12px 16px;
+  background: white;
+  border-radius: 10px;
+  outline: 1px #DCE4EF solid;
+  outline-offset: -1px;
+  border: none;
+  font-size: 13px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #142238;
+  resize: vertical;
+  line-height: 1.5;
+  box-sizing: border-box;
+  transition: outline-color 0.15s ease;
+}
+.mulai-textarea::placeholder {
+  color: #94A3B8;
+}
+.mulai-submit-row {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-top: 5px;
+}
+.mulai-btn-submit {
+  background: #186DD8;
+  color: white;
+  font-size: 13px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  line-height: 18.2px;
+  padding: 12px 20px;
+  border-radius: 9px;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s ease;
+}
+.mulai-btn-submit:hover {
+  background: #1459B0;
+}
+
+/* Dark mode support */
+.dark .mulai-page-head h1 {
+  color: #F1F5F9;
+}
+.dark .mulai-page-head p {
+  color: #94A3B8;
+}
+.dark .mulai-main-card {
+  background: #182538;
+  outline-color: #34465D;
+}
+.dark .mulai-card-title {
+  color: #F1F5F9;
+}
+.dark .mulai-identity-box {
+  background: #132033;
+  outline-color: #34465D;
+}
+.dark .mulai-identity-icon-box {
+  background: #1B2C43;
+}
+.dark .mulai-identity-campus {
+  color: #F1F5F9;
+}
+.dark .mulai-identity-major {
+  color: #CBD5E1;
+}
+.dark .mulai-identity-note {
+  color: #94A3B8;
+}
+.dark .mulai-pedoman-box {
+  background: #132033;
+  outline-color: #34465D;
+}
+.dark .mulai-pedoman-title {
+  color: #F1F5F9;
+}
+.dark .mulai-pedoman-card {
+  background: #182538;
+  outline-color: #34465D;
+}
+.dark .mulai-pedoman-card.selected {
+  background: #1B2C43;
+  outline-color: #3B82F6;
+}
+.dark .mulai-radio-indicator {
+  background: #182538;
+  outline-color: #475569;
+}
+.dark .mulai-pedoman-card.selected .mulai-radio-indicator {
+  outline-color: #3B82F6;
+}
+.dark .mulai-pedoman-card.selected .mulai-radio-dot {
+  background: #3B82F6;
+}
+.dark .mulai-pedoman-name {
+  color: #F1F5F9;
+}
+.dark .mulai-pedoman-desc {
+  color: #94A3B8;
+}
+.dark .mulai-chapter-pill {
+  background: #182538;
+  outline-color: #34465D;
+}
+.dark .mulai-pill-bab {
+  color: #F1F5F9;
+}
+.dark .mulai-pill-name {
+  color: #94A3B8;
+}
+.dark .mulai-label {
+  color: #F1F5F9;
+}
+.dark .mulai-opt,
+.dark .mulai-count {
+  color: #94A3B8;
+}
+.dark .mulai-input,
+.dark .mulai-select,
+.dark .mulai-textarea {
+  background: #132033;
+  color: #F1F5F9;
+  outline-color: #34465D;
+}
+.dark .mulai-date-icon {
+  stroke: #94A3B8;
+}
+
+@media (max-width: 760px) {
+  .mulai-pedoman-options {
+    grid-template-columns: 1fr;
+  }
+  .mulai-form-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .mulai-main-card {
+    padding: 16px;
+    border-radius: 12px;
+  }
+  .mulai-identity-box {
+    padding: 14px;
+  }
+}

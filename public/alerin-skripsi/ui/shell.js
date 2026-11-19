@@ -432,6 +432,10 @@ Object.assign(ACTIONS, {
     if (unsaved) persist();
     menuOpen = false;
     if (arg === 'progres' && progressTab === 'revisi') progressTab = 'aktif';
+    if (arg === 'mulai') {
+      ensureGuide();
+      S.guide.view = 'konteks';
+    }
     go(safeRoute(arg));
     if (matchMedia('(max-width:760px)').matches) document.body.classList.remove('sidebar-open');
   },
