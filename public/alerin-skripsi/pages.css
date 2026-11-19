@@ -318,6 +318,18 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
 .pustaka-item-action-btn.delete svg{width:14px;height:14px;stroke:#f43f5e;color:#f43f5e}
 .pustaka-empty-msg{color:#52647d;font-size:14px;line-height:24.5px;margin:12px 0 0}
 .pustaka-edit-note{margin-bottom:14px}
+.folder-modal-field{padding:4px 0 12px;width:100%;box-sizing:border-box}
+.folder-modal-label-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.folder-modal-label{font-size:13px;font-weight:600;color:#1e293b;line-height:18px}
+.folder-modal-label .required-star{color:#ef4444;font-weight:600;margin-left:2px}
+.folder-modal-counter{font-size:12px;font-weight:400;color:#94a3b8;line-height:18px}
+.folder-modal-input{width:100%;height:44px;padding:10px 14px;border:1px solid #dce4ef;border-radius:8px;font-size:13.5px;color:#0f172a;background:#fff;outline:none;transition:all .15s ease;box-sizing:border-box;font-family:inherit}
+.folder-modal-input::placeholder{color:#94a3b8}
+.folder-modal-input:focus{border-color:#186dd8;box-shadow:0 0 0 3px rgba(24,109,216,.12)}
+.folder-modal-btn-cancel{height:40px;min-height:40px;padding:0 22px;border-radius:8px;border:1px solid #dce4ef!important;background:#fff!important;color:#1e293b!important;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s ease}
+.folder-modal-btn-cancel:hover{background:#f8fafc!important;border-color:#cbd5e1!important}
+.folder-modal-btn-submit{height:40px;min-height:40px;padding:0 22px;border-radius:8px;border:none!important;background:#186dd8!important;color:#fff!important;font-size:13px;font-weight:600;cursor:pointer;transition:background-color .15s ease}
+.folder-modal-btn-submit:hover{background:#125ab5!important}
 @media(max-width:960px){
 .pustaka-folders-grid,.pustaka-folder-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
@@ -414,4 +426,13 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
 .dark .pustaka-folder-detail-count{background:#20354f;color:#92a4bd}
 .dark .pustaka-folder-back-btn{background:#20354f;color:#7cb2ff;border-color:#34465d}
 .dark .pustaka-folder-back-btn:hover{background:#274163}
+.dark .folder-modal-label{color:#e4ebf5}
+.dark .folder-modal-counter{color:#92a4bd}
+.dark .folder-modal-input{background:#132033;border-color:#4e6580;color:#e4ebf5}
+.dark .folder-modal-input::placeholder{color:#64748b}
+.dark .folder-modal-input:focus{border-color:#7cb2ff;box-shadow:0 0 0 3px rgba(124,178,255,.2)}
+.dark .folder-modal-btn-cancel{background:#20354f!important;border-color:#34465d!important;color:#e4ebf5!important}
+.dark .folder-modal-btn-cancel:hover{background:#274163!important}
+.dark .folder-modal-btn-submit{background:#186dd8!important;color:#fff!important}
+.dark .folder-modal-btn-submit:hover{background:#125ab5!important}
 .dark .pustaka-empty-msg{color:#92a4bd}

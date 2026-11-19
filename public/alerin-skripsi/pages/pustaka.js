@@ -676,24 +676,39 @@ Object.assign(ACTIONS, {
   },
   'dp-new-folder': () => {
     modal(
-      'Buat Folder Baru',
-      `<p class="small muted" style="margin-bottom:14px;">Buat folder baru untuk mengelompokkan daftar pustaka per bab atau topik penelitian.</p>
-       <div class="mt">${field('folder-name', 'Nama Folder Baru', '', 'Mis. Bab V', 40, 'text', '', false)}</div>`,
-      B('Batal', 'close-modal') + B('Buat Folder', 'dp-create-folder', 'primary', 'plus'),
+      'Buat folder',
+      `
+        <div class="folder-modal-field">
+          <div class="folder-modal-label-row">
+            <label for="folder-name" class="folder-modal-label">Nama folder<span class="required-star">*</span></label>
+            <span class="folder-modal-counter" data-count="folder-name">0/40</span>
+          </div>
+          <input id="folder-name" type="text" maxlength="40" placeholder="Contoh: Bab V" class="folder-modal-input" autocomplete="off" autofocus>
+        </div>
+      `,
+      `<button type="button" class="btn folder-modal-btn-cancel" data-action="close-modal">Batal</button>
+       <button type="button" class="btn primary folder-modal-btn-submit" data-action="dp-create-folder">Buat folder</button>`,
     );
   },
   'dp-create-folder': () => {
-    const n = $('#folder-name').value.trim();
+    const input = $('#folder-name');
+    const n = (input?.value || '').trim();
     clearErrors();
     if (!n) {
-      fieldError('folder-name', 'Kolom ini perlu diisi dulu.');
-      return focusFirstError();
+      toast('Nama folder tidak boleh kosong.', 'error');
+      input?.focus();
+      return;
     }
-    if (!S.biblio.folders.includes(n)) S.biblio.folders.push(n);
+    if (S.biblio.folders.includes(n)) {
+      toast('Folder sudah ada.', 'error');
+      input?.focus();
+      return;
+    }
+    S.biblio.folders.push(n);
     persist();
     closeModal(true);
     render();
-    toast('Folder dibuat.');
+    toast(`Folder "${n}" berhasil dibuat.`);
   },
   'dp-folder-toggle': (arg, btn) => {
     const wrapper = btn?.closest('.pustaka-item-folder-wrapper');
@@ -745,10 +760,18 @@ Object.assign(ACTIONS, {
       b.setAttribute('aria-expanded', 'false');
     });
     modal(
-      'Buat Folder Baru',
-      `<p class="small muted" style="margin-bottom:14px;">Buat folder baru untuk mengelompokkan daftar pustaka.</p>
-       <div class="mt">${field('folder-new-name', 'Nama Folder Baru', '', 'Mis. Bab V', 40, 'text')}</div>`,
-      B('Batal', 'close-modal') + B('Buat & Pindahkan', 'dp-folder-create-assign:' + arg, 'primary', 'plus'),
+      'Buat folder',
+      `
+        <div class="folder-modal-field">
+          <div class="folder-modal-label-row">
+            <label for="folder-new-name" class="folder-modal-label">Nama folder<span class="required-star">*</span></label>
+            <span class="folder-modal-counter" data-count="folder-new-name">0/40</span>
+          </div>
+          <input id="folder-new-name" type="text" maxlength="40" placeholder="Contoh: Bab V" class="folder-modal-input" autocomplete="off" autofocus>
+        </div>
+      `,
+      `<button type="button" class="btn folder-modal-btn-cancel" data-action="close-modal">Batal</button>
+       <button type="button" class="btn primary folder-modal-btn-submit" data-action="dp-folder-create-assign:${arg}">Buat folder</button>`,
     );
   },
   'dp-folder-create-assign': arg => {
@@ -756,6 +779,7 @@ Object.assign(ACTIONS, {
     const nw = (input?.value || '').trim();
     if (!nw) {
       toast('Nama folder tidak boleh kosong.', 'error');
+      input?.focus();
       return;
     }
     if (!S.biblio.folders.includes(nw)) {
@@ -986,4 +1010,17 @@ Object.assign(ACTIONS, {
     const r = syncReport();
     toast(`${r.matched}/${r.total} kutipan sudah tercatat di Daftar Pustaka.`);
   },
+});
+
+document.addEventListener('keydown', ev => {
+  if (ev.key === 'Enter') {
+    if (ev.target?.id === 'folder-name') {
+      ev.preventDefault();
+      ACTIONS['dp-create-folder']?.();
+    } else if (ev.target?.id === 'folder-new-name') {
+      ev.preventDefault();
+      const submitBtn = document.querySelector('.folder-modal-btn-submit');
+      if (submitBtn) submitBtn.click();
+    }
+  }
 });
