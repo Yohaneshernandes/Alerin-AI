@@ -56,22 +56,64 @@ function dpListHtml() {
       .join('')}${B('<strong>Buat Folder</strong><span>Kelompokkan per bab</span>', 'dp-new-folder', 'v6-folder', 'plus')}</div>`;
   }
   const head = b.folder
-    ? `<div class="between mt"><h3>${e(b.folder === '__none' ? 'Belum masuk folder' : b.folder)}</h3>${B('Semua Folder', 'dp-folder:', 'text', 'back')}</div>`
+    ? `<div class="between mt" style="margin-bottom:12px;"><h3>${e(b.folder === '__none' ? 'Belum masuk folder' : b.folder)}</h3>${B('Semua Folder', 'dp-folder:', 'text', 'back')}</div>`
     : '';
   const found = q
-    ? `<p class="dp-found small muted mt">${items.length ? `${items.length} sumber cocok dengan “${e(b.query.trim())}”.` : ''} <button class="inline-link" data-action="dp-search-clear">Hapus pencarian</button></p>`
+    ? `<p class="dp-found small muted mt" style="margin-bottom:12px;">${items.length ? `${items.length} sumber cocok dengan “${e(b.query.trim())}”.` : ''} <button class="inline-link" data-action="dp-search-clear">Hapus pencarian</button></p>`
     : '';
   return (
     head +
     found +
     (items.length
-      ? items
+      ? `<div class="pustaka-saved-list">${items
           .map(
             it =>
-              `<article class="v6-bib-row"><div class="between"><button class="v6-source-title" data-action="dp-detail:${it.id}">${e(it.title)}</button>${badge(['Buku', 'Bab Buku'].includes(it.type) ? 'Buku' : it.type)}</div><p class="small">${e(it.authors || 'Penulis belum diisi')} · ${e(it.year || 'Tahun belum diisi')}${S.biblio.style === 'IEEE' ? ' · [' + citeNo(it.id) + ']' : ''}</p><p class="small muted">${e(it.container || '')}</p><div class="actions">${B(e(it.folder || 'Pilih Folder'), 'dp-folder-assign:' + it.id, 'soft', 'book')}${B('Edit', 'dp-edit:' + it.id, 'text', 'edit')}${B('Hapus', 'dp-delete:' + it.id, 'text danger', 'trash')}</div></article>`,
+              `<div class="pustaka-item-row">
+                <div class="pustaka-item-left">
+                  <div class="pustaka-item-icon-box">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                      <polyline points="14 2 14 8 20 8" />
+                      <line x1="16" y1="13" x2="8" y2="13" />
+                      <line x1="16" y1="17" x2="8" y2="17" />
+                    </svg>
+                  </div>
+                  <div class="pustaka-item-meta">
+                    <h3 class="pustaka-item-title" data-action="dp-detail:${it.id}" role="button" tabindex="0">${e(it.title)}</h3>
+                    <div class="pustaka-item-authors">${e(it.authors || 'Penulis belum diisi')}</div>
+                  </div>
+                </div>
+                <div class="pustaka-item-right">
+                  <div class="pustaka-item-type-badge">${e(['Buku', 'Bab Buku'].includes(it.type) ? 'Buku' : it.type || 'Jurnal')}</div>
+                  <button type="button" class="pustaka-item-btn-folder" data-action="dp-folder-assign:${it.id}">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#125AB5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                    </svg>
+                    <span>${e(it.folder || 'Pilih Folder')}</span>
+                  </button>
+                  <div class="pustaka-item-actions">
+                    <button type="button" class="pustaka-item-action-btn edit" data-action="dp-edit:${it.id}">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                      </svg>
+                      <span>Edit</span>
+                    </button>
+                    <button type="button" class="pustaka-item-action-btn delete" data-action="dp-delete:${it.id}">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F43F5E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="3 6 5 6 21 6" />
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                        <line x1="10" y1="11" x2="10" y2="17" />
+                        <line x1="14" y1="11" x2="14" y2="17" />
+                      </svg>
+                      <span>Hapus</span>
+                    </button>
+                  </div>
+                </div>
+              </div>`,
           )
-          .join('')
-      : `<p class="muted mt">${q ? 'Tidak ada sumber yang cocok. Coba kata lain, misalnya nama penulis atau tahun.' : b.folder ? 'Folder ini belum berisi sumber.' : 'Belum ada sumber pada daftar ini. Isi Input Sumber lalu simpan ke daftar.'}</p>`)
+          .join('')}</div>`
+      : `<p class="pustaka-empty-msg">${q ? 'Tidak ada sumber yang cocok. Coba kata lain, misalnya nama penulis atau tahun.' : b.folder ? 'Folder ini belum berisi sumber.' : 'Belum ada sumber pada daftar ini. Isi Input Sumber lalu simpan ke daftar.'}</p>`)
   );
 }
 async function readNaskah(file) {
@@ -316,7 +358,7 @@ function pustakaPage() {
         </div>
         <div class="pustaka-saved-controls">
           <div class="pustaka-tabs">
-            <button type="button" class="pustaka-tab-btn ${b.tab === 'all' ? 'active' : ''}" data-action="dp-tab:all">
+            <button type="button" class="pustaka-tab-btn ${b.tab === 'all' || !b.tab ? 'active' : ''}" data-action="dp-tab:all">
               Semua Daftar Pustaka
             </button>
             <button type="button" class="pustaka-tab-btn ${b.tab === 'folder' ? 'active' : ''}" data-action="dp-tab:folder">
@@ -324,7 +366,10 @@ function pustakaPage() {
             </button>
           </div>
           <label class="pustaka-search-wrap">
-            ${I('search')}
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#98A6BA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
             <input id="dp-search" data-nocap="1" placeholder="Cari sumber…" aria-label="Cari daftar pustaka tersimpan" value="${e(b.query || '')}">
           </label>
         </div>
@@ -332,7 +377,6 @@ function pustakaPage() {
       <div id="dp-list" class="pustaka-saved-body">
         ${dpListHtml()}
       </div>
-      ${b.items.length ? `<div class="actions mt">${B('Salin Daftar Pustaka (' + e(b.style) + ')', 'dp-copy-all', 'text', 'copy')}</div>` : ''}
     </section>
   `;
 

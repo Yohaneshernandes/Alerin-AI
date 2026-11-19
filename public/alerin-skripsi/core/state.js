@@ -59,6 +59,9 @@ function normalizeState() {
   S.biblio ??= sampleBiblio(!S.sample);
   S.biblio.form ??= blankSource();
   S.biblio.items ??= [];
+  if (!S.biblio.items.length || S.biblio.items.some(x => x.id === 'dp-orozco2019' || x.title === 'adasd' || x.title?.includes('Pengembangan Sistem Rekomendasi') || x.sample)) {
+    S.biblio.items = sampleBiblio(false).items;
+  }
   S.biblio.folders ??= ['Bab I', 'Bab II', 'Bab III'];
   ensureGuide();
   for (const k of ['_pastAgenda', '_pendingOrder', 'refs', 'updates', 'removedFiles', 'draftStep', 'selectedTitle', 'lastResearchUpdate'])
