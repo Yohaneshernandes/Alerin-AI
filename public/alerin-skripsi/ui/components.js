@@ -26,7 +26,7 @@ function modal(title, body, footer = '', wide = false, drawer = false) {
   lastFocus = document.activeElement;
   modalDirty = false;
   $('#overlay-root').innerHTML =
-    `<div class="overlay ${drawer ? 'drawer-overlay' : ''}" data-overlay="true"><section class="modal ${wide ? 'wide' : ''} ${drawer ? 'drawer' : ''}" role="dialog" aria-modal="true" aria-labelledby="modal-title"><header class="modal-head"><h2 id="modal-title">${title}</h2><button class="icon-btn" data-action="close-modal" aria-label="Tutup jendela">${I('close')}</button></header><div class="modal-body">${body}</div>${footer ? `<footer class="modal-footer">${footer}</footer>` : ''}</section></div>`;
+    `<div class="overlay ${drawer ? 'drawer-overlay' : ''}" data-overlay="true"><section class="modal ${wide ? (wide === true ? 'wide' : wide) : ''} ${drawer ? 'drawer' : ''}" role="dialog" aria-modal="true" aria-labelledby="modal-title"><header class="modal-head"><h2 id="modal-title">${title}</h2><button class="icon-btn" data-action="close-modal" aria-label="Tutup jendela">${I('close')}</button></header><div class="modal-body">${body}</div>${footer ? `<footer class="modal-footer">${footer}</footer>` : ''}</section></div>`;
   document.body.style.overflow = 'hidden';
   requestAnimationFrame(() => {
     const first = drawer
