@@ -82,9 +82,23 @@ function ujiPanel() {
       '',
     )}<button class="btn small" data-action="uji:kosong">Data akun kosong</button><button class="btn small" data-action="uji:contoh">Isi Ceritakan dengan contoh</button><button class="btn small" data-action="uji:naskah">Muat naskah contoh di Periksa</button><button class="btn small danger" data-action="uji:reset">Hapus semua data uji</button></div></details>`;
 }
-/* Notifikasi: pratinjau integrasi dengan Notifikasi Alerin Induk. Tab Umum (agenda dan arahan dosen) dan Sistem. */
+/* Notifikasi: disamakan dengan desain Notifikasi Alerin Chat */
 let notifTab = 'umum';
+let notifSimulatedEmpty = false;
+
+const NOTIF_ICONS = {
+  target: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" /></svg>',
+  alarm: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8" /><path d="M12 9v4l2 2" /><path d="M5 3 2 6" /><path d="m22 6-3-3" /><path d="M6.38 18.7 4 21" /><path d="M17.64 18.67 20 21" /></svg>',
+  quiz: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" /><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" /><path d="M4 22h16" /><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" /><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" /><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" /></svg>',
+  book: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z" /><path d="M6 6h10" /><path d="M6 10h10" /></svg>',
+  bulb: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-1 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5" /><path d="M9 18h6" /><path d="M10 22h4" /></svg>',
+  trending: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17" /><polyline points="16 7 22 7 22 13" /></svg>',
+  shield: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" /><path d="m9 12 2 2 4-4" /></svg>',
+  check: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>'
+};
+
 function notifItems() {
+  const read = S.notificationReads || [];
   const cutoff = addDaysIso(7),
     items = [];
   for (const a of (S.agendas || []).filter(a => a.remind !== false && !a.done && !a.log && a.date >= isoToday() && a.date <= cutoff))
@@ -93,56 +107,147 @@ function notifItems() {
       tab: 'umum',
       title: a.title,
       detail: dateLong(a.date) + (a.time ? ' · ' + a.time + ' WIB' : ''),
+      time: 'Agenda dekat',
+      icon: NOTIF_ICONS.alarm,
       action: 'cal-edit:' + a.id,
-      label: 'Lihat Agenda',
+      unread: !read.includes('agenda:' + a.id + ':' + a.date + ':' + (a.time || ''))
     });
-  for (const r of pendingRevisions())
+  for (const r of pendingRevisions()) {
+    const id = 'direction:' + r.id + ':' + (r.updatedAt || r.date || '');
     items.push({
-      id: 'direction:' + r.id + ':' + (r.updatedAt || r.date || ''),
+      id,
       tab: 'umum',
       title: 'Arahan dosen perlu ditindaklanjuti',
       detail: r.topic || r.text,
+      time: 'Hari ini',
+      icon: NOTIF_ICONS.target,
       action: 'nav:revisi',
-      label: 'Lihat Arahan',
+      unread: !read.includes(id)
     });
+  }
   const rv = latestReview();
-  if (rv && S.files.some(f => f.context === 'periksa' && f.time > rv.date))
+  if (rv && S.files.some(f => f.context === 'periksa' && f.time > rv.date)) {
+    const id = 'review:' + rv.id;
     items.push({
-      id: 'review:' + rv.id,
+      id,
       tab: 'sistem',
+      icon: NOTIF_ICONS.shield,
       title: 'Bahan pemeriksaan telah diperbarui',
       detail: 'Periksa ulang bahan terbaru agar temuan mengikuti naskah yang digunakan.',
+      time: 'Hari ini',
       action: 'nav:periksa',
-      label: 'Periksa Ulang',
+      unread: !read.includes(id)
     });
+  }
   return items;
 }
-const notifUnread = () => notifItems().filter(n => !(S.notificationReads || []).includes(n.id)).length;
+
+const notifUnread = () => notifSimulatedEmpty ? 0 : notifItems().filter(n => !(S.notificationReads || []).includes(n.id)).length;
+
 function notifsModal() {
-  const all = notifItems(),
-    read = S.notificationReads || [],
-    items = all.filter(n => n.tab === notifTab);
-  modal(
-    'Notifikasi',
-    `<div class="qc14-notification-top"><span class="small muted">Alerin Induk · pratinjau integrasi</span>${B('Tandai dibaca', 'notif-read', 'text small', '', 'aria-label="Tandai notifikasi dibaca" ' + (all.every(n => read.includes(n.id)) ? 'disabled' : ''))}</div><div class="tabs qc14-notification-tabs">${[
-      ['umum', 'Umum'],
-      ['sistem', 'Sistem'],
-    ]
-      .map(([id, label]) =>
-        `<button type="button" class="btn ${notifTab === id ? 'primary' : 'text'}" data-action="notif-tab:${id}" aria-pressed="${notifTab === id}">${label} ${badge(all.filter(n => n.tab === id && !read.includes(n.id)).length, 'blue')}</button>`,
-      )
-      .join('')}</div>${
-      items.length
-        ? items
-            .map(
-              n =>
-                `<article class="qc14-notification-item ${read.includes(n.id) ? 'read' : ''}"><div class="between"><h3>${e(n.title)}</h3>${read.includes(n.id) ? badge('Dibaca') : badge('Baru', 'blue')}</div><p>${e(n.detail)}</p>${B(n.label, n.action, 'text', 'arrow')}</article>`,
-            )
-            .join('')
-        : `<div class="qc14-notification-empty">${I('bell')}<h3>Tidak ada notifikasi</h3><p>Belum ada pembaruan ${notifTab === 'umum' ? 'tugas, deadline, atau aktivitas penelitian' : 'sistem'} untukmu saat ini.</p></div>`
-    }<p class="small muted mt">Notifikasi di sini mengikuti data penelitian di perangkat ini. Sinkronisasi akun Alerin Induk belum terhubung.</p>`,
-    B('Tutup', 'close-modal'),
-  );
+  lastFocus = document.activeElement;
+  modalDirty = false;
+  document.body.style.overflow = 'hidden';
+  const all = notifSimulatedEmpty ? [] : notifItems();
+  const read = S.notificationReads || [];
+  const displayUmum = all.filter(n => n.tab === 'umum');
+  const displaySistem = all.filter(n => n.tab === 'sistem');
+  const currentList = notifTab === 'umum' ? displayUmum : displaySistem;
+  const unreadCount = all.filter(n => !read.includes(n.id)).length;
+
+  $('#overlay-root').innerHTML = `
+    <div class="overlay notif-overlay" data-overlay="true">
+      <div class="notif-modal-card">
+        <div class="notif-modal-header">
+          <div class="notif-header-left">
+            <button type="button" class="notif-bell-btn ${notifSimulatedEmpty ? 'simulated-empty' : ''}" data-action="notif-toggle-empty" title="${notifSimulatedEmpty ? 'Tampilkan notifikasi' : 'Simulasikan tidak ada notifikasi'}">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+              </svg>
+            </button>
+            <h3 class="notif-modal-title">Notifikasi</h3>
+          </div>
+          <div class="notif-header-right">
+            <button type="button" class="notif-mark-read-btn" data-action="notif-read" ${unreadCount === 0 || notifSimulatedEmpty || currentList.length === 0 ? 'disabled' : ''}>
+              Tandai dibaca
+            </button>
+            <button type="button" class="notif-close-icon-btn" data-action="close-modal" aria-label="Tutup notifikasi">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="notif-tabs-row">
+          <button type="button" class="notif-tab-item ${notifTab === 'umum' ? 'active' : ''}" data-action="notif-tab:umum">
+            <span>Umum</span>
+            <span class="notif-tab-badge ${notifTab === 'umum' ? 'active' : ''}">${displayUmum.length}</span>
+            ${notifTab === 'umum' ? '<span class="notif-tab-indicator"></span>' : ''}
+          </button>
+          <button type="button" class="notif-tab-item ${notifTab === 'sistem' ? 'active' : ''}" data-action="notif-tab:sistem">
+            <span>Sistem</span>
+            <span class="notif-tab-badge ${notifTab === 'sistem' ? 'active' : ''}">${displaySistem.length}</span>
+            ${notifTab === 'sistem' ? '<span class="notif-tab-indicator"></span>' : ''}
+          </button>
+        </div>
+
+        <div class="notif-modal-body">
+          ${currentList.length === 0 ? `
+            <div class="notif-empty-state">
+              <div class="notif-empty-icon">
+                ${notifTab === 'umum' ? `
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                    <line x1="4" y1="4" x2="20" y2="20" />
+                  </svg>
+                ` : `
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
+                    <path d="m9 12 2 2 4-4" />
+                  </svg>
+                `}
+              </div>
+              <h4 class="notif-empty-title">
+                ${notifTab === 'umum' ? 'Tidak ada notifikasi' : 'Tidak ada notifikasi sistem'}
+              </h4>
+              <p class="notif-empty-desc">
+                ${notifTab === 'umum'
+                  ? 'Belum ada pembaruan tugas, deadline, atau aktivitas penelitian baru untukmu saat ini.'
+                  : 'Semua sistem sinkronisasi data dan server berjalan normal tanpa kendala.'}
+              </p>
+            </div>
+          ` : `
+            <div class="notif-items-grid">
+              ${currentList.map(n => `
+                <button type="button" class="notif-item-card" data-action="${n.action || 'close-modal'}">
+                  <div class="notif-item-icon">
+                    ${n.icon}
+                  </div>
+                  <div class="notif-item-content">
+                    <div class="notif-item-head">
+                      <h4 class="notif-item-title">${e(n.title)}</h4>
+                      ${!read.includes(n.id) ? '<span class="notif-unread-dot"></span>' : ''}
+                    </div>
+                    <p class="notif-item-desc">${e(n.detail || n.desc || '')}</p>
+                    <span class="notif-item-time">${e(n.time || 'Baru saja')}</span>
+                  </div>
+                  <div class="notif-item-arrow">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="m9 18 6-6-6-6" />
+                    </svg>
+                  </div>
+                </button>
+              `).join('')}
+            </div>
+          `}
+        </div>
+      </div>
+    </div>
+  `;
 }
 /* Alerin Chat di Alerin Skripsi hanya pintasan ke Alerin Chat utama. Tidak ada percakapan di halaman ini. */
 const ALERIN_CHAT_URL = 'https://alerin.id/';
@@ -336,6 +441,11 @@ Object.assign(ACTIONS, {
   'notif-tab': arg => {
     notifTab = arg === 'sistem' ? 'sistem' : 'umum';
     notifsModal();
+  },
+  'notif-toggle-empty': () => {
+    notifSimulatedEmpty = !notifSimulatedEmpty;
+    notifsModal();
+    render();
   },
   'notif-read': () => {
     S.notificationReads = [...new Set([...(S.notificationReads || []), ...notifItems().map(n => n.id)])];

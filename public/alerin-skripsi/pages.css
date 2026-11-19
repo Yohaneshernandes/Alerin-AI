@@ -62,17 +62,46 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
 .qc14-source-form>.field-grid{grid-template-columns:minmax(110px,.65fr) minmax(0,1.35fr);gap:16px}
 .qc14-source-form>.v6-three-fields{gap:14px}
 .qc14-source-form>.actions{justify-content:space-between;padding-top:4px}
-.qc14-notification-top{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap}
-.qc14-notification-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
-.qc14-notification-tabs .btn{justify-content:center}
-.qc14-notification-tabs .pill{margin-left:6px}
-.qc14-notification-empty{text-align:center;padding:38px 18px}
-.qc14-notification-empty>.ico{width:52px;height:52px;color:#8ca2bb;background:#f2f6fb;border:1px solid var(--line);padding:13px;border-radius:50%;margin-bottom:16px}
-.qc14-notification-empty p{font-size:13px;color:var(--muted);max-width:34ch;margin:12px auto 0;line-height:1.8}
-.qc14-notification-item{padding:18px 0;border-bottom:1px solid var(--line)}
-.qc14-notification-item h3{font-size:14px;line-height:1.6}
-.qc14-notification-item p{font-size:13px;line-height:1.75;white-space:pre-wrap;margin:8px 0;overflow-wrap:anywhere}
-.qc14-notification-item.read{opacity:.75}
+/* Notifikasi Alerin Chat Match */
+.notif-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);z-index:220;display:flex;align-items:center;justify-content:center;padding:16px;animation:fade-in .15s ease-out}
+.notif-modal-card{width:100%;max-width:680px;background:#ffffff;border-radius:24px;overflow:hidden;box-shadow:0 25px 80px rgba(14,37,73,0.2),0 10px 25px rgba(0,0,0,0.06);border:1px solid #f1f5f9;display:flex;flex-direction:column;animation:toast-in .2s ease-out}
+.notif-modal-header{display:flex;align-items:center;justify-content:space-between;padding:20px 24px 14px}
+.notif-header-left{display:flex;align-items:center;gap:10px}
+.notif-bell-btn{width:36px;height:36px;border-radius:50%;border:1px solid #e2e8f0;background:#f1f5f9;display:inline-flex;align-items:center;justify-content:center;color:#475569;cursor:pointer;transition:all .15s ease;padding:0}
+.notif-bell-btn:hover{background:#e2e8f0;color:#1e293b}
+.notif-bell-btn.simulated-empty{background:#e2e8f0;border-color:#cbd5e1;color:#334155}
+.notif-modal-title{font-size:17px;font-weight:700;color:#0f172a;margin:0;letter-spacing:-0.01em}
+.notif-header-right{display:flex;align-items:center;gap:8px}
+.notif-mark-read-btn{border:none;background:none;font-size:12px;font-weight:600;color:#0f172a;cursor:pointer;padding:4px 8px;border-radius:6px;transition:color .15s ease,background .15s ease}
+.notif-mark-read-btn:hover:not(:disabled){color:#000000;background:#f1f5f9}
+.notif-mark-read-btn:disabled{color:#94a3b8;cursor:not-allowed}
+.notif-close-icon-btn{width:32px;height:32px;border-radius:50%;border:none;background:none;display:inline-flex;align-items:center;justify-content:center;color:#94a3b8;cursor:pointer;transition:all .15s ease;padding:0}
+.notif-close-icon-btn:hover{background:#f1f5f9;color:#475569}
+.notif-tabs-row{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid #f1f5f9;width:100%;position:relative}
+.notif-tab-item{position:relative;display:flex;align-items:center;justify-content:center;gap:8px;padding:12px 16px;font-size:14px;font-weight:500;color:#94a3b8;border:none;background:none;cursor:pointer;transition:all .15s ease}
+.notif-tab-item.active{color:#2563eb;font-weight:700}
+.notif-tab-badge{padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:700;background:#f1f5f9;color:#64748b;transition:all .15s ease}
+.notif-tab-item.active .notif-tab-badge{background:#dbeafe;color:#1d4ed8}
+.notif-tab-indicator{position:absolute;bottom:0;left:0;right:0;height:2px;background:#2563eb;border-radius:9999px}
+.notif-modal-body{max-height:500px;min-height:220px;overflow-y:auto;padding:16px;scrollbar-width:none;box-sizing:border-box}
+.notif-modal-body::-webkit-scrollbar{display:none}
+.notif-empty-state{padding:48px 20px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.notif-empty-icon{width:64px;height:64px;border-radius:50%;background:#f8fafc;border:1px solid #e2e8f0;display:flex;align-items:center;justify-content:center;color:#94a3b8;margin-bottom:14px;box-shadow:0 1px 2px rgba(0,0,0,0.02)}
+.notif-empty-title{font-size:15px;font-weight:700;color:#1e293b;margin:0;letter-spacing:-0.01em}
+.notif-empty-desc{font-size:12px;color:#94a3b8;font-weight:400;line-height:1.6;max-width:280px;margin:6px 0 0}
+.notif-items-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:640px){.notif-items-grid{grid-template-columns:1fr}}
+.notif-item-card{width:100%;display:flex;align-items:flex-start;gap:14px;padding:12px 14px;border-radius:16px;border:1px solid #f1f5f9;background:rgba(248,250,252,0.5);text-align:left;cursor:pointer;transition:all .15s ease;box-sizing:border-box}
+.notif-item-card:hover{background:#f8fafc;border-color:#e2e8f0}
+.notif-item-icon{width:44px;height:44px;border-radius:14px;background:#f8fafc;border:1px solid #e2e8f0;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#334155;margin-top:2px}
+.notif-item-content{flex:1;min-width:0;padding-right:4px}
+.notif-item-head{display:flex;align-items:center;gap:6px}
+.notif-item-title{font-size:13.5px;font-weight:600;color:#0f172a;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.notif-unread-dot{width:7px;height:7px;border-radius:50%;background:#2563eb;flex-shrink:0;display:inline-block}
+.notif-item-desc{font-size:12px;color:#64748b;margin:3px 0 0;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.notif-item-time{font-size:11px;color:#94a3b8;margin-top:4px;display:block}
+.notif-item-arrow{color:#cbd5e1;align-self:center;flex-shrink:0;display:flex;align-items:center;transition:transform .15s ease,color .15s ease}
+.notif-item-card:hover .notif-item-arrow{color:#64748b;transform:translateX(2px)}
 .qc14-calendar-heading{margin:18px 0;flex-wrap:wrap}
 .qc14-calendar-heading>.actions{gap:6px}
 .qc14-calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
@@ -93,7 +122,31 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
 .dark .profile-name{color:#e4ebf5}
 .dark .profile-sub{color:#9cb1cc}
 .dark .profile-chevron,.dark .profile-chevron .ico{color:#9cb1cc;stroke:#9cb1cc}
-.dark .qc14-notification-empty>.ico{background:#21364f}
+.dark .notif-modal-card{background:#182538;border-color:#273a52;box-shadow:0 25px 80px rgba(0,0,0,0.5)}
+.dark .notif-modal-title{color:#e4ebf5}
+.dark .notif-bell-btn{background:#20354f;border-color:#34465d;color:#92a4bd}
+.dark .notif-bell-btn:hover{background:#264367;color:#e4ebf5}
+.dark .notif-bell-btn.simulated-empty{background:#253a54;border-color:#3b5577;color:#d1e2f7}
+.dark .notif-mark-read-btn{color:#e4ebf5}
+.dark .notif-mark-read-btn:hover:not(:disabled){background:#20354f;color:#ffffff}
+.dark .notif-mark-read-btn:disabled{color:#52647d}
+.dark .notif-close-icon-btn:hover{background:#20354f;color:#e4ebf5}
+.dark .notif-tabs-row{border-color:#273a52}
+.dark .notif-tab-item{color:#92a4bd}
+.dark .notif-tab-item.active{color:#60a5fa}
+.dark .notif-tab-badge{background:#20354f;color:#92a4bd}
+.dark .notif-tab-item.active .notif-tab-badge{background:#1e3a8a;color:#93c5fd}
+.dark .notif-tab-indicator{background:#60a5fa}
+.dark .notif-empty-icon{background:#1c2c42;border-color:#273a52;color:#7d90a8}
+.dark .notif-empty-title{color:#e4ebf5}
+.dark .notif-empty-desc{color:#92a4bd}
+.dark .notif-item-card{background:#1c2c42;border-color:#273a52}
+.dark .notif-item-card:hover{background:#233752;border-color:#34465d}
+.dark .notif-item-icon{background:#20354f;border-color:#34465d;color:#e4ebf5}
+.dark .notif-item-title{color:#e4ebf5}
+.dark .notif-item-desc{color:#92a4bd}
+.dark .notif-item-time{color:#6b7f9b}
+.dark .notif-item-arrow{color:#4e6580}
 @media(max-width:1120px){.qc14-source-form>.section-head{display:block}.qc14-source-form>.section-head>.btn{margin-top:12px}}
 @media(min-width:761px) and (max-width:1000px){
  .topbar:has(.qc14-back-home){height:auto;min-height:74px;flex-wrap:wrap;padding-top:12px;padding-bottom:12px;gap:12px}
