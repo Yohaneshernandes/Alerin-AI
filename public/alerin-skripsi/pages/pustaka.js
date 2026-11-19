@@ -96,15 +96,58 @@ function dpListHtml() {
   else if (b.folder) items = items.filter(it => (it.folder || '') === b.folder);
   if (b.tab === 'folder' && !b.folder && !q) {
     const groups = ['', ...b.folders];
-    return `<div class="v6-folder-grid">${groups
-      .map(fd => {
-        const n = b.items.filter(it => (it.folder || '') === fd).length;
-        return B(`<strong>${e(fd || 'Belum masuk folder')}</strong><span>${n} sumber</span>`, 'dp-folder:' + (fd || '__none'), 'v6-folder', 'book');
-      })
-      .join('')}${B('<strong>Buat Folder</strong><span>Kelompokkan per bab</span>', 'dp-new-folder', 'v6-folder', 'plus')}</div>`;
+    return `
+      <div class="pustaka-folders-grid pustaka-folder-grid" data-folder-grid>
+        ${groups
+          .map(fd => {
+            const n = b.items.filter(it => (it.folder || '') === fd).length;
+            const title = fd || 'Belum masuk folder';
+            return `
+              <button type="button" class="pustaka-folder-card" data-action="dp-folder:${e(fd || '__none')}" aria-label="Buka folder ${e(title)} (${n} sumber)">
+                <div class="pustaka-folder-icon-box">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#125AB5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                  </svg>
+                </div>
+                <div class="pustaka-folder-info">
+                  <span class="pustaka-folder-title">${e(title)}</span>
+                  <span class="pustaka-folder-count">${n} sumber</span>
+                </div>
+              </button>
+            `;
+          })
+          .join('')}
+        <button type="button" class="pustaka-folder-card pustaka-folder-card-new" data-action="dp-new-folder" aria-label="Buat Folder">
+          <div class="pustaka-folder-icon-box new">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+          </div>
+          <div class="pustaka-folder-info">
+            <span class="pustaka-folder-title">Buat Folder</span>
+            <span class="pustaka-folder-count">Kelompokkan per bab</span>
+          </div>
+        </button>
+      </div>
+    `;
   }
   const head = b.folder
-    ? `<div class="between mt" style="margin-bottom:12px;"><h3>${e(b.folder === '__none' ? 'Belum masuk folder' : b.folder)}</h3>${B('Semua Folder', 'dp-folder:', 'text', 'back')}</div>`
+    ? `
+      <div class="pustaka-folder-detail-head">
+        <button type="button" class="pustaka-folder-back-btn" data-action="dp-folder:" aria-label="Kembali ke semua folder">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+          <span>Kembali ke Folder</span>
+        </button>
+        <div class="pustaka-folder-detail-meta">
+          <h3>${e(b.folder === '__none' ? 'Belum masuk folder' : b.folder)}</h3>
+          <span class="pustaka-folder-detail-count">${items.length} sumber</span>
+        </div>
+      </div>
+    `
     : '';
   const found = q
     ? `<p class="dp-found small muted mt" style="margin-bottom:12px;">${items.length ? `${items.length} sumber cocok dengan “${e(b.query.trim())}”.` : ''} <button class="inline-link" data-action="dp-search-clear">Hapus pencarian</button></p>`
@@ -633,9 +676,10 @@ Object.assign(ACTIONS, {
   },
   'dp-new-folder': () => {
     modal(
-      'Buat folder',
-      field('folder-name', 'Nama folder', '', 'Mis. Bab IV', 40, 'text', '', false),
-      B('Batal', 'close-modal') + B('Buat folder', 'dp-create-folder', 'primary', 'plus'),
+      'Buat Folder Baru',
+      `<p class="small muted" style="margin-bottom:14px;">Buat folder baru untuk mengelompokkan daftar pustaka per bab atau topik penelitian.</p>
+       <div class="mt">${field('folder-name', 'Nama Folder Baru', '', 'Mis. Bab V', 40, 'text', '', false)}</div>`,
+      B('Batal', 'close-modal') + B('Buat Folder', 'dp-create-folder', 'primary', 'plus'),
     );
   },
   'dp-create-folder': () => {

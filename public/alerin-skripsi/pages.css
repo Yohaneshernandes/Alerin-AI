@@ -265,6 +265,22 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
 .pustaka-search-wrap input::placeholder{color:#757575}
 .pustaka-saved-body{width:100%;box-sizing:border-box}
 .pustaka-saved-list{display:flex;flex-direction:column;width:100%}
+.pustaka-folders-grid,.pustaka-folder-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;width:100%;margin-top:14px;box-sizing:border-box}
+.pustaka-folder-card{display:flex;align-items:center;gap:14px;padding:20px;background:#f8fbff;border:1px solid #e2e8f0;border-radius:12px;cursor:pointer;text-align:left;font-family:inherit;transition:all .18s ease;width:100%;box-sizing:border-box;outline:none}
+.pustaka-folder-card:hover{background:#f0f6ff;border-color:#cbd5e1;transform:translateY(-1px);box-shadow:0 4px 12px rgba(25,55,86,.05)}
+.pustaka-folder-card:active{transform:translateY(0)}
+.pustaka-folder-icon-box{width:36px;height:36px;background:#edf4ff;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pustaka-folder-icon-box svg{width:18px;height:18px;stroke:#125ab5}
+.pustaka-folder-icon-box.new svg{stroke:#64748b}
+.pustaka-folder-info{display:flex;flex-direction:column;gap:2px;min-width:0}
+.pustaka-folder-title{color:#0f172a;font-size:14px;font-weight:600;line-height:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pustaka-folder-count{color:#94a3b8;font-size:12px;font-weight:400;line-height:16px}
+.pustaka-folder-detail-head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:8px 4px 16px;margin-bottom:8px;border-bottom:1px solid #eef2f6;width:100%;box-sizing:border-box}
+.pustaka-folder-detail-meta{display:flex;align-items:center;gap:10px}
+.pustaka-folder-detail-meta h3{margin:0;font-size:16px;font-weight:650;color:#0f172a}
+.pustaka-folder-detail-count{font-size:12px;color:#64748b;background:#f1f5f9;padding:2px 8px;border-radius:6px;font-weight:500}
+.pustaka-folder-back-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:#edf4ff;border:1px solid #dce4ef;border-radius:8px;color:#125ab5;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s ease}
+.pustaka-folder-back-btn:hover{background:#dbeafe}
 .pustaka-item-row{display:flex;justify-content:space-between;align-items:center;padding:14px 8px;border-radius:8px;width:100%;box-sizing:border-box;transition:background-color .15s ease}
 .pustaka-item-row + .pustaka-item-row{border-top:1px solid #dce4ef}
 .pustaka-item-row:hover{background-color:#f8fafc}
@@ -302,6 +318,9 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
 .pustaka-item-action-btn.delete svg{width:14px;height:14px;stroke:#f43f5e;color:#f43f5e}
 .pustaka-empty-msg{color:#52647d;font-size:14px;line-height:24.5px;margin:12px 0 0}
 .pustaka-edit-note{margin-bottom:14px}
+@media(max-width:960px){
+.pustaka-folders-grid,.pustaka-folder-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
 @media(max-width:760px){
 .pustaka-page-head h1{font-size:24px;line-height:30px}
 .pustaka-card{padding:18px 16px}
@@ -314,6 +333,7 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
 .pustaka-tabs{width:100%}
 .pustaka-tab-btn{flex:1}
 .pustaka-search-wrap{width:100%;max-width:100%}
+.pustaka-folders-grid,.pustaka-folder-grid{grid-template-columns:1fr;gap:10px}
 .pustaka-item-row{flex-direction:column;align-items:flex-start;gap:12px;padding:14px 4px}
 .pustaka-item-left{width:100%;padding-right:0}
 .pustaka-item-right{width:100%;justify-content:space-between;flex-wrap:wrap}
@@ -382,4 +402,16 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
 .dark .pustaka-folder-new-btn{color:#7cb2ff}
 .dark .pustaka-folder-new-btn:hover{background:#20354f}
 .dark .pustaka-folder-new-btn svg{stroke:#7cb2ff}
+.dark .pustaka-folder-card{background:#132033;border-color:#34465d}
+.dark .pustaka-folder-card:hover{background:#1a2a40;border-color:#4e6580;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.dark .pustaka-folder-icon-box{background:#20354f}
+.dark .pustaka-folder-icon-box svg{stroke:#7cb2ff}
+.dark .pustaka-folder-icon-box.new svg{stroke:#92a4bd}
+.dark .pustaka-folder-title{color:#e4ebf5}
+.dark .pustaka-folder-count{color:#92a4bd}
+.dark .pustaka-folder-detail-head{border-bottom-color:#273a52}
+.dark .pustaka-folder-detail-meta h3{color:#e4ebf5}
+.dark .pustaka-folder-detail-count{background:#20354f;color:#92a4bd}
+.dark .pustaka-folder-back-btn{background:#20354f;color:#7cb2ff;border-color:#34465d}
+.dark .pustaka-folder-back-btn:hover{background:#274163}
 .dark .pustaka-empty-msg{color:#92a4bd}
