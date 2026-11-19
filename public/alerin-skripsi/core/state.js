@@ -125,7 +125,7 @@ function initialState(empty = true) {
     version: 1,
     profile: {
       name: 'Naya',
-      major: 'Ilmu Komunikasi',
+      major: 'Manajemen',
       level: 'S1',
       semester: '7',
       campus: '',

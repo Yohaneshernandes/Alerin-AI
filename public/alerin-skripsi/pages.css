@@ -40,9 +40,12 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
 @media(max-width:1100px){.repair-cards{grid-template-columns:1fr}}
 @media(max-width:760px){.v4-progress-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;overflow:visible}.v4-progress-tabs .btn{width:100%;font-size:12px;min-height:44px}.position-strip{gap:4px}.position-strip>.btn{margin-top:6px}.workspace-actions{grid-template-columns:1fr 1fr}.workspace-actions .btn{font-size:12px;line-height:1.55}.report-heading h2{min-width:0}}
 .settings-row .switch,.dark .settings-row .switch{background:transparent!important;border:0!important;color:inherit}.settings-row .switch:before{content:"";position:absolute;left:0;top:9px;width:44px;height:26px;border-radius:20px;background:#dce3ed}.settings-row .switch:checked:before{background:#276bba}.dark .settings-row .switch:before{background:#4d6580}.dark .settings-row .switch:checked:before{background:#76adf4}.settings-row .switch:after{box-shadow:0 1px 3px #0002}/* Only the components named in the 14 November QC brief. */
-.qc14-back-home{margin-right:auto;border-radius:12px;background:#fff;box-shadow:0 1px 2px #1937560d;gap:9px;white-space:nowrap;flex-shrink:0}
+.qc14-back-home{margin-right:auto;border-radius:12px;background:#fff;border:1px solid #dce4ef;box-shadow:0 1px 2px rgba(25,55,86,0.05);gap:9px;white-space:nowrap;flex-shrink:0;height:44px;min-height:44px;padding:10px 16px;display:inline-flex;align-items:center;justify-content:center;color:#125ab5;font-size:12px;font-weight:600;line-height:17.4px;text-decoration:none;transition:all .15s}
+.qc14-back-home:hover{background:#f8fbff;border-color:#c7d9ee;box-shadow:0 2px 4px rgba(25,55,86,0.08)}
 .topbar:has(.qc14-back-home)>.header-actions{flex-shrink:0}
-.qc14-back-home>.ico{width:26px;height:26px;border:1px solid var(--line);border-radius:50%;padding:5px;flex-shrink:0}
+.back-icon-circle{width:26px;height:26px;min-width:26px;border-radius:13px;border:1px solid #dce4ef;display:inline-flex;align-items:center;justify-content:center;padding:0;box-sizing:border-box;flex-shrink:0;background:#fff;transition:border-color .15s}
+.back-icon-circle .ico{width:14px;height:14px;color:#125ab5;stroke:#125ab5;stroke-width:2.2;display:block}
+.qc14-back-home:hover .back-icon-circle{border-color:#b4cde9}
 .topbar .btn.qc14-back-home>.ico{display:inline-block}
 .qc14-shortcuts{grid-template-columns:repeat(2,minmax(0,1fr))}
 .qc14-shortcuts>.home-shortcut:last-child{grid-column:auto}
@@ -80,7 +83,16 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
 .qc14-calendar-agenda{margin-top:24px;padding-top:20px;border-top:1px solid var(--line)}
 .qc14-calendar-agenda article{padding:14px 0;border-bottom:1px solid var(--line);font-size:13px;overflow-wrap:anywhere}
 .qc14-calendar-agenda article p{margin-top:6px;font-size:12px;color:var(--muted)}
-.dark .qc14-back-home{background:#1c304a}
+.dark .qc14-back-home{background:#1c304a;border-color:#34465d;color:#8bbdff}
+.dark .back-icon-circle{background:#182538;border-color:#34465d}
+.dark .back-icon-circle .ico{color:#8bbdff;stroke:#8bbdff}
+.dark .notification-button{background:#1c304a;border-color:#34465d;color:#e4ebf5}
+.dark .notification-button .ico{color:#e4ebf5;stroke:#e4ebf5}
+.dark .header-divider{background:#34465d}
+.dark .profile-button .avatar{background:#253a54;color:#a4caff}
+.dark .profile-name{color:#e4ebf5}
+.dark .profile-sub{color:#9cb1cc}
+.dark .profile-chevron,.dark .profile-chevron .ico{color:#9cb1cc;stroke:#9cb1cc}
 .dark .qc14-notification-empty>.ico{background:#21364f}
 @media(max-width:1120px){.qc14-source-form>.section-head{display:block}.qc14-source-form>.section-head>.btn{margin-top:12px}}
 @media(min-width:761px) and (max-width:1000px){
@@ -90,8 +102,9 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
 }
 @media(max-width:760px){
  .topbar:has(.qc14-back-home){height:auto;min-height:68px;flex-wrap:wrap;gap:8px;padding-top:10px;padding-bottom:10px}
- .qc14-back-home{order:3;flex:0 1 auto;min-height:40px;font-size:11px;padding:7px 12px;margin-right:0}
- .qc14-back-home>.ico{width:22px;height:22px;padding:4px}
+ .qc14-back-home{order:3;flex:0 1 auto;min-height:38px;height:38px;font-size:11px;padding:6px 12px;margin-right:0;border-radius:10px}
+ .qc14-back-home .back-icon-circle{width:22px;height:22px;min-width:22px;border-radius:11px;padding:3px}
+ .qc14-back-home .back-icon-circle .ico{width:12px;height:12px}
  .topbar:has(.qc14-back-home)>.header-actions{margin-left:auto}
  .qc14-shortcuts{grid-template-columns:1fr}
  .qc14-source-form{padding:20px}
