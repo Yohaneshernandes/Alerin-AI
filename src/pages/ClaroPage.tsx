@@ -21074,9 +21074,10 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                   </div>
                 </div>
 
+                {/* List Kartu Agenda (Scrollable, tinggi diatur max-h-[90px] agar di mobile terlihat 1,5 kartu agenda sebelum di-scroll) */}
                 <div
                   onWheel={(e) => e.stopPropagation()}
-                  className="calendar-agenda-scrollbar self-stretch max-h-[148px] overflow-y-auto overscroll-contain touch-pan-y flex flex-col gap-2 pr-1.5"
+                  className="calendar-agenda-scrollbar self-stretch max-h-[90px] overflow-y-auto overscroll-contain touch-pan-y flex flex-col gap-2 pr-1.5"
                   style={{ WebkitOverflowScrolling: "touch" }}
                 >
                   {selectedEvents.map((ev, ei) => (
