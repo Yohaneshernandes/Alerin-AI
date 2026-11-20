@@ -10,8 +10,9 @@ let revQuery = '',
   revSort = 'terbaru';
 const REV_TABS = [
   ['semua', 'Semua'],
-  ['belum', 'Belum ditindaklanjuti'],
-  ['sudah', 'Sudah ditindaklanjuti'],
+  ['belum', 'Belum dikerjakan'],
+  ['proses', 'Dalam pengerjaan'],
+  ['selesai', 'Selesai dikerjakan'],
 ];
 function partChapterLabel(part) {
   for (const c of CHAPTERS) {
@@ -35,10 +36,10 @@ const REV_PHASE = {
 };
 const REV_ANS = { yes: 'Sudah, bukti tersedia', no: 'Belum, perlu diperbaiki', ask: 'Belum yakin, perlu klarifikasi' };
 const REV_FLOW = [
-  ['Pahami arahan', 'Setujui pemahaman Alerin, atau ubah dulu bila kurang tepat.'],
-  ['Tautkan dan kerjakan', 'Arahan masuk ke kartu di Progres Aktif. Perbaikannya dikerjakan di sana.'],
-  ['Laporkan tindak lanjut', 'Tulis perubahan yang sudah kamu lakukan. Tinjauan Alerin boleh dipakai untuk cek mandiri.'],
-  ['Catat selesai', 'Kartu di Progres Aktif bisa dicatat selesai setelah arahannya dilaporkan.'],
+  ['Catat arahan', 'Tulis catatan dosen apa adanya setiap selesai bimbingan.'],
+  ['Setujui pemahaman', 'Pastikan pemahaman Alerin sesuai maksud dosen, atau ubah dulu.'],
+  ['Jadikan Progres Aktif', 'Arahan menjadi kartu pekerjaan. Paling banyak 2 arahan dikerjakan bersamaan.'],
+  ['Selesaikan di Progres Aktif', 'Tulis perubahanmu, periksa, lalu catat selesai. Kartu di sini mencatat hasilnya.'],
 ];
 const revOf = id => (S.revisions || []).find(x => x.id === id);
 const revTask = r => (r && r.taskId && S.tasks.find(t => t.id === r.taskId)) || null;
@@ -119,84 +120,123 @@ function revisiPage() {
   let tab = S.revFilter || 'semua';
   if (!REV_TABS.some(x => x[0] === tab)) tab = 'semua';
 
-  if (!all.length) {
-    return `
-      <div class="revisi-page-head">
-        <h1>Arahan dosen dari setiap bimbingan</h1>
-        <p>Catatan asli dosen tetap utuh. Konfirmasikan pemahaman sebelum menghubungkannya ke Progres Aktif.</p>
-      </div>
-      <div class="revisi-layout">
-        <div class="revisi-main">
-          <div class="revisi-empty-card">
-            <div class="revisi-empty-icon-box">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#52647D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 20h9"></path>
-                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
-              </svg>
-            </div>
-            <h3 class="revisi-empty-title">Belum ada arahan dosen</h3>
-            <p class="revisi-empty-desc">Catat arahan setiap selesai bimbingan. Alerin membantu memahami<br/>maksudnya dan menautkannya ke pekerjaan di Progres Aktif.</p>
-            <button type="button" class="revisi-btn-tambah" data-action="add-revision">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-              </svg>
-              <span>Tambah Arahan</span>
-            </button>
-          </div>
-        </div>
-        <aside class="revisi-sidebar">
-          ${revFlow()}
-        </aside>
-      </div>
-    `;
-  }
+  const totalCount = all.length;
+  const belumCount = all.filter(r => !r.taskId && r.status !== 'done').length;
+  const prosesCount = all.filter(r => r.taskId && r.status !== 'done').length;
+  const selesaiCount = all.filter(r => r.status === 'done').length;
 
-  const belumCount = all.filter(r => r.status !== 'done').length;
-  const sudahCount = all.filter(r => r.status === 'done').length;
+  const st = stageInfo();
+  const pos = st.idx !== null && st.idx !== undefined ? (st.idx < 0 ? 'Sebelum 01 · Persiapan' : stageName(st.idx)) : 'Sebelum 01 · Persiapan';
 
   return `
-    <div class="revisi-page-head">
-      <div class="revisi-head-text">
-        <h1>Arahan dosen dari setiap bimbingan</h1>
-        <p>Catatan asli dosen tetap utuh. Konfirmasikan pemahaman sebelum menghubungkannya ke Progres Aktif.</p>
-      </div>
-      <div class="revisi-head-action">
-        <button type="button" class="revisi-btn-tambah" data-action="add-revision">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <div class="revisi-v2-container">
+      <div class="revisi-v2-head">
+        <div class="revisi-v2-head-text">
+          <h1 class="revisi-v2-title">Arahan dosen dari setiap bimbingan</h1>
+          <p class="revisi-v2-desc">Catat arahan, setujui pemahamannya, lalu kerjakan sampai selesai di Progres Aktif. Catatan asli dosen tetap utuh.</p>
+        </div>
+        <button type="button" class="revisi-v2-btn-tambah" data-action="add-revision">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <line x1="12" y1="5" x2="12" y2="19"></line>
             <line x1="5" y1="12" x2="19" y2="12"></line>
           </svg>
           <span>Tambah Arahan</span>
         </button>
       </div>
-    </div>
-    <div class="rv-tab-bar">
-      <div class="rv-tabs-group" role="tablist">
-        <button type="button" class="rv-tab-item ${tab === 'semua' ? 'active' : ''}" data-action="rev-filter:semua">
-          <span>Semua</span>
-          <span class="rv-tab-count">${all.length}</span>
-        </button>
-        <button type="button" class="rv-tab-item ${tab === 'belum' ? 'active' : ''}" data-action="rev-filter:belum">
-          <span>Belum ditindaklanjuti</span>
-          <span class="rv-tab-count">${belumCount}</span>
-        </button>
-        <button type="button" class="rv-tab-item ${tab === 'sudah' ? 'active' : ''}" data-action="rev-filter:sudah">
-          <span>Sudah ditindaklanjuti</span>
-          <span class="rv-tab-count">${sudahCount}</span>
-        </button>
+
+      <div class="rv-context-card-v2">
+        <div class="rv-context-left">
+          <div class="rv-context-icon-box">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#186DD8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+          </div>
+          <div class="rv-context-info">
+            <span class="rv-context-eyebrow">JUDUL PENELITIAN AKTIF</span>
+            <h3 class="rv-context-title">${e(S.title || 'Judul penelitian belum ditentukan')}</h3>
+            <p class="rv-context-meta">Posisi penelitian: ${e(pos)} · menurut informasimu</p>
+          </div>
+        </div>
+        <button type="button" class="rv-context-btn" data-action="guide-view:konteks">${S.title ? 'Lihat Konteks' : 'Isi Konteks Skripsi'}</button>
       </div>
-      <div class="rv-sort-group">
-        <button type="button" class="rv-sort-btn" data-action="rev-sort-toggle">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
-          </svg>
-          <span>Urutkan: <strong>${revSort === 'terbaru' ? 'Terbaru' : 'Terlama'}</strong></span>
-        </button>
+
+      <div class="rv-stats-row-v2">
+        <div class="rv-stat-card-v2">
+          <h2 class="rv-stat-num-v2">${totalCount}</h2>
+          <span class="rv-stat-lbl-v2">Total arahan</span>
+        </div>
+        <div class="rv-stat-card-v2">
+          <h2 class="rv-stat-num-v2">${belumCount}</h2>
+          <span class="rv-stat-lbl-v2">Belum dikerjakan</span>
+        </div>
+        <div class="rv-stat-card-v2">
+          <h2 class="rv-stat-num-v2">${prosesCount}/${totalCount || 1}</h2>
+          <span class="rv-stat-lbl-v2">Dalam pengerjaan</span>
+        </div>
+        <div class="rv-stat-card-v2">
+          <h2 class="rv-stat-num-v2">${selesaiCount}</h2>
+          <span class="rv-stat-lbl-v2">Selesai dikerjakan</span>
+        </div>
       </div>
-    </div>
-    <div class="rv-content-area">
-      ${revList(all, tab)}
+
+      <div class="rv-controls-wrap-v2">
+        <div class="rv-tabs-row-v2" role="tablist">
+          ${REV_TABS.map(
+            ([k, lbl]) => `
+            <button type="button" class="rv-tab-btn-v2 ${tab === k ? 'active' : ''}" data-action="rev-filter:${k}">
+              ${e(lbl)}
+            </button>
+          `,
+          ).join('')}
+        </div>
+        <div class="rv-search-row-v2">
+          <div class="rv-search-wrap-v2">
+            <svg class="rv-search-icon-v2" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input id="rv-search" type="search" placeholder="Cari arahan atau bagian penelitian" value="${e(revQuery)}" class="rv-search-input-v2">
+          </div>
+          <div class="rv-stage-select-wrap-v2">
+            <select id="rv-stage-filter" class="rv-stage-select-v2">
+              <option value="" ${revStage === '' ? 'selected' : ''}>Semua tahap</option>
+              <option value="-1" ${revStage === '-1' ? 'selected' : ''}>Sebelum 01 · Persiapan</option>
+              ${ALERIN.phases.map((p, i) => `<option value="${i}" ${revStage === String(i) ? 'selected' : ''}>Tahap ${stageName(i)}</option>`).join('')}
+            </select>
+            <svg class="rv-stage-chevron-v2" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="rv-main-grid-v2">
+        <div class="rv-cards-column-v2">
+          ${revList(all, tab)}
+        </div>
+        <aside class="rv-sidebar-column-v2">
+          <div class="rv-sidebar-card-v2">
+            <h3 class="rv-sidebar-title-v2">Alur revisi</h3>
+            <div class="rv-sidebar-list-v2">
+              ${REV_FLOW.map(
+                ([title, desc], i) => `
+                <div class="rv-sidebar-item-v2">
+                  <div class="rv-sidebar-circle-v2">${i + 1}</div>
+                  <div class="rv-sidebar-item-body-v2">
+                    <h4 class="rv-sidebar-item-title-v2">${e(title)}</h4>
+                    <p class="rv-sidebar-item-desc-v2">${e(desc)}</p>
+                  </div>
+                </div>
+              `,
+              ).join('')}
+            </div>
+          </div>
+        </aside>
+      </div>
     </div>
   `;
 }
@@ -207,10 +247,19 @@ function revContext() {
 }
 function revList(all, tab) {
   let rs = all.filter(r => {
-    if (tab === 'belum') return r.status !== 'done';
-    if (tab === 'sudah') return r.status === 'done';
+    if (tab === 'belum') return !r.taskId && r.status !== 'done';
+    if (tab === 'proses') return !!r.taskId && r.status !== 'done';
+    if (tab === 'selesai') return r.status === 'done';
     return true;
   });
+
+  const q = revQuery.trim().toLowerCase();
+  if (q) {
+    rs = rs.filter(r => revSearchText(r).includes(q));
+  }
+  if (revStage !== '') {
+    rs = rs.filter(r => String(revStageIdx(r)) === revStage);
+  }
 
   if (revSort === 'terbaru') {
     rs.sort((a, b) => (b.date || '').localeCompare(a.date || '') || String(b.created || '').localeCompare(String(a.created || '')));
@@ -222,35 +271,7 @@ function revList(all, tab) {
     return `<div class="card empty rv-empty-card" style="text-align:center;padding:48px 24px;border-radius:16px;outline:1px #DCE4EF solid;background:#fff;"><p class="muted" style="margin:0;font-size:13px;color:#64748B;">Tidak ada arahan pada filter ini.</p></div>`;
   }
 
-  const groups = {};
-  for (const r of rs) {
-    (groups[r.date] ??= []).push(r);
-  }
-
-  return Object.entries(groups)
-    .map(([d, list]) => {
-      const vis = list.length;
-      return `
-        <div class="rv-session-group">
-          <div class="rv-session-head">
-            <div class="rv-session-date-info">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                <line x1="16" y1="2" x2="16" y2="6"></line>
-                <line x1="8" y1="2" x2="8" y2="6"></line>
-                <line x1="3" y1="10" x2="21" y2="10"></line>
-              </svg>
-              <h3>Bimbingan ${dateLong(d)}</h3>
-            </div>
-            <div class="rv-session-count-badge">${vis} arahan</div>
-          </div>
-          <div class="rv-cards-list">
-            ${list.map(revCard).join('')}
-          </div>
-        </div>
-      `;
-    })
-    .join('');
+  return rs.map(revCard).join('');
 }
 const revFoot = () =>
   `<div class="rv-foot"><span class="small muted">Catatan asli, pemahaman, dan laporan tindak lanjut bisa diunduh untuk dibawa saat bimbingan.</span>${B('Unduh catatan revisi', 'rev-export', 'text', 'download')}</div>`;
@@ -368,108 +389,120 @@ function revCard(r) {
   const partStr = partChapterLabel(r.part);
   const isApproved = revUnderstood(r);
   const isDone = r.status === 'done';
+  const t = revTask(r);
 
-  let sentenceText = '';
-  if (u.maksud) {
-    const cleanMaksud = u.maksud.replace(/,\s*terutama di bagian\s+.*$/i, '').replace(/\.$/, '').trim();
-    sentenceText = `${cleanMaksud}, terutama di bagian`;
+  const stagePartText = `${r.stageText || 'Sebelum Tahap 01'} · ${partStr}`;
+
+  let badgeStatusText = 'Siap dikerjakan';
+  if (isDone) {
+    badgeStatusText = 'Selesai dikerjakan';
+  } else if (!isApproved) {
+    badgeStatusText = 'Konfirmasi pemahaman';
+  } else if (t) {
+    badgeStatusText = 'Dalam pengerjaan';
   } else {
-    sentenceText = `Dosen meminta kamu merevisi arahan ini, terutama di bagian`;
+    badgeStatusText = 'Siap dikerjakan';
   }
 
-  const langkahText = u.langkah || 'Tulis ulang rumusan masalah agar menyebut subjek, fenomena, dan fokus yang diteliti.';
-
   return `
-    <article class="rv-card ${isDone ? 'is-done' : ''}" id="rev-${r.id}">
-      <div class="rv-card-header">
-        <h3 class="rv-card-title">${e(r.topic || 'Rumusan masalah')}</h3>
-        <span class="rv-card-source">Sumber: arahan pembimbing</span>
+    <article class="rv-session-card-v2" id="rev-${r.id}" data-rv-text="${e(revSearchText(r))}" data-rv-stage="${e(String(revStageIdx(r)))}">
+      <!-- Session Header -->
+      <div class="rv-session-header-v2">
+        <h3 class="rv-session-date-v2">Bimbingan ${dateLong(r.date)}</h3>
+        <div class="rv-session-toggle-v2" aria-label="Aksi bimbingan">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#125AB5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+        </div>
       </div>
 
-      <div class="rv-original-box">
-        <div class="rv-original-head">
-          <div class="rv-original-label">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-            </svg>
-            <span>Catatan asli dosen • tidak diubah</span>
-          </div>
-          <span class="rv-verbatim-badge">Verbatim</span>
-        </div>
-        <div class="rv-original-quote">“${e(r.text)}”</div>
+      <!-- Top meta badges -->
+      <div class="rv-card-top-row">
+        <div class="rv-badge-status-v2">${e(badgeStatusText)}</div>
+        <div class="rv-stage-part-text">${e(stagePartText)}</div>
+      </div>
+
+      <!-- Topic Title -->
+      <h4 class="rv-topic-title-v2">${e(r.topic || 'Jurnal')}</h4>
+
+      <!-- Catatan Asli Dosen Box -->
+      <div class="rv-box-original-v2">
+        <span class="rv-box-eyebrow-v2">CATATAN ASLI DOSEN · TIDAK DIUBAH</span>
+        <p class="rv-box-quote-v2">“${e(r.text)}”</p>
         ${files.length ? `
-          <div class="rv-original-files">
+          <div class="rv-original-files" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;">
             ${files.map(f => B(`${e(f.name)} · ${fileSize(f.size)}`, 'open-file:' + f.id, 'text', 'file')).join('')}
           </div>
         ` : ''}
       </div>
 
-      <div class="rv-card-understanding">
-        <div class="rv-understanding-head">
-          <span class="rv-badge-alerin">Pemahaman Alerin</span>
-          <span class="rv-dot-sep">•</span>
-          ${isApproved ? `
-            <span class="rv-approved-status">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
-              <span>sudah kamu setujui</span>
-            </span>
-          ` : `
-            <span class="rv-pending-status">
-              <span>perlu kamu setujui</span>
-            </span>
-          `}
-        </div>
-
-        <div class="rv-sentence">
-          ${e(sentenceText)} <span class="rv-inline-pill">${e(partStr)}</span> .
-        </div>
-
-        <div class="rv-detail-rows">
-          <div class="rv-detail-row">
-            <span class="rv-detail-label">Bagian terdampak:</span>
-            <span class="rv-inline-pill"><span class="rv-dot-bullet">•</span> ${e(partStr)}</span>
-          </div>
-          <div class="rv-detail-row">
-            <span class="rv-detail-label">Langkah perbaikan:</span>
-            <span class="rv-detail-val">${e(langkahText)}</span>
-          </div>
+      <!-- Pemahaman Alerin Box -->
+      <div class="rv-box-understanding-v2">
+        <span class="rv-box-blue-eyebrow-v2">PEMAHAMAN ALERIN · ${isApproved ? (u.edited ? 'DIUBAH OLEHMU' : 'DIUBAH OLEHMU') : 'PERLU KAMU KONFIRMASI'}</span>
+        <p class="rv-box-maksud-v2">${e(u.maksud || '')}</p>
+        <div class="rv-box-langkah-wrap-v2">
+          <strong class="rv-box-langkah-label">Langkah perbaikan:</strong>
+          <span class="rv-box-langkah-val">${e(u.langkah || '')}</span>
         </div>
       </div>
 
-      <div class="rv-card-bottom-actions">
-        <div class="rv-action-left-group">
-          <button type="button" class="rv-btn-action-primary" data-action="rev-link:${r.id}">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="12" y1="5" x2="12" y2="19"></line>
-              <line x1="5" y1="12" x2="19" y2="12"></line>
+      <!-- Footer Area -->
+      <div class="rv-card-footer-v2">
+        <div class="rv-card-footer-top-row">
+          <div class="rv-card-link-status">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
             </svg>
-            <span>${r.taskId ? 'Buka di Progres' : 'Masukkan ke Progres'}</span>
-          </button>
-          <button type="button" class="rv-btn-action-secondary" data-action="rev-done:${r.id}">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
-            <span>${isDone ? 'Sudah Ditindaklanjuti' : 'Sudah Ditindaklanjuti'}</span>
-          </button>
-        </div>
-        <div class="rv-action-right-group">
-          <details class="rv-action-menu">
-            <summary class="rv-btn-action-more" aria-label="Menu pilihan arahan">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                <circle cx="5" cy="12" r="2"></circle>
-                <circle cx="12" cy="12" r="2"></circle>
-                <circle cx="19" cy="12" r="2"></circle>
-              </svg>
-            </summary>
-            <div class="rv-dropdown-content">
-              <button type="button" class="rv-dropdown-item" data-action="rev-detail:${r.id}">Lihat Detail</button>
-              <button type="button" class="rv-dropdown-item" data-action="rev-edit:${r.id}">Ubah Pemahaman Alerin</button>
-              <button type="button" class="rv-dropdown-item" data-action="rev-ask:${r.id}">Tanyakan Ulang ke Dosen</button>
-              <button type="button" class="rv-dropdown-item danger" data-action="rev-del:${r.id}">Hapus Arahan</button>
+            <span>${t ? `Tertaut ke <strong>${e(t.title)}</strong>` : 'Belum dibawa ke Progres Aktif'}</span>
+          </div>
+          <div class="rv-card-step-pills">
+            <!-- Step 1: Pemahaman -->
+            <div class="rv-step-pill ${isApproved ? 'is-done' : ''}">
+              ${isApproved ? `
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#125AB5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              ` : ''}
+              <span>Pemahaman</span>
             </div>
-          </details>
+            <!-- Step 2: Progres Aktif -->
+            <div class="rv-step-pill ${t ? 'is-done' : ''}">
+              ${t ? `
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#125AB5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              ` : ''}
+              <span>Progres Aktif</span>
+            </div>
+            <!-- Step 3: Selesai dikerjakan -->
+            <div class="rv-step-pill ${isDone ? 'is-done' : ''}">
+              ${isDone ? `
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#125AB5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              ` : ''}
+              <span>Selesai dikerjakan</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action row -->
+        <div class="rv-card-footer-action-row">
+          ${!isApproved ? `
+            <button type="button" class="rv-btn-card-activate" data-action="rev-detail:${r.id}">Konfirmasi Pemahaman</button>
+          ` : !t ? `
+            <button type="button" class="rv-btn-card-activate" data-action="rev-card-activate:${r.id}">Jadikan Progres Aktif</button>
+            <p class="rv-card-hint-text">Setelah dijadikan Progres Aktif, laporan perubahan sampai Catat Sebagai Selesai dikerjakan di kartunya.</p>
+          ` : `
+            <button type="button" class="rv-btn-card-activate" data-action="rev-work:${r.id}">
+              <span>Buka di Progres</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </button>
+          `}
         </div>
       </div>
     </article>
@@ -1106,7 +1139,17 @@ Object.assign(ACTIONS, {
   },
   'rev-progres-activate': arg => {
     const r = revOf(arg);
-    if (!r) return closeModal(true);
+    if (r) {
+      r.understood = true;
+    }
+    persist();
+    closeModal(true);
+    render();
+    if (r) toast(`Arahan “${r.topic || 'Jurnal'}” siap dikerjakan.`, 'check');
+  },
+  'rev-card-activate': arg => {
+    const r = revOf(arg);
+    if (!r) return;
     let t = revTask(r);
     if (!t) {
       const auto = revAutoLink(r);
@@ -1133,9 +1176,8 @@ Object.assign(ACTIONS, {
     }
     reorderTasks(true, 'Ada arahan dosen baru');
     persist();
-    closeModal(true);
     render();
-    toast(`Arahan “${r.topic}” berhasil dijadikan kartu pekerjaan di Progres Aktif.`, 'check');
+    toast(`Arahan “${r.topic || 'Jurnal'}” berhasil dijadikan kartu pekerjaan di Progres Aktif.`, 'check');
   },
   'rev-link': arg => {
     revLinkModal(arg);
