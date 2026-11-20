@@ -478,9 +478,8 @@ function revCard(r) {
             </svg>
           </summary>
           <div class="rv-session-dropdown">
-            <button type="button" class="btn text" data-action="rev-detail:${r.id}">Lihat Detail</button>
-            <button type="button" class="btn text" data-action="rev-edit:${r.id}">Ubah Pemahaman</button>
-            <button type="button" class="btn text danger-text" data-action="rev-del:${r.id}">Hapus Arahan</button>
+            <button type="button" class="btn text rv-menu-btn-blue" data-action="rev-detail:${r.id}">Lihat Detail</button>
+            <button type="button" class="btn text rv-menu-btn-blue" data-action="rev-ask:${r.id}">Tanyakan Ulang ke Dosen</button>
           </div>
         </details>
       </div>

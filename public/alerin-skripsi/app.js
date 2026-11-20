@@ -21,6 +21,8 @@ document.addEventListener('click', async ev => {
   if (btn) {
     ev.preventDefault();
     if (btn.disabled) return;
+    const parentDetails = btn.closest('details[open]');
+    if (parentDetails) parentDetails.removeAttribute('open');
     try {
       await runAction(btn.dataset.action, btn);
     } catch (error) {

@@ -5686,46 +5686,44 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
 .rv-session-dropdown {
   position: absolute !important;
   right: 0 !important;
-  top: 34px !important;
+  top: 36px !important;
   bottom: auto !important;
-  min-width: 170px !important;
+  min-width: 220px !important;
   background: #ffffff !important;
-  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.15), 0 4px 6px -2px rgba(15, 23, 42, 0.05) !important;
-  border: 1px solid #E2E8F0 !important;
-  border-radius: 10px !important;
-  padding: 6px !important;
+  box-shadow: 0 12px 32px -4px rgba(15, 23, 42, 0.12), 0 4px 12px -2px rgba(15, 23, 42, 0.06) !important;
+  border: 1px solid #DCE4EF !important;
+  border-radius: 16px !important;
+  padding: 18px 24px !important;
   z-index: 50 !important;
   display: flex !important;
   flex-direction: column !important;
-  gap: 2px !important;
+  gap: 18px !important;
+  box-sizing: border-box !important;
 }
 
-.rv-session-dropdown .btn {
+.rv-session-dropdown .btn,
+.rv-session-dropdown .rv-menu-btn-blue {
   display: flex !important;
   width: 100% !important;
   justify-content: flex-start !important;
   text-align: left !important;
-  padding: 8px 12px !important;
-  font-size: 12.5px !important;
-  border-radius: 6px !important;
+  padding: 0 !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  line-height: 22px !important;
+  border-radius: 4px !important;
   border: none !important;
   background: none !important;
-  color: #1e293b !important;
+  color: #125AB5 !important;
   cursor: pointer !important;
+  font-family: Inter, sans-serif !important;
+  transition: color 0.15s ease !important;
 }
 
-.rv-session-dropdown .btn:hover {
-  background: #f1f5f9 !important;
-}
-
-.rv-session-dropdown .btn.danger-text {
-  color: #ef4444 !important;
-  font-weight: 600 !important;
-}
-
-.rv-session-dropdown .btn.danger-text:hover {
-  background: #fef2f2 !important;
-  color: #dc2626 !important;
+.rv-session-dropdown .btn:hover,
+.rv-session-dropdown .rv-menu-btn-blue:hover {
+  color: #0b4388 !important;
+  background: none !important;
 }
 
 /* Dark mode */
@@ -5752,18 +5750,13 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
   border-color: #1f334d !important;
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important;
 }
-.dark .rv-session-dropdown .btn {
-  color: #e2e8f0 !important;
+.dark .rv-session-dropdown .btn,
+.dark .rv-session-dropdown .rv-menu-btn-blue {
+  color: #60a5fa !important;
 }
-.dark .rv-session-dropdown .btn:hover {
-  background: #152238 !important;
-}
-.dark .rv-session-dropdown .btn.danger-text {
-  color: #f87171 !important;
-}
-.dark .rv-session-dropdown .btn.danger-text:hover {
-  background: #2b171c !important;
-  color: #fca5a5 !important;
+.dark .rv-session-dropdown .btn:hover,
+.dark .rv-session-dropdown .rv-menu-btn-blue:hover {
+  color: #93c5fd !important;
 }
 
 /* Remove footer across all tabs */
