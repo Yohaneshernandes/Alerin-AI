@@ -2962,3 +2962,220 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
     justify-content: center;
   }
 }
+
+
+/* Pilih Judul Success Modal (Gambar 2 Redesign 2026-11-20) */
+.pilih-modal-dialog {
+  width: 100%;
+  max-width: 774px;
+  background: white;
+  border-radius: 24px;
+  outline: 1px #F1F5F9 solid;
+  outline-offset: -1px;
+  padding: 30px;
+  position: relative;
+  box-shadow: 0px 25px 50px -12px rgba(15, 23, 42, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 18.9px;
+  box-sizing: border-box;
+}
+
+.pilih-modal-close {
+  position: absolute;
+  top: 25px;
+  right: 25px;
+  width: 36px;
+  height: 36px;
+  border-radius: 9999px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: background 0.15s ease;
+  z-index: 10;
+}
+.pilih-modal-close:hover {
+  background: #F1F5F9;
+}
+.pilih-modal-close svg {
+  stroke: #94A3B8;
+  transition: stroke 0.15s ease;
+}
+.pilih-modal-close:hover svg {
+  stroke: #475569;
+}
+
+/* Header */
+.pilih-modal-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding-right: 40px;
+  box-sizing: border-box;
+}
+.pilih-modal-icon-wrap {
+  width: 56px;
+  height: 56px;
+  background: #EAF2FE;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.pilih-modal-title {
+  color: #0F172A;
+  font-size: 24px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 700;
+  line-height: 33px;
+  margin: 0;
+}
+
+/* Box Judul Aktif */
+.pilih-modal-box {
+  width: 100%;
+  padding: 20px;
+  background: #F3F7FD;
+  border-radius: 16px;
+  outline: 1px #DBE6F5 solid;
+  outline-offset: -1px;
+  display: flex;
+  flex-direction: column;
+  gap: 5.19px;
+  box-sizing: border-box;
+}
+.pilih-modal-box-tag {
+  color: #186DD8;
+  font-size: 12px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: 0.3px;
+}
+.pilih-modal-box-text {
+  color: #0F172A;
+  font-size: 15.5px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  line-height: 21.31px;
+}
+
+/* Description */
+.pilih-modal-desc {
+  color: #475569;
+  font-size: 14px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  line-height: 22.75px;
+  margin: 0;
+}
+
+/* Actions */
+.pilih-modal-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+.pilih-modal-btn-download {
+  flex: 1 1 0;
+  height: 45px;
+  padding: 10px 16px;
+  background: #EDF4FF;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #186DD8;
+  font-size: 13.5px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  line-height: 20.25px;
+  transition: background 0.15s ease;
+  white-space: nowrap;
+}
+.pilih-modal-btn-download:hover {
+  background: #DBEAFE;
+}
+.pilih-modal-btn-primary {
+  flex: 1 1 0;
+  height: 45px;
+  padding: 10px 20px;
+  background: #186DD8;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: white;
+  font-size: 13.5px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  line-height: 20.25px;
+  transition: background 0.15s ease;
+  white-space: nowrap;
+}
+.pilih-modal-btn-primary:hover {
+  background: #1459B0;
+}
+
+/* Dark mode */
+.dark .pilih-modal-dialog {
+  background: #182538;
+  outline-color: #34465D;
+}
+.dark .pilih-modal-title {
+  color: #F1F5F9;
+}
+.dark .pilih-modal-box {
+  background: #142238;
+  outline-color: #23354d;
+}
+.dark .pilih-modal-box-tag {
+  color: #60A5FA;
+}
+.dark .pilih-modal-box-text {
+  color: #F1F5F9;
+}
+.dark .pilih-modal-desc {
+  color: #94A3B8;
+}
+.dark .pilih-modal-btn-download {
+  background: #23354d;
+  color: #7CB2FF;
+}
+.dark .pilih-modal-btn-download:hover {
+  background: #2d4361;
+}
+
+@media (max-width: 760px) {
+  .pilih-modal-dialog {
+    padding: 20px 16px;
+    border-radius: 16px;
+    gap: 16px;
+  }
+  .pilih-modal-title {
+    font-size: 18px;
+    line-height: 24px;
+  }
+  .pilih-modal-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .pilih-modal-btn-download,
+  .pilih-modal-btn-primary {
+    width: 100%;
+  }
+}

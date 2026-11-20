@@ -697,25 +697,9 @@ function hasilAwalPage() {
 function chooseTitleModal(i) {
   const t = titleOptions()[+i];
   if (!t) return;
-  modal(
-    'Tinjau Judul Pilihan',
-    `${badge('Contoh', 'blue')}${S.title ? `<p class="small muted mt">Judul aktif saat ini: ${e(S.title)}. Judul lama tetap tersimpan di riwayat.</p>` : ''}<div class="field"><label for="title-edit">Judul penelitian <span class="required-label">Wajib</span></label><textarea id="title-edit" maxlength="220" placeholder="Tinjau atau edit sebelum dikonfirmasi." rows="3">${e(t[0])}</textarea><div class="field-meta"><span>Boleh kamu sesuaikan dulu sebelum dipilih.</span><span data-count="title-edit">${t[0].length}/220</span></div></div><p class="small muted mt">Judul dipilih oleh pengguna. Diskusikan kelayakannya dengan pembimbing. Setelah ini, pekerjaan pertamamu muncul di Progres Aktif.</p>`,
-    B('Kembali', 'close-modal') + B('Pilih Judul', 'confirm-title:' + i, 'primary'),
-    true,
-  );
-}
-function confirmTitle(i) {
-  clearErrors();
-  const el = $('#title-edit');
-  const raw = (el?.value || '').trim();
-  if (!checkRequired('title-edit')) return focusFirstError();
-  if (raw.split(/\s+/).length < 4) {
-    fieldError('title-edit', 'Judul terlalu pendek. Tulis judul lengkap, ya.');
-    return focusFirstError();
-  }
-  const title = titleCase(raw),
-    b = currentBundle(+i),
-    old = S.title;
+  const title = t[0];
+  const b = currentBundle(+i);
+  const old = S.title;
   if (old && old !== title) {
     (S.titleVersions ??= []).push({ title: old, time: new Date().toISOString() });
     S.needsReview = true;
@@ -727,16 +711,18 @@ function confirmTitle(i) {
   S.titleChosenAt = new Date().toISOString();
   S.stageLog = (S.stageLog || []).filter(x => x.stage !== 0);
   S.stageLog.unshift({ stage: 0, text: 'Judul dipilih', by: 'menurut pengguna', date: isoToday() });
+
   const sp = splitTheoryMethod(S.draft?.idea);
   if (sp.method && !S.profile.method) S.profile.method = detectMethod(sp.method);
+
   ensureGuide();
   S.guide.view = 'guide';
   S.guide.part = 'background';
   guideSeed();
-  /* Latar Belakang yang sudah selesai tidak dibuat ulang; pengguna bisa membukanya lagi dari Progres Aktif. */
+
   const doneBg = !S.tasks.some(x => x.part === 'background' && x.status !== 'done') &&
     S.tasks.find(x => x.part === 'background' && x.status === 'done');
-  const t =
+  const task =
     doneBg ||
     partTask('background', {
       source: 'mulai',
@@ -747,24 +733,71 @@ function confirmTitle(i) {
   record(old && old !== title ? 'Judul diganti' : 'Judul dipilih', title);
   synchronizeResearch();
   persist();
-  closeModal(true);
-  /* Revisi 18 November: yang diperbarui adalah posisi penelitian tersimpan, dan hanya setelah pengguna setuju. */
-  const pos = stageInfo().idx;
-  if (pos === null || pos < 1) {
-    modal(
-      'Perbarui posisi penelitianmu?',
-      `<p>Judul sudah dipilih. Perbarui posisi penelitianmu menjadi <strong>${e(positionLabel(1))}</strong>?</p><p class="small muted">Posisi ini dipakai Beranda dan Peta Skripsi untuk menentukan langkahmu.</p>`,
-      B('Nanti saja', 'close-modal') + B('Perbarui', 'kondisi-up:proposal', 'primary'),
-    );
-  }
   render();
-  toast(
-    doneBg
-      ? `Judul dipilih. “${t.title}” sudah selesai; buka lagi dari Progres Aktif bila perlu disesuaikan dengan judul baru.`
-      : `Judul dipilih. “${t.title}” sudah ada di Progres Aktif.`,
-    '',
-    6000,
-  );
+
+  showTitleChosenModal(i, title);
+}
+
+function showTitleChosenModal(i, title) {
+  lastFocus = document.activeElement;
+  modalDirty = false;
+  $('#overlay-root').innerHTML = `
+    <div class="overlay" data-overlay="true">
+      <div class="pilih-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="pilih-modal-title">
+        <button type="button" class="pilih-modal-close" data-action="close-modal" aria-label="Tutup jendela">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+
+        <div class="pilih-modal-header">
+          <div class="pilih-modal-icon-wrap">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#186DD8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <path d="m9 15 2 2 4-4"></path>
+            </svg>
+          </div>
+          <h2 id="pilih-modal-title" class="pilih-modal-title">Judul penelitianmu sudah dipilih</h2>
+        </div>
+
+        <div class="pilih-modal-box">
+          <div class="pilih-modal-box-tag">Judul Aktif</div>
+          <div class="pilih-modal-box-text">${e(title)}</div>
+        </div>
+
+        <p class="pilih-modal-desc">Unduh outline dan kerangka berpikir untuk bahan bimbingan, atau lanjutkan penyusunan Bab I.</p>
+
+        <div class="pilih-modal-actions">
+          <button type="button" class="pilih-modal-btn-download" data-action="download-outline:${i}">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#186DD8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            <span>Unduh Outline</span>
+          </button>
+          <button type="button" class="pilih-modal-btn-download" data-action="download-framework:${i}">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#186DD8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            <span>Unduh Kerangka Berpikir</span>
+          </button>
+          <button type="button" class="pilih-modal-btn-primary" data-action="go-bab-1:${i}">
+            <span>Lanjutkan ke Bab I</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.style.overflow = 'hidden';
 }
 
 Object.assign(ACTIONS, {
@@ -797,7 +830,27 @@ Object.assign(ACTIONS, {
   'choose-title': arg => {
     chooseTitleModal(arg);
   },
-  'confirm-title': arg => {
-    confirmTitle(arg);
+  'download-outline': arg => {
+    const b = currentBundle(+arg) || currentBundle(0);
+    const txt = b ? outlineText(b.outline) : 'Outline Judul';
+    const filename = `Outline_${(S.title || 'Skripsi').slice(0, 30).replace(/[^a-zA-Z0-9]/g, '_')}.txt`;
+    download(filename, txt);
+    toast('Outline judul berhasil diunduh.');
+  },
+  'download-framework': arg => {
+    const b = currentBundle(+arg) || currentBundle(0);
+    const txt = b ? rowText(b.framework) : 'Kerangka Berpikir';
+    const filename = `Kerangka_Berpikir_${(S.title || 'Skripsi').slice(0, 30).replace(/[^a-zA-Z0-9]/g, '_')}.txt`;
+    download(filename, txt);
+    toast('Kerangka berpikir berhasil diunduh.');
+  },
+  'go-bab-1': () => {
+    closeModal(true);
+    ensureGuide();
+    S.guide.view = 'guide';
+    S.guide.part = 'background';
+    persist();
+    go('mulai');
+    toast('Membuka Bab I · Latar Belakang.');
   },
 });
