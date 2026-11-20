@@ -332,7 +332,7 @@ function pustakaPage() {
       </div>
 
       <div class="field pustaka-field-row">
-        <label for="dp-authors">Penulis</label>
+        <label for="dp-authors">Penulis <span class="req">*</span></label>
         <input id="dp-authors" data-dp="authors" data-nocap="1" type="text" value="${e(f.authors ?? '')}" placeholder="Mis. Putra, Adi; Sari, Bunga" maxlength="300" class="pustaka-input">
       </div>
 

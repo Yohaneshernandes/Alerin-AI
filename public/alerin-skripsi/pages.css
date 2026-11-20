@@ -334,25 +334,59 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
 .pustaka-folders-grid,.pustaka-folder-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media(max-width:760px){
-.pustaka-page-head h1{font-size:24px;line-height:30px}
-.pustaka-card{padding:18px 16px}
-.pustaka-field-row{grid-template-columns:1fr;gap:6px}
-.pustaka-two-fields{grid-template-columns:1fr}
-.pustaka-three-fields{grid-template-columns:1fr}
-.pustaka-styles-grid{grid-template-columns:repeat(2,1fr)}
-.pustaka-saved-head{flex-direction:column;align-items:flex-start}
-.pustaka-saved-controls{width:100%;flex-direction:column;align-items:stretch}
-.pustaka-tabs{width:100%}
-.pustaka-tab-btn{flex:1}
-.pustaka-search-wrap{width:100%;max-width:100%}
-.pustaka-folders-grid,.pustaka-folder-grid{grid-template-columns:1fr;gap:10px}
-.pustaka-item-row{flex-direction:column;align-items:flex-start;gap:12px;padding:14px 4px}
-.pustaka-item-left{width:100%;padding-right:0}
-.pustaka-item-right{width:100%;justify-content:space-between;flex-wrap:wrap}
-.pustaka-folder-popover{left:50%;right:auto;transform:translateX(-50%);min-width:190px;width:200px;max-width:calc(100vw - 32px);animation:folderPopoverInMobile .15s cubic-bezier(.16,1,.3,1)}
-@keyframes folderPopoverInMobile{from{opacity:0;transform:translate(-50%,6px)}to{opacity:1;transform:translate(-50%,0)}}
-.pustaka-preview-actions{flex-direction:column}
-.pustaka-btn-salin,.pustaka-btn-simpan{width:100%}
+  .pustaka-page-head{text-align:center;margin-bottom:16px;padding-top:4px}
+  .pustaka-page-head h1{font-size:25px;font-weight:650;line-height:31.25px;color:#142238;text-align:center;margin:0}
+  .pustaka-page-head p{font-size:13px;font-weight:400;line-height:18px;color:#637087;text-align:center;margin:6px auto 0;max-width:320px}
+  .pustaka-top-grid{display:flex;flex-direction:column;gap:15px}
+  .pustaka-right-stack{display:flex;flex-direction:column;gap:15px}
+  .pustaka-card{padding:15px 20px 20px;border-radius:16px;border:1px solid #dce4ef;box-shadow:0 2px 4px rgba(35,58,87,.01);box-sizing:border-box}
+  .pustaka-source-card{min-height:auto}
+  .pustaka-saved-card{margin-top:0;padding:15px 20px 20px;border-radius:16px;border:1px solid #dce4ef;box-shadow:0 2px 4px rgba(35,58,87,.01)}
+  .pustaka-card-header{margin-bottom:14px}
+  .pustaka-card-header.between{flex-direction:column;align-items:flex-start;gap:12px}
+  .pustaka-card-header h2{font-size:18px;font-weight:650;line-height:25.2px;color:#142238;margin:0}
+  .pustaka-card-header p{font-size:12px;font-weight:400;line-height:17px;color:#637087;margin:4px 0 0}
+  .btn-cari-jurnal{background:#edf4ff;border-radius:9px;color:#125ab5;font-size:12px;font-weight:600;line-height:17.4px;min-height:44px;height:44px;padding:0 14px;display:inline-flex;align-items:center;gap:8px;border:none;cursor:pointer}
+  .pustaka-field-row{display:flex;flex-direction:column;align-items:stretch;gap:5px;margin-top:14px}
+  .pustaka-field-row label{font-size:14px;font-weight:600;line-height:18px;color:#4c5b70;margin:0;display:flex;align-items:center;gap:2px}
+  .pustaka-two-fields{display:flex;flex-direction:column;gap:14px;margin-top:14px}
+  .pustaka-col-field label{font-size:14px;font-weight:600;line-height:18px;color:#4c5b70;margin:0 0 5px 0}
+  .pustaka-three-fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}
+  .pustaka-three-fields .pustaka-col-field label{font-size:14px;font-weight:600;line-height:18px;color:#4c5b70;margin:0 0 5px 0}
+  .pustaka-three-fields .pustaka-col-field .opt{display:none}
+  .pustaka-doi-group{margin-top:14px;gap:5px}
+  .pustaka-doi-label-row{display:flex;align-items:center;gap:5px}
+  .pustaka-doi-label{font-size:14px;font-weight:600;line-height:18px;color:#4c5b70}
+  .pustaka-doi-label-row .opt{display:none}
+  .pustaka-doi-box{display:flex;align-items:center;min-height:44px;height:46px;padding:5px 7px 5px 12px;border-radius:8px;border:1px solid #dfe5ee;box-sizing:border-box;background:#fff}
+  .pustaka-doi-box input{font-size:14px;color:#202e42}
+  .pustaka-btn-cari-doi{height:33px;min-height:33px;background:#edf4ff;border-radius:9px;color:#125ab5;font-size:12px;font-weight:600;padding:0 16px;display:inline-flex;align-items:center;gap:8px;white-space:nowrap;border:none}
+  .pustaka-input,.pustaka-dropdown-trigger{min-height:44px;height:44px;font-size:14px;border:1px solid #dfe5ee;border-radius:8px;padding:10px 12px}
+  .pustaka-input::placeholder{font-size:14px;color:#a4aebd}
+  .pustaka-styles-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+  .pustaka-style-btn{min-height:44px;height:44px;font-size:12px;font-weight:600;line-height:17.4px;padding:0 4px;border-radius:9px;border:1px solid #dce4ef;background:#fff;color:#202e42}
+  .pustaka-style-btn.active{background:#eff6ff;border-color:#347cea;color:#1765c2}
+  .pustaka-format-card .pustaka-card-header p,.pustaka-preview-card .pustaka-card-header p{font-size:12px;line-height:21px;color:#52647d}
+  .pustaka-preview-banner{padding:10px 15px;border-radius:9px 9px 0 0;font-size:12px;line-height:15px;color:#2872ce;background:#eef6ff;border:1px solid #dce8f8;border-bottom:none}
+  .pustaka-preview-box{min-height:160px;padding:15px;border-radius:0 0 9px 9px;border:1px solid #dce8f8;border-top:none;box-sizing:border-box}
+  .pustaka-preview-actions{display:flex;flex-direction:row;align-items:center;gap:9px;margin-top:10px;flex-wrap:wrap}
+  .pustaka-btn-salin{min-height:44px;height:44px;padding:0 16px;border-radius:9px;border:1px solid #dce4ef;background:#fff;color:#202e42;font-size:12px;font-weight:600;width:auto}
+  .pustaka-btn-simpan{min-height:44px;height:44px;padding:0 16px;border-radius:9px;background:#186dd8;box-shadow:0 2px 5px rgba(24,87,155,.08);color:#fff;font-size:12px;font-weight:600;border:none;width:auto}
+  .pustaka-saved-head{display:flex;flex-direction:column;align-items:flex-start;gap:10px;margin-bottom:10px}
+  .pustaka-saved-title-group h2{font-size:18px;font-weight:650;line-height:25.2px;color:#142238}
+  .pustaka-saved-title-group p{font-size:12px;font-weight:400;line-height:21px;color:#637087;margin-top:3px}
+  .pustaka-saved-controls{width:100%;display:flex;flex-direction:column;align-items:stretch;gap:10px}
+  .pustaka-tabs{display:flex;align-items:center;gap:11px;width:100%}
+  .pustaka-tab-btn{height:44px;min-height:44px;border-radius:9px;font-size:12px;font-weight:600;line-height:14.5px;padding:0 12px;border:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+  .pustaka-tab-btn:first-child{flex:1.75}
+  .pustaka-tab-btn:last-child{flex:1}
+  .pustaka-search-wrap{width:100%;max-width:100%;height:40px;min-height:40px;padding:0 12px;background:#fff;border:1px solid #dce4ef;border-radius:8px;box-sizing:border-box;display:flex;align-items:center;gap:8px}
+  .pustaka-empty-msg{color:#52647d;font-size:13px;font-weight:400;line-height:19px;margin-top:8px}
+  .pustaka-folders-grid,.pustaka-folder-grid{grid-template-columns:1fr;gap:10px}
+  .pustaka-item-row{flex-direction:column;align-items:flex-start;gap:12px;padding:14px 4px}
+  .pustaka-item-left{width:100%;padding-right:0}
+  .pustaka-item-right{width:100%;justify-content:space-between;flex-wrap:wrap}
+  .pustaka-folder-popover{left:50%;right:auto;transform:translateX(-50%);min-width:190px;width:200px;max-width:calc(100vw - 32px);animation:folderPopoverInMobile .15s cubic-bezier(.16,1,.3,1)}
 }
 .dark .pustaka-page-head h1{color:#e4ebf5}
 .dark .pustaka-page-head p{color:#92a4bd}
