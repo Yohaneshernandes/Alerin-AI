@@ -3877,3 +3877,321 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
     flex-direction: column !important;
   }
 }
+
+/* ========================================================
+   B18 - Modal Ubah Paket Alerin Skripsi
+   ======================================================== */
+.b18-plan-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  background: rgba(15, 23, 42, 0.60) !important;
+  backdrop-filter: blur(4px) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
+  z-index: 1000 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 24px !important;
+  box-sizing: border-box !important;
+  animation: fade-in 0.15s ease !important;
+}
+
+.b18-plan-dialog {
+  width: 100% !important;
+  max-width: 1024px !important;
+  background: #ffffff !important;
+  border-radius: 24px !important;
+  box-shadow: 0px 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+  outline: 1px #F1F5F9 solid !important;
+  outline-offset: -1px !important;
+  position: relative !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+  animation: toast-in 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.b18-plan-close-btn {
+  position: absolute !important;
+  top: 21px !important;
+  right: 21px !important;
+  width: 36px !important;
+  height: 36px !important;
+  padding: 8px !important;
+  background: rgba(241, 245, 249, 0.80) !important;
+  border-radius: 9999px !important;
+  border: none !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #94A3B8 !important;
+  transition: all 0.15s ease !important;
+  z-index: 10 !important;
+}
+.b18-plan-close-btn:hover {
+  background: #E2E8F0 !important;
+  color: #64748B !important;
+}
+
+.b18-plan-content {
+  padding: 25px 36px 30px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 25px !important;
+  box-sizing: border-box !important;
+  overflow-y: auto !important;
+  max-height: calc(100dvh - 60px) !important;
+}
+
+.b18-plan-header {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  padding-right: 48px !important;
+}
+
+.b18-plan-eyebrow {
+  color: #64748B !important;
+  font-size: 11px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  line-height: 16.5px !important;
+  letter-spacing: 1.1px !important;
+}
+
+.b18-plan-title {
+  color: #0F172A !important;
+  font-size: 30px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 700 !important;
+  line-height: 36px !important;
+  letter-spacing: -0.02em !important;
+  margin: 0 !important;
+}
+
+.b18-plan-subtitle {
+  color: #475569 !important;
+  font-size: 16px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 400 !important;
+  line-height: 24px !important;
+  max-width: 672px !important;
+  margin: 0 !important;
+}
+
+.b18-plan-grid {
+  display: flex !important;
+  align-items: stretch !important;
+  gap: 20px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.b18-plan-card {
+  flex: 1 1 0 !important;
+  min-width: 0 !important;
+  padding: 20px !important;
+  background: #ffffff !important;
+  border-radius: 16px !important;
+  outline: 1px #DCE4EF solid !important;
+  outline-offset: -1px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  box-sizing: border-box !important;
+  transition: all 0.2s ease !important;
+}
+
+.b18-plan-card-pro {
+  background: rgba(239, 246, 255, 0.20) !important;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05) !important;
+  outline: 2px #186DD8 solid !important;
+  outline-offset: -2px !important;
+}
+
+.b18-plan-card-top {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+}
+
+.b18-plan-card-eyebrow {
+  color: #64748B !important;
+  font-size: 10px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  line-height: 15px !important;
+  letter-spacing: 0.5px !important;
+}
+
+.b18-plan-card-eyebrow-pro {
+  color: #186DD8 !important;
+}
+
+.b18-plan-card-name {
+  color: #0F172A !important;
+  font-size: 24px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 700 !important;
+  line-height: 32px !important;
+  margin: 0 !important;
+}
+
+.b18-plan-card-desc {
+  color: #64748B !important;
+  font-size: 12px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 400 !important;
+  line-height: 16px !important;
+  min-height: 32px !important;
+  margin: 0 !important;
+}
+
+.b18-plan-divider {
+  height: 1px !important;
+  background: #DCE4EF !important;
+  margin: 16px 0 !important;
+  width: 100% !important;
+}
+
+.b18-plan-divider-pro {
+  background: #DBEAFE !important;
+  margin: 12px 0 12px 0 !important;
+}
+
+.b18-plan-features {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  flex: 1 1 auto !important;
+}
+
+.b18-plan-features li {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 10px !important;
+  font-size: 12px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 400 !important;
+  line-height: 16px !important;
+  color: #334155 !important;
+}
+
+.b18-plan-features svg {
+  flex-shrink: 0 !important;
+  margin-top: 1px !important;
+}
+
+.b18-plan-card-action {
+  padding-top: 30px !important;
+  margin-top: auto !important;
+  width: 100% !important;
+}
+
+.b18-plan-btn-current {
+  width: 100% !important;
+  height: 38px !important;
+  padding: 10px 16px !important;
+  background: rgba(239, 246, 255, 0.80) !important;
+  border-radius: 12px !important;
+  outline: 1px #BFDBFE solid !important;
+  outline-offset: -1px !important;
+  border: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #186DD8 !important;
+  font-size: 12px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 600 !important;
+  line-height: 16px !important;
+  box-sizing: border-box !important;
+}
+
+.b18-plan-btn-upgrade {
+  width: 100% !important;
+  height: 38px !important;
+  padding: 10px 16px !important;
+  background: #186DD8 !important;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05) !important;
+  border-radius: 12px !important;
+  border: none !important;
+  outline: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #ffffff !important;
+  font-size: 12px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 600 !important;
+  line-height: 16px !important;
+  cursor: pointer !important;
+  box-sizing: border-box !important;
+  transition: background 0.15s ease !important;
+}
+.b18-plan-btn-upgrade:hover {
+  background: #125AB5 !important;
+}
+
+/* Dark mode */
+.dark .b18-plan-dialog {
+  background: #101c2e !important;
+  outline-color: #1f334d !important;
+}
+.dark .b18-plan-close-btn {
+  background: #1a2a40 !important;
+  color: #8da2bd !important;
+}
+.dark .b18-plan-title {
+  color: #f1f5f9 !important;
+}
+.dark .b18-plan-subtitle {
+  color: #94a3b8 !important;
+}
+.dark .b18-plan-card {
+  background: #152238 !important;
+  outline-color: #24364e !important;
+}
+.dark .b18-plan-card-pro {
+  background: rgba(24, 109, 216, 0.15) !important;
+  outline-color: #186DD8 !important;
+}
+.dark .b18-plan-card-name {
+  color: #f1f5f9 !important;
+}
+.dark .b18-plan-features li {
+  color: #cbd5e1 !important;
+}
+.dark .b18-plan-divider {
+  background: #24364e !important;
+}
+.dark .b18-plan-divider-pro {
+  background: #1e3a5f !important;
+}
+.dark .b18-plan-btn-current {
+  background: rgba(24, 109, 216, 0.20) !important;
+  outline-color: #186DD8 !important;
+  color: #60a5fa !important;
+}
+
+@media (max-width: 900px) {
+  .b18-plan-grid {
+    flex-direction: column !important;
+  }
+  .b18-plan-content {
+    padding: 20px !important;
+  }
+  .b18-plan-title {
+    font-size: 22px !important;
+    line-height: 28px !important;
+  }
+  .b18-plan-subtitle {
+    font-size: 14px !important;
+    line-height: 20px !important;
+  }
+}

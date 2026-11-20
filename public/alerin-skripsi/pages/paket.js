@@ -1,35 +1,242 @@
 'use strict';
-/* Halaman paket. */
+/* Halaman & Modal paket Alerin Skripsi. */
+
+function planModal() {
+  lastFocus = document.activeElement;
+  modalDirty = false;
+  $('#overlay-root').innerHTML = `
+    <div class="overlay b18-plan-overlay" data-overlay="true">
+      <div class="b18-plan-dialog" role="dialog" aria-modal="true" aria-labelledby="plan-modal-title">
+        <button type="button" class="b18-plan-close-btn" data-action="close-modal" aria-label="Tutup jendela">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+
+        <div class="b18-plan-content">
+          <header class="b18-plan-header">
+            <span class="b18-plan-eyebrow">PAKET ALERIN SKRIPSI</span>
+            <h2 id="plan-modal-title" class="b18-plan-title">Ruang yang sesuai dengan kebutuhanmu.</h2>
+            <p class="b18-plan-subtitle">
+              Semua paket membuka alur utama. Kedalaman penjelasan, kapasitas, dan jatah<br>penggunaan menyesuaikan kebutuhan penelitian.
+            </p>
+          </header>
+
+          <div class="b18-plan-grid">
+            <!-- Card 1: Gratis -->
+            <div class="b18-plan-card b18-plan-card-gratis">
+              <div class="b18-plan-card-top">
+                <span class="b18-plan-card-eyebrow">LANGKAH PERTAMA</span>
+                <h3 class="b18-plan-card-name">Gratis</h3>
+                <p class="b18-plan-card-desc">Kenali arah dan cara kerja Alerin.</p>
+              </div>
+
+              <div class="b18-plan-divider"></div>
+
+              <ul class="b18-plan-features">
+                <li>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#186DD8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                  <span>3 opsi judul</span>
+                </li>
+                <li>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#186DD8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                  <span>Ringkasan dasar</span>
+                </li>
+                <li>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#186DD8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                  <span>Pemeriksaan utama: 1/hari · 2/minggu</span>
+                </li>
+                <li>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#186DD8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                  <span>Pembaruan AI: 1/hari · 2/minggu</span>
+                </li>
+                <li>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#186DD8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                  <span>Pemrosesan berkas: 1/hari · 3/minggu</span>
+                </li>
+                <li>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#186DD8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                  <span>Berkas hingga 5 MB</span>
+                </li>
+                <li>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#186DD8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                  <span>Koleksi 5 sumber</span>
+                </li>
+              </ul>
+
+              <div class="b18-plan-card-action">
+                <div class="b18-plan-btn-current">
+                  <span>Paket Anda Saat Ini</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 2: Plus -->
+            <div class="b18-plan-card b18-plan-card-plus">
+              <div class="b18-plan-card-top">
+                <span class="b18-plan-card-eyebrow">PROGRES RUTIN</span>
+                <h3 class="b18-plan-card-name">Plus</h3>
+                <p class="b18-plan-card-desc">Lebih leluasa untuk pemeriksaan berkala.</p>
+              </div>
+
+              <div class="b18-plan-divider"></div>
+
+              <ul class="b18-plan-features">
+                <li>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#186DD8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                  <span>3 opsi judul</span>
+                </li>
+                <li>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#186DD8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                  <span>Penjelasan keterkaitan</span>
+                </li>
+                <li>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#186DD8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                  <span>Pemeriksaan utama: 2/hari · 6/minggu</span>
+                </li>
+                <li>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#186DD8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                  <span>Pembaruan AI: 2/hari · 8/minggu</span>
+                </li>
+                <li>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#186DD8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                  <span>Pemrosesan berkas: 6/hari · 10/minggu</span>
+                </li>
+                <li>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#186DD8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                  <span>Berkas hingga 15 MB</span>
+                </li>
+                <li>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#186DD8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                  <span>Koleksi 20 sumber</span>
+                </li>
+              </ul>
+
+              <div class="b18-plan-card-action">
+                <button type="button" class="b18-plan-btn-upgrade" data-action="upgrade-plan:Plus">
+                  <span>Upgrade Paket</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Card 3: Pro -->
+            <div class="b18-plan-card b18-plan-card-pro">
+              <div class="b18-plan-card-top">
+                <span class="b18-plan-card-eyebrow b18-plan-card-eyebrow-pro">RISET LEBIH INTENSIF</span>
+                <h3 class="b18-plan-card-name">Pro</h3>
+                <p class="b18-plan-card-desc">Cakupan lebih dalam untuk revisi dan<br>hubungan antarbab.</p>
+              </div>
+
+              <div class="b18-plan-divider b18-plan-divider-pro"></div>
+
+              <ul class="b18-plan-features">
+                <li>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#186DD8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                  <span>5 opsi judul</span>
+                </li>
+                <li>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#186DD8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                  <span>Analisis risiko dan konsekuensi</span>
+                </li>
+                <li>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#186DD8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                  <span>Pemeriksaan utama: 3/hari · 10/minggu</span>
+                </li>
+                <li>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#186DD8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                  <span>Pembaruan AI: 4/hari · 16/minggu</span>
+                </li>
+                <li>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#186DD8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                  <span>Pemrosesan berkas: 10/hari · 18/minggu</span>
+                </li>
+                <li>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#186DD8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                  <span>Berkas hingga 30 MB</span>
+                </li>
+                <li>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#186DD8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                  <span>Koleksi 50 sumber</span>
+                </li>
+              </ul>
+
+              <div class="b18-plan-card-action">
+                <button type="button" class="b18-plan-btn-upgrade" data-action="upgrade-plan:Pro">
+                  <span>Upgrade Paket</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.style.overflow = 'hidden';
+  requestAnimationFrame(() => {
+    $('#overlay-root .b18-plan-close-btn')?.focus({ preventScroll: true });
+  });
+}
+
 function paketPage() {
-  return (
-    pageHead(
-      'Ruang yang sesuai dengan kebutuhanmu.',
-      'Semua paket membuka alur utama. Kedalaman penjelasan, kapasitas, dan jatah penggunaan menyesuaikan kebutuhan penelitian.',
-      '',
-      '',
-      '',
-      'PAKET ALERIN SKRIPSI',
-    ) +
-    `<div class="plan-grid">${['Gratis', 'Plus', 'Pro']
-      .map((p, i) => {
-        const l = ALERIN.planLimits[p];
-        return `<section class="pricing-card ${S.plan === p ? 'selected' : ''}"><div class="between"><span class="eyebrow">${['LANGKAH PERTAMA', 'PROGRES RUTIN', 'RISET LEBIH INTENSIF'][i]}</span>${S.plan === p ? badge('Paket saat ini', 'blue') : ''}</div><h2>${p}</h2><p>${['Kenali arah dan cara kerja Alerin.', 'Lebih leluasa untuk pemeriksaan berkala.', 'Cakupan lebih dalam untuk revisi dan hubungan antarbab.'][i]}</p><ul>${[`${l.titles} opsi judul`, `${['Ringkasan dasar', 'Penjelasan keterkaitan', 'Analisis risiko dan konsekuensi'][i]}`, `Pemeriksaan utama: ${l.main[0]}/hari · ${l.main[1]}/minggu`, `Pembaruan AI: ${l.update[0]}/hari · ${l.update[1]}/minggu`, `Pemrosesan berkas: ${l.file[0]}/hari · ${l.file[1]}/minggu`, `Berkas hingga ${l.mb} MB`, `Koleksi ${l.refs} sumber`].map(t => `<li>${I('check')}<span>${t}</span></li>`).join('')}</ul>${B(S.plan === p ? 'Lihat manfaat paket' : 'Coba tampilan ' + p, 'set-plan:' + p, S.plan === p ? 'soft' : 'primary', S.plan === p ? 'info' : '')}</section>`;
-      })
-      .join(
-        '',
-      )}</div><div class="mt">${note('Pemilihan paket di sini hanya mengubah pratinjau akses dan kedalaman konten. Tidak ada pembayaran atau perubahan langganan Alerin asli. Ketentuan jatah mengikuti PDF terbaru.')}</div><section class="card mt"><h3>Bagaimana penggunaan dihitung?</h3><div class="grid3 mt">${[
-      ['Pemeriksaan Utama', 'Satu rangkaian hasil awal, termasuk lima jenis output, dihitung satu permintaan.'],
-      ['Pembaruan AI', 'Analisis baru setelah perubahan isian, kondisi, arahan, atau bukti.'],
-      ['Pemrosesan Berkas', 'Membaca berkas baru atau versi revisi; berbeda dari analisis akademik.'],
-    ]
-      .map(([h, p]) => `<div><h4>${h}</h4><p class="small" style="margin-top:8px;line-height:1.9">${p}</p></div>`)
-      .join(
-        '',
-      )}</div><hr class="rule"><p class="small">Simpan draf, Kerjakan, Tunda, pilih judul, membuka hasil, dan mengubah target secara manual tidak memakai jatah AI. Referensi ini tidak memotong kuota akun produksi.</p></section>`
-  );
+  requestAnimationFrame(() => planModal());
+  return berandaPage();
 }
 
 Object.assign(ACTIONS, {
+  'open-plan-modal': () => planModal(),
+  'plan-modal': () => planModal(),
+  'upgrade-plan': arg => {
+    if (!ALERIN.planLimits[arg]) return;
+    S.plan = arg;
+    record('Paket diubah', arg + ' · pratinjau tanpa transaksi');
+    persist();
+    closeModal(true);
+    render();
+    toast('Paket berhasil diubah ke ' + arg + '!');
+  },
   'set-plan': arg => {
     modal(
       'Pratinjau paket ' + e(arg),
