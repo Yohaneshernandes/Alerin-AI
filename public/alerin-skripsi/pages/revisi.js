@@ -558,7 +558,7 @@ function revCard(r) {
         <!-- Action row -->
         <div class="rv-card-footer-action-row">
           ${!isApproved ? `
-            <button type="button" class="rv-btn-card-activate" data-action="rev-detail:${r.id}">Konfirmasi Pemahaman</button>
+            <button type="button" class="rv-btn-card-activate" data-action="rev-confirm:${r.id}">Konfirmasi Pemahaman</button>
           ` : !t ? `
             <button type="button" class="rv-btn-card-activate" data-action="rev-card-activate:${r.id}">Jadikan Progres Aktif</button>
             <p class="rv-card-hint-text">Setelah dijadikan Progres Aktif, laporan perubahan sampai Catat Sebagai Selesai dikerjakan di kartunya.</p>
@@ -770,12 +770,19 @@ function revDetailModal(id, fresh = false) {
     : '';
 
   const isApproved = revUnderstood(r);
-  const badgeLabel = isApproved ? 'Sudah disetujui' : 'Konfirmasi pemahaman';
+  const isDone = r.status === 'done';
+  const badgeLabel = fresh
+    ? (isApproved ? 'Sudah disetujui' : 'Konfirmasi pemahaman')
+    : (isDone ? 'Selesai dikerjakan' : 'Dalam pengerjaan');
+  const badgeClass = isDone ? 'rv-review-badge is-done' : (fresh && !isApproved ? 'rv-review-badge is-warning' : 'rv-review-badge');
+
+  const taskTitleText = t ? t.title : ('Tindak lanjuti arahan: ' + (r.topic || 'Jurnal'));
+  const criteriaStatusText = `Dikerjakan di Progres Aktif: ${e(taskTitleText)} · Prioritas Utama`;
 
   const body = `
     ${alertBox}
     <div class="rv-review-meta-block">
-      <div class="rv-review-badge">${e(badgeLabel)}</div>
+      <div class="${badgeClass}">${e(badgeLabel)}</div>
       <div class="rv-review-heading-wrap">
         <h3 class="rv-review-topic">${e(r.topic || 'Jurnal')}</h3>
         <p class="rv-review-meta-line">${e(meta)}</p>
@@ -827,7 +834,7 @@ function revDetailModal(id, fresh = false) {
           <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
           <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
         </svg>
-        <span>${t ? `Tertaut ke <strong>${e(t.title)}</strong>` : 'Belum dibawa ke Progres Aktif'}</span>
+        <span>${criteriaStatusText}</span>
       </div>
     </div>
 
@@ -839,7 +846,8 @@ function revDetailModal(id, fresh = false) {
     ` : ''}
   `;
 
-  const foot = `
+  const foot = fresh
+    ? `
     <button type="button" class="rv-review-btn-edit" data-action="rev-edit:${id}">Ubah Pemahaman</button>
     <button type="button" class="rv-review-btn-approve" data-action="rev-ok:${id}">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -847,9 +855,14 @@ function revDetailModal(id, fresh = false) {
       </svg>
       <span>Setujui Pemahaman</span>
     </button>
+  `
+    : `
+    <button type="button" class="rv-detail-btn-close" data-action="close-modal">Tutup</button>
+    <button type="button" class="rv-detail-btn-work" data-action="rev-work:${id}">Buka di Progres Aktif</button>
   `;
 
-  modal('Tinjau pemahaman Alerin', body, foot, 'rv-review-modal');
+  const modalTitle = fresh ? 'Tinjau pemahaman Alerin' : 'Detail arahan';
+  modal(modalTitle, body, foot, 'rv-review-modal');
 }
 function revActiveConfirmModal(id) {
   const r = revOf(id);
@@ -1187,8 +1200,11 @@ Object.assign(ACTIONS, {
     revSort = revSort === 'terbaru' ? 'terlama' : 'terbaru';
     render();
   },
+  'rev-confirm': arg => {
+    revDetailModal(arg, true);
+  },
   'rev-detail': arg => {
-    revDetailModal(arg);
+    revDetailModal(arg, false);
   },
   'rev-ok': arg => {
     const r = revOf(arg);
@@ -1254,9 +1270,33 @@ Object.assign(ACTIONS, {
     saveRevLink(arg);
   },
   'rev-work': arg => {
-    const r = revOf(arg),
-      t = revTask(r);
-    if (!t) return revLinkModal(arg);
+    const r = revOf(arg);
+    if (!r) return;
+    let t = revTask(r);
+    if (!t) {
+      const auto = revAutoLink(r);
+      if (auto) {
+        t = auto;
+      } else {
+        const part = r.part || analyzeArahan(r.text).part;
+        const title = 'Tindak lanjuti arahan: ' + (r.topic || 'Jurnal');
+        t = plainTask({
+          title: capitalize(title),
+          part,
+          phase: partPhase(part),
+          source: 'revisi',
+          reason: r.understanding?.maksud || '',
+          doing: r.understanding?.langkah || '',
+          deliverable: 'Bagian yang sudah kamu perbaiki sesuai arahan dosen.',
+        });
+        r.taskId = t.id;
+        record('Arahan masuk ke Progres Aktif', r.topic + ' → ' + t.title);
+      }
+      r.understood = true;
+      reorderTasks(true, 'Ada arahan dosen baru');
+      persist();
+    }
+    closeModal(true);
     focusTaskInProgres(t.id);
   },
   'rev-done': arg => {
