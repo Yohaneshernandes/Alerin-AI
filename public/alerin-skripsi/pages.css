@@ -5935,6 +5935,7 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
   min-height: 36px !important;
   padding: 0 !important;
   border-radius: 9px !important;
+  display: inline-flex !important;
 }
 
 .brand-icon-default {
@@ -6234,31 +6235,7 @@ body.collapsed .brand-icon-box:hover .brand-icon-hover .ico {
   }
   .sidebar .brand-icon-box,
   .collapsed .sidebar .brand-icon-box {
-    width: 32px !important;
-    height: 32px !important;
-    min-width: 32px !important;
-    min-height: 32px !important;
-    border-radius: 8px !important;
-    border: 1px solid #52647D !important;
-    background: transparent !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-  }
-  .sidebar .brand-icon-box .brand-icon-default {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-  }
-  .sidebar .brand-icon-box .brand-icon-hover {
     display: none !important;
-  }
-  .sidebar .brand-icon-img {
-    width: 28px !important;
-    height: 28px !important;
-    object-fit: contain !important;
   }
   .sidebar .brand-name,
   .collapsed .sidebar .brand-name {
