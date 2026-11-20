@@ -713,23 +713,119 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
 }
 
 @media (max-width: 768px) {
-  .mentor-card {
-    padding: 16px;
+  .mentor-page-head {
+    margin-top: -7px;
+    margin-bottom: 15px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
   .mentor-page-head h1 {
-    font-size: 24px;
-    line-height: 30px;
+    font-size: 25px;
+    font-weight: 650;
+    line-height: 31.25px;
+    text-align: center;
+    letter-spacing: -0.2px;
   }
-  .mentor-actions {
-    flex-direction: column;
-    align-items: stretch;
+  .mentor-page-head p {
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 18px;
+    text-align: center;
+    max-width: 310px;
+    margin: 6px auto 0;
   }
-  .mentor-btn-wa, .mentor-btn-web {
-    width: 100%;
-    justify-content: center;
+  .mentor-card {
+    padding: 15px 15px 20px 15px;
+    border-radius: 16px;
+    box-shadow: 0px 2px 4px rgba(35, 58, 87, 0.01);
+  }
+  .mentor-card-title {
+    font-size: 18px;
+    font-weight: 650;
+    line-height: 25.2px;
+    margin: 0 0 14px 0;
+  }
+  .mentor-field {
+    margin: 0 0 0 0;
+  }
+  .mentor-field-label-row {
+    margin-bottom: 6px;
+  }
+  .mentor-field-label {
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 19.2px;
+  }
+  .mentor-counter {
+    font-size: 9px;
+    line-height: 14.4px;
+  }
+  .mentor-textarea {
+    min-height: 155px;
+    height: 155px;
+    padding: 9px 10px;
+    font-size: 12px;
+    line-height: 20px;
+  }
+  .mentor-accordion {
+    margin-top: 15px;
+  }
+  .mentor-accordion > summary.mentor-accordion-toggle {
+    min-height: 44px;
+    padding: 11.8px 16px 12.2px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 19.8px;
+    border-radius: 9px;
   }
   .mentor-summary-box {
-    padding: 14px 16px;
+    margin-top: 12px;
+    padding: 10px 20px 15px 20px;
+    gap: 5px;
+    font-size: 12px;
+    line-height: 22.2px;
+    border-radius: 10px;
+  }
+  .mentor-actions {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 9px !important;
+    margin-top: 15px !important;
+    width: 100% !important;
+    flex-wrap: nowrap !important;
+  }
+  .mentor-btn-wa, .mentor-btn-web {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    width: auto !important;
+    min-height: 44px !important;
+    padding: 11.8px 8px 12.2px 8px !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    line-height: 17.4px !important;
+    justify-content: center !important;
+    white-space: nowrap !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
+  }
+  .mentor-btn-wa {
+    gap: 8px !important;
+    box-shadow: 0px 2px 5px rgba(24, 87, 155, 0.08) !important;
+  }
+  .mentor-btn-wa svg {
+    width: 16px !important;
+    height: 16px !important;
+    flex-shrink: 0 !important;
+  }
+  .mentor-footer-note {
+    margin: 15px 0 0 0 !important;
+    font-size: 12px !important;
+    font-weight: 400 !important;
+    line-height: 16px !important;
+    color: #52647D !important;
   }
 }
 
