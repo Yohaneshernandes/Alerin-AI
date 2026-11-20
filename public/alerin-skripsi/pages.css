@@ -5541,3 +5541,187 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
 .dark .rv-sidebar-item-desc-v2 {
   color: #94a3b8 !important;
 }
+
+/* Empty state card for Revisi Dosen v2 */
+.rv-empty-state-card-v2 {
+  background: #ffffff !important;
+  border-radius: 12px !important;
+  outline: 1px rgba(226, 232, 240, 0.90) solid !important;
+  outline-offset: -1px !important;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05) !important;
+  padding: 60px 24px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  min-height: 380px !important;
+  box-sizing: border-box !important;
+}
+
+.rv-empty-icon-box {
+  width: 36px !important;
+  height: 36px !important;
+  background: #f1f5f9 !important;
+  border-radius: 8px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-bottom: 16px !important;
+}
+
+.rv-empty-title {
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  color: #0F172A !important;
+  margin: 0 0 8px 0 !important;
+  line-height: 26px !important;
+}
+
+.rv-empty-desc {
+  font-size: 13px !important;
+  color: #64748B !important;
+  line-height: 20px !important;
+  max-width: 440px !important;
+  margin: 0 0 24px 0 !important;
+}
+
+.rv-empty-btn-tambah {
+  background: #186DD8 !important;
+  color: #ffffff !important;
+  border: 1px solid #186DD8 !important;
+  border-radius: 9px !important;
+  min-height: 44px !important;
+  padding: 10px 20px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  cursor: pointer !important;
+  box-shadow: 0px 2px 5px rgba(24, 87, 155, 0.12) !important;
+  transition: all 0.15s ease !important;
+}
+
+.rv-empty-btn-tambah:hover {
+  background: #155bb5 !important;
+}
+
+/* 3 dots menu button on card */
+.rv-session-menu {
+  position: relative !important;
+}
+
+.rv-session-dots-btn {
+  width: 28px !important;
+  height: 28px !important;
+  min-width: 28px !important;
+  min-height: 28px !important;
+  max-width: 28px !important;
+  max-height: 28px !important;
+  background: #EEF5FF !important;
+  border-radius: 6px !important;
+  outline: 1px #D8E6FA solid !important;
+  outline-offset: -1px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  border: none !important;
+  list-style: none !important;
+  color: #125AB5 !important;
+  transition: all 0.15s ease !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.rv-session-dots-btn::-webkit-details-marker {
+  display: none !important;
+}
+
+.rv-session-dots-btn:hover {
+  background: #dbeafe !important;
+}
+
+.rv-session-dropdown {
+  position: absolute !important;
+  right: 0 !important;
+  top: 34px !important;
+  bottom: auto !important;
+  min-width: 170px !important;
+  background: #ffffff !important;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.15), 0 4px 6px -2px rgba(15, 23, 42, 0.05) !important;
+  border: 1px solid #E2E8F0 !important;
+  border-radius: 10px !important;
+  padding: 6px !important;
+  z-index: 50 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+}
+
+.rv-session-dropdown .btn {
+  display: flex !important;
+  width: 100% !important;
+  justify-content: flex-start !important;
+  text-align: left !important;
+  padding: 8px 12px !important;
+  font-size: 12.5px !important;
+  border-radius: 6px !important;
+  border: none !important;
+  background: none !important;
+  color: #1e293b !important;
+  cursor: pointer !important;
+}
+
+.rv-session-dropdown .btn:hover {
+  background: #f1f5f9 !important;
+}
+
+.rv-session-dropdown .btn.danger-text {
+  color: #ef4444 !important;
+  font-weight: 600 !important;
+}
+
+.rv-session-dropdown .btn.danger-text:hover {
+  background: #fef2f2 !important;
+  color: #dc2626 !important;
+}
+
+/* Dark mode */
+.dark .rv-empty-state-card-v2 {
+  background: #101c2e !important;
+  outline-color: #1f334d !important;
+}
+.dark .rv-empty-icon-box {
+  background: #152238 !important;
+}
+.dark .rv-empty-title {
+  color: #f1f5f9 !important;
+}
+.dark .rv-empty-desc {
+  color: #94a3b8 !important;
+}
+.dark .rv-session-dots-btn {
+  background: #152238 !important;
+  outline-color: #24364e !important;
+  color: #60a5fa !important;
+}
+.dark .rv-session-dropdown {
+  background: #101c2e !important;
+  border-color: #1f334d !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important;
+}
+.dark .rv-session-dropdown .btn {
+  color: #e2e8f0 !important;
+}
+.dark .rv-session-dropdown .btn:hover {
+  background: #152238 !important;
+}
+.dark .rv-session-dropdown .btn.danger-text {
+  color: #f87171 !important;
+}
+.dark .rv-session-dropdown .btn.danger-text:hover {
+  background: #2b171c !important;
+  color: #fca5a5 !important;
+}

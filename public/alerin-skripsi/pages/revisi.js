@@ -35,6 +35,12 @@ const REV_PHASE = {
   selesai: ['Selesai dikerjakan', 'green', 'selesai'],
 };
 const REV_ANS = { yes: 'Sudah, bukti tersedia', no: 'Belum, perlu diperbaiki', ask: 'Belum yakin, perlu klarifikasi' };
+const REV_FLOW_EMPTY = [
+  ['Pahami arahan', 'Setujui pemahaman Alerin, atau ubah dulu bila kurang tepat.'],
+  ['Tautkan dan kerjakan', 'Arahan masuk ke kartu di Progres Aktif. Perbaikannya dikerjakan di sana.'],
+  ['Laporkan tindak lanjut', 'Tulis perubahan yang sudah kamu lakukan. Tinjauan Alerin boleh dipakai untuk cek mandiri.'],
+  ['Catat selesai', 'Kartu di Progres Aktif bisa dicatat selesai setelah arahannya dilaporkan.'],
+];
 const REV_FLOW = [
   ['Catat arahan', 'Tulis catatan dosen apa adanya setiap selesai bimbingan.'],
   ['Setujui pemahaman', 'Pastikan pemahaman Alerin sesuai maksud dosen, atau ubah dulu.'],
@@ -117,6 +123,60 @@ function revGuessPart(src) {
 /* ---------- Halaman ---------- */
 function revisiPage() {
   const all = S.revisions || [];
+
+  if (!all.length) {
+    return `
+      <div class="revisi-v2-container">
+        <div class="revisi-v2-head">
+          <div class="revisi-v2-head-text">
+            <h1 class="revisi-v2-title">Arahan dosen dari setiap bimbingan</h1>
+            <p class="revisi-v2-desc">Catatan asli dosen tetap utuh. Konfirmasikan pemahaman sebelum menghubungkannya ke Progres Aktif.</p>
+          </div>
+        </div>
+
+        <div class="rv-main-grid-v2">
+          <div class="rv-cards-column-v2">
+            <div class="rv-empty-state-card-v2">
+              <div class="rv-empty-icon-box">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#52647D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 20h9"></path>
+                  <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                </svg>
+              </div>
+              <h3 class="rv-empty-title">Belum ada arahan dosen</h3>
+              <p class="rv-empty-desc">Catat arahan setiap selesai bimbingan. Alerin membantu memahami<br/>maksudnya dan menautkannya ke pekerjaan di Progres Aktif.</p>
+              <button type="button" class="rv-empty-btn-tambah" data-action="add-revision">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                <span>Tambah Arahan</span>
+              </button>
+            </div>
+          </div>
+          <aside class="rv-sidebar-column-v2">
+            <div class="rv-sidebar-card-v2">
+              <h3 class="rv-sidebar-title-v2">Alur revisi</h3>
+              <div class="rv-sidebar-list-v2">
+                ${REV_FLOW_EMPTY.map(
+                  ([title, desc], i) => `
+                  <div class="rv-sidebar-item-v2">
+                    <div class="rv-sidebar-circle-v2">${i + 1}</div>
+                    <div class="rv-sidebar-item-body-v2">
+                      <h4 class="rv-sidebar-item-title-v2">${e(title)}</h4>
+                      <p class="rv-sidebar-item-desc-v2">${e(desc)}</p>
+                    </div>
+                  </div>
+                `,
+                ).join('')}
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    `;
+  }
+
   let tab = S.revFilter || 'semua';
   if (!REV_TABS.some(x => x[0] === tab)) tab = 'semua';
 
@@ -409,11 +469,20 @@ function revCard(r) {
       <!-- Session Header -->
       <div class="rv-session-header-v2">
         <h3 class="rv-session-date-v2">Bimbingan ${dateLong(r.date)}</h3>
-        <div class="rv-session-toggle-v2" aria-label="Aksi bimbingan">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#125AB5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-          </svg>
-        </div>
+        <details class="v6-options rv-session-menu">
+          <summary class="rv-session-dots-btn" aria-label="Pilihan arahan ${e(r.topic || 'Jurnal')}">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#125AB5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="5" cy="12" r="1.5"></circle>
+              <circle cx="12" cy="12" r="1.5"></circle>
+              <circle cx="19" cy="12" r="1.5"></circle>
+            </svg>
+          </summary>
+          <div class="rv-session-dropdown">
+            <button type="button" class="btn text" data-action="rev-detail:${r.id}">Lihat Detail</button>
+            <button type="button" class="btn text" data-action="rev-edit:${r.id}">Ubah Pemahaman</button>
+            <button type="button" class="btn text danger-text" data-action="rev-del:${r.id}">Hapus Arahan</button>
+          </div>
+        </details>
       </div>
 
       <!-- Top meta badges -->
