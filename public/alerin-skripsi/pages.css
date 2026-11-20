@@ -2278,3 +2278,321 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
     padding: 14px;
   }
 }
+
+
+/* Mulai Skripsi — Peta Skripsi & Topik/Judul (Gambar 2 Redesign 2026-11-20) */
+.idea-card {
+  width: 100%;
+  background: white;
+  box-shadow: 0px 2px 4px rgba(35, 58, 87, 0.01);
+  border-radius: 16px;
+  outline: 1px #DCE4EF solid;
+  outline-offset: -1px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  box-sizing: border-box;
+  margin-bottom: 20px;
+}
+.idea-card-header {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+.idea-card-title {
+  color: #0F172A;
+  font-size: 24px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 700;
+  line-height: 32px;
+  margin: 0;
+}
+
+/* Stepper Track & Items */
+.idea-stepper-wrap {
+  position: relative;
+  width: 100%;
+  padding: 4px 16px 8px 16px;
+  box-sizing: border-box;
+}
+.idea-stepper-track {
+  position: absolute;
+  left: 36px;
+  right: 36px;
+  top: 24px;
+  height: 2px;
+  background: #E2E8F0;
+  z-index: 1;
+}
+.idea-stepper-list {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+}
+.idea-step-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  min-width: 60px;
+  text-decoration: none;
+}
+.idea-step-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  background: white;
+  outline: 2px #CBD5E1 solid;
+  outline-offset: -2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #334155;
+  font-size: 14px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  line-height: 20px;
+  transition: all 0.15s ease;
+  position: relative;
+}
+.idea-step-circle.active {
+  background: #186DD8;
+  outline: none;
+  color: white;
+  font-weight: 700;
+  box-shadow: 0px 2px 4px -2px rgba(0, 0, 0, 0.10), 0px 4px 6px -1px rgba(0, 0, 0, 0.10), 0px 0px 0px 4px #EFF6FF;
+}
+.idea-step-item:hover .idea-step-circle:not(.active) {
+  outline-color: #186DD8;
+  color: #186DD8;
+}
+.idea-step-label {
+  margin-top: 10px;
+  color: #1E293B;
+  font-size: 14px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  line-height: 20px;
+  text-align: center;
+  white-space: nowrap;
+}
+.idea-step-label.active {
+  color: #0F172A;
+  font-weight: 700;
+}
+
+/* Suggestion Pills */
+.idea-topics-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin-top: 2px;
+}
+.idea-topic-pill {
+  height: 45px;
+  padding: 8px 16px;
+  background: #EDF4FF;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  color: #186DD8;
+  font-size: 14px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  line-height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+.idea-topic-pill:hover {
+  background: #DBEAFE;
+}
+
+/* Form Fields */
+.idea-fields-group {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  margin-top: 4px;
+}
+.idea-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+.idea-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+.idea-label-left {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.idea-label {
+  color: #1E293B;
+  font-size: 14px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  line-height: 20px;
+  margin: 0;
+}
+.idea-req {
+  color: #C53645;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+}
+.idea-opt {
+  color: #94A3B8;
+  font-size: 12px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  line-height: 16px;
+  margin-left: 6px;
+}
+.idea-count {
+  color: #94A3B8;
+  font-size: 12px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  line-height: 16px;
+}
+.idea-textarea {
+  width: 100%;
+  min-height: 84px;
+  padding: 12px 16px;
+  background: white;
+  border-radius: 12px;
+  outline: 1px #E2E8F0 solid;
+  outline-offset: -1px;
+  border: none;
+  font-size: 14px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #1E293B;
+  resize: vertical;
+  line-height: 20px;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+  transition: outline-color 0.15s ease, box-shadow 0.15s ease;
+}
+.idea-textarea:focus {
+  outline: 1.5px #186DD8 solid;
+  outline-offset: -1.5px;
+}
+.idea-textarea::placeholder {
+  color: #94A3B8;
+}
+
+/* Submit */
+.idea-submit-row {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  width: 100%;
+  margin-top: 4px;
+}
+.idea-btn-submit {
+  height: 45px;
+  padding: 10px 24px;
+  background: #186DD8;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  color: white;
+  font-size: 16px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  line-height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease;
+}
+.idea-btn-submit:hover {
+  background: #1459B0;
+}
+
+/* Dark mode support */
+.dark .idea-card {
+  background: #182538;
+  outline-color: #34465D;
+}
+.dark .idea-card-title {
+  color: #F1F5F9;
+}
+.dark .idea-stepper-track {
+  background: #334155;
+}
+.dark .idea-step-circle {
+  background: #182538;
+  outline-color: #475569;
+  color: #CBD5E1;
+}
+.dark .idea-step-circle.active {
+  background: #186DD8;
+  color: white;
+  box-shadow: 0px 0px 0px 4px #1E3A8A;
+}
+.dark .idea-step-label {
+  color: #CBD5E1;
+}
+.dark .idea-step-label.active {
+  color: #F1F5F9;
+}
+.dark .idea-topic-pill {
+  background: #1E293B;
+  color: #7CB2FF;
+}
+.dark .idea-label {
+  color: #F1F5F9;
+}
+.dark .idea-opt,
+.dark .idea-count {
+  color: #94A3B8;
+}
+.dark .idea-textarea {
+  background: #132033;
+  color: #F1F5F9;
+  outline-color: #34465D;
+}
+
+@media (max-width: 760px) {
+  .idea-stepper-wrap {
+    overflow-x: auto;
+    padding-bottom: 12px;
+  }
+  .idea-stepper-list {
+    min-width: 480px;
+  }
+  .idea-stepper-track {
+    min-width: 440px;
+  }
+  .idea-topics-row {
+    gap: 8px;
+  }
+  .idea-topic-pill {
+    font-size: 12px;
+    height: 38px;
+    padding: 6px 12px;
+  }
+  .idea-card {
+    padding: 16px;
+    border-radius: 12px;
+  }
+}

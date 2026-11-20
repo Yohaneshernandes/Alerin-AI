@@ -29,8 +29,7 @@ function mulaiPage() {
   const view = mulaiView();
   if (view === 'guide') return workspaceView();
   if (view === 'saran') return strukturView();
-  if (view === 'idea')
-    return pageHead('Mulai Skripsi', 'Tentukan topik atau judul sebagai awal penyusunan.') + chapterNav('idea') + ideaView();
+  if (view === 'idea') return ideaPageView();
   return konteksView();
 }
 /* Pemilih bab dan subbagian (tampilan GPT: Peta Skripsi · Panduan Penyusunan).
@@ -225,19 +224,116 @@ function konteksView() {
     </div>
   `;
 }
-function ideaView() {
+function ideaPageView() {
+  ensureGuide();
   const d = S.draft || {};
-  const topics = /komunikasi/i.test(S.profile.major)
-    ? ['Film sebagai media belajar', 'Literasi informasi mahasiswa', 'Komunikasi kesehatan digital', 'Pengalaman audiens media sosial']
-    : /akuntansi|ekonomi/i.test(S.profile.major)
-      ? ['Literasi keuangan mahasiswa', 'Pelaporan keuangan UMKM', 'Penggunaan aplikasi akuntansi', 'Perilaku pengelolaan keuangan']
-      : ['Pengalaman belajar mahasiswa', 'Pemanfaatan teknologi di bidang studi', 'Hambatan akses layanan', 'Perubahan perilaku di lingkungan kampus'];
-  const chosen = S.title
-    ? `<div class="mt mb">${note(`Judul dipilih: <strong>${e(S.title)}</strong>. Lanjutkan penyusunan lewat Bab I–${lastRoman()} di atas. ` + B('Buka Bab I', 'guide-bab:1', 'text small'))}</div>`
-    : S.draftReady
-      ? `<div class="mt mb">${note('Rancangan dan opsi judul terakhir tersimpan. ' + B('Lihat Opsi Judul', 'v2-show-titles', 'text small'))}</div>`
-      : '';
-  return `${chosen}<section class="card"><h2>Topik / Judul</h2><p>Inspirasi awal untuk ${e(S.profile.major || 'jurusan yang kamu isi')}.</p><div class="v4-topics">${topics.map(t => B(e(t), 'use-topic:' + t, 'soft')).join('')}</div>${field('draft-topic', 'Topik atau bidang yang ingin diteliti', d.topic, 'Topik yang ingin dipahami', 150, 'textarea', 'draft.topic', false)}${field('draft-phenomenon', 'Fenomena atau masalah yang kamu lihat', d.phenomenon, 'Kondisi atau masalah yang kamu amati', 600, 'textarea', 'draft.phenomenon', false)}${field('draft-location', 'Objek, subjek, atau lokasi penelitian', d.location, 'Siapa atau apa yang ingin diteliti?', 150, 'textarea', 'draft.location')}${field('draft-idea', 'Teori, jurnal, atau metode yang terpikir', d.idea, 'Boleh dikosongkan jika belum ada gambaran.', 500, 'textarea', 'draft.idea')}${B('Lanjutkan', 'build-draft', 'primary')}${S.draftSavedAt ? `<p class="small muted mt">Draf tersimpan ${e(savedStamp(S.draftSavedAt))}.</p>` : ''}</section>`;
+  const topics = [
+    'Film sebagai media belajar',
+    'Literasi informasi mahasiswa',
+    'Komunikasi kesehatan digital',
+    'Pengalaman audiens media sosial',
+  ];
+
+  return `
+    <div class="mulai-page-head">
+      <h1>Mulai Skripsi</h1>
+      <p>Panduan pengerjaan dari penentuan arah sampai Bab ${lastRoman()}.</p>
+    </div>
+
+    <!-- CARD 1: PETA SKRIPSI (STEPPER) -->
+    <div class="idea-card idea-stepper-card">
+      <div class="idea-card-header">
+        <h2 class="idea-card-title">Peta Skripsi</h2>
+      </div>
+      <div class="idea-stepper-wrap">
+        <div class="idea-stepper-track"></div>
+        <div class="idea-stepper-list">
+          <div class="idea-step-item active" data-action="guide-view:idea" role="button" tabindex="0" aria-label="Tahap 0: Topik/Judul">
+            <div class="idea-step-circle active">
+              <div class="idea-step-glow"></div>
+              <span>0</span>
+            </div>
+            <div class="idea-step-label active">Topik/Judul</div>
+          </div>
+          ${CHAPTERS.map((ch, idx) => `
+            <div class="idea-step-item" data-action="guide-bab:${idx + 1}" role="button" tabindex="0" title="Bab ${ch[0]} · ${e(ch[1])}" aria-label="Bab ${idx + 1}: ${e(ch[1])}">
+              <div class="idea-step-circle">
+                <span>${idx + 1}</span>
+              </div>
+              <div class="idea-step-label">Bab ${idx + 1}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 2: TOPIK/JUDUL FORM -->
+    <div class="idea-card idea-form-card">
+      <div class="idea-card-header">
+        <h2 class="idea-card-title">Topik/Judul</h2>
+      </div>
+
+      <div class="idea-topics-row">
+        ${topics.map(t => `
+          <button type="button" class="idea-topic-pill" data-action="use-topic:${e(t)}">
+            <span>${e(t)}</span>
+          </button>
+        `).join('')}
+      </div>
+
+      <div class="idea-fields-group">
+        <div class="field idea-field">
+          <div class="idea-label-row">
+            <div class="idea-label-left">
+              <label for="draft-topic" class="idea-label">Topik atau bidang yang ingin diteliti</label>
+              <span class="idea-req">*</span>
+            </div>
+            <span class="idea-count" data-count="draft-topic">${String(d.topic || '').length}/150</span>
+          </div>
+          <textarea id="draft-topic" maxlength="150" data-bind="draft.topic" placeholder="Topik yang ingin dipahami" class="idea-textarea" rows="2" aria-required="true">${e(d.topic || '')}</textarea>
+        </div>
+
+        <div class="field idea-field">
+          <div class="idea-label-row">
+            <div class="idea-label-left">
+              <label for="draft-phenomenon" class="idea-label">Fenomena atau masalah yang kamu lihat</label>
+              <span class="idea-req">*</span>
+            </div>
+            <span class="idea-count" data-count="draft-phenomenon">${String(d.phenomenon || '').length}/600</span>
+          </div>
+          <textarea id="draft-phenomenon" maxlength="600" data-bind="draft.phenomenon" placeholder="Kondisi atau masalah yang kamu amati" class="idea-textarea" rows="2" aria-required="true">${e(d.phenomenon || '')}</textarea>
+        </div>
+
+        <div class="field idea-field">
+          <div class="idea-label-row">
+            <div class="idea-label-left">
+              <label for="draft-location" class="idea-label">Objek, subjek, atau lokasi penelitian</label>
+              <span class="idea-opt">Opsional</span>
+            </div>
+            <span class="idea-count" data-count="draft-location">${String(d.location || '').length}/150</span>
+          </div>
+          <textarea id="draft-location" maxlength="150" data-bind="draft.location" placeholder="Siapa atau apa yang ingin diteliti?" class="idea-textarea" rows="2">${e(d.location || '')}</textarea>
+        </div>
+
+        <div class="field idea-field">
+          <div class="idea-label-row">
+            <div class="idea-label-left">
+              <label for="draft-idea" class="idea-label">Teori, jurnal, atau metode yang terpikir</label>
+              <span class="idea-opt">Opsional</span>
+            </div>
+            <span class="idea-count" data-count="draft-idea">${String(d.idea || '').length}/500</span>
+          </div>
+          <textarea id="draft-idea" maxlength="500" data-bind="draft.idea" placeholder="Boleh dikosongkan jika belum ada gambaran." class="idea-textarea" rows="2">${e(d.idea || '')}</textarea>
+        </div>
+
+        <div class="idea-submit-row">
+          <button type="button" class="idea-btn-submit" data-action="build-draft">
+            <span>Lanjutkan</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
 }
 function workspaceView() {
   ensureGuide();
@@ -413,7 +509,7 @@ Object.assign(ACTIONS, {
       record(old ? 'Judul aktif diganti dari Konteks' : 'Judul dicatat dari Konteks', S.title);
     }
     ensureGuide();
-    S.guide.view = !c.chapter && !S.title ? 'idea' : 'guide';
+    S.guide.view = 'idea';
     if (c.chapter) {
       const first = CHAPTERS[+c.chapter - 1][2].map(x => x[0]).find(partApplies);
       if (PARTS[S.guide.part]?.chapter !== +c.chapter && first) S.guide.part = first;
@@ -423,7 +519,7 @@ Object.assign(ACTIONS, {
     persist();
     render();
     window.scrollTo({ top: 0 });
-    toast(S.guide.view === 'idea' ? 'Konteks tersimpan. Lanjutkan dengan topik atau judul.' : 'Konteks tersimpan. Workspace siap dipakai.');
+    toast('Konteks tersimpan. Lanjutkan dengan topik atau judul.');
   },
   'guide-bab': arg => {
     ensureGuide();
