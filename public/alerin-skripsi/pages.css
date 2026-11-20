@@ -5725,3 +5725,8 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
   background: #2b171c !important;
   color: #fca5a5 !important;
 }
+
+/* Remove footer across all tabs */
+.global-footer {
+  display: none !important;
+}
