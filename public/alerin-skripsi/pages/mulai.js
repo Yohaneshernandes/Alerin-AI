@@ -346,15 +346,42 @@ function workspaceView() {
     nx = nextPart(id),
     c = ensureKonteks();
   S.guide.part = id;
-  const area = (fid, label, opt, val, max, rows, ph, bind) =>
-    `<div class="field"><label for="${fid}">${e(label)}${opt ? OPT : REQ}</label><textarea id="${fid}" data-guide="${bind}" maxlength="${max}" placeholder="${e(ph)}" rows="${rows}" ${opt ? '' : 'aria-required="true"'}>${e(val || '')}</textarea><div class="field-meta"><span>${opt ? 'Boleh dilengkapi kemudian.' : ''}</span><span data-count="${fid}">${String(val || '').length}/${max}</span></div></div>`;
+
+  const curChapterParts = CHAPTERS[p.chapter - 1][2].filter(
+    x => partApplies(x[0]) && (p.chapter !== 1 || x[0] !== 'boundaries' || id === 'boundaries'),
+  );
+
+  const area = (fid, label, opt, val, max, rows, ph, bind) => `
+    <div class="field idea-field">
+      <div class="idea-label-row">
+        <div class="idea-label-left">
+          <label for="${fid}" class="idea-label">${e(label)}</label>
+          ${opt ? '<span class="idea-opt">Opsional</span>' : '<span class="idea-req">*</span>'}
+        </div>
+        <span class="idea-count" data-count="${fid}">${String(val || '').length}/${max}</span>
+      </div>
+      <textarea id="${fid}" data-guide="${bind}" maxlength="${max}" placeholder="${e(ph)}" rows="${rows}" class="idea-textarea" ${opt ? '' : 'aria-required="true"'}>${e(val || '')}</textarea>
+    </div>
+  `;
+
   const fields = p.fields
     .map((f, i) => {
       const [label, opt] = f.split('|');
       return area('guide-' + id + '-' + i, label, !!opt, v['f' + i], 1500, 3, 'Tuliskan berdasarkan bahan yang tersedia.', `${id}:f${i}`);
     })
     .join('');
-  const draf = area('guide-' + id + '-draft', 'Draf tulisanmu', true, v.draft, 6000, 7, `Tulis paragraf ${p.name.toLowerCase()} dengan kalimatmu sendiri. Alerin tidak menuliskannya untukmu.`, `${id}:draft`);
+
+  const draf = area(
+    'guide-' + id + '-draft',
+    'Draf tulisanmu',
+    true,
+    v.draft,
+    6000,
+    3,
+    `Tulis paragraf ${p.name.toLowerCase()} dengan kalimatmu sendiri.`,
+    `${id}:draft`,
+  );
+
   const kendala = String(c.kendala || '').trim(),
     kp = kendala && kendalaPart(kendala);
   const kendalaNote =
@@ -364,18 +391,132 @@ function workspaceView() {
   const doneNote = done
     ? `<div class="mt">${note(`<strong>${e(p.name)} sudah dicatat selesai</strong> menurut pengguna${done.completedAt ? ' · ' + dateLong(done.completedAt.slice(0, 10)) : ''}. Lihat pekerjaannya di Progres Aktif, atau buka lagi dengan alasan bila perlu diubah.`, 'green')}</div>`
     : '';
+
   const buttons = done
-    ? B('Lihat Pekerjaan', 'lihat-pekerjaan:' + done.id, 'primary') + B('Buka Lagi', 'reopen:' + done.id, '') + B('Lihat Panduan', 'guide-panduan', 'text')
-    : B('Kerjakan', 'guide-task', 'primary') + B('Lihat Panduan', 'guide-panduan', 'text');
-  /* Lihat Panduan: cara mengisi kolom di bagian ini, dengan tombol Tutup (QC 17 November). */
-  const panduan = S.guide.guidance[id]
-    ? `<div class="v3-guidance" id="panduan-box" tabindex="-1"><div class="between"><span class="eyebrow">PANDUAN PENGISIAN</span>${B('Tutup', 'guide-panduan-tutup', 'text small', 'close')}</div><h3>${e(p.name)}</h3>${outputRows(guidanceRows(id), false)}<p class="small muted">Panduan berbasis isianmu, belum analisis AI. Setelah isian lengkap, klik Kerjakan untuk melihat poin pembahasan.</p></div>`
-    : '';
-  const next = `<div class="mt"><h3>Langkah berikutnya</h3><div class="v3-focus"><span>${nx ? e(partLabel(nx)) : 'Periksa bab yang sudah kamu tulis'}</span>${nx ? B('Lanjut ke ' + PARTS[nx].name, 'guide-part:' + nx, 'soft') : B('Periksa Skripsi', 'periksa-bab:' + p.chapter, 'soft')}</div></div>`;
-  return (
-    pageHead('Mulai Skripsi', `Panduan Bab I–${lastRoman()} · isian setiap subbagian tersimpan otomatis di perangkat ini.`, 'guide-view:konteks', 'Edit Konteks') +
-    `<div class="v3-context-strip"><strong>${e(S.title || 'Judul belum dipilih')}</strong><span>${e(c.method || S.profile.method || 'Metode belum ditentukan')}</span></div><div class="v3-work-layout">${chapterNav('guide')}<section class="card v3-editor"><span class="eyebrow">BAB ${p.roman} · ${e(p.chapterName)}</span><h2>${e(p.name)}</h2>${['hypothesis', 'boundaries'].includes(id) ? note('Bagian ini opsional. Gunakan jika sesuai desain dan pedoman kampus.') : ''}${selectField('guide-method', 'Pendekatan penelitian', METODE, c.method || 'Belum ditentukan')}<div class="v3-section-fields">${fields}${draf}</div>${kendalaNote}${doneNote}<div class="actions v3-editor-actions">${buttons}</div><p class="small muted mt" data-autosave="1">Isian tersimpan otomatis di perangkat ini${t ? ' · pekerjaannya ada di Progres Aktif' : ''}.</p>${panduan}${next}</section></div>`
-  );
+    ? `<button type="button" class="idea-btn-submit" data-action="lihat-pekerjaan:${done.id}"><span>Lihat Pekerjaan</span></button>
+       <button type="button" class="bab-btn-next" style="background:#52647D; margin-left: 8px;" data-action="reopen:${done.id}"><span>Buka Lagi</span></button>`
+    : `<button type="button" class="idea-btn-submit" data-action="guide-task"><span>Kerjakan</span></button>`;
+
+  const nextBox = nx
+    ? `
+      <div class="bab-next-box">
+        <div class="bab-next-content">
+          <div class="bab-next-title">Langkah berikutnya</div>
+          <div class="bab-next-sub">Bab ${p.roman} • ${e(PARTS[nx].name)}</div>
+        </div>
+        <button type="button" class="bab-btn-next" data-action="guide-part:${nx}">
+          <span>Lanjut ke ${e(PARTS[nx].name)}</span>
+        </button>
+      </div>
+    `
+    : `
+      <div class="bab-next-box">
+        <div class="bab-next-content">
+          <div class="bab-next-title">Langkah berikutnya</div>
+          <div class="bab-next-sub">Periksa bab yang sudah kamu tulis</div>
+        </div>
+        <button type="button" class="bab-btn-next" data-action="periksa-bab:${p.chapter}">
+          <span>Periksa Skripsi</span>
+        </button>
+      </div>
+    `;
+
+  return `
+    <div class="mulai-page-head">
+      <h1>Mulai Skripsi</h1>
+      <p>Panduan pengerjaan dari penentuan arah sampai Bab ${lastRoman()}.</p>
+    </div>
+
+    <!-- CARD 1: PETA SKRIPSI (STEPPER + TAHAP BAB) -->
+    <div class="idea-card bab-stepper-card">
+      <div class="idea-card-header">
+        <h2 class="idea-card-title">Peta Skripsi</h2>
+      </div>
+      <div class="idea-stepper-wrap">
+        <div class="idea-stepper-track"></div>
+        <div class="idea-stepper-list">
+          <div class="idea-step-item" data-action="guide-view:idea" role="button" tabindex="0" aria-label="Tahap 0: Topik/Judul">
+            <div class="idea-step-circle completed">
+              <span>0</span>
+            </div>
+            <div class="idea-step-label active">Topik/Judul</div>
+          </div>
+          ${CHAPTERS.map((ch, idx) => {
+            const chNum = idx + 1;
+            const isChActive = p.chapter === chNum;
+            const isChCompleted = p.chapter > chNum;
+            const circleClass = isChActive ? 'active' : isChCompleted ? 'completed' : '';
+            return `
+              <div class="idea-step-item" data-action="guide-bab:${chNum}" role="button" tabindex="0" title="Bab ${ch[0]} · ${e(ch[1])}" aria-label="Bab ${chNum}: ${e(ch[1])}">
+                <div class="idea-step-circle ${circleClass}">
+                  <span>${chNum}</span>
+                </div>
+                <div class="idea-step-label ${isChActive ? 'active' : ''}">Bab ${chNum}</div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+
+      <div class="bab-substeps-wrap">
+        <div class="bab-substeps-title">Tahap Bab ${p.chapter}</div>
+        <div class="bab-substeps-list">
+          ${curChapterParts.map(cp => {
+            const isPartActive = cp[0] === id;
+            return `
+              <button type="button" class="bab-substep-btn ${isPartActive ? 'active' : ''}" data-action="guide-part:${cp[0]}">
+                <span>${e(cp[1])}</span>
+              </button>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 2: FORM / EDITOR (LATAR BELAKANG) -->
+    <div class="idea-card bab-editor-card">
+      <div class="idea-card-header">
+        <h2 class="idea-card-title">${e(p.name)}</h2>
+      </div>
+
+      <div class="idea-fields-group">
+        <div class="field bab-field">
+          <div class="idea-label-row">
+            <div class="idea-label-left">
+              <label for="guide-method" class="idea-label">Pendekatan penelitian</label>
+              <span class="idea-req">*</span>
+            </div>
+          </div>
+          <div class="bab-select-wrap">
+            <select id="guide-method" class="bab-select" aria-required="true">
+              ${METODE.map(m => `<option value="${e(m)}" ${(c.method === m || (!c.method && m === 'Kualitatif')) ? 'selected' : ''}>${e(m)}</option>`).join('')}
+            </select>
+            <div class="bab-select-arrow" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        ${fields}
+        ${draf}
+
+        ${kendalaNote}
+        ${doneNote}
+
+        <div class="idea-submit-row">
+          ${buttons}
+        </div>
+
+        <div class="bab-autosave-note">
+          Isian tersimpan otomatis di perangkat ini • pekerjaannya ada di Progres Aktif.
+        </div>
+
+        ${nextBox}
+      </div>
+    </div>
+  `;
 }
 function guidanceRows(id) {
   const p = PARTS[id],

@@ -3179,3 +3179,223 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
     width: 100%;
   }
 }
+
+/* Mulai Skripsi — Workspace Bab 1 (Gambar 1 Redesign 2026-11-20) */
+.idea-step-circle.completed {
+  background: #EDF4FF;
+  outline: none;
+  color: #125AB5;
+  font-weight: 700;
+  box-shadow: 0px 2px 4px -2px rgba(0, 0, 0, 0.10), 0px 4px 6px -1px rgba(0, 0, 0, 0.10), 0px 0px 0px 4px #EFF6FF;
+}
+
+.bab-substeps-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  margin-top: 10px;
+}
+.bab-substeps-title {
+  color: #0F172A;
+  font-size: 14px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 700;
+  line-height: 20px;
+}
+.bab-substeps-list {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  flex-wrap: wrap;
+}
+.bab-substep-btn {
+  flex: 1 1 0;
+  min-width: 140px;
+  min-height: 42px;
+  padding: 10px 16px;
+  background: white;
+  border-radius: 12px;
+  outline: 1px #E2E8F0 solid;
+  outline-offset: -1px;
+  border: none;
+  color: #334155;
+  font-size: 14px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 500;
+  line-height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.bab-substep-btn:hover:not(.active) {
+  outline-color: #CBD5E1;
+  color: #0F172A;
+}
+.bab-substep-btn.active {
+  background: #186DD8;
+  outline: none;
+  color: white;
+  font-weight: 500;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.bab-select-wrap {
+  position: relative;
+  width: 100%;
+}
+.bab-select {
+  width: 100%;
+  height: 50px;
+  padding: 8px 40px 8px 14px;
+  background: white;
+  border-radius: 8px;
+  outline: 1px #E2E8F0 solid;
+  outline-offset: -1px;
+  border: none;
+  color: #334155;
+  font-size: 14px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 500;
+  line-height: 16px;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+.bab-select:focus {
+  outline: 1.5px #186DD8 solid;
+  outline-offset: -1.5px;
+}
+.bab-select-arrow {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6B7280;
+}
+
+.bab-autosave-note {
+  color: #94A3B8;
+  font-size: 14px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 400;
+  line-height: 16.5px;
+  margin-top: 4px;
+}
+
+.bab-next-box {
+  width: 100%;
+  padding: 20px;
+  background: #F3F7FD;
+  border-radius: 12px;
+  outline: 1px #DBE6F5 solid;
+  outline-offset: -1px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  box-sizing: border-box;
+  margin-top: 6px;
+}
+.bab-next-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.bab-next-title {
+  color: #0F172A;
+  font-size: 14px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 700;
+  line-height: 20px;
+}
+.bab-next-sub {
+  color: #334155;
+  font-size: 14px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 400;
+  line-height: 16px;
+}
+.bab-btn-next {
+  height: 45px;
+  padding: 10px 16px;
+  background: #186DD8;
+  border-radius: 8px;
+  border: none;
+  color: white;
+  font-size: 14px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 500;
+  line-height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease;
+}
+.bab-btn-next:hover {
+  background: #1459B0;
+}
+
+/* Dark mode for Bab 1 Workspace */
+.dark .idea-step-circle.completed {
+  background: #1E3A8A;
+  color: #93C5FD;
+  box-shadow: 0px 0px 0px 4px #1E293B;
+}
+.dark .bab-substeps-title {
+  color: #F1F5F9;
+}
+.dark .bab-substep-btn {
+  background: #1E293B;
+  outline-color: #334155;
+  color: #CBD5E1;
+}
+.dark .bab-substep-btn:hover:not(.active) {
+  outline-color: #475569;
+  color: #F8FAFC;
+}
+.dark .bab-substep-btn.active {
+  background: #186DD8;
+  color: white;
+}
+.dark .bab-select {
+  background: #1E293B;
+  outline-color: #334155;
+  color: #F8FAFC;
+}
+.dark .bab-next-box {
+  background: #172554;
+  outline-color: #1E3A8A;
+}
+.dark .bab-next-title {
+  color: #F8FAFC;
+}
+.dark .bab-next-sub {
+  color: #94A3B8;
+}
+
+@media (max-width: 760px) {
+  .bab-substeps-list {
+    flex-direction: column;
+  }
+  .bab-substep-btn {
+    width: 100%;
+  }
+  .bab-next-box {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .bab-btn-next {
+    width: 100%;
+  }
+}
