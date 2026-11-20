@@ -6,6 +6,7 @@ interface AlerinSkripsiPanelProps {
 
 export default function AlerinSkripsiPanel({ onBack }: AlerinSkripsiPanelProps) {
   const [loading, setLoading] = useState(true);
+  const [iframeSrc] = useState(() => `/alerin-skripsi/index.html?v=${Date.now()}`);
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
@@ -30,7 +31,7 @@ export default function AlerinSkripsiPanel({ onBack }: AlerinSkripsiPanelProps) 
         </div>
       )}
       <iframe
-        src="/alerin-skripsi/index.html"
+        src={iframeSrc}
         title="Alerin Skripsi"
         onLoad={() => setLoading(false)}
         className="w-full h-full border-none flex-1"
