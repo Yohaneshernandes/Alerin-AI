@@ -17,11 +17,11 @@ function partChapterLabel(part) {
   for (const c of CHAPTERS) {
     for (const p of c[2]) {
       if (p[0] === part) {
-        return `Bab ${c[0]} • ${p[1]}`;
+        return `Bab ${c[0]} · ${p[1]}`;
       }
     }
   }
-  return partLabel(part) || 'Bab I • Rumusan Masalah';
+  return partLabel(part) || 'Bab I · Rumusan Masalah';
 }
 /* Posisi arahan: [label status, warna, kelompok tab]. */
 const REV_PHASE = {
@@ -555,7 +555,10 @@ function revisionStage(taskId) {
   const t = taskId && S.tasks.find(x => x.id === taskId);
   if (t) return stageName(+t.phase || 0) + (t.part && PARTS[t.part] ? ' · ' + PARTS[t.part].name : '');
   const i = revisionStageIdx(taskId);
-  return i !== null ? stageName(i) : '';
+  if (i !== null && i !== undefined) {
+    return i < 0 ? 'Sebelum 01 · Persiapan' : stageName(i);
+  }
+  return 'Sebelum 01 · Persiapan';
 }
 function saveRevision(taskId) {
   clearErrors();
@@ -585,7 +588,9 @@ function saveRevision(taskId) {
   const cleanText = text.replace(/^[“"']+|[”"']+$/g, '').trim();
   let topic = $('#rv-topic')?.value?.trim() || '';
   if (!topic) {
-    if (/rumusan|masalah/i.test(cleanText)) {
+    if (/jurnal|artikel|referensi|pustaka|tam|consumer behavior/i.test(cleanText)) {
+      topic = 'Jurnal';
+    } else if (/rumusan|masalah/i.test(cleanText)) {
       topic = 'Rumusan masalah';
     } else if (/latar|belakang/i.test(cleanText)) {
       topic = 'Latar belakang';
@@ -615,7 +620,7 @@ function saveRevision(taskId) {
     part: u.part,
     criteria: revCriteriaFrom(u.langkah, u.part),
     status: 'open',
-    understood: true,
+    understood: false,
     review: '',
     created: new Date().toISOString(),
   };
@@ -623,7 +628,6 @@ function saveRevision(taskId) {
   if (taskId && S.tasks.some(x => x.id === taskId)) r.taskId = taskId;
   S.revisions.unshift(r);
   record('Arahan dosen dicatat', r.topic);
-  closeModal(true);
   if (r.taskId) {
     const t = S.tasks.find(x => x.id === r.taskId);
     if (t.status === 'done') {
@@ -634,7 +638,7 @@ function saveRevision(taskId) {
   }
   persist();
   render();
-  toast('Arahan berhasil disimpan.', 'check');
+  revDetailModal(r.id, true);
 }
 
 /* ---------- Detail dan pemahaman ---------- */
@@ -644,16 +648,107 @@ function revDetailModal(id, fresh = false) {
   const ph = revPhase(r),
     t = revTask(r),
     u = r.understanding || {},
-    ans = r.reviewAnswers || [];
+    files = (S.files || []).filter(f => f.context === 'rev-' + r.id);
   const meta = ['Bimbingan ' + dateLong(r.date), r.stageText ? 'Tahap saat itu: ' + r.stageText : ''].filter(Boolean).join(' · ');
-  const body = `${fresh ? note('Arahan tersimpan. Pastikan pemahaman Alerin sesuai maksud dosen sebelum mengerjakan perbaikan.') : ''}<div class="rv-meta mt">${badge(REV_PHASE[ph][0], REV_PHASE[ph][1])}</div><h3 class="mt">${e(r.topic)}</h3><p class="small muted">${e(meta)}</p><div class="v6-original"><span class="small muted">Catatan asli dosen · tidak diubah</span><p>“${e(r.text)}”</p></div><div class="rv-understanding"><strong class="small">Pemahaman Alerin · ${revUnderstood(r) ? 'sudah kamu konfirmasi' : 'perlu kamu konfirmasi'}</strong><p>${e(u.maksud || '')}</p><p class="small"><strong>Bagian terdampak:</strong> ${e(u.bagian || partLabel(r.part))}</p><p class="small"><strong>Langkah perbaikan:</strong> ${e(u.langkah || '')}</p></div><div class="mt"><strong class="small">Kriteria selesai</strong><ul class="rv-criteria">${revCriteria(r)
-    .map((c, i) => `<li class="${ans[i] ? 'is-' + ans[i] : ''}">${e(c)}${ans[i] ? `<small>${REV_ANS[ans[i]]}</small>` : ''}</li>`)
-    .join('')}</ul></div>${r.doneNote ? `<div class="rv-report"><span class="small muted">${r.status === 'done' ? 'Laporan tindak lanjut' + (r.doneAt ? ' · ' + dateLong(r.doneAt) : '') : 'Laporan terakhir · perlu diperbarui'}</span><p>${e(r.doneNote)}</p></div>` : ''}<p class="rv-link small">${I('link')}<span>${t ? `Tertaut ke <strong>${e(t.title)}</strong> · ${revTaskStatus(t)}` : 'Belum ditautkan ke pekerjaan'}</span></p>`;
-  const foot =
-    ph === 'konfirmasi'
-      ? B('Ubah Pemahaman', 'rev-edit:' + id) + B('Setujui Pemahaman', 'rev-ok:' + id, 'primary', 'check')
-      : B('Tutup', 'close-modal') + revPrimary(r, ph);
-  modal(fresh ? 'Tinjau pemahaman Alerin' : 'Detail arahan', body, foot, true);
+
+  const alertBox = fresh
+    ? `
+    <div class="rv-review-alert">
+      <div class="rv-review-alert-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+      </div>
+      <div class="rv-review-alert-text">
+        Arahan tersimpan. Pastikan pemahaman Alerin sesuai maksud dosen sebelum mengerjakan perbaikan.
+      </div>
+    </div>
+  `
+    : '';
+
+  const isApproved = revUnderstood(r);
+  const badgeLabel = isApproved ? 'Sudah disetujui' : 'Konfirmasi pemahaman';
+
+  const body = `
+    ${alertBox}
+    <div class="rv-review-meta-block">
+      <div class="rv-review-badge">${e(badgeLabel)}</div>
+      <div class="rv-review-heading-wrap">
+        <h3 class="rv-review-topic">${e(r.topic || 'Jurnal')}</h3>
+        <p class="rv-review-meta-line">${e(meta)}</p>
+      </div>
+    </div>
+
+    <div class="rv-review-original-box">
+      <span class="rv-review-box-eyebrow">CATATAN ASLI DOSEN · TIDAK DIUBAH</span>
+      <div class="rv-review-original-text">“${e(r.text)}”</div>
+      ${files.length ? `
+        <div class="rv-original-files" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;">
+          ${files.map(f => B(`${e(f.name)} · ${fileSize(f.size)}`, 'open-file:' + f.id, 'text', 'file')).join('')}
+        </div>
+      ` : ''}
+    </div>
+
+    <div class="rv-review-understanding-box">
+      <div class="rv-review-understanding-head">
+        <div class="rv-review-blue-dot"></div>
+        <span class="rv-review-understanding-eyebrow">PEMAHAMAN ALERIN · ${isApproved ? 'SUDAH KAMU KONFIRMASI' : 'PERLU KAMU KONFIRMASI'}</span>
+      </div>
+      <div class="rv-review-understanding-text">
+        ${e(u.maksud || '')}
+      </div>
+      <div class="rv-review-understanding-details">
+        <div class="rv-review-detail-row">
+          <span class="rv-review-detail-label">Bagian terdampak:</span>
+          <span class="rv-review-part-badge">${e(partChapterLabel(r.part))}</span>
+        </div>
+        <div class="rv-review-detail-row">
+          <span class="rv-review-detail-label">Langkah perbaikan:</span>
+          <span class="rv-review-detail-val">${e(u.langkah || '')}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="rv-review-criteria-section">
+      <h4 class="rv-review-criteria-title">Kriteria selesai · menjadi “Selesai bila” di Progres Aktif</h4>
+      <ul class="rv-review-criteria-list">
+        ${revCriteria(r).map(c => `
+          <li>
+            <span class="rv-review-criteria-dot"></span>
+            <span>${e(c)}</span>
+          </li>
+        `).join('')}
+      </ul>
+      <div class="rv-review-criteria-status">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+        </svg>
+        <span>${t ? `Tertaut ke <strong>${e(t.title)}</strong>` : 'Belum dibawa ke Progres Aktif'}</span>
+      </div>
+    </div>
+
+    ${r.doneNote ? `
+      <div class="rv-report" style="margin-top:12px;padding:12px 16px;background:#F8FAFC;border-radius:10px;outline:1px #E2E8F0 solid;">
+        <span class="small muted">${r.status === 'done' ? 'Laporan tindak lanjut' + (r.doneAt ? ' · ' + dateLong(r.doneAt) : '') : 'Laporan terakhir · perlu diperbarui'}</span>
+        <p style="margin:4px 0 0;font-size:14px;color:#334155;">${e(r.doneNote)}</p>
+      </div>
+    ` : ''}
+  `;
+
+  const foot = `
+    <button type="button" class="rv-review-btn-edit" data-action="rev-edit:${id}">Ubah Pemahaman</button>
+    <button type="button" class="rv-review-btn-approve" data-action="rev-ok:${id}">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+      <span>Setujui Pemahaman</span>
+    </button>
+  `;
+
+  modal('Tinjau pemahaman Alerin', body, foot, 'rv-review-modal');
 }
 function revEditModal(id) {
   const r = revOf(id);

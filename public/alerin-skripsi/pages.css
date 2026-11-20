@@ -4195,3 +4195,445 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
     line-height: 20px !important;
   }
 }
+
+/* ========================================================
+   B18 - Modal Tinjau Pemahaman Alerin (Revisi Dosen)
+   ======================================================== */
+.modal.rv-review-modal {
+  max-width: 1037px !important;
+  width: 100% !important;
+  background: #ffffff !important;
+  border-radius: 16px !important;
+  box-shadow: 0px 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+  outline: 1px #F1F5F9 solid !important;
+  outline-offset: -1px !important;
+  overflow: hidden !important;
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  border: none !important;
+}
+
+.modal.rv-review-modal .modal-head {
+  padding: 20px 28px !important;
+  background: #ffffff !important;
+  border-bottom: 1px #CBD5E1 solid !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+.modal.rv-review-modal .modal-head h2 {
+  color: #1E293B !important;
+  font-size: 22px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 700 !important;
+  line-height: 28px !important;
+  margin: 0 !important;
+}
+
+.modal.rv-review-modal .modal-head .icon-btn {
+  padding: 8px !important;
+  border-radius: 12px !important;
+  color: #94A3B8 !important;
+  background: transparent !important;
+  border: none !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+.modal.rv-review-modal .modal-head .icon-btn:hover {
+  background: #F1F5F9 !important;
+  color: #475569 !important;
+}
+
+.modal.rv-review-modal .modal-body {
+  padding: 24px 28px 20px !important;
+  overflow-y: auto !important;
+  max-height: calc(85vh - 145px) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 15px !important;
+  box-sizing: border-box !important;
+}
+
+/* Alert notice */
+.rv-review-alert {
+  align-self: stretch !important;
+  padding: 16px !important;
+  background: rgba(239, 246, 255, 0.70) !important;
+  border-radius: 12px !important;
+  outline: 1px rgba(219, 234, 254, 0.80) solid !important;
+  outline-offset: -1px !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 14px !important;
+  box-sizing: border-box !important;
+}
+
+.rv-review-alert-icon {
+  width: 20px !important;
+  height: 20px !important;
+  flex-shrink: 0 !important;
+  margin-top: 2px !important;
+  color: #186DD8 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.rv-review-alert-text {
+  color: #334155 !important;
+  font-size: 14px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 400 !important;
+  line-height: 22.75px !important;
+}
+
+/* Metadata block */
+.rv-review-meta-block {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  align-self: stretch !important;
+}
+
+.rv-review-badge {
+  display: inline-flex !important;
+  align-self: flex-start !important;
+  padding: 4px 10px !important;
+  background: #FFFBEB !important;
+  border-radius: 6px !important;
+  outline: 1px rgba(253, 230, 138, 0.60) solid !important;
+  outline-offset: -1px !important;
+  color: #92400E !important;
+  font-size: 12px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 500 !important;
+  line-height: 16px !important;
+  letter-spacing: 0.3px !important;
+}
+
+.rv-review-heading-wrap {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+}
+
+.rv-review-topic {
+  color: #0F172A !important;
+  font-size: 18px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 700 !important;
+  line-height: 28px !important;
+  margin: 0 !important;
+}
+
+.rv-review-meta-line {
+  color: #64748B !important;
+  font-size: 14px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 400 !important;
+  line-height: 20px !important;
+  margin: 0 !important;
+}
+
+/* Card: Catatan Asli Dosen */
+.rv-review-original-box {
+  align-self: stretch !important;
+  padding: 20px !important;
+  background: rgba(248, 250, 252, 0.80) !important;
+  border-radius: 12px !important;
+  outline: 1px rgba(226, 232, 240, 0.80) solid !important;
+  outline-offset: -1px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  box-sizing: border-box !important;
+}
+
+.rv-review-box-eyebrow {
+  color: #64748B !important;
+  font-size: 12px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 500 !important;
+  text-transform: uppercase !important;
+  line-height: 16px !important;
+  letter-spacing: 0.6px !important;
+}
+
+.rv-review-original-text {
+  color: #334155 !important;
+  font-size: 15px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-style: italic !important;
+  font-weight: 400 !important;
+  line-height: 24.38px !important;
+}
+
+/* Card: Pemahaman Alerin */
+.rv-review-understanding-box {
+  align-self: stretch !important;
+  padding: 20px !important;
+  background: linear-gradient(180deg, rgba(239, 246, 255, 0.40) 0%, #ffffff 100%) !important;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05) !important;
+  border-radius: 12px !important;
+  outline: 1px rgba(219, 234, 254, 0.90) solid !important;
+  outline-offset: -1px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  box-sizing: border-box !important;
+}
+
+.rv-review-understanding-head {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+.rv-review-blue-dot {
+  width: 6px !important;
+  height: 6px !important;
+  background: #186DD8 !important;
+  border-radius: 9999px !important;
+  flex-shrink: 0 !important;
+}
+
+.rv-review-understanding-eyebrow {
+  color: #186DD8 !important;
+  font-size: 12px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  line-height: 16px !important;
+  letter-spacing: 0.6px !important;
+}
+
+.rv-review-understanding-text {
+  color: #334155 !important;
+  font-size: 15px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 400 !important;
+  line-height: 24.38px !important;
+}
+
+.rv-review-understanding-details {
+  border-top: 1px rgba(239, 246, 255, 0.80) solid !important;
+  padding-top: 13px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+}
+
+.rv-review-detail-row {
+  display: flex !important;
+  align-items: baseline !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+}
+
+.rv-review-detail-label {
+  min-width: 130px !important;
+  color: #1E293B !important;
+  font-size: 14px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 600 !important;
+  line-height: 20px !important;
+}
+
+.rv-review-part-badge {
+  display: inline-flex !important;
+  padding: 2px 8px !important;
+  background: #F1F5F9 !important;
+  border-radius: 4px !important;
+  outline: 1px rgba(226, 232, 240, 0.60) solid !important;
+  outline-offset: -1px !important;
+  color: #334155 !important;
+  font-size: 12px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 500 !important;
+  line-height: 16px !important;
+}
+
+.rv-review-detail-val {
+  color: #475569 !important;
+  font-size: 14px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 400 !important;
+  line-height: 22.75px !important;
+}
+
+/* Criteria section */
+.rv-review-criteria-section {
+  align-self: stretch !important;
+  padding-top: 4px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+}
+
+.rv-review-criteria-title {
+  color: #1E293B !important;
+  font-size: 14px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 600 !important;
+  line-height: 20px !important;
+  margin: 0 !important;
+}
+
+.rv-review-criteria-list {
+  list-style: none !important;
+  padding: 0 0 0 4px !important;
+  margin: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+.rv-review-criteria-list li {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 10px !important;
+  color: #475569 !important;
+  font-size: 14px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 400 !important;
+  line-height: 20px !important;
+}
+
+.rv-review-criteria-dot {
+  width: 6px !important;
+  height: 6px !important;
+  background: #94A3B8 !important;
+  border-radius: 9999px !important;
+  flex-shrink: 0 !important;
+  margin-top: 7px !important;
+}
+
+.rv-review-criteria-status {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  color: #94A3B8 !important;
+  font-size: 12px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 400 !important;
+  line-height: 16px !important;
+  margin-top: 2px !important;
+}
+
+/* Footer buttons */
+.modal.rv-review-modal .modal-footer {
+  padding: 16px 28px !important;
+  background: rgba(248, 250, 252, 0.50) !important;
+  border-top: 1px #CBD5E1 solid !important;
+  display: flex !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+.rv-review-btn-edit {
+  height: 45px !important;
+  padding: 10px 20px !important;
+  background: #ffffff !important;
+  border-radius: 12px !important;
+  outline: 1px #E2E8F0 solid !important;
+  outline-offset: -1px !important;
+  border: none !important;
+  color: #334155 !important;
+  font-size: 14px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 500 !important;
+  line-height: 20px !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.15s ease !important;
+  box-sizing: border-box !important;
+}
+.rv-review-btn-edit:hover {
+  background: #F8FAFC !important;
+  outline-color: #CBD5E1 !important;
+}
+
+.rv-review-btn-approve {
+  height: 45px !important;
+  padding: 10px 20px !important;
+  background: #186DD8 !important;
+  border-radius: 12px !important;
+  border: none !important;
+  color: #ffffff !important;
+  font-size: 14px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 600 !important;
+  line-height: 20px !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  transition: all 0.15s ease !important;
+  box-sizing: border-box !important;
+}
+.rv-review-btn-approve:hover {
+  background: #125AB5 !important;
+}
+
+/* Dark mode */
+.dark .modal.rv-review-modal {
+  background: #101c2e !important;
+  outline-color: #1f334d !important;
+}
+.dark .modal.rv-review-modal .modal-head {
+  background: #101c2e !important;
+  border-bottom-color: #1f334d !important;
+}
+.dark .modal.rv-review-modal .modal-head h2 {
+  color: #f1f5f9 !important;
+}
+.dark .rv-review-alert {
+  background: rgba(24, 109, 216, 0.15) !important;
+  outline-color: rgba(24, 109, 216, 0.3) !important;
+}
+.dark .rv-review-alert-text {
+  color: #e2e8f0 !important;
+}
+.dark .rv-review-topic {
+  color: #f1f5f9 !important;
+}
+.dark .rv-review-original-box {
+  background: #152238 !important;
+  outline-color: #24364e !important;
+}
+.dark .rv-review-original-text {
+  color: #e2e8f0 !important;
+}
+.dark .rv-review-understanding-box {
+  background: linear-gradient(180deg, rgba(24, 109, 216, 0.20) 0%, #152238 100%) !important;
+  outline-color: #1e3a5f !important;
+}
+.dark .rv-review-understanding-text {
+  color: #e2e8f0 !important;
+}
+.dark .rv-review-detail-label {
+  color: #f1f5f9 !important;
+}
+.dark .rv-review-criteria-title {
+  color: #f1f5f9 !important;
+}
+.dark .rv-review-criteria-list li {
+  color: #cbd5e1 !important;
+}
+.dark .modal.rv-review-modal .modal-footer {
+  background: #0d1726 !important;
+  border-top-color: #1f334d !important;
+}
+.dark .rv-review-btn-edit {
+  background: #1a2a40 !important;
+  outline-color: #2a3d58 !important;
+  color: #e2e8f0 !important;
+}
