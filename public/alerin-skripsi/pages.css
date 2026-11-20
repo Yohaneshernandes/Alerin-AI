@@ -385,7 +385,13 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
   .pustaka-folders-grid,.pustaka-folder-grid{grid-template-columns:1fr;gap:10px}
   .pustaka-item-row{flex-direction:column;align-items:flex-start;gap:12px;padding:14px 4px}
   .pustaka-item-left{width:100%;padding-right:0}
-  .pustaka-item-right{width:100%;justify-content:space-between;flex-wrap:wrap}
+  .pustaka-item-right{width:100%;display:flex;align-items:center;justify-content:flex-start;flex-wrap:nowrap;gap:8px}
+  .pustaka-item-type-badge{font-size:11px;padding:2px 8px;flex-shrink:0}
+  .pustaka-item-folder-wrapper{flex-shrink:0}
+  .pustaka-item-btn-folder{height:28px;padding:4px 8px;font-size:11px;gap:5px;max-width:120px}
+  .pustaka-item-btn-folder span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .pustaka-item-actions{margin-left:auto;display:flex;align-items:center;gap:4px;flex-shrink:0}
+  .pustaka-item-action-btn{height:26px;padding:4px 6px;font-size:11px;gap:4px;white-space:nowrap}
   .pustaka-folder-popover{left:50%;right:auto;transform:translateX(-50%);min-width:190px;width:200px;max-width:calc(100vw - 32px);animation:folderPopoverInMobile .15s cubic-bezier(.16,1,.3,1)}
 }
 .dark .pustaka-page-head h1{color:#e4ebf5}
