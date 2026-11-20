@@ -41,36 +41,154 @@ function periksaPage() {
     titleOnly = p.chapter === 'title',
     whole = p.chapter === 'all' || p.mode === 'prep',
     last = latestReview();
-  const scopeSelect = `<div class="field"><label for="periksa-chapter">Bagian yang ingin diperiksa</label><select id="periksa-chapter" data-periksa="chapter">${scopeGroups()
-    .map(([g, opts]) => `<optgroup label="${g}">${opts.map(([v, l]) => `<option value="${v}" ${p.chapter === v ? 'selected' : ''}>${e(l)}</option>`).join('')}</optgroup>`)
-    .join('')}</select></div>`;
-  const partSelect = ch
-    ? `<div class="field"><label for="periksa-part">Subbagian <span>Opsional</span></label><select id="periksa-part" data-periksa="part"><option value="">Seluruh Bab ${ch[0]}</option>${ch[2]
-        .filter(x => partApplies(x[0]))
-        .map(x => `<option value="${x[0]}" ${p.part === x[0] ? 'selected' : ''}>${e(x[1])}</option>`)
-        .join('')}</select></div>`
-    : '';
-  const hint = titleOnly
-    ? ''
-    : `<p class="small muted">${
-        whole
-          ? `Unggah ${p.prep === 'sempro' && p.mode === 'prep' ? `proposal terbaru (Bab I–${proposalRoman()})` : `naskah terbaru (Bab I–${lastRoman()})`}${p.mode === 'prep' ? ' beserta daftar pustaka' : ''}. Naskah utuh perlu minimal ${NASKAH_MIN.toLocaleString('id-ID')} karakter yang terbaca. `
-          : ''
-      }Susunan Bab I–${lastRoman()} mengikuti pilihan <strong>${e(SUSUNAN[susunanId()].label)}</strong> di Konteks Skripsi.</p>`;
-  const meta = (id, val, max, opt) =>
-    `<div class="field-meta"><span>${opt ? 'Boleh dilengkapi kemudian.' : ''}</span><span data-count="${id}">${String(val || '').length}/${max}</span></div>`;
-  const titleField = `<div class="field"><label for="periksa-title">Judul penelitian <span class="required-label">Wajib</span></label><textarea id="periksa-title" maxlength="220" data-periksa="title" aria-required="true" placeholder="Tuliskan judul penelitianmu" rows="3">${e(p.title)}</textarea>${meta('periksa-title', p.title, 220, false)}</div>`;
-  const bahan = titleOnly
-    ? `<p class="mt">Judul saja sudah cukup untuk meninjau keselarasan judul.</p>${titleField}`
-    : `<p class="mt">Tambahkan bahan yang ingin ditinjau.</p>${uploadZone('periksa', 'Pilih Berkas PDF / DOCX', 'PDF, DOCX, TXT')}${fileList('periksa')}<details class="v6-review-title v6-review-detail" ${p.title ? '' : 'open'}><summary>Judul penelitian · ${p.title ? 'Sudah tersedia' : 'Wajib diisi'}</summary>${titleField}</details>`;
-  return (
-    pageHead('Apa yang ingin diperiksa?', 'Tinjau judul, satu bab, atau kesiapan naskahmu sebelum seminar proposal dan sidang.', '', '', '', 'PERIKSA SKRIPSI') +
-    `<section class="card v6-review-form"><h3 class="mb">1 · Pilih bagian yang diperiksa</h3><div class="field-grid">${scopeSelect}${partSelect}</div>${hint}<hr class="rule"><h3>2 · Tambahkan bahan pemeriksaan</h3>${bahan}<details class="v6-review-title v6-review-detail focus" ${p.focus ? 'open' : ''}><summary>Bagian yang ingin diperhatikan · ${p.focus ? 'Sudah diisi' : 'Opsional'}</summary><div class="field"><label for="periksa-focus">Ada bagian yang ingin diperhatikan? <span>Opsional</span></label><textarea id="periksa-focus" maxlength="400" data-periksa="focus" placeholder="Misalnya: kesesuaian instrumen dan variabel penelitian." rows="3">${e(p.focus)}</textarea>${meta('periksa-focus', p.focus, 400, true)}</div></details>${
-      titleOnly
-        ? ''
-        : `<details class="v6-review-title v6-review-detail paste" ${p.text ? 'open' : ''}><summary>Gunakan teks sebagai bahan pemeriksaan · ${p.text ? 'Sudah diisi' : 'Opsional'}</summary><div class="field"><label for="periksa-text">Tempel teks naskah <span>Opsional</span></label><textarea id="periksa-text" maxlength="20000" data-periksa="text" placeholder="Teks subbagian atau bab yang ingin diperiksa." rows="3">${e(p.text)}</textarea>${meta('periksa-text', p.text, 20000, true)}</div></details>`
-    }<p class="small muted mt">Alerin hanya menandai; perbaikannya tetap kamu tulis sendiri. Hasil saat ini contoh berbasis aturan, belum analisis AI.</p><div class="actions mt">${B('Periksa Sekarang', 'run-periksa', 'primary', 'arrow')}${last ? B('Buka Hasil Terakhir', 'nav:hasil-periksa', 'text') : ''}</div></section>`
-  );
+
+  const titleLength = String(p.title || '').length;
+  const focusLength = String(p.focus || '').length;
+  const textLength = String(p.text || '').length;
+
+  return `
+    <div class="pk-page-v2">
+      <div class="pk-page-head-v2">
+        <h1 class="pk-page-title-v2">Apa yang ingin diperiksa?</h1>
+        <p class="pk-page-desc-v2">Tinjau judul, satu bab, atau kesiapan naskahmu sebelum seminar proposal dan sidang.</p>
+      </div>
+
+      <section class="card pk-card-v2">
+        <!-- Bagian 1: Pilih bagian yang diperiksa -->
+        <div class="pk-section-v2">
+          <div class="pk-section-head-v2">
+            <h2 class="pk-section-title-v2">Pilih bagian yang diperiksa</h2>
+          </div>
+
+          <div class="pk-dropdown-row-v2">
+            <!-- Dropdown 1: Bagian yang ingin diperiksa -->
+            <div class="field pk-field-v2">
+              <label for="periksa-chapter" class="pk-label-v2">Bagian yang ingin diperiksa</label>
+              <div class="pk-select-wrap-v2">
+                <select id="periksa-chapter" data-periksa="chapter" class="pk-select-v2">
+                  ${scopeGroups()
+                    .map(
+                      ([g, opts]) =>
+                        `<optgroup label="${g}">${opts
+                          .map(
+                            ([v, l]) =>
+                              `<option value="${v}" ${p.chapter === v ? 'selected' : ''}>${e(l)}</option>`,
+                          )
+                          .join('')}</optgroup>`,
+                    )
+                    .join('')}
+                </select>
+                <div class="pk-select-arrow-v2">${I('down')}</div>
+              </div>
+            </div>
+
+            <!-- Dropdown 2: Subbagian (Opsional) -->
+            <div class="field pk-field-v2">
+              <div class="pk-label-row-v2">
+                <label for="periksa-part" class="pk-label-v2">Subbagian</label>
+                <span class="pk-optional-badge-v2">Opsional</span>
+              </div>
+              <div class="pk-select-wrap-v2">
+                <select id="periksa-part" data-periksa="part" class="pk-select-v2" ${ch ? '' : 'disabled'}>
+                  <option value="">${ch ? `Seluruh Bab ${ch[0]}` : 'Pilih bab untuk memilih subbagian'}</option>
+                  ${ch
+                    ? ch[2]
+                        .filter(x => partApplies(x[0]))
+                        .map(
+                          x =>
+                            `<option value="${x[0]}" ${p.part === x[0] ? 'selected' : ''}>${e(x[1])}</option>`,
+                        )
+                        .join('')
+                    : ''}
+                </select>
+                <div class="pk-select-arrow-v2">${I('down')}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Info row -->
+          <div class="pk-info-row-v2">
+            <div class="pk-info-icon-v2">${I('info')}</div>
+            <span class="pk-info-text-v2">
+              Susunan Bab I–${lastRoman()} mengikuti pilihan <strong class="pk-info-strong-v2">${e(SUSUNAN[susunanId()].label)}</strong> di Konteks Skripsi.
+            </span>
+          </div>
+        </div>
+
+        <div class="pk-divider-v2"></div>
+
+        <!-- Bagian 2: Tambahkan bahan pemeriksaan -->
+        <div class="pk-section-v2">
+          <div class="pk-section-head-v2">
+            <h2 class="pk-section-title-v2">Tambahkan bahan pemeriksaan</h2>
+            <p class="pk-section-desc-v2">Tambahkan bahan yang ingin ditinjau.</p>
+          </div>
+
+          <!-- Upload Zone -->
+          <label class="upload-zone pk-upload-zone-v2" for="upload-periksa">
+            <div class="pk-upload-icon-circle-v2">${I('upload')}</div>
+            <strong class="pk-upload-title-v2">Pilih Berkas PDF / DOCX</strong>
+            <small class="pk-upload-desc-v2">PDF, DOCX, TXT · maksimal ${limit().mb} MB per berkas</small>
+            <small class="pk-upload-cta-v2">Klik untuk memilih atau letakkan berkas di sini.</small>
+            <input class="native-input" id="upload-periksa" type="file" data-file-context="periksa" accept=".pdf,.docx,.txt" multiple>
+          </label>
+          ${fileList('periksa')}
+
+          <!-- Form Fields Stack -->
+          <div class="pk-fields-stack-v2">
+            <!-- Field 1: Judul penelitian -->
+            <div class="field pk-field-v2">
+              <div class="pk-label-row-v2">
+                <label for="periksa-title" class="pk-label-v2">Judul penelitian <span class="pk-required-star-v2">*</span></label>
+                <span class="pk-counter-v2" data-count="periksa-title">${titleLength}/220</span>
+              </div>
+              <textarea id="periksa-title" maxlength="220" data-periksa="title" class="pk-textarea-v2" placeholder="Tuliskan judul penelitianmu" rows="3">${e(p.title)}</textarea>
+            </div>
+
+            <!-- Field 2: Ada bagian yang ingin diperhatikan? -->
+            <div class="field pk-field-v2">
+              <div class="pk-label-row-v2">
+                <div class="pk-label-left-v2">
+                  <label for="periksa-focus" class="pk-label-v2">Ada bagian yang ingin diperhatikan?</label>
+                  <span class="pk-optional-sub-v2">· Opsional</span>
+                </div>
+                <span class="pk-counter-v2" data-count="periksa-focus">${focusLength}/400</span>
+              </div>
+              <textarea id="periksa-focus" maxlength="400" data-periksa="focus" class="pk-textarea-v2" placeholder="Misalnya: kesesuaian instrumen dan variabel penelitian." rows="3">${e(p.focus)}</textarea>
+            </div>
+
+            <!-- Field 3: Gunakan teks sebagai bahan pemeriksaan -->
+            <div class="field pk-field-v2">
+              <div class="pk-label-row-v2">
+                <div class="pk-label-left-v2">
+                  <label for="periksa-text" class="pk-label-v2">Gunakan teks sebagai bahan pemeriksaan</label>
+                  <span class="pk-optional-sub-v2">· Opsional</span>
+                </div>
+                <span class="pk-counter-v2" data-count="periksa-text">${textLength}/20000</span>
+              </div>
+              <textarea id="periksa-text" maxlength="20000" data-periksa="text" class="pk-textarea-v2" placeholder="Teks subbagian atau bab yang ingin diperiksa." rows="4">${e(p.text)}</textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions & Disclaimer -->
+        <div class="pk-actions-section-v2">
+          <div class="pk-btn-wrap-v2">
+            <button class="btn primary pk-submit-btn-v2" data-action="run-periksa">
+              <span>Periksa Sekarang</span>
+              ${I('arrow')}
+            </button>
+            ${last ? `<button class="btn text pk-last-btn-v2" data-action="nav:hasil-periksa">Buka Hasil Terakhir</button>` : ''}
+          </div>
+
+          <div class="pk-disclaimer-banner-v2">
+            <div class="pk-disclaimer-icon-v2">${I('warning')}</div>
+            <div class="pk-disclaimer-text-v2">Alerin hanya menandai, perbaikannya tetap kamu tulis sendiri. Hasil saat ini contoh berbasis aturan, belum analisis AI.</div>
+          </div>
+        </div>
+      </section>
+    </div>
+  `;
 }
 async function readPeriksaFiles() {
   const res = [];
