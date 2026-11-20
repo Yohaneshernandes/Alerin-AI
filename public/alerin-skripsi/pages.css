@@ -4637,3 +4637,182 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
   outline-color: #2a3d58 !important;
   color: #e2e8f0 !important;
 }
+
+/* ========================================================
+   B19 - Modal Jadikan Progres Aktif? (Revisi Dosen)
+   ======================================================== */
+.modal.rv-progres-confirm-modal {
+  max-width: 640px !important;
+  width: 100% !important;
+  background: #ffffff !important;
+  border-radius: 26px !important;
+  box-shadow: 0px 0px 0px 1px rgba(226, 232, 240, 0.80), 0px 25px 50px -12px rgba(15, 23, 42, 0.22) !important;
+  outline: 1px #F1F5F9 solid !important;
+  outline-offset: -1px !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  border: none !important;
+}
+
+.modal.rv-progres-confirm-modal .modal-head {
+  padding: 28px 32px 20px 32px !important;
+  background: #ffffff !important;
+  border-bottom: 1px #E2E8F0 solid !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+.modal.rv-progres-confirm-modal .modal-head h2 {
+  color: #0F172A !important;
+  font-size: 23px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 700 !important;
+  line-height: 34.50px !important;
+  margin: 0 !important;
+}
+
+.modal.rv-progres-confirm-modal .modal-head .icon-btn {
+  padding: 8px !important;
+  border-radius: 9999px !important;
+  color: #94A3B8 !important;
+  background: transparent !important;
+  border: none !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.15s ease !important;
+}
+.modal.rv-progres-confirm-modal .modal-head .icon-btn:hover {
+  background: #F1F5F9 !important;
+  color: #475569 !important;
+}
+
+.modal.rv-progres-confirm-modal .modal-body {
+  padding: 25px 32px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 15px !important;
+  background: #ffffff !important;
+  box-sizing: border-box !important;
+}
+
+.rv-progres-confirm-body {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 15px !important;
+  align-self: stretch !important;
+}
+
+.rv-progres-line {
+  color: #475569 !important;
+  font-size: 15px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 400 !important;
+  line-height: 24.38px !important;
+  margin: 0 !important;
+}
+
+.rv-progres-topic {
+  color: #1E293B !important;
+  font-size: 15px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 700 !important;
+  line-height: 24.38px !important;
+}
+
+.rv-progres-desc {
+  padding-bottom: 1px !important;
+}
+
+.modal.rv-progres-confirm-modal .modal-footer {
+  padding: 20px 32px !important;
+  background: #ffffff !important;
+  border-top: 1px #E2E8F0 solid !important;
+  display: flex !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  gap: 14px !important;
+}
+
+.rv-progres-btn-later {
+  height: 45px !important;
+  padding: 10px 20px !important;
+  background: #ffffff !important;
+  border-radius: 12px !important;
+  outline: 1px #E2E8F0 solid !important;
+  outline-offset: -1px !important;
+  border: none !important;
+  color: #334155 !important;
+  font-size: 14px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 500 !important;
+  line-height: 21px !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.15s ease !important;
+  box-sizing: border-box !important;
+}
+.rv-progres-btn-later:hover {
+  background: #F8FAFC !important;
+  outline-color: #CBD5E1 !important;
+}
+
+.rv-progres-btn-confirm {
+  height: 45px !important;
+  padding: 10px 20px !important;
+  background: #186DD8 !important;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05) !important;
+  border-radius: 12px !important;
+  border: none !important;
+  color: #ffffff !important;
+  font-size: 14px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 600 !important;
+  line-height: 21px !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.15s ease !important;
+  box-sizing: border-box !important;
+}
+.rv-progres-btn-confirm:hover {
+  background: #125AB5 !important;
+}
+
+/* Dark mode for Jadikan Progres Aktif modal */
+.dark .modal.rv-progres-confirm-modal {
+  background: #101c2e !important;
+  outline-color: #1f334d !important;
+  box-shadow: 0px 0px 0px 1px rgba(31, 51, 77, 0.8), 0px 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+}
+.dark .modal.rv-progres-confirm-modal .modal-head {
+  background: #101c2e !important;
+  border-bottom-color: #1f334d !important;
+}
+.dark .modal.rv-progres-confirm-modal .modal-head h2 {
+  color: #f1f5f9 !important;
+}
+.dark .modal.rv-progres-confirm-modal .modal-body {
+  background: #101c2e !important;
+}
+.dark .rv-progres-line {
+  color: #94A3B8 !important;
+}
+.dark .rv-progres-topic {
+  color: #f1f5f9 !important;
+}
+.dark .modal.rv-progres-confirm-modal .modal-footer {
+  background: #101c2e !important;
+  border-top-color: #1f334d !important;
+}
+.dark .rv-progres-btn-later {
+  background: #1a2a40 !important;
+  outline-color: #2a3d58 !important;
+  color: #e2e8f0 !important;
+}

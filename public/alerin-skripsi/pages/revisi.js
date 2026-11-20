@@ -750,6 +750,30 @@ function revDetailModal(id, fresh = false) {
 
   modal('Tinjau pemahaman Alerin', body, foot, 'rv-review-modal');
 }
+function revActiveConfirmModal(id) {
+  const r = revOf(id);
+  if (!r) return;
+
+  const body = `
+    <div class="rv-progres-confirm-body">
+      <div class="rv-progres-line">Pemahaman diperbarui dan disetujui.</div>
+      <div class="rv-progres-line">
+        <strong class="rv-progres-topic">${e(r.topic || 'Jurnal')}</strong>
+        <span> siap dikerjakan.</span>
+      </div>
+      <div class="rv-progres-line rv-progres-desc">
+        Arahan menjadi kartu pekerjaan di Progres Aktif. Laporan perubahan sampai<br/>Catat Sebagai Selesai dikerjakan di kartu itu.
+      </div>
+    </div>
+  `;
+
+  const foot = `
+    <button type="button" class="rv-progres-btn-later" data-action="rev-progres-later:${r.id}">Nanti Saja</button>
+    <button type="button" class="rv-progres-btn-confirm" data-action="rev-progres-activate:${r.id}">Jadikan Progres Aktif</button>
+  `;
+
+  modal('Jadikan Progres Aktif?', body, foot, 'rv-progres-confirm-modal');
+}
 function revEditModal(id) {
   const r = revOf(id);
   if (!r) return;
@@ -1071,22 +1095,47 @@ Object.assign(ACTIONS, {
     r.understood = true;
     record('Pemahaman arahan disetujui', r.topic);
     persist();
+    render();
+    revActiveConfirmModal(r.id);
+  },
+  'rev-progres-later': arg => {
+    const r = revOf(arg);
     closeModal(true);
     render();
-    const t = revTask(r);
-    /* Revisi 18 November (Progres Aktif): bila ada kartu yang jelas membahas bagian dan hasil kerja yang sama,
-       arahan langsung ditautkan ke kartu itu. Bila kecocokannya meragukan, pengguna memilih. */
-    if (!t && r.status !== 'done') {
+    toast(r ? `Pemahaman disetujui. Arahan “${r.topic}” siap ditautkan ke Progres Aktif kapan saja.` : 'Pemahaman disetujui.');
+  },
+  'rev-progres-activate': arg => {
+    const r = revOf(arg);
+    if (!r) return closeModal(true);
+    let t = revTask(r);
+    if (!t) {
       const auto = revAutoLink(r);
-      if (!auto)
-        return revLinkModal(r.id, 'Pemahaman disetujui. Kecocokan dengan kartu yang ada belum pasti, jadi pilih kartu yang membahas bagian yang sama atau buat pekerjaan baru.');
-      const calm = reorderTasks(true, 'Ada arahan dosen baru');
-      persist();
-      render();
-      if (calm) toast(`Pemahaman disetujui. Arahan tertaut ke kartu yang sudah ada: “${auto.title}”.`, '', 6500);
-      return;
+      if (auto) {
+        t = auto;
+      } else {
+        const part = r.part || analyzeArahan(r.text).part;
+        const title = 'Tindak lanjuti arahan: ' + (r.topic || 'Jurnal');
+        t = plainTask({
+          title: capitalize(title),
+          part,
+          phase: partPhase(part),
+          source: 'revisi',
+          reason: r.understanding?.maksud || '',
+          doing: r.understanding?.langkah || '',
+          deliverable: 'Bagian yang sudah kamu perbaiki sesuai arahan dosen.',
+        });
+        r.taskId = t.id;
+        record('Arahan masuk ke Progres Aktif', r.topic + ' → ' + t.title);
+      }
+    } else if (t.status === 'done') {
+      t.status = 'todo';
+      t.reopenReason = 'Arahan dosen baru';
     }
-    toast(t ? `Pemahaman disetujui. Arahan tetap tertaut ke “${t.title}”.` : 'Pemahaman disetujui.');
+    reorderTasks(true, 'Ada arahan dosen baru');
+    persist();
+    closeModal(true);
+    render();
+    toast(`Arahan “${r.topic}” berhasil dijadikan kartu pekerjaan di Progres Aktif.`, 'check');
   },
   'rev-link': arg => {
     revLinkModal(arg);
