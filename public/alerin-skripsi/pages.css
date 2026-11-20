@@ -6082,6 +6082,41 @@ body.collapsed .brand-icon-box:hover .brand-icon-hover .ico {
   stroke: #ffffff !important;
 }
 
+/* Sidebar active item blue #186DD8 */
+.sidebar .nav-btn.active,
+.collapsed .sidebar .nav-btn.active,
+.nav-btn.active {
+  background: #186DD8 !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(24, 109, 216, 0.2) !important;
+}
+
+.sidebar .nav-btn.active:hover,
+.collapsed .sidebar .nav-btn.active:hover,
+.nav-btn.active:hover {
+  background: #125AB5 !important;
+  color: #ffffff !important;
+}
+
+.sidebar .nav-btn.active span,
+.collapsed .sidebar .nav-btn.active span,
+.nav-btn.active span {
+  color: #ffffff !important;
+}
+
+.sidebar .nav-btn.active .ico,
+.collapsed .sidebar .nav-btn.active .ico,
+.nav-btn.active > .ico {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+.sidebar .nav-btn.active .nav-count,
+.nav-btn.active .nav-count {
+  background: #ffffff !important;
+  color: #186DD8 !important;
+}
+
 /* ========================================================
    MOBILE HEADER & DRAWER SIDEBAR (Gambar 1 & Gambar 2)
    ======================================================== */
@@ -6400,9 +6435,13 @@ body.collapsed .brand-icon-box:hover .brand-icon-hover .ico {
   }
   .sidebar .nav-btn.active,
   .collapsed .sidebar .nav-btn.active {
-    background: #142238 !important;
+    background: #186DD8 !important;
     color: #ffffff !important;
-    box-shadow: 0px 4px 9px rgba(21, 34, 56, 0.07) !important;
+    box-shadow: 0px 4px 12px rgba(24, 109, 216, 0.2) !important;
+  }
+  .sidebar .nav-btn.active:hover,
+  .collapsed .sidebar .nav-btn.active:hover {
+    background: #125AB5 !important;
   }
   .sidebar .nav-btn.active span {
     color: #ffffff !important;
@@ -6410,6 +6449,10 @@ body.collapsed .brand-icon-box:hover .brand-icon-hover .ico {
   .sidebar .nav-btn.active .ico {
     color: #ffffff !important;
     stroke: #ffffff !important;
+  }
+  .sidebar .nav-btn.active .nav-count {
+    background: #ffffff !important;
+    color: #186DD8 !important;
   }
 
   /* Divider & Section Label */
