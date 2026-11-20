@@ -136,23 +136,7 @@ function revisiPage() {
 
         <div class="rv-main-grid-v2">
           <div class="rv-cards-column-v2">
-            <div class="rv-empty-state-card-v2">
-              <div class="rv-empty-icon-box">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#52647D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M12 20h9"></path>
-                  <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
-                </svg>
-              </div>
-              <h3 class="rv-empty-title">Belum ada arahan dosen</h3>
-              <p class="rv-empty-desc">Catat arahan setiap selesai bimbingan. Alerin membantu memahami<br/>maksudnya dan menautkannya ke pekerjaan di Progres Aktif.</p>
-              <button type="button" class="rv-empty-btn-tambah" data-action="add-revision">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="12" y1="5" x2="12" y2="19"></line>
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
-                <span>Tambah Arahan</span>
-              </button>
-            </div>
+            ${revEmptyState(all, 'semua', '', '')}
           </div>
           <aside class="rv-sidebar-column-v2">
             <div class="rv-sidebar-card-v2">
@@ -305,6 +289,127 @@ function revContext() {
   const pos = st.idx !== null && st.idx !== undefined ? stageName(st.idx) + (st.source ? ' · ' + st.source : '') : 'belum tercatat';
   return `<section class="card rv-context" aria-label="Judul penelitian aktif"><span class="rv-context-ico">${I('document')}</span><div class="rv-context-copy"><span class="eyebrow">JUDUL PENELITIAN AKTIF</span><strong>${e(S.title || 'Judul penelitian belum ditentukan')}</strong><small>Posisi penelitian: ${e(pos)}</small></div>${B(S.title ? 'Lihat Konteks' : 'Isi Konteks Skripsi', 'guide-view:konteks', 'text', 'arrow')}</section>`;
 }
+function revEmptyState(all, tab, q, stage) {
+  let iconSvg = '';
+  let title = '';
+  let desc = '';
+  let actions = '';
+
+  if (q || stage !== '') {
+    iconSvg = `
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#125AB5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+    `;
+    title = 'Tidak ada arahan yang sesuai';
+    desc = 'Tidak ditemukan arahan yang cocok dengan pencarian atau filter tahap yang dipilih. Coba periksa kata kunci atau reset filter.';
+    actions = `
+      <button type="button" class="rv-empty-btn-sec" data-action="rev-reset-filter">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+          <path d="M3 3v5h5"></path>
+        </svg>
+        <span>Reset Pencarian & Filter</span>
+      </button>
+    `;
+  } else if (tab === 'belum') {
+    iconSvg = `
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#125AB5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 11l3 3L22 4"></path>
+        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+      </svg>
+    `;
+    title = 'Tidak ada arahan yang belum dikerjakan';
+    desc = all && all.length
+      ? 'Semua arahan bimbingan sudah kamu tindak lanjuti ke Progres Aktif atau sudah selesai dikerjakan.'
+      : 'Belum ada catatan arahan dari dosen pembimbing.';
+    actions = `
+      <div class="rv-empty-actions">
+        ${all && all.length ? `
+          <button type="button" class="rv-empty-btn-sec" data-action="rev-filter:semua">
+            <span>Lihat Semua Arahan</span>
+          </button>
+        ` : ''}
+        <button type="button" class="rv-empty-btn-tambah" data-action="add-revision">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          <span>Tambah Arahan</span>
+        </button>
+      </div>
+    `;
+  } else if (tab === 'proses') {
+    iconSvg = `
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#125AB5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <polyline points="12 6 12 12 16 14"></polyline>
+      </svg>
+    `;
+    title = 'Tidak ada arahan dalam pengerjaan';
+    desc = 'Belum ada arahan dosen yang sedang aktif dikerjakan di Progres Aktif saat ini.';
+    actions = `
+      <div class="rv-empty-actions">
+        <button type="button" class="rv-empty-btn-sec" data-action="rev-filter:belum">
+          <span>Lihat Arahan Belum Dikerjakan</span>
+        </button>
+        <button type="button" class="rv-empty-btn-tambah" data-action="add-revision">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          <span>Tambah Arahan</span>
+        </button>
+      </div>
+    `;
+  } else if (tab === 'selesai') {
+    iconSvg = `
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#125AB5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+      </svg>
+    `;
+    title = 'Belum ada arahan yang selesai';
+    desc = 'Arahan dosen yang sudah kamu selesaikan perbaikannya dan dicatat tuntas akan tersimpan rapi di sini.';
+    actions = `
+      <div class="rv-empty-actions">
+        <button type="button" class="rv-empty-btn-sec" data-action="rev-filter:semua">
+          <span>Lihat Semua Arahan</span>
+        </button>
+      </div>
+    `;
+  } else {
+    iconSvg = `
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#125AB5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 20h9"></path>
+        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+      </svg>
+    `;
+    title = 'Belum ada arahan dosen';
+    desc = 'Catat arahan setiap selesai bimbingan. Alerin membantumu memahami maksudnya dan menautkannya ke pekerjaan di Progres Aktif.';
+    actions = `
+      <button type="button" class="rv-empty-btn-tambah" data-action="add-revision">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        <span>Tambah Arahan</span>
+      </button>
+    `;
+  }
+
+  return `
+    <div class="rv-empty-state-card-v2">
+      <div class="rv-empty-icon-box">
+        ${iconSvg}
+      </div>
+      <h3 class="rv-empty-title">${e(title)}</h3>
+      <p class="rv-empty-desc">${e(desc)}</p>
+      ${actions}
+    </div>
+  `;
+}
 function revList(all, tab) {
   let rs = all.filter(r => {
     if (tab === 'belum') return !r.taskId && r.status !== 'done';
@@ -328,7 +433,7 @@ function revList(all, tab) {
   }
 
   if (!rs.length) {
-    return `<div class="card empty rv-empty-card" style="text-align:center;padding:48px 24px;border-radius:16px;outline:1px #DCE4EF solid;background:#fff;"><p class="muted" style="margin:0;font-size:13px;color:#64748B;">Tidak ada arahan pada filter ini.</p></div>`;
+    return revEmptyState(all, tab, q, revStage);
   }
 
   return rs.map(revCard).join('');
@@ -1142,24 +1247,26 @@ function revExportText() {
 }
 /* Penyaring cari dan tahap bekerja langsung di halaman, supaya kursor tidak hilang saat mengetik. */
 function revApplyFilters() {
-  const main = $('#main');
-  if (!main) return;
+  const container = document.querySelector('.rv-cards-column-v2');
+  if (!container) return;
   const q = revQuery.trim().toLowerCase();
-  let any = false;
-  main.querySelectorAll('.rv-session').forEach(sec => {
-    let n = 0;
-    sec.querySelectorAll('.rv-card').forEach(c => {
-      const show = (!q || c.dataset.rvText.includes(q)) && (revStage === '' || c.dataset.rvStage === revStage);
-      c.hidden = !show;
-      if (show) n++;
-    });
-    sec.hidden = !n;
-    if (n) any = true;
-    const cnt = sec.querySelector('[data-rv-count]');
-    if (cnt) cnt.textContent = n + ' arahan';
+  let count = 0;
+  const cards = container.querySelectorAll('.rv-session-card-v2');
+  cards.forEach(c => {
+    const text = (c.dataset.rvText || '').toLowerCase();
+    const stage = c.dataset.rvStage || '';
+    const match = (!q || text.includes(q)) && (revStage === '' || stage === revStage);
+    c.style.display = match ? '' : 'none';
+    if (match) count++;
   });
-  const nm = main.querySelector('.rv-nomatch');
-  if (nm) nm.hidden = any;
+  let emptyEl = container.querySelector('.rv-empty-state-card-v2');
+  if (count === 0 && cards.length > 0) {
+    if (!emptyEl) {
+      container.insertAdjacentHTML('beforeend', revEmptyState([], S.revFilter || 'semua', q, revStage));
+    }
+  } else if (emptyEl && cards.length > 0 && count > 0) {
+    emptyEl.remove();
+  }
 }
 document.addEventListener('input', ev => {
   const el = ev.target;
@@ -1193,6 +1300,13 @@ Object.assign(ACTIONS, {
   },
   'rev-filter': arg => {
     S.revFilter = REV_TABS.some(x => x[0] === arg) ? arg : 'semua';
+    persist();
+    render();
+  },
+  'rev-reset-filter': () => {
+    revQuery = '';
+    revStage = '';
+    S.revFilter = 'semua';
     persist();
     render();
   },
