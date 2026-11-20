@@ -46,7 +46,7 @@ const iconPaths = {
   target: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
   refresh: '<path d="M21 4v6h-6M3 20v-6h6M21 10a9 9 0 0 0-16-5M3 14a9 9 0 0 0 16 5"/>',
   help: '<circle cx="12" cy="12" r="9"/><path d="M9 8a3 3 0 1 1 4 3c-1 .5-1 1-1 3M12 17h.01"/>',
-  menu: '<path d="M4 7h16M4 12h16M4 17h16"/>',
+  menu: '<path d="M4 6.5h16M4 12h16M4 17.5h10"/>',
   bell: '<path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/>',
   more: '<circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/>',
   moon: '<path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5Z"/>',
