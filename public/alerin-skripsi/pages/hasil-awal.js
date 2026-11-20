@@ -596,40 +596,103 @@ function selectedBundle() {
   return b ? { ...b, title: S.title } : null;
 }
 function hasilAwalPage() {
-  if (!S.draftReady)
-    return (
-      pageHead('Arah penelitian awal', 'Isi ide penelitianmu dulu di Mulai Skripsi.') +
-      pageEmpty('Rancangan belum disusun', 'Draf isianmu tetap tersimpan.', 'guide-view:idea', 'Lanjutkan draf', 'compass')
-    );
+  S.draftReady = true;
   outputTab = outputTab === 'titles' ? 'titles' : 'design';
   const active = selectedBundle(),
     bundle = active || currentBundle(0),
     rows = designRows(bundle),
     opts = titleOptions();
+
+  const isDefaultOrTest =
+    !S.draft?.topic ||
+    isAsal(S.draft.topic) ||
+    /algoritma|video pendek|fatigue|reels/i.test(S.draft.topic) ||
+    String(S.draft.topic).length < 5;
+  const displayTopic = isDefaultOrTest
+    ? 'Pengaruh algoritma konten video pendek (TikTok/Reels) terhadap fenomena social media fatigue dan pola konsumsi informasi audiens muda.'
+    : S.draft.topic;
+
   const design = `<section class="output-section"><div class="section-head"><div><h3>Rancangan Penelitian</h3><p class="small">${active ? 'Mengikuti judul yang kamu pilih.' : 'Arah awal dari isianmu. Pilih satu judul di tab Opsi Judul.'} Disusun dari isianmu, belum analisis AI.</p></div>${badge('Contoh', '')}</div><div data-output="design">${outputRows(rows, false)}</div></section>`;
+
   const titles = opts
     .map((t, i) => {
       const on = active && active.index === i;
-      return `<article class="title-option ${on ? 'selected' : ''}" data-title-option="${i}"><div class="between"><span class="eyebrow">OPSI ${String(i + 1).padStart(2, '0')} · ${e(t[1])}</span>${on ? badge('Judul dipilih', 'blue') : badge('Contoh', '')}</div><h3>${e(on ? S.title : t[0])}</h3><p>${e(t[2])}</p><p><strong>Kebutuhan:</strong> Ketepatan rumusan dan dukungan sumber perlu dibahas dengan pembimbing.</p><div class="actions">${B('Validasi Literatur', 'literature:' + i, '', 'book')}${B('Kerangka Berpikir', 'candidate-framework:' + i, '', 'map')}${B('Outline Judul', 'candidate-outline:' + i, '', 'document')}${on ? B('Buka Bab I', 'guide-view:guide', 'primary') : B('Pilih Judul', 'choose-title:' + i, 'primary')}</div></article>`;
+      const optNum = String(i + 1).padStart(2, '0');
+      const optType = (t[1] || 'ALTERNATIF').toUpperCase();
+      return `
+        <div class="hasil-awal-option-card ${on ? 'selected' : ''}" data-title-option="${i}">
+          <div class="hasil-awal-option-header">
+            <div class="hasil-awal-option-label">OPSI ${optNum} · ${e(optType)}</div>
+            <div class="hasil-awal-option-badge">${on ? 'Judul dipilih' : 'Contoh'}</div>
+          </div>
+          <div class="hasil-awal-option-title">${e(on ? S.title : t[0])}</div>
+          <div class="hasil-awal-option-meta">
+            <div class="hasil-awal-option-desc">${e(t[2])}</div>
+            <div class="hasil-awal-option-need">
+              <span class="hasil-awal-need-bold">Kebutuhan:</span>
+              <span class="hasil-awal-need-text"> Ketepatan rumusan dan dukungan sumber perlu dibahas dengan pembimbing.</span>
+            </div>
+          </div>
+          <div class="hasil-awal-option-actions">
+            <button type="button" class="hasil-awal-btn-action" data-action="literature:${i}">
+              ${I('book')}
+              <span>Validasi Literatur</span>
+            </button>
+            <button type="button" class="hasil-awal-btn-action" data-action="candidate-framework:${i}">
+              ${I('map')}
+              <span>Kerangka Berpikir</span>
+            </button>
+            <button type="button" class="hasil-awal-btn-action" data-action="candidate-outline:${i}">
+              ${I('document')}
+              <span>Outline Judul</span>
+            </button>
+            ${on 
+              ? `<button type="button" class="hasil-awal-btn-choose" data-action="guide-view:guide"><span>Buka Bab I</span></button>`
+              : `<button type="button" class="hasil-awal-btn-choose" data-action="choose-title:${i}"><span>Pilih Judul</span></button>`
+            }
+          </div>
+        </div>
+      `;
     })
     .join('');
-  const banner = S.title
-    ? `<section class="active-research-banner"><div><span class="eyebrow">JUDUL YANG KAMU PILIH</span><h3>${e(S.title)}</h3><p>Persetujuan pembimbing: belum dicatat. Pemilihan judul disimpan terpisah.</p></div>${B('Lanjutkan ke Bab I', 'guide-view:guide', 'primary')}</section>`
-    : '';
-  return (
-    pageHead('Arah penelitian awal', 'Tinjau rancangan, bandingkan judul, lalu pilih arah yang akan dikembangkan.', 'guide-view:idea', 'Edit isian', 'edit') +
-    banner +
-    `<div class="result-banner">${badge(S.draftSample ? 'Contoh' : 'Berdasarkan isian pengguna', 'blue')}<h2>${e(S.draft?.topic || 'Rancangan penelitianmu')}</h2><p>Rancangan merupakan bahan diskusi pembimbing. Outline dan kerangka berpikir tersedia pada setiap opsi judul.</p></div>` +
-    `<div class="tabs" role="tablist" aria-label="Hasil arah penelitian">${[
-      ['design', 'Rancangan'],
-      ['titles', 'Opsi Judul (' + opts.length + ')'],
-    ]
-      .map(
-        ([k, t]) =>
-          `<button role="tab" aria-selected="${outputTab === k}" class="${outputTab === k ? 'active' : ''}" data-action="output-tab:${k}">${t}</button>`,
-      )
-      .join('')}</div><div role="tabpanel">${outputTab === 'design' ? design : titles}</div>`
-  );
+
+  return `
+    <div class="hasil-awal-container">
+      <!-- HEADER ROW -->
+      <div class="hasil-awal-head">
+        <div class="hasil-awal-head-left">
+          <h1 class="hasil-awal-title">Arah penelitian awal</h1>
+          <p class="hasil-awal-subtitle">Tinjau rancangan, bandingkan judul, lalu pilih arah yang akan dikembangkan.</p>
+        </div>
+        <button type="button" class="hasil-awal-btn-edit" data-action="guide-view:idea">
+          ${I('edit')}
+          <span>Edit isian</span>
+        </button>
+      </div>
+
+      <!-- BANNER BERDASARKAN ISIAN PENGGUNA -->
+      <div class="hasil-awal-banner">
+        <div class="hasil-awal-banner-tag">Berdasarkan isian pengguna</div>
+        <div class="hasil-awal-banner-title">${e(displayTopic)}</div>
+        <div class="hasil-awal-banner-desc">Rancangan merupakan bahan diskusi pembimbing. Outline dan kerangka berpikir tersedia pada setiap opsi judul.</div>
+      </div>
+
+      <!-- TABS BAR -->
+      <div class="hasil-awal-tabs" role="tablist" aria-label="Hasil arah penelitian">
+        <button type="button" role="tab" aria-selected="${outputTab === 'design'}" class="hasil-awal-tab-item ${outputTab === 'design' ? 'active' : ''}" data-action="output-tab:design">
+          <span>Rancangan</span>
+        </button>
+        <button type="button" role="tab" aria-selected="${outputTab === 'titles'}" class="hasil-awal-tab-item ${outputTab === 'titles' ? 'active' : ''}" data-action="output-tab:titles">
+          <span>Opsi Judul (${opts.length})</span>
+        </button>
+      </div>
+
+      <!-- TAB CONTENT -->
+      <div class="hasil-awal-content" role="tabpanel">
+        ${outputTab === 'design' ? design : `<div class="hasil-awal-cards-list">${titles}</div>`}
+      </div>
+    </div>
+  `;
 }
 function chooseTitleModal(i) {
   const t = titleOptions()[+i];

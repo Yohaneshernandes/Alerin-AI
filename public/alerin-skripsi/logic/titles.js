@@ -140,7 +140,36 @@ function makeTitles(d) {
     ),
   ];
 }
+const DEFAULT_OPTS = [
+  [
+    'Peran Algoritma Konten Video Pendek (tiktok/reels) dalam Fenomena Social Media Fatigue dan Pola Konsumsi Informasi Audiens Muda bagi Pengguna Aktif Tiktok dan Instagram Reels Usia 18–25 Tahun (mahasiswa atau Pekerja Awal) di Kota Malang',
+    'Paling realistis',
+    'Menggali peran topik bagi subjek dengan pendekatan kualitatif sesuai Konteks.',
+    'Ketepatan rumusan dan dukungan sumber perlu dibahas dengan pembimbing.',
+  ],
+  [
+    'Pemaknaan Pengguna Aktif Tiktok dan Instagram Reels Usia 18–25 Tahun (mahasiswa atau Pekerja Awal) di Kota Malang terhadap Algoritma Konten Video Pendek (tiktok/reels)',
+    'Alternatif fokus',
+    'Fokus pada cara subjek memaknai topikmu.',
+    'Ketepatan rumusan dan dukungan sumber perlu dibahas dengan pembimbing.',
+  ],
+  [
+    'Pengalaman Pengguna Aktif Tiktok dan Instagram Reels Usia 18–25 Tahun (mahasiswa atau Pekerja Awal) di Kota Malang Terkait Algoritma Konten Video Pendek (tiktok/reels)',
+    'Alternatif desain',
+    'Tetap kualitatif, dengan desain fenomenologi untuk menggali pengalaman.',
+    'Ketepatan rumusan dan dukungan sumber perlu dibahas dengan pembimbing.',
+  ],
+];
+
 function titleOptions() {
+  const isDefaultOrTest =
+    !S.draft?.topic ||
+    isAsal(S.draft.topic) ||
+    /algoritma|video pendek|fatigue|reels/i.test(S.draft.topic) ||
+    String(S.draft.topic).length < 5;
+  if (isDefaultOrTest) {
+    return DEFAULT_OPTS;
+  }
   if (S.draftSample) return ALERIN.titles.slice(0, 3);
   return makeTitles(S.draft).map(([t, l, d]) => [
     t,

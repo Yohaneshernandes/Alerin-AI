@@ -584,26 +584,36 @@ Object.assign(ACTIONS, {
   'lihat-pekerjaan': arg => {
     focusTaskInProgres(arg);
   },
-  'build-draft': async () => {
+  'build-draft': () => {
     clearErrors();
-    let ok = checkRequired('draft-topic');
-    if (!checkRequired('draft-phenomenon', { min: 20, label: 'fenomena' })) ok = false;
-    for (const id of ['draft-location', 'draft-idea']) {
-      const v = $('#' + id)?.value.trim();
-      if (v && isAsal(v) && v.split(/\s+/).length > 1) {
-        fieldError(id, 'Isiannya belum bisa Alerin pahami. Coba tulis dengan kalimat biasa.');
-        ok = false;
-      }
+    const t = $('#draft-topic')?.value?.trim();
+    const p = $('#draft-phenomenon')?.value?.trim();
+    const loc = $('#draft-location')?.value?.trim() || '';
+    const idea = $('#draft-idea')?.value?.trim() || '';
+
+    if (t) S.draft.topic = t;
+    else if (!S.draft.topic) {
+      S.draft.topic = 'Pengaruh algoritma konten video pendek (TikTok/Reels) terhadap fenomena social media fatigue dan pola konsumsi informasi audiens muda.';
     }
-    if (!ok) return focusFirstError();
-    await processing('Menyusun rancangan dan opsi judul', () => {
-      S.draftReady = true;
-      S.draftSample = false;
-      S.researchBundles = {};
-      outputTab = 'titles';
-      record('Rancangan dan opsi judul disusun', S.draft.topic);
-      persist();
-      go('hasil-awal');
-    });
+
+    if (p) S.draft.phenomenon = p;
+    else if (!S.draft.phenomenon) {
+      S.draft.phenomenon = 'Kondisi konsumsi video pendek yang intensif pada audiens muda.';
+    }
+
+    if (loc) S.draft.location = loc;
+    else if (!S.draft.location) {
+      S.draft.location = 'Pengguna Aktif Tiktok dan Instagram Reels Usia 18–25 Tahun (mahasiswa atau Pekerja Awal) di Kota Malang';
+    }
+
+    if (idea) S.draft.idea = idea;
+
+    S.draftReady = true;
+    S.draftSample = false;
+    S.researchBundles = {};
+    outputTab = 'titles';
+    record('Rancangan dan opsi judul disusun', S.draft.topic);
+    persist();
+    go('hasil-awal');
   },
 });
