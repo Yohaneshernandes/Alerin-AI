@@ -5730,3 +5730,64 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
 .global-footer {
   display: none !important;
 }
+
+/* New Alerin Skripsi brand icon (Gambar 2) */
+.brand-icon-box {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  width: 36px !important;
+  height: 36px !important;
+  min-width: 36px !important;
+  min-height: 36px !important;
+  padding: 0 !important;
+  border-radius: 9px !important;
+}
+
+.brand-icon-default {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.brand-icon-img {
+  width: 36px !important;
+  height: 36px !important;
+  display: block !important;
+  object-fit: contain !important;
+}
+
+.mobile-brand img {
+  width: 28px !important;
+  height: 28px !important;
+  object-fit: contain !important;
+}
+
+.dark .brand-icon-box {
+  background: transparent !important;
+}
+
+.dark .brand-icon-img,
+.dark .mobile-brand img {
+  filter: brightness(0) invert(1) !important;
+}
+
+body.collapsed .brand-icon-box:hover {
+  background: #f1f5f9 !important;
+}
+
+body.collapsed .brand-icon-box:hover .brand-icon-hover .ico {
+  color: #0f172a !important;
+  stroke: #0f172a !important;
+}
+
+.dark.collapsed .brand-icon-box:hover {
+  background: #1e293b !important;
+}
+
+.dark.collapsed .brand-icon-box:hover .brand-icon-hover .ico {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
+}
