@@ -6525,7 +6525,28 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
   display: none !important;
 }
 
-/* New Alerin Skripsi brand icon (Gambar 2) */
+/* Sembunyikan logo Alerin Skripsi di sidebar */
+@media (min-width: 761px) {
+  body:not(.collapsed) .sidebar .brand-icon-box {
+    display: none !important;
+  }
+  body.collapsed .sidebar .brand-icon-box {
+    display: inline-flex !important;
+  }
+  body.collapsed .sidebar .brand-icon-box .brand-icon-default {
+    display: none !important;
+  }
+  body.collapsed .sidebar .brand-icon-box .brand-icon-hover {
+    display: inline-flex !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+  .brand-name {
+    padding-left: 6px;
+    cursor: pointer;
+  }
+}
+
 .brand-icon-box {
   background: transparent !important;
   border: none !important;
