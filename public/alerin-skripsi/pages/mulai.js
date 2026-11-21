@@ -255,7 +255,7 @@ function ideaPageView() {
               <div class="idea-step-glow"></div>
               <span>0</span>
             </div>
-            <div class="idea-step-label active">Topik/Judul</div>
+            <div class="idea-step-label active"><span class="step-lbl-full">Topik/Judul</span><span class="step-lbl-break">Topik/<br/>Judul</span></div>
           </div>
           ${CHAPTERS.map((ch, idx) => `
             <div class="idea-step-item" data-action="guide-bab:${idx + 1}" role="button" tabindex="0" title="Bab ${ch[0]} · ${e(ch[1])}" aria-label="Bab ${idx + 1}: ${e(ch[1])}">
@@ -442,7 +442,7 @@ function workspaceView() {
             <div class="idea-step-circle completed">
               <span>0</span>
             </div>
-            <div class="idea-step-label active">Topik/Judul</div>
+            <div class="idea-step-label active"><span class="step-lbl-full">Topik/Judul</span><span class="step-lbl-break">Topik/<br/>Judul</span></div>
           </div>
           ${CHAPTERS.map((ch, idx) => {
             const chNum = idx + 1;
