@@ -753,10 +753,14 @@ function showTitleChosenModal(i, title) {
 
         <div class="pilih-modal-header">
           <div class="pilih-modal-icon-wrap">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#186DD8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-              <polyline points="14 2 14 8 20 8"></polyline>
-              <path d="m9 15 2 2 4-4"></path>
+            <svg width="32" height="32" viewBox="0 0 28 28" fill="none">
+              <path d="M16 3H7C5.89543 3 5 3.89543 5 5V23C5 24.1046 5.89543 25 7 25H16" stroke="#186DD8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M16 3L21 8V14" stroke="#186DD8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M16 3V8H21" stroke="#186DD8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M9 12H14" stroke="#186DD8" stroke-width="2" stroke-linecap="round"/>
+              <path d="M9 16H13" stroke="#186DD8" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="19.5" cy="19.5" r="5.5" fill="#186DD8"/>
+              <path d="M17 19.5L18.8 21.3L22.2 17.7" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </div>
           <h2 id="pilih-modal-title" class="pilih-modal-title">Judul penelitianmu sudah dipilih</h2>
@@ -770,22 +774,24 @@ function showTitleChosenModal(i, title) {
         <p class="pilih-modal-desc">Unduh outline dan kerangka berpikir untuk bahan bimbingan, atau lanjutkan penyusunan Bab I.</p>
 
         <div class="pilih-modal-actions">
-          <button type="button" class="pilih-modal-btn-download" data-action="download-outline:${i}">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#186DD8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-              <polyline points="7 10 12 15 17 10"></polyline>
-              <line x1="12" y1="15" x2="12" y2="3"></line>
-            </svg>
-            <span>Unduh Outline</span>
-          </button>
-          <button type="button" class="pilih-modal-btn-download" data-action="download-framework:${i}">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#186DD8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-              <polyline points="7 10 12 15 17 10"></polyline>
-              <line x1="12" y1="15" x2="12" y2="3"></line>
-            </svg>
-            <span>Unduh Kerangka Berpikir</span>
-          </button>
+          <div class="pilih-modal-downloads">
+            <button type="button" class="pilih-modal-btn-download" data-action="download-outline:${i}">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#186DD8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              <span>Unduh Outline</span>
+            </button>
+            <button type="button" class="pilih-modal-btn-download" data-action="download-framework:${i}">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#186DD8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              <span>Unduh Kerangka Berpikir</span>
+            </button>
+          </div>
           <button type="button" class="pilih-modal-btn-primary" data-action="go-bab-1:${i}">
             <span>Lanjutkan ke Bab I</span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -799,6 +805,7 @@ function showTitleChosenModal(i, title) {
   `;
   document.body.style.overflow = 'hidden';
 }
+window.showTitleChosenModal = showTitleChosenModal;
 
 Object.assign(ACTIONS, {
   'v2-show-titles': () => {
