@@ -83,8 +83,8 @@ function refreshSusunanField() {
     const radio = l.querySelector('input');
     l.classList.toggle('selected', !!radio?.checked);
   });
-  const sub = $('.mulai-page-head p') || $('#main .page-head p');
-  if (sub) sub.textContent = `Panduan pengerjaan dari penentuan arah sampai Bab ${lastRoman()}.`;
+  const subDesk = $('.mulai-page-head .mulai-sub-desktop') || $('#main .page-head p');
+  if (subDesk) subDesk.textContent = `Panduan pengerjaan dari penentuan arah sampai Bab ${lastRoman()}.`;
 }
 function konteksView() {
   const c = ensureKonteks();
@@ -99,7 +99,8 @@ function konteksView() {
   return `
     <div class="mulai-page-head">
       <h1>Mulai Skripsi</h1>
-      <p>Panduan pengerjaan dari penentuan arah sampai Bab ${lastRoman()}.</p>
+      <p class="mulai-sub-desktop">Panduan pengerjaan dari penentuan arah sampai Bab ${lastRoman()}.</p>
+      <p class="mulai-sub-mobile">Panduan penyusunan dan penentuan<br/>arah skripsi Bab I sampai selesai</p>
     </div>
     <div class="mulai-main-card">
       <div class="mulai-card-head">
@@ -202,9 +203,9 @@ function konteksView() {
         <div class="mulai-label-row">
           <label for="ctx-kendala" class="mulai-label">Kendala</label>
           <span class="mulai-opt">Opsional</span>
-          <span class="mulai-count" data-count="ctx-kendala">${String(c.kendala || '').length}/500</span>
+          <span class="mulai-count" data-count="ctx-kendala">${String(c.kendala || '').length}/350</span>
         </div>
-        <textarea id="ctx-kendala" maxlength="500" data-bind="konteks.kendala" placeholder="Bagian yang masih membingungkan" class="mulai-textarea" rows="3">${e(c.kendala || '')}</textarea>
+        <textarea id="ctx-kendala" maxlength="350" data-bind="konteks.kendala" placeholder="Bagian yang masih membingungkan" class="mulai-textarea" rows="3">${e(c.kendala || '')}</textarea>
       </div>
 
       <div class="field mulai-field-full">
@@ -237,7 +238,8 @@ function ideaPageView() {
   return `
     <div class="mulai-page-head">
       <h1>Mulai Skripsi</h1>
-      <p>Panduan pengerjaan dari penentuan arah sampai Bab ${lastRoman()}.</p>
+      <p class="mulai-sub-desktop">Panduan pengerjaan dari penentuan arah sampai Bab ${lastRoman()}.</p>
+      <p class="mulai-sub-mobile">Panduan penyusunan dan penentuan<br/>arah skripsi Bab I sampai selesai</p>
     </div>
 
     <!-- CARD 1: PETA SKRIPSI (STEPPER) -->
@@ -424,7 +426,8 @@ function workspaceView() {
   return `
     <div class="mulai-page-head">
       <h1>Mulai Skripsi</h1>
-      <p>Panduan pengerjaan dari penentuan arah sampai Bab ${lastRoman()}.</p>
+      <p class="mulai-sub-desktop">Panduan pengerjaan dari penentuan arah sampai Bab ${lastRoman()}.</p>
+      <p class="mulai-sub-mobile">Panduan penyusunan dan penentuan<br/>arah skripsi Bab I sampai selesai</p>
     </div>
 
     <!-- CARD 1: PETA SKRIPSI (STEPPER + TAHAP BAB) -->
