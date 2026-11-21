@@ -6525,82 +6525,69 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
   display: none !important;
 }
 
-/* Sembunyikan logo Alerin Skripsi di sidebar */
+/* Brand header sidebar: sembunyikan logo di mode buka, tampilkan icon sidebar di mode tutup */
 @media (min-width: 761px) {
   body:not(.collapsed) .sidebar .brand-icon-box {
     display: none !important;
   }
   body.collapsed .sidebar .brand-icon-box {
     display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    min-height: 36px !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    border: 1px solid #DCE4EF !important;
+    border-radius: 9px !important;
+    box-shadow: 0px 1px 2px rgba(25, 55, 86, 0.05) !important;
+    color: #52647D !important;
+    cursor: pointer !important;
+    transition: all 0.15s ease !important;
+    margin: 0 auto !important;
   }
-  body.collapsed .sidebar .brand-icon-box .brand-icon-default {
-    display: none !important;
+  body.collapsed .sidebar .brand-icon-box .ico {
+    width: 18px !important;
+    height: 18px !important;
+    color: #52647D !important;
+    stroke: #52647D !important;
+    stroke-width: 1.7 !important;
+    display: block !important;
+    transition: color 0.15s ease, stroke 0.15s ease !important;
   }
-  body.collapsed .sidebar .brand-icon-box .brand-icon-hover {
-    display: inline-flex !important;
-    opacity: 1 !important;
-    pointer-events: auto !important;
+  body.collapsed .sidebar .brand-icon-box:hover {
+    background: #F1F5F9 !important;
+    border-color: #CBD5E1 !important;
+    color: #0F172A !important;
+  }
+  body.collapsed .sidebar .brand-icon-box:hover .ico {
+    color: #0F172A !important;
+    stroke: #0F172A !important;
+  }
+  .dark.collapsed .sidebar .brand-icon-box {
+    background: #1B2C43 !important;
+    border-color: #34465D !important;
+    color: #CBD5E1 !important;
+  }
+  .dark.collapsed .sidebar .brand-icon-box .ico {
+    color: #CBD5E1 !important;
+    stroke: #CBD5E1 !important;
+  }
+  .dark.collapsed .sidebar .brand-icon-box:hover {
+    background: #253E61 !important;
+    border-color: #4B6382 !important;
+    color: #FFFFFF !important;
+  }
+  .dark.collapsed .sidebar .brand-icon-box:hover .ico {
+    color: #FFFFFF !important;
+    stroke: #FFFFFF !important;
   }
   .brand-name {
     padding-left: 6px;
     cursor: pointer;
   }
-}
-
-.brand-icon-box {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  width: 36px !important;
-  height: 36px !important;
-  min-width: 36px !important;
-  min-height: 36px !important;
-  padding: 0 !important;
-  border-radius: 9px !important;
-  display: inline-flex !important;
-}
-
-.brand-icon-default {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  width: 100% !important;
-  height: 100% !important;
-}
-
-.brand-icon-img {
-  width: 36px !important;
-  height: 36px !important;
-  display: block !important;
-  object-fit: contain !important;
-}
-
-.mobile-brand img {
-  width: 28px !important;
-  height: 28px !important;
-  object-fit: contain !important;
-}
-
-.dark .brand-icon-box {
-  background: transparent !important;
-}
-
-.dark .brand-icon-img,
-.dark .mobile-brand img {
-  filter: brightness(0) invert(1) !important;
-}
-
-body.collapsed .brand-icon-box:hover {
-  background: #f1f5f9 !important;
-}
-
-body.collapsed .brand-icon-box:hover .brand-icon-hover .ico {
-  color: #0f172a !important;
-  stroke: #0f172a !important;
-}
-
-.dark.collapsed .brand-icon-box:hover {
-  background: #1e293b !important;
 }
 
 .dark.collapsed .brand-icon-box:hover .brand-icon-hover .ico {
