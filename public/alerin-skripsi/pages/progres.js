@@ -54,22 +54,222 @@ function taskCard(t, role = '') {
     active = !!role;
   const eyebrow = t.status === 'done' ? 'SELESAI DIKERJAKAN' : t.status === 'deferred' ? 'DITUNDA' : active ? role.toUpperCase() : 'ANTREAN';
   const nFiles = S.files.filter(f => f.context === 'task-' + t.id).length;
-  let acts;
-  if (t.status === 'done')
-    acts = `<div class="actions mt">${B('Lihat Pekerjaan', 'task:' + t.id, 'primary', 'arrow')}${B('Buka Lagi', 'reopen:' + t.id, 'text')}${t.approval ? '' : B('Catat Persetujuan Dosen', 'approve:' + t.id, 'text', 'check')}</div><p class="small muted">Selesai Dikerjakan${t.completedAt ? ' · ' + dateLong(t.completedAt.slice(0, 10)) : ''}.</p>${approvalLine(t)}`;
-  else if (t.status === 'deferred')
-    acts = `<div class="actions mt">${B('Lanjutkan', 'restore:' + t.id, 'primary', 'refresh')}${B('Lihat', 'task-preview:' + t.id, 'text')}</div><p class="small muted">Ditunda${t.deferReason ? ' · ' + e(t.deferReason) : ''}${t.resumeDate ? ' · rencana lanjut ' + dateLong(t.resumeDate) : ''}</p>`;
-  else if (!active) acts = `<div class="actions mt">${B('Lihat', 'task-preview:' + t.id, '', 'arrow')}</div><p class="small muted">Pratinjau saja. Pengerjaan, pemeriksaan, dan penyelesaian tersedia setelah kartu aktif dan siap dikerjakan.</p>`;
-  else if (!ready)
-    acts = `<div class="actions mt">${B('Lihat Detail', 'task-preview:' + t.id, '', 'arrow')}${completeButton(t, '', true)}${B('Tunda', 'defer:' + t.id, 'text')}</div><p class="small muted help">Periksa Pekerjaan dan Catat Sebagai Selesai terbuka setelah prasyaratnya selesai.</p>`;
-  else {
-    const block = completionBlock(t);
-    acts = `<div class="actions mt">${B('Kerjakan', 'task:' + t.id, 'primary', 'arrow')}${completeButton(t, '', !!block)}${B('Tunda', 'defer:' + t.id, 'text')}</div>${block ? `<p class="small muted help"><strong>Belum bisa dicatat selesai:</strong> ${e(block.text)}</p>` : ''}`;
-  }
   const reason = priorityReason(t, role),
     early = earlierStageNote(t);
+  const crit = critList(t);
+  const revs = taskRevs(t);
+  const block = completionBlock(t);
   const limit = t.kind === 'parallel' && t.limit && t.status !== 'done' ? `<p class="small b19-limit"><strong>Batas pekerjaan:</strong> ${e(t.limit)}</p>` : '';
-  return `<article class="task-card v6-task ${role === SLOTS[0] ? 'lead' : ''} ${t.status} ${!ready && t.status !== 'done' ? 'b19-waiting' : ''}" data-task="${e(t.id)}"><div class="between"><span class="eyebrow">${e(eyebrow)}</span>${badge(st[1], t.status === 'done' ? 'green' : st[0] === 'warn' ? 'amber' : 'blue')}</div><button class="sync-stage-link" data-action="peta-focus:${ph}">Tahap ${e(stageName(ph))}</button><h3>${e(t.title)}</h3><p class="small muted b19-meta">Bagian: ${e(taskBagian(t))} · Sumber: ${e(taskSource(t))} · ${nFiles} berkas bukti</p>${reason ? `<p class="small b19-reason"><strong>Alasan prioritas:</strong> ${e(reason)}</p>` : ''}${early ? `<p class="small muted b19-early">${e(early)}</p>` : ''}${limit}${taskFacts(t)}${t.status === 'done' ? '' : relatedBlocks(t, true)}${acts}</article>`;
+  const dotCls = st[0] ? st[0] : (t.status === 'done' ? 'ok' : 'grey');
+
+  return `
+    <article class="card b18-task-card ${role === SLOTS[0] ? 'lead' : ''} ${t.status} ${!ready && t.status !== 'done' ? 'b19-waiting' : ''}" data-task="${e(t.id)}">
+      <div class="b18-task-top-bar"></div>
+      <div class="b18-task-body">
+        <div class="b18-task-badges-row">
+          <div class="b18-badges-left">
+            <div class="b18-task-role-pill">
+              <span class="b18-role-dot"></span>
+              <span>${e(eyebrow)}</span>
+            </div>
+            <button type="button" class="b18-task-stage-pill" data-action="peta-focus:${ph}">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+              </svg>
+              <span>Tahap ${e(stageName(ph))}</span>
+            </button>
+          </div>
+          <div class="b18-task-status-pill">
+            <span class="b18-status-dot ${dotCls}"></span>
+            <span>${e(st[1])}</span>
+          </div>
+        </div>
+
+        <div class="b18-task-title-group">
+          <h2 class="b18-task-title">${e(t.title)}</h2>
+          <div class="b18-task-meta-row">
+            <div class="b18-meta-item">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+              </svg>
+              <span class="b18-meta-label">Bagian:</span>
+              <span class="b18-meta-val">${e(taskBagian(t))}</span>
+            </div>
+            <span class="b18-meta-sep">·</span>
+            <div class="b18-meta-item">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              <span class="b18-meta-label">Sumber:</span>
+              <span class="b18-meta-val">${e(taskSource(t).charAt(0).toUpperCase() + taskSource(t).slice(1))}</span>
+            </div>
+            <span class="b18-meta-sep">·</span>
+            <div class="b18-meta-item">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
+              </svg>
+              <span class="b18-meta-val">${nFiles} berkas bukti</span>
+            </div>
+          </div>
+        </div>
+
+        ${reason ? `
+          <div class="b18-task-reason-box">
+            <div class="b18-reason-icon-wrap">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#125AB5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+              </svg>
+            </div>
+            <div class="b18-reason-content">
+              <span class="b18-reason-lead">Alasan prioritas: </span>
+              <span class="b18-reason-body">${e(reason)}</span>
+            </div>
+          </div>
+        ` : ''}
+
+        ${early ? `<p class="small muted b19-early">${e(early)}</p>` : ''}
+        ${limit}
+
+        <div class="b18-task-facts-duo">
+          <div class="b18-duo-card">
+            <div class="b18-duo-head">
+              <div class="b18-duo-icon">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#125AB5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+              </div>
+              <span class="b18-duo-label">YANG DIKERJAKAN</span>
+            </div>
+            <div class="b18-duo-desc">${e(t.doing || t.reason || 'Tambahkan penelitian terdahulu yang relevan, lalu jelaskan perbedaannya.')}</div>
+          </div>
+          <div class="b18-duo-card">
+            <div class="b18-duo-head">
+              <div class="b18-duo-icon">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#125AB5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                  <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+              </div>
+              <span class="b18-duo-label">HASIL YANG DISIAPKAN</span>
+            </div>
+            <div class="b18-duo-desc">${e(t.deliverable || 'Laporan perubahan yang menjawab arahan dosen, beserta letaknya di naskah.')}</div>
+          </div>
+        </div>
+
+        <div class="b18-task-criteria-box">
+          <div class="b18-criteria-head">
+            <div class="b18-criteria-title">
+              <div class="b18-criteria-icon">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 11 12 14 22 4"></polyline>
+                  <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                </svg>
+              </div>
+              <span class="b18-criteria-label">SELESAI BILA</span>
+            </div>
+            <span class="b18-criteria-pill">${(crit.length || 3)} kriteria evaluasi</span>
+          </div>
+          <ul class="b18-criteria-list">
+            ${(crit.length ? crit : [
+              'Tambahkan penelitian terdahulu yang relevan, lalu jelaskan perbedaannya.',
+              'Perubahan menjawab seluruh catatan asli dosen.',
+              'Letak perubahannya di ' + taskBagian(t) + ' bisa ditunjukkan.'
+            ]).map(c => `
+              <li>
+                <span class="b18-crit-dot"></span>
+                <span class="b18-crit-text">${e(c)}</span>
+              </li>
+            `).join('')}
+          </ul>
+        </div>
+
+        ${revs.length ? revs.map(r => `
+          <div class="b18-task-arahan-box">
+            <div class="b18-arahan-head">
+              <div class="b18-arahan-left">
+                <div class="b18-arahan-icon">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                  </svg>
+                </div>
+                <span class="b18-arahan-title">Arahan dosen</span>
+                <span class="b18-arahan-dot">·</span>
+                <span class="b18-arahan-sub">Catatan asli dosen · tidak diubah</span>
+              </div>
+              <div class="b18-arahan-right">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <span>Bimbingan ${dateLong(r.date)}</span>
+              </div>
+            </div>
+            <div class="b18-arahan-quote">
+              <p>“${e(r.text)}”</p>
+            </div>
+          </div>
+        `).join('') : ''}
+
+        <div class="b18-task-actions">
+          ${t.status === 'done' ? `
+            <button type="button" class="btn b18-btn-kerjakan" data-action="task:${t.id}"><span>Lihat Pekerjaan</span></button>
+            <button type="button" class="btn b18-btn-tunda" data-action="reopen:${t.id}"><span>Buka Lagi</span></button>
+            ${t.approval ? '' : `<button type="button" class="btn b18-btn-tunda" data-action="approve:${t.id}"><span>Catat Persetujuan Dosen</span></button>`}
+          ` : t.status === 'deferred' ? `
+            <button type="button" class="btn b18-btn-kerjakan" data-action="restore:${t.id}"><span>Lanjutkan</span></button>
+            <button type="button" class="btn b18-btn-tunda" data-action="task-preview:${t.id}"><span>Lihat</span></button>
+          ` : !active ? `
+            <button type="button" class="btn b18-btn-kerjakan" data-action="task-preview:${t.id}"><span>Lihat</span></button>
+          ` : !ready ? `
+            <button type="button" class="btn b18-btn-kerjakan" data-action="task-preview:${t.id}"><span>Lihat Detail</span></button>
+            <button type="button" class="btn b18-btn-complete locked" data-action="complete:${t.id}" aria-disabled="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span>Catat Sebagai Selesai</span>
+            </button>
+            <button type="button" class="btn b18-btn-tunda" data-action="defer:${t.id}"><span>Tunda</span></button>
+          ` : `
+            <button type="button" class="btn b18-btn-kerjakan" data-action="task:${t.id}"><span>Kerjakan</span></button>
+            <button type="button" class="btn b18-btn-complete ${block ? 'locked' : 'active-ready'}" data-action="complete:${t.id}" ${block ? 'aria-disabled="true"' : ''}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span>Catat Sebagai Selesai</span>
+            </button>
+            <button type="button" class="btn b18-btn-tunda" data-action="defer:${t.id}"><span>Tunda</span></button>
+          `}
+        </div>
+
+        ${active && block && t.status !== 'done' && t.status !== 'deferred' ? `
+          <div class="b18-task-block-banner">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+              <line x1="12" y1="9" x2="12" y2="13"></line>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            <div class="b18-block-text">
+              <span class="b18-block-label">Belum bisa dicatat selesai:</span>
+              <span class="b18-block-desc"> ${e(block.text)}</span>
+            </div>
+          </div>
+        ` : ''}
+
+        ${t.status === 'done' ? approvalLine(t) : ''}
+      </div>
+    </article>
+  `;
 }
 /* Empat tab hanya untuk tampilan. Status pekerjaan berubah lewat tombol kartu dan aturan kunci. */
 const PROGRESS_TABS = [
@@ -93,28 +293,19 @@ function progressShortcuts() {
 }
 /* Tiga slot: Prioritas Utama, Prioritas Berikutnya, Pekerjaan Paralel. Slot tanpa calon yang siap dibiarkan kosong. */
 function activeSlots(list) {
-  const r = slotRoles(list),
-    cells = [...(r.pu ? [[r.pu, SLOTS[0]]] : []), ...r.pb.map(t => [t, SLOTS[1]]), ...r.par.map(t => [t, SLOTS[2]])];
-  const waitingQ = S.tasks.filter(t => t.status === 'queued' && !taskReady(t));
-  const emptyWhy = waitingQ.length
-    ? `Belum ada pekerjaan di antrean yang siap dikerjakan. “${waitingQ[0].title}” masih ${waitLabel(waitingQ[0]).charAt(0).toLowerCase() + waitLabel(waitingQ[0]).slice(1)}.`
-    : 'Belum ada pekerjaan di antrean yang siap dikerjakan, jadi slot ini dibiarkan kosong.';
-  const want = [SLOTS[1], SLOTS[2]].filter(n => !cells.some(c => c[1] === n));
-  const pads = [];
-  while (cells.length + pads.length < 3) pads.push(want.shift() || 'Slot kosong');
+  const r = slotRoles(list);
+  const cells = [];
+  if (r.pu) cells.push([r.pu, SLOTS[0]]);
+  r.pb.forEach(t => cells.push([t, SLOTS[1]]));
+  r.par.forEach(t => cells.push([t, SLOTS[2]]));
+  list.forEach(t => {
+    if (!cells.some(c => c[0] === t)) cells.push([t, slotName(t) || 'Prioritas']);
+  });
   const readyPar = r.par.find(taskReady);
   const noPu = !r.pu && list.length
     ? `<div class="mb">${note(`<strong>Belum ada Prioritas Utama yang siap dikerjakan.</strong> ${r.pb[0] ? e(`“${r.pb[0].title}” ${waitLabel(r.pb[0]).charAt(0).toLowerCase() + waitLabel(r.pb[0]).slice(1)}.`) : ''} ${readyPar ? e(`Kerjakan dulu “${readyPar.title}” di slot Pekerjaan Paralel.`) : ''}`, 'amber')}</div>`
     : '';
-  return (
-    noPu +
-    `<div class="task-grid">${cells.map(([t, n]) => taskCard(t, n)).join('')}${pads
-      .map(
-        n =>
-          `<article class="task-card v6-task slot-empty"><div class="between"><span class="eyebrow">${e(n.toUpperCase())}</span>${badge('Kosong', '')}</div><p class="small muted">${e(n === SLOTS[2] && !waitingQ.length ? 'Slot untuk pekerjaan yang aman dikerjakan sambil menunggu. Belum ada calon yang siap.' : emptyWhy)}</p></article>`,
-      )
-      .join('')}</div>`
-  );
+  return `${noPu}<div class="task-grid b18-task-list">${cells.map(([t, n]) => taskCard(t, n)).join('')}</div>`;
 }
 function progresGuideCard() {
   if (S.settings.hideProgresGuide) return '';
@@ -329,10 +520,11 @@ function progresPage() {
     ? progresEmptyCard(progressTab, S.tasks.length)
     : progressTab === 'aktif'
       ? activeSlots(list)
-      : `<div class="task-grid">${list.map(t => taskCard(t)).join('')}</div>`;
+      : `<div class="task-grid b18-task-list">${list.map(t => taskCard(t)).join('')}</div>`;
   const sim = S.sample
     ? `<div class="b19-simbar">${badge('Mode Simulasi', 'amber')}<span>Contoh penelitian Naya. Arahan reliabilitas, tiga kartu aktif, dan antrean adalah skenario contoh, bukan data penelitianmu. Mulai ruang kosong lewat Pengaturan.</span></div>`
     : '';
+  const guide = !tabs.aktif.length && !S.settings.hideProgresGuide ? progresGuideCard() : '';
   return `
     <div class="b18-progres-page-wrap">
       <div class="mulai-page-head b18-progres-head">
@@ -340,7 +532,7 @@ function progresPage() {
         <p>Kerjakan prioritasmu, diskusikan perbaikan, dan simpan bukti dalam satu alur.</p>
       </div>
       ${sim}
-      ${progresGuideCard()}
+      ${guide}
       ${progresPositionStrip()}
       ${progresSyncContext(tabs)}
       ${progresTabsBar(tabs)}

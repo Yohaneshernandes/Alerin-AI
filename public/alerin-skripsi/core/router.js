@@ -62,7 +62,8 @@ function render() {
   let content = pages[route]();
   /* Seperti site GPT: strip posisi di atas Progres, Peta, dan Mentor; catatan judul berubah di bawahnya. */
   const changed = ['hasil-awal', 'hasil-periksa', 'peta', 'progres'].includes(route) ? titleChangedNote() : '';
-  if (['progres', 'peta'].includes(route)) content = posStrip() + changed + content;
+  if (['peta'].includes(route)) content = posStrip() + changed + content;
+  else if (route === 'progres') content = changed + content;
   else if (route !== 'beranda') content = changed + content;
   $('#app').innerHTML = shell(content);
   document.title = `${pageNames[route]} · Alerin Skripsi`;

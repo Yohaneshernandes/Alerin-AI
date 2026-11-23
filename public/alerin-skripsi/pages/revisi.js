@@ -881,7 +881,7 @@ function revDetailModal(id, fresh = false) {
     : (isDone ? 'Selesai dikerjakan' : 'Dalam pengerjaan');
   const badgeClass = isDone ? 'rv-review-badge is-done' : (fresh && !isApproved ? 'rv-review-badge is-warning' : 'rv-review-badge');
 
-  const taskTitleText = t ? t.title : ('Tindak lanjuti arahan: ' + (r.topic || 'Jurnal'));
+  const taskTitleText = t ? t.title : ('Tindak lanjut arahan: ' + (r.topic || 'Jurnal'));
   const criteriaStatusText = `Dikerjakan di Progres Aktif: ${e(taskTitleText)} · Prioritas Utama`;
 
   const body = `
@@ -1071,7 +1071,7 @@ function revLinkModal(id, why = '') {
           i === 0,
         ),
       )
-      .join('')}${opt('new', 'Buat pekerjaan baru', 'Kartu baru masuk Progres Aktif. Urutannya ditata ulang otomatis.', !matches.length)}</div><div class="field rv-newtitle"><label for="rl-title">Judul pekerjaan baru <span class="required-label">Wajib</span></label><input id="rl-title" type="text" maxlength="120" value="${e('Tindak lanjuti arahan: ' + r.topic)}"><div class="field-meta"><span></span><span data-count="rl-title">${('Tindak lanjuti arahan: ' + r.topic).length}/120</span></div></div></div>`,
+      .join('')}${opt('new', 'Buat pekerjaan baru', 'Kartu baru masuk Progres Aktif. Urutannya ditata ulang otomatis.', !matches.length)}</div><div class="field rv-newtitle"><label for="rl-title">Judul pekerjaan baru <span class="required-label">Wajib</span></label><input id="rl-title" type="text" maxlength="120" value="${e('Tindak lanjut arahan: ' + r.topic)}"><div class="field-meta"><span></span><span data-count="rl-title">${('Tindak lanjut arahan: ' + r.topic).length}/120</span></div></div></div>`,
     B('Batal', 'close-modal') + B('Tautkan Arahan', 'rev-link-save:' + id, 'primary', 'link'),
   );
 }
@@ -1355,15 +1355,20 @@ Object.assign(ACTIONS, {
         t = auto;
       } else {
         const part = r.part || analyzeArahan(r.text).part;
-        const title = 'Tindak lanjuti arahan: ' + (r.topic || 'Jurnal');
+        const title = 'Tindak lanjut arahan: ' + (r.topic || 'Jurnal');
         t = plainTask({
           title: capitalize(title),
           part,
           phase: partPhase(part),
           source: 'revisi',
           reason: r.understanding?.maksud || '',
-          doing: r.understanding?.langkah || '',
-          deliverable: 'Bagian yang sudah kamu perbaiki sesuai arahan dosen.',
+          doing: r.understanding?.langkah || 'Tambahkan penelitian terdahulu yang relevan, lalu jelaskan perbedaannya.',
+          deliverable: 'Laporan perubahan yang menjawab arahan dosen, beserta letaknya di naskah.',
+          criteria: r.criteria?.length ? r.criteria : [
+            'Tambahkan penelitian terdahulu yang relevan, lalu jelaskan perbedaannya.',
+            'Perubahan menjawab seluruh catatan asli dosen.',
+            'Letak perubahannya di ' + (partLabel(part) || 'naskah') + ' bisa ditunjukkan.'
+          ],
         });
         r.taskId = t.id;
         record('Arahan masuk ke Progres Aktif', r.topic + ' → ' + t.title);
@@ -1393,15 +1398,20 @@ Object.assign(ACTIONS, {
         t = auto;
       } else {
         const part = r.part || analyzeArahan(r.text).part;
-        const title = 'Tindak lanjuti arahan: ' + (r.topic || 'Jurnal');
+        const title = 'Tindak lanjut arahan: ' + (r.topic || 'Jurnal');
         t = plainTask({
           title: capitalize(title),
           part,
           phase: partPhase(part),
           source: 'revisi',
           reason: r.understanding?.maksud || '',
-          doing: r.understanding?.langkah || '',
-          deliverable: 'Bagian yang sudah kamu perbaiki sesuai arahan dosen.',
+          doing: r.understanding?.langkah || 'Tambahkan penelitian terdahulu yang relevan, lalu jelaskan perbedaannya.',
+          deliverable: 'Laporan perubahan yang menjawab arahan dosen, beserta letaknya di naskah.',
+          criteria: r.criteria?.length ? r.criteria : [
+            'Tambahkan penelitian terdahulu yang relevan, lalu jelaskan perbedaannya.',
+            'Perubahan menjawab seluruh catatan asli dosen.',
+            'Letak perubahannya di ' + (partLabel(part) || 'naskah') + ' bisa ditunjukkan.'
+          ],
         });
         r.taskId = t.id;
         record('Arahan masuk ke Progres Aktif', r.topic + ' → ' + t.title);
