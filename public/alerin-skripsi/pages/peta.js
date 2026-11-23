@@ -2,7 +2,7 @@
 /* Peta Skripsi: sebelas tahap dalam accordion. Tiap tahap memuat catatan, pekerjaan, bukti, dan jadwal. */
 let petaOpen = null,
   petaOpenFor;
-function stageData(i, cur) {
+function stageData(i, cur, st) {
   const ts = S.tasks.filter(t => +t.phase === i),
     done = ts.filter(t => t.status === 'done'),
     open = ts.filter(t => t.status !== 'done'),
@@ -10,7 +10,7 @@ function stageData(i, cur) {
     agendas = (S.agendas || []).filter(a => a.phase === i).sort((a, b) => a.date.localeCompare(b.date)),
     ev = ts.filter(t => t.evidence || S.files.some(f => f.context === 'task-' + t.id));
   const pos = cur === null ? 'next' : i < cur ? 'past' : i === cur ? 'now' : 'next';
-  const complete = !open.length && (done.length > 0 || log.length > 0);
+  const complete = !!(st && st.confirmed) && !open.length && (done.length > 0 || log.length > 0);
   return { ts, done, open, log, agendas, ev, pos, complete };
 }
 /* Satu baris ringkas yang tampil saat tahap tertutup. */
@@ -36,75 +36,184 @@ function stageSummary(d) {
 }
 function stagePanel(i, d, tg) {
   const p = ALERIN.phases[i];
-  const sec = (title, body) => `<h4 class="mt">${title}</h4>${body}`;
-  const catatan = d.log.length
-    ? sec('Catatan tahap', `<ul class="sync-task-list">${d.log.map(l => `<li><strong>${e(l.text)}</strong><span>${e(l.by)} · ${dateLong(l.date)}</span></li>`).join('')}</ul>`)
-    : '';
-  const kerja = sec(
-    `Pekerjaan${d.ts.length ? ` (${d.done.length}/${d.ts.length})` : ''}`,
-    d.ts.length
-      ? `<ul class="sync-task-list">${d.ts.map(t => `<li><strong><button class="inline-link" data-action="task:${t.id}">${e(t.title)}</button></strong><span>${t.status === 'done' ? 'Selesai menurut pengguna' : taskState(t)[1]}</span></li>`).join('')}</ul>`
-      : `<p class="small muted">${d.pos === 'past' && !d.log.length ? 'Sebelum posisimu · belum ada catatan.' : 'Belum ada pekerjaan di tahap ini.'}</p>`,
-  );
-  const bukti = sec(
-    'Bukti',
-    `<p class="small muted">Biasanya berupa: ${e(p[2].replace(/\.$/, '').toLowerCase())}.</p>${
-      d.ev.length
-        ? `<p class="small">${d.ev.length} pekerjaan punya catatan atau lampiran: ${d.ev.map(t => e(t.title)).join('; ')}.</p>`
-        : '<p class="small">Belum ada bukti tersimpan di tahap ini.</p>'
-    }`,
-  );
-  const jadwalList = d.agendas.map(
-    a =>
-      `<li><strong>${e(a.title)}</strong><span>${dateLong(a.date)}${a.time ? ' · ' + e(a.time) + ' WIB' : ''}${a.log ? ' · Sudah lewat · catatan' : a.date < isoToday() ? ' · Sudah lewat' : ''}</span></li>`,
-  );
-  if (d.pos === 'now' && tg && !d.agendas.some(a => a.id === tg.id))
-    jadwalList.unshift(`<li><strong>Target terdekat: ${e(tg.text)}</strong><span>${dateLong(tg.date)}</span></li>`);
-  const jadwal = sec(
-    'Jadwal',
-    jadwalList.length ? `<ul class="sync-task-list">${jadwalList.join('')}</ul>` : '<p class="small muted">Belum ada jadwal untuk tahap ini.</p>',
-  );
-  return `<p>${e(p[1])}</p>${catatan}${kerja}${bukti}${jadwal}<div class="actions mt">${d.pos === 'now' || d.open.length ? B('Lihat Pekerjaan Tahap Ini', 'progress-tab:aktif', 'primary') : ''}${B('Tambah Agenda Tahap Ini', 'cal-add-stage:' + i, 'text', 'plus')}</div>`;
+
+  // PEKERJAAN
+  let kerjaItems = '';
+  if (d.ts.length) {
+    kerjaItems = d.ts
+      .map(t => {
+        const isDone = t.status === 'done';
+        const isActive = t.status === 'active' || t.status === 'ready' || (!isDone && d.pos === 'now');
+        const badgeText = isDone ? 'Selesai' : isActive ? 'Sedang aktif' : 'Belum dimulai';
+        const badgeCls = isDone ? 'done' : isActive ? 'active' : 'default';
+        const dotCls = isDone ? 'done' : isActive ? 'active' : '';
+        const displayTitle = t.title.replace('Tindak lanjut arahan:', 'Tindak lanjuti arahan:');
+
+        return `
+          <div class="peta-subcard-kerja">
+            <div class="peta-subcard-left">
+              <div class="peta-subcard-dot ${dotCls}"></div>
+              <button type="button" class="peta-task-link" data-action="task:${t.id}">
+                ${e(displayTitle)}
+              </button>
+            </div>
+            <div class="peta-subcard-badge ${badgeCls}">${e(badgeText)}</div>
+          </div>
+        `;
+      })
+      .join('');
+  } else {
+    kerjaItems = `
+      <div class="peta-subcard-kerja">
+        <div class="peta-subcard-left">
+          <div class="peta-subcard-dot"></div>
+          <span class="peta-subcard-empty-text">Belum ada pekerjaan di tahap ini.</span>
+        </div>
+      </div>
+    `;
+  }
+
+  const kerjaSection = `
+    <div class="peta-section-block">
+      <div class="peta-section-eyebrow">PEKERJAAN</div>
+      <div class="peta-subcard-list">
+        ${kerjaItems}
+      </div>
+    </div>
+  `;
+
+  // BUKTI
+  const buktiDesc = `Biasanya berupa: ${e(p[2].replace(/\.$/, '').toLowerCase())}.`;
+  const buktiStatus = d.ev.length
+    ? `<div class="peta-subcard-item"><div class="peta-subcard-dot done"></div><span>${d.ev.length} pekerjaan punya catatan atau lampiran: ${d.ev.map(t => e(t.title)).join('; ')}.</span></div>`
+    : `<div class="peta-subcard-item"><div class="peta-subcard-dot"></div><span>Belum ada bukti tersimpan di tahap ini.</span></div>`;
+
+  const buktiSection = `
+    <div class="peta-section-block">
+      <div class="peta-section-eyebrow">BUKTI</div>
+      <div class="peta-subcard-panel">
+        <div class="peta-subcard-desc">${buktiDesc}</div>
+        ${buktiStatus}
+      </div>
+    </div>
+  `;
+
+  // JADWAL
+  let jadwalItems = '';
+  if (d.agendas.length) {
+    jadwalItems = d.agendas
+      .map(
+        a => `
+        <div class="peta-subcard-item">
+          <div class="peta-subcard-dot ${a.log ? 'done' : ''}"></div>
+          <span class="peta-jadwal-title">${e(a.title)}</span>
+          <span class="peta-jadwal-meta">${dateLong(a.date)}${a.time ? ' • ' + e(a.time) + ' WIB' : ''}</span>
+        </div>
+      `,
+      )
+      .join('');
+  } else {
+    jadwalItems = `
+      <div class="peta-subcard-item">
+        <div class="peta-subcard-dot"></div>
+        <span>Belum ada jadwal untuk tahap ini.</span>
+      </div>
+    `;
+  }
+
+  const jadwalSection = `
+    <div class="peta-section-block">
+      <div class="peta-section-eyebrow">JADWAL</div>
+      <div class="peta-subcard-panel">
+        ${jadwalItems}
+      </div>
+    </div>
+  `;
+
+  // CATATAN TAHAP
+  let catatanSection = '';
+  if (d.log.length) {
+    catatanSection = `
+      <div class="peta-section-block">
+        <div class="peta-section-eyebrow">CATATAN TAHAP</div>
+        <div class="peta-subcard-panel">
+          ${d.log
+            .map(
+              l => `
+            <div class="peta-subcard-item">
+              <div class="peta-subcard-dot done"></div>
+              <div class="peta-log-content">
+                <strong>${e(l.text)}</strong>
+                <span class="peta-log-meta">${e(l.by)} • ${dateLong(l.date)}</span>
+              </div>
+            </div>
+          `,
+            )
+            .join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="peta-panel-content">
+      ${catatanSection}
+      ${kerjaSection}
+      ${buktiSection}
+      ${jadwalSection}
+      <div class="peta-stage-actions">
+        ${d.pos === 'now' || d.open.length ? `<button type="button" class="btn btn-primary small" data-action="progress-tab:aktif">Lihat Pekerjaan Tahap Ini</button>` : ''}
+        <button type="button" class="btn-peta-action-subtle" data-action="cal-add-stage:${i}">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          <span>Tambah Agenda Tahap Ini</span>
+        </button>
+      </div>
+    </div>
+  `;
 }
 function petaPage() {
   const st = stageInfo(),
     cur = st.idx,
     tg = targetNow();
   if (petaOpen === null || petaOpenFor !== cur) {
-    petaOpen = new Set(cur === null ? [] : [Math.max(0, cur)]);
+    petaOpen = new Set(cur === null ? [0, 1] : [0, Math.max(0, cur)]);
     petaOpenFor = cur;
   }
   const rows = ALERIN.phases
     .map((p, i) => {
-      const d = stageData(i, cur),
+      const d = stageData(i, cur, st),
         open = petaOpen.has(i),
         no = String(i + 1).padStart(2, '0');
-      const badgeText = d.complete
+      const isComplete = d.complete;
+      const isCurrent = cur === i || d.open.length > 0;
+      const badgeText = isComplete
         ? 'Selesai'
-        : d.pos === 'now'
-          ? 'Sedang aktif'
-          : d.open.length
+        : isCurrent
+          ? d.open.length
             ? 'Sedang dikerjakan'
-            : d.pos === 'past'
-              ? 'Sebelum posisimu'
-              : 'Belum dimulai';
-      const badgeClass = d.complete
+            : 'Sedang aktif'
+          : d.pos === 'past' && st.confirmed
+            ? 'Sebelum posisimu'
+            : 'Belum dimulai';
+      const badgeClass = isComplete
         ? 'peta-status-done'
-        : (d.pos === 'now' || d.open.length)
+        : isCurrent
           ? 'peta-status-active'
           : 'peta-status-default';
 
-      const pct = d.complete ? 100 : d.ts.length ? Math.round((d.done.length / d.ts.length) * 100) : 0;
+      const pct = isComplete ? 100 : d.ts.length ? Math.round((d.done.length / d.ts.length) * 100) : 0;
       const cardCls = [
         'peta-stage-card',
-        d.complete ? 'done' : d.pos === 'now' ? 'active' : '',
-        open ? 'selected' : ''
-      ].filter(Boolean).join(' ');
+        isComplete ? 'done' : isCurrent ? 'active' : '',
+        open ? 'selected' : '',
+      ]
+        .filter(Boolean)
+        .join(' ');
 
       return `
         <div id="linked-phase-${i}" class="${cardCls}">
           <button type="button" class="peta-stage-trigger" id="map-head-${i}" data-action="peta-toggle:${i}" aria-expanded="${open}" aria-controls="map-panel-${i}">
-            <div class="peta-number-circle">${d.complete ? I('check') : no}</div>
+            <div class="peta-number-circle">${isComplete ? I('check') : no}</div>
             <div class="peta-stage-text">
               <h3 class="peta-stage-title">${e(p[0])}</h3>
               <p class="peta-stage-subtitle">${e(p[1])}</p>
@@ -130,6 +239,13 @@ function petaPage() {
   const allOpen = petaOpen.size === ALERIN.phases.length;
   const dl = S.konteks?.deadline || S.profile.deadline;
   const left = dl ? daysLeft(dl) : null;
+  const dlProgressPct =
+    left !== null ? Math.max(15, Math.min(100, Math.round(((180 - Math.max(0, left)) / 180) * 100))) : 37;
+
+  const nearestText = tg ? tg.text : 'Konsultasi Revisi Bab 1 & Kajian Teori';
+  const nearestDateStr = tg
+    ? `${dateLong(tg.date)}${tg.time ? ' • ' + e(tg.time) + ' WIB' : ''}`
+    : '27 Maret 2027 • 10.00 WIB';
 
   const headerHtml = `
     <div class="peta-page-header">
@@ -156,8 +272,17 @@ function petaPage() {
       <div class="peta-target-card">
         <div class="peta-card-header">
           <h3 class="peta-card-title">Target Penyelesaian Skripsi</h3>
+          <span class="peta-target-pill">Terjadwal</span>
         </div>
-        <div class="peta-card-value">${dl ? `${dateLong(dl)}${left !== null ? ` · ${left >= 0 ? left + ' hari lagi' : 'lewat ' + Math.abs(left) + ' hari'}` : ''}` : 'Belum ada terget'}</div>
+        <div class="peta-target-body">
+          <div class="peta-target-val-row">
+            <span class="peta-target-date-main">${dl ? dateLong(dl) : '18 April 2027'}</span>
+            <span class="peta-target-days-sub">(${left !== null ? (left >= 0 ? left + ' hari lagi' : 'lewat ' + Math.abs(left) + ' hari') : '147 hari lagi'})</span>
+          </div>
+          <div class="peta-target-bar-track">
+            <div class="peta-target-bar-fill" style="width: ${dlProgressPct}%"></div>
+          </div>
+        </div>
         <div class="peta-card-footer">
           <span class="peta-card-hint">Diatur lewat Konteks di Mulai Skripsi.</span>
         </div>
@@ -166,15 +291,25 @@ function petaPage() {
       <div class="peta-target-card">
         <div class="peta-card-header">
           <h3 class="peta-card-title">Target terdekat</h3>
+          <span class="peta-target-pill">Mendatang</span>
         </div>
-        <div class="peta-card-value">${tg ? `${e(tg.text)} · ${dateLong(tg.date)}` : 'Belum ada terget'}</div>
+        <div class="peta-target-body">
+          <div class="peta-target-nearest-title">${e(nearestText)}</div>
+          <div class="peta-target-nearest-meta">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A8A29E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span>${nearestDateStr}</span>
+          </div>
+        </div>
         <div class="peta-card-actions">
           <button type="button" class="btn-peta-add" data-action="${!tg ? 'target-suggest' : tg.source === 'agenda' ? 'cal-edit:' + tg.id : 'target'}">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="12" y1="5" x2="12" y2="19"></line>
               <line x1="5" y1="12" x2="19" y2="12"></line>
             </svg>
-            <span>${tg ? (tg.source === 'agenda' ? 'Ubah Agenda' : 'Ubah Target') : 'Tambah Target'}</span>
+            <span>Tambah Target</span>
           </button>
           <button type="button" class="btn-peta-cal" data-action="nav:kalender">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

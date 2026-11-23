@@ -11385,12 +11385,316 @@ body.dark-mode .alerin-toast-close:hover,
   transition: width 0.3s ease;
 }
 
+.peta-target-pill {
+  padding: 2px 6px;
+  background: #F1F5F9;
+  border-radius: 4px;
+  outline: 1px #E2E8F0 solid;
+  outline-offset: -1px;
+  color: #64748B;
+  font-size: 10px;
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-weight: 500;
+  line-height: 16px;
+  flex-shrink: 0;
+}
+
+.peta-target-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.peta-target-val-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding-bottom: 6px;
+}
+
+.peta-target-date-main {
+  color: #1C1917;
+  font-size: 20px;
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-weight: 600;
+  line-height: 28px;
+}
+
+.peta-target-days-sub {
+  color: #78716C;
+  font-size: 12px;
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-weight: 500;
+  line-height: 16px;
+}
+
+.peta-target-bar-track {
+  width: 100%;
+  height: 6px;
+  background: #F5F5F4;
+  border-radius: 9999px;
+  overflow: hidden;
+  position: relative;
+}
+
+.peta-target-bar-fill {
+  height: 6px;
+  background: #186DD8;
+  border-radius: 9999px;
+  transition: width 0.3s ease;
+}
+
+.peta-target-nearest-title {
+  color: #1C1917;
+  font-size: 14px;
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-weight: 600;
+  line-height: 20px;
+  padding-top: 2px;
+}
+
+.peta-target-nearest-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #78716C;
+  font-size: 11px;
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-weight: 400;
+  line-height: 16px;
+}
+
 .peta-stage-panel {
   padding-top: 16px;
   border-top: 1px solid #E2E8F0;
   margin-top: 14px;
   font-size: 12px;
-  line-height: 1.8;
+  line-height: 1.6;
+}
+
+.peta-panel-content {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+  padding-top: 5px;
+}
+
+.peta-section-block {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+}
+
+.peta-section-eyebrow {
+  color: #1E293B;
+  font-size: 12px;
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 16px;
+  letter-spacing: 0.6px;
+}
+
+.peta-subcard-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.peta-subcard-kerja {
+  width: 100%;
+  min-height: 45px;
+  padding: 12px;
+  background: white;
+  border-radius: 8px;
+  outline: 1px #E2E8F0 solid;
+  outline-offset: -1px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  box-sizing: border-box;
+}
+
+.peta-subcard-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.peta-subcard-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: #CBD5E1;
+  flex-shrink: 0;
+}
+
+.peta-subcard-dot.active {
+  background: #186DD8;
+}
+
+.peta-subcard-dot.done {
+  background: #16A34A;
+}
+
+.peta-task-link {
+  color: #125AB5;
+  font-size: 12px;
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-weight: 500;
+  line-height: 16px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+  text-decoration: none;
+  word-break: break-word;
+}
+.peta-task-link:hover {
+  text-decoration: underline;
+}
+
+.peta-subcard-empty-text {
+  color: #475569;
+  font-size: 12px;
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-weight: 500;
+  line-height: 16px;
+}
+
+.peta-subcard-badge {
+  height: 23px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-weight: 600;
+  line-height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.peta-subcard-badge.default {
+  background: #F1F5F9;
+  outline: 1px #E2E8F0 solid;
+  outline-offset: -1px;
+  color: #64748B;
+}
+
+.peta-subcard-badge.active {
+  background: #EEF5FF;
+  outline: 1px #D8E6FA solid;
+  outline-offset: -1px;
+  color: #125AB5;
+}
+
+.peta-subcard-badge.done {
+  background: #F0FDF4;
+  outline: 1px #DCFCE7 solid;
+  outline-offset: -1px;
+  color: #16A34A;
+}
+
+.peta-subcard-panel {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(0deg, white 0%, white 100%), rgba(248, 250, 252, 0.50);
+  border-radius: 8px;
+  outline: 1px #E2E8F0 solid;
+  outline-offset: -1px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-sizing: border-box;
+}
+
+.peta-subcard-desc {
+  color: #475569;
+  font-size: 12px;
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-weight: 500;
+  line-height: 16px;
+}
+
+.peta-subcard-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #475569;
+  font-size: 12px;
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-weight: 500;
+  line-height: 16px;
+}
+
+.peta-jadwal-title {
+  color: #1E293B;
+  font-weight: 500;
+}
+
+.peta-jadwal-meta {
+  color: #78716C;
+  font-size: 11px;
+  margin-left: auto;
+}
+
+.peta-log-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.peta-log-content strong {
+  color: #1E293B;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.peta-log-meta {
+  color: #64748B;
+  font-size: 11px;
+}
+
+.peta-stage-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+.btn-peta-action-subtle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  background: #F8FAFC;
+  border-radius: 6px;
+  outline: 1px #E2E8F0 solid;
+  outline-offset: -1px;
+  border: none;
+  font-size: 12px;
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-weight: 500;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.btn-peta-action-subtle:hover {
+  background: #EEF5FF;
+  outline-color: #D8E6FA;
+  color: #125AB5;
 }
 
 /* Dark Mode Overrides */
@@ -11478,6 +11782,93 @@ body.dark .peta-stage-panel,
 body.dark-mode .peta-stage-panel,
 .dark .peta-stage-panel {
   border-color: #334155 !important;
+}
+
+body.dark .peta-target-pill,
+body.dark-mode .peta-target-pill,
+.dark .peta-target-pill {
+  background: #334155 !important;
+  color: #94A3B8 !important;
+  outline-color: #475569 !important;
+}
+
+body.dark .peta-target-date-main,
+body.dark-mode .peta-target-date-main,
+.dark .peta-target-date-main {
+  color: #F8FAFC !important;
+}
+
+body.dark .peta-target-days-sub,
+body.dark-mode .peta-target-days-sub,
+.dark .peta-target-days-sub,
+body.dark .peta-target-nearest-meta,
+body.dark-mode .peta-target-nearest-meta,
+.dark .peta-target-nearest-meta {
+  color: #94A3B8 !important;
+}
+
+body.dark .peta-target-nearest-title,
+body.dark-mode .peta-target-nearest-title,
+.dark .peta-target-nearest-title {
+  color: #F8FAFC !important;
+}
+
+body.dark .peta-target-bar-track,
+body.dark-mode .peta-target-bar-track,
+.dark .peta-target-bar-track {
+  background: #334155 !important;
+}
+
+body.dark .peta-section-eyebrow,
+body.dark-mode .peta-section-eyebrow,
+.dark .peta-section-eyebrow {
+  color: #CBD5E1 !important;
+}
+
+body.dark .peta-subcard-kerja,
+body.dark-mode .peta-subcard-kerja,
+.dark .peta-subcard-kerja {
+  background: #0F172A !important;
+  outline-color: #334155 !important;
+}
+
+body.dark .peta-subcard-empty-text,
+body.dark-mode .peta-subcard-empty-text,
+.dark .peta-subcard-empty-text {
+  color: #94A3B8 !important;
+}
+
+body.dark .peta-subcard-panel,
+body.dark-mode .peta-subcard-panel,
+.dark .peta-subcard-panel {
+  background: #0F172A !important;
+  outline-color: #334155 !important;
+}
+
+body.dark .peta-subcard-desc,
+body.dark-mode .peta-subcard-desc,
+.dark .peta-subcard-desc,
+body.dark .peta-subcard-item,
+body.dark-mode .peta-subcard-item,
+.dark .peta-subcard-item {
+  color: #94A3B8 !important;
+}
+
+body.dark .peta-jadwal-title,
+body.dark-mode .peta-jadwal-title,
+.dark .peta-jadwal-title,
+body.dark .peta-log-content strong,
+body.dark-mode .peta-log-content strong,
+.dark .peta-log-content strong {
+  color: #F8FAFC !important;
+}
+
+body.dark .btn-peta-action-subtle,
+body.dark-mode .btn-peta-action-subtle,
+.dark .btn-peta-action-subtle {
+  background: #1E293B !important;
+  outline-color: #334155 !important;
+  color: #94A3B8 !important;
 }
 
 @media (max-width: 768px) {
