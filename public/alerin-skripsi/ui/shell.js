@@ -139,6 +139,19 @@ function notifItems() {
       unread: !read.includes(id)
     });
   }
+  if (S.needsReview) {
+    const id = 'title-review:' + (S.activeTitle?.id || S.title || 'current');
+    items.push({
+      id,
+      tab: 'both',
+      icon: NOTIF_ICONS.book,
+      title: 'Judul aktif berubah',
+      detail: 'Rancangan dan hasil sebelumnya tetap tersimpan serta perlu ditinjau ulang. Periksa keselarasannya di Periksa Skripsi.',
+      time: 'Perlu ditinjau',
+      action: 'periksa-judul',
+      unread: !read.includes(id)
+    });
+  }
   return items;
 }
 
@@ -150,8 +163,8 @@ function notifsModal() {
   document.body.style.overflow = 'hidden';
   const all = notifSimulatedEmpty ? [] : notifItems();
   const read = S.notificationReads || [];
-  const displayUmum = all.filter(n => n.tab === 'umum');
-  const displaySistem = all.filter(n => n.tab === 'sistem');
+  const displayUmum = all.filter(n => n.tab === 'umum' || n.tab === 'both');
+  const displaySistem = all.filter(n => n.tab === 'sistem' || n.tab === 'both');
   const currentList = notifTab === 'umum' ? displayUmum : displaySistem;
   const unreadCount = all.filter(n => !read.includes(n.id)).length;
 

@@ -143,11 +143,9 @@ function posStrip() {
     source = st.idx === null ? 'Belum dikonfirmasi · konfirmasi lewat Beranda' : positionSource();
   return `<section class="position-strip"><div><span class="eyebrow">${eyebrow}</span><strong${st.idx === null ? ' class="b18-placeholder"' : ''}>${e(label)}</strong><span class="position-source">${e(source)}</span></div>${B('Peta Skripsi', 'nav:peta', 'text', 'map')}</section>`;
 }
-/* Catatan judul aktif berubah (QC 14 November): tampil di bawah strip posisi. */
+/* Catatan judul aktif berubah: kini dimasukkan ke modal Notifikasi header, tidak lagi tampil sebagai banner di tiap halaman. */
 function titleChangedNote() {
-  return S.needsReview
-    ? `<div class="mb">${note('Judul aktif berubah. Rancangan dan hasil sebelumnya tetap tersimpan serta <strong>perlu ditinjau ulang</strong>. Periksa keselarasannya di Periksa Skripsi. ' + B('Periksa Judul Baru', 'periksa-judul', 'text small'))}</div>`
-    : '';
+  return '';
 }
 function synchronizeResearch() {
   fillSlots();

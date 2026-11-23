@@ -29,7 +29,6 @@ function berandaPage() {
       <p>Satu langkah yang jelas untuk melanjutkan penelitianmu.</p>
     </div>` +
     homeStrip(p) +
-    titleChangedNote() +
     directionNotice(p) +
     `<div class="v7-home-layout qc14-home-layout b18-home-layout">${priorityCard(p)}<aside class="home-schedule">${targetCard()}</aside></div>` +
     homeShortcuts(p)

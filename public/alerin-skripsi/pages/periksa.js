@@ -358,12 +358,15 @@ async function runPeriksa() {
 }
 
 Object.assign(ACTIONS, {
-  /* Dari catatan "Judul aktif berubah": periksa judul aktif yang baru. */
+  /* Dari notifikasi "Judul aktif berubah": periksa judul aktif yang baru. */
   'periksa-judul': () => {
     const p = ensurePeriksa();
     p.chapter = 'title';
     p.part = '';
     p.title = S.title || p.title;
+    const notifId = 'title-review:' + (S.activeTitle?.id || S.title || 'current');
+    if (!S.notificationReads) S.notificationReads = [];
+    if (!S.notificationReads.includes(notifId)) S.notificationReads.push(notifId);
     persist();
     go('periksa');
   },
