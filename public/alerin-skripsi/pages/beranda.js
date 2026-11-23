@@ -182,7 +182,7 @@ function priorityCard(p) {
           <div class="b18-priority-banner">
             <div class="b18-priority-banner-text">${e(p.rec.text)}</div>
           </div>
-          <p class="b18-priority-note">Prioritas muncul di sini setelah ada pekerjaan di Progres Aktif: dari subbagian yang kamu susun, temuan pemeriksaan, atau arahan dosen yang ditautkan.</p>
+          <p class="b18-priority-note">Jawabanmu disimpan sebagai posisi penelitian aktif saat ini. Tahap sebelumnya tidak otomatis ditandai selesai tanpa persetujuanmu.</p>
           ${activeTitle()}
         </div>
       </section>
