@@ -848,12 +848,12 @@ body.dark .rv-why{background:#173a33;color:#7fd6b9}
 .b18-cell strong{font-size:15px;line-height:1.5;overflow-wrap:anywhere}
 .b18-cell .btn.text{margin-top:auto;padding:6px 0;min-height:36px}
 .b18-placeholder{color:#6b7f98!important;font-weight:600}
-.b18-notice{display:flex;align-items:center;gap:14px;background:#fffbf3;border:1px solid #f0e5cf;border-radius:14px;padding:14px 18px;margin-bottom:22px}
-.b18-notice>.ico{width:20px;height:20px;color:var(--amber);flex-shrink:0}
+.b18-notice{display:flex;align-items:center;gap:14px;background:#f0f6fe;border:1px solid #d4e5f9;border-radius:14px;padding:14px 18px;margin-bottom:22px;box-shadow:0 1px 3px rgba(18,90,181,0.04)}
+.b18-notice>.ico{width:20px;height:20px;color:#125ab5;flex-shrink:0}
 .b18-notice>div{flex:1;min-width:0}
-.b18-notice strong{font-size:14px;color:#6b4f1d}
-.b18-notice p{margin:2px 0 0!important;color:#7a6139}
-.b18-notice .btn{flex-shrink:0}
+.b18-notice strong{font-size:14px;font-weight:600;color:#125ab5}
+.b18-notice p{margin:2px 0 0!important;color:#475569}
+.b18-notice .btn{flex-shrink:0;color:#125ab5;font-weight:600}
 .b18-priority .b18-priority-top{width:100%;align-items:center}
 .b18-priority .b18-priority-top .eyebrow{margin:0}
 .b18-done-when{margin-top:12px!important;color:#3d5370}
@@ -884,8 +884,11 @@ body.dark .rv-why{background:#173a33;color:#7fd6b9}
 .b18-situasi .stuck-option>.ico{grid-column:2;grid-row:1/span 2}
 .b18-rec-box{background:#f3f7fd;border:1px solid #dde9fa;border-radius:12px;padding:16px}
 .b18-rec-box h3{margin:6px 0}
-body.dark .b18-notice{background:#44331e;border-color:#5c4a2c}
-body.dark .b18-notice strong,body.dark .b18-notice p{color:#ffe0aa}
+body.dark .b18-notice{background:#0e2038;border-color:#1e3e6b;box-shadow:none}
+body.dark .b18-notice>.ico{color:#60a5fa}
+body.dark .b18-notice strong{color:#93c5fd}
+body.dark .b18-notice p{color:#94a3b8}
+body.dark .b18-notice .btn{color:#60a5fa}
 body.dark .b18-direction{background:#2c2618;border-color:#5c4a2c}
 body.dark .b18-direction p,body.dark .b18-done-when{color:#e4ebf5}
 body.dark .b18-stage-box,body.dark .b18-rec-box{background:#132033;border-color:#34465d}
