@@ -116,6 +116,206 @@ function activeSlots(list) {
       .join('')}</div>`
   );
 }
+function progresGuideCard() {
+  if (S.settings.hideProgresGuide) return '';
+  return `
+    <section class="card b18-progres-guide" aria-label="Cara membaca Progres Aktif">
+      <div class="b18-guide-header">
+        <div class="b18-guide-header-text">
+          <h2>Cara membaca Progres Aktif</h2>
+          <p>Pahami urutan prioritas agar pengerjaan skripsi tetap fokus, teratur, dan selesai tepat waktu.</p>
+        </div>
+        <button type="button" class="btn b18-btn-mengerti" data-action="dismiss-progres-guide">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M3.33 8.5L6.67 11.5L12.67 4.5" stroke="#125AB5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span>Mengerti</span>
+        </button>
+      </div>
+      <div class="b18-guide-cards">
+        <div class="b18-guide-card">
+          <div class="b18-guide-bar"></div>
+          <div class="b18-guide-card-content">
+            <div class="b18-guide-card-head">
+              <div class="b18-guide-icon-box">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <circle cx="8" cy="8" r="6.5" stroke="#125AB5" stroke-width="1.33"/>
+                  <circle cx="8" cy="8" r="3.5" stroke="#125AB5" stroke-width="1.33"/>
+                  <circle cx="8" cy="8" r="1" fill="#125AB5"/>
+                </svg>
+              </div>
+              <span class="b18-guide-badge">1 · PRIORITAS UTAMA</span>
+            </div>
+            <p class="b18-guide-desc">Pekerjaan yang siap dikerjakan sekarang dan paling menentukan langkah berikutnya. Alerin memilihnya dari pekerjaan yang membuka pekerjaan lain, arahan dosen yang menghambat, atau tenggat yang paling dekat.</p>
+          </div>
+        </div>
+        <div class="b18-guide-card">
+          <div class="b18-guide-bar"></div>
+          <div class="b18-guide-card-content">
+            <div class="b18-guide-card-head">
+              <div class="b18-guide-icon-box">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M3.5 8H12.5M12.5 8L8.5 4M12.5 8L8.5 12" stroke="#125AB5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <span class="b18-guide-badge">2 · PRIORITAS BERIKUTNYA</span>
+            </div>
+            <p class="b18-guide-desc">Pekerjaan lanjutan yang paling relevan setelah Prioritas Utama. Kartunya bisa langsung dikerjakan, atau masih menunggu pekerjaan lain selesai. Selama menunggu, detailnya bisa dilihat, tetapi Periksa Pekerjaan dan Catat Sebagai Selesai baru terbuka setelah prasyaratnya selesai.</p>
+          </div>
+        </div>
+        <div class="b18-guide-card">
+          <div class="b18-guide-bar"></div>
+          <div class="b18-guide-card-content">
+            <div class="b18-guide-card-head">
+              <div class="b18-guide-icon-box">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M2 5L8 2L14 5L8 8L2 5Z" stroke="#125AB5" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M2 8.5L8 11.5L14 8.5" stroke="#125AB5" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M2 12L8 15L14 12" stroke="#125AB5" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <span class="b18-guide-badge">3 · PEKERJAAN PARALEL</span>
+            </div>
+            <p class="b18-guide-desc">Pekerjaan yang bisa dicicil kapan saja tanpa menunggu pekerjaan lain, misalnya sambil menunggu tanggapan dosen. Mengerjakannya tidak menggeser Prioritas Utama. Kalau sebagian hasilnya masih bergantung pada pekerjaan lain, batasnya ditulis di kartu.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+function progresPositionStrip() {
+  const st = stageInfo();
+  const title = st.confirmed ? positionLabel(st.idx) : 'Pilih Tahap Terakhir';
+  const meta = st.confirmed ? positionSource() : 'Belum dikonfirmasi';
+  return `
+    <section class="card b18-progres-pos-strip" aria-label="Posisi Penelitian">
+      <div class="b18-pos-strip-text">
+        <span class="b18-pos-eyebrow">POSISI PENELITIANMU</span>
+        <strong class="b18-pos-strong">${e(title)}</strong>
+        <span class="b18-pos-meta">${e(meta)}</span>
+      </div>
+      <button type="button" class="btn b18-pos-btn" data-action="pos-edit">
+        <span>Perbarui Posisi</span>
+      </button>
+    </section>
+  `;
+}
+
+function progresSyncContext(tabs) {
+  return `
+    <div class="card b18-sync-context" aria-label="Konteks pekerjaan penting">
+      <div class="b18-sync-text">
+        <strong>Tiga hal yang paling penting dikerjakan</strong>
+        <p>${tabs.aktif.length}/3 pekerjaan aktif · ${tabs.antre.length} di antrean. Arahan dosen dan temuan pemeriksaan terhubung ke pekerjaan yang sama.</p>
+      </div>
+      <button type="button" class="btn b18-btn-peta" data-action="nav:peta">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#125AB5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+          <line x1="8" y1="2" x2="8" y2="18"></line>
+          <line x1="16" y1="6" x2="16" y2="22"></line>
+        </svg>
+        <span>Buka Peta Skripsi</span>
+      </button>
+    </div>
+  `;
+}
+
+function progresTabsBar(tabs) {
+  return `
+    <div class="tabs b18-progres-tabs" role="tablist" aria-label="Status pekerjaan">
+      ${PROGRESS_TABS.map(([k, l]) => `
+        <button type="button" class="b18-tab-btn ${progressTab === k ? 'active' : ''}" data-action="progress-tab:${k}" role="tab" aria-selected="${progressTab === k}">
+          <span>${l} (${tabs[k].length})</span>
+        </button>
+      `).join('')}
+    </div>
+  `;
+}
+
+function progresEmptyCard(kind, hasTasks) {
+  if (kind === 'aktif') {
+    if (!hasTasks) {
+      return `
+        <div class="card b18-progres-empty" aria-label="Belum ada pekerjaan">
+          <div class="b18-empty-icon-wrap">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#9BAAC1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="8" y1="6" x2="21" y2="6"></line>
+              <line x1="8" y1="12" x2="21" y2="12"></line>
+              <line x1="8" y1="18" x2="21" y2="18"></line>
+              <polyline points="3 6 4 7 6 5"></polyline>
+              <polyline points="3 12 4 13 6 11"></polyline>
+              <polyline points="3 18 4 19 6 17"></polyline>
+            </svg>
+          </div>
+          <h3>Belum ada pekerjaan</h3>
+          <p>Pekerjaan muncul di sini dari rencana penelitian yang kamu pilih di Mulai Skripsi, <br/>temuan pemeriksaan yang kamu jadikan pekerjaan, atau arahan dosen yang sudah dikonfirmasi.</p>
+          <button type="button" class="btn primary b18-btn-empty-start" data-action="nav:mulai">
+            <span>Mulai Skripsi</span>
+          </button>
+        </div>
+      `;
+    }
+    return `
+      <div class="card b18-progres-empty" aria-label="Tidak ada pekerjaan aktif">
+        <div class="b18-empty-icon-wrap">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#9BAAC1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="8" y1="6" x2="21" y2="6"></line>
+            <line x1="8" y1="12" x2="21" y2="12"></line>
+            <line x1="8" y1="18" x2="21" y2="18"></line>
+            <polyline points="3 6 4 7 6 5"></polyline>
+            <polyline points="3 12 4 13 6 11"></polyline>
+            <polyline points="3 18 4 19 6 17"></polyline>
+          </svg>
+        </div>
+        <h3>Tidak ada pekerjaan aktif</h3>
+        <p>Pekerjaan yang tersisa sudah selesai, ditunda, atau masih menunggu prasyarat.<br/>Lihat tab Antrean dan Ditunda.</p>
+      </div>
+    `;
+  }
+  if (kind === 'antre') {
+    return `
+      <div class="card b18-progres-empty" aria-label="Antrean kosong">
+        <div class="b18-empty-icon-wrap">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#9BAAC1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+        </div>
+        <h3>Antrean kosong</h3>
+        <p>Pekerjaan yang belum mendapat slot atau masih menunggu prasyarat tampil di sini.</p>
+      </div>
+    `;
+  }
+  if (kind === 'selesai') {
+    return `
+      <div class="card b18-progres-empty" aria-label="Belum ada pekerjaan selesai">
+        <div class="b18-empty-icon-wrap">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#9BAAC1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+          </svg>
+        </div>
+        <h3>Belum ada pekerjaan yang dicatat Selesai Dikerjakan</h3>
+        <p>Pekerjaan yang kamu catat Selesai Dikerjakan akan tampil di sini sebagai riwayat pencapaian.</p>
+      </div>
+    `;
+  }
+  return `
+    <div class="card b18-progres-empty" aria-label="Tidak ada pekerjaan ditunda">
+      <div class="b18-empty-icon-wrap">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#9BAAC1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="10" y1="15" x2="10" y2="9"></line>
+          <line x1="14" y1="15" x2="14" y2="9"></line>
+        </svg>
+      </div>
+      <h3>Tidak ada pekerjaan yang ditunda</h3>
+      <p>Pekerjaan yang kamu tunda sementara waktu akan tersimpan aman di sini.</p>
+    </div>
+  `;
+}
+
 function progresPage() {
   if (S.title && activeTasks().length < 3) {
     const n = S.tasks.length;
@@ -125,38 +325,29 @@ function progresPage() {
   const tabs = progressLists();
   if (!tabs[progressTab]) progressTab = 'aktif';
   const list = tabs[progressTab];
-  const empty = {
-    aktif: pageEmpty(
-      S.tasks.length ? 'Tidak ada pekerjaan aktif' : 'Belum ada pekerjaan',
-      S.tasks.length
-        ? 'Pekerjaan yang tersisa sudah selesai, ditunda, atau masih menunggu prasyarat. Lihat tab Antrean dan Ditunda.'
-        : 'Pekerjaan muncul di sini dari rencana penelitian yang kamu pilih di Mulai Skripsi, temuan pemeriksaan yang kamu jadikan pekerjaan, atau arahan dosen yang sudah dikonfirmasi.',
-      S.tasks.length ? '' : 'nav:mulai',
-      'Mulai Skripsi',
-      'checklist',
-    ),
-    antre: '<div class="card empty"><p class="muted">Antrean kosong. Pekerjaan yang belum mendapat slot atau masih menunggu prasyarat tampil di sini.</p></div>',
-    selesai: '<div class="card empty"><p class="muted">Belum ada pekerjaan yang dicatat Selesai Dikerjakan.</p></div>',
-    tunda: '<div class="card empty"><p class="muted">Tidak ada pekerjaan yang ditunda.</p></div>',
-  };
   const body = !list.length
-    ? empty[progressTab]
+    ? progresEmptyCard(progressTab, S.tasks.length)
     : progressTab === 'aktif'
       ? activeSlots(list)
       : `<div class="task-grid">${list.map(t => taskCard(t)).join('')}</div>`;
   const sim = S.sample
     ? `<div class="b19-simbar">${badge('Mode Simulasi', 'amber')}<span>Contoh penelitian Naya. Arahan reliabilitas, tiga kartu aktif, dan antrean adalah skenario contoh, bukan data penelitianmu. Mulai ruang kosong lewat Pengaturan.</span></div>`
     : '';
-  return (
-    pageHead('Progres Aktif', 'Kerjakan prioritasmu, diskusikan perbaikan, dan simpan bukti dalam satu alur.') +
-    sim +
-    `<div class="sync-context"><div><strong>Tiga hal yang paling penting dikerjakan</strong><p>${tabs.aktif.length}/3 pekerjaan aktif · ${tabs.antre.length} di antrean. Arahan dosen dan temuan pemeriksaan terhubung ke pekerjaan yang sama.</p></div>${B('Buka Peta Skripsi', 'nav:peta', 'soft', 'map')}</div>` +
-    `<div class="tabs v4-progress-tabs" role="tablist" aria-label="Status pekerjaan">${PROGRESS_TABS.map(([k, l]) =>
-      B(`${l} (${tabs[k].length})`, 'progress-tab:' + k, progressTab === k ? 'primary' : 'text', '', `role="tab" aria-selected="${progressTab === k}"`),
-    ).join('')}</div>` +
-    `<div role="tabpanel" data-progress-list="${progressTab}">${body}</div>` +
-    progressShortcuts()
-  );
+  return `
+    <div class="b18-progres-page-wrap">
+      <div class="mulai-page-head b18-progres-head">
+        <h1>Progres Aktif</h1>
+        <p>Kerjakan prioritasmu, diskusikan perbaikan, dan simpan bukti dalam satu alur.</p>
+      </div>
+      ${sim}
+      ${progresGuideCard()}
+      ${progresPositionStrip()}
+      ${progresSyncContext(tabs)}
+      ${progresTabsBar(tabs)}
+      <div role="tabpanel" data-progress-list="${progressTab}">${body}</div>
+      ${tabs.aktif.length ? progressShortcuts() : ''}
+    </div>
+  `;
 }
 function ditundaPage() {
   const list = S.tasks.filter(t => t.status === 'deferred');
@@ -543,5 +734,17 @@ Object.assign(ACTIONS, {
     closeModal(true);
     if (route !== 'progres') go('progres');
     else render();
+  },
+  'dismiss-progres-guide': () => {
+    S.settings.hideProgresGuide = true;
+    persist();
+    render();
+    toast('Panduan Progres Aktif disembunyikan. Kamu bisa melihatnya kembali lewat Pengaturan.');
+  },
+  'show-progres-guide': () => {
+    S.settings.hideProgresGuide = false;
+    persist();
+    render();
+    toast('Panduan Progres Aktif ditampilkan kembali.');
   },
 });
