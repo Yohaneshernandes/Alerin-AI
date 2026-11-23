@@ -343,33 +343,65 @@ function homeShortcuts(p) {
 
 /* ---------- Target terdekat (Beranda dan Peta Skripsi) ---------- */
 function targetCard() {
-  const tg = targetNow(),
-    urg = urgency(tg?.date);
-  let body = `
-    <div class="b18-target-empty-wrap">
-      <div class="b18-target-icon-box">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"></circle>
-          <polyline points="12 6 12 12 16 14"></polyline>
-        </svg>
+  const list = typeof targetsUpcoming === 'function' ? targetsUpcoming(5) : [];
+  const primaryUrg = list.length ? urgency(list[0].date) : { cls: '', label: '' };
+  let body = '';
+
+  if (!list.length) {
+    body = `
+      <div class="b18-target-empty-wrap">
+        <div class="b18-target-icon-box">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+        </div>
+        <div class="b18-target-empty-title">Belum Ada Target Terdekat</div>
+        <p class="b18-target-empty-desc">Tentukan tenggat bab atau jadwal bimbingan<br>untuk mendapatkan pengingat rutin.</p>
       </div>
-      <div class="b18-target-empty-title">Belum Ada Target Terdekat</div>
-      <p class="b18-target-empty-desc">Tentukan tenggat bab atau jadwal bimbingan<br>untuk mendapatkan pengingat rutin.</p>
-    </div>
-  `;
-  if (tg) {
-    const d = new Date(tg.date + 'T12:00:00'),
-      ag = tg.source === 'agenda' ? (S.agendas || []).find(x => x.id === tg.id) : null,
-      phase = ag && ag.phase !== undefined && ag.phase !== null && ag.phase !== '' ? +ag.phase : null,
-      linked = tg.source === 'target' && S.target?.taskId ? S.tasks.find(x => x.id === S.target.taskId) : null;
-    body = `<div class="calendar-date"><div class="date-square"><span>${d.toLocaleDateString('id-ID', { month: 'short', timeZone: 'Asia/Jakarta' }).toUpperCase()}</span><strong>${d.getDate()}</strong></div><div><strong>${e(tg.text)}</strong><p class="small">${tg.source === 'agenda' ? 'Agenda · ' : ''}${dateLong(tg.date)}${tg.time ? ' · ' + e(tg.time) + ' WIB' : ''}${urg.label ? ` · <span class="target-days">${urg.label}</span>` : ''}</p></div></div>${phase !== null ? `<p class="small muted">Tahap ${e(stageName(phase))}</p>` : ''}${linked ? `<p class="small b18-target-link">${I('link')}<span>Terkait: ${e(linked.title)}${linked.status === 'done' ? ' · sudah selesai' : ''}</span></p>` : ''}`;
+    `;
+  } else {
+    body = `
+      <div class="b18-targets-list-wrap">
+        ${list
+          .map((tg, idx) => {
+            const urg = urgency(tg.date);
+            const d = new Date(tg.date + 'T12:00:00');
+            const ag = tg.source === 'agenda' ? (S.agendas || []).find(x => x.id === tg.id) : null;
+            const phase = ag && ag.phase !== undefined && ag.phase !== null && ag.phase !== '' ? +ag.phase : null;
+            const linked = tg.source === 'target' && S.target?.taskId ? S.tasks.find(x => x.id === S.target.taskId) : null;
+            const editAct = tg.source === 'agenda' ? (route === 'beranda' ? 'home-agenda:' : 'cal-edit:') + tg.id : 'target';
+
+            return `
+              <div class="calendar-date b18-target-row-item ${idx > 0 ? 'mt-divider' : ''}">
+                <div class="date-square">
+                  <span>${d.toLocaleDateString('id-ID', { month: 'short', timeZone: 'Asia/Jakarta' }).toUpperCase()}</span>
+                  <strong>${d.getDate()}</strong>
+                </div>
+                <div class="b18-target-info-col">
+                  <div class="b18-target-title-row">
+                    <strong class="b18-target-item-title">${e(tg.text)}</strong>
+                    <button type="button" class="btn-icon-subtle b18-target-edit-btn" data-action="${editAct}" title="Ubah ${e(tg.text)}" aria-label="Ubah ${e(tg.text)}">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                      </svg>
+                    </button>
+                  </div>
+                  <p class="small">
+                    ${tg.source === 'agenda' ? 'Agenda · ' : ''}${dateLong(tg.date)}${tg.time ? ' · ' + e(tg.time) + ' WIB' : ''}${urg.label ? ` · <span class="target-days">${urg.label}</span>` : ''}
+                  </p>
+                  ${phase !== null ? `<p class="small muted">Tahap ${e(stageName(phase))}</p>` : ''}
+                  ${linked ? `<p class="small b18-target-link">${I('link')}<span>Terkait: ${e(linked.title)}${linked.status === 'done' ? ' · sudah selesai' : ''}</span></p>` : ''}
+                </div>
+              </div>
+            `;
+          })
+          .join('')}
+      </div>
+    `;
   }
-  /* Label tombol sama dengan isi formulirnya: agenda → Ubah Agenda, target akademik → Ubah Target. */
-  const [label, act] = !tg
-    ? ['Tambah Target', 'target-suggest']
-    : tg.source === 'agenda'
-      ? ['Ubah Agenda', (route === 'beranda' ? 'home-agenda:' : 'cal-edit:') + tg.id]
-      : ['Ubah Target', 'target'];
+
   const status =
     route === 'beranda' && !KALENDER_INDUK_TERHUBUNG
       ? `<div class="b18-cal-status">
@@ -381,8 +413,9 @@ function targetCard() {
           <span>Kalender Alerin Induk belum terhubung. Pengingat otomatis via email belum aktif.</span>
         </div>`
       : '';
+
   return `
-    <section class="card target-card b18-target-card ${urg.cls}">
+    <section class="card target-card b18-target-card ${primaryUrg.cls}">
       <div class="b18-target-head">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#125AB5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
@@ -390,17 +423,17 @@ function targetCard() {
           <line x1="8" y1="2" x2="8" y2="6"></line>
           <line x1="3" y1="10" x2="21" y2="10"></line>
         </svg>
-        <h3>Target Terdekat</h3>
+        <h3>Target Terdekat${list.length > 1 ? ` (${list.length})` : ''}</h3>
       </div>
       ${body}
       ${status}
       <div class="actions b18-target-actions">
-        <button type="button" class="btn b18-btn-add-target" data-action="${act}">
+        <button type="button" class="btn b18-btn-add-target" data-action="target-suggest">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="12" y1="5" x2="12" y2="19"></line>
             <line x1="5" y1="12" x2="19" y2="12"></line>
           </svg>
-          <span>${label}</span>
+          <span>Tambah Target</span>
         </button>
         <button type="button" class="btn b18-btn-cal" data-action="${route === 'beranda' ? 'cal-preview' : 'calendar'}">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#125AB5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">

@@ -5117,6 +5117,82 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
   max-width: 240px !important;
   margin: 0 auto !important;
 }
+
+/* List of multiple targets / agendas in Target Terdekat */
+.b18-targets-list-wrap {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  width: 100% !important;
+  max-height: 320px !important;
+  overflow-y: auto !important;
+  padding: 10px 4px 10px 0 !important;
+  box-sizing: border-box !important;
+}
+
+.b18-target-row-item {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 14px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.b18-target-row-item.mt-divider {
+  padding-top: 12px !important;
+  border-top: 1px solid #F1F5F9 !important;
+}
+
+.b18-target-info-col {
+  flex: 1 1 0 !important;
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 3px !important;
+}
+
+.b18-target-title-row {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+  width: 100% !important;
+}
+
+.b18-target-item-title {
+  color: #0F172A !important;
+  font-size: 14px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 600 !important;
+  line-height: 20px !important;
+  word-break: break-word !important;
+}
+
+.b18-target-edit-btn {
+  background: none !important;
+  border: none !important;
+  padding: 4px !important;
+  color: #94A3B8 !important;
+  cursor: pointer !important;
+  border-radius: 4px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+  transition: all 0.15s ease !important;
+}
+.b18-target-edit-btn:hover {
+  background: #F1F5F9 !important;
+  color: #125AB5 !important;
+}
+
+.b18-targets-list-wrap::-webkit-scrollbar {
+  width: 4px;
+}
+.b18-targets-list-wrap::-webkit-scrollbar-thumb {
+  background: #E2E8F0;
+  border-radius: 4px;
+}
 .b18-cal-status {
   background: #EEF5FF !important;
   border-radius: 12px !important;
@@ -5771,6 +5847,16 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
 }
 .dark .b18-target-head h3 {
   color: #F1F5F9 !important;
+}
+.dark .b18-target-row-item.mt-divider {
+  border-top-color: #334155 !important;
+}
+.dark .b18-target-item-title {
+  color: #F8FAFC !important;
+}
+.dark .b18-target-edit-btn:hover {
+  background: #334155 !important;
+  color: #38BDF8 !important;
 }
 .dark .b18-target-empty {
   color: #94A3B8 !important;

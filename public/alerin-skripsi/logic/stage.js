@@ -162,6 +162,33 @@ function targetNow() {
   const future = list.filter(x => x.date >= today).sort((a, b) => a.date.localeCompare(b.date));
   return future[0] || list.sort((a, b) => b.date.localeCompare(a.date))[0] || null;
 }
+function targetsUpcoming(limit = 5) {
+  const today = isoToday(),
+    list = [];
+  if (S.target?.date && S.target.text) {
+    list.push({
+      date: S.target.date,
+      text: S.target.text,
+      source: 'target',
+      id: 'target-main',
+      taskId: S.target.taskId,
+    });
+  }
+  for (const a of S.agendas || []) {
+    if (a.date >= today && !a.log && !a.done) {
+      list.push({
+        date: a.date,
+        text: a.title,
+        source: 'agenda',
+        id: a.id,
+        time: a.time,
+        phase: a.phase,
+      });
+    }
+  }
+  list.sort((a, b) => a.date.localeCompare(b.date));
+  return limit ? list.slice(0, limit) : list;
+}
 function urgency(date) {
   if (!date) return { cls: '', label: '' };
   const d = daysLeft(date);
