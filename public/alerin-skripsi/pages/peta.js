@@ -34,7 +34,7 @@ function stageSummary(d) {
   else if (next) bits.push('jadwal ' + dateLong(next.date));
   return bits.join(' · ');
 }
-function stagePanel(i, d, tg) {
+function stagePanel(i, d, tg, badgeClass, badgeText) {
   const p = ALERIN.phases[i];
 
   // PEKERJAAN
@@ -157,6 +157,7 @@ function stagePanel(i, d, tg) {
 
   return `
     <div class="peta-panel-content">
+      ${badgeClass && badgeText ? `<div class="peta-panel-badge-wrap"><div class="peta-status-badge ${badgeClass}">${e(badgeText)}</div></div>` : ''}
       ${catatanSection}
       ${kerjaSection}
       ${buktiSection}
@@ -229,7 +230,7 @@ function petaPage() {
             <div class="peta-meter-fill" style="width:${pct}%"></div>
           </div>
           <div class="peta-stage-panel" id="map-panel-${i}" role="region" aria-labelledby="map-head-${i}" ${open ? '' : 'hidden'}>
-            ${stagePanel(i, d, tg)}
+            ${stagePanel(i, d, tg, badgeClass, badgeText)}
           </div>
         </div>
       `;
@@ -241,11 +242,6 @@ function petaPage() {
   const left = dl ? daysLeft(dl) : null;
   const dlProgressPct =
     left !== null ? Math.max(15, Math.min(100, Math.round(((180 - Math.max(0, left)) / 180) * 100))) : 37;
-
-  const nearestText = tg ? tg.text : 'Konsultasi Revisi Bab 1 & Kajian Teori';
-  const nearestDateStr = tg
-    ? `${dateLong(tg.date)}${tg.time ? ' • ' + e(tg.time) + ' WIB' : ''}`
-    : '27 Maret 2027 • 10.00 WIB';
 
   const headerHtml = `
     <div class="peta-page-header">
@@ -267,21 +263,51 @@ function petaPage() {
     </section>
   `;
 
+  const dlSet = Boolean(dl);
+  const tgSet = Boolean(tg);
+
+  const targetDeadlineBody = dlSet
+    ? `
+      <div class="peta-target-val-row">
+        <span class="peta-target-date-main">${dateLong(dl)}</span>
+        <span class="peta-target-days-sub">(${left !== null ? (left >= 0 ? left + ' hari lagi' : 'lewat ' + Math.abs(left) + ' hari') : ''})</span>
+      </div>
+      <div class="peta-target-bar-track">
+        <div class="peta-target-bar-fill" style="width: ${dlProgressPct}%"></div>
+      </div>
+    `
+    : `
+      <div class="peta-target-val-row">
+        <span class="peta-card-value">Belum ada target</span>
+      </div>
+    `;
+
+  const targetNearestBody = tgSet
+    ? `
+      <div class="peta-target-nearest-title">${e(tg.text)}</div>
+      <div class="peta-target-nearest-meta">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A8A29E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        <span>${dateLong(tg.date)}${tg.time ? ' • ' + e(tg.time) + ' WIB' : ''}</span>
+      </div>
+    `
+    : `
+      <div class="peta-target-val-row">
+        <span class="peta-card-value">Belum ada target</span>
+      </div>
+    `;
+
   const targetsHtml = `
     <div class="peta-targets-grid">
       <div class="peta-target-card">
         <div class="peta-card-header">
           <h3 class="peta-card-title">Target Penyelesaian Skripsi</h3>
-          <span class="peta-target-pill">Terjadwal</span>
+          ${dlSet ? '<span class="peta-target-pill">Terjadwal</span>' : ''}
         </div>
         <div class="peta-target-body">
-          <div class="peta-target-val-row">
-            <span class="peta-target-date-main">${dl ? dateLong(dl) : '18 April 2027'}</span>
-            <span class="peta-target-days-sub">(${left !== null ? (left >= 0 ? left + ' hari lagi' : 'lewat ' + Math.abs(left) + ' hari') : '147 hari lagi'})</span>
-          </div>
-          <div class="peta-target-bar-track">
-            <div class="peta-target-bar-fill" style="width: ${dlProgressPct}%"></div>
-          </div>
+          ${targetDeadlineBody}
         </div>
         <div class="peta-card-footer">
           <span class="peta-card-hint">Diatur lewat Konteks di Mulai Skripsi.</span>
@@ -291,20 +317,13 @@ function petaPage() {
       <div class="peta-target-card">
         <div class="peta-card-header">
           <h3 class="peta-card-title">Target terdekat</h3>
-          <span class="peta-target-pill">Mendatang</span>
+          ${tgSet ? '<span class="peta-target-pill">Mendatang</span>' : ''}
         </div>
         <div class="peta-target-body">
-          <div class="peta-target-nearest-title">${e(nearestText)}</div>
-          <div class="peta-target-nearest-meta">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A8A29E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"></circle>
-              <polyline points="12 6 12 12 16 14"></polyline>
-            </svg>
-            <span>${nearestDateStr}</span>
-          </div>
+          ${targetNearestBody}
         </div>
         <div class="peta-card-actions">
-          <button type="button" class="btn-peta-add" data-action="${!tg ? 'target-suggest' : tg.source === 'agenda' ? 'cal-edit:' + tg.id : 'target'}">
+          <button type="button" class="btn-peta-add" data-action="${!tgSet ? 'target-suggest' : tg.source === 'agenda' ? 'cal-edit:' + tg.id : 'target'}">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="12" y1="5" x2="12" y2="19"></line>
               <line x1="5" y1="12" x2="19" y2="12"></line>
