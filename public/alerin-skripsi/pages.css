@@ -9990,24 +9990,6 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
   font-family: Inter, sans-serif;
 }
 
-/* Responsiveness for Periksa Skripsi */
-@media (max-width: 760px) {
-  .pk-dropdown-row-v2 {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-  .pk-card-v2 {
-    padding: 20px 16px !important;
-  }
-  .pk-upload-zone-v2 {
-    padding: 24px 14px !important;
-  }
-  .pk-page-title-v2 {
-    font-size: 24px;
-    line-height: 32px;
-  }
-}
-
 /* Dark mode for Periksa Skripsi */
 .dark .pk-page-title-v2 {
   color: #E2E8F0;
@@ -11934,10 +11916,22 @@ body.dark-mode .btn-peta-action-subtle,
     --sidebar: 0px !important;
   }
   body:not(.sidebar-open) .sidebar {
+    display: none !important;
     transform: translateX(-100%) !important;
+    width: 0 !important;
   }
-  .app-body {
+  .app-body,
+  body.collapsed .app-body,
+  .collapsed .app-body {
     margin-left: 0 !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+  }
+  .main {
+    width: 100% !important;
+    max-width: 100vw !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
   }
   .peta-targets-grid {
     grid-template-columns: 1fr !important;
@@ -13363,6 +13357,369 @@ body.dark-mode .btn-peta-action-subtle,
   }
   body.dark .b18-block-label,
   body.dark .b18-block-desc {
+    color: #94A3B8 !important;
+  }
+
+  /* ========================================================
+     PERIKSA SKRIPSI MOBILE REDESIGN (Figma 390px)
+     ======================================================== */
+  .pk-page-v2 {
+    width: 100% !important;
+    max-width: 100% !important;
+    gap: 15px !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Header Centered */
+  .pk-page-head-v2 {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    padding-top: 10px !important;
+    padding-bottom: 5px !important;
+    margin-bottom: 0 !important;
+  }
+  .pk-page-title-v2 {
+    font-size: 25px !important;
+    font-weight: 650 !important;
+    line-height: 31.25px !important;
+    color: #142238 !important;
+    text-align: center !important;
+    margin: 0 0 6px 0 !important;
+    letter-spacing: -0.01em !important;
+  }
+  .pk-page-desc-v2 {
+    font-size: 13px !important;
+    font-weight: 400 !important;
+    line-height: 18px !important;
+    color: #637087 !important;
+    text-align: center !important;
+    max-width: 320px !important;
+    margin: 0 auto !important;
+  }
+
+  /* Main Card */
+  .pk-card-v2 {
+    padding: 15px !important;
+    background: #FFFFFF !important;
+    box-shadow: 0px 2px 4px rgba(35, 58, 87, 0.01) !important;
+    border-radius: 16px !important;
+    outline: 1px #DCE4EF solid !important;
+    outline-offset: -1px !important;
+    border: none !important;
+    gap: 15px !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Section 1: Pilih bagian yang diperiksa */
+  .pk-section-v2 {
+    gap: 15px !important;
+  }
+  .pk-section-title-v2 {
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    line-height: 28px !important;
+    color: #0F172A !important;
+  }
+  .pk-section-desc-v2 {
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    line-height: 20px !important;
+    color: #64748B !important;
+  }
+
+  /* Dropdown Row Stacked into Column */
+  .pk-dropdown-row-v2 {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px !important;
+    width: 100% !important;
+  }
+  .pk-field-v2 {
+    gap: 6px !important;
+  }
+  .pk-label-v2 {
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    line-height: 16px !important;
+    color: #334155 !important;
+  }
+  .pk-optional-badge-v2 {
+    font-size: 11px !important;
+    font-weight: 500 !important;
+    line-height: 16.5px !important;
+    color: #94A3B8 !important;
+  }
+  .pk-optional-sub-v2 {
+    display: none !important;
+  }
+  .pk-counter-v2 {
+    font-size: 9px !important;
+    font-weight: 500 !important;
+    line-height: 16.5px !important;
+    color: #94A3B8 !important;
+  }
+
+  .pk-select-wrap-v2 {
+    width: 100% !important;
+  }
+  .pk-select-v2 {
+    height: 50px !important;
+    min-height: 50px !important;
+    padding: 10px 40px 10px 12px !important;
+    background: #FFFFFF !important;
+    border-radius: 8px !important;
+    outline: 1px #CBD5E1 solid !important;
+    outline-offset: -1px !important;
+    border: none !important;
+    color: #1E293B !important;
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    line-height: 20px !important;
+  }
+  .pk-select-arrow-v2 {
+    right: 14px !important;
+  }
+
+  /* Info Row */
+  .pk-info-row-v2 {
+    display: inline-flex !important;
+    align-items: flex-start !important;
+    gap: 5px !important;
+    padding-top: 0 !important;
+  }
+  .pk-info-icon-v2 {
+    width: 13px !important;
+    height: 13px !important;
+    margin-top: 2px !important;
+  }
+  .pk-info-icon-v2 .ico {
+    width: 13px !important;
+    height: 13px !important;
+  }
+  .pk-info-text-v2 {
+    font-size: 11px !important;
+    font-weight: 400 !important;
+    line-height: 15px !important;
+    color: #52647D !important;
+  }
+  .pk-info-strong-v2 {
+    font-weight: 620 !important;
+    color: #52647D !important;
+  }
+
+  /* Divider */
+  .pk-divider-v2 {
+    border-top: 1px #DCE4EF solid !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  /* Upload Zone */
+  .pk-upload-zone-v2 {
+    padding: 32px 16px !important;
+    background: rgba(239, 246, 255, 0.40) !important;
+    border-radius: 12px !important;
+    outline: 2px #BFDBFE solid !important;
+    outline-offset: -2px !important;
+    border: none !important;
+    gap: 4px !important;
+  }
+  .pk-upload-icon-circle-v2 {
+    width: 48px !important;
+    height: 48px !important;
+    background: #FFFFFF !important;
+    border-radius: 9999px !important;
+    outline: 1px #D8E6FA solid !important;
+    outline-offset: -1px !important;
+    border: none !important;
+    margin-bottom: 4px !important;
+  }
+  .pk-upload-icon-circle-v2 .ico {
+    width: 20px !important;
+    height: 20px !important;
+    stroke: #186DD8 !important;
+    color: #186DD8 !important;
+  }
+  .pk-upload-title-v2 {
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    line-height: 20px !important;
+    color: #1E293B !important;
+  }
+  .pk-upload-desc-v2 {
+    font-size: 12px !important;
+    font-weight: 400 !important;
+    line-height: 16px !important;
+    color: #64748B !important;
+  }
+  .pk-upload-cta-v2 {
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    line-height: 16px !important;
+    color: #186DD8 !important;
+    margin-top: 2px !important;
+  }
+
+  /* Form Fields Stack */
+  .pk-fields-stack-v2 {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    margin-top: 0 !important;
+  }
+  .pk-textarea-v2 {
+    border-radius: 8px !important;
+    outline: 1px #CBD5E1 solid !important;
+    outline-offset: -1px !important;
+    border: none !important;
+    padding: 10px 12px !important;
+    background: #FFFFFF !important;
+    color: #1E293B !important;
+    font-size: 14px !important;
+    line-height: 20px !important;
+    box-sizing: border-box !important;
+  }
+  .pk-textarea-v2::placeholder {
+    color: #94A3B8 !important;
+    font-size: 12px !important;
+    line-height: 20px !important;
+  }
+
+  /* Actions & Disclaimer */
+  .pk-actions-section-v2 {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px !important;
+    padding-top: 0 !important;
+    width: 100% !important;
+  }
+  .pk-btn-wrap-v2 {
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+  .pk-submit-btn-v2 {
+    width: 100% !important;
+    height: 45px !important;
+    min-height: 45px !important;
+    padding: 10px 24px !important;
+    background: #186DD8 !important;
+    border-radius: 8px !important;
+    border: none !important;
+    color: #FFFFFF !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    line-height: 20px !important;
+    display: inline-flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 8px !important;
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05) !important;
+  }
+  .pk-submit-btn-v2 .ico {
+    width: 16px !important;
+    height: 16px !important;
+  }
+  .pk-last-btn-v2 {
+    display: none !important;
+  }
+
+  .pk-disclaimer-banner-v2 {
+    padding: 12px !important;
+    background: #EEF5FF !important;
+    border-radius: 8px !important;
+    outline: 1px #F1F5F9 solid !important;
+    outline-offset: -1px !important;
+    border: none !important;
+    display: inline-flex !important;
+    align-items: flex-start !important;
+    gap: 10px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .pk-disclaimer-icon-v2 {
+    width: 16px !important;
+    height: 16px !important;
+    margin-top: 2px !important;
+  }
+  .pk-disclaimer-icon-v2 .ico {
+    width: 16px !important;
+    height: 16px !important;
+    stroke: #94A3B8 !important;
+    color: #94A3B8 !important;
+  }
+  .pk-disclaimer-text-v2 {
+    font-size: 11px !important;
+    font-weight: 400 !important;
+    line-height: 15px !important;
+    color: #64748B !important;
+  }
+
+  /* Dark Mode Overrides for Mobile Periksa Skripsi */
+  body.dark .pk-page-title-v2 {
+    color: #F8FAFC !important;
+  }
+  body.dark .pk-page-desc-v2 {
+    color: #94A3B8 !important;
+  }
+  body.dark .pk-card-v2 {
+    background: #182538 !important;
+    outline-color: #34465D !important;
+  }
+  body.dark .pk-section-title-v2 {
+    color: #F8FAFC !important;
+  }
+  body.dark .pk-section-desc-v2 {
+    color: #94A3B8 !important;
+  }
+  body.dark .pk-label-v2 {
+    color: #CBD5E1 !important;
+  }
+  body.dark .pk-select-v2 {
+    background: #111A28 !important;
+    outline-color: #34465D !important;
+    color: #F8FAFC !important;
+  }
+  body.dark .pk-info-text-v2 {
+    color: #94A3B8 !important;
+  }
+  body.dark .pk-info-strong-v2 {
+    color: #CBD5E1 !important;
+  }
+  body.dark .pk-divider-v2 {
+    border-top-color: #34465D !important;
+  }
+  body.dark .pk-upload-zone-v2 {
+    background: rgba(30, 48, 77, 0.40) !important;
+    outline-color: #3D5A80 !important;
+  }
+  body.dark .pk-upload-icon-circle-v2 {
+    background: #182538 !important;
+    outline-color: #34465D !important;
+  }
+  body.dark .pk-upload-title-v2 {
+    color: #F8FAFC !important;
+  }
+  body.dark .pk-upload-desc-v2 {
+    color: #94A3B8 !important;
+  }
+  body.dark .pk-textarea-v2 {
+    background: #111A28 !important;
+    outline-color: #34465D !important;
+    color: #F8FAFC !important;
+  }
+  body.dark .pk-textarea-v2::placeholder {
+    color: #64748B !important;
+  }
+  body.dark .pk-disclaimer-banner-v2 {
+    background: #1B2C43 !important;
+    outline-color: #34465D !important;
+  }
+  body.dark .pk-disclaimer-text-v2 {
     color: #94A3B8 !important;
   }
 }

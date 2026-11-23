@@ -183,7 +183,7 @@ function periksaPage() {
 
           <div class="pk-disclaimer-banner-v2">
             <div class="pk-disclaimer-icon-v2">${I('warning')}</div>
-            <div class="pk-disclaimer-text-v2">Alerin hanya menandai, perbaikannya tetap kamu tulis sendiri. Hasil saat ini contoh berbasis aturan, belum analisis AI.</div>
+            <div class="pk-disclaimer-text-v2">Alerin hanya menanda, perbaikannya tetap kamu tulis sendiri. Hasil saat ini contoh berbasis aturan, belum analisis AI.</div>
           </div>
         </div>
       </section>
