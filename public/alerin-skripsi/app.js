@@ -11,6 +11,19 @@ async function runAction(command, button) {
   return handler(params.join(':'), button, key, command, params);
 }
 
+ACTIONS['close-toast'] = () => {
+  clearTimeout(toastTimer);
+  const t = $('#toast-root .toast');
+  if (t) {
+    t.classList.add('toast-out');
+    setTimeout(() => {
+      $('#toast-root').innerHTML = '';
+    }, 180);
+  } else {
+    $('#toast-root').innerHTML = '';
+  }
+};
+
 document.addEventListener('click', async ev => {
   const mentorLink = ev.target.closest('#mentor-link');
   if (mentorLink) {

@@ -101,11 +101,96 @@ function boundedRows(rows, max = OUTPUT_MAX) {
 function rowText(rows) {
   return rows.map(x => x.join('\n')).join('\n');
 }
+function parseAlerinToast(rawMsg) {
+  if (typeof rawMsg === 'object' && rawMsg !== null) {
+    return {
+      title: rawMsg.title || 'Pemberitahuan',
+      description: rawMsg.description
+        ? rawMsg.description.endsWith('.') || rawMsg.description.endsWith('!')
+          ? rawMsg.description
+          : `${rawMsg.description}.`
+        : '',
+    };
+  }
+  const raw = String(rawMsg || '').trim();
+  const lower = raw.toLowerCase();
+  const cleanDesc = raw.endsWith('.') || raw.endsWith('!') ? raw : `${raw}.`;
+
+  if (lower.includes('siap dikerjakan') || lower.includes('arahan'))
+    return { title: 'Pemberitahuan', description: cleanDesc };
+  if (lower.includes('paket dipilih') || lower.includes('paket'))
+    return { title: 'Paket Berhasil Dipilih', description: cleanDesc };
+  if (lower.includes('voucher') && lower.includes('berhasil'))
+    return { title: 'Voucher Diterapkan', description: cleanDesc };
+  if (lower.includes('lapor'))
+    return { title: 'Laporan Respon Diterima', description: cleanDesc };
+  if (lower.includes('disalin') || lower.includes('salin'))
+    return { title: 'Berhasil Disalin', description: cleanDesc };
+  if (lower.includes('dihapus') || lower.includes('hapus'))
+    return { title: 'Berhasil Dihapus', description: cleanDesc };
+  if (lower.includes('disimpan') || lower.includes('simpan') || lower.includes('tersimpan'))
+    return { title: 'Berhasil Disimpan', description: cleanDesc };
+  if (lower.includes('dibuat') || lower.includes('buat'))
+    return { title: 'Berhasil Dibuat', description: cleanDesc };
+  if (lower.includes('ditambahkan') || lower.includes('tambah'))
+    return { title: 'Berhasil Ditambahkan', description: cleanDesc };
+  if (lower.includes('tersinkron'))
+    return { title: 'Berhasil Disinkronkan', description: cleanDesc };
+  if (lower.includes('berhasil'))
+    return { title: 'Berhasil', description: cleanDesc };
+  if (lower.includes('gagal') || lower.includes('belum') || lower.includes('tidak'))
+    return { title: 'Perhatian', description: cleanDesc };
+  return { title: 'Pemberitahuan', description: cleanDesc };
+}
+
 function toast(msg, type = '', ms = 4800) {
   clearTimeout(toastTimer);
-  $('#toast-root').innerHTML =
-    `<div class="toast ${type}">${I(type === 'error' ? 'warning' : 'check')}<span>${e(msg)}</span></div>`;
-  toastTimer = setTimeout(() => ($('#toast-root').innerHTML = ''), ms);
+  const parsed = parseAlerinToast(msg);
+  let title = parsed.title;
+  const description = parsed.description;
+  const isErr = type === 'error';
+  const isWarn = type === 'warn' || type === 'warning';
+  if (isErr && title === 'Pemberitahuan') title = 'Perhatian';
+
+  const iconSvg = isErr
+    ? `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`
+    : isWarn
+    ? `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`
+    : `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+
+  const iconClass = isErr ? 'error' : isWarn ? 'warn' : '';
+
+  $('#toast-root').innerHTML = `
+    <div class="toast ${type}" role="status" aria-live="polite">
+      <div class="alerin-toast-main">
+        <div class="alerin-toast-icon ${iconClass}">
+          ${iconSvg}
+        </div>
+        <div class="alerin-toast-content">
+          <h4 class="alerin-toast-title">${e(title)}</h4>
+          ${description ? `<p class="alerin-toast-desc">${e(description)}</p>` : ''}
+        </div>
+      </div>
+      <button type="button" class="alerin-toast-close" data-action="close-toast" aria-label="Tutup notifikasi">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  `;
+
+  toastTimer = setTimeout(() => {
+    const t = $('#toast-root .toast');
+    if (t) {
+      t.classList.add('toast-out');
+      setTimeout(() => {
+        if ($('#toast-root .toast.toast-out')) $('#toast-root').innerHTML = '';
+      }, 200);
+    } else {
+      $('#toast-root').innerHTML = '';
+    }
+  }, ms);
 }
 function fieldError(id, msg) {
   const el = document.getElementById(id);

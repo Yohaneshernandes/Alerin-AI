@@ -10818,3 +10818,197 @@ body.dark-mode .b18-ws-btn-periksa:hover,
   }
 }
 
+/* ─── Modern Alerin Toast Notification (matching AlerinToast / ClaroPage) ─── */
+#toast-root {
+  position: fixed !important;
+  inset: auto 0 0 0 !important;
+  pointer-events: none !important;
+  z-index: 9999 !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: flex-end !important;
+  padding: 0 16px 24px 16px !important;
+}
+
+#toast-root .toast,
+.toast {
+  pointer-events: auto !important;
+  position: relative !important;
+  bottom: auto !important;
+  left: auto !important;
+  transform: none !important;
+  width: auto !important;
+  max-width: min(440px, calc(100vw - 32px)) !important;
+  min-width: 340px !important;
+  margin: 0 auto !important;
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid rgba(226, 232, 240, 0.90) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.14), 0 4px 12px rgba(0, 0, 0, 0.06) !important;
+  padding: 14px 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 14px !important;
+  animation: alerinToastIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  box-sizing: border-box !important;
+}
+
+@keyframes alerinToastIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.toast.toast-out {
+  opacity: 0 !important;
+  transform: translateY(12px) scale(0.97) !important;
+  transition: opacity 0.18s ease, transform 0.18s ease !important;
+}
+
+.alerin-toast-main {
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+  min-width: 0 !important;
+  flex: 1 1 auto !important;
+}
+
+.alerin-toast-icon {
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 9999px !important;
+  background: #186DD8 !important;
+  color: #ffffff !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+  box-shadow: 0 2px 8px rgba(24, 109, 216, 0.25) !important;
+}
+
+.alerin-toast-icon svg {
+  display: block;
+  stroke: #ffffff !important;
+}
+
+.alerin-toast-icon.error {
+  background: #EF4444 !important;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.25) !important;
+}
+
+.alerin-toast-icon.warn {
+  background: #F59E0B !important;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.25) !important;
+}
+
+.alerin-toast-content {
+  min-width: 0 !important;
+  flex: 1 1 auto !important;
+  text-align: left !important;
+}
+
+.alerin-toast-title {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  line-height: 1.25 !important;
+  color: #0F172A !important;
+  letter-spacing: -0.01em !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  font-family: inherit !important;
+}
+
+.alerin-toast-desc {
+  font-size: 12.5px !important;
+  font-weight: 400 !important;
+  line-height: 1.35 !important;
+  color: #64748B !important;
+  margin: 2.5px 0 0 0 !important;
+  padding: 0 !important;
+  font-family: inherit !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+}
+
+.alerin-toast-close {
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 9999px !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #94A3B8 !important;
+  cursor: pointer !important;
+  flex-shrink: 0 !important;
+  transition: background-color 0.15s ease, color 0.15s ease !important;
+}
+
+.alerin-toast-close:hover {
+  background: #F1F5F9 !important;
+  color: #475569 !important;
+}
+
+/* Dark mode overrides */
+body.dark #toast-root .toast,
+body.dark-mode #toast-root .toast,
+.dark .toast {
+  background: #182538 !important;
+  color: #F8FAFC !important;
+  border: 1px solid #334155 !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45), 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+body.dark .alerin-toast-title,
+body.dark-mode .alerin-toast-title,
+.dark .alerin-toast-title {
+  color: #F8FAFC !important;
+}
+
+body.dark .alerin-toast-desc,
+body.dark-mode .alerin-toast-desc,
+.dark .alerin-toast-desc {
+  color: #94A3B8 !important;
+}
+
+body.dark .alerin-toast-close,
+body.dark-mode .alerin-toast-close,
+.dark .alerin-toast-close {
+  color: #94A3B8 !important;
+}
+
+body.dark .alerin-toast-close:hover,
+body.dark-mode .alerin-toast-close:hover,
+.dark .alerin-toast-close:hover {
+  background: #23354D !important;
+  color: #F1F5F9 !important;
+}
+
+@media (max-width: 640px) {
+  #toast-root {
+    padding: 0 16px 84px 16px !important;
+  }
+  #toast-root .toast,
+  .toast {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+}
+
+
