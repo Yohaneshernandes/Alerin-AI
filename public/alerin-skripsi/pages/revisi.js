@@ -126,11 +126,11 @@ function revisiPage() {
 
   if (!all.length) {
     return `
-      <div class="revisi-v2-container">
+      <div class="revisi-v2-container is-empty">
         <div class="revisi-v2-head">
           <div class="revisi-v2-head-text">
             <h1 class="revisi-v2-title">Arahan dosen dari setiap bimbingan</h1>
-            <p class="revisi-v2-desc">Catatan asli dosen tetap utuh. Konfirmasikan pemahaman sebelum menghubungkannya ke Progres Aktif.</p>
+            <p class="revisi-v2-desc">Catat arahan, setujui pemahamannya, lalu kerjakan sampai selesai di Progres Aktif. Catatan asli dosen tetap utuh.</p>
           </div>
         </div>
 
@@ -381,7 +381,7 @@ function revEmptyState(all, tab, q, stage) {
     `;
   } else {
     iconSvg = `
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#125AB5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#52647D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M12 20h9"></path>
         <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
       </svg>
@@ -1339,11 +1339,41 @@ Object.assign(ACTIONS, {
     const r = revOf(arg);
     if (r) {
       r.understood = true;
+      let t = revTask(r);
+      if (!t) {
+        const auto = revAutoLink(r);
+        if (auto) {
+          t = auto;
+        } else {
+          const part = r.part || analyzeArahan(r.text).part;
+          const title = 'Tindak lanjut arahan: ' + (r.topic || 'Jurnal');
+          t = plainTask({
+            title: capitalize(title),
+            part,
+            phase: partPhase(part),
+            source: 'revisi',
+            reason: r.understanding?.maksud || '',
+            doing: r.understanding?.langkah || 'Tambahkan penelitian terdahulu yang relevan, lalu jelaskan perbedaannya.',
+            deliverable: 'Laporan perubahan yang menjawab arahan dosen, beserta letaknya di naskah.',
+            criteria: r.criteria?.length ? r.criteria : [
+              'Tambahkan penelitian terdahulu yang relevan, lalu jelaskan perbedaannya.',
+              'Perubahan menjawab seluruh catatan asli dosen.',
+              'Letak perubahannya di ' + (partLabel(part) || 'naskah') + ' bisa ditunjukkan.'
+            ],
+          });
+          r.taskId = t.id;
+          record('Arahan masuk ke Progres Aktif', r.topic + ' → ' + t.title);
+        }
+      } else if (t.status === 'done') {
+        t.status = 'todo';
+        t.reopenReason = 'Arahan dosen baru';
+      }
+      reorderTasks(true, 'Ada arahan dosen baru');
     }
     persist();
     closeModal(true);
     render();
-    if (r) toast(`Arahan “${r.topic || 'Jurnal'}” siap dikerjakan.`, 'check');
+    if (r) toast(`Arahan “${r.topic || 'Jurnal'}” berhasil dijadikan kartu pekerjaan di Progres Aktif.`, 'check');
   },
   'rev-card-activate': arg => {
     const r = revOf(arg);
