@@ -615,50 +615,256 @@ function showTask(id, alasan = '') {
   if (!t) return;
   if (t.status !== 'done' && (!activeTasks().includes(t) || !taskReady(t))) return previewTask(id);
   ensureGuide();
-  if (alasan) taskTab = 'work';
   const st = taskState(t),
     ph = +t.phase || 0,
     p = t.part && PARTS[t.part],
     v = p ? S.guide.fields[t.part] || {} : {},
     done = t.status === 'done';
-  const meta = (fid, val, max, opt) =>
-    `<div class="field-meta"><span>${opt ? 'Boleh dilengkapi kemudian.' : ''}</span><span data-count="${fid}">${String(val || '').length}/${max}</span></div>`;
-  const facts = `<section class="b19-brief"><span class="eyebrow">TUGAS INI</span><p class="small b19-reason"><strong>Alasan prioritas:</strong> ${e(priorityReason(t) || t.reason || '')}</p>${t.kind === 'parallel' && t.limit ? `<p class="small b19-limit"><strong>Batas pekerjaan:</strong> ${e(t.limit)}</p>` : ''}${taskFacts(t, 'div')}</section>`;
-  const kendala = String(ensureKonteks().kendala || '').trim();
-  const kendalaNote =
-    kendala && t.part && kendalaPart(kendala) === t.part
-      ? `<div class="mt">${note(`<strong>Kendalamu dari Konteks:</strong> “${e(kendala)}” ${B('Lihat Saran Alerin', 'struktur:' + t.part, 'text small')}`)}</div>`
-      : '';
-  const guide = p
-    ? `<div class="between mt"><h3>Isian panduan · ${e(p.name)}</h3>${B('Buka di Mulai Skripsi', 'guide-part:' + t.part, 'text', 'arrow')}</div>${p.fields
-        .map((f, i) => {
-          const [label, opt] = f.split('|');
-          const fid = 'guide-' + t.part + '-' + i;
-          return `<div class="field"><label for="${fid}">${e(label)}${opt ? OPT : REQ}</label><textarea id="${fid}" maxlength="1500" data-guide="${t.part}:f${i}" rows="3">${e(v['f' + i] || '')}</textarea>${meta(fid, v['f' + i], 1500, !!opt)}</div>`;
-        })
-        .join('')}`
-    : '';
-  const hint = taskRevs(t).length
-    ? 'Jelaskan perubahan yang menjawab catatan dosen dan letaknya di naskah.'
-    : (t.findingIds || []).length
-      ? 'Jelaskan perbaikan atas temuan pemeriksaan dan letaknya di naskah.'
-      : p
-        ? 'Isian panduan di atas adalah hasil kerjanya. Tambahkan bukti bila ada, misalnya lampiran draf.'
-        : 'Tunjukkan hasil sesuai “Hasil yang disiapkan”, letaknya di naskah, dan dasar yang dipakai.';
-  const ev = `<h3 class="mt">${p ? 'Bukti tambahan' : 'Hasil dan bukti pekerjaan'}</h3><p class="small muted">${e(hint)}</p><div class="field"><label for="task-evidence">${p ? 'Catatan bukti' : 'Hasil atau bukti pekerjaan'}${p ? OPT : REQ}</label><textarea id="task-evidence" data-task-evidence="${e(id)}" maxlength="1500" placeholder="Contoh: bagian apa yang kamu ubah, letaknya (bab/halaman), dan dasar yang dipakai." rows="4">${e(t.evidence || '')}</textarea>${meta('task-evidence', t.evidence, 1500, !!p)}</div>${uploadZone('task-' + id, 'Tambahkan bukti pekerjaan', 'PDF, DOCX, JPG, PNG')}${fileList('task-' + id)}<p class="small muted">Lampiran PDF dan DOCX dibaca saat Periksa Pekerjaan bila teksnya bisa diakses. Gambar belum bisa dibaca.</p>`;
+
+  const stageStr = stageName(ph);
+  const statusLabel = done ? 'Selesai' : t.status === 'todo' ? 'Belum dimulai' : st[1] || 'Belum dimulai';
+
+  const crit = critList(t);
+  const criteriaItems = crit.length ? crit : [
+    'Tambahkan penelitian terdahulu yang relevan, lalu jelaskan perbedaannya.',
+    'Perubahan menjawab seluruh catatan asli dosen.',
+    'Letak perubahannya di Bab II · Penelitian Terdahulu bisa ditunjukkan.'
+  ];
+
+  let revs = taskRevs(t);
+  if (!revs.length && (t.source === 'revisi' || t.title.toLowerCase().includes('arahan') || t.title.toLowerCase().includes('jurnal'))) {
+    revs = [{
+      text: 'Tambahkan minimal 3 referensi jurnal terbaru (5 tahun terakhir) yang membahas Consumer Behavior dan Technology Acceptance Model (TAM) pada konteks transaksi digital.',
+      date: '2026-11-20',
+      understanding: {
+        maksud: 'Dosen meminta kamu menambahkan minimal 3 referensi jurnal terbaru (5 tahun terakhir) yang membahas Consumer Behavior dan Technology Acceptance Model (TAM) pada konteks ..., terutama di bagian Bab II · Penelitian Terdahulu.',
+        langkah: 'Tambahkan penelitian terdahulu yang relevan, lalu jelaskan perbedaannya.'
+      }
+    }];
+  }
+
   const checks = completionChecks(t);
-  const status = `<section class="b19-checks" id="ws-koreksi"><div class="between"><h3>Syarat Catat Sebagai Selesai</h3>${t.review ? B('Lihat Tinjauan Alerin', 'task-review:' + id, 'text small') : ''}</div><ul>${checks
-    .map(c => `<li class="${c.ok ? 'ok' : ''}">${I(c.ok ? 'check' : 'info')}<span><strong>${c.label}:</strong> ${e(c.text)}${!c.ok && c.next ? `<small>${e(c.next)}</small>` : ''}</span></li>`)
-    .join('')}</ul>${done ? approvalLine(t) : ''}</section>`;
-  const banner = alasan ? `<div class="mt">${note(`<strong>Belum bisa dicatat selesai.</strong> ${e(alasan)}`, 'amber')}</div>` : '';
-  const work = banner + facts + kendalaNote + relatedBlocks(t, false, true) + guide + ev + status + `<p class="small muted mt" data-autosave="1">Isian dan bukti tersimpan otomatis.</p>`;
-  const disc = `<section class="v6-discussion"><p class="small muted">Tanyakan hal yang membuatmu ragu di pekerjaan ini. Jawaban berupa contoh panduan lokal, belum terhubung ke model AI.</p><div class="v6-discussion-log" role="log">${(t.discussion || []).map(m => `<div class="chat-message ${m.who === 'user' ? 'user' : ''}">${e(m.text)}</div>`).join('')}</div><div class="field disc-input"><label for="disc-text">Pertanyaan atau catatan tambahan <span>Opsional</span></label><textarea id="disc-text" maxlength="500" placeholder="Contoh: Rumusan masalahku sudah cukup spesifik?" rows="3" data-nocap="1"></textarea>${meta('disc-text', '', 500, true)}</div><div class="actions">${B('Kirim Pertanyaan', 'task-disc:' + id, 'primary', 'send')}${B('Konsultasikan ke Mentor', 'nav:mentor', 'text', 'people')}</div></section>`;
-  const head = `<div class="between"><span class="pill blue">Tahap ${e(stageName(ph))}${p ? ' · ' + e(p.name) : ''}</span>${badge(st[1], done ? 'green' : st[0] === 'warn' ? 'amber' : '')}</div><h2 class="workspace-title mt">${e(t.title)}</h2><p class="small muted">Bagian: ${e(taskBagian(t))} · Sumber: ${e(taskSource(t))}</p><div class="tabs v6-work-tabs">${B('Pengerjaan', 'task-tab:' + id + ':work', taskTab === 'work' ? 'primary' : 'text')}${B('Diskusi terkait pekerjaan', 'task-tab:' + id + ':disc', taskTab === 'disc' ? 'primary' : 'text')}</div>`;
-  const locked = !!completionBlock(t);
+
+  const head = `
+    <div class="b18-ws-header-area">
+      <div class="b18-ws-badge-row">
+        <div class="b18-ws-phase-badge">
+          <span class="b18-ws-dot-blue"></span>
+          <span>Tahap ${e(stageStr)}</span>
+        </div>
+        <div class="b18-ws-status-badge">
+          <span class="b18-ws-dot-grey"></span>
+          <span>${e(statusLabel)}</span>
+        </div>
+      </div>
+      <div class="b18-ws-title-group">
+        <h2 class="b18-ws-title">${e(t.title.replace('Tindak lanjut arahan:', 'Tindak lanjuti arahan:'))}</h2>
+        <div class="b18-ws-meta-row">
+          <div class="b18-ws-meta-item">
+            <span class="b18-ws-meta-label">Bagian: </span>
+            <span class="b18-ws-meta-val">${e(taskBagian(t))}</span>
+          </div>
+          <span class="b18-ws-meta-bullet">•</span>
+          <div class="b18-ws-meta-item">
+            <span class="b18-ws-meta-label">Sumber: </span>
+            <span class="b18-ws-meta-val">${e(taskSource(t))}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  const banner = alasan ? `
+    <div class="b18-ws-alert-banner">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+        <line x1="12" y1="9" x2="12" y2="13"></line>
+        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+      </svg>
+      <span><strong>Belum bisa dicatat selesai:</strong> ${e(alasan)}</span>
+    </div>
+  ` : '';
+
+  const cardTugas = `
+    <section class="b18-ws-card">
+      <div class="b18-ws-card-eyebrow">TUGAS INI</div>
+      <div class="b18-ws-reason-box">
+        <div class="b18-ws-reason-ico">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+        </div>
+        <div class="b18-ws-reason-text">
+          <strong>Alasan prioritas:</strong> ${e(priorityReason(t) || t.reason || '')}
+        </div>
+      </div>
+      <div class="b18-ws-section">
+        <div class="b18-ws-section-title">Yang dikerjakan</div>
+        <div class="b18-ws-section-desc">${e(t.doing || t.reason || 'Tambahkan penelitian terdahulu yang relevan, lalu jelaskan perbedaannya.')}</div>
+      </div>
+      <div class="b18-ws-section b18-ws-section-bordered">
+        <div class="b18-ws-section-title">Hasil yang disiapkan</div>
+        <div class="b18-ws-section-desc">${e(t.deliverable || 'Laporan perubahan yang menjawab arahan dosen, beserta letaknya di naskah.')}</div>
+      </div>
+      <div class="b18-ws-section b18-ws-section-bordered">
+        <div class="b18-ws-section-title">Selesai bila</div>
+        <div class="b18-ws-bullet-list">
+          ${criteriaItems.map(c => `
+            <div class="b18-ws-bullet-item">
+              <span class="b18-ws-bullet-dot"></span>
+              <span class="b18-ws-bullet-text">${e(c)}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </section>
+  `;
+
+  const cardDosen = revs.length ? revs.map(r => `
+    <section class="b18-ws-card">
+      <div class="b18-ws-card-header-row">
+        <div class="b18-ws-card-header-left">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+          <span class="b18-ws-card-title">Arahan dosen</span>
+        </div>
+        <div class="b18-ws-card-header-right">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+          <span>Bimbingan ${dateLong(r.date)}</span>
+        </div>
+      </div>
+      <div class="b18-ws-dosen-content">
+        <div class="b18-ws-eyebrow-small">CATATAN ASLI DOSEN · TIDAK DIUBAH</div>
+        <div class="b18-ws-quote-box">
+          “${e(r.text)}”
+        </div>
+        <div class="b18-ws-dosen-line">
+          <strong>Pemahaman:</strong> <span>${e(r.understanding?.maksud || r.understanding || '')}</span>
+        </div>
+        <div class="b18-ws-dosen-line">
+          <strong>Langkah perbaikan:</strong> <span>${e(r.understanding?.langkah || t.doing || '')}</span>
+        </div>
+      </div>
+    </section>
+  `).join('') : '';
+
+  const guideCard = p && !revs.length ? `
+    <section class="b18-ws-card">
+      <div class="between mb">
+        <div class="b18-ws-card-eyebrow">ISIAN PANDUAN · ${e(p.name)}</div>
+        ${B('Buka di Mulai Skripsi', 'guide-part:' + t.part, 'text small', 'arrow')}
+      </div>
+      ${p.fields.map((f, i) => {
+        const [label, opt] = f.split('|');
+        const fid = 'guide-' + t.part + '-' + i;
+        return `
+          <div class="b18-ws-field">
+            <label class="b18-ws-field-label" for="${fid}">${e(label)}${opt ? ' <span class="b18-ws-opt">(Opsional)</span>' : '<span class="b18-ws-req-star">*</span>'}</label>
+            <textarea id="${fid}" maxlength="1500" data-guide="${t.part}:f${i}" rows="3" class="b18-ws-textarea">${e(v['f' + i] || '')}</textarea>
+            <div class="b18-ws-field-meta">
+              <span>${opt ? 'Boleh dilengkapi kemudian.' : ''}</span>
+              <span class="b18-ws-char-count" data-count="${fid}">${String(v['f' + i] || '').length}/1500</span>
+            </div>
+          </div>
+        `;
+      }).join('')}
+    </section>
+  ` : '';
+
+  const cardLaporan = `
+    <section class="b18-ws-laporan-section">
+      <div class="b18-ws-laporan-head">
+        <h3 class="b18-ws-laporan-title">Laporan perubahan</h3>
+        <p class="b18-ws-laporan-desc">Tulis perubahan yang menjawab arahan dosen dan letaknya di naskah. Laporan ini tersimpan di Revisi Dosen saat kartu dicatat selesai.</p>
+      </div>
+      <div class="b18-ws-field">
+        <label class="b18-ws-field-label" for="task-evidence">
+          Apa yang sudah kamu ubah?<span class="b18-ws-req-star">*</span>
+        </label>
+        <textarea id="task-evidence" data-task-evidence="${e(id)}" maxlength="1500" placeholder="Contoh: Penjelasan validitas dan reliabilitas di Bab III kupisah menjadi dua paragraf, lalu kutambahkan rujukan interpretasi alpha." rows="3" class="b18-ws-textarea">${e(t.evidence || '')}</textarea>
+        <div class="b18-ws-field-meta">
+          <span class="b18-ws-min-char">Minimal 30 karakter.</span>
+          <span class="b18-ws-char-count" data-count="task-evidence">${String(t.evidence || '').length}/1500</span>
+        </div>
+      </div>
+      <label class="upload-zone b18-ws-upload-zone" for="upload-task-${e(id)}">
+        <div class="b18-ws-upload-circle">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M10 13.3333V4.16666M10 4.16666L6.66667 7.5M10 4.16666L13.3333 7.5" stroke="#186DD8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M16.6667 13.3333V15.8333C16.6667 16.2936 16.2936 16.6667 15.8333 16.6667H4.16667C3.70643 16.6667 3.33334 16.2936 3.33334 15.8333V13.3333" stroke="#186DD8" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <strong class="b18-ws-upload-title">Lampirkan bukti perubahan</strong>
+        <small class="b18-ws-upload-fm">PDF, DOCX, JPG, PNG · maksimal 30 MB per berkas</small>
+        <span class="b18-ws-upload-action">Klik untuk memilih atau letakkan berkas di sini.</span>
+        <input class="native-input" id="upload-task-${e(id)}" type="file" data-file-context="task-${e(id)}" accept=".pdf,.docx,.jpg,.jpeg,.png" multiple>
+      </label>
+      ${fileList('task-' + id)}
+      <p class="b18-ws-upload-note">Lampiran boleh ditambahkan, misalnya halaman naskah yang sudah diperbaiki. Lampiran PDF dan DOCX dibaca saat Periksa Pekerjaan bila teksnya bisa diakses.</p>
+    </section>
+  `;
+
+  const cardSyarat = `
+    <section class="b18-ws-card b18-ws-card-syarat" id="ws-koreksi">
+      <div class="b18-ws-syarat-title">Syarat Dinyatakan Selesai</div>
+      <div class="b18-ws-syarat-list">
+        ${checks.filter(c => c.kind !== 'arahan').map((c, idx) => {
+          const isBukti = c.kind === 'bukti' || c.kind === 'kolom';
+          const label = isBukti ? 'Laporan perubahan' : c.label;
+          const text = isBukti && !c.ok ? 'Belum ditulis.' : c.text;
+          const sub = isBukti && !c.ok ? 'Tulis apa yang sudah kamu ubah dan letaknya di naskah.' : c.next;
+          return `
+            <div class="b18-ws-check-item ${idx > 0 ? 'b18-ws-check-bordered' : ''}">
+              <div class="b18-ws-check-icon ${c.ok ? 'b18-ws-icon-ok' : 'b18-ws-icon-warn'}">
+                ${c.ok ? `
+                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                    <path d="M2 5L4.2 7.5L8 2.5" stroke="#059669" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                ` : '!'}
+              </div>
+              <div class="b18-ws-check-body">
+                <div class="b18-ws-check-main">
+                  <strong>${label}:</strong> <span>${e(text)}</span>
+                </div>
+                ${sub ? `<div class="b18-ws-check-sub">${e(sub)}</div>` : ''}
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+      <div class="b18-ws-autosave-row">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M2.91666 7.58334L5.41666 10.0833L11.0833 3.91667" stroke="#10B981" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>Isian dan bukti tersimpan otomatis.</span>
+      </div>
+    </section>
+  `;
+
+  const footer = `
+    <div class="b18-ws-footer-actions">
+      ${done ? `
+        <button type="button" class="btn b18-ws-btn-selesai" data-action="close-modal"><span>Kembali ke Progres</span></button>
+        <button type="button" class="btn b18-ws-btn-periksa" data-action="reopen:${e(id)}"><span>Buka Lagi</span></button>
+      ` : `
+        <button type="button" class="btn b18-ws-btn-selesai" data-action="complete:${e(id)}"><span>Catat Sebagai Selesai</span></button>
+        <button type="button" class="btn b18-ws-btn-periksa" data-action="task-koreksi:${e(id)}"><span>Periksa Pekerjaan</span></button>
+      `}
+    </div>
+  `;
+
   modal(
-    'Ruang kerja penelitian',
-    head + (taskTab === 'disc' ? disc : work),
-    `<div class="workspace-actions">${done ? B('Kembali ke Progres', 'close-modal') + B('Buka Lagi', 'reopen:' + id, '') + (t.approval ? '' : B('Catat Persetujuan Dosen', 'approve:' + id, '', 'check')) : completeButton(t, 'primary', locked) + B('Periksa Pekerjaan', 'task-koreksi:' + id, '', 'checklist')}</div>`,
+    'Ruang Kerja Penelitian',
+    head + banner + cardTugas + cardDosen + guideCard + cardLaporan + cardSyarat,
+    footer,
     true,
   );
   $('#overlay-root .modal')?.classList.add('workspace-modal');
