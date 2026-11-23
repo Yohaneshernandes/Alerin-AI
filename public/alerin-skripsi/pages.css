@@ -5456,6 +5456,9 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
   box-sizing: border-box !important;
   transition: all 0.15s ease !important;
 }
+.b18-btn-mengerti-mobile {
+  display: none !important;
+}
 .b18-btn-mengerti:hover {
   background: #E0EDFE !important;
 }
@@ -6009,29 +6012,6 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
   .b18-pz-label {
     width: auto !important;
     min-width: 0 !important;
-  }
-  .b18-guide-cards {
-    grid-template-columns: 1fr !important;
-  }
-  .b18-guide-header {
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    gap: 12px !important;
-  }
-  .b18-progres-pos-strip {
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    gap: 12px !important;
-  }
-  .b18-sync-context {
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    gap: 12px !important;
-  }
-  .b18-progres-tabs {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    gap: 8px !important;
   }
 }
 
@@ -6741,16 +6721,6 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
 .dark .b18-block-label,
 .dark .b18-block-desc {
   color: #94A3B8 !important;
-}
-
-@media (max-width: 768px) {
-  .b18-task-facts-duo {
-    grid-template-columns: 1fr !important;
-  }
-  .b18-task-badges-row {
-    flex-direction: column !important;
-    align-items: flex-start !important;
-  }
 }
 
 /* ========================================================
@@ -11958,6 +11928,17 @@ body.dark-mode .btn-peta-action-subtle,
 }
 
 @media (max-width: 768px) {
+  :root,
+  body,
+  body.collapsed {
+    --sidebar: 0px !important;
+  }
+  body:not(.sidebar-open) .sidebar {
+    transform: translateX(-100%) !important;
+  }
+  .app-body {
+    margin-left: 0 !important;
+  }
   .peta-targets-grid {
     grid-template-columns: 1fr !important;
   }
@@ -12545,6 +12526,843 @@ body.dark-mode .btn-peta-action-subtle,
     outline-color: #2D4C73 !important;
   }
   body.dark .b18-cal-status span {
+    color: #94A3B8 !important;
+  }
+
+  /* ========================================================
+     PROGRES AKTIF MOBILE REDESIGN (Figma 390px)
+     ======================================================== */
+  .b18-progres-page-wrap {
+    gap: 15px !important;
+    width: 100% !important;
+  }
+
+  /* Header Centered */
+  .b18-progres-head {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    padding-top: 10px !important;
+    padding-bottom: 5px !important;
+    margin-bottom: 0 !important;
+  }
+  .b18-progres-head h1 {
+    font-size: 25px !important;
+    font-weight: 700 !important;
+    color: #0F172A !important;
+    line-height: 32px !important;
+    text-align: center !important;
+    margin: 0 0 4px 0 !important;
+  }
+  .b18-progres-head p {
+    font-size: 13px !important;
+    color: #64748B !important;
+    line-height: 18px !important;
+    text-align: center !important;
+    max-width: 320px !important;
+    margin: 0 !important;
+  }
+
+  /* 1. Cara Membaca Progres Aktif Banner (Gambar 1) */
+  .b18-progres-guide {
+    border-radius: 16px !important;
+    outline: 1px #DCE4EF solid !important;
+    outline-offset: -1px !important;
+    padding: 0 !important;
+    gap: 0 !important;
+    overflow: hidden !important;
+    margin: 0 !important;
+    background: #FFFFFF !important;
+  }
+  .b18-guide-header {
+    padding: 15px !important;
+    border-bottom: 1px solid #DCE4EF !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0 !important;
+  }
+  .b18-guide-header-text {
+    padding-top: 0 !important;
+    gap: 4px !important;
+  }
+  .b18-guide-header-text h2 {
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    color: #0F172A !important;
+    line-height: 24px !important;
+    margin: 0 !important;
+  }
+  .b18-guide-header-text p {
+    font-size: 12px !important;
+    font-weight: 400 !important;
+    color: #647D9D !important;
+    line-height: 17px !important;
+    margin: 0 !important;
+  }
+  .b18-btn-mengerti-desktop {
+    display: none !important;
+  }
+  .b18-guide-cards {
+    padding: 15px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 15px !important;
+    grid-template-columns: 1fr !important;
+  }
+  .b18-guide-card {
+    padding: 15px !important;
+    min-height: auto !important;
+    border-radius: 12px !important;
+    outline: 1px #D8E6FA solid !important;
+    outline-offset: -1px !important;
+    background: rgba(238, 245, 255, 0.70) !important;
+    position: relative !important;
+    overflow: hidden !important;
+  }
+  .b18-guide-bar {
+    position: absolute !important;
+    top: 0 !important;
+    left: 2px !important;
+    right: 2px !important;
+    height: 7px !important;
+    background: #186DD8 !important;
+    border-top-left-radius: 10px !important;
+    border-top-right-radius: 10px !important;
+  }
+  .b18-guide-card-content {
+    gap: 10px !important;
+    margin-top: 4px !important;
+  }
+  .b18-guide-card-head {
+    gap: 8px !important;
+  }
+  .b18-guide-icon-box {
+    width: 28px !important;
+    height: 28px !important;
+    background: #DBEAFE !important;
+    border-radius: 8px !important;
+  }
+  .b18-guide-badge {
+    color: #125AB5 !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.6px !important;
+    line-height: 16px !important;
+  }
+  .b18-guide-desc {
+    color: #334155 !important;
+    font-size: 12px !important;
+    font-weight: 400 !important;
+    line-height: 17px !important;
+    margin: 0 !important;
+  }
+  .b18-btn-mengerti-mobile {
+    display: flex !important;
+    width: 100% !important;
+    height: 40px !important;
+    padding: 10px 9px !important;
+    background: #EEF5FF !important;
+    border-radius: 9px !important;
+    outline: 1px #D8E6FA solid !important;
+    outline-offset: -1px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 5px !important;
+    margin: 0 !important;
+    cursor: pointer !important;
+    border: none !important;
+    box-sizing: border-box !important;
+  }
+  .b18-btn-mengerti-mobile span {
+    color: #125AB5 !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    line-height: 20px !important;
+  }
+
+  /* 2. Posisi Strip (Row side-by-side) */
+  .b18-progres-pos-strip {
+    padding: 15px !important;
+    background: linear-gradient(168deg, rgba(239, 246, 255, 0.50) 0%, rgba(248, 250, 252, 0.80) 100%), white !important;
+    border-radius: 14px !important;
+    outline: 1px #DCE4EF solid !important;
+    outline-offset: -1px !important;
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 12px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .b18-pos-strip-text {
+    flex: 1 1 0 !important;
+    min-width: 150px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+  }
+  .b18-pos-eyebrow {
+    color: #94A3B8 !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.6px !important;
+    line-height: 16px !important;
+  }
+  .b18-pos-strong {
+    color: #0F172A !important;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    line-height: 24px !important;
+    padding-top: 2px !important;
+  }
+  .b18-pos-meta {
+    color: #64748B !important;
+    font-size: 12px !important;
+    font-weight: 400 !important;
+    line-height: 16px !important;
+  }
+  .b18-pos-btn {
+    width: 113px !important;
+    height: 44px !important;
+    min-height: 44px !important;
+    padding: 12px 9px !important;
+    background: #EEF5FF !important;
+    border-radius: 9px !important;
+    outline: 1px #D8E6FA solid !important;
+    outline-offset: -1px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
+    border: none !important;
+    cursor: pointer !important;
+  }
+  .b18-pos-btn span {
+    color: #125AB5 !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    line-height: 16px !important;
+  }
+
+  /* 3. Sync Context Card */
+  .b18-sync-context {
+    padding: 15px !important;
+    background: linear-gradient(168deg, rgba(239, 246, 255, 0.50) 0%, rgba(248, 250, 252, 0.80) 100%), white !important;
+    border-radius: 12px !important;
+    outline: 1px #DCE4EF solid !important;
+    outline-offset: -1px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 15px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .b18-sync-text strong {
+    color: #202E42 !important;
+    font-size: 14px !important;
+    font-weight: 620 !important;
+    line-height: 22.4px !important;
+  }
+  .b18-sync-text p {
+    color: #647D9D !important;
+    font-size: 11px !important;
+    font-weight: 400 !important;
+    line-height: 16px !important;
+    margin: 4px 0 0 0 !important;
+  }
+  .b18-btn-peta {
+    width: auto !important;
+    min-width: 148px !important;
+    height: 44px !important;
+    min-height: 44px !important;
+    padding: 11px 16px !important;
+    background: #EDF4FF !important;
+    border-radius: 9px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    border: none !important;
+    cursor: pointer !important;
+  }
+  .b18-btn-peta span {
+    color: #125AB5 !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    line-height: 17.4px !important;
+  }
+
+  /* 4. Tabs 2x2 Grid */
+  .b18-progres-tabs {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+    width: 100% !important;
+    overflow: visible !important;
+    margin: 0 !important;
+  }
+  .b18-tab-btn {
+    height: 44px !important;
+    min-height: 44px !important;
+    padding: 7px 9px !important;
+    border-radius: 9px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    background: #EEF5FF !important;
+    outline: 1px #D8E6FA solid !important;
+    outline-offset: -1px !important;
+    border: none !important;
+    box-sizing: border-box !important;
+  }
+  .b18-tab-btn span {
+    color: #125AB5 !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    line-height: 17.4px !important;
+    text-align: center !important;
+  }
+  .b18-tab-btn.active {
+    background: #186DD8 !important;
+    outline: none !important;
+    box-shadow: 0px 2px 5px rgba(24, 87, 155, 0.08) !important;
+    border-bottom: 2px solid #186DD8 !important;
+  }
+  .b18-tab-btn.active span {
+    color: #FFFFFF !important;
+  }
+
+  /* 5. Empty State Card */
+  .b18-progres-empty {
+    padding: 20px !important;
+    background: white !important;
+    box-shadow: 0px 2px 4px rgba(35, 58, 87, 0.01) !important;
+    border-radius: 16px !important;
+    outline: 1px #DCE4EF solid !important;
+    outline-offset: -1px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    gap: 15px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .b18-empty-icon-wrap {
+    width: 34px !important;
+    height: 34px !important;
+  }
+  .b18-progres-empty h3 {
+    color: #142238 !important;
+    font-size: 18px !important;
+    font-weight: 640 !important;
+    line-height: 26.1px !important;
+    margin: 0 !important;
+  }
+  .b18-progres-empty p {
+    color: #637087 !important;
+    font-size: 12px !important;
+    font-weight: 400 !important;
+    line-height: 17px !important;
+    max-width: 320px !important;
+    margin: 0 !important;
+    padding-bottom: 0 !important;
+  }
+  .b18-btn-empty-start {
+    width: 100% !important;
+    max-width: 358px !important;
+    height: 44px !important;
+    min-height: 44px !important;
+    background: #186DD8 !important;
+    border-radius: 9px !important;
+    outline: 1px #186DD8 solid !important;
+    color: white !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    justify-content: center !important;
+    display: flex !important;
+    align-items: center !important;
+    border: none !important;
+    cursor: pointer !important;
+  }
+
+  /* 6. Populated Active Task Card (Gambar 2) */
+  .b18-task-card {
+    border-radius: 16px !important;
+    border: 1px solid #DCE4EF !important;
+  }
+  .b18-task-top-bar {
+    height: 7px !important;
+    background: linear-gradient(90deg, #186DD8 0%, #186DD8 50%, #0EA5E9 100%) !important;
+  }
+  .b18-task-body {
+    padding: 15px !important;
+    gap: 16px !important;
+  }
+  .b18-task-badges-row {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+  }
+  .b18-badges-left {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+  }
+  .b18-task-role-pill {
+    padding: 4px 10px !important;
+    border-radius: 6px !important;
+    background: #EEF5FF !important;
+    border: 1px solid #D8E6FA !important;
+  }
+  .b18-task-role-pill span:last-child {
+    color: #125AB5 !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.55px !important;
+  }
+  .b18-task-stage-pill {
+    padding: 4px 12px !important;
+    border-radius: 6px !important;
+    background: #F1F5F9 !important;
+    border: 1px solid #E2E8F0 !important;
+    color: #475569 !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+  }
+  .b18-task-status-pill {
+    padding: 4px 12px !important;
+    border-radius: 9999px !important;
+    background: #F1F5F9 !important;
+    border: 1px solid #E2E8F0 !important;
+    color: #475569 !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+  }
+  .b18-task-title {
+    color: #0F172A !important;
+    font-size: 20px !important;
+    font-weight: 700 !important;
+    line-height: 28px !important;
+    margin: 0 !important;
+  }
+  .b18-task-meta-row {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 6px !important;
+    font-size: 12px !important;
+    line-height: 18px !important;
+  }
+  .b18-meta-sep {
+    display: none !important;
+  }
+  .b18-meta-item {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    font-size: 12px !important;
+  }
+  .b18-meta-label {
+    color: #64748B !important;
+    font-size: 12px !important;
+  }
+  .b18-meta-val {
+    color: #334155 !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+  }
+  .b18-task-reason-box {
+    padding: 12px 14px !important;
+    background: #EEF5FF !important;
+    border-radius: 12px !important;
+    border: 1px solid #DBEAFE !important;
+    gap: 10px !important;
+  }
+  .b18-reason-icon-wrap {
+    width: 20px !important;
+    height: 20px !important;
+    min-width: 20px !important;
+    background: #DBEAFE !important;
+    border-radius: 6px !important;
+  }
+  .b18-reason-content {
+    font-size: 11px !important;
+    line-height: 17px !important;
+  }
+  .b18-reason-lead {
+    color: #125AB5 !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+  }
+  .b18-reason-body {
+    color: #334155 !important;
+    font-size: 11px !important;
+    font-weight: 400 !important;
+  }
+  .b18-task-facts-duo {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+  .b18-duo-card {
+    padding: 15px !important;
+    background: rgba(248, 250, 252, 0.80) !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(226, 232, 240, 0.90) !important;
+    gap: 8px !important;
+  }
+  .b18-duo-icon {
+    width: 24px !important;
+    height: 24px !important;
+    background: #EEF5FF !important;
+    border-radius: 6px !important;
+    border: 1px solid #D8E6FA !important;
+  }
+  .b18-duo-label {
+    color: #64748B !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.3px !important;
+  }
+  .b18-duo-desc {
+    color: #1E293B !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    line-height: 19px !important;
+  }
+  .b18-task-criteria-box {
+    padding: 15px !important;
+    background: rgba(248, 250, 252, 0.80) !important;
+    border-radius: 12px !important;
+    border: 1px solid #E2E8F0 !important;
+    gap: 10px !important;
+  }
+  .b18-criteria-label {
+    color: #475569 !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.6px !important;
+  }
+  .b18-criteria-pill {
+    font-size: 10px !important;
+    padding: 2px 8px !important;
+    background: #F1F5F9 !important;
+    border-radius: 4px !important;
+    border: 1px solid #E2E8F0 !important;
+    color: #64748B !important;
+  }
+  .b18-crit-dot {
+    width: 6px !important;
+    height: 6px !important;
+    background: #3B82F6 !important;
+    border-radius: 9999px !important;
+    margin-top: 6px !important;
+  }
+  .b18-crit-text {
+    color: #334155 !important;
+    font-size: 11.5px !important;
+    font-weight: 400 !important;
+    line-height: 17px !important;
+  }
+  .b18-task-arahan-box {
+    padding: 10px 15px 15px 15px !important;
+    background: rgba(248, 250, 252, 0.80) !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(226, 232, 240, 0.90) !important;
+    gap: 10px !important;
+  }
+  .b18-arahan-head {
+    padding-bottom: 10px !important;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.70) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 6px !important;
+  }
+  .b18-arahan-right {
+    order: 1 !important;
+    font-size: 11px !important;
+    color: #94A3B8 !important;
+    font-weight: 500 !important;
+  }
+  .b18-arahan-left {
+    order: 2 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    flex-wrap: wrap !important;
+  }
+  .b18-arahan-title {
+    color: #0F172A !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+  }
+  .b18-arahan-sub {
+    color: #64748B !important;
+    font-size: 10px !important;
+    font-weight: 500 !important;
+  }
+  .b18-arahan-quote {
+    padding-left: 10px !important;
+    border-left: 2px solid #94A3B8 !important;
+  }
+  .b18-arahan-quote p {
+    color: #1E293B !important;
+    font-size: 12px !important;
+    font-style: italic !important;
+    line-height: 18px !important;
+  }
+  .b18-task-actions {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 7px !important;
+    flex-wrap: nowrap !important;
+    width: 100% !important;
+    margin-top: 4px !important;
+  }
+  .b18-btn-kerjakan {
+    height: 40px !important;
+    padding: 10px 14px !important;
+    background: #186DD8 !important;
+    border-radius: 8px !important;
+    color: white !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    white-space: nowrap !important;
+  }
+  .b18-btn-complete {
+    height: 40px !important;
+    padding: 10px 10px !important;
+    background: #F8FAFC !important;
+    border-radius: 8px !important;
+    border: 1px solid #E2E8F0 !important;
+    color: #94A3B8 !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    flex: 1.6 1 auto !important;
+    min-width: 0 !important;
+    gap: 4px !important;
+    white-space: nowrap !important;
+  }
+  .b18-btn-complete svg {
+    width: 14px !important;
+    height: 14px !important;
+    flex-shrink: 0 !important;
+  }
+  .b18-btn-tunda {
+    height: 40px !important;
+    padding: 10px 12px !important;
+    background: #F8FAFC !important;
+    border-radius: 8px !important;
+    border: 1px solid #E2E8F0 !important;
+    color: #475569 !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    flex: 0.8 1 auto !important;
+    min-width: 0 !important;
+    white-space: nowrap !important;
+  }
+  .b18-task-block-banner {
+    padding: 10px !important;
+    background: rgba(238, 245, 255, 0.70) !important;
+    border-radius: 8px !important;
+    border: 1px solid rgba(219, 234, 254, 0.50) !important;
+    gap: 6px !important;
+    align-items: flex-start !important;
+  }
+  .b18-task-block-banner svg {
+    width: 14px !important;
+    height: 14px !important;
+    flex-shrink: 0 !important;
+    margin-top: 1px !important;
+  }
+  .b18-block-text {
+    font-size: 10px !important;
+    line-height: 14px !important;
+  }
+  .b18-block-label {
+    color: #64748B !important;
+    font-weight: 600 !important;
+    font-size: 10px !important;
+  }
+  .b18-block-desc {
+    color: #64748B !important;
+    font-weight: 400 !important;
+    font-size: 10px !important;
+  }
+
+  /* Dark Mode Overrides for Mobile Progres Aktif */
+  body.dark .b18-progres-head h1 {
+    color: #F8FAFC !important;
+  }
+  body.dark .b18-progres-head p {
+    color: #94A3B8 !important;
+  }
+  body.dark .b18-progres-guide {
+    background: #182538 !important;
+    outline-color: #34465D !important;
+  }
+  body.dark .b18-guide-header {
+    border-bottom-color: #34465D !important;
+  }
+  body.dark .b18-guide-header-text h2 {
+    color: #F8FAFC !important;
+  }
+  body.dark .b18-guide-header-text p {
+    color: #94A3B8 !important;
+  }
+  body.dark .b18-guide-card {
+    background: rgba(30, 58, 138, 0.25) !important;
+    outline-color: #23354D !important;
+  }
+  body.dark .b18-guide-desc {
+    color: #CBD5E1 !important;
+  }
+  body.dark .b18-btn-mengerti-mobile {
+    background: #1E3A8A !important;
+    outline-color: #2D4C77 !important;
+  }
+  body.dark .b18-btn-mengerti-mobile span {
+    color: #93C5FD !important;
+  }
+  body.dark .b18-progres-pos-strip {
+    background: linear-gradient(168deg, rgba(30, 58, 138, 0.40) 0%, rgba(24, 37, 56, 0.80) 100%), #182538 !important;
+    outline-color: #34465D !important;
+  }
+  body.dark .b18-pos-strong {
+    color: #F8FAFC !important;
+  }
+  body.dark .b18-pos-meta {
+    color: #94A3B8 !important;
+  }
+  body.dark .b18-pos-btn {
+    background: #1E3A8A !important;
+    outline-color: #2D4C77 !important;
+  }
+  body.dark .b18-pos-btn span {
+    color: #93C5FD !important;
+  }
+  body.dark .b18-sync-context {
+    background: linear-gradient(168deg, rgba(30, 58, 138, 0.40) 0%, rgba(24, 37, 56, 0.80) 100%), #182538 !important;
+    outline-color: #34465D !important;
+  }
+  body.dark .b18-sync-text strong {
+    color: #F8FAFC !important;
+  }
+  body.dark .b18-sync-text p {
+    color: #94A3B8 !important;
+  }
+  body.dark .b18-btn-peta {
+    background: #1E3A8A !important;
+  }
+  body.dark .b18-btn-peta span {
+    color: #93C5FD !important;
+  }
+  body.dark .b18-tab-btn {
+    background: #182538 !important;
+    outline-color: #34465D !important;
+  }
+  body.dark .b18-tab-btn span {
+    color: #93C5FD !important;
+  }
+  body.dark .b18-tab-btn.active {
+    background: #186DD8 !important;
+    outline: none !important;
+  }
+  body.dark .b18-tab-btn.active span {
+    color: #FFFFFF !important;
+  }
+  body.dark .b18-progres-empty {
+    background: #182538 !important;
+    outline-color: #34465D !important;
+  }
+  body.dark .b18-progres-empty h3 {
+    color: #F8FAFC !important;
+  }
+  body.dark .b18-progres-empty p {
+    color: #94A3B8 !important;
+  }
+  body.dark .b18-task-card {
+    background: #182538 !important;
+    border-color: #34465D !important;
+  }
+  body.dark .b18-task-stage-pill,
+  body.dark .b18-task-status-pill {
+    background: #232E40 !important;
+    border-color: #33435C !important;
+    color: #94A3B8 !important;
+  }
+  body.dark .b18-task-title {
+    color: #F8FAFC !important;
+  }
+  body.dark .b18-meta-val {
+    color: #CBD5E1 !important;
+  }
+  body.dark .b18-task-reason-box {
+    background: rgba(24, 109, 216, 0.12) !important;
+    border-color: rgba(24, 109, 216, 0.25) !important;
+  }
+  body.dark .b18-reason-body {
+    color: #CBD5E1 !important;
+  }
+  body.dark .b18-duo-card {
+    background: #202B3B !important;
+    border-color: #2D3D54 !important;
+  }
+  body.dark .b18-duo-desc {
+    color: #E2E8F0 !important;
+  }
+  body.dark .b18-task-criteria-box {
+    background: #202B3B !important;
+    border-color: #2D3D54 !important;
+  }
+  body.dark .b18-criteria-pill {
+    background: #232E40 !important;
+    border-color: #33435C !important;
+    color: #94A3B8 !important;
+  }
+  body.dark .b18-crit-text {
+    color: #CBD5E1 !important;
+  }
+  body.dark .b18-task-arahan-box {
+    background: #202B3B !important;
+    border-color: #2D3D54 !important;
+  }
+  body.dark .b18-arahan-head {
+    border-bottom-color: #2D3D54 !important;
+  }
+  body.dark .b18-arahan-title {
+    color: #F8FAFC !important;
+  }
+  body.dark .b18-arahan-quote p {
+    color: #E2E8F0 !important;
+  }
+  body.dark .b18-btn-complete,
+  body.dark .b18-btn-tunda {
+    background: #202B3B !important;
+    border-color: #2D3D54 !important;
+    color: #CBD5E1 !important;
+  }
+  body.dark .b18-task-block-banner {
+    background: rgba(24, 109, 216, 0.12) !important;
+    border-color: rgba(24, 109, 216, 0.25) !important;
+  }
+  body.dark .b18-block-label,
+  body.dark .b18-block-desc {
     color: #94A3B8 !important;
   }
 }

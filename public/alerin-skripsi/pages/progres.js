@@ -316,7 +316,7 @@ function progresGuideCard() {
           <h2>Cara membaca Progres Aktif</h2>
           <p>Pahami urutan prioritas agar pengerjaan skripsi tetap fokus, teratur, dan selesai tepat waktu.</p>
         </div>
-        <button type="button" class="btn b18-btn-mengerti" data-action="dismiss-progres-guide">
+        <button type="button" class="btn b18-btn-mengerti b18-btn-mengerti-desktop" data-action="dismiss-progres-guide">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
             <path d="M3.33 8.5L6.67 11.5L12.67 4.5" stroke="#125AB5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
@@ -370,6 +370,12 @@ function progresGuideCard() {
             <p class="b18-guide-desc">Pekerjaan yang bisa dicicil kapan saja tanpa menunggu pekerjaan lain, misalnya sambil menunggu tanggapan dosen. Mengerjakannya tidak menggeser Prioritas Utama. Kalau sebagian hasilnya masih bergantung pada pekerjaan lain, batasnya ditulis di kartu.</p>
           </div>
         </div>
+        <button type="button" class="btn b18-btn-mengerti b18-btn-mengerti-mobile" data-action="dismiss-progres-guide">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M3.33 8.5L6.67 11.5L12.67 4.5" stroke="#125AB5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span>Mengerti</span>
+        </button>
       </div>
     </section>
   `;
