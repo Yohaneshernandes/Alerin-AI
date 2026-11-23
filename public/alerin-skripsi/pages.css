@@ -11011,4 +11011,489 @@ body.dark-mode .alerin-toast-close:hover,
   }
 }
 
+/* ─── Peta Skripsi Modern Redesign ─── */
+.peta-layout-container {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  box-sizing: border-box;
+}
+
+.peta-page-header {
+  align-self: stretch;
+  min-height: 64px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 3px;
+  margin-bottom: 0;
+}
+
+.peta-title {
+  color: #142238;
+  font-size: 30px;
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-weight: 650;
+  line-height: 37.5px;
+  margin: 0;
+}
+
+.peta-subtitle {
+  color: #637087;
+  font-size: 13px;
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-weight: 400;
+  line-height: 22.75px;
+  margin: 0;
+  max-width: 650px;
+}
+
+/* Two Targets Grid */
+.peta-targets-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  width: 100%;
+  align-items: stretch;
+}
+
+.peta-target-card {
+  min-height: 140px;
+  padding: 20px;
+  background: linear-gradient(90deg, rgba(239, 246, 255, 0.50) 0%, white 50%, white 100%), white;
+  box-shadow: 0px 2px 4px rgba(35, 58, 87, 0.01);
+  border-radius: 16px;
+  outline: 1px #DCE4EF solid;
+  outline-offset: -1px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 15px;
+  box-sizing: border-box;
+}
+
+.peta-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.peta-card-title {
+  color: #142238;
+  font-size: 17px;
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-weight: 640;
+  line-height: 24.65px;
+  margin: 0;
+}
+
+.peta-card-value {
+  color: #1C1917;
+  font-size: 14px;
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-weight: 600;
+  line-height: 20px;
+  padding-top: 2px;
+}
+
+.peta-card-footer {
+  border-top: 1px #DCE4EF solid;
+  padding-top: 12px;
+  margin-top: auto;
+}
+
+.peta-card-hint {
+  color: #52647D;
+  font-size: 11px;
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-weight: 400;
+  line-height: 16.5px;
+}
+
+.peta-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-top: 1px #DCE4EF solid;
+  padding-top: 15px;
+  margin-top: auto;
+}
+
+.btn-peta-add {
+  flex: 1 1 0;
+  height: 40px;
+  padding: 8px 12px;
+  background: white;
+  border-radius: 10px;
+  outline: 1px #E2E8F0 solid;
+  outline-offset: -1px;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: #334155;
+  font-size: 12px;
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-weight: 600;
+  line-height: 16px;
+  transition: all 0.15s ease;
+}
+.btn-peta-add:hover {
+  background: #F8FAFC;
+  outline-color: #CBD5E1;
+}
+
+.btn-peta-cal {
+  flex: 1 1 0;
+  height: 40px;
+  padding: 8px 12px;
+  background: #EEF5FF;
+  border-radius: 10px;
+  outline: 1px #D8E6FA solid;
+  outline-offset: -1px;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: #125AB5;
+  font-size: 12px;
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-weight: 600;
+  line-height: 16px;
+  transition: all 0.15s ease;
+}
+.btn-peta-cal:hover {
+  background: #E0EDFF;
+  outline-color: #B9D6F8;
+}
+
+/* Big White Container */
+.peta-main-card {
+  padding: 15px 20px 20px 20px;
+  background: white;
+  box-shadow: 0px 2px 4px rgba(35, 58, 87, 0.01);
+  border-radius: 16px;
+  outline: 1px #DCE4EF solid;
+  outline-offset: -1px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.peta-main-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.peta-main-desc {
+  flex: 1 1 0;
+  color: #52647D;
+  font-size: 12px;
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-weight: 400;
+  line-height: 21px;
+  margin: 0;
+}
+
+.btn-peta-all {
+  color: #125AB5;
+  font-size: 14px;
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-weight: 600;
+  line-height: 17.4px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 9px;
+  transition: background-color 0.15s ease;
+}
+.btn-peta-all:hover {
+  background: #EEF5FF;
+}
+
+.peta-stages-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+}
+
+/* Stage Card (01 to 11) */
+.peta-stage-card {
+  background: linear-gradient(90deg, rgba(239, 246, 255, 0.50) 0%, white 50%, white 100%), white;
+  border-radius: 10px;
+  outline: 1px #DCE4EF solid;
+  outline-offset: -1px;
+  padding: 0 16px 15px 16px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.15s ease;
+  box-sizing: border-box;
+}
+
+.peta-stage-card.selected {
+  outline-color: #186DD8;
+  box-shadow: 0 0 0 1px #186DD8;
+}
+
+.peta-stage-trigger {
+  width: 100%;
+  padding: 18px 0;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+}
+
+.peta-number-circle {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background: #F4F6FA;
+  outline: 1px #E5EAF2 solid;
+  outline-offset: -1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #A6B0C1;
+  font-size: 11px;
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-weight: 400;
+  line-height: 17.6px;
+}
+
+.peta-stage-card.active .peta-number-circle {
+  background: #EEF5FF;
+  outline-color: #D8E6FA;
+  color: #125AB5;
+  font-weight: 600;
+}
+
+.peta-stage-card.done .peta-number-circle {
+  background: #F0FDF4;
+  outline-color: #DCFCE7;
+  color: #16A34A;
+}
+
+.peta-stage-text {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.peta-stage-title {
+  color: #223851;
+  font-size: 16px;
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-weight: 620;
+  line-height: 23.4px;
+  margin: 0;
+}
+
+.peta-stage-subtitle {
+  color: #52647D;
+  font-size: 14px;
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-weight: 400;
+  line-height: 16px;
+  margin: 0;
+}
+
+.peta-status-badge {
+  height: 23px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-weight: 600;
+  line-height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.peta-status-default {
+  background: #F1F5F9;
+  outline: 1px #E2E8F0 solid;
+  outline-offset: -1px;
+  color: #64748B;
+}
+
+.peta-status-active {
+  background: #EEF5FF;
+  outline: 1px #D8E6FA solid;
+  outline-offset: -1px;
+  color: #125AB5;
+}
+
+.peta-status-done {
+  background: #F0FDF4;
+  outline: 1px #DCFCE7 solid;
+  outline-offset: -1px;
+  color: #16A34A;
+}
+
+.peta-chevron-box {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #94A3B8;
+  transition: transform 0.2s ease;
+}
+
+.peta-stage-card.selected .peta-chevron-box {
+  transform: rotate(180deg);
+}
+
+.peta-meter-track {
+  width: 100%;
+  height: 5px;
+  background: #EAF0F8;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+}
+
+.peta-meter-fill {
+  height: 100%;
+  background: #317EE6;
+  border-radius: 8px;
+  transition: width 0.3s ease;
+}
+
+.peta-stage-panel {
+  padding-top: 16px;
+  border-top: 1px solid #E2E8F0;
+  margin-top: 14px;
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+/* Dark Mode Overrides */
+body.dark .peta-title,
+body.dark-mode .peta-title,
+.dark .peta-title {
+  color: #F8FAFC !important;
+}
+
+body.dark .peta-subtitle,
+body.dark-mode .peta-subtitle,
+.dark .peta-subtitle {
+  color: #94A3B8 !important;
+}
+
+body.dark .peta-target-card,
+body.dark-mode .peta-target-card,
+.dark .peta-target-card {
+  background: #182538 !important;
+  outline-color: #334155 !important;
+}
+
+body.dark .peta-card-title,
+body.dark-mode .peta-card-title,
+.dark .peta-card-title {
+  color: #F8FAFC !important;
+}
+
+body.dark .peta-card-value,
+body.dark-mode .peta-card-value,
+.dark .peta-card-value {
+  color: #E2E8F0 !important;
+}
+
+body.dark .peta-card-footer,
+body.dark-mode .peta-card-footer,
+.dark .peta-card-footer,
+body.dark .peta-card-actions,
+body.dark-mode .peta-card-actions,
+.dark .peta-card-actions {
+  border-color: #334155 !important;
+}
+
+body.dark .btn-peta-add,
+body.dark-mode .btn-peta-add,
+.dark .btn-peta-add {
+  background: #1E293B !important;
+  outline-color: #334155 !important;
+  color: #F8FAFC !important;
+}
+
+body.dark .btn-peta-add:hover,
+body.dark-mode .btn-peta-add:hover,
+.dark .btn-peta-add:hover {
+  background: #334155 !important;
+}
+
+body.dark .peta-main-card,
+body.dark-mode .peta-main-card,
+.dark .peta-main-card {
+  background: #182538 !important;
+  outline-color: #334155 !important;
+}
+
+body.dark .peta-stage-card,
+body.dark-mode .peta-stage-card,
+.dark .peta-stage-card {
+  background: #1E293B !important;
+  outline-color: #334155 !important;
+}
+
+body.dark .peta-stage-title,
+body.dark-mode .peta-stage-title,
+.dark .peta-stage-title {
+  color: #F8FAFC !important;
+}
+
+body.dark .peta-stage-subtitle,
+body.dark-mode .peta-stage-subtitle,
+.dark .peta-stage-subtitle {
+  color: #94A3B8 !important;
+}
+
+body.dark .peta-stage-panel,
+body.dark-mode .peta-stage-panel,
+.dark .peta-stage-panel {
+  border-color: #334155 !important;
+}
+
+@media (max-width: 768px) {
+  .peta-targets-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .peta-card-actions {
+    flex-direction: column !important;
+  }
+  .peta-stage-trigger {
+    flex-wrap: wrap !important;
+  }
+  .peta-status-badge {
+    margin-left: 50px !important;
+  }
+}
+
+
 

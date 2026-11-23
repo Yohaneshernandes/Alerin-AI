@@ -60,8 +60,6 @@ function render() {
   applySusunan();
   syncQueue();
   let content = pages[route]();
-  /* Posisi penelitian di atas Peta Skripsi */
-  if (['peta'].includes(route)) content = posStrip() + content;
   $('#app').innerHTML = shell(content);
   document.title = `${pageNames[route]} · Alerin Skripsi`;
 }

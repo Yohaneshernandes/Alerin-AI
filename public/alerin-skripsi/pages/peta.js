@@ -79,30 +79,137 @@ function petaPage() {
       const d = stageData(i, cur),
         open = petaOpen.has(i),
         no = String(i + 1).padStart(2, '0');
-      const pill = d.complete
-        ? badge('Selesai', 'green')
+      const badgeText = d.complete
+        ? 'Selesai'
         : d.pos === 'now'
-          ? badge('Posisimu', 'blue')
+          ? 'Sedang aktif'
           : d.open.length
-            ? badge('Sedang dikerjakan', 'blue')
+            ? 'Sedang dikerjakan'
             : d.pos === 'past'
-              ? badge(d.log.length ? 'Tercatat' : 'Sebelum posisimu · belum ada catatan', '')
-              : badge('Belum dimulai', '');
+              ? 'Sebelum posisimu'
+              : 'Belum dimulai';
+      const badgeClass = d.complete
+        ? 'peta-status-done'
+        : (d.pos === 'now' || d.open.length)
+          ? 'peta-status-active'
+          : 'peta-status-default';
+
       const pct = d.complete ? 100 : d.ts.length ? Math.round((d.done.length / d.ts.length) * 100) : 0;
-      const cls = [d.pos, d.complete ? 'done' : d.pos === 'past' && d.open.length ? 'open' : d.pos === 'past' ? 'nolog' : '', open ? 'selected' : '']
-        .filter(Boolean)
-        .join(' ');
-      return `<section id="linked-phase-${i}" class="sync-phase ${cls}"><button class="sync-phase-trigger" id="map-head-${i}" data-action="peta-toggle:${i}" aria-expanded="${open}" aria-controls="map-panel-${i}"><span class="timeline-number">${d.complete ? I('check') : no}</span><span class="sync-phase-name"><strong>${e(p[0])}</strong><small>${e(stageSummary(d))}</small></span>${pill}</button><div class="sync-meter" role="progressbar" aria-label="Penyelesaian ${e(p[0])}" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"><span style="width:${pct}%"></span></div><div class="sync-phase-detail" id="map-panel-${i}" role="region" aria-labelledby="map-head-${i}" ${open ? '' : 'hidden'}>${stagePanel(i, d, tg)}</div></section>`;
+      const cardCls = [
+        'peta-stage-card',
+        d.complete ? 'done' : d.pos === 'now' ? 'active' : '',
+        open ? 'selected' : ''
+      ].filter(Boolean).join(' ');
+
+      return `
+        <div id="linked-phase-${i}" class="${cardCls}">
+          <button type="button" class="peta-stage-trigger" id="map-head-${i}" data-action="peta-toggle:${i}" aria-expanded="${open}" aria-controls="map-panel-${i}">
+            <div class="peta-number-circle">${d.complete ? I('check') : no}</div>
+            <div class="peta-stage-text">
+              <h3 class="peta-stage-title">${e(p[0])}</h3>
+              <p class="peta-stage-subtitle">${e(p[1])}</p>
+            </div>
+            <div class="peta-status-badge ${badgeClass}">${e(badgeText)}</div>
+            <div class="peta-chevron-box">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </div>
+          </button>
+          <div class="peta-meter-track" role="progressbar" aria-label="Penyelesaian ${e(p[0])}" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100">
+            <div class="peta-meter-fill" style="width:${pct}%"></div>
+          </div>
+          <div class="peta-stage-panel" id="map-panel-${i}" role="region" aria-labelledby="map-head-${i}" ${open ? '' : 'hidden'}>
+            ${stagePanel(i, d, tg)}
+          </div>
+        </div>
+      `;
     })
     .join('');
+
   const allOpen = petaOpen.size === ALERIN.phases.length;
   const dl = S.konteks?.deadline || S.profile.deadline;
   const left = dl ? daysLeft(dl) : null;
-  return (
-    pageHead('Peta Skripsi', 'Pilih tahap untuk melihat rincian dan pekerjaan yang terhubung. Status dihitung dari Progres Aktif.') +
-    `<div class="v3-map-head"><div class="card"><h3>Target Penyelesaian Skripsi</h3><p>${dl ? `${dateLong(dl)}${left !== null ? ` · ${left >= 0 ? left + ' hari lagi' : 'lewat ' + Math.abs(left) + ' hari'}` : ''}` : 'Belum ditentukan'}</p><p class="small muted mt">Diatur lewat Konteks di Mulai Skripsi.</p></div>${targetCard()}</div>` +
-    `<section class="card mt"><div class="between peta-head"><p class="small muted">Pekerjaan yang selesai memperbarui tahap ini. Antrean, bukti, serta arahan dosen tetap dapat ditinjau; persetujuan akademik dicatat terpisah.</p>${B(allOpen ? 'Tutup semua' : 'Buka semua', 'peta-all', 'text')}</div>${rows}</section>`
-  );
+
+  const headerHtml = `
+    <div class="peta-page-header">
+      <h1 class="peta-title">Peta Skripsi</h1>
+      <p class="peta-subtitle">Pilih tahap untuk melihat rincian dan pekerjaan yang terhubung. Status dihitung dari Progres Aktif.</p>
+    </div>
+  `;
+
+  const posStripHtml = `
+    <section class="card b18-progres-pos-strip" aria-label="Posisi Penelitian">
+      <div class="b18-pos-strip-text">
+        <span class="b18-pos-eyebrow">POSISI PENELITIANMU</span>
+        <strong class="b18-pos-strong">${e(st.confirmed ? positionLabel(st.idx) : 'Pilih Tahap Terakhir')}</strong>
+        <span class="b18-pos-meta">${e(st.confirmed ? positionSource() : 'Belum dikonfirmasi')}</span>
+      </div>
+      <button type="button" class="btn b18-pos-btn" data-action="pos-edit">
+        <span>Perbarui Posisi</span>
+      </button>
+    </section>
+  `;
+
+  const targetsHtml = `
+    <div class="peta-targets-grid">
+      <div class="peta-target-card">
+        <div class="peta-card-header">
+          <h3 class="peta-card-title">Target Penyelesaian Skripsi</h3>
+        </div>
+        <div class="peta-card-value">${dl ? `${dateLong(dl)}${left !== null ? ` · ${left >= 0 ? left + ' hari lagi' : 'lewat ' + Math.abs(left) + ' hari'}` : ''}` : 'Belum ada terget'}</div>
+        <div class="peta-card-footer">
+          <span class="peta-card-hint">Diatur lewat Konteks di Mulai Skripsi.</span>
+        </div>
+      </div>
+
+      <div class="peta-target-card">
+        <div class="peta-card-header">
+          <h3 class="peta-card-title">Target terdekat</h3>
+        </div>
+        <div class="peta-card-value">${tg ? `${e(tg.text)} · ${dateLong(tg.date)}` : 'Belum ada terget'}</div>
+        <div class="peta-card-actions">
+          <button type="button" class="btn-peta-add" data-action="${!tg ? 'target-suggest' : tg.source === 'agenda' ? 'cal-edit:' + tg.id : 'target'}">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            <span>${tg ? (tg.source === 'agenda' ? 'Ubah Agenda' : 'Ubah Target') : 'Tambah Target'}</span>
+          </button>
+          <button type="button" class="btn-peta-cal" data-action="nav:kalender">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            <span>Kalender Alerin</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  const mainCardHtml = `
+    <section class="peta-main-card">
+      <div class="peta-main-header">
+        <p class="peta-main-desc">Pekerjaan yang selesai memperbarui tahap ini. Antrean, bukti, serta arahan dosen tetap dapat ditinjau; persetujuan akademik dicatat terpisah.</p>
+        <button type="button" class="btn-peta-all" data-action="peta-all">${allOpen ? 'Tutup semua' : 'Buka semua'}</button>
+      </div>
+      <div class="peta-stages-list">
+        ${rows}
+      </div>
+    </section>
+  `;
+
+  return `
+    <div class="peta-layout-container">
+      ${headerHtml}
+      ${posStripHtml}
+      ${targetsHtml}
+      ${mainCardHtml}
+    </div>
+  `;
 }
 
 Object.assign(ACTIONS, {
