@@ -96,9 +96,11 @@ function priorityCard(p) {
     const k = p.k,
       pz = S.profile.personalisasi || {};
     const rows = [
-      ['Topik', pz.topik],
-      ['Judul', pz.judul],
+      ['Topik Riset', pz.topik],
+      ['Judul Sementara', pz.judul],
     ].filter(r => r[1]);
+    const stageNum = k.stage !== null && k.stage !== undefined ? k.stage + 1 : 1;
+    const num = String(stageNum).padStart(2, '0');
     return `
       <section class="card next-step-card b18-priority b18-confirm" aria-labelledby="home-priority-title">
         <div class="b18-priority-top">
@@ -112,29 +114,42 @@ function priorityCard(p) {
           <span class="b18-confirm-badge">Perlu konfirmasi</span>
         </div>
         <div class="b18-priority-body">
-          <h2 id="home-priority-title">Apa Kamu Sampai Tahap Ini?</h2>
+          <div class="b18-confirm-head">
+            <h2 id="home-priority-title">Apa Kamu Sedang di Tahap Ini?</h2>
+          </div>
           <div class="b18-stage-box">
-            <strong>${e(positionLabel(k.stage))}</strong>
-            <span>Dari personalisasi alerin.id: ${e(k.label)} · ${e(k.ket)}</span>
+            <div class="b18-stage-top">
+              <div class="b18-stage-badge">${num}</div>
+              <div class="b18-stage-info">
+                <strong>Tahap ${e(stageName(k.stage))}</strong>
+                <span>Personalisasi dari sistem: ${e(k.ket || k.label)}</span>
+              </div>
+            </div>
             ${rows.length ? `
-              <div class="b18-pz-stacked">
-                ${rows.map(([h, v]) => `
-                  <div class="b18-pz-item">
-                    <div class="b18-pz-label">${h}</div>
-                    <div class="b18-pz-val">${e(v)}</div>
+              <div class="b18-pz-table">
+                ${rows.map(([h, v], idx) => `
+                  <div class="b18-pz-row">
+                    <div class="b18-pz-label">${e(h)}</div>
+                    <div class="b18-pz-val ${idx === 1 ? 'b18-pz-val-title' : ''}">${e(v)}</div>
                   </div>
                 `).join('')}
               </div>
             ` : ''}
-            ${pz.contoh ? '<p class="b18-pz-note">Contoh data personalisasi. Judul ini belum menjadi judul aktif.</p>' : ''}
+            ${pz.contoh ? `
+              <div class="b18-stage-note">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;">
+                  <circle cx="8" cy="8" r="6" stroke="#3B82F6" stroke-width="1.3"></circle>
+                  <line x1="8" y1="7" x2="8" y2="11.5" stroke="#3B82F6" stroke-width="1.3" stroke-linecap="round"></line>
+                  <circle cx="8" cy="4.7" r="0.75" fill="#3B82F6"></circle>
+                </svg>
+                <span>Contoh data personalisasi dari profil awal. Judul dapat diubah sewaktu-waktu di pengaturan proposal.</span>
+              </div>
+            ` : ''}
           </div>
-          <p class="b18-footnote">Jawabanmu disimpan sebagai posisi penelitian. Tahap sebelumnya tidak otomatis ditandai selesai.</p>
-          <div class="actions b18-main-action">
+          <p class="b18-footnote">Jawabanmu disimpan sebagai posisi penelitian aktif saat ini. Tahap sebelumnya tidak otomatis ditandai selesai tanpa persetujuanmu.</p>
+          <div class="actions b18-main-action b18-confirm-actions">
             <button type="button" class="b18-btn-confirm" data-action="pos-confirm">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
-              <span>Ya, Sampai Tahap Ini</span>
+              <span>Ya, Konfirmasi Tahap Ini</span>
             </button>
             <button type="button" class="b18-btn-other" data-action="pos-edit">
               <span>Pilih Tahap Lain</span>
