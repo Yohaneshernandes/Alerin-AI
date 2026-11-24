@@ -24,9 +24,9 @@ const situasiOf = id => SITUASI.find(x => x.id === id);
 function berandaPage() {
   const p = homePriority();
   return (
-    `<div class="mulai-page-head">
+    `<div class="mulai-page-head b18-home-head">
       <h1>Halo, ${e(S.profile.name || 'Naya')}.</h1>
-      <p>Satu langkah yang jelas untuk melanjutkan penelitianmu.</p>
+      <p>Selamat datang! Alerin siap menemani langkah skripsimu hari ini.</p>
     </div>` +
     homeStrip(p) +
     directionNotice(p) +
@@ -85,7 +85,7 @@ function priorityCard(p) {
           <span class="b18-pulse-ring"></span>
           <span class="b18-pulse-core"></span>
         </div>
-        <span class="b18-eyebrow">PRIORITAS SAAT INI</span>
+        <span class="b18-eyebrow">TAHAP PENELITIAN SAAT INI</span>
       </div>
       ${extra}
     </div>`;
@@ -108,7 +108,7 @@ function priorityCard(p) {
               <span class="b18-pulse-ring"></span>
               <span class="b18-pulse-core"></span>
             </div>
-            <span class="b18-eyebrow">PRIORITAS SAAT INI</span>
+            <span class="b18-eyebrow">TAHAP PENELITIAN SAAT INI</span>
           </div>
           <span class="b18-confirm-badge">Perlu konfirmasi</span>
         </div>
@@ -158,31 +158,27 @@ function priorityCard(p) {
       </section>
     `;
   }
-  if (p.kind === 'no-position') {
-    const stop = p.k?.id === 'terhenti';
-    return `
-      <section class="card next-step-card b18-priority b18-empty" aria-labelledby="home-priority-title">
-        ${head('<span class="b18-status-pill">Belum ada posisi</span>')}
-        <div class="b18-priority-body">
-          <h2 id="home-priority-title">Belum ada posisi penelitian</h2>
-          <div class="b18-priority-banner">
-            <div class="b18-priority-banner-text">${stop ? 'Personalisasimu menyebut progres sedang terhenti. Pilih tahap terakhir yang sudah kamu capai, lalu ceritakan kendalanya lewat Perbarui Kondisi.' : 'Pilih tahap terakhir yang sudah kamu capai. Alerin memakai posisi ini di Peta Skripsi dan ringkasan untuk Mentor.'}</div>
-          </div>
-          <div class="actions b18-main-action">${B('Pilih Tahap Terakhir', 'pos-edit', 'primary', 'map')}</div>
-        </div>
-      </section>
-    `;
-  }
-  if (p.kind === 'no-task')
+  if (p.kind === 'no-position' || p.kind === 'no-task')
     return `
       <section class="card next-step-card b18-priority b18-empty" aria-labelledby="home-priority-title">
         ${head('<span class="b18-status-pill">Belum ada pekerjaan</span>')}
         <div class="b18-priority-body">
-          <h2 id="home-priority-title">Belum ada pekerjaan aktif</h2>
-          <div class="b18-priority-banner">
-            <div class="b18-priority-banner-text">${e(p.rec.text)}</div>
+          <div class="b18-priority-title-wrap">
+            <h2 id="home-priority-title">Belum ada tahap penelitian</h2>
           </div>
-          <p class="b18-priority-note">Jawabanmu disimpan sebagai posisi penelitian aktif saat ini. Tahap sebelumnya tidak otomatis ditandai selesai tanpa persetujuanmu.</p>
+          <div class="b18-priority-banner b18-banner-v2">
+            <div class="b18-banner-inner">
+              <div class="b18-priority-banner-text">Ceritakan idemu, lalu pilih judul. Setelah itu pekerjaan pertamamu akan masuk ke Progres Aktif.</div>
+            </div>
+            <button type="button" class="btn primary b18-btn-mulai" data-action="nav:mulai">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+              </svg>
+              <span>Mulai Skripsi</span>
+            </button>
+          </div>
+          <div class="b18-priority-note">Prioritas akan muncul di sini setelah ada pekerjaan di Progress Aktif.</div>
           ${activeTitle()}
         </div>
       </section>
@@ -201,76 +197,96 @@ function priorityCard(p) {
     <section class="card next-step-card b18-priority" aria-labelledby="home-priority-title">
       ${head(badge(st[1], st[0] === 'warn' ? 'amber' : 'blue'))}
       <div class="b18-priority-body">
-        <h2 id="home-priority-title">${e(t.title)}</h2>
-        <div class="b18-priority-banner">
-          <div class="b18-priority-banner-text">${e(t.doing || t.reason || '')}</div>
+        <div class="b18-priority-title-wrap">
+          <h2 id="home-priority-title">${e(t.title)}</h2>
+        </div>
+        <div class="b18-priority-banner b18-banner-v2">
+          <div class="b18-banner-inner">
+            <div class="b18-priority-banner-text">${e(t.doing || t.reason || '')}</div>
+          </div>
+          <button type="button" class="btn primary b18-btn-mulai" data-action="home-work:${t.id}">
+            <span>Kerjakan</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </button>
         </div>
         ${crit ? `<p class="small b18-done-when"><strong>Selesai bila:</strong> ${e(crit)}</p>` : ''}
         ${arahan}
         <p class="small muted next-step-meta">${e(meta.join(' · '))}</p>
-        <div class="actions b18-main-action">${B('Kerjakan', 'home-work:' + t.id, 'primary', 'arrow')}</div>
-        <p class="small muted b18-slots">${p.act.length}/3 slot Progres Aktif terisi${p.queue ? ` · ${p.queue} pekerjaan di antrean` : ''}.</p>
+        <div class="b18-priority-note">${p.act.length}/3 slot Progres Aktif terisi${p.queue ? ` · ${p.queue} pekerjaan di antrean` : ''}.</div>
         ${activeTitle()}
       </div>
     </section>
   `;
 }
 
-/* ---------- Posisi · terakhir diperiksa · kondisi ---------- */
+/* ---------- Terakhir diperiksa · kondisi ---------- */
 function homeStrip(p) {
-  const st = stageInfo(),
-    k = kondisiOf(S.profile.kondisi),
+  const k = kondisiOf(S.profile.kondisi),
     r = latestReview(),
     sit = situasiOf(S.situation?.id);
 
-  const cell = (eyebrow, strong, meta, btn = '', ph = false) => `
-    <div class="b18-cell">
-      <div class="b18-cell-content">
-        <span class="b18-eyebrow">${eyebrow}</span>
-        <strong class="b18-strong ${ph ? 'b18-placeholder' : ''}">${e(strong)}</strong>
-        <span class="b18-meta">${e(meta)}</span>
-      </div>
-      <div class="b18-cell-action">
-        ${btn}
-      </div>
-    </div>
-  `;
+  let checkedTitle = 'Belum ada bahan diperiksa';
+  let checkedDesc = 'Hasil Periksa Skripsi otomatis tampil di sini.';
+  let checkedAction = 'nav:periksa';
+  let checkedBtnText = 'Mulai Unggah Berkas';
+  let checkedIsPlaceholder = true;
 
-  const pos = cell(
-    'POSISI PENELITIANMU',
-    st.confirmed ? positionLabel(st.idx) : 'Pilih Tahap Terakhir',
-    st.confirmed ? positionSource() : 'Belum dikonfirmasi',
-    `<button type="button" class="btn text b18-btn-kondisi" data-action="pos-edit"><span>Perbarui Posisi</span></button>`,
-    !st.confirmed,
-  );
-
-  let checked;
   if (r) {
     const open = openFindings().length,
       n = r.findings.length;
-    checked = cell(
-      'TERAKHIR DIPERIKSA',
-      r.scope,
-      `${localTime(r.date)} WIB · ${n ? n + ' temuan' : 'belum ada temuan'}${open ? ` · ${open} belum jadi pekerjaan` : ''}`,
-      `<button type="button" class="btn text b18-btn-kondisi" data-action="nav:hasil-periksa"><span>Lihat Hasil</span></button>`,
-    );
-  } else {
-    checked = cell(
-      'TERAKHIR DIPERIKSA',
-      'Belum ada bahan diperiksa',
-      'Hasil Periksa Skripsi otomatis tampil di sini.',
-      `<button type="button" class="btn text b18-btn-kondisi" data-action="nav:periksa"><span>Mulai Unggah Berkas</span></button>`,
-      true,
-    );
+    checkedTitle = r.scope;
+    checkedDesc = `${localTime(r.date)} WIB · ${n ? n + ' temuan' : 'belum ada temuan'}${open ? ` · ${open} belum jadi pekerjaan` : ''}`;
+    checkedAction = 'nav:hasil-periksa';
+    checkedBtnText = 'Lihat Hasil';
+    checkedIsPlaceholder = false;
   }
 
-  const kond = sit
-    ? cell('KONDISI BIMBINGAN', sit.label, 'diperbarui ' + dateLong(String(S.situation.date || '').slice(0, 10)), `<button type="button" class="btn text b18-btn-kondisi" data-action="situasi-pick"><span>Perbarui Kondisi</span></button>`)
-    : k?.id === 'terhenti'
-      ? cell('KONDISI BIMBINGAN', 'Progres terhenti', 'menurut personalisasi · pilih kendalanya', `<button type="button" class="btn text b18-btn-kondisi" data-action="situasi-pick"><span>Perbarui Kondisi</span></button>`)
-      : cell('KONDISI BIMBINGAN', 'Belum diperbarui', 'Ceritakan kendala dengan dosen pembimbing atau materi.', `<button type="button" class="btn text b18-btn-kondisi" data-action="situasi-pick"><span>Perbarui Kondisi</span></button>`, true);
+  let kondTitle = 'Belum diperbarui';
+  let kondDesc = 'Ceritakan kendala dengan dosen pembimbing atau materi.';
+  let kondIsPlaceholder = true;
 
-  return `<section class="b18-strip" aria-label="Ringkasan penelitian">${pos}${checked}${kond}</section>`;
+  if (sit) {
+    kondTitle = sit.label;
+    kondDesc = 'diperbarui ' + dateLong(String(S.situation.date || '').slice(0, 10));
+    kondIsPlaceholder = false;
+  } else if (k?.id === 'terhenti') {
+    kondTitle = 'Progres terhenti';
+    kondDesc = 'menurut personalisasi · pilih kendalanya';
+    kondIsPlaceholder = false;
+  }
+
+  return `
+    <section class="b18-strip-v2" aria-label="Ringkasan penelitian">
+      <div class="b18-strip-card">
+        <div class="b18-strip-card-content">
+          <span class="b18-strip-eyebrow">TERAKHIR DIPERIKSA</span>
+          <strong class="b18-strip-title ${checkedIsPlaceholder ? 'b18-placeholder' : ''}">${e(checkedTitle)}</strong>
+          <span class="b18-strip-desc">${e(checkedDesc)}</span>
+        </div>
+        <div class="b18-strip-card-action">
+          <button type="button" class="btn text b18-btn-strip-link" data-action="${checkedAction}">
+            <span>${e(checkedBtnText)}</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="b18-strip-card">
+        <div class="b18-strip-card-content">
+          <span class="b18-strip-eyebrow">KONDISI BIMBINGAN</span>
+          <strong class="b18-strip-title ${kondIsPlaceholder ? 'b18-placeholder' : ''}">${e(kondTitle)}</strong>
+          <span class="b18-strip-desc">${e(kondDesc)}</span>
+        </div>
+        <div class="b18-strip-card-action">
+          <button type="button" class="btn text b18-btn-strip-link" data-action="situasi-pick">
+            <span>Perbarui Kondisi</span>
+          </button>
+        </div>
+      </div>
+    </section>
+  `;
 }
 
 /* ---------- Pemberitahuan arahan dosen ---------- */
@@ -293,27 +309,6 @@ function directionNotice(p) {
 function homeShortcuts(p) {
   return `
     <div class="home-shortcuts b18-home-shortcuts" aria-label="Akses lain">
-      <button type="button" class="home-shortcut b18-shortcut-btn" data-action="nav:mulai">
-        <div class="b18-shortcut-left">
-          <div class="b18-shortcut-icon-box">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#125AB5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"></circle>
-              <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
-            </svg>
-          </div>
-          <div class="b18-shortcut-text">
-            <strong>Mulai Skripsi</strong>
-            <p>Panduan bertahap menyusun kerangka latar belakang &amp; rumusan masalah</p>
-          </div>
-        </div>
-        <div class="b18-shortcut-arrow">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#186DD8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-            <polyline points="12 5 19 12 12 19"></polyline>
-          </svg>
-        </div>
-      </button>
-
       <button type="button" class="home-shortcut b18-shortcut-btn" data-action="nav:periksa">
         <div class="b18-shortcut-left">
           <div class="b18-shortcut-icon-box">
@@ -327,7 +322,28 @@ function homeShortcuts(p) {
           </div>
           <div class="b18-shortcut-text">
             <strong>Periksa Skripsi</strong>
-            <p>Analisis keterbacaan, plagiasi internal, sitasi &amp; logika argumen</p>
+            <p>Gunakan fitur ini jika kamu ingin memeriksa hasil skripsi saat ini.</p>
+          </div>
+        </div>
+        <div class="b18-shortcut-arrow">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#186DD8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </div>
+      </button>
+
+      <button type="button" class="home-shortcut b18-shortcut-btn" data-action="nav:revisi">
+        <div class="b18-shortcut-left">
+          <div class="b18-shortcut-icon-box">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#125AB5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+          </div>
+          <div class="b18-shortcut-text">
+            <strong>Revisi Dosen</strong>
+            <p>Gunakan fitur ini, jika kamu memiliki revisi atau arahan dari Dosen</p>
           </div>
         </div>
         <div class="b18-shortcut-arrow">
