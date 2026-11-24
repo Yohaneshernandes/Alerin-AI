@@ -48,7 +48,7 @@ function chapterNav(view) {
         })
         .join('')}</select>`
     : `<p class="small muted v4-map-hint">Pilih bab untuk melihat subbagiannya.</p>`;
-  return `<section class="card v4-map-picker"><span class="eyebrow">PETA SKRIPSI · PANDUAN PENYUSUNAN</span><div class="v4-chapters">${B('Topik / Judul', 'guide-view:idea', view === 'idea' ? 'primary' : 'soft')}${CHAPTERS.map((c, ci) => B('Bab ' + c[0], 'guide-bab:' + (ci + 1), view === 'guide' && p?.chapter === ci + 1 ? 'primary' : 'soft', '', `title="${e(c[1])}"`)).join('')}</div>${select}</section>`;
+  return `<section class="card v4-map-picker"><span class="eyebrow">PETA SKRIPSI · PANDUAN PENYUSUNAN</span><div class="v4-chapters">${B('Penyusunan Judul Penelitian', 'guide-view:idea', view === 'idea' ? 'primary' : 'soft')}${CHAPTERS.map((c, ci) => B('Bab ' + c[0], 'guide-bab:' + (ci + 1), view === 'guide' && p?.chapter === ci + 1 ? 'primary' : 'soft', '', `title="${e(c[1])}"`)).join('')}</div>${select}</section>`;
 }
 /* Susunan bab kampus di Konteks Skripsi: aturan dan pratinjau babnya. */
 const SUSUNAN_NOTE = {
@@ -250,12 +250,12 @@ function ideaPageView() {
       <div class="idea-stepper-wrap">
         <div class="idea-stepper-track"></div>
         <div class="idea-stepper-list">
-          <div class="idea-step-item active" data-action="guide-view:idea" role="button" tabindex="0" aria-label="Tahap 0: Topik/Judul">
+          <div class="idea-step-item active" data-action="guide-view:idea" role="button" tabindex="0" aria-label="Tahap 0: Penyusunan Judul Penelitian">
             <div class="idea-step-circle active">
               <div class="idea-step-glow"></div>
               <span>0</span>
             </div>
-            <div class="idea-step-label active"><span class="step-lbl-full">Topik/Judul</span><span class="step-lbl-break">Topik/<br/>Judul</span></div>
+            <div class="idea-step-label active"><span class="step-lbl-full">Penyusunan Judul Penelitian</span><span class="step-lbl-break">Penyusunan<br/>Judul</span></div>
           </div>
           ${CHAPTERS.map((ch, idx) => `
             <div class="idea-step-item" data-action="guide-bab:${idx + 1}" role="button" tabindex="0" title="Bab ${ch[0]} · ${e(ch[1])}" aria-label="Bab ${idx + 1}: ${e(ch[1])}">
@@ -269,10 +269,10 @@ function ideaPageView() {
       </div>
     </div>
 
-    <!-- CARD 2: TOPIK/JUDUL FORM -->
+    <!-- CARD 2: PENYUSUNAN JUDUL PENELITIAN FORM -->
     <div class="idea-card idea-form-card">
       <div class="idea-card-header">
-        <h2 class="idea-card-title">Topik/Judul</h2>
+        <h2 class="idea-card-title">Penyusunan Judul Penelitian</h2>
       </div>
 
       <div class="idea-topics-row">
@@ -438,11 +438,11 @@ function workspaceView() {
       <div class="idea-stepper-wrap">
         <div class="idea-stepper-track"></div>
         <div class="idea-stepper-list">
-          <div class="idea-step-item" data-action="guide-view:idea" role="button" tabindex="0" aria-label="Tahap 0: Topik/Judul">
+          <div class="idea-step-item" data-action="guide-view:idea" role="button" tabindex="0" aria-label="Tahap 0: Penyusunan Judul Penelitian">
             <div class="idea-step-circle completed">
               <span>0</span>
             </div>
-            <div class="idea-step-label active"><span class="step-lbl-full">Topik/Judul</span><span class="step-lbl-break">Topik/<br/>Judul</span></div>
+            <div class="idea-step-label active"><span class="step-lbl-full">Penyusunan Judul Penelitian</span><span class="step-lbl-break">Penyusunan<br/>Judul</span></div>
           </div>
           ${CHAPTERS.map((ch, idx) => {
             const chNum = idx + 1;
@@ -663,7 +663,7 @@ Object.assign(ACTIONS, {
     persist();
     render();
     window.scrollTo({ top: 0 });
-    toast('Konteks tersimpan. Lanjutkan dengan topik atau judul.');
+    toast('Konteks tersimpan. Lanjutkan dengan Penyusunan Judul Penelitian.');
   },
   'guide-bab': arg => {
     ensureGuide();
