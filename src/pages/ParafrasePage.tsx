@@ -183,7 +183,7 @@ export default function ParafrasePage() {
     setProgress(0);
     setActiveTab("editor");
 
-    const duration = 1400 + Math.random() * 600;
+    const duration = 350 + Math.random() * 200;
     const start = Date.now();
     const tick = () => {
       const elapsed = Date.now() - start;

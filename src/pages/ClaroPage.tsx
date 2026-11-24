@@ -13780,7 +13780,7 @@ function GramEditorScreen({ onDone, onBack }: { onDone: () => void; onBack: () =
         if (idx !== -1) mapped.push({ ...demo, start: idx, end: idx + demo.word.length });
       }
       setErrors(mapped); setAnalyzing(false); setAnalyzed(true); setMode("view");
-    }, 1800);
+    }, 350);
   }, [text]);
 
   const applyFix = useCallback((id: number) => {
@@ -22085,12 +22085,12 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
     const iv = window.setInterval(() => {
       idx += 1;
       setLoadingStatus(idx % LOADING_MSGS.length);
-    }, 900);
+    }, 450);
     loadingTimers.current.push(iv);
     const tid = window.setTimeout(() => {
       clearInterval(iv);
       setLoadingDone(true);
-    }, 4500);
+    }, 900);
     loadingTimers.current.push(tid);
   };
 
@@ -22126,12 +22126,12 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
     const iv = window.setInterval(() => {
       idx += 1;
       setFeatureLoadingStatus(idx % FEATURE_MSGS.length);
-    }, 1000);
+    }, 400);
     featureTimers.current.push(iv);
     const tid = window.setTimeout(() => {
       clearInterval(iv);
       setFeatureLoadingDone(true);
-    }, 4000);
+    }, 800);
     featureTimers.current.push(tid);
     // Auto-navigate after loading completes
     const navTid = window.setTimeout(() => {
@@ -22144,7 +22144,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
         skripsi:   { tab: "fitur", featureKey: "skripsi" },
       };
       onFinish(FITUR_DEST[selectedFitur] ?? { prompt: loadingPrompt });
-    }, 4200);
+    }, 900);
     featureTimers.current.push(navTid);
   };
 
@@ -22648,7 +22648,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
 
       {/* Same progress bar style as registration slides — hidden on mobile */}
       <div className="hidden sm:block absolute top-0 left-0 right-0 h-1.5 z-10" style={{ background: "rgba(203,213,225,0.4)" }}>
-        <div className="h-full rounded-full" style={{ background: "#2563eb", animation: loadingDone ? "none" : "fillBar 4.4s cubic-bezier(0.33,0,0.66,1) forwards", width: loadingDone ? "100%" : undefined }} />
+        <div className="h-full rounded-full" style={{ background: "#2563eb", animation: loadingDone ? "none" : "fillBar 0.9s cubic-bezier(0.33,0,0.66,1) forwards", width: loadingDone ? "100%" : undefined }} />
       </div>
 
       <div className="relative z-10 flex flex-col items-center text-center px-6 max-w-xl w-full">
@@ -22669,7 +22669,7 @@ function RegisterModal({ onClose, onFinish }: { onClose: () => void; onFinish: (
               strokeLinecap="round"
               strokeDasharray="603"
               strokeDashoffset={loadingDone ? 0 : undefined}
-              style={{ animation: loadingDone ? "none" : "fillArc 4.4s cubic-bezier(0.33,0,0.66,1) forwards",
+              style={{ animation: loadingDone ? "none" : "fillArc 0.9s cubic-bezier(0.33,0,0.66,1) forwards",
                        strokeDashoffset: loadingDone ? 0 : undefined,
                        transition: loadingDone ? "stroke-dashoffset 0.4s ease" : undefined }}
             />

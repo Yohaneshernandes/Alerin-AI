@@ -58,22 +58,31 @@ async function extractDocument(file) {
     pdfjs.GlobalWorkerOptions.workerSrc = new URL('vendor/pdf.worker.mjs', document.baseURI).href;
     const pdf = await pdfjs.getDocument({ data: new Uint8Array(await file.arrayBuffer()), isEvalSupported: false })
       .promise;
+    const maxPages = Math.min(pdf.numPages, 100);
+    const pageNums = Array.from({ length: maxPages }, (_, i) => i + 1);
+    const chunkSize = 12;
     const pages = [];
-    for (let n = 1; n <= pdf.numPages; n++) {
-      const page = await pdf.getPage(n),
-        content = await page.getTextContent();
-      let text = '',
-        lastY = null;
-      for (const item of content.items) {
-        if (!('str' in item)) continue;
-        const y = item.transform[5];
-        if (lastY !== null && Math.abs(y - lastY) > 3) text += '\n';
-        else if (text && !text.endsWith('\n')) text += ' ';
-        text += item.str;
-        if (item.hasEOL) text += '\n';
-        lastY = y;
-      }
-      pages.push(text);
+    for (let i = 0; i < pageNums.length; i += chunkSize) {
+      const chunk = pageNums.slice(i, i + chunkSize);
+      const chunkTexts = await Promise.all(
+        chunk.map(async n => {
+          const page = await pdf.getPage(n);
+          const content = await page.getTextContent();
+          let text = '',
+            lastY = null;
+          for (const item of content.items) {
+            if (!('str' in item)) continue;
+            const y = item.transform[5];
+            if (lastY !== null && Math.abs(y - lastY) > 3) text += '\n';
+            else if (text && !text.endsWith('\n')) text += ' ';
+            text += item.str;
+            if (item.hasEOL) text += '\n';
+            lastY = y;
+          }
+          return text;
+        })
+      );
+      pages.push(...chunkTexts);
     }
     return { text: pages.join('\n\n'), pages: pdf.numPages };
   }

@@ -208,7 +208,7 @@ function EditorScreen({ onDone }: { onDone: () => void }) {
       setAnalyzing(false);
       setAnalyzed(true);
       setMode("view");
-    }, 1800);
+    }, 350);
   }, [text]);
 
   const applyFix = useCallback((id: number) => {

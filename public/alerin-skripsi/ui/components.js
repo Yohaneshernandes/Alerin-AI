@@ -60,7 +60,7 @@ async function processing(title, action) {
     'Menyiapkan pratinjau',
     `<div class="process-state"><img src="assets/alerin.svg" alt=""><h3>${e(title)}</h3><p>Menata informasi yang tersedia di perangkatmu.</p><div class="process-progress"><i></i></div><p class="process-note">Pratinjau lokal. Tidak menjalankan analisis AI.</p></div>`,
   );
-  await new Promise(r => setTimeout(r, 450));
+  await new Promise(r => setTimeout(r, 100));
   try {
     await action();
   } catch (error) {
