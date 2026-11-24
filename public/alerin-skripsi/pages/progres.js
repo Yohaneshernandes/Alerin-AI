@@ -306,10 +306,10 @@ function activeSlots(list) {
 function progresGuideCard() {
   if (S.settings.hideProgresGuide) return '';
   return `
-    <section class="card b18-progres-guide" aria-label="Cara membaca Progres Aktif">
+    <section class="card b18-progres-guide" aria-label="Membaca Progres Aktif">
       <div class="b18-guide-header">
         <div class="b18-guide-header-text">
-          <h2>Cara membaca Progres Aktif</h2>
+          <h2>Membaca Progres Aktif</h2>
           <p>Pahami urutan prioritas agar pengerjaan skripsi tetap fokus, teratur, dan selesai tepat waktu.</p>
         </div>
         <button type="button" class="btn b18-btn-mengerti b18-btn-mengerti-desktop" data-action="dismiss-progres-guide">
@@ -333,7 +333,7 @@ function progresGuideCard() {
               </div>
               <span class="b18-guide-badge">1 · PRIORITAS UTAMA</span>
             </div>
-            <p class="b18-guide-desc">Pekerjaan yang siap dikerjakan sekarang dan paling menentukan langkah berikutnya. Alerin memilihnya dari pekerjaan yang membuka pekerjaan lain, arahan dosen yang menghambat, atau tenggat yang paling dekat.</p>
+            <p class="b18-guide-desc">Pekerjaan yang bisa langsung kamu kerjakan dan paling menentukan langkah berikutnya. Alerin memilihnya dari pekerjaan yang membuka pekerjaan lain, arahan dosen yang menghambat, atau tenggat terdekat.</p>
           </div>
         </div>
         <div class="b18-guide-card">
@@ -347,7 +347,7 @@ function progresGuideCard() {
               </div>
               <span class="b18-guide-badge">2 · PRIORITAS BERIKUTNYA</span>
             </div>
-            <p class="b18-guide-desc">Pekerjaan lanjutan yang paling relevan setelah Prioritas Utama. Kartunya bisa langsung dikerjakan, atau masih menunggu pekerjaan lain selesai. Selama menunggu, detailnya bisa dilihat, tetapi Periksa Pekerjaan dan Catat Sebagai Selesai baru terbuka setelah prasyaratnya selesai.</p>
+            <p class="b18-guide-desc">Pekerjaan yang paling dekat setelah Prioritas Utama. Kalau masih menunggu pekerjaan lain selesai, kamu tetap bisa melihat detailnya. Periksa Pekerjaan dan Catat Sebagai Selesai baru terbuka setelah pekerjaan sebelumnya selesai.</p>
           </div>
         </div>
         <div class="b18-guide-card">
@@ -361,9 +361,9 @@ function progresGuideCard() {
                   <path d="M2 12L8 15L14 12" stroke="#125AB5" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
               </div>
-              <span class="b18-guide-badge">3 · PEKERJAAN PARALEL</span>
+              <span class="b18-guide-badge">3 · BAGIAN BERIKUTNYA</span>
             </div>
-            <p class="b18-guide-desc">Pekerjaan yang bisa dicicil kapan saja tanpa menunggu pekerjaan lain, misalnya sambil menunggu tanggapan dosen. Mengerjakannya tidak menggeser Prioritas Utama. Kalau sebagian hasilnya masih bergantung pada pekerjaan lain, batasnya ditulis di kartu.</p>
+            <p class="b18-guide-desc">Bagian skripsi selanjutnya, diambil dari struktur Mulai Skripsi sesuai urutannya. Jadi kamu sudah tahu apa yang menyusul setelah dua pekerjaan di atas. Kalau bagian ini masih bergantung pada bagian sebelumnya, aturannya sama seperti Prioritas Berikutnya.</p>
           </div>
         </div>
         <button type="button" class="btn b18-btn-mengerti b18-btn-mengerti-mobile" data-action="dismiss-progres-guide">
@@ -526,7 +526,7 @@ function progresPage() {
   const sim = S.sample
     ? `<div class="b19-simbar">${badge('Mode Simulasi', 'amber')}<span>Contoh penelitian Naya. Arahan reliabilitas, tiga kartu aktif, dan antrean adalah skenario contoh, bukan data penelitianmu. Mulai ruang kosong lewat Pengaturan.</span></div>`
     : '';
-  const guide = !tabs.aktif.length && !S.settings.hideProgresGuide ? progresGuideCard() : '';
+  const guide = !S.settings.hideProgresGuide ? progresGuideCard() : '';
   return `
     <div class="b18-progres-page-wrap">
       <div class="mulai-page-head b18-progres-head">
