@@ -68,6 +68,10 @@ function normalizeState() {
     S.biblio.folders.splice(b3Idx + 1, 0, 'Bab IV');
   }
   ensureGuide();
+  S.history ??= [];
+  if (S.sample && (!Array.isArray(S.history) || S.history.length === 0)) {
+    S.history = sampleHistory();
+  }
   for (const k of ['_pastAgenda', '_pendingOrder', 'refs', 'updates', 'removedFiles', 'draftStep', 'selectedTitle', 'lastResearchUpdate'])
     delete S[k];
   if (S.v6) return;
@@ -301,7 +305,37 @@ function initialState(empty = true) {
       time: addDaysIso(-2) + 'T14:15:00+07:00',
     },
   ];
+  s.history = sampleHistory();
   return s;
+}
+
+function sampleHistory() {
+  return [
+    {
+      id: 'h-sample-4',
+      title: 'Tinjauan Alerin dijalankan',
+      detail: 'Tindak lanjut arahan: Jurnal • 0/3 kriteria terpenuhi',
+      time: '2026-11-22T16:04:00+07:00',
+    },
+    {
+      id: 'h-sample-3',
+      title: 'Arahan dijadikan Progres Aktif',
+      detail: 'Tindak lanjut arahan: Jurnal • 0/3 kriteria terpenuhi',
+      time: '2026-11-20T09:13:00+07:00',
+    },
+    {
+      id: 'h-sample-2',
+      title: 'Pemahaman arahan diubah',
+      detail: 'Tindak lanjut arahan: Judul dan Latar Belakang • 0/3 kriteria terpenuhi',
+      time: '2026-11-19T16:27:00+07:00',
+    },
+    {
+      id: 'h-sample-1',
+      title: 'Arahan dosen dicatat',
+      detail: 'Tindak lanjut arahan: Judul dan Latar Belakang • 0/3 kriteria terpenuhi',
+      time: '2026-11-19T10:32:00+07:00',
+    },
+  ];
 }
 /* Skenario Mode Simulasi Naya untuk Progres Aktif (Revisi 18 November): bagian penelitian, prasyarat, batas
    pekerjaan paralel, dan satu kartu antrean yang menunggu prasyarat. Aman dijalankan berulang. */

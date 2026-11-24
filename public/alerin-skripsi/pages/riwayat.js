@@ -16,39 +16,83 @@ function historyRoute(h) {
   if (/Data contoh/.test(t)) return 'pengaturan';
   return '';
 }
+
 function riwayatPage() {
-  return (
-    pageHead(
-      'Riwayat penelitian',
-      'Buka kembali hasil dan keputusan yang tersimpan di perangkat ini.',
-      '',
-      '',
-      '',
-      'PROFIL',
-    ) +
-    `<section class="card"><div class="section-head"><h2>Catatan perjalanan</h2>${B('Unduh riwayat', 'export-history', 'text', 'download')}</div>${
-      S.history.length
-        ? S.history
-            .map(h => {
-              const r = historyRoute(h);
-              return `<${r ? 'button' : 'div'} class="history-line ${r ? 'clickable' : ''}" ${r ? `data-action="history-open:${h.id}"` : ''}>${I('history')}<div><h4>${e(h.title)}</h4><p>${e(h.detail)}</p><small>${e(localTime(h.time))} WIB · tindakan pengguna</small></div>${r ? `<span class="history-go">Buka hasil</span>` : ''}</${r ? 'button' : 'div'}>`;
-            })
-            .join('')
-        : `<div class="empty"><p>Belum ada tindakan baru. Coba simpan draf, ubah target, atau mulai pekerjaan untuk mencatat riwayat.</p></div>`
-    }</section>`
-  );
+  return `
+    <div class="rw-page">
+      <div class="rw-head">
+        <h1 class="rw-title">Riwayat Penelitian</h1>
+        <p class="rw-desc">Buka kembali hasil dan keputusan yang tersimpan di perangkat ini.</p>
+      </div>
+
+      <section class="rw-card">
+        <div class="rw-card-header">
+          <h2 class="rw-card-title">Catatan perjalanan</h2>
+          <button type="button" class="rw-btn-download" data-action="export-history">
+            ${I('download')}
+            <span>Unduh riwayat</span>
+          </button>
+        </div>
+
+        ${
+          S.history && S.history.length
+            ? `<div class="rw-list">
+                ${S.history
+                  .map(h => {
+                    const r = historyRoute(h);
+                    return `
+                      <div class="rw-item">
+                        <div class="rw-item-icon">
+                          ${I('history')}
+                        </div>
+                        <div class="rw-item-body">
+                          <div class="rw-item-content">
+                            <div class="rw-item-title">${e(h.title)}</div>
+                            ${h.detail ? `<div class="rw-item-detail">${e(h.detail)}</div>` : ''}
+                            <div class="rw-item-meta">
+                              <span class="rw-meta-time">
+                                <span class="rw-meta-ico">${I('clock')}</span>
+                                ${e(localTime(h.time))} WIB
+                              </span>
+                              <span class="rw-meta-dot">•</span>
+                              <span class="rw-meta-user">
+                                <span class="rw-meta-ico">${I('user')}</span>
+                                Tindakan pengguna
+                              </span>
+                            </div>
+                          </div>
+                          ${
+                            r
+                              ? `<div class="rw-item-action">
+                                  <button type="button" class="rw-btn-open" data-action="history-open:${h.id}">Buka Hasil</button>
+                                </div>`
+                              : ''
+                          }
+                        </div>
+                      </div>
+                    `;
+                  })
+                  .join('')}
+              </div>`
+            : `<div class="rw-empty">
+                <p>Belum ada tindakan baru. Coba simpan draf, ubah target, atau mulai pekerjaan untuk mencatat riwayat.</p>
+              </div>`
+        }
+      </section>
+    </div>
+  `;
 }
 
 Object.assign(ACTIONS, {
   'export-history': () => {
     download(
       'Riwayat_Penelitian_Alerin.txt',
-      S.history.map(h => `${localTime(h.time)} WIB\n${h.title}\n${h.detail}`).join('\n\n') || 'Belum ada catatan baru.',
+      (S.history || []).map(h => `${localTime(h.time)} WIB\n${h.title}\n${h.detail}`).join('\n\n') || 'Belum ada catatan baru.',
     );
     toast('Riwayat siap diunduh.');
   },
   'history-open': arg => {
-    const h = S.history.find(x => x.id === arg);
+    const h = (S.history || []).find(x => x.id === arg);
     const r = h && historyRoute(h);
     if (!r) return;
     const [page, tab] = r.split(':');
