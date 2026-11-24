@@ -510,7 +510,19 @@ function progresEmptyCard(kind, hasTasks) {
 }
 
 function progresPage() {
-  if (S.title && activeTasks().length < 3) {
+  const ch = +(S.konteks?.chapter || 1);
+  const chParts = (CHAPTERS[ch - 1] ? CHAPTERS[ch - 1][2] : CHAPTERS[0][2])
+    .map(x => x[0])
+    .filter(partApplies);
+  const chHasUnfinished = chParts.some(pid => !S.tasks.some(t => t.part === pid && t.status === 'done'));
+
+  const hasNonChapterActive = activeTasks().some(
+    t => !t.part || !PARTS[t.part] || PARTS[t.part].chapter !== ch,
+  );
+  if (chHasUnfinished && (hasNonChapterActive || activeTasks().length < 3)) {
+    syncTasksForChapter(ch);
+    persist();
+  } else if (S.title && activeTasks().length < 3) {
     const n = S.tasks.length;
     fillSlots();
     if (S.tasks.length !== n) persist();

@@ -678,6 +678,7 @@ Object.assign(ACTIONS, {
     if (c.chapter) {
       const first = CHAPTERS[+c.chapter - 1][2].map(x => x[0]).find(partApplies);
       if (PARTS[S.guide.part]?.chapter !== +c.chapter && first) S.guide.part = first;
+      syncTasksForChapter(+c.chapter);
     }
     record('Konteks skripsi disimpan', [c.method, c.chapter ? 'Bab ' + CHAPTERS[+c.chapter - 1][0] : ''].filter(Boolean).join(' · '));
     synchronizeResearch();

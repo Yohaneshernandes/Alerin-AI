@@ -727,8 +727,8 @@ function chooseTitleModal(i) {
       source: 'mulai',
       reason: 'Judul sudah dipilih. Latar belakang menjadi dasar rumusan masalah dan bab berikutnya.',
     });
-  reorderTasks(false);
-  fillSlots();
+  const ch = +(S.konteks?.chapter || 1);
+  syncTasksForChapter(ch);
   record(old && old !== title ? 'Judul diganti' : 'Judul dipilih', title);
   synchronizeResearch();
   persist();
@@ -847,6 +847,9 @@ Object.assign(ACTIONS, {
     ensureGuide();
     S.guide.view = 'guide';
     S.guide.part = 'background';
+    if (!S.konteks) S.konteks = {};
+    S.konteks.chapter = '1';
+    syncTasksForChapter(1);
     persist();
     go('mulai');
     toast('Membuka Bab I · Latar Belakang.');

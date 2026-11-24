@@ -69,6 +69,45 @@ function primaryTask() {
   return r.pu || r.par.find(taskReady) || activeTasks()[0] || null;
 }
 
+function syncTasksForChapter(chapterNum) {
+  const ch = +chapterNum || 1;
+  const chParts = (CHAPTERS[ch - 1] ? CHAPTERS[ch - 1][2] : CHAPTERS[0][2])
+    .map(x => x[0])
+    .filter(partApplies);
+  if (!chParts.length) return;
+
+  // Pastikan bagian-bagian dari bab ini sudah dibuat sebagai task
+  for (const pid of chParts.slice(0, 3)) {
+    if (!S.tasks.some(t => t.part === pid)) {
+      partTask(pid, {
+        source: 'mulai',
+        reason: `Subbagian Bab ${CHAPTERS[ch - 1][0]} (${PARTS[pid]?.name || ''}) sesuai urutan rencana di Mulai Skripsi.`,
+      });
+    }
+  }
+
+  // Jika bab yang dipilih belum selesai semua bagiannya,
+  // antrekan task dari bab/tahap lain yang belum selesai agar task bab yang dipilih aktif
+  const chDone = chParts.every(pid => S.tasks.some(t => t.part === pid && t.status === 'done'));
+  if (!chDone) {
+    S.tasks.forEach(t => {
+      if (t.status !== 'done' && t.status !== 'deferred') {
+        const isThisChapter = t.part && PARTS[t.part]?.chapter === ch;
+        if (!isThisChapter) {
+          t.status = 'queued';
+        } else {
+          t.status = 'todo';
+        }
+      }
+    });
+  }
+
+  reorderTasks(false);
+  applyOrder();
+  fillSlots();
+}
+window.syncTasksForChapter = syncTasksForChapter;
+
 /* Slot kosong terisi dari antrean dulu, lalu dari subbagian berikutnya dalam rencana penelitian (Mulai Skripsi).
    Hanya kartu rencana (sumber Mulai Skripsi) yang menjadi patokan, supaya kartu dari temuan, arahan, atau skenario
    contoh tidak memunculkan subbagian baru tanpa alasan. */
@@ -79,26 +118,28 @@ function fillSlots() {
     const act = activeTasks(),
       idx = t => PART_ORDER.indexOf(t.part),
       plan = S.tasks.filter(t => t.part && PARTS[t.part] && t.source === 'mulai');
-    if (!plan.length) break;
+    if (!plan.length) {
+      const ch = +(S.konteks?.chapter || 1);
+      const startParts = (CHAPTERS[ch - 1] ? CHAPTERS[ch - 1][2] : CHAPTERS[0][2])
+        .map(x => x[0])
+        .filter(partApplies);
+      if (startParts.length) {
+        partTask(startParts[0], {
+          source: 'mulai',
+          reason: `Bagian awal Bab ${CHAPTERS[(ch || 1) - 1][0]} sesuai pilihan di Mulai Skripsi.`,
+        });
+        continue;
+      }
+      break;
+    }
     const open = plan.filter(t => !['done', 'deferred'].includes(t.status) && t.kind !== 'parallel'),
       anchor = open.length ? Math.min(...open.map(idx)) : Math.max(...plan.map(idx)),
-      anchorCh = PARTS[PART_ORDER[anchor]]?.chapter || 1,
       has = id => S.tasks.some(t => t.part === id),
       list = PART_ORDER.filter((id, i) => i > anchor && partApplies(id) && !has(id));
     if (!list.length) break;
-    const needPar = act.length >= 2 && !act.some(t => t.kind === 'parallel'),
-      alt = needPar && list.find(x => x !== list[0] && PARTS[x].chapter > anchorCh && PROPOSAL_PARTS.has(x));
-    partTask(
-      alt || list[0],
-      alt
-        ? {
-            kind: 'parallel',
-            reason: `Aman dikerjakan sambil menunggu tanggapan dosen atas Bab ${PARTS[PART_ORDER[anchor]]?.roman || 'sebelumnya'}. Terisi dari rencana penelitianmu karena slot Pekerjaan Paralel kosong.`,
-          }
-        : {
-            reason: `Subbagian berikutnya dalam rencana penelitianmu setelah ${PARTS[PART_ORDER[anchor]]?.name || 'pekerjaan sebelumnya'}.`,
-          },
-    );
+    partTask(list[0], {
+      reason: `Subbagian berikutnya dalam rencana penelitianmu setelah ${PARTS[PART_ORDER[anchor]]?.name || 'pekerjaan sebelumnya'}.`,
+    });
   }
   syncQueue();
 }
@@ -270,6 +311,17 @@ function taskScore(t) {
   if (t.part) s += PART_ORDER.indexOf(t.part);
   if (t.kind === 'parallel') s += 60;
   if (!taskReady(t)) s += 200;
+
+  // Prioritaskan pekerjaan pada bab yang sedang dikerjakan pengguna di Mulai Skripsi
+  const userCh = +(S.konteks?.chapter || 1);
+  const chParts = (CHAPTERS[userCh - 1] ? CHAPTERS[userCh - 1][2] : CHAPTERS[0][2])
+    .map(x => x[0])
+    .filter(partApplies);
+  const chHasUnfinished = chParts.some(pid => !S.tasks.some(x => x.part === pid && x.status === 'done'));
+  if (chHasUnfinished) {
+    if (t.part && PARTS[t.part]?.chapter === userCh) s -= 500;
+    else s += 500;
+  }
   return s;
 }
 /* Prioritas Utama dari sebuah urutan: kartu utama pertama yang siap di antara tiga kartu yang akan aktif. */
