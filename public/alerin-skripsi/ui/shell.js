@@ -265,8 +265,8 @@ function notifsModal() {
 /* Alerin Chat di Alerin Skripsi hanya pintasan ke Alerin Chat utama. Tidak ada percakapan di halaman ini. */
 const ALERIN_CHAT_URL = 'https://alerin.id/';
 function chatPanel() {
-  const judul = S.title ? `<strong>“${e(S.title)}”</strong>` : 'belum dipilih';
-  return `<aside class="chat-panel chat-shortcut" aria-label="Pintasan Alerin Chat"><div class="chat-head"><img src="assets/alerin.svg" alt=""><div><strong>Alerin Chat</strong></div><button class="icon-btn" data-action="chat" aria-label="Tutup pintasan Alerin Chat">${I('close')}</button></div><div class="chat-shortcut-body"><p>Kamu sedang di fitur <strong>${e(pageNames[route])}</strong>, judul penelitianmu ${judul}. Diskusikan kendalamu bersama Alerin Chat.</p><a class="btn primary chat-shortcut-link" href="${ALERIN_CHAT_URL}" onclick="if(window.parent && window.parent !== window){window.parent.postMessage('backToAlerin','*');event.preventDefault();}" target="_blank" rel="noopener">${I('external')}Buka Alerin Chat</a></div></aside>`;
+  const judul = S.title ? `judul penelitianmu <strong>“${e(S.title)}”</strong>` : 'Judul penelitianmu belum dipilih';
+  return `<aside class="chat-panel chat-shortcut" aria-label="Pintasan Alerin Chat"><div class="chat-head"><img src="assets/alerin.svg" alt=""><div><strong>Alerin Chat</strong></div><button class="icon-btn" data-action="chat" aria-label="Tutup pintasan Alerin Chat">${I('close')}</button></div><div class="chat-shortcut-body"><p>Kamu sedang di fitur <strong>${e(pageNames[route] || 'Beranda')}</strong>, ${judul}. Ada yang dibingungkan? Diskusikan bersama Alerin Chat</p><a class="btn primary chat-shortcut-link" href="${ALERIN_CHAT_URL}" onclick="if(window.parent && window.parent !== window){window.parent.postMessage({type:'openAlerinChat'},'*');window.parent.postMessage('backToAlerin','*');event.preventDefault();}else{window.open('${ALERIN_CHAT_URL}','_blank');event.preventDefault();}" target="_blank" rel="noopener">${I('external')}Buka Alerin Chat</a></div></aside>`;
 }
 function ujiAction(k) {
   const sample = initialState(false);

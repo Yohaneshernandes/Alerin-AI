@@ -2,15 +2,19 @@ import React, { useEffect, useState } from "react";
 
 interface AlerinSkripsiPanelProps {
   onBack: () => void;
+  onOpenChat?: () => void;
 }
 
-export default function AlerinSkripsiPanel({ onBack }: AlerinSkripsiPanelProps) {
+export default function AlerinSkripsiPanel({ onBack, onOpenChat }: AlerinSkripsiPanelProps) {
   const [loading, setLoading] = useState(true);
   const [iframeSrc] = useState(() => `/alerin-skripsi/index.html?v=20261124p1`);
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
-      if (event.data === "backToAlerin" || event.data?.type === "backToAlerin") {
+      if (event.data === "openAlerinChat" || event.data?.type === "openAlerinChat") {
+        if (onOpenChat) onOpenChat();
+        else onBack();
+      } else if (event.data === "backToAlerin" || event.data?.type === "backToAlerin") {
         onBack();
       }
     };
@@ -18,7 +22,7 @@ export default function AlerinSkripsiPanel({ onBack }: AlerinSkripsiPanelProps) 
     return () => {
       window.removeEventListener("message", handleMessage);
     };
-  }, [onBack]);
+  }, [onBack, onOpenChat]);
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-slate-50 w-full h-full overflow-hidden">

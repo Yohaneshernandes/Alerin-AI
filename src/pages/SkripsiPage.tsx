@@ -4,5 +4,5 @@ import AlerinSkripsiPanel from "@/components/AlerinSkripsiPanel";
 
 export default function SkripsiPage() {
   const navigate = useNavigate();
-  return <AlerinSkripsiPanel onBack={() => navigate("/")} />;
+  return <AlerinSkripsiPanel onBack={() => navigate("/")} onOpenChat={() => navigate("/")} />;
 }

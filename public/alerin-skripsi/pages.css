@@ -15285,5 +15285,87 @@ body.dark-mode .btn-peta-action-subtle,
   }
 }
 
+/* Pintasan Alerin Chat */
+.chat-panel.chat-shortcut {
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12), 0 1px 3px rgba(15, 23, 42, 0.06);
+  border-radius: 16px;
+  border: 1px solid #E2E8F0;
+  width: 320px;
+}
+.chat-panel .chat-head {
+  padding: 14px 16px;
+  border-bottom: 1px solid #E2E8F0;
+}
+.chat-panel .chat-head strong {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0F172A;
+}
+.chat-panel .chat-head img {
+  width: 22px;
+  height: 24px;
+}
+.chat-shortcut-body {
+  padding: 16px 16px 18px;
+  gap: 16px;
+}
+.chat-shortcut-body p {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #475569;
+  margin: 0;
+}
+.chat-shortcut-body p strong {
+  color: #0F172A;
+  font-weight: 600;
+}
+.chat-shortcut-link {
+  width: 100%;
+  min-height: 40px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #1D6DE3;
+  color: #FFFFFF !important;
+  border: none;
+  text-decoration: none;
+  box-shadow: 0 1px 2px rgba(29, 109, 227, 0.2);
+  transition: background 0.15s ease;
+}
+.chat-shortcut-link:hover {
+  background: #1557B0;
+  color: #FFFFFF !important;
+}
+.chat-shortcut-link .ico {
+  width: 15px;
+  height: 15px;
+}
+body.dark .chat-panel.chat-shortcut {
+  background: #182538;
+  border-color: #34465D;
+}
+body.dark .chat-panel .chat-head {
+  border-bottom-color: #34465D;
+}
+body.dark .chat-panel .chat-head strong {
+  color: #F8FAFC;
+}
+body.dark .chat-shortcut-body p {
+  color: #94A3B8;
+}
+body.dark .chat-shortcut-body p strong {
+  color: #F8FAFC;
+}
+body.dark .chat-shortcut-link {
+  background: #2563EB;
+}
+body.dark .chat-shortcut-link:hover {
+  background: #1D4ED8;
+}
+
 
 

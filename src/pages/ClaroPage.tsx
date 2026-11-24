@@ -15794,7 +15794,17 @@ function FiturTab({ onChat, openFeatureKey, onFeatureOpened }: { onChat: (prompt
   if (showParafrase) return <ParafraseFigmaPanel onBack={() => setShowParafrase(false)} />;
   if (showGrammar) return <GrammarPanel onBack={() => setShowGrammar(false)} />;
   if (showPlagiasi) return <PlagiasPanel onBack={() => setShowPlagiasi(false)} />;
-  if (showSkripsi) return <AlerinSkripsiPanel onBack={() => setShowSkripsi(false)} />;
+  if (showSkripsi) {
+    return (
+      <AlerinSkripsiPanel
+        onBack={() => setShowSkripsi(false)}
+        onOpenChat={() => {
+          setShowSkripsi(false);
+          onChat();
+        }}
+      />
+    );
+  }
   if (showJurnal) {
     return (
       <CariJurnalFigmaPanel
