@@ -11649,7 +11649,8 @@ body.dark-mode .alerin-toast-close:hover,
   background: #16A34A;
 }
 
-.peta-task-link {
+.peta-task-link,
+.peta-task-title {
   color: #125AB5;
   font-size: 12px;
   font-family: 'Inter', -apple-system, sans-serif;
@@ -11658,10 +11659,16 @@ body.dark-mode .alerin-toast-close:hover,
   background: none;
   border: none;
   padding: 0;
-  cursor: pointer;
   text-align: left;
   text-decoration: none;
   word-break: break-word;
+}
+.peta-task-link {
+  cursor: pointer;
+}
+.peta-task-title {
+  cursor: default;
+  pointer-events: none;
 }
 .peta-task-link:hover {
   text-decoration: underline;
@@ -14159,7 +14166,8 @@ body.dark-mode .btn-peta-action-subtle,
     gap: 8px !important;
     box-sizing: border-box !important;
   }
-  .peta-task-link {
+  .peta-task-link,
+  .peta-task-title {
     color: #125AB5 !important;
     font-size: 12px !important;
     font-weight: 500 !important;
@@ -14309,7 +14317,8 @@ body.dark-mode .btn-peta-action-subtle,
   body.dark .peta-subcard-empty-text {
     color: #94A3B8 !important;
   }
-  body.dark .peta-task-link {
+  body.dark .peta-task-link,
+  body.dark .peta-task-title {
     color: #60A5FA !important;
   }
   body.dark .peta-subcard-badge {

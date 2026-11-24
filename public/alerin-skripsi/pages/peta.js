@@ -53,9 +53,9 @@ function stagePanel(i, d, tg, badgeClass, badgeText) {
           <div class="peta-subcard-kerja">
             <div class="peta-subcard-left">
               <div class="peta-subcard-dot ${dotCls}"></div>
-              <button type="button" class="peta-task-link" data-action="task:${t.id}">
+              <span class="peta-task-title">
                 ${e(displayTitle)}
-              </button>
+              </span>
             </div>
             <div class="peta-subcard-badge ${badgeCls}">${e(badgeText)}</div>
           </div>
