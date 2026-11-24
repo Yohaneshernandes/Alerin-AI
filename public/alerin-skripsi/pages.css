@@ -1236,7 +1236,9 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
 .rv-modal-checkbox-row {
   margin: 6px 0 0 0;
   display: flex;
+  flex-direction: column;
   align-items: flex-start;
+  width: 100%;
 }
 .rv-modal-checkbox-label {
   display: flex;
@@ -1248,6 +1250,20 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
   font-weight: 500;
   color: #1E293B;
   line-height: 1.45;
+  width: 100%;
+}
+.rv-modal-checkbox-row .field-error {
+  color: #C53645;
+  font-size: 11px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  line-height: 16px;
+  margin: 4px 0 0 0;
+  display: block;
+  width: 100%;
+}
+.dark .rv-modal-checkbox-row .field-error {
+  color: #ffb4bf;
 }
 .rv-modal-checkbox-row input[type="checkbox"],
 .rv-modal-checkbox {
@@ -1255,6 +1271,8 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
   height: 16px !important;
   min-width: 16px !important;
   max-width: 16px !important;
+  min-height: 16px !important;
+  max-height: 16px !important;
   padding: 0 !important;
   margin: 2px 0 0 0 !important;
   border-radius: 4px;
@@ -1262,6 +1280,7 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
   accent-color: #186DD8;
   cursor: pointer;
   flex: 0 0 16px !important;
+  outline: none;
 }
 .rv-modal-btn-cancel {
   height: 46px;

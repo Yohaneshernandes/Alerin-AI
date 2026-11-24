@@ -749,6 +749,16 @@ function revisionModal(taskId, pre = {}) {
   `;
 
   modal('Tambahkan Revisi Dosen', body, footer, 'rv-new-modal');
+  const okCb = $('#rv-ok');
+  okCb?.addEventListener('change', () => {
+    if (okCb.checked) {
+      const w = okCb.closest('.rv-modal-checkbox-row');
+      if (w) {
+        w.classList.remove('invalid');
+        w.querySelector('.field-error')?.remove();
+      }
+    }
+  });
 }
 /* Tahap dicatat otomatis dari pekerjaan tertaut atau posisi skripsi, tanpa meminta pengguna mengetik ulang. */
 function revisionStageIdx(taskId) {
@@ -784,7 +794,7 @@ function saveRevision(taskId) {
     if (w) {
       w.classList.add('invalid');
       if (!w.querySelector('.field-error')) {
-        w.insertAdjacentHTML('beforeend', '<p class="field-error" style="color:#C53645;font-size:11px;margin-top:4px;">Centang dulu bila kamu sudah memahami arahan ini.</p>');
+        w.insertAdjacentHTML('beforeend', '<p class="field-error" style="color:#C53645;font-size:11px;margin:4px 0 0 0;display:block;width:100%;line-height:16px;">Centang dulu bila kamu sudah memahami arahan ini.</p>');
       }
     }
     ok = false;
