@@ -293,15 +293,11 @@ function pustakaPage() {
   /* Left Column: Input Sumber */
   const inputCard = `
     <section class="pustaka-card pustaka-source-card">
-      <div class="pustaka-card-header between">
+      <div class="pustaka-card-header">
         <div>
           <h2>Input Sumber</h2>
           <p>Lengkapi identitas sumber pustaka untuk menambahkannya ke daftar.</p>
         </div>
-        <button type="button" class="btn-cari-jurnal" data-action="dp-cari-jurnal">
-          ${I('search')}
-          <span>Alerin Cari Jurnal</span>
-        </button>
       </div>
       ${b.editing ? `<div class="pustaka-edit-note">${note('Kamu sedang mengedit sumber tersimpan. Simpan untuk memperbarui daftar.')} <button class="inline-link" data-action="dp-reset">Batal edit</button></div>` : ''}
 
@@ -474,11 +470,36 @@ function pustakaPage() {
     </section>
   `;
 
+  const journalBanner = `
+    <div class="pustaka-journal-banner">
+      <div class="pustaka-journal-banner-left">
+        <div class="pustaka-journal-banner-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#125AB5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+          </svg>
+        </div>
+        <div class="pustaka-journal-banner-text">
+          <strong>Temukan berbagai sumber dan referensi artikel terpercaya</strong>
+          <p>Kamu bisa mendapatkan akses dari berbagai macam artikel jurnal dari fokus penelitian sesuai kebutuhanmu.</p>
+        </div>
+      </div>
+      <button type="button" class="btn primary pustaka-btn-cari-jurnal-main" data-action="dp-cari-jurnal">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <span>Alerin Cari Jurnal</span>
+      </button>
+    </div>
+  `;
+
   return `
     <div class="pustaka-page-head">
       <h1>Daftar Pustaka</h1>
       <p>Buat, kelola, dan format daftar pustaka sesuai gaya sitasi yang kamu pilih.</p>
     </div>
+    ${journalBanner}
     <div class="pustaka-top-grid">
       ${inputCard}
       <div class="pustaka-right-stack">
