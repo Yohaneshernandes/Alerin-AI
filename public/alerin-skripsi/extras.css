@@ -2104,3 +2104,410 @@ body.dark .rw-btn-open {
 body.dark .rw-btn-open:hover {
   background: #254877;
 }
+
+
+/* ==========================================================================
+   HALAMAN PENGATURAN (DESKTOP & MOBILE FIGMA)
+   ========================================================================== */
+
+.cfg-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.cfg-head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cfg-title {
+  color: #142238;
+  font-size: 30px;
+  font-weight: 650;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.cfg-desc {
+  color: #637087;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.75;
+  margin: 0;
+  max-width: 650px;
+}
+
+.cfg-card {
+  background: #ffffff;
+  border: 1px solid #DCE4EF;
+  box-shadow: 0px 2px 4px rgba(35, 58, 87, 0.01);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.cfg-card-title {
+  color: #0F172A;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 0;
+}
+
+.cfg-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.cfg-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.cfg-row-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  max-width: 580px;
+  flex: 1;
+}
+
+.cfg-row-label {
+  color: #0F172A;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+}
+
+.cfg-row-desc {
+  color: #64748B;
+  font-size: 12.5px;
+  font-weight: 400;
+  line-height: 19px;
+}
+
+.cfg-desc-muted {
+  color: #94A3B8;
+}
+
+.cfg-reading-desc-desktop {
+  display: block;
+}
+
+.cfg-reading-desc-mobile {
+  display: none;
+}
+
+.cfg-divider {
+  height: 1px;
+  background: #E2E8F0;
+  width: 100%;
+}
+
+.cfg-row-ctrl {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* Switch */
+.cfg-switch {
+  position: relative;
+  width: 48px;
+  height: 24px;
+  border-radius: 9999px;
+  background: #E2E8F0;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  outline: none;
+  transition: background-color 0.2s ease;
+  flex-shrink: 0;
+  margin: 0;
+}
+
+.cfg-switch:after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 9999px;
+  background: white;
+  transition: transform 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.cfg-switch:checked {
+  background: #186DD8;
+}
+
+.cfg-switch:checked:after {
+  transform: translateX(24px);
+}
+
+/* Select */
+.cfg-select-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.cfg-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: white;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  padding: 8px 34px 8px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  color: #334155;
+  cursor: pointer;
+  line-height: 19.5px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.cfg-select:hover {
+  border-color: #cbd5e1;
+}
+
+.cfg-select:focus {
+  border-color: #3b82f6;
+}
+
+/* Buttons */
+.cfg-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: inherit;
+  font-weight: 500;
+  line-height: 19.5px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  outline: none;
+}
+
+.cfg-btn .ico {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.cfg-btn-default {
+  background: white;
+  border: 1px solid #E2E8F0;
+  color: #334155;
+}
+
+.cfg-btn-default .ico {
+  stroke: #64748B;
+}
+
+.cfg-btn-default:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.cfg-btn-danger {
+  background: white;
+  border: 1px solid #FECACA;
+  color: #DC2626;
+}
+
+.cfg-btn-danger .ico {
+  stroke: #EF4444;
+}
+
+.cfg-btn-danger:hover {
+  background: #fef2f2;
+  border-color: #fca5a5;
+}
+
+.cfg-btn-disabled {
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  color: #94A3B8;
+  cursor: not-allowed;
+}
+
+.cfg-btn-disabled .ico {
+  stroke: #94A3B8;
+}
+
+/* Mobile Styling */
+@media (max-width: 760px) {
+  .cfg-page {
+    gap: 16px;
+  }
+
+  .cfg-head {
+    text-align: center;
+    align-items: center;
+  }
+
+  .cfg-title {
+    font-size: 25px;
+    font-weight: 650;
+    line-height: 31.25px;
+  }
+
+  .cfg-desc {
+    font-size: 13px;
+    line-height: 18px;
+    text-align: center;
+    max-width: 320px;
+  }
+
+  .cfg-card {
+    border-radius: 16px;
+    padding: 20px 16px;
+    gap: 16px;
+  }
+
+  .cfg-card-title {
+    font-size: 18px;
+  }
+
+  .cfg-rows {
+    gap: 16px;
+  }
+
+  .cfg-row-info {
+    max-width: none;
+  }
+
+  .cfg-row-desc {
+    font-size: 12px;
+  }
+
+  .cfg-reading-desc-desktop {
+    display: none;
+  }
+
+  .cfg-reading-desc-mobile {
+    display: block;
+  }
+
+  .cfg-select {
+    padding: 7px 24px 7px 10px;
+    font-size: 12px;
+    background-position: right 6px center;
+  }
+
+  .cfg-row-stack-mobile {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .cfg-btn {
+    padding: 8px 16px;
+    font-size: 12px;
+  }
+
+  .cfg-btn .ico {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+/* Dark Mode */
+body.dark .cfg-title {
+  color: #f1f5f9;
+}
+
+body.dark .cfg-desc {
+  color: #94a3b8;
+}
+
+body.dark .cfg-card {
+  background: #182538;
+  border-color: #34465d;
+}
+
+body.dark .cfg-card-title {
+  color: #f1f5f9;
+}
+
+body.dark .cfg-row-label {
+  color: #f1f5f9;
+}
+
+body.dark .cfg-row-desc {
+  color: #94a3b8;
+}
+
+body.dark .cfg-desc-muted {
+  color: #64748b;
+}
+
+body.dark .cfg-divider {
+  background: #34465d;
+}
+
+body.dark .cfg-switch {
+  background: #334155;
+}
+
+body.dark .cfg-switch:checked {
+  background: #186DD8;
+}
+
+body.dark .cfg-select {
+  background-color: #1e293b;
+  border-color: #334155;
+  color: #f1f5f9;
+}
+
+body.dark .cfg-btn-default {
+  background: #1e293b;
+  border-color: #334155;
+  color: #e2e8f0;
+}
+
+body.dark .cfg-btn-default .ico {
+  stroke: #94a3b8;
+}
+
+body.dark .cfg-btn-danger {
+  background: #1e293b;
+  border-color: #7f1d1d;
+  color: #f87171;
+}
+
+body.dark .cfg-btn-danger .ico {
+  stroke: #f87171;
+}
+
+body.dark .cfg-btn-disabled {
+  background: #0f172a;
+  border-color: #334155;
+  color: #64748b;
+}
+
+body.dark .cfg-btn-disabled .ico {
+  stroke: #64748b;
+}

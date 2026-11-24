@@ -2,11 +2,128 @@
 /* Halaman pengaturan. */
 function pengaturanPage() {
   const dark = S.settings.theme === 'dark';
-  const row = (label, desc, ctl) => `<div class="settings-row"><div><strong>${label}</strong><p>${desc}</p></div>${ctl}</div>`;
-  return (
-    pageHead('Pengaturan', 'Atur kenyamanan membaca dan kelola salinan data penelitian.', '', '', '', 'PROFIL') +
-    `<section class="card" style="max-width:850px"><h3>Kenyamanan tampilan</h3>${row('Mode tampilan', dark ? 'Mode gelap' : 'Mode terang', `<input type="checkbox" class="switch" role="switch" aria-label="Mode gelap" data-theme-toggle="1" ${dark ? 'checked' : ''}>`)}${row('Animasi antarmuka', 'Matikan gerakan peralihan jika kamu lebih nyaman dengan tampilan yang tenang.', `<input class="switch" type="checkbox" role="switch" aria-label="Animasi antarmuka" data-setting="motion" ${S.settings.motion ? 'checked' : ''}>`)}${row('Ukuran tulisan', 'Perbesar teks isi agar lebih nyaman dibaca.', `<select aria-label="Ukuran tulisan" data-setting="reading"><option value="normal" ${S.settings.reading !== 'large' ? 'selected' : ''}>Standar</option><option value="large" ${S.settings.reading === 'large' ? 'selected' : ''}>Lebih besar</option></select>`)}${row('Panduan Progres Aktif', S.settings.hideProgresGuide ? 'Panduan disembunyikan.' : 'Panduan Membaca Progres Aktif ditampilkan di Progres Aktif.', S.settings.hideProgresGuide ? B('Tampilkan Panduan', 'show-progres-guide', 'primary', 'eye') : B('Sembunyikan', 'dismiss-progres-guide', 'text'))}<hr class="rule"><h3>Data di perangkat ini</h3>${row('Unduh salinan data', 'Mencakup isian, pekerjaan, arahan dosen, dan daftar lampiran. Isi berkas asli diunduh terpisah.', B('Unduh data', 'export-all', '', 'download'))}${row('Mulai dengan ruang kosong', 'Arsipkan kondisi saat ini lalu mulai penelitian baru. Salinan lokal dapat dipulihkan.', B('Mulai baru', 'reset-empty', 'danger', 'refresh'))}${row('Pulihkan data sebelumnya', hasArchive() ? 'Kembalikan arsip yang dibuat saat memilih mulai baru atau mengisi contoh.' : 'Belum ada arsip. Arsip dibuat saat kamu memilih mulai baru atau mengisi contoh.', hasArchive() ? B('Pulihkan', 'restore-backup', '', 'history') : `<button type="button" class="btn locked" data-action="restore-backup" aria-disabled="true">${I('history')}Pulihkan</button>`)}${row('Isi contoh penelitian', 'Isi semua halaman, termasuk Konteks Skripsi, dengan contoh penelitian tentang film. Data sekarang diarsipkan dulu.', B('Isi Contoh', 'isi-contoh', '', 'document'))}</section>`
-  );
+  return `
+    <div class="cfg-page">
+      <div class="cfg-head">
+        <h1 class="cfg-title">Pengaturan</h1>
+        <p class="cfg-desc">Atur kenyamanan membaca dan kelola salinan data penelitian.</p>
+      </div>
+
+      <!-- Kartu 1: Kenyamanan tampilan -->
+      <section class="cfg-card">
+        <h2 class="cfg-card-title">Kenyamanan tampilan</h2>
+        <div class="cfg-rows">
+          <!-- Mode tampilan -->
+          <div class="cfg-row">
+            <div class="cfg-row-info">
+              <div class="cfg-row-label">Mode tampilan</div>
+              <div class="cfg-row-desc">${dark ? 'Mode gelap' : 'Mode terang'}</div>
+            </div>
+            <div class="cfg-row-ctrl">
+              <input type="checkbox" class="cfg-switch" role="switch" aria-label="Mode gelap" data-theme-toggle="1" ${dark ? 'checked' : ''}>
+            </div>
+          </div>
+
+          <div class="cfg-divider"></div>
+
+          <!-- Animasi antarmuka -->
+          <div class="cfg-row">
+            <div class="cfg-row-info">
+              <div class="cfg-row-label">Animasi antarmuka</div>
+              <div class="cfg-row-desc">Matikan gerakan peralihan jika kamu lebih nyaman dengan tampilan yang tenang.</div>
+            </div>
+            <div class="cfg-row-ctrl">
+              <input type="checkbox" class="cfg-switch" role="switch" aria-label="Animasi antarmuka" data-setting="motion" ${S.settings.motion ? 'checked' : ''}>
+            </div>
+          </div>
+
+          <div class="cfg-divider"></div>
+
+          <!-- Ukuran tulisan -->
+          <div class="cfg-row">
+            <div class="cfg-row-info">
+              <div class="cfg-row-label">Ukuran tulisan</div>
+              <div class="cfg-row-desc cfg-reading-desc-desktop">Perbesar teks isi agar lebih nyaman dibaca.</div>
+              <div class="cfg-row-desc cfg-reading-desc-mobile">Perbesar agar lebih nyaman dibaca.</div>
+            </div>
+            <div class="cfg-row-ctrl">
+              <div class="cfg-select-wrap">
+                <select class="cfg-select" aria-label="Ukuran tulisan" data-setting="reading">
+                  <option value="normal" ${S.settings.reading !== 'large' ? 'selected' : ''}>Standar</option>
+                  <option value="large" ${S.settings.reading === 'large' ? 'selected' : ''}>Lebih besar</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Kartu 2: Data di perangkat ini -->
+      <section class="cfg-card">
+        <h2 class="cfg-card-title">Data di perangkat ini</h2>
+        <div class="cfg-rows">
+          <!-- Unduh salinan data -->
+          <div class="cfg-row cfg-row-stack-mobile">
+            <div class="cfg-row-info">
+              <div class="cfg-row-label">Unduh salinan data</div>
+              <div class="cfg-row-desc">Mencakup isian, pekerjaan, arahan dosen, dan daftar lampiran. Isi berkas asli diunduh terpisah.</div>
+            </div>
+            <div class="cfg-row-ctrl">
+              <button type="button" class="cfg-btn cfg-btn-default" data-action="export-all">
+                ${I('download')}
+                <span>Unduh data</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="cfg-divider"></div>
+
+          <!-- Mulai dengan ruang kosong -->
+          <div class="cfg-row cfg-row-stack-mobile">
+            <div class="cfg-row-info">
+              <div class="cfg-row-label">Mulai dengan ruang kosong</div>
+              <div class="cfg-row-desc">Arsipkan kondisi saat ini lalu mulai penelitian baru. Salinan lokal dapat dipulihkan.</div>
+            </div>
+            <div class="cfg-row-ctrl">
+              <button type="button" class="cfg-btn cfg-btn-danger" data-action="reset-empty">
+                ${I('refresh')}
+                <span>Mulai baru</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="cfg-divider"></div>
+
+          <!-- Pulihkan data sebelumnya -->
+          <div class="cfg-row cfg-row-stack-mobile">
+            <div class="cfg-row-info">
+              <div class="cfg-row-label">Pulihkan data sebelumnya</div>
+              <div class="cfg-row-desc ${hasArchive() ? '' : 'cfg-desc-muted'}">
+                ${
+                  hasArchive()
+                    ? 'Kembalikan arsip yang dibuat saat memilih mulai baru atau mengisi contoh.'
+                    : 'Belum ada arsip. Arsip dibuat saat kamu memilih mulai baru atau mengisi contoh.'
+                }
+              </div>
+            </div>
+            <div class="cfg-row-ctrl">
+              ${
+                hasArchive()
+                  ? `<button type="button" class="cfg-btn cfg-btn-default" data-action="restore-backup">
+                      ${I('history')}
+                      <span>Pulihkan</span>
+                    </button>`
+                  : `<button type="button" class="cfg-btn cfg-btn-disabled" data-action="restore-backup" aria-disabled="true">
+                      ${I('history')}
+                      <span>Pulihkan</span>
+                    </button>`
+              }
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  `;
 }
 
 const hasArchive = () => !!localStorage.getItem(ARSIP);
