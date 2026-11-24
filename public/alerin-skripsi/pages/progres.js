@@ -834,7 +834,7 @@ function showTask(id, alasan = '') {
     <section class="b18-ws-card b18-ws-card-syarat" id="ws-koreksi">
       <div class="b18-ws-syarat-title">Syarat Dinyatakan Selesai</div>
       <div class="b18-ws-syarat-list">
-        ${checks.filter(c => c.kind !== 'arahan').map((c, idx) => {
+        ${checks.filter(c => c.kind !== 'arahan' && c.kind !== 'koreksi').map((c, idx) => {
           const isBukti = c.kind === 'bukti' || c.kind === 'kolom';
           const label = isBukti ? 'Laporan perubahan' : c.label;
           const text = isBukti && !c.ok ? 'Belum ditulis.' : c.text;

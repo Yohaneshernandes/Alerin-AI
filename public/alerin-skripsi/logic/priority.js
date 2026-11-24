@@ -529,14 +529,6 @@ function completionChecks(t) {
     pass: ['Semua kriteria terpenuhi', ''],
   }[rv];
   out.push({ kind: 'tinjauan', ok: rv === 'pass', label: 'Tinjauan Alerin', text: rvText[0], next: rvText[1] });
-  const notes = (t.review?.notes || []).filter(n => !n.done);
-  out.push(
-    rv === 'pass' || rv === 'partial'
-      ? notes.length
-        ? { kind: 'koreksi', ok: false, label: 'Koreksi Alerin', text: `${notes.length} poin belum ditandai tuntas`, next: 'Perbaiki poinnya, lalu tandai tuntas di Tinjauan Alerin.' }
-        : { kind: 'koreksi', ok: true, label: 'Koreksi Alerin', text: 'Tidak ada poin terbuka' }
-      : { kind: 'koreksi', ok: false, label: 'Koreksi Alerin', text: 'Menunggu Tinjauan Alerin', next: 'Jalankan Periksa Pekerjaan dulu.' },
-  );
   out.push(
     !revs.length
       ? { kind: 'arahan', ok: true, label: 'Revisi Dosen', text: 'Tidak ada arahan tertaut' }
