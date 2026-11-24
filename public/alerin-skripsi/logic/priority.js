@@ -70,61 +70,67 @@ function primaryTask() {
 }
 
 function syncTasksForChapter(chapterNum) {
-  const ch = +chapterNum || 1;
+  const ch = +chapterNum || +(S.konteks?.chapter || (S.guide?.part ? PARTS[S.guide.part]?.chapter : 1) || 1);
   const chParts = (CHAPTERS[ch - 1] ? CHAPTERS[ch - 1][2] : CHAPTERS[0][2])
     .map(x => x[0])
     .filter(partApplies);
   if (!chParts.length) return;
 
-  // Pastikan bagian-bagian dari bab ini sudah dibuat sebagai task
-  for (const pid of chParts.slice(0, 3)) {
-    if (!S.tasks.some(t => t.part === pid)) {
-      partTask(pid, {
+  // Hapus / bersihkan open tasks yang BUKAN chapter ini (agar tidak ada task bab lain di aktif maupun antrean)
+  S.tasks = (S.tasks || []).filter(t => {
+    if (t.status === 'done' || t.status === 'deferred') return true;
+    if (t.part && PARTS[t.part]) {
+      return PARTS[t.part].chapter === ch;
+    }
+    return false;
+  });
+
+  // Pastikan SEMUA bagian dari bab ini sudah dibuat sebagai task
+  chParts.forEach(pid => {
+    let t = S.tasks.find(x => x.part === pid);
+    if (!t) {
+      t = partTask(pid, {
         source: 'mulai',
         reason: `Subbagian Bab ${CHAPTERS[ch - 1][0]} (${PARTS[pid]?.name || ''}) sesuai urutan rencana di Mulai Skripsi.`,
       });
     }
-  }
+  });
 
-  // Jika bab yang dipilih belum selesai semua bagiannya,
-  // antrekan task dari bab/tahap lain yang belum selesai agar task bab yang dipilih aktif
-  const chDone = chParts.every(pid => S.tasks.some(t => t.part === pid && t.status === 'done'));
-  if (!chDone) {
-    S.tasks.forEach(t => {
-      if (t.status !== 'done' && t.status !== 'deferred') {
-        const isThisChapter = t.part && PARTS[t.part]?.chapter === ch;
-        if (!isThisChapter) {
-          t.status = 'queued';
-        } else {
-          t.status = 'todo';
-        }
-      }
-    });
-  }
+  // Atur status: 3 task pertama yang belum selesai menjadi 'todo' (Aktif),
+  // sisanya dari bab ini menjadi 'queued' (Antrean)
+  let activeCount = 0;
+  chParts.forEach(pid => {
+    const t = S.tasks.find(x => x.part === pid);
+    if (!t || t.status === 'done' || t.status === 'deferred') return;
+    if (activeCount < 3) {
+      t.status = 'todo';
+      activeCount++;
+    } else {
+      t.status = 'queued';
+    }
+  });
 
   reorderTasks(false);
   applyOrder();
-  fillSlots();
 }
 window.syncTasksForChapter = syncTasksForChapter;
 
-/* Slot kosong terisi dari antrean dulu, lalu dari subbagian berikutnya dalam rencana penelitian (Mulai Skripsi).
-   Hanya kartu rencana (sumber Mulai Skripsi) yang menjadi patokan, supaya kartu dari temuan, arahan, atau skenario
-   contoh tidak memunculkan subbagian baru tanpa alasan. */
+/* Slot kosong terisi dari antrean dulu, lalu dari subbagian berikutnya dalam rencana penelitian bab aktif (Mulai Skripsi). */
 function fillSlots() {
   syncQueue();
   if (!S.title) return;
+  const ch = +(S.konteks?.chapter || (S.guide?.part ? PARTS[S.guide.part]?.chapter : 1) || 1);
+  const chParts = (CHAPTERS[ch - 1] ? CHAPTERS[ch - 1][2] : CHAPTERS[0][2])
+    .map(x => x[0])
+    .filter(partApplies);
+
   for (let guard = 0; guard < 3 && activeTasks().length < 3; guard++) {
     const act = activeTasks(),
-      idx = t => PART_ORDER.indexOf(t.part),
-      plan = S.tasks.filter(t => t.part && PARTS[t.part] && t.source === 'mulai');
+      idx = t => chParts.indexOf(t.part),
+      plan = S.tasks.filter(t => t.part && PARTS[t.part] && PARTS[t.part].chapter === ch && t.source === 'mulai');
     if (!plan.length) {
-      const ch = +(S.konteks?.chapter || 1);
-      const startParts = (CHAPTERS[ch - 1] ? CHAPTERS[ch - 1][2] : CHAPTERS[0][2])
-        .map(x => x[0])
-        .filter(partApplies);
-      if (startParts.length) {
-        partTask(startParts[0], {
+      if (chParts.length) {
+        partTask(chParts[0], {
           source: 'mulai',
           reason: `Bagian awal Bab ${CHAPTERS[(ch || 1) - 1][0]} sesuai pilihan di Mulai Skripsi.`,
         });
@@ -135,10 +141,10 @@ function fillSlots() {
     const open = plan.filter(t => !['done', 'deferred'].includes(t.status) && t.kind !== 'parallel'),
       anchor = open.length ? Math.min(...open.map(idx)) : Math.max(...plan.map(idx)),
       has = id => S.tasks.some(t => t.part === id),
-      list = PART_ORDER.filter((id, i) => i > anchor && partApplies(id) && !has(id));
+      list = chParts.filter((id, i) => i > anchor && !has(id));
     if (!list.length) break;
     partTask(list[0], {
-      reason: `Subbagian berikutnya dalam rencana penelitianmu setelah ${PARTS[PART_ORDER[anchor]]?.name || 'pekerjaan sebelumnya'}.`,
+      reason: `Subbagian berikutnya dalam rencana penelitianmu setelah ${PARTS[chParts[anchor]]?.name || 'pekerjaan sebelumnya'}.`,
     });
   }
   syncQueue();

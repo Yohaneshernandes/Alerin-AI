@@ -688,6 +688,9 @@ Object.assign(ACTIONS, {
     const list = CHAPTERS[+arg - 1][2].map(x => x[0]).filter(partApplies);
     if (PARTS[S.guide.part]?.chapter !== +arg) S.guide.part = list[0];
     S.guide.view = 'guide';
+    if (!S.konteks) S.konteks = {};
+    S.konteks.chapter = String(arg);
+    syncTasksForChapter(+arg);
     persist();
     render();
     $(`[data-action="guide-bab:${arg}"]`)?.focus({ preventScroll: true });
@@ -696,6 +699,12 @@ Object.assign(ACTIONS, {
     ensureGuide();
     S.guide.part = arg;
     S.guide.view = 'guide';
+    const ch = PARTS[arg]?.chapter;
+    if (ch) {
+      if (!S.konteks) S.konteks = {};
+      S.konteks.chapter = String(ch);
+      syncTasksForChapter(ch);
+    }
     persist();
     closeModal(true);
     if (route !== 'mulai') go('mulai');

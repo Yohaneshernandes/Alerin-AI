@@ -279,10 +279,14 @@ const PROGRESS_TABS = [
   ['tunda', 'Ditunda'],
 ];
 function progressLists() {
-  const aktif = activeTasks();
+  const ch = +(S.konteks?.chapter || (S.guide?.part ? PARTS[S.guide.part]?.chapter : 1) || 1);
+  const aktif = activeTasks().filter(t => !t.part || !PARTS[t.part] || PARTS[t.part].chapter === ch);
+  const antre = S.tasks.filter(
+    t => !['done', 'deferred'].includes(t.status) && !aktif.includes(t) && (!t.part || !PARTS[t.part] || PARTS[t.part].chapter === ch),
+  );
   return {
     aktif,
-    antre: S.tasks.filter(t => !['done', 'deferred'].includes(t.status) && !aktif.includes(t)),
+    antre,
     selesai: S.tasks.filter(t => t.status === 'done'),
     tunda: S.tasks.filter(t => t.status === 'deferred'),
   };
@@ -510,19 +514,21 @@ function progresEmptyCard(kind, hasTasks) {
 }
 
 function progresPage() {
-  const ch = +(S.konteks?.chapter || 1);
+  const ch = +(S.konteks?.chapter || (S.guide?.part ? PARTS[S.guide.part]?.chapter : 1) || 1);
   const chParts = (CHAPTERS[ch - 1] ? CHAPTERS[ch - 1][2] : CHAPTERS[0][2])
     .map(x => x[0])
     .filter(partApplies);
   const chHasUnfinished = chParts.some(pid => !S.tasks.some(t => t.part === pid && t.status === 'done'));
 
-  const hasNonChapterActive = activeTasks().some(
-    t => !t.part || !PARTS[t.part] || PARTS[t.part].chapter !== ch,
+  const hasNonChapterTasks = S.tasks.some(
+    t => !['done', 'deferred'].includes(t.status) && (!t.part || !PARTS[t.part] || PARTS[t.part].chapter !== ch),
   );
-  if (chHasUnfinished && (hasNonChapterActive || activeTasks().length < 3)) {
+  const chMissingTasks = chParts.some(pid => !S.tasks.some(t => t.part === pid));
+
+  if (chHasUnfinished && (hasNonChapterTasks || chMissingTasks || activeTasks().length < Math.min(3, chParts.length))) {
     syncTasksForChapter(ch);
     persist();
-  } else if (S.title && activeTasks().length < 3) {
+  } else if (S.title && activeTasks().length < Math.min(3, chParts.length)) {
     const n = S.tasks.length;
     fillSlots();
     if (S.tasks.length !== n) persist();
