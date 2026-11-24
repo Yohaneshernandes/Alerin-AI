@@ -503,15 +503,130 @@ function calPreviewModal() {
 }
 
 /* ---------- Formulir posisi dan kondisi ---------- */
+let activeModalTahap = 1;
+
+function selectTahapItem(stageNum) {
+  activeModalTahap = stageNum;
+  const cards = document.querySelectorAll('.tahap-opt-card');
+  cards.forEach(card => {
+    const isSel = card.getAttribute('data-stage') === String(stageNum);
+    card.classList.toggle('selected', isSel);
+    card.setAttribute('aria-checked', isSel ? 'true' : 'false');
+    const radio = card.querySelector('.tahap-radio');
+    if (radio) {
+      radio.classList.toggle('selected', isSel);
+      radio.innerHTML = isSel ? '<span class="tahap-radio-dot"></span>' : '';
+    }
+  });
+}
+
+const STAGE_CHOICES = [
+  { stage: -1, title: 'Baru Memulai · Persiapan', subtitle: 'Di personalisasi: Belum mulai', persoId: 'belum' },
+  { stage: 0, title: 'Penentuan Topik atau Judul', subtitle: 'Di personalisasi: Mencari topik/judul', persoId: 'judul' },
+  { stage: 1, title: 'Penyusunan Proposal', subtitle: 'Di personalisasi: Penyusunan proposal', persoId: 'proposal' },
+  { stage: 2, title: 'Persiapan Instrumen dan Izin', subtitle: 'Tidak ada di pilihan personalisasi', persoId: null },
+  { stage: 3, title: 'Persiapan Seminar Proposal', subtitle: 'Di personalisasi: Persiapan sempro', persoId: 'sempro' },
+  { stage: 4, title: 'Seminar Proposal dan Revisi', subtitle: 'Tidak ada di pilihan personalisasi', persoId: null },
+  { stage: 5, title: 'Pengumpulan Data', subtitle: 'Di personalisasi: Pengumpulan data', persoId: 'data' },
+  { stage: 6, title: 'Pengolahan dan Analisis Data', subtitle: 'Di personalisasi: Pengumpulan data', persoId: null },
+  { stage: 7, title: 'Penyusunan Bab Akhir', subtitle: 'Di personalisasi: Penyusunan bab akhir', persoId: 'babakhir' },
+  { stage: 8, title: 'Finalisasi dan Review', subtitle: 'Di personalisasi: Review dan revisi', persoId: 'review' },
+  { stage: 9, title: 'Persiapan dan Pelaksanaan Sidang', subtitle: 'Di personalisasi: Persiapan sidang', persoId: 'sidang' },
+  { stage: 10, title: 'Revisi Akhir', subtitle: 'Tidak ada di pilihan personalisasi', persoId: null },
+];
+
 function positionModal() {
-  const p = positionOf(),
-    cur = p ? String(p.stage) : '';
-  const opts = [['-1', 'Sebelum 01 · Persiapan']].concat(ALERIN.phases.map((_, i) => [String(i), stageName(i)]));
-  modal(
-    'Perbarui posisi penelitian',
-    `<p class="small muted">Pilih tahap yang sedang kamu jalani sekarang.</p><div class="field"><label for="pos-stage">Tahap terakhir <span class="required-label">Wajib</span></label><select id="pos-stage"><option value="" disabled ${cur === '' ? 'selected' : ''}>Pilih tahap terakhir</option>${opts.map(([v, n]) => `<option value="${v}" ${v === cur ? 'selected' : ''}>${e(n)}</option>`).join('')}</select></div>${note('Mengubah posisi tidak menandai tahap sebelumnya selesai. Status tiap tahap di Peta Skripsi tetap mengikuti pekerjaan dan bukti. Hasil Periksa Skripsi juga tidak mengubah posisimu.')}`,
-    B('Batal', 'close-modal') + B('Simpan Posisi', 'pos-save', 'primary', 'save'),
-  );
+  const p = positionOf();
+  const curStage = p && Number.isInteger(p.stage) ? p.stage : (stageInfo().akun ?? 1);
+  activeModalTahap = curStage;
+
+  lastFocus = document.activeElement;
+  modalDirty = false;
+
+  const userKondisi = kondisiOf(S.profile?.kondisi);
+
+  const cardsHtml = STAGE_CHOICES.map(item => {
+    const isSelected = item.stage === curStage;
+    const isPerso = (item.persoId && item.persoId === S.profile?.kondisi) ||
+                    (userKondisi && Number.isInteger(userKondisi.stage) && userKondisi.stage === item.stage);
+
+    return `
+      <div class="tahap-opt-card ${isSelected ? 'selected' : ''}" data-action="tahap-select:${item.stage}" data-stage="${item.stage}" role="radio" aria-checked="${isSelected ? 'true' : 'false'}" tabindex="0">
+        <div class="tahap-radio-wrapper">
+          <div class="tahap-radio ${isSelected ? 'selected' : ''}">
+            ${isSelected ? '<span class="tahap-radio-dot"></span>' : ''}
+          </div>
+        </div>
+        <div class="tahap-opt-content">
+          <div class="tahap-opt-title">${e(item.title)}</div>
+          <div class="tahap-opt-subtitle">${e(item.subtitle)}</div>
+          ${isPerso ? `
+            <div class="tahap-perso-badge">
+              <span>Sesuai personalisasimu</span>
+            </div>
+          ` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  $('#overlay-root').innerHTML = `
+    <div class="overlay tahap-modal-overlay" data-overlay="true">
+      <div class="tahap-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="tahap-modal-title">
+        
+        <!-- Header -->
+        <div class="tahap-modal-header">
+          <div class="tahap-modal-header-text">
+            <h2 id="tahap-modal-title" class="tahap-modal-title">Pilih tahap penelitian</h2>
+            <p class="tahap-modal-subtitle">Pilih tahap skripsimu saat ini. Daftar ini disesuaikan dengan Peta Skripsi, lengkap dengan label personalisasi alerin.id di bawahnya.</p>
+          </div>
+          <button type="button" class="tahap-modal-close" data-action="close-modal" aria-label="Tutup jendela">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Scrollable Body -->
+        <div class="tahap-modal-body">
+          <div class="tahap-cards-list">
+            ${cardsHtml}
+          </div>
+
+          <!-- Notice Box -->
+          <div class="tahap-notice-box">
+            <div class="tahap-notice-icon-wrap">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#186DD8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+              </svg>
+            </div>
+            <div class="tahap-notice-text">
+              Mengubah tahap tidak menandai tahap sebelumnya selesai. Status tiap tahap di Peta Skripsi tetap mengikuti pekerjaan dan bukti. Hasil Periksa Skripsi juga tidak mengubah tahapmu.
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="tahap-modal-footer">
+          <button type="button" class="tahap-btn-cancel" data-action="close-modal">Batal</button>
+          <button type="button" class="tahap-btn-save" data-action="tahap-save">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+              <polyline points="17 21 17 13 7 13 7 21"></polyline>
+              <polyline points="7 3 7 8 15 8"></polyline>
+            </svg>
+            <span>Simpan Tahap</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  `;
+
+  document.body.style.overflow = 'hidden';
 }
 function savePosition(stage, from) {
   S.position = { stage, date: new Date().toISOString(), from };
@@ -665,11 +780,14 @@ Object.assign(ACTIONS, {
   'pos-edit': () => {
     positionModal();
   },
+  'tahap-select': arg => {
+    selectTahapItem(+arg);
+  },
+  'tahap-save': () => {
+    savePosition(activeModalTahap, 'pengguna');
+  },
   'pos-save': () => {
-    clearErrors();
-    const v = $('#pos-stage')?.value ?? '';
-    if (v === '') return fieldError('pos-stage', 'Pilih tahap terakhirmu dulu.') || focusFirstError();
-    savePosition(+v, 'pengguna');
+    savePosition(activeModalTahap, 'pengguna');
   },
   'pos-confirm': () => {
     const k = kondisiOf(S.profile.kondisi);

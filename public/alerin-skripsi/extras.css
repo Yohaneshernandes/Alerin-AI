@@ -2913,3 +2913,534 @@ body.dark .pustaka-journal-banner-text p {
 .mulai-chapter-banner {
   margin-bottom: 20px !important;
 }
+
+/* ==========================================================================
+   Modal Pilih Tahap Penelitian (Desktop & Mobile)
+   ========================================================================== */
+
+.tahap-modal-overlay {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  padding: 24px !important;
+  background: linear-gradient(0deg, rgba(15, 23, 42, 0.40) 0%, rgba(15, 23, 42, 0.40) 100%), rgba(255, 255, 255, 0.01) !important;
+  backdrop-filter: blur(4px) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
+  box-sizing: border-box !important;
+  z-index: 1000 !important;
+}
+
+.tahap-modal-dialog {
+  width: 100% !important;
+  max-width: 896px !important;
+  max-height: min(942px, calc(100vh - 48px)) !important;
+  background: #ffffff !important;
+  box-shadow: 0px 4px 6px -4px rgba(0, 0, 0, 0.10), 0px 10px 15px -3px rgba(0, 0, 0, 0.10) !important;
+  border-radius: 16px !important;
+  outline: 1px #E2E8F0 solid !important;
+  outline-offset: -1px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  position: relative !important;
+  box-sizing: border-box !important;
+  animation: toast-in 0.2s ease-out !important;
+}
+
+/* Header */
+.tahap-modal-header {
+  padding: 20px 24px !important;
+  background: #ffffff !important;
+  border-bottom: 1px #E2E8F0 solid !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: flex-start !important;
+  gap: 16px !important;
+  position: relative !important;
+  flex-shrink: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.tahap-modal-header-text {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 5px !important;
+}
+
+.tahap-modal-title {
+  color: #0F172A !important;
+  font-size: 20px !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-weight: 700 !important;
+  line-height: 28px !important;
+  margin: 0 !important;
+  letter-spacing: -0.01em !important;
+}
+
+.tahap-modal-subtitle {
+  color: #475569 !important;
+  font-size: 14px !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-weight: 400 !important;
+  line-height: 18px !important;
+  margin: 0 !important;
+}
+
+.tahap-modal-close {
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 8px !important;
+  color: #94A3B8 !important;
+  background: transparent !important;
+  border: none !important;
+  cursor: pointer !important;
+  flex-shrink: 0 !important;
+  padding: 0 !important;
+  transition: all 0.15s ease !important;
+}
+
+.tahap-modal-close:hover {
+  background: #F1F5F9 !important;
+  color: #334155 !important;
+}
+
+/* Scrollable Body */
+.tahap-modal-body {
+  padding: 20px 24px !important;
+  background: #ffffff !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  flex: 1 1 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 20px !important;
+  box-sizing: border-box !important;
+}
+
+.tahap-cards-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  width: 100% !important;
+}
+
+/* Option Card */
+.tahap-opt-card {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 16px !important;
+  border-radius: 12px !important;
+  background: #ffffff !important;
+  outline: 1px #E2E8F0 solid !important;
+  outline-offset: -1px !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 14px !important;
+  cursor: pointer !important;
+  text-align: left !important;
+  user-select: none !important;
+  transition: background 0.15s ease, outline-color 0.15s ease !important;
+}
+
+.tahap-opt-card:hover {
+  background: #F8FAFC !important;
+  outline-color: #CBD5E1 !important;
+}
+
+.tahap-opt-card.selected {
+  background: rgba(238, 245, 255, 0.75) !important;
+  outline: 1px #186DD8 solid !important;
+  outline-offset: -1px !important;
+}
+
+/* Radio Button */
+.tahap-radio-wrapper {
+  width: 18px !important;
+  min-width: 18px !important;
+  height: 18px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding-top: 1px !important;
+  flex-shrink: 0 !important;
+}
+
+.tahap-radio {
+  width: 16px !important;
+  height: 16px !important;
+  border-radius: 16px !important;
+  background: #ffffff !important;
+  border: 1px #CBD5E1 solid !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.15s ease !important;
+}
+
+.tahap-radio.selected {
+  width: 18px !important;
+  height: 18px !important;
+  background: #186DD8 !important;
+  border: none !important;
+}
+
+.tahap-radio-dot {
+  width: 6px !important;
+  height: 6px !important;
+  border-radius: 50% !important;
+  background: #ffffff !important;
+  display: block !important;
+}
+
+/* Card Content */
+.tahap-opt-content {
+  flex: 1 1 0% !important;
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+}
+
+.tahap-opt-title {
+  color: #0F172A !important;
+  font-size: 14px !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-weight: 600 !important;
+  line-height: 20px !important;
+}
+
+.tahap-opt-card.selected .tahap-opt-title {
+  font-weight: 700 !important;
+}
+
+.tahap-opt-subtitle {
+  color: #64748B !important;
+  font-size: 12px !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-weight: 400 !important;
+  line-height: 16px !important;
+}
+
+.tahap-opt-card.selected .tahap-opt-subtitle {
+  color: #475569 !important;
+}
+
+/* Badge "Sesuai personalisasimu" */
+.tahap-perso-badge {
+  align-self: flex-start !important;
+  margin-top: 6px !important;
+  padding: 2px 10px !important;
+  background: rgba(226, 232, 240, 0.70) !important;
+  border-radius: 6px !important;
+  color: #475569 !important;
+  font-size: 11px !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-weight: 500 !important;
+  line-height: 16.5px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+/* Notice Box */
+.tahap-notice-box {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 14px 16px !important;
+  background: #EEF5FF !important;
+  border-radius: 12px !important;
+  outline: 1px #D8E6FA solid !important;
+  outline-offset: -1px !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 12px !important;
+}
+
+.tahap-notice-icon-wrap {
+  width: 16px !important;
+  min-width: 16px !important;
+  padding-top: 2px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+}
+
+.tahap-notice-text {
+  color: #475569 !important;
+  font-size: 12px !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-weight: 400 !important;
+  line-height: 19.5px !important;
+  margin: 0 !important;
+}
+
+/* Footer */
+.tahap-modal-footer {
+  padding: 16px 24px !important;
+  background: #ffffff !important;
+  border-top: 1px #E2E8F0 solid !important;
+  display: flex !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  gap: 12px !important;
+  flex-shrink: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.tahap-btn-cancel {
+  height: 40px !important;
+  padding: 8px 16px !important;
+  background: #ffffff !important;
+  border-radius: 8px !important;
+  outline: 1px #E2E8F0 solid !important;
+  outline-offset: -1px !important;
+  color: #334155 !important;
+  font-size: 14px !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-weight: 500 !important;
+  line-height: 20px !important;
+  cursor: pointer !important;
+  border: none !important;
+  transition: all 0.15s ease !important;
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.tahap-btn-cancel:hover {
+  background: #F8FAFC !important;
+  outline-color: #CBD5E1 !important;
+}
+
+.tahap-btn-save {
+  height: 40px !important;
+  padding: 10px 20px !important;
+  background: #186DD8 !important;
+  border-radius: 8px !important;
+  color: #ffffff !important;
+  font-size: 14px !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-weight: 500 !important;
+  line-height: 20px !important;
+  cursor: pointer !important;
+  border: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  transition: background 0.15s ease !important;
+  box-sizing: border-box !important;
+}
+
+.tahap-btn-save:hover {
+  background: #145bb5 !important;
+}
+
+/* ==========================================================================
+   Mobile Responsive View (max-width: 640px)
+   ========================================================================== */
+@media (max-width: 640px) {
+  .tahap-modal-overlay {
+    padding: 16px !important;
+    background: linear-gradient(0deg, rgba(51, 65, 85, 0.60) 0%, rgba(51, 65, 85, 0.60) 100%), rgba(255, 255, 255, 0.01) !important;
+  }
+
+  .tahap-modal-dialog {
+    max-width: 346px !important;
+    max-height: min(663px, calc(100dvh - 32px)) !important;
+    border-radius: 15px !important;
+    border-top: 1px #F1F5F9 solid !important;
+    box-shadow: 0px 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+  }
+
+  .tahap-modal-header {
+    padding: 14px 18px 14px !important;
+    border-bottom: 1px #F3F4F6 solid !important;
+  }
+
+  .tahap-modal-title {
+    color: #111827 !important;
+    font-size: 18px !important;
+    line-height: 26px !important;
+  }
+
+  .tahap-modal-subtitle {
+    color: #475569 !important;
+    font-size: 12px !important;
+    line-height: 17px !important;
+    margin-top: 4px !important;
+  }
+
+  .tahap-modal-close {
+    color: #9CA3AF !important;
+  }
+
+  .tahap-modal-body {
+    padding: 14px 16px !important;
+    gap: 10px !important;
+  }
+
+  .tahap-opt-card {
+    padding: 14px !important;
+    gap: 12px !important;
+  }
+
+  .tahap-radio {
+    border-color: #D1D5DB !important;
+  }
+
+  .tahap-opt-title {
+    color: #111827 !important;
+  }
+
+  .tahap-opt-subtitle {
+    color: #6B7280 !important;
+  }
+
+  .tahap-opt-card.selected .tahap-opt-subtitle {
+    color: #4B5563 !important;
+  }
+
+  .tahap-perso-badge {
+    margin-top: 8px !important;
+  }
+
+  .tahap-notice-box {
+    padding: 10px !important;
+    gap: 6px !important;
+  }
+
+  .tahap-notice-icon-wrap {
+    width: 14px !important;
+    min-width: 14px !important;
+  }
+
+  .tahap-notice-icon-wrap svg {
+    width: 14px !important;
+    height: 14px !important;
+  }
+
+  .tahap-notice-text {
+    font-size: 11px !important;
+    line-height: 17px !important;
+  }
+
+  .tahap-modal-footer {
+    padding: 12px 16px !important;
+    border-top: 1px #E5E7EB solid !important;
+  }
+
+  .tahap-btn-cancel {
+    display: none !important;
+  }
+
+  .tahap-btn-save {
+    width: 100% !important;
+    height: 45px !important;
+    font-size: 14px !important;
+  }
+}
+
+/* ==========================================================================
+   Dark Mode Support
+   ========================================================================== */
+body.dark .tahap-modal-dialog {
+  background: #182538 !important;
+  outline-color: #273a52 !important;
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.6) !important;
+}
+
+body.dark .tahap-modal-header {
+  background: #182538 !important;
+  border-bottom-color: #273a52 !important;
+}
+
+body.dark .tahap-modal-title {
+  color: #F1F5F9 !important;
+}
+
+body.dark .tahap-modal-subtitle {
+  color: #94A3B8 !important;
+}
+
+body.dark .tahap-modal-close {
+  color: #94A3B8 !important;
+}
+
+body.dark .tahap-modal-close:hover {
+  background: #223247 !important;
+  color: #F1F5F9 !important;
+}
+
+body.dark .tahap-modal-body {
+  background: #182538 !important;
+}
+
+body.dark .tahap-opt-card {
+  background: #1c2a3f !important;
+  outline-color: #2c3f59 !important;
+}
+
+body.dark .tahap-opt-card:hover {
+  background: #23344d !important;
+  outline-color: #3b5273 !important;
+}
+
+body.dark .tahap-opt-card.selected {
+  background: rgba(24, 109, 216, 0.20) !important;
+  outline-color: #3B82F6 !important;
+}
+
+body.dark .tahap-radio {
+  background: #1c2a3f !important;
+  border-color: #475569 !important;
+}
+
+body.dark .tahap-opt-title {
+  color: #F1F5F9 !important;
+}
+
+body.dark .tahap-opt-subtitle {
+  color: #94A3B8 !important;
+}
+
+body.dark .tahap-opt-card.selected .tahap-opt-subtitle {
+  color: #CBD5E1 !important;
+}
+
+body.dark .tahap-perso-badge {
+  background: #253346 !important;
+  color: #CBD5E1 !important;
+}
+
+body.dark .tahap-notice-box {
+  background: #1a2b42 !important;
+  outline-color: #284468 !important;
+}
+
+body.dark .tahap-notice-text {
+  color: #94A3B8 !important;
+}
+
+body.dark .tahap-modal-footer {
+  background: #182538 !important;
+  border-top-color: #273a52 !important;
+}
+
+body.dark .tahap-btn-cancel {
+  background: #1c2a3f !important;
+  outline-color: #2c3f59 !important;
+  color: #E2E8F0 !important;
+}
+
+body.dark .tahap-btn-cancel:hover {
+  background: #23344d !important;
+}
