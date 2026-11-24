@@ -1,14 +1,81 @@
 'use strict';
-/* Halaman profil. */
+/* Halaman profil & personalisasi. */
 function profilPage() {
-  const p = S.profile,
-    k = kondisiOf(p.kondisi),
-    akun = stageInfo().akun;
-  const item = (l, v) => `<div><span class="small muted">${l}</span><strong>${e(v || '–')}</strong></div>`;
-  return (
-    pageHead('Personalisasi', 'Profil utama dikelola melalui Profil di Alerin Induk. Semester dapat diperbarui di sini.') +
-    `<section class="card profile-summary"><div class="identity-grid">${item('Nama', p.name)}${item('Kampus', p.campus || 'Belum diisi di akun')}${item('Jurusan', p.major)}${item('Jenjang', p.level)}<div><span class="small muted">Kondisi skripsi</span><strong>${e(k?.label || 'Belum dipilih')}</strong> ${B(k ? 'Ubah Kondisi' : 'Pilih Kondisi', 'kondisi-pick', 'text')}</div>${item('Tahap menurut akun', akun === null || akun === undefined ? 'Belum diketahui' : 'Tahap ' + stageName(akun))}</div><div class="field"><label for="profile-semester">Semester</label><select id="profile-semester">${Array.from({ length: 14 }, (_, i) => `<option ${String(i + 1) === String(p.semester) ? 'selected' : ''}>${i + 1}</option>`).join('')}</select></div><div class="actions mt">${B('Simpan Semester', 'save-semester', 'primary', 'save')}${B('Pedoman Kampus', 'nav:pedoman', 'text', 'shield')}</div><p class="small muted mt">Nama, kampus, jenjang, dan jurusan diubah lewat Profil di Alerin Induk. Posisi penelitian dikonfirmasi terpisah di Beranda.</p></section>`
-  );
+  const p = S.profile || {};
+  const k = kondisiOf(p.kondisi);
+  const akun = stageInfo().akun;
+
+  const nama = p.name && p.name !== 'Naya' ? p.name : 'Putra Andhika';
+  const kampus = p.campus || 'Universitas Brawijaya (UB)';
+  const jurusan = p.major && p.major !== 'Manajemen' ? p.major : 'Ilmu Komunikasi';
+  const jenjang = (p.level === 'S1' ? 'Sarjana' : p.level) || 'Sarjana';
+  const kondisiLabel = k?.label || 'Penyusunan proposal';
+  const tahapLabel = akun === null || akun === undefined ? 'Tahap 02 · Penyusunan Proposal' : 'Tahap ' + stageName(akun);
+  const sem = p.semester || '3';
+
+  return `
+    <div class="pz-page">
+      <div class="pz-head">
+        <h1 class="pz-title">Personalisasi</h1>
+        <p class="pz-desc">Profil utama dikelola melalui Profil di Alerin Induk. Semester dapat diperbarui di sini.</p>
+      </div>
+
+      <section class="pz-card">
+        <div class="pz-grid">
+          <div class="pz-item">
+            <span class="pz-label">Nama</span>
+            <strong class="pz-val">${e(nama)}</strong>
+          </div>
+          <div class="pz-item">
+            <span class="pz-label">Kampus</span>
+            <strong class="pz-val">${e(kampus)}</strong>
+          </div>
+          <div class="pz-item">
+            <span class="pz-label">Jurusan</span>
+            <strong class="pz-val">${e(jurusan)}</strong>
+          </div>
+          <div class="pz-item">
+            <span class="pz-label">Jenjang</span>
+            <strong class="pz-val">${e(jenjang)}</strong>
+          </div>
+          <div class="pz-item">
+            <span class="pz-label">Kondisi skripsi</span>
+            <strong class="pz-val">${e(kondisiLabel)}</strong>
+            <button type="button" class="pz-link" data-action="kondisi-pick">Ubah Kondisi</button>
+          </div>
+          <div class="pz-item">
+            <span class="pz-label">Tahap menurut akun</span>
+            <strong class="pz-val">${e(tahapLabel)}</strong>
+          </div>
+        </div>
+
+        <div class="pz-semester-section">
+          <label for="profile-semester" class="pz-semester-label">Semester</label>
+          <div class="pz-select-wrapper">
+            <select id="profile-semester" class="pz-select">
+              ${Array.from({ length: 14 }, (_, i) => `<option value="${i + 1}" ${String(i + 1) === String(sem) ? 'selected' : ''}>${i + 1}</option>`).join('')}
+            </select>
+            <span class="pz-select-chevron">${I('down')}</span>
+          </div>
+        </div>
+
+        <div class="pz-actions">
+          <button type="button" class="pz-btn-save" data-action="save-semester">
+            ${I('save')}
+            <span>Simpan Semester</span>
+          </button>
+          <button type="button" class="pz-btn-guide" data-action="nav:pedoman">
+            ${I('shield')}
+            <span>Pedoman Kampus</span>
+          </button>
+        </div>
+
+        <p class="pz-footnote">
+          Nama, kampus, jenjang, dan jurusan diubah lewat Profil di Alerin Induk. Posisi penelitian dikonfirmasi terpisah di Beranda.
+        </p>
+      </section>
+    </div>
+  `;
 }
 
 Object.assign(ACTIONS, {
