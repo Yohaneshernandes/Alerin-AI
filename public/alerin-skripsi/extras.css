@@ -3456,3 +3456,110 @@ body.dark .tahap-btn-cancel {
 body.dark .tahap-btn-cancel:hover {
   background: #23344d !important;
 }
+
+/* ========================================================
+   BERANDA MOBILE FIX: Isolation, Sidebar Hiding & Vertical Stacking (390px Viewport)
+   ======================================================== */
+@media (max-width: 768px) {
+  :root,
+  body,
+  html body,
+  body.collapsed {
+    --sidebar: 0px !important;
+  }
+
+  /* Force hide desktop sidebar on mobile when not opened */
+  body:not(.sidebar-open) .sidebar,
+  body:not(.sidebar-open) aside.sidebar,
+  aside.sidebar:not(.sidebar-open) {
+    display: none !important;
+    width: 0 !important;
+    max-width: 0 !important;
+    min-width: 0 !important;
+    transform: translateX(-100%) !important;
+    position: absolute !important;
+    left: -9999px !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+  }
+
+  /* Main container takes full width with zero left margin */
+  .app-body,
+  body .app-body,
+  body.collapsed .app-body,
+  .collapsed .app-body {
+    margin-left: 0 !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    box-sizing: border-box !important;
+  }
+
+  .main,
+  #main {
+    padding: 15px 16px 80px !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+  }
+
+  /* Row 2: Force vertical stacking of Priority Card and Target Terdekat */
+  div.v7-home-layout,
+  div.v7-home-layout.b18-home-layout,
+  div.qc14-home-layout.b18-home-layout,
+  div.v7-home-layout.qc14-home-layout.b18-home-layout {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 15px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-bottom: 15px !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Priority Card (TAHAP PENELITIAN SAAT INI) - 100% Full Width Stacked on Top */
+  section.card.next-step-card.b18-priority,
+  section.b18-priority,
+  .b18-priority {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    flex: none !important;
+    min-height: auto !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+    border-radius: 16px !important;
+    outline: 1px #E2E8F0 solid !important;
+    outline-offset: -1px !important;
+    background: white !important;
+    box-shadow: none !important;
+    overflow: hidden !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  /* Target Terdekat Card - 100% Full Width Stacked Below Priority */
+  aside.home-schedule,
+  .home-schedule {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    flex: none !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+  }
+
+  .b18-target-card,
+  .target-card.b18-target-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+  }
+}
+
