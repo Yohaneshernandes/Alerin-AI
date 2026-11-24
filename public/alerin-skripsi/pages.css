@@ -4354,6 +4354,12 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
     flex: 1 1 auto !important;
     min-width: 0 !important;
   }
+  .pilih-modal-btn-download:only-child {
+    flex: 1 1 100% !important;
+    width: 100% !important;
+    height: 45px !important;
+    font-size: 13px !important;
+  }
   .pilih-modal-btn-download svg {
     width: 16px !important;
     height: 16px !important;

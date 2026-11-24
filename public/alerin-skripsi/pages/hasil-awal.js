@@ -770,7 +770,7 @@ function showTitleChosenModal(i, title) {
           <div class="pilih-modal-box-text">${e(title)}</div>
         </div>
 
-        <p class="pilih-modal-desc">Unduh outline dan kerangka berpikir untuk bahan bimbingan, atau lanjutkan penyusunan Bab I.</p>
+        <p class="pilih-modal-desc">Unduh outline untuk bahan bimbingan, atau lanjutkan penyusunan Bab 1.</p>
 
         <div class="pilih-modal-actions">
           <div class="pilih-modal-downloads">
@@ -782,17 +782,9 @@ function showTitleChosenModal(i, title) {
               </svg>
               <span>Unduh Outline</span>
             </button>
-            <button type="button" class="pilih-modal-btn-download" data-action="download-framework:${i}">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#186DD8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                <polyline points="7 10 12 15 17 10"></polyline>
-                <line x1="12" y1="15" x2="12" y2="3"></line>
-              </svg>
-              <span>Unduh Kerangka Berpikir</span>
-            </button>
           </div>
           <button type="button" class="pilih-modal-btn-primary" data-action="go-bab-1:${i}">
-            <span>Lanjutkan ke Bab I</span>
+            <span>Lanjutkan ke Bab 1</span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="5" y1="12" x2="19" y2="12"></line>
               <polyline points="12 5 19 12 12 19"></polyline>
