@@ -89,8 +89,8 @@ const CHAPTERS = [
     'Penutup',
     [
       ['conclusion', 'Kesimpulan', ['Rumusan masalah yang dijawab', 'Temuan hasil penelitian yang menjawabnya']],
-      ['limitations', 'Keterbatasan', ['Keterbatasan yang dialami', 'Dampak terhadap penafsiran']],
       ['recommendations', 'Saran', ['Pihak yang dituju', 'Dasar saran', 'Tindakan yang disarankan|optional']],
+      ['limitations', 'Keterbatasan', ['Keterbatasan yang dialami', 'Dampak terhadap penafsiran']],
     ],
   ],
 ];
@@ -117,7 +117,7 @@ const SUSUNAN = {
       ['Tinjauan Pustaka', ['theory', 'prior', 'framework', 'hypothesis']],
       ['Metode Penelitian', ['design', 'location', 'population', 'participants', 'collection', 'quality', 'analysis']],
       ['Hasil dan Pembahasan', ['data', 'results', 'discussion']],
-      ['Penutup', ['conclusion', 'limitations', 'recommendations']],
+      ['Penutup', ['conclusion', 'recommendations', 'limitations']],
     ],
   },
   hasil6: {
@@ -128,7 +128,7 @@ const SUSUNAN = {
       ['Metode Penelitian', ['design', 'location', 'population', 'participants', 'collection', 'quality', 'analysis']],
       ['Hasil Penelitian', ['data', 'results']],
       ['Pembahasan', ['discussion']],
-      ['Penutup', ['conclusion', 'limitations', 'recommendations']],
+      ['Penutup', ['conclusion', 'recommendations', 'limitations']],
     ],
   },
   konsep6: {
@@ -139,7 +139,7 @@ const SUSUNAN = {
       ['Kerangka Konseptual dan Hipotesis', ['framework', 'hypothesis']],
       ['Metode Penelitian', ['design', 'location', 'population', 'participants', 'collection', 'quality', 'analysis']],
       ['Hasil dan Pembahasan', ['data', 'results', 'discussion']],
-      ['Penutup', ['conclusion', 'limitations', 'recommendations']],
+      ['Penutup', ['conclusion', 'recommendations', 'limitations']],
     ],
   },
 };

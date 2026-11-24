@@ -14867,8 +14867,8 @@ function CariJudulPanel({ onBack }: { onBack: () => void }) {
         no: 5, judul: "Penutup",
         subs: [
           { title: "5.1 Kesimpulan", items: xVars.map((x, i) => `Kesimpulan H${i + 1}: ${x} terhadap ${yVar}`) },
-          { title: "5.2 Keterbatasan Penelitian", items: ["Keterbatasan sampel dan generalisasi", "Keterbatasan metode pengumpulan data"] },
-          { title: "5.3 Saran", items: ["Saran bagi penelitian selanjutnya", "Saran praktis bagi pelaku industri dan institusi terkait"] },
+          { title: "5.2 Saran", items: ["Saran bagi penelitian selanjutnya", "Saran praktis bagi pelaku industri dan institusi terkait"] },
+          { title: "5.3 Keterbatasan Penelitian", items: ["Keterbatasan sampel dan generalisasi", "Keterbatasan metode pengumpulan data"] },
         ],
       },
     ];
