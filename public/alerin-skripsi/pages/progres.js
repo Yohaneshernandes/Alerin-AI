@@ -287,10 +287,6 @@ function progressLists() {
     tunda: S.tasks.filter(t => t.status === 'deferred'),
   };
 }
-function progressShortcuts() {
-  /* Tambah arahan ada di setiap kartu dan Dukungan Mentor ada di sidebar, jadi tidak diulang di sini. */
-  return `<section class="card mt"><h3>Perbarui konteks pekerjaan</h3><div class="actions mt">${B('Mulai Menyusun', S.title ? 'guide-view:guide' : 'nav:mulai', '', 'compass')}${B('Periksa Draf Terbaru', 'nav:periksa', '', 'document')}</div></section>`;
-}
 /* Tiga slot: Prioritas Utama, Prioritas Berikutnya, Pekerjaan Paralel. Slot tanpa calon yang siap dibiarkan kosong. */
 function activeSlots(list) {
   const r = slotRoles(list);
@@ -543,7 +539,6 @@ function progresPage() {
       ${progresSyncContext(tabs)}
       ${progresTabsBar(tabs)}
       <div role="tabpanel" data-progress-list="${progressTab}">${body}</div>
-      ${tabs.aktif.length ? progressShortcuts() : ''}
     </div>
   `;
 }
