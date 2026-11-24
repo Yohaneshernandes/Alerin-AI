@@ -621,8 +621,8 @@ function hasilAwalPage() {
       return `
         <div class="hasil-awal-option-card ${on ? 'selected' : ''}" data-title-option="${i}">
           <div class="hasil-awal-option-header">
-            <div class="hasil-awal-option-label">OPSI ${optNum} · ${e(optType)}</div>
-            <div class="hasil-awal-option-badge">${on ? 'Judul dipilih' : 'Contoh'}</div>
+            <div class="hasil-awal-option-label">OPSI ${optNum}</div>
+            ${on ? `<div class="hasil-awal-option-badge">Judul dipilih</div>` : ''}
           </div>
           <div class="hasil-awal-option-title">${e(on ? S.title : t[0])}</div>
           <div class="hasil-awal-option-meta">
