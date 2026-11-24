@@ -519,18 +519,18 @@ function selectTahapItem(stageNum) {
 }
 
 const STAGE_CHOICES = [
-  { stage: -1, title: 'Baru Memulai · Persiapan', subtitle: 'Di personalisasi: Belum mulai', persoId: 'belum' },
-  { stage: 0, title: 'Penentuan Topik atau Judul', subtitle: 'Di personalisasi: Mencari topik/judul', persoId: 'judul' },
-  { stage: 1, title: 'Penyusunan Proposal', subtitle: 'Di personalisasi: Penyusunan proposal', persoId: 'proposal' },
-  { stage: 2, title: 'Persiapan Instrumen dan Izin', subtitle: 'Tidak ada di pilihan personalisasi', persoId: null },
-  { stage: 3, title: 'Persiapan Seminar Proposal', subtitle: 'Di personalisasi: Persiapan sempro', persoId: 'sempro' },
-  { stage: 4, title: 'Seminar Proposal dan Revisi', subtitle: 'Tidak ada di pilihan personalisasi', persoId: null },
-  { stage: 5, title: 'Pengumpulan Data', subtitle: 'Di personalisasi: Pengumpulan data', persoId: 'data' },
-  { stage: 6, title: 'Pengolahan dan Analisis Data', subtitle: 'Di personalisasi: Pengumpulan data', persoId: null },
-  { stage: 7, title: 'Penyusunan Bab Akhir', subtitle: 'Di personalisasi: Penyusunan bab akhir', persoId: 'babakhir' },
-  { stage: 8, title: 'Finalisasi dan Review', subtitle: 'Di personalisasi: Review dan revisi', persoId: 'review' },
-  { stage: 9, title: 'Persiapan dan Pelaksanaan Sidang', subtitle: 'Di personalisasi: Persiapan sidang', persoId: 'sidang' },
-  { stage: 10, title: 'Revisi Akhir', subtitle: 'Tidak ada di pilihan personalisasi', persoId: null },
+  { stage: -1, title: 'Baru Memulai · Persiapan', subtitle: 'Di personalisasi: Belum mulai', persoId: 'belum', deskOrder: 1 },
+  { stage: 0, title: 'Penentuan Topik atau Judul', subtitle: 'Di personalisasi: Mencari topik/judul', persoId: 'judul', deskOrder: 3 },
+  { stage: 1, title: 'Penyusunan Proposal', subtitle: 'Di personalisasi: Penyusunan proposal', persoId: 'proposal', deskOrder: 2 },
+  { stage: 2, title: 'Persiapan Instrumen dan Izin', subtitle: 'Tidak ada di pilihan personalisasi', persoId: null, deskOrder: 4 },
+  { stage: 3, title: 'Persiapan Seminar Proposal', subtitle: 'Di personalisasi: Persiapan sempro', persoId: 'sempro', deskOrder: 5 },
+  { stage: 4, title: 'Seminar Proposal dan Revisi', subtitle: 'Tidak ada di pilihan personalisasi', persoId: null, deskOrder: 6 },
+  { stage: 5, title: 'Pengumpulan Data', subtitle: 'Di personalisasi: Pengumpulan data', persoId: 'data', deskOrder: 7 },
+  { stage: 6, title: 'Pengolahan dan Analisis Data', subtitle: 'Di personalisasi: Pengumpulan data', persoId: null, deskOrder: 8 },
+  { stage: 7, title: 'Penyusunan Bab Akhir', subtitle: 'Di personalisasi: Penyusunan bab akhir', persoId: 'babakhir', deskOrder: 9 },
+  { stage: 8, title: 'Finalisasi dan Review', subtitle: 'Di personalisasi: Review dan revisi', persoId: 'review', deskOrder: 10 },
+  { stage: 9, title: 'Persiapan dan Pelaksanaan Sidang', subtitle: 'Di personalisasi: Persiapan sidang', persoId: 'sidang', deskOrder: 11 },
+  { stage: 10, title: 'Revisi Akhir', subtitle: 'Tidak ada di pilihan personalisasi', persoId: null, deskOrder: 12 },
 ];
 
 function positionModal() {
@@ -549,7 +549,7 @@ function positionModal() {
                     (userKondisi && Number.isInteger(userKondisi.stage) && userKondisi.stage === item.stage);
 
     return `
-      <div class="tahap-opt-card ${isSelected ? 'selected' : ''}" data-action="tahap-select:${item.stage}" data-stage="${item.stage}" role="radio" aria-checked="${isSelected ? 'true' : 'false'}" tabindex="0">
+      <div class="tahap-opt-card ${isSelected ? 'selected' : ''}" data-action="tahap-select:${item.stage}" data-stage="${item.stage}" role="radio" aria-checked="${isSelected ? 'true' : 'false'}" tabindex="0" style="--desk-order: ${item.deskOrder};">
         <div class="tahap-radio-wrapper">
           <div class="tahap-radio ${isSelected ? 'selected' : ''}">
             ${isSelected ? '<span class="tahap-radio-dot"></span>' : ''}

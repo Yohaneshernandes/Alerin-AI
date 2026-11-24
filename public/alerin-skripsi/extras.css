@@ -3024,8 +3024,8 @@ body.dark .pustaka-journal-banner-text p {
 }
 
 .tahap-cards-list {
-  display: flex !important;
-  flex-direction: column !important;
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   gap: 10px !important;
   width: 100% !important;
 }
@@ -3045,6 +3045,8 @@ body.dark .pustaka-journal-banner-text p {
   cursor: pointer !important;
   text-align: left !important;
   user-select: none !important;
+  order: var(--desk-order, 1) !important;
+  min-height: 72px !important;
   transition: background 0.15s ease, outline-color 0.15s ease !important;
 }
 
@@ -3057,6 +3059,7 @@ body.dark .pustaka-journal-banner-text p {
   background: rgba(238, 245, 255, 0.75) !important;
   outline: 1px #186DD8 solid !important;
   outline-offset: -1px !important;
+  min-height: 72px !important;
 }
 
 /* Radio Button */
@@ -3284,11 +3287,20 @@ body.dark .pustaka-journal-banner-text p {
   }
 
   .tahap-modal-body {
-    padding: 14px 16px !important;
+    padding: 14px 16px 20px !important;
     gap: 10px !important;
   }
 
+  .tahap-cards-list {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    width: 100% !important;
+  }
+
   .tahap-opt-card {
+    order: initial !important;
+    min-height: auto !important;
     padding: 14px !important;
     gap: 12px !important;
   }
