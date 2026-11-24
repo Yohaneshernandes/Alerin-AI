@@ -3468,19 +3468,64 @@ body.dark .tahap-btn-cancel:hover {
     --sidebar: 0px !important;
   }
 
-  /* Force hide desktop sidebar on mobile when not opened */
+  /* Hide desktop sidebar on mobile when drawer is closed */
   body:not(.sidebar-open) .sidebar,
-  body:not(.sidebar-open) aside.sidebar,
-  aside.sidebar:not(.sidebar-open) {
+  body:not(.sidebar-open) aside.sidebar {
     display: none !important;
     width: 0 !important;
     max-width: 0 !important;
     min-width: 0 !important;
-    transform: translateX(-100%) !important;
+    transform: translateX(-105%) !important;
     position: absolute !important;
     left: -9999px !important;
     pointer-events: none !important;
     visibility: hidden !important;
+  }
+
+  /* Show mobile sidebar drawer when open */
+  body.sidebar-open .sidebar-scrim {
+    display: block !important;
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 99 !important;
+    background: rgba(15, 23, 42, 0.45) !important;
+    backdrop-filter: blur(4px) !important;
+    -webkit-backdrop-filter: blur(4px) !important;
+    touch-action: none !important;
+  }
+
+  body.sidebar-open .sidebar,
+  body.sidebar-open aside.sidebar,
+  body.collapsed.sidebar-open .sidebar,
+  body.collapsed.sidebar-open aside.sidebar {
+    display: flex !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    height: 100% !important;
+    max-height: 100dvh !important;
+    width: 280px !important;
+    max-width: 85vw !important;
+    min-width: 260px !important;
+    background: #FFFFFF !important;
+    border-right: 1px solid #DCE4EF !important;
+    transform: translateX(0) !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    z-index: 100 !important;
+    padding: 20px 15px !important;
+    box-sizing: border-box !important;
+    flex-direction: column !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain !important;
+    box-shadow: 0px 25px 50px -12px rgba(15, 23, 42, 0.25) !important;
+  }
+
+  body.dark.sidebar-open .sidebar,
+  body.dark.sidebar-open aside.sidebar {
+    background: #0F172A !important;
+    border-right-color: #1E293B !important;
   }
 
   /* Main container takes full width with zero left margin */

@@ -282,7 +282,7 @@ window.addEventListener('beforeunload', () => {
 });
 
 window.addEventListener('resize', () => {
-  if (!matchMedia('(max-width:760px)').matches) document.body.classList.remove('sidebar-open');
+  if (!matchMedia('(max-width:768px)').matches) document.body.classList.remove('sidebar-open');
 });
 
 S = loadState();

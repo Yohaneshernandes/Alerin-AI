@@ -384,7 +384,7 @@ Object.assign(ACTIONS, {
     }
   },
   sidebar: () => {
-    if (matchMedia('(max-width:760px)').matches) {
+    if (matchMedia('(max-width:768px)').matches) {
       const open = document.body.classList.toggle('sidebar-open');
       $('.mobile-menu')?.setAttribute('aria-expanded', String(open));
       if (open) $('.sidebar-toggle')?.focus();
@@ -454,7 +454,7 @@ Object.assign(ACTIONS, {
       S.guide.view = 'konteks';
     }
     go(safeRoute(arg));
-    if (matchMedia('(max-width:760px)').matches) document.body.classList.remove('sidebar-open');
+    if (matchMedia('(max-width:768px)').matches) document.body.classList.remove('sidebar-open');
   },
   notifs: () => {
     notifsModal();

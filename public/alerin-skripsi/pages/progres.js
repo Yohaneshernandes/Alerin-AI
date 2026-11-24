@@ -925,6 +925,18 @@ function completeTask(id) {
     );
     return;
   }
+  const rs = reviewState(t);
+  const belumPeriksa = !t.review || rs === 'none' || rs === 'stale';
+  if (belumPeriksa || block.kind === 'tinjauan') {
+    const fromWorkspace = !!$('#overlay-root .workspace-modal');
+    modal(
+      'Selesaikan Periksa Pekerjaan terlebih Dahulu',
+      `<p>Kamu perlu menjalankan <strong>Periksa Pekerjaan</strong> terlebih dahulu sebelum mencatat pekerjaan ini selesai.</p><p class="small muted">Tekan tombol <strong>Periksa Pekerjaan</strong> di bawah ini untuk memeriksa ketercapaian kriteria.</p>`,
+      B('Kembali', fromWorkspace ? 'task:' + id : 'close-modal') + B('Periksa Pekerjaan', 'task-koreksi:' + id, 'primary', 'check'),
+    );
+    toast('Selesaikan Periksa Pekerjaan terlebih Dahulu', 'warn');
+    return;
+  }
   showTask(id, block.text);
   if (block.kind === 'kolom') {
     const ids = block.empty?.length ? block.empty : PARTS[t.part].fields.map((f, i) => i).filter(i => !PARTS[t.part].fields[i].includes('|optional'));
