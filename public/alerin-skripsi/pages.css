@@ -13207,54 +13207,69 @@ body.dark-mode .btn-peta-action-subtle,
     display: flex !important;
     flex-direction: row !important;
     align-items: center !important;
-    gap: 7px !important;
-    flex-wrap: nowrap !important;
+    gap: 8px !important;
+    flex-wrap: wrap !important;
     width: 100% !important;
-    margin-top: 4px !important;
+    margin-top: 6px !important;
   }
   .b18-btn-kerjakan {
-    height: 40px !important;
-    padding: 10px 14px !important;
+    order: 1 !important;
+    height: 42px !important;
+    padding: 10px 16px !important;
     background: #186DD8 !important;
     border-radius: 8px !important;
     color: white !important;
-    font-size: 12px !important;
+    font-size: 13px !important;
     font-weight: 600 !important;
-    flex: 1 1 auto !important;
-    min-width: 0 !important;
+    flex: 1 1 100% !important;
+    width: 100% !important;
     white-space: nowrap !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-sizing: border-box !important;
   }
   .b18-btn-complete {
-    height: 40px !important;
-    padding: 10px 10px !important;
-    background: #F8FAFC !important;
-    border-radius: 8px !important;
-    border: 1px solid #E2E8F0 !important;
-    color: #94A3B8 !important;
-    font-size: 12px !important;
-    font-weight: 500 !important;
-    flex: 1.6 1 auto !important;
-    min-width: 0 !important;
-    gap: 4px !important;
-    white-space: nowrap !important;
-  }
-  .b18-btn-complete svg {
-    width: 14px !important;
-    height: 14px !important;
-    flex-shrink: 0 !important;
-  }
-  .b18-btn-tunda {
-    height: 40px !important;
+    order: 2 !important;
+    height: 42px !important;
     padding: 10px 12px !important;
     background: #F8FAFC !important;
     border-radius: 8px !important;
     border: 1px solid #E2E8F0 !important;
-    color: #475569 !important;
-    font-size: 12px !important;
+    color: #94A3B8 !important;
+    font-size: 12.5px !important;
     font-weight: 500 !important;
-    flex: 0.8 1 auto !important;
+    flex: 1 1 0 !important;
     min-width: 0 !important;
+    gap: 6px !important;
     white-space: nowrap !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-sizing: border-box !important;
+  }
+  .b18-btn-complete svg {
+    width: 15px !important;
+    height: 15px !important;
+    flex-shrink: 0 !important;
+  }
+  .b18-btn-tunda {
+    order: 3 !important;
+    height: 42px !important;
+    padding: 10px 14px !important;
+    background: #F8FAFC !important;
+    border-radius: 8px !important;
+    border: 1px solid #E2E8F0 !important;
+    color: #475569 !important;
+    font-size: 12.5px !important;
+    font-weight: 500 !important;
+    flex: 0 0 auto !important;
+    min-width: 72px !important;
+    white-space: nowrap !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-sizing: border-box !important;
   }
   .b18-task-block-banner {
     padding: 10px !important;
