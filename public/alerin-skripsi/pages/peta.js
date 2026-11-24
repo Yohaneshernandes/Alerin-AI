@@ -290,19 +290,6 @@ function petaPage() {
     </div>
   `;
 
-  const posStripHtml = `
-    <section class="card b18-progres-pos-strip" aria-label="Posisi Penelitian">
-      <div class="b18-pos-strip-text">
-        <span class="b18-pos-eyebrow">POSISI PENELITIANMU</span>
-        <strong class="b18-pos-strong">${e(st.confirmed ? positionLabel(st.idx) : 'Pilih Tahap Terakhir')}</strong>
-        <span class="b18-pos-meta">${e(st.confirmed ? positionSource() : 'Belum dikonfirmasi')}</span>
-      </div>
-      <button type="button" class="btn b18-pos-btn" data-action="pos-edit">
-        <span>Perbarui Posisi</span>
-      </button>
-    </section>
-  `;
-
   const dlSet = Boolean(dl);
   const tgSet = Boolean(tg);
 
@@ -399,7 +386,6 @@ function petaPage() {
   return `
     <div class="peta-layout-container">
       ${headerHtml}
-      ${posStripHtml}
       ${targetsHtml}
       ${mainCardHtml}
     </div>
