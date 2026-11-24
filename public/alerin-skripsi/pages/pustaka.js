@@ -302,7 +302,7 @@ function pustakaPage() {
       ${b.editing ? `<div class="pustaka-edit-note">${note('Kamu sedang mengedit sumber tersimpan. Simpan untuk memperbarui daftar.')} <button class="inline-link" data-action="dp-reset">Batal edit</button></div>` : ''}
 
       <div class="field pustaka-field-row">
-        <label for="dp-type">Jenis Sumber <span class="req">*</span></label>
+        <label for="dp-type">Jenis Sumber <span class="req required-star required-label">*</span></label>
         <div class="pustaka-custom-dropdown">
           <button type="button" class="pustaka-dropdown-trigger" data-action="dp-type-toggle" aria-haspopup="listbox" aria-expanded="false">
             <span class="pustaka-dropdown-val">${e(f.type || 'Jurnal')}</span>
@@ -320,7 +320,7 @@ function pustakaPage() {
       </div>
 
       <div class="field pustaka-field-row">
-        <label for="dp-title">Judul Sumber <span class="req">*</span></label>
+        <label for="dp-title">Judul Sumber <span class="req required-star required-label">*</span></label>
         <div class="pustaka-input-wrap">
           <input id="dp-title" data-dp="title" data-nocap="1" type="text" value="${e(f.title ?? '')}" placeholder="Masukkan judul sumber" maxlength="300" aria-required="true" class="pustaka-input">
           <div id="dp-case">${caseHint()}</div>
@@ -328,17 +328,17 @@ function pustakaPage() {
       </div>
 
       <div class="field pustaka-field-row">
-        <label for="dp-authors">Penulis <span class="req">*</span></label>
+        <label for="dp-authors">Penulis <span class="req required-star required-label">*</span></label>
         <input id="dp-authors" data-dp="authors" data-nocap="1" type="text" value="${e(f.authors ?? '')}" placeholder="Mis. Putra, Adi; Sari, Bunga" maxlength="300" class="pustaka-input">
       </div>
 
       <div class="pustaka-two-fields">
         <div class="field pustaka-col-field">
-          <label for="dp-year">Tahun <span class="req">*</span></label>
+          <label for="dp-year">Tahun <span class="req required-star required-label">*</span></label>
           <input id="dp-year" data-dp="year" data-nocap="1" type="text" value="${e(f.year ?? '')}" placeholder="2026" maxlength="4" aria-required="true" class="pustaka-input">
         </div>
         <div class="field pustaka-col-field">
-          <label for="dp-container">${containerLabel} <span class="req">*</span></label>
+          <label for="dp-container">${containerLabel} <span class="req required-star required-label">*</span></label>
           <input id="dp-container" data-dp="container" data-nocap="1" type="text" value="${e(f.container ?? '')}" placeholder="${journal ? 'Nama publikasi' : 'Nama penerbit'}" maxlength="300" aria-required="true" class="pustaka-input">
         </div>
       </div>

@@ -4067,4 +4067,74 @@ body.dark .kerangka-btn-back:hover {
   }
 }
 
+/* ==========================================================================
+   Universal Red Required Asterisks & Badges (* and Wajib) across Alerin Skripsi
+   ========================================================================== */
+.req,
+.required-star,
+.b18-ws-req-star,
+.mulai-req,
+.idea-req,
+.pk-required-star-v2,
+.required-label,
+label span.req,
+label span.required-star,
+label span.b18-ws-req-star,
+label span.mulai-req,
+label span.idea-req,
+label span.pk-required-star-v2,
+.field label span.req,
+.field label span.required-star,
+.field label span.b18-ws-req-star,
+.field label span.mulai-req,
+.field label span.idea-req,
+.field label span.pk-required-star-v2,
+.pustaka-field-row label .req,
+.pustaka-col-field label .req,
+.pustaka-card label .req,
+.folder-modal-label .required-star,
+.b18-ws-field-label .b18-ws-req-star,
+.mulai-label .mulai-req,
+.idea-label .idea-req,
+.rv-modal-label .req,
+.mentor-field-label .req,
+span[class*="req"],
+span[class*="star"] {
+  color: #DC2626 !important;
+  font-weight: 700 !important;
+}
+
+body.dark .req,
+body.dark .required-star,
+body.dark .b18-ws-req-star,
+body.dark .mulai-req,
+body.dark .idea-req,
+body.dark .pk-required-star-v2,
+body.dark .required-label,
+body.dark label span.req,
+body.dark label span.required-star,
+body.dark label span.b18-ws-req-star,
+body.dark label span.mulai-req,
+body.dark label span.idea-req,
+body.dark label span.pk-required-star-v2,
+body.dark .field label span.req,
+body.dark .field label span.required-star,
+body.dark .field label span.b18-ws-req-star,
+body.dark .field label span.mulai-req,
+body.dark .field label span.idea-req,
+body.dark .field label span.pk-required-star-v2,
+body.dark .pustaka-field-row label .req,
+body.dark .pustaka-col-field label .req,
+body.dark .folder-modal-label .required-star,
+body.dark .b18-ws-field-label .b18-ws-req-star,
+body.dark .mulai-label .mulai-req,
+body.dark .idea-label .idea-req,
+body.dark .rv-modal-label .req,
+body.dark .mentor-field-label .req,
+body.dark span[class*="req"],
+body.dark span[class*="star"] {
+  color: #EF4444 !important;
+  font-weight: 700 !important;
+}
+
 
