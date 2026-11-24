@@ -611,7 +611,7 @@ function hasilAwalPage() {
     ? 'Pengaruh algoritma konten video pendek (TikTok/Reels) terhadap fenomena social media fatigue dan pola konsumsi informasi audiens muda.'
     : S.draft.topic;
 
-  const design = `<section class="output-section"><div class="section-head"><div><h3>Rancangan Penelitian</h3><p class="small">${active ? 'Mengikuti judul yang kamu pilih.' : 'Arah awal dari isianmu. Pilih satu judul di tab Opsi Judul.'} Disusun dari isianmu, belum analisis AI.</p></div>${badge('Contoh', '')}</div><div data-output="design">${outputRows(rows, false)}</div></section>`;
+  const design = `<section class="output-section"><div class="section-head"><div><h3>Rancangan Penelitian</h3><p class="small">${active ? 'Mengikuti judul yang kamu pilih.' : 'Arah awal dari isianmu. Pilih satu judul di tab Opsi Judul.'} Disusun dari isianmu, belum analisis AI.</p></div></div><div data-output="design">${outputRows(rows, false)}</div></section>`;
 
   const titles = opts
     .map((t, i) => {
