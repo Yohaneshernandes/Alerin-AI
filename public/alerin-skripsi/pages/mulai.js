@@ -351,7 +351,7 @@ function ideaPageView() {
 
         <div class="idea-submit-row">
           <button type="button" class="idea-btn-submit" data-action="build-draft">
-            <span>Lanjutkan</span>
+            <span>Kerjakan</span>
           </button>
         </div>
       </div>
@@ -776,7 +776,7 @@ Object.assign(ACTIONS, {
     S.draftReady = true;
     S.draftSample = false;
     S.researchBundles = {};
-    outputTab = 'titles';
+    outputTab = 'design';
     record('Rancangan dan opsi judul disusun', S.draft.topic);
     persist();
     go('hasil-awal');
