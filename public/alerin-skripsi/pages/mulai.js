@@ -444,12 +444,34 @@ function workspaceView() {
       </div>
     `;
 
+  const hasActiveTitle = !!(S.title && (S.titleChosenAt || S.activeResearch));
+  const isDefaultOrTest =
+    !S.draft?.topic ||
+    isAsal(S.draft.topic) ||
+    /algoritma|video pendek|fatigue|reels/i.test(S.draft.topic) ||
+    String(S.draft.topic).length < 5;
+  const displayTopic = isDefaultOrTest
+    ? (S.title || 'Pengaruh algoritma konten video pendek (TikTok/Reels) terhadap fenomena social media fatigue dan pola konsumsi informasi audiens muda.')
+    : S.draft.topic;
+
+  const bannerHtml = hasActiveTitle
+    ? `
+      <div class="hasil-awal-banner mulai-chapter-banner">
+        <div class="hasil-awal-banner-tag">Berdasarkan isian pengguna</div>
+        <div class="hasil-awal-banner-title">${e(displayTopic)}</div>
+        <div class="hasil-awal-banner-desc">Rancangan merupakan bahan diskusi pembimbing. Outline dan kerangka berpikir tersedia pada setiap opsi judul.</div>
+      </div>
+    `
+    : '';
+
   return `
     <div class="mulai-page-head">
       <h1>Mulai Skripsi</h1>
       <p class="mulai-sub-desktop">Panduan pengerjaan dari Bab I hingga selesai.</p>
       <p class="mulai-sub-mobile">Panduan penyusunan dan penentuan<br/>arah skripsi Bab I sampai selesai</p>
     </div>
+
+    ${bannerHtml}
 
     <!-- CARD 1: PETA SKRIPSI (STEPPER + TAHAP BAB) -->
     <div class="idea-card bab-stepper-card">

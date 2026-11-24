@@ -2908,3 +2908,8 @@ body.dark .pustaka-journal-banner-text p {
     justify-content: center !important;
   }
 }
+
+/* Mulai Skripsi — Banner Keterangan Judul Aktif di Setiap Bab */
+.mulai-chapter-banner {
+  margin-bottom: 20px !important;
+}
