@@ -155,20 +155,34 @@ function konteksView() {
       <div class="mulai-form-grid">
         <div class="field mulai-field">
           <label for="ctx-semester" class="mulai-label">Semester<span class="mulai-req">*</span></label>
-          <select id="ctx-semester" class="mulai-select" aria-required="true">
-            ${opsi(
-              Array.from({ length: 14 }, (_, i) => [String(i + 1), String(i + 1)]),
-              semester,
-              'Pilih semester',
-            )}
-          </select>
+          <div class="mulai-select-wrap">
+            <select id="ctx-semester" class="mulai-select" aria-required="true">
+              ${opsi(
+                Array.from({ length: 14 }, (_, i) => [String(i + 1), String(i + 1)]),
+                semester,
+                'Pilih semester',
+              )}
+            </select>
+            <div class="mulai-select-arrow" aria-hidden="true">
+              <svg class="mulai-select-chevron" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </div>
+          </div>
         </div>
 
         <div class="field mulai-field">
           <label for="ctx-chapter" class="mulai-label">Bagian yang ingin dikerjakan</label>
-          <select id="ctx-chapter" class="mulai-select" data-bind="konteks.chapter">
-            ${chapterOptions(c.chapter)}
-          </select>
+          <div class="mulai-select-wrap">
+            <select id="ctx-chapter" class="mulai-select" data-bind="konteks.chapter">
+              ${chapterOptions(c.chapter)}
+            </select>
+            <div class="mulai-select-arrow" aria-hidden="true">
+              <svg class="mulai-select-chevron" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </div>
+          </div>
         </div>
 
         <div class="field mulai-field">
@@ -189,13 +203,20 @@ function konteksView() {
 
         <div class="field mulai-field">
           <label for="ctx-method" class="mulai-label">Metode<span class="mulai-req">*</span></label>
-          <select id="ctx-method" class="mulai-select" data-bind="konteks.method" aria-required="true">
-            ${opsi(
-              METODE.map(m => [m, m]),
-              c.method,
-              'Pilih metode',
-            )}
-          </select>
+          <div class="mulai-select-wrap">
+            <select id="ctx-method" class="mulai-select" data-bind="konteks.method" aria-required="true">
+              ${opsi(
+                METODE.map(m => [m, m]),
+                c.method,
+                'Pilih metode',
+              )}
+            </select>
+            <div class="mulai-select-arrow" aria-hidden="true">
+              <svg class="mulai-select-chevron" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </div>
+          </div>
         </div>
       </div>
 

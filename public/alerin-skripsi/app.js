@@ -50,6 +50,19 @@ document.addEventListener('click', async ev => {
     $('.profile-menu')?.remove();
     $('.profile-button')?.setAttribute('aria-expanded', 'false');
   }
+  const selWrap = ev.target.closest('.mulai-select-wrap');
+  $$('.mulai-select-wrap.is-open').forEach(w => {
+    if (w !== selWrap) w.classList.remove('is-open');
+  });
+  if (selWrap) {
+    selWrap.classList.toggle('is-open');
+  }
+});
+
+document.addEventListener('focusout', ev => {
+  if (ev.target.classList?.contains('mulai-select')) {
+    ev.target.closest('.mulai-select-wrap')?.classList.remove('is-open');
+  }
 });
 
 /* Simpan otomatis sesaat setelah pengguna berhenti mengetik. */
@@ -110,6 +123,10 @@ document.addEventListener('input', ev => {
 
 document.addEventListener('change', async ev => {
   const el = ev.target;
+  if (el.classList?.contains('mulai-select')) {
+    el.closest('.mulai-select-wrap')?.classList.remove('is-open');
+    el.blur();
+  }
   const d = el.dataset;
   if (d.bind === 'konteks.susunan') {
     /* Ganti susunan bab: bagian yang sedang dipilih ikut pindah ke nomor bab barunya. */

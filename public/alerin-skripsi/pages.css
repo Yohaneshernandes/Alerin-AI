@@ -2256,14 +2256,54 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
   outline: 1.5px #186DD8 solid;
   outline-offset: -1.5px;
 }
+.mulai-select-wrap {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
 .mulai-select {
-  appearance: none;
-  -webkit-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23637087' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 14px center;
-  padding-right: 36px;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  background-image: none !important;
+  padding-right: 38px !important;
   cursor: pointer;
+}
+.mulai-select::-ms-expand {
+  display: none;
+}
+.mulai-select-arrow {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #637087;
+}
+.mulai-select-chevron {
+  width: 15px;
+  height: 15px;
+  stroke: #637087;
+  transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.15s ease;
+  transform-origin: center;
+}
+.mulai-select-wrap:focus-within .mulai-select-chevron,
+.mulai-select-wrap.is-open .mulai-select-chevron,
+.mulai-select:focus ~ .mulai-select-arrow .mulai-select-chevron {
+  transform: rotate(90deg);
+  stroke: #186DD8;
+}
+.dark .mulai-select-arrow .mulai-select-chevron {
+  stroke: #94A3B8;
+}
+.dark .mulai-select-wrap:focus-within .mulai-select-chevron,
+.dark .mulai-select-wrap.is-open .mulai-select-chevron,
+.dark .mulai-select:focus ~ .mulai-select-arrow .mulai-select-chevron {
+  stroke: #60A5FA;
 }
 .mulai-date-wrap {
   position: relative;
@@ -2668,10 +2708,8 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
     line-height: 17px;
   }
   .mulai-select {
-    background-image: url("data:image/svg+xml,%3Csvg width='13' height='14' viewBox='0 0 13 14' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M3 5.25L6.5 8.75L10 5.25' stroke='%23657A96' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 14px center;
-    padding-right: 36px;
+    background-image: none !important;
+    padding-right: 36px !important;
   }
   .mulai-date-wrap {
     position: relative;
