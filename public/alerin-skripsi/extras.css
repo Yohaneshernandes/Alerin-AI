@@ -1315,3 +1315,380 @@ body.dark .pz-footnote {
   color: #94a3b8;
 }
 
+/* ============================================================
+   Halaman Pedoman Kampus (Desktop & Mobile)
+   Sesuai desain Figma Alerin Skripsi
+   ============================================================ */
+.pdm-page {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.pdm-head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  gap: 4px;
+  min-height: 64px;
+  justify-content: flex-end;
+}
+
+.pdm-title {
+  color: #142238;
+  font-size: 30px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 650;
+  line-height: 37.5px;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.pdm-desc {
+  color: #637087;
+  font-size: 13px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  line-height: 22.75px;
+  margin: 0;
+  max-width: 650px;
+}
+
+.pdm-layout {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 24px;
+  width: 100%;
+}
+
+.pdm-card-main {
+  flex: 1;
+  max-width: 869px;
+  padding: 20px;
+  background: linear-gradient(90deg, rgba(239, 246, 255, 0.50) 0%, #ffffff 50%, #ffffff 100%), #ffffff;
+  box-shadow: 0px 2px 4px rgba(35, 58, 87, 0.01);
+  border-radius: 16px;
+  border: 1px solid #DCE4EF;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  box-sizing: border-box;
+}
+
+.pdm-card-header {
+  align-self: stretch;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.pdm-card-title {
+  color: #142238;
+  font-size: 18px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 650;
+  line-height: 25.2px;
+  margin: 0;
+}
+
+.pdm-badge {
+  padding: 4px 9px;
+  background: #EDF4FF;
+  border-radius: 6px;
+  color: #125AB5;
+  font-size: 10px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  line-height: 14px;
+}
+
+.pdm-upload-zone {
+  align-self: stretch;
+  min-height: 154px;
+  padding: 20px;
+  background: #FAFDFF;
+  border-radius: 10px;
+  border: 1px solid #CBD8EB;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  box-sizing: border-box;
+  text-decoration: none;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.pdm-upload-zone:hover {
+  background: #F0F7FF;
+  border-color: #186DD8;
+}
+
+.pdm-upload-icon-circle {
+  width: 40px;
+  height: 40px;
+  background: #EEF5FF;
+  border-radius: 9999px;
+  border: 1px solid #D8E6FA;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 2px;
+}
+
+.pdm-upload-icon-circle .ico {
+  width: 20px;
+  height: 20px;
+  color: #186DD8;
+}
+
+.pdm-upload-title {
+  color: #1E293B;
+  font-size: 14px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  line-height: 20px;
+  text-align: center;
+  margin: 0;
+}
+
+.pdm-upload-format {
+  color: #94A3B8;
+  font-size: 11px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  line-height: 16.5px;
+  text-align: center;
+  margin: 0;
+}
+
+.pdm-upload-hint {
+  color: #125AB5;
+  font-size: 12px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  line-height: 16px;
+  text-align: center;
+  margin: 0;
+}
+
+.pdm-note {
+  align-self: stretch;
+  color: #52647D;
+  font-size: 12px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  line-height: 17.5px;
+  margin: 0;
+}
+
+/* Side Card */
+.pdm-card-side {
+  width: 351px;
+  flex-shrink: 0;
+  padding: 20px;
+  background: linear-gradient(90deg, rgba(239, 246, 255, 0.50) 0%, #ffffff 50%, #ffffff 100%), #ffffff;
+  box-shadow: 0px 2px 4px rgba(35, 58, 87, 0.01);
+  border-radius: 16px;
+  border: 1px solid #DCE4EF;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+  box-sizing: border-box;
+}
+
+.pdm-side-header {
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pdm-side-icon-square {
+  width: 28px;
+  height: 28px;
+  background: #EDF4FF;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.pdm-side-icon-square .ico {
+  width: 16px;
+  height: 16px;
+  color: #186DD8;
+}
+
+.pdm-side-title {
+  color: #0F172A;
+  font-size: 16px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  line-height: 24px;
+  margin: 0;
+}
+
+.pdm-bullets {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.pdm-bullet-item {
+  align-self: stretch;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #DCE4EF;
+}
+
+.pdm-bullet-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.pdm-bullet-dot {
+  width: 6px;
+  height: 6px;
+  background: #186DD8;
+  border-radius: 9999px;
+  flex-shrink: 0;
+  margin-top: 7px;
+}
+
+.pdm-bullet-text {
+  color: #1E293B;
+  font-size: 14px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  line-height: 21px;
+}
+
+/* Responsif Mobile (maks 760px) */
+@media (max-width: 760px) {
+  .pdm-page {
+    gap: 15px;
+  }
+  .pdm-head {
+    align-items: center;
+    text-align: center;
+    min-height: auto;
+    margin-bottom: 0;
+  }
+  .pdm-title {
+    font-size: 25px;
+    line-height: 31.25px;
+    text-align: center;
+  }
+  .pdm-desc {
+    font-size: 13px;
+    line-height: 18px;
+    text-align: center;
+  }
+  .pdm-layout {
+    flex-direction: column;
+    gap: 24px;
+  }
+  .pdm-card-main {
+    max-width: 100%;
+    padding: 15px;
+    background: #ffffff;
+    border-radius: 16px;
+    gap: 12px;
+  }
+  .pdm-upload-zone {
+    min-height: 189px;
+    padding: 20px;
+  }
+  .pdm-note {
+    font-size: 11.5px;
+    line-height: 17.5px;
+    text-align: center;
+  }
+  .pdm-card-side {
+    width: 100%;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 16px;
+    gap: 20px;
+  }
+}
+
+/* Dark Mode */
+body.dark .pdm-title {
+  color: #f1f5f9;
+}
+body.dark .pdm-desc {
+  color: #94a3b8;
+}
+body.dark .pdm-card-main,
+body.dark .pdm-card-side {
+  background: #182538;
+  border-color: #34465d;
+}
+body.dark .pdm-card-title,
+body.dark .pdm-side-title {
+  color: #f1f5f9;
+}
+body.dark .pdm-badge {
+  background: #1e3a5f;
+  color: #93c5fd;
+}
+body.dark .pdm-upload-zone {
+  background: #152233;
+  border-color: #34465d;
+}
+body.dark .pdm-upload-zone:hover {
+  background: #1a2c42;
+  border-color: #3b82f6;
+}
+body.dark .pdm-upload-icon-circle {
+  background: #1e3a5f;
+  border-color: #2d4f7c;
+}
+body.dark .pdm-upload-icon-circle .ico {
+  color: #93c5fd;
+}
+body.dark .pdm-upload-title {
+  color: #f1f5f9;
+}
+body.dark .pdm-upload-format {
+  color: #94a3b8;
+}
+body.dark .pdm-upload-hint {
+  color: #60a5fa;
+}
+body.dark .pdm-note {
+  color: #94a3b8;
+}
+body.dark .pdm-side-icon-square {
+  background: #1e3a5f;
+}
+body.dark .pdm-side-icon-square .ico {
+  color: #93c5fd;
+}
+body.dark .pdm-bullet-item {
+  border-color: #34465d;
+}
+body.dark .pdm-bullet-text {
+  color: #e2e8f0;
+}
+body.dark .pdm-bullet-dot {
+  background: #3b82f6;
+}
+
+
