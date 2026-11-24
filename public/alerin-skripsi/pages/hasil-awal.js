@@ -590,9 +590,9 @@ function candidateModal(index, type) {
 }
 function selectedBundle() {
   const a = S.activeResearch;
-  if (!a || a.title !== S.title || !(a.index >= 0)) return null;
+  if (!a || a.title !== S.title || !(a.index >= 0) || !S.titleChosenAt) return null;
   const b = currentBundle(a.index);
-  return b ? { ...b, title: S.title } : null;
+  return b ? { ...b, title: S.title, index: a.index } : null;
 }
 function hasilAwalPage() {
   S.draftReady = true;

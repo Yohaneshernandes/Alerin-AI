@@ -188,7 +188,7 @@ function initialState(empty = true) {
   s.draftSample = true;
   s.draftReady = true;
   s.draft = clone(ALERIN.draft || {});
-  s.activeResearch = { index: 0, title: ALERIN.title };
+  s.activeResearch = null;
   s.biblio = sampleBiblio(false);
   s.review = { title: ALERIN.title, phase: 6, method: 'Metode campuran', condition: '' };
   s.tasks = clone(ALERIN.tasks).map(t => ({

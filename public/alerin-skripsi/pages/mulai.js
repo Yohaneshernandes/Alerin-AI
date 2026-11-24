@@ -777,6 +777,8 @@ Object.assign(ACTIONS, {
     S.draftReady = true;
     S.draftSample = false;
     S.researchBundles = {};
+    S.activeResearch = null;
+    delete S.titleChosenAt;
     outputTab = 'design';
     record('Rancangan dan opsi judul disusun', S.draft.topic);
     persist();
