@@ -420,30 +420,6 @@ function workspaceView() {
        <button type="button" class="bab-btn-next" style="background:#52647D; margin-left: 8px;" data-action="reopen:${done.id}"><span>Buka Lagi</span></button>`
     : `<button type="button" class="idea-btn-submit" data-action="guide-task"><span>Kerjakan</span></button>`;
 
-  const nextBox = nx
-    ? `
-      <div class="bab-next-box">
-        <div class="bab-next-content">
-          <div class="bab-next-title">Langkah berikutnya</div>
-          <div class="bab-next-sub">Bab ${p.roman} • ${e(PARTS[nx].name)}</div>
-        </div>
-        <button type="button" class="bab-btn-next" data-action="guide-part:${nx}">
-          <span>Lanjut ke ${e(PARTS[nx].name)}</span>
-        </button>
-      </div>
-    `
-    : `
-      <div class="bab-next-box">
-        <div class="bab-next-content">
-          <div class="bab-next-title">Langkah berikutnya</div>
-          <div class="bab-next-sub">Periksa bab yang sudah kamu tulis</div>
-        </div>
-        <button type="button" class="bab-btn-next" data-action="periksa-bab:${p.chapter}">
-          <span>Periksa Skripsi</span>
-        </button>
-      </div>
-    `;
-
   const hasActiveTitle = !!(S.title && (S.titleChosenAt || S.activeResearch));
   const isDefaultOrTest =
     !S.draft?.topic ||
@@ -558,8 +534,6 @@ function workspaceView() {
         <div class="bab-autosave-note">
           Isian tersimpan otomatis di perangkat ini • pekerjaannya ada di Progres Aktif.
         </div>
-
-        ${nextBox}
       </div>
     </div>
   `;
