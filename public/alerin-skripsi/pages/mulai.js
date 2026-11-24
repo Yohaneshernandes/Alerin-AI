@@ -84,7 +84,7 @@ function refreshSusunanField() {
     l.classList.toggle('selected', !!radio?.checked);
   });
   const subDesk = $('.mulai-page-head .mulai-sub-desktop') || $('#main .page-head p');
-  if (subDesk) subDesk.textContent = `Panduan pengerjaan dari penentuan arah sampai Bab ${lastRoman()}.`;
+  if (subDesk) subDesk.textContent = 'Panduan pengerjaan dari Bab I hingga selesai.';
 }
 function konteksView() {
   const c = ensureKonteks();
@@ -99,7 +99,7 @@ function konteksView() {
   return `
     <div class="mulai-page-head">
       <h1>Mulai Skripsi</h1>
-      <p class="mulai-sub-desktop">Panduan pengerjaan dari penentuan arah sampai Bab ${lastRoman()}.</p>
+      <p class="mulai-sub-desktop">Panduan pengerjaan dari Bab I hingga selesai.</p>
       <p class="mulai-sub-mobile">Panduan penyusunan dan penentuan<br/>arah skripsi Bab I sampai selesai</p>
     </div>
     <div class="mulai-main-card">
@@ -238,7 +238,7 @@ function ideaPageView() {
   return `
     <div class="mulai-page-head">
       <h1>Mulai Skripsi</h1>
-      <p class="mulai-sub-desktop">Panduan pengerjaan dari penentuan arah sampai Bab ${lastRoman()}.</p>
+      <p class="mulai-sub-desktop">Panduan pengerjaan dari Bab I hingga selesai.</p>
       <p class="mulai-sub-mobile">Panduan penyusunan dan penentuan<br/>arah skripsi Bab I sampai selesai</p>
     </div>
 
@@ -426,7 +426,7 @@ function workspaceView() {
   return `
     <div class="mulai-page-head">
       <h1>Mulai Skripsi</h1>
-      <p class="mulai-sub-desktop">Panduan pengerjaan dari penentuan arah sampai Bab ${lastRoman()}.</p>
+      <p class="mulai-sub-desktop">Panduan pengerjaan dari Bab I hingga selesai.</p>
       <p class="mulai-sub-mobile">Panduan penyusunan dan penentuan<br/>arah skripsi Bab I sampai selesai</p>
     </div>
 
