@@ -3563,3 +3563,463 @@ body.dark .tahap-btn-cancel:hover {
   }
 }
 
+/* ==========================================================================
+   Kerangka Berpikir Modal (Desktop & Mobile Redesign)
+   ========================================================================== */
+.kerangka-modal-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  background: rgba(15, 23, 42, 0.45) !important;
+  backdrop-filter: blur(4px) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 1000 !important;
+  padding: 16px !important;
+  box-sizing: border-box !important;
+  overflow-y: auto !important;
+}
+
+.kerangka-modal-dialog {
+  position: relative !important;
+  width: 768px !important;
+  max-width: 960px !important;
+  max-height: 90vh !important;
+  background: #FFFFFF !important;
+  border-radius: 24px !important;
+  outline: 1px #DCE4EF solid !important;
+  outline-offset: -1px !important;
+  box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.05), 0px 25px 50px -12px rgba(0, 0, 0, 0.15) !important;
+  padding: 26px 28px 22px 28px !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+}
+
+.kerangka-modal-close {
+  position: absolute !important;
+  top: 20px !important;
+  right: 20px !important;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 9999px !important;
+  background: transparent !important;
+  border: none !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  transition: background 0.15s ease, opacity 0.15s ease !important;
+  z-index: 2 !important;
+}
+
+.kerangka-modal-close:hover {
+  background: #F1F5F9 !important;
+}
+
+.kerangka-modal-header {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  text-align: center !important;
+  width: 100% !important;
+  margin-bottom: 20px !important;
+}
+
+.kerangka-modal-title {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+  font-size: 24px !important;
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
+  line-height: 32px !important;
+  color: #0F172A !important;
+  margin: 0 !important;
+  letter-spacing: 0.5px !important;
+}
+
+.kerangka-modal-badge-wrap {
+  margin-top: 10px !important;
+  display: flex !important;
+  justify-content: center !important;
+}
+
+.kerangka-modal-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 4px 16px !important;
+  background: #EFF6FF !important;
+  border-radius: 9999px !important;
+  color: #186DD8 !important;
+  font-family: 'Inter', sans-serif !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.6px !important;
+  line-height: 16px !important;
+}
+
+.kerangka-modal-cand-title {
+  margin-top: 14px !important;
+  font-family: 'Inter', system-ui, sans-serif !important;
+  font-size: 19px !important;
+  font-weight: 700 !important;
+  line-height: 26px !important;
+  color: #0F172A !important;
+  max-width: 680px !important;
+  text-align: center !important;
+}
+
+.kerangka-modal-body {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  width: 100% !important;
+  gap: 0 !important;
+}
+
+.kerangka-modal-card {
+  align-self: stretch !important;
+  width: 100% !important;
+  background: #FFFFFF !important;
+  border-radius: 16px !important;
+  outline: 1px #DCE4EF solid !important;
+  outline-offset: -1px !important;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.02) !important;
+  padding: 20px !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  text-align: center !important;
+}
+
+.kerangka-card-pill {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 4px 16px !important;
+  background: #F1F5F9 !important;
+  border-radius: 6px !important;
+  color: #334155 !important;
+  font-family: 'Inter', sans-serif !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.28px !important;
+  line-height: 16.5px !important;
+  margin-bottom: 8px !important;
+}
+
+.kerangka-card-title {
+  font-family: 'Inter', system-ui, sans-serif !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  line-height: 24px !important;
+  color: #0F172A !important;
+  margin-bottom: 4px !important;
+}
+
+.kerangka-card-desc {
+  font-family: 'Inter', system-ui, sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 400 !important;
+  line-height: 21px !important;
+  color: #475569 !important;
+  max-width: 680px !important;
+}
+
+.kerangka-card-desc.muted-sm {
+  font-size: 12px !important;
+  line-height: 16px !important;
+  color: #64748B !important;
+}
+
+.kerangka-arrow-down {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 8px 0 !important;
+  line-height: 0 !important;
+}
+
+.kerangka-theory-warning {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 8px 18px !important;
+  background: rgba(254, 242, 242, 0.70) !important;
+  border-radius: 8px !important;
+  outline: 1px #FECACA solid !important;
+  outline-offset: -1px !important;
+  color: #DC2626 !important;
+  font-family: 'Inter', sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  line-height: 16px !important;
+  margin-bottom: 8px !important;
+}
+
+.kerangka-theory-active {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 8px 18px !important;
+  background: rgba(239, 246, 255, 0.70) !important;
+  border-radius: 8px !important;
+  outline: 1px #BFDBFE solid !important;
+  outline-offset: -1px !important;
+  color: #1D4ED8 !important;
+  font-family: 'Inter', sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  line-height: 16px !important;
+  margin-bottom: 8px !important;
+}
+
+.kerangka-model-row {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  margin: 6px 0 8px 0 !important;
+}
+
+.kerangka-var-name {
+  font-family: 'Inter', system-ui, sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  line-height: 21px !important;
+  color: #0F172A !important;
+}
+
+.kerangka-target-box {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 8px 16px !important;
+  background: #F8FAFC !important;
+  border-radius: 8px !important;
+  outline: 1px rgba(226, 232, 240, 0.80) solid !important;
+  outline-offset: -1px !important;
+  color: #475569 !important;
+  font-family: 'Inter', sans-serif !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  line-height: 16px !important;
+  max-width: 540px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.kerangka-modal-footer {
+  display: flex !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  width: 100% !important;
+  margin-top: 20px !important;
+  padding-top: 14px !important;
+}
+
+.kerangka-btn-back {
+  height: 44px !important;
+  padding: 0 24px !important;
+  background: #FFFFFF !important;
+  border-radius: 12px !important;
+  outline: 1px rgba(226, 232, 240, 0.90) solid !important;
+  outline-offset: -1px !important;
+  border: none !important;
+  color: #334155 !important;
+  font-family: 'Inter', sans-serif !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: background 0.15s ease, border-color 0.15s ease !important;
+}
+
+.kerangka-btn-back:hover {
+  background: #F8FAFC !important;
+  color: #0F172A !important;
+}
+
+/* Dark mode support */
+body.dark .kerangka-modal-dialog {
+  background: #0F172A !important;
+  outline-color: #334155 !important;
+}
+
+body.dark .kerangka-modal-close:hover {
+  background: #1E293B !important;
+}
+
+body.dark .kerangka-modal-title,
+body.dark .kerangka-modal-cand-title,
+body.dark .kerangka-card-title,
+body.dark .kerangka-var-name {
+  color: #F8FAFC !important;
+}
+
+body.dark .kerangka-modal-badge {
+  background: rgba(24, 109, 216, 0.20) !important;
+  color: #60A5FA !important;
+}
+
+body.dark .kerangka-modal-card {
+  background: #1E293B !important;
+  outline-color: #334155 !important;
+}
+
+body.dark .kerangka-card-pill {
+  background: #334155 !important;
+  color: #E2E8F0 !important;
+}
+
+body.dark .kerangka-card-desc {
+  color: #94A3B8 !important;
+}
+
+body.dark .kerangka-card-desc.muted-sm {
+  color: #64748B !important;
+}
+
+body.dark .kerangka-theory-warning {
+  background: rgba(220, 38, 38, 0.15) !important;
+  outline-color: rgba(220, 38, 38, 0.40) !important;
+  color: #FCA5A5 !important;
+}
+
+body.dark .kerangka-target-box {
+  background: #0F172A !important;
+  outline-color: #334155 !important;
+  color: #CBD5E1 !important;
+}
+
+body.dark .kerangka-btn-back {
+  background: #1E293B !important;
+  outline-color: #334155 !important;
+  color: #E2E8F0 !important;
+}
+
+body.dark .kerangka-btn-back:hover {
+  background: #334155 !important;
+}
+
+/* ==========================================================================
+   Kerangka Berpikir Modal - Mobile Responsive (< 768px)
+   ========================================================================== */
+@media (max-width: 768px) {
+  .kerangka-modal-overlay {
+    padding: 12px !important;
+  }
+
+  .kerangka-modal-dialog {
+    width: 348px !important;
+    max-width: calc(100vw - 24px) !important;
+    border-radius: 15px !important;
+    padding: 20px 16px 16px 16px !important;
+  }
+
+  .kerangka-modal-close {
+    top: 14px !important;
+    right: 14px !important;
+  }
+
+  .kerangka-modal-header {
+    margin-bottom: 14px !important;
+  }
+
+  .kerangka-modal-title {
+    font-size: 18px !important;
+    line-height: 23px !important;
+  }
+
+  .kerangka-modal-badge {
+    font-size: 11px !important;
+    padding: 3px 14px !important;
+    border-radius: 7px !important;
+    background: #EBF5FF !important;
+  }
+
+  .kerangka-modal-cand-title {
+    font-size: 14.5px !important;
+    line-height: 20px !important;
+    margin-top: 10px !important;
+  }
+
+  .kerangka-modal-card {
+    padding: 16px 14px !important;
+    border-radius: 14px !important;
+  }
+
+  .kerangka-card-pill {
+    font-size: 10px !important;
+    padding: 3px 12px !important;
+    margin-bottom: 6px !important;
+  }
+
+  .kerangka-card-title {
+    font-size: 15px !important;
+    line-height: 21px !important;
+  }
+
+  .kerangka-card-desc {
+    font-size: 12px !important;
+    line-height: 18px !important;
+  }
+
+  .kerangka-arrow-down {
+    padding: 6px 0 !important;
+  }
+
+  .kerangka-arrow-down svg {
+    width: 16px !important;
+    height: 16px !important;
+  }
+
+  .kerangka-theory-warning,
+  .kerangka-theory-active {
+    font-size: 12px !important;
+    padding: 6px 14px !important;
+  }
+
+  .kerangka-card-desc.muted-sm {
+    font-size: 11.5px !important;
+    line-height: 16px !important;
+  }
+
+  .kerangka-model-row {
+    gap: 6px !important;
+  }
+
+  .kerangka-var-name {
+    font-size: 12px !important;
+  }
+
+  .kerangka-target-box {
+    font-size: 11px !important;
+    padding: 6px 10px !important;
+    line-height: 16px !important;
+    width: 100% !important;
+  }
+
+  .kerangka-modal-footer {
+    margin-top: 14px !important;
+    padding-top: 10px !important;
+  }
+
+  .kerangka-btn-back {
+    height: 38px !important;
+    padding: 0 18px !important;
+    font-size: 12px !important;
+    border-radius: 9px !important;
+  }
+}
+
+

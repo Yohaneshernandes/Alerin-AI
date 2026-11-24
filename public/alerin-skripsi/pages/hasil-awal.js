@@ -575,15 +575,173 @@ function designRows(bundle) {
     active && bundle.key === active.key ? [['Judul penelitian', bundle.title], ...bundle.design] : bundle.design,
   );
 }
+function openKerangkaBerpikirModal(index) {
+  const b = currentBundle(index);
+  if (!b) return;
+  lastFocus = document.activeElement;
+  modalDirty = false;
+
+  const isActive = chosenTitle() === b.title;
+  const badgeText = isActive ? 'JUDUL DIPILIH' : 'PRATINJAU OPSI KANDIDAT';
+
+  // 1. Fenomena dan Fokus (Card 01)
+  const d = S.draft || {};
+  const isDefaultOrTest =
+    !d.topic ||
+    isAsal(d.topic) ||
+    /algoritma|video pendek|fatigue|reels/i.test(d.topic) ||
+    String(d.topic).length < 5;
+
+  let card1Title = 'Pengalaman Audiens Media Sosial';
+  let card1Desc = 'Fokus awal: analisis pola dan pengalaman audiens pada platform media sosial.';
+  if (!isDefaultOrTest && d.topic) {
+    card1Title = capitalize(d.topic);
+    card1Desc = d.phenomenon
+      ? `Fokus awal: ${d.phenomenon.toLowerCase()}.`
+      : `Fokus awal: analisis pola dan pengaruh ${d.topic.toLowerCase()}.`;
+  } else if (b.title && /pemaknaan/i.test(b.title)) {
+    card1Title = 'Pemaknaan Algoritma Konten Video Pendek';
+    card1Desc = 'Fokus awal: cara audiens memaknai interaksi algoritma pada platform media sosial.';
+  } else if (b.title && /pengalaman/i.test(b.title)) {
+    card1Title = 'Pengalaman Audiens Media Sosial';
+    card1Desc = 'Fokus awal: analisis pola dan pengalaman audiens pada platform media sosial.';
+  }
+
+  // 2. Landasan Teori (Card 02)
+  const hasTheory = b.theory && !/belum ditentukan/i.test(b.theory);
+  const theoryWarningPill = hasTheory
+    ? `<div class="kerangka-theory-active">${e(b.theory.replace(/^Gagasan yang sudah terpikirkan:\s*/, ''))}</div>`
+    : `<div class="kerangka-theory-warning">Teori belum ditentukan</div>`;
+  const theoryDesc = hasTheory
+    ? 'Dapat diselaraskan melalui tahap Validasi Literatur pada Opsi Judul.'
+    : 'Dapat ditelusuri melalui tahap Validasi Literatur pada Opsi Judul.';
+
+  // 3. Model Penelitian (Card 03)
+  const varX = 'Variabel Bebas (x)';
+  const varY = 'Variabel terikat (y)';
+  const modelDesc = 'Bagan arah penelaahan. Hubungan antarkonsep belum merupakan bukti sebab akibat.';
+
+  // 4. Rancangan Metode dan Data (Card 04)
+  const mLabel = konteksMethodLabel();
+  let methodTitle = 'Pendekatan Kuantitatif';
+  let methodDesc = 'Mengukur variabel lalu menganalisis hubungannya secara statistik.';
+  if (mLabel === 'Kualitatif') {
+    methodTitle = 'Pendekatan Kualitatif';
+    methodDesc = 'Menggali pengalaman, proses, atau makna secara mendalam.';
+  } else if (mLabel === 'Metode campuran') {
+    methodTitle = 'Pendekatan Metode Campuran';
+    methodDesc = 'Memadukan data kuantitatif dan kualitatif dengan urutan yang jelas.';
+  } else if (mLabel === 'R&D') {
+    methodTitle = 'Pendekatan R&D';
+    methodDesc = 'Mengembangkan produk lalu menguji kelayakan dan penggunaannya.';
+  }
+
+  let targetText = 'Pengguna Aktif TikTok dan Instagram Reels Usia 18–25 Tahun di Kota Malang';
+  if (!isDefaultOrTest && d.location) {
+    targetText = d.location;
+  }
+
+  const downArrowSvg = `
+    <div class="kerangka-arrow-down">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 3V17M10 17L5 12M10 17L15 12" stroke="#186DD8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+  `;
+
+  const rightArrowSvg = `
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" class="kerangka-model-arrow">
+      <path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="#186DD8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  `;
+
+  $('#overlay-root').innerHTML = `
+    <div class="overlay kerangka-modal-overlay" data-overlay="true">
+      <section class="kerangka-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="kerangka-title">
+        <button type="button" class="kerangka-modal-close" data-action="close-modal" aria-label="Tutup jendela">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1 1L13 13M13 1L1 13" stroke="#94A3B8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+
+        <header class="kerangka-modal-header">
+          <h2 id="kerangka-title" class="kerangka-modal-title">KERANGKA BERPIKIR</h2>
+          <div class="kerangka-modal-badge-wrap">
+            <span class="kerangka-modal-badge">${badgeText}</span>
+          </div>
+          <div class="kerangka-modal-cand-title">
+            ${e(b.title)}
+          </div>
+        </header>
+
+        <div class="kerangka-modal-body">
+          <!-- 01 · FENOMENA DAN FOKUS -->
+          <div class="kerangka-modal-card">
+            <div class="kerangka-card-pill">01 · FENOMENA DAN FOKUS</div>
+            <div class="kerangka-card-title">${e(card1Title)}</div>
+            <div class="kerangka-card-desc">${e(card1Desc)}</div>
+          </div>
+
+          ${downArrowSvg}
+
+          <!-- 02 · LANDASAN TEORI -->
+          <div class="kerangka-modal-card">
+            <div class="kerangka-card-pill">02 · LANDASAN TEORI</div>
+            ${theoryWarningPill}
+            <div class="kerangka-card-desc muted-sm">${e(theoryDesc)}</div>
+          </div>
+
+          ${downArrowSvg}
+
+          <!-- 03 · MODEL PENELITIAN -->
+          <div class="kerangka-modal-card">
+            <div class="kerangka-card-pill">03 · MODEL PENELITIAN</div>
+            <div class="kerangka-model-row">
+              <span class="kerangka-var-name">${e(varX)}</span>
+              ${rightArrowSvg}
+              <span class="kerangka-var-name">${e(varY)}</span>
+            </div>
+            <div class="kerangka-card-desc muted-sm">${e(modelDesc)}</div>
+          </div>
+
+          ${downArrowSvg}
+
+          <!-- 04 · RANCANGAN METODE DAN DATA -->
+          <div class="kerangka-modal-card">
+            <div class="kerangka-card-pill">04 · RANCANGAN METODE DAN DATA</div>
+            <div class="kerangka-card-title">${e(methodTitle)}</div>
+            <div class="kerangka-card-desc" style="margin-bottom:8px;">${e(methodDesc)}</div>
+            <div class="kerangka-target-box">
+              Target : ${e(targetText)}
+            </div>
+          </div>
+        </div>
+
+        <footer class="kerangka-modal-footer">
+          <button type="button" class="kerangka-btn-back" data-action="close-modal">Kembali</button>
+        </footer>
+      </section>
+    </div>
+  `;
+
+  document.body.style.overflow = 'hidden';
+  requestAnimationFrame(() => {
+    $('#overlay-root .kerangka-btn-back')?.focus({ preventScroll: true });
+  });
+}
 function candidateModal(index, type) {
   const b = currentBundle(index);
   if (!b) return;
   const isFrame = type === 'framework',
     isActive = chosenTitle() === b.title;
-  const text = isFrame ? rowText(b.framework) : outlineText(b.outline);
+  if (isFrame) {
+    openKerangkaBerpikirModal(index);
+    return;
+  }
+  const text = outlineText(b.outline);
   modal(
-    isFrame ? 'Kerangka Berpikir' : 'Outline Judul',
-    `<div class="candidate-context">${badge(isActive ? 'Judul dipilih' : 'Pratinjau kandidat', 'blue')}<h3>${e(b.title)}</h3><p>${b.alternative ? 'Penyesuaian kandidat merupakan usulan berdasarkan konteks dokumen fitur; kebutuhan metode dan data perlu ditinjau kembali.' : S.draftSample ? 'Disusun mengikuti fokus, metode, dan sumber penelitian pada dokumen fitur.' : 'Disusun dari ide penelitian yang kamu isi; bagian yang belum diisi ditandai untuk dilengkapi.'}</p></div>${isFrame ? `<div data-output="framework" data-character-count="${text.length}">${frameworkHtml(b.framework)}</div><p class="small muted">Bagan arah penelaahan. Hubungan antarkonsep belum merupakan bukti sebab akibat.</p>` : `<div data-output="outline" data-character-count="${text.length}">${outlineHtml(b.outline)}</div><p class="small muted">Arahan isi setiap subbab disusun dari ide penelitian dan perlu dikembangkan bersama pembimbing.</p>`}`,
+    'Outline Judul',
+    `<div class="candidate-context">${badge(isActive ? 'Judul dipilih' : 'Pratinjau kandidat', 'blue')}<h3>${e(b.title)}</h3><p>${b.alternative ? 'Penyesuaian kandidat merupakan usulan berdasarkan konteks dokumen fitur; kebutuhan metode dan data perlu ditinjau kembali.' : S.draftSample ? 'Disusun mengikuti fokus, metode, dan sumber penelitian pada dokumen fitur.' : 'Disusun dari ide penelitian yang kamu isi; bagian yang belum diisi ditandai untuk dilengkapi.'}</p></div><div data-output="outline" data-character-count="${text.length}">${outlineHtml(b.outline)}</div><p class="small muted">Arahan isi setiap subbab disusun dari ide penelitian dan perlu dikembangkan bersama pembimbing.</p>`,
     B('Kembali', 'close-modal'),
     true,
   );
