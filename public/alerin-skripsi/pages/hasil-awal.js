@@ -584,8 +584,7 @@ function candidateModal(index, type) {
   modal(
     isFrame ? 'Kerangka Berpikir' : 'Outline Judul',
     `<div class="candidate-context">${badge(isActive ? 'Judul dipilih' : 'Pratinjau kandidat', 'blue')}<h3>${e(b.title)}</h3><p>${b.alternative ? 'Penyesuaian kandidat merupakan usulan berdasarkan konteks dokumen fitur; kebutuhan metode dan data perlu ditinjau kembali.' : S.draftSample ? 'Disusun mengikuti fokus, metode, dan sumber penelitian pada dokumen fitur.' : 'Disusun dari ide penelitian yang kamu isi; bagian yang belum diisi ditandai untuk dilengkapi.'}</p></div>${isFrame ? `<div data-output="framework" data-character-count="${text.length}">${frameworkHtml(b.framework)}</div><p class="small muted">Bagan arah penelaahan. Hubungan antarkonsep belum merupakan bukti sebab akibat.</p>` : `<div data-output="outline" data-character-count="${text.length}">${outlineHtml(b.outline)}</div><p class="small muted">Arahan isi setiap subbab disusun dari ide penelitian dan perlu dikembangkan bersama pembimbing.</p>`}`,
-    B('Kembali', 'close-modal') +
-      (isActive ? B('Buka Bab I', 'guide-view:guide', 'primary') : B('Pilih Judul', 'choose-title:' + index, 'primary', 'check')),
+    B('Kembali', 'close-modal'),
     true,
   );
 }
