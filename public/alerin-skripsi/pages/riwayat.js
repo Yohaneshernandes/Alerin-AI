@@ -28,10 +28,6 @@ function riwayatPage() {
       <section class="rw-card">
         <div class="rw-card-header">
           <h2 class="rw-card-title">Catatan perjalanan</h2>
-          <button type="button" class="rw-btn-download" data-action="export-history">
-            ${I('download')}
-            <span>Unduh riwayat</span>
-          </button>
         </div>
 
         ${
