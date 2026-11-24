@@ -535,7 +535,6 @@ function progresPage() {
       </div>
       ${sim}
       ${guide}
-      ${progresPositionStrip()}
       ${progresSyncContext(tabs)}
       ${progresTabsBar(tabs)}
       <div role="tabpanel" data-progress-list="${progressTab}">${body}</div>
