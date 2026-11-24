@@ -11750,7 +11750,8 @@ body.dark-mode .alerin-toast-close:hover,
   line-height: 16px;
 }
 
-.peta-jadwal-title {
+.peta-jadwal-title,
+.peta-bukti-filename {
   color: #1E293B;
   font-weight: 500;
 }
@@ -11969,6 +11970,9 @@ body.dark-mode .peta-subcard-item,
 body.dark .peta-jadwal-title,
 body.dark-mode .peta-jadwal-title,
 .dark .peta-jadwal-title,
+body.dark .peta-bukti-filename,
+body.dark-mode .peta-bukti-filename,
+.dark .peta-bukti-filename,
 body.dark .peta-log-content strong,
 body.dark-mode .peta-log-content strong,
 .dark .peta-log-content strong {

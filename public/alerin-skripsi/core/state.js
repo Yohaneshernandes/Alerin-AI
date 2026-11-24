@@ -283,6 +283,24 @@ function initialState(empty = true) {
       sample: true,
     },
   ];
+  s.files = [
+    {
+      id: 'f-sample-proposal',
+      context: 'task-part-background',
+      name: 'Draft_Proposal_Skripsi_Bab1-3.docx',
+      size: 245760,
+      type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      time: addDaysIso(-14) + 'T10:30:00+07:00',
+    },
+    {
+      id: 'f-sample-reliab',
+      context: 'task-reliabilitas',
+      name: 'Lampiran_Uji_Reliabilitas_SPSS.pdf',
+      size: 512000,
+      type: 'application/pdf',
+      time: addDaysIso(-2) + 'T14:15:00+07:00',
+    },
+  ];
   return s;
 }
 /* Skenario Mode Simulasi Naya untuk Progres Aktif (Revisi 18 November): bagian penelitian, prasyarat, batas

@@ -34,6 +34,47 @@ function stageSummary(d) {
   else if (next) bits.push('jadwal ' + dateLong(next.date));
   return bits.join(' · ');
 }
+function getStageBuktiFile(i, d) {
+  // 1. Berkas yang terlampir pada tugas di tahap ini
+  const stageFiles = (S.files || []).filter(f =>
+    d.ts.some(t => f.context === 'task-' + t.id || (t.part && f.context === 'task-' + t.part) || (t.id && f.context.includes(t.id)))
+  );
+  if (stageFiles.length) {
+    const sorted = stageFiles.slice().sort((a, b) => (b.time || '').localeCompare(a.time || ''));
+    return sorted[0].name;
+  }
+
+  // 2. Jika tahap ini sedang aktif/berjalan atau memiliki pekerjaan selesai, ambil berkas progres terakhir dari pengguna
+  if (d.pos === 'now' || d.open.length || d.done.length) {
+    const progressFiles = (S.files || []).filter(
+      f => f.context && (f.context.startsWith('task-') || f.context === 'periksa')
+    );
+    if (progressFiles.length) {
+      const sorted = progressFiles.slice().sort((a, b) => (b.time || '').localeCompare(a.time || ''));
+      return sorted[0].name;
+    }
+  }
+
+  // 3. Fallback nama berkas contoh pada mode simulasi/sampel
+  if (S.sample || S.draftSample) {
+    if (i === 1) {
+      return 'Draft_Proposal_Skripsi_Bab1-3.docx';
+    }
+    if (i === 6) {
+      return 'Lampiran_Uji_Reliabilitas_SPSS.pdf';
+    }
+    if (d.pos === 'past') {
+      const pastFiles = {
+        0: 'Catatan_Ide_dan_Topik_Skripsi.pdf',
+        1: 'Draft_Proposal_Skripsi_Bab1-3.docx',
+      };
+      if (pastFiles[i]) return pastFiles[i];
+    }
+  }
+
+  return null;
+}
+
 function stagePanel(i, d, tg, badgeClass, badgeText) {
   const p = ALERIN.phases[i];
 
@@ -84,8 +125,9 @@ function stagePanel(i, d, tg, badgeClass, badgeText) {
 
   // BUKTI
   const buktiDesc = `Biasanya berupa: ${e(p[2].replace(/\.$/, '').toLowerCase())}.`;
-  const buktiStatus = d.ev.length
-    ? `<div class="peta-subcard-item"><div class="peta-subcard-dot done"></div><span>${d.ev.length} pekerjaan punya catatan atau lampiran: ${d.ev.map(t => e(t.title)).join('; ')}.</span></div>`
+  const buktiFile = getStageBuktiFile(i, d);
+  const buktiStatus = buktiFile
+    ? `<div class="peta-subcard-item"><div class="peta-subcard-dot done"></div><span class="peta-bukti-filename">${e(buktiFile)}</span></div>`
     : `<div class="peta-subcard-item"><div class="peta-subcard-dot"></div><span>Belum ada bukti tersimpan di tahap ini.</span></div>`;
 
   const buktiSection = `
