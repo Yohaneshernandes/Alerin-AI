@@ -4137,4 +4137,488 @@ body.dark span[class*="star"] {
   font-weight: 700 !important;
 }
 
+/* ==========================================================================
+   Header Redesign: Desktop & Mobile (Kembali ke Alerin, Notifikasi, Profile)
+   ========================================================================== */
+
+/* --- Desktop Header (min-width: 769px) --- */
+@media (min-width: 769px) {
+  .topbar {
+    height: 74px !important;
+    background: rgba(255, 255, 255, 0.93) !important;
+    border-bottom: 1px solid #DCE4EF !important;
+    backdrop-filter: blur(14px) !important;
+    -webkit-backdrop-filter: blur(14px) !important;
+    padding: 0 36px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    box-sizing: border-box !important;
+    z-index: 30 !important;
+  }
+
+  .mobile-menu {
+    display: none !important;
+  }
+
+  .header-actions {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 16px !important;
+    margin-left: auto !important;
+  }
+
+  /* Kembali ke Alerin Button */
+  .qc14-back-home {
+    height: 44px !important;
+    min-height: 44px !important;
+    padding: 0 16px !important;
+    background: #FFFFFF !important;
+    border: 1px solid #DCE4EF !important;
+    border-radius: 12px !important;
+    box-shadow: 0px 1px 2px rgba(25, 55, 86, 0.05) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 9px !important;
+    color: #1E293B !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    line-height: 18px !important;
+    text-decoration: none !important;
+    transition: all 0.15s ease !important;
+    margin: 0 !important;
+  }
+  .qc14-back-home:hover {
+    background: #F8FAFC !important;
+    border-color: #CBD5E1 !important;
+    box-shadow: 0 2px 4px rgba(25, 55, 86, 0.08) !important;
+  }
+
+  .back-icon-circle {
+    width: 26px !important;
+    height: 26px !important;
+    min-width: 26px !important;
+    border-radius: 50% !important;
+    background: #EFF6FF !important;
+    border: 1px solid #DCE4EF !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    flex-shrink: 0 !important;
+  }
+
+  .header-alerin-icon {
+    width: 14px !important;
+    height: 14px !important;
+    display: block !important;
+    object-fit: contain !important;
+  }
+
+  .qc14-back-text {
+    display: inline-block !important;
+    color: #1E293B !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    white-space: nowrap !important;
+  }
+
+  /* Dividers between header buttons */
+  .header-divider {
+    display: block !important;
+    width: 1px !important;
+    height: 25px !important;
+    background: #DFE5EE !important;
+    margin: 0 !important;
+    flex-shrink: 0 !important;
+    border: none !important;
+  }
+
+  /* Notifikasi Button */
+  .notification-button {
+    height: 44px !important;
+    min-height: 44px !important;
+    padding: 0 16px !important;
+    background: #FFFFFF !important;
+    border: 1px solid #DCE4EF !important;
+    border-radius: 12px !important;
+    box-shadow: 0px 1px 2px rgba(25, 55, 86, 0.05) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    color: #1E293B !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    line-height: 18px !important;
+    cursor: pointer !important;
+    transition: all 0.15s ease !important;
+  }
+  .notification-button:hover {
+    background: #F8FAFC !important;
+    border-color: #CBD5E1 !important;
+  }
+
+  .notif-bell-wrap {
+    position: relative !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .notification-button .ico {
+    width: 18px !important;
+    height: 18px !important;
+    stroke: #1E293B !important;
+    color: #1E293B !important;
+    stroke-width: 1.8 !important;
+    display: block !important;
+  }
+
+  .notif-text {
+    display: inline-block !important;
+    color: #1E293B !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    white-space: nowrap !important;
+  }
+
+  /* On desktop without active unreads, hide dot */
+  .notif-dot {
+    display: none !important;
+  }
+
+  /* Profile Button */
+  .profile-button {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    cursor: pointer !important;
+    transition: opacity 0.15s ease !important;
+  }
+  .profile-button:hover {
+    opacity: 0.85 !important;
+  }
+
+  .profile-button .avatar {
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 50% !important;
+    background: #EFF6FF !important;
+    color: #1D4ED8 !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    display: grid !important;
+    place-items: center !important;
+    flex-shrink: 0 !important;
+  }
+
+  .profile-info {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    text-align: left !important;
+    line-height: 1.2 !important;
+  }
+
+  .profile-name-row {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+  }
+
+  .profile-name {
+    color: #0F172A !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    line-height: 18px !important;
+  }
+
+  .profile-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 1px 6px !important;
+    background: #186DD8 !important;
+    border-radius: 4px !important;
+    color: #FFFFFF !important;
+    font-size: 8.5px !important;
+    font-weight: 700 !important;
+    line-height: 13px !important;
+    letter-spacing: 0.04em !important;
+  }
+
+  .profile-chevron {
+    width: 12px !important;
+    height: 12px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #64748B !important;
+    margin-left: 2px !important;
+  }
+  .profile-chevron .ico {
+    width: 12px !important;
+    height: 12px !important;
+    stroke: #64748B !important;
+    stroke-width: 2.2 !important;
+  }
+
+  .profile-sub {
+    color: #64748B !important;
+    font-size: 11px !important;
+    font-weight: 400 !important;
+    margin-top: 1px !important;
+  }
+}
+
+/* --- Mobile Header (max-width: 768px) --- */
+@media (max-width: 768px) {
+  .topbar {
+    height: 68px !important;
+    min-height: 68px !important;
+    padding: 0 16px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    flex-wrap: nowrap !important;
+    background: rgba(255, 255, 255, 0.93) !important;
+    border-bottom: 1px solid #DCE4EF !important;
+    backdrop-filter: blur(14px) !important;
+    -webkit-backdrop-filter: blur(14px) !important;
+    box-sizing: border-box !important;
+    z-index: 30 !important;
+  }
+
+  .mobile-menu {
+    display: inline-flex !important;
+    width: 42px !important;
+    height: 42px !important;
+    min-width: 42px !important;
+    min-height: 42px !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    border: 1px solid #DCE4EF !important;
+    border-radius: 12px !important;
+    box-shadow: 0px 1.375px 2.75px rgba(25, 55, 86, 0.05) !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #475569 !important;
+    flex-shrink: 0 !important;
+    cursor: pointer !important;
+    transition: all 0.15s ease !important;
+  }
+  .mobile-menu:hover {
+    background: #f8fafc !important;
+    border-color: #cbd5e1 !important;
+  }
+  .mobile-menu .ico {
+    width: 20px !important;
+    height: 20px !important;
+    stroke: #475569 !important;
+    color: #475569 !important;
+    stroke-width: 2 !important;
+    display: block !important;
+  }
+
+  .mobile-brand {
+    display: none !important;
+  }
+
+  .header-actions {
+    margin-left: auto !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    flex-shrink: 0 !important;
+    height: 42px !important;
+  }
+
+  .header-divider {
+    display: none !important;
+  }
+
+  /* Button 1: Kembali ke Alerin (Square icon-only button) */
+  .qc14-back-home {
+    order: 1 !important;
+    width: 42px !important;
+    height: 42px !important;
+    min-width: 42px !important;
+    min-height: 42px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: #ffffff !important;
+    border: 1px solid #DCE4EF !important;
+    border-radius: 12px !important;
+    box-shadow: 0px 1.375px 2.75px rgba(25, 55, 86, 0.05) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
+    text-decoration: none !important;
+    transition: all 0.15s ease !important;
+  }
+  .qc14-back-home:hover {
+    background: #f8fafc !important;
+    border-color: #cbd5e1 !important;
+  }
+  .qc14-back-text {
+    display: none !important;
+  }
+  .qc14-back-home .back-icon-circle {
+    width: 24px !important;
+    height: 24px !important;
+    min-width: 24px !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  .header-alerin-icon {
+    width: 22px !important;
+    height: 22px !important;
+    display: block !important;
+    object-fit: contain !important;
+  }
+
+  /* Button 2: Notification Bell (Square icon-only button with blue dot) */
+  .notification-button {
+    order: 2 !important;
+    width: 42px !important;
+    height: 42px !important;
+    min-width: 42px !important;
+    min-height: 42px !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    border: 1px solid #DCE4EF !important;
+    border-radius: 12px !important;
+    box-shadow: 0px 1.375px 2.75px rgba(25, 55, 86, 0.05) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: relative !important;
+    cursor: pointer !important;
+    flex-shrink: 0 !important;
+    transition: all 0.15s ease !important;
+  }
+  .notification-button:hover {
+    background: #f8fafc !important;
+    border-color: #cbd5e1 !important;
+  }
+  .notif-text {
+    display: none !important;
+  }
+  .notif-bell-wrap {
+    position: relative !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 22px !important;
+    height: 22px !important;
+  }
+  .notification-button .ico {
+    width: 20px !important;
+    height: 20px !important;
+    stroke: #334155 !important;
+    color: #334155 !important;
+    stroke-width: 1.8 !important;
+    display: block !important;
+  }
+  .notification-button .notif-dot {
+    position: absolute !important;
+    top: -1px !important;
+    right: 0px !important;
+    width: 7.5px !important;
+    height: 7.5px !important;
+    background: #186DD8 !important;
+    border-radius: 50% !important;
+    box-shadow: 0 0 0 1.5px #ffffff !important;
+    display: block !important;
+  }
+
+  /* Button 3: Profile Avatar (Circular button) */
+  .profile-button {
+    order: 3 !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    flex-shrink: 0 !important;
+  }
+  .profile-info,
+  .profile-chevron {
+    display: none !important;
+  }
+  .profile-button .avatar {
+    width: 42px !important;
+    height: 42px !important;
+    min-width: 42px !important;
+    min-height: 42px !important;
+    border-radius: 50% !important;
+    background: #EFF6FF !important;
+    color: #1D4ED8 !important;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    display: grid !important;
+    place-items: center !important;
+    line-height: 1 !important;
+    border: none !important;
+    box-shadow: none !important;
+    transition: opacity 0.15s ease !important;
+  }
+  .profile-button:hover .avatar {
+    opacity: 0.9 !important;
+  }
+}
+
+/* --- Dark Mode Support for Header --- */
+body.dark .topbar {
+  background: rgba(24, 37, 56, 0.93) !important;
+  border-bottom-color: #34465D !important;
+}
+body.dark .mobile-menu,
+body.dark .qc14-back-home,
+body.dark .notification-button {
+  background: #182538 !important;
+  border-color: #34465D !important;
+  color: #E4EBF5 !important;
+}
+body.dark .mobile-menu .ico,
+body.dark .notification-button .ico,
+body.dark .qc14-back-text,
+body.dark .notif-text {
+  color: #E4EBF5 !important;
+  stroke: #E4EBF5 !important;
+}
+body.dark .header-divider {
+  background: #34465D !important;
+}
+body.dark .profile-name {
+  color: #E4EBF5 !important;
+}
+body.dark .profile-sub {
+  color: #B2C2D8 !important;
+}
+body.dark .profile-button .avatar {
+  background: #20354F !important;
+  color: #73AFFF !important;
+}
+body.dark .back-icon-circle {
+  background: #20354F !important;
+  border-color: #34465D !important;
+}
+
 

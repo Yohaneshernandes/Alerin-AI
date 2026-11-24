@@ -154,11 +154,6 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
  .v6-bib-grid:has(.qc14-source-form){grid-template-columns:1fr}
 }
 @media(max-width:760px){
- .topbar:has(.qc14-back-home){height:auto;min-height:68px;flex-wrap:wrap;gap:8px;padding-top:10px;padding-bottom:10px}
- .qc14-back-home{order:3;flex:0 1 auto;min-height:38px;height:38px;font-size:11px;padding:6px 12px;margin-right:0;border-radius:10px}
- .qc14-back-home .back-icon-circle{width:22px;height:22px;min-width:22px;border-radius:11px;padding:3px}
- .qc14-back-home .back-icon-circle .ico{width:12px;height:12px}
- .topbar:has(.qc14-back-home)>.header-actions{margin-left:auto}
  .qc14-shortcuts{grid-template-columns:1fr}
  .qc14-source-form{padding:20px}
  .qc14-source-form>.field:has(#dp-type),.qc14-source-form>.field:has(#dp-title),.qc14-source-form>.field:has(#dp-authors){display:flex}
@@ -9112,17 +9107,16 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
 /* ========================================================
    MOBILE HEADER & DRAWER SIDEBAR (Gambar 1 & Gambar 2)
    ======================================================== */
-@media (max-width: 760px) {
+@media (max-width: 768px) {
   /* Topbar container */
   .topbar,
   .topbar:has(.qc14-back-home) {
     height: 68px !important;
     min-height: 68px !important;
-    padding: 11.5px 16px !important;
+    padding: 0 16px !important;
     display: flex !important;
     align-items: center !important;
-    justify-content: flex-start !important;
-    gap: 12px !important;
+    justify-content: space-between !important;
     flex-wrap: nowrap !important;
     background: rgba(255, 255, 255, 0.93) !important;
     border-bottom: 1px solid #DCE4EF !important;
@@ -9135,135 +9129,156 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
   /* Hamburger Menu Button */
   .mobile-menu {
     display: inline-flex !important;
-    width: 33px !important;
-    height: 33px !important;
-    min-width: 33px !important;
-    min-height: 33px !important;
-    padding: 4px !important;
-    background: #ffffff !important;
-    border: 1px solid #DCE4EF !important;
-    border-radius: 6px !important;
-    box-shadow: 0px 1px 2px rgba(25, 55, 86, 0.05) !important;
-    align-items: center !important;
-    justify-content: center !important;
-    color: #52647D !important;
-    flex-shrink: 0 !important;
-    order: 1 !important;
-    cursor: pointer !important;
-  }
-  .mobile-menu .ico {
-    width: 16px !important;
-    height: 16px !important;
-    stroke: #52647D !important;
-    stroke-width: 1.5 !important;
-    display: block !important;
-  }
-
-  /* Kembali ke Beranda button */
-  .qc14-back-home {
-    display: inline-flex !important;
-    order: 2 !important;
-    height: 39px !important;
-    min-height: 39px !important;
-    padding: 8px 12px !important;
-    margin: 0 !important;
+    width: 42px !important;
+    height: 42px !important;
+    min-width: 42px !important;
+    min-height: 42px !important;
+    padding: 0 !important;
     background: #ffffff !important;
     border: 1px solid #DCE4EF !important;
     border-radius: 12px !important;
-    box-shadow: 0px 1px 2px rgba(25, 55, 86, 0.05) !important;
-    gap: 9px !important;
+    box-shadow: 0px 1.375px 2.75px rgba(25, 55, 86, 0.05) !important;
     align-items: center !important;
     justify-content: center !important;
-    color: #125AB5 !important;
-    font-size: 11px !important;
-    font-weight: 600 !important;
-    line-height: 15.95px !important;
-    white-space: nowrap !important;
+    color: #475569 !important;
     flex-shrink: 0 !important;
-    text-decoration: none !important;
+    cursor: pointer !important;
+    transition: all 0.15s ease !important;
   }
-  .qc14-back-home .back-icon-circle {
-    width: 22px !important;
-    height: 22px !important;
-    min-width: 22px !important;
-    border-radius: 11px !important;
-    border: 1px solid #DCE4EF !important;
-    padding: 4px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    box-sizing: border-box !important;
+  .mobile-menu:hover {
+    background: #f8fafc !important;
+    border-color: #cbd5e1 !important;
   }
-  .qc14-back-home .back-icon-circle .ico {
-    width: 12px !important;
-    height: 12px !important;
-    stroke: #125AB5 !important;
-    color: #125AB5 !important;
+  .mobile-menu .ico {
+    width: 20px !important;
+    height: 20px !important;
+    stroke: #475569 !important;
+    color: #475569 !important;
     stroke-width: 2 !important;
     display: block !important;
   }
 
-  /* Hide mobile brand from header as shown in Gambar 2 */
+  /* Hide mobile brand from header */
   .mobile-brand {
     display: none !important;
   }
 
-  /* Right side header actions */
+  /* Right side header actions container */
   .header-actions,
   .topbar:has(.qc14-back-home) > .header-actions {
     margin-left: auto !important;
     display: inline-flex !important;
     align-items: center !important;
-    gap: 6px !important;
+    gap: 10px !important;
     flex-shrink: 0 !important;
-    height: 39px !important;
-    order: 3 !important;
+    height: 42px !important;
   }
 
+  /* Hide vertical dividers on mobile */
   .header-divider {
     display: none !important;
   }
 
-  /* Notification Bell Button */
+  /* Button 1: Kembali ke Alerin (Icon-only square button) */
+  .qc14-back-home {
+    width: 42px !important;
+    height: 42px !important;
+    min-width: 42px !important;
+    min-height: 42px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: #ffffff !important;
+    border: 1px solid #DCE4EF !important;
+    border-radius: 12px !important;
+    box-shadow: 0px 1.375px 2.75px rgba(25, 55, 86, 0.05) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
+    text-decoration: none !important;
+    transition: all 0.15s ease !important;
+  }
+  .qc14-back-home:hover {
+    background: #f8fafc !important;
+    border-color: #cbd5e1 !important;
+  }
+  .qc14-back-text {
+    display: none !important;
+  }
+  .qc14-back-home .back-icon-circle {
+    width: 24px !important;
+    height: 24px !important;
+    min-width: 24px !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  .header-alerin-icon {
+    width: 22px !important;
+    height: 22px !important;
+    display: block !important;
+    object-fit: contain !important;
+  }
+
+  /* Button 2: Notification Bell (Icon-only square button) */
   .notification-button {
-    width: 33px !important;
-    height: 33px !important;
-    min-width: 33px !important;
-    min-height: 33px !important;
+    width: 42px !important;
+    height: 42px !important;
+    min-width: 42px !important;
+    min-height: 42px !important;
     padding: 0 !important;
     background: #ffffff !important;
     border: 1px solid #DCE4EF !important;
-    border-radius: 9px !important;
-    box-shadow: none !important;
+    border-radius: 12px !important;
+    box-shadow: 0px 1.375px 2.75px rgba(25, 55, 86, 0.05) !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
     position: relative !important;
     cursor: pointer !important;
+    flex-shrink: 0 !important;
+    transition: all 0.15s ease !important;
   }
-  .notification-button span:not(.notif-dot) {
+  .notification-button:hover {
+    background: #f8fafc !important;
+    border-color: #cbd5e1 !important;
+  }
+  .notif-text {
     display: none !important;
   }
+  .notif-bell-wrap {
+    position: relative !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 22px !important;
+    height: 22px !important;
+  }
   .notification-button .ico {
-    width: 17px !important;
-    height: 17px !important;
-    stroke: #202E42 !important;
-    color: #202E42 !important;
+    width: 20px !important;
+    height: 20px !important;
+    stroke: #334155 !important;
+    color: #334155 !important;
+    stroke-width: 1.8 !important;
     display: block !important;
   }
   .notification-button .notif-dot {
     position: absolute !important;
-    top: 6px !important;
-    right: 6px !important;
-    width: 5px !important;
-    height: 5px !important;
-    background: #2563EB !important;
+    top: -1px !important;
+    right: 0px !important;
+    width: 7.5px !important;
+    height: 7.5px !important;
+    background: #186DD8 !important;
     border-radius: 50% !important;
-    box-shadow: 0 0 0 1px #ffffff !important;
+    box-shadow: 0 0 0 1.5px #ffffff !important;
     display: block !important;
   }
 
-  /* Profile Avatar Button */
+  /* Button 3: Profile Avatar (Circular button) */
   .profile-button {
     background: transparent !important;
     border: none !important;
@@ -9275,28 +9290,33 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
     align-items: center !important;
     justify-content: center !important;
     cursor: pointer !important;
+    flex-shrink: 0 !important;
   }
   .profile-info,
   .profile-chevron {
     display: none !important;
   }
   .profile-button .avatar {
-    width: 35px !important;
-    height: 35px !important;
-    min-width: 35px !important;
-    min-height: 35px !important;
-    border-radius: 17.5px !important;
-    background: #EDF3FC !important;
-    color: #5779A4 !important;
-    font-size: 13px !important;
-    font-weight: 600 !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+    width: 42px !important;
+    height: 42px !important;
+    min-width: 42px !important;
+    min-height: 42px !important;
+    border-radius: 50% !important;
+    background: #EFF6FF !important;
+    color: #1D4ED8 !important;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    display: grid !important;
+    place-items: center !important;
     line-height: 1 !important;
     border: none !important;
     box-shadow: none !important;
+    transition: opacity 0.15s ease !important;
   }
+  .profile-button:hover .avatar {
+    opacity: 0.9 !important;
+  }
+}
 
   /* ----------------------------------------------------
      DRAWER SIDEBAR (Gambar 1)
