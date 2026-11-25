@@ -17,6 +17,7 @@ import PdfViewer from "@/components/PdfViewer";
 import PlusBadgeIcon from "@/components/PlusBadgeIcon";
 import AlerinBusinessModal from "@/components/AlerinBusinessModal";
 import SaranLaporanModal from "@/components/SaranLaporanModal";
+import PasangPintasanModal from "@/components/PasangPintasanModal";
 import { downloadAttachmentFile } from "@/utils/generateDownloadFile";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -5629,6 +5630,13 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
   }, []);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const [pintasanOpen, setPintasanOpen] = useState(false);
+
+  useEffect(() => {
+    const handleOpenPintasan = () => setPintasanOpen(true);
+    window.addEventListener("alerin-open-pintasan", handleOpenPintasan);
+    return () => window.removeEventListener("alerin-open-pintasan", handleOpenPintasan);
+  }, []);
   const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
   const [profileMenuPos, setProfileMenuPos] = useState<{ top: number; right: number } | null>(null);
   const profileBtnRef = useRef<HTMLButtonElement>(null);
@@ -6387,6 +6395,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
       {upgradeOpen && <UpgradeModal onClose={() => setUpgradeOpen(false)} onToast={showToast} />}
       {businessModalOpen && <AlerinBusinessModal onClose={() => setBusinessModalOpen(false)} onToast={showToast} />}
       {feedbackOpen && <SaranLaporanModal onClose={() => setFeedbackOpen(false)} onToast={showToast} isDark={isDarkTheme} />}
+      {pintasanOpen && <PasangPintasanModal onClose={() => setPintasanOpen(false)} onToast={showToast} isDark={isDarkTheme} />}
       {creditsOpen && <CreditsModal onClose={() => setCreditsOpen(false)} onUpgrade={() => { setCreditsOpen(false); navigate("/upgrade"); }} />}
       {calOpen && <CalendarModal onClose={() => setCalOpen(false)} onToast={showToast} />}
       {toast && <Toast msg={toast} onDone={() => setToast(null)} />}
@@ -7319,7 +7328,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                 <span className="text-sm font-medium">Saran &amp; Laporan</span>
               </button>
 
-              <button type="button" onClick={() => { showToast("Pintasan Alerin siap dipasang di layar utama."); setProfileMenuOpen(false); }}
+              <button type="button" onClick={() => { setPintasanOpen(true); setProfileMenuOpen(false); }}
                 className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors cursor-pointer ${
                   isDarkTheme ? "text-slate-300 hover:bg-slate-800" : "text-slate-600 hover:bg-slate-50"
                 }`}>
@@ -26148,8 +26157,7 @@ function ProfilTab({ onTab, onRegister }: { onTab: (t: NavTab) => void; onRegist
                     ].map((item, i) => (
                       <button key={i} type="button" onClick={() => {
                         if (i === 0) {
-                          setNotice("Alerin dapat dipasang untuk desktop dan mobile.");
-                          window.setTimeout(() => setNotice(""), 2600);
+                          window.dispatchEvent(new Event("alerin-open-pintasan"));
                           return;
                         }
                         setProfileView(item.view);

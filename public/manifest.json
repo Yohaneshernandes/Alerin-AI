@@ -1,0 +1,31 @@
+{
+  "name": "Alerin - AI Skripsi & Kuliah",
+  "short_name": "Alerin",
+  "description": "Tanya apa saja tentang kuliah. Alerin bantu sampai jelas.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#347CEA",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/logo192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/alerin-logo-only.png",
+      "sizes": "501x450",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

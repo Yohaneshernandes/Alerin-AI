@@ -19,6 +19,21 @@ if (typeof window !== 'undefined') {
   } catch {}
 }
 
+// Tangkap event PWA beforeinstallprompt untuk fitur Pasang Pintasan
+if (typeof window !== 'undefined') {
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    (window as any).deferredInstallPrompt = e;
+    window.dispatchEvent(new Event('alerin_install_prompt_ready'));
+  });
+
+  if ('serviceWorker' in navigator && !window.location.hostname.includes('localhost')) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    });
+  }
+}
+
 // Tangani otomatis refresh jika terjadi pergantian chunk bundle setelah rilis baru di Vercel
 window.addEventListener('vite:preloadError', (event) => {
   event.preventDefault();

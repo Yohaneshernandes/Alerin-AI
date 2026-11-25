@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router";
 import PlusBadgeIcon from "@/components/PlusBadgeIcon";
 import AlerinBusinessModal from "@/components/AlerinBusinessModal";
 import SaranLaporanModal from "@/components/SaranLaporanModal";
+import PasangPintasanModal from "@/components/PasangPintasanModal";
 import AlerinToast from "@/components/AlerinToast";
 
 // Deterministic QR Code matrix (33x33) untuk tampilan pembayaran QRIS
@@ -544,6 +545,7 @@ export default function UpgradePage() {
   const [notifOpen, setNotifOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const [pintasanOpen, setPintasanOpen] = useState(false);
   const [profileMenuPos, setProfileMenuPos] = useState<{ top: number; right: number } | null>(null);
   const profileBtnRef = useRef<HTMLButtonElement>(null);
   const [currentAccountPlan, setCurrentAccountPlan] = useState("Paket: Plus");
@@ -1415,6 +1417,15 @@ export default function UpgradePage() {
         />
       )}
 
+      {/* Pasang Pintasan Modal */}
+      {pintasanOpen && (
+        <PasangPintasanModal
+          onClose={() => setPintasanOpen(false)}
+          onToast={showToast}
+          isDark={isDarkTheme}
+        />
+      )}
+
       {/* Profile Popup Menu (Persis Profile Menu di Alerin Chat) */}
       {profileMenuOpen && profileMenuPos && (
         <>
@@ -1514,7 +1525,7 @@ export default function UpgradePage() {
               <button
                 type="button"
                 onClick={() => {
-                  showToast("Pintasan Alerin siap dipasang di layar utama.", "info");
+                  setPintasanOpen(true);
                   setProfileMenuOpen(false);
                 }}
                 className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors cursor-pointer ${
