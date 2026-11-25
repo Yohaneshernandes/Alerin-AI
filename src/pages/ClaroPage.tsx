@@ -21233,7 +21233,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
             )}
 
             {/* Bottom Actions: Tambah Agenda Baru & Hubungkan Google Kalender */}
-            <div className="self-stretch px-5 py-2.5 bg-white border-t border-slate-100 flex flex-col items-center gap-2 shrink-0">
+            <div className="self-stretch px-5 pt-3 pb-3.5 bg-white border-t border-slate-100 flex flex-col items-center gap-3.5 shrink-0">
               <button
                 type="button"
                 onClick={() => switchDesktopView(true)}
