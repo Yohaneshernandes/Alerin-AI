@@ -534,6 +534,14 @@ function UpgradeNotifModal({
 export default function UpgradePage() {
   const navigate = useNavigate();
 
+  const [toast, setToast] = useState<string | { title: string; description?: string } | null>(null);
+  const showToast = useCallback(
+    (msg: string | { title: string; description?: string }, _type?: string) => {
+      setToast(msg);
+    },
+    []
+  );
+
   // State
   const [currentDuration, setCurrentDuration] = useState<"7d" | "30d" | "1y">("30d");
   const [currentTier, setCurrentTier] = useState<"plus" | "pro">("plus");
@@ -744,8 +752,6 @@ export default function UpgradePage() {
   const [isPaymentProcessing, setIsPaymentProcessing] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 
-  const [toast, setToast] = useState<string | { title: string; description?: string } | null>(null);
-
   // Segment Switcher: Individu vs Business
   const [planType, setPlanType] = useState<"individual" | "business">("individual");
   const [bizForm, setBizForm] = useState({
@@ -861,13 +867,6 @@ export default function UpgradePage() {
       showToast("Berhasil mengirim formulir ke admin@alerin.id", "success");
     }, 700);
   };
-
-  const showToast = useCallback(
-    (msg: string | { title: string; description?: string }, _type?: string) => {
-      setToast(msg);
-    },
-    []
-  );
 
   // Toggle Features
   const toggleFeature = (key: string) => {
