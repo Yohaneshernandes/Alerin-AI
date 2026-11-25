@@ -24375,9 +24375,16 @@ function ProfilTab({ onTab, onRegister }: { onTab: (t: NavTab) => void; onRegist
     typeof window !== "undefined" ? window.localStorage.getItem("alerin-language") || "id" : "id"
   ));
   const [themeMode, setThemeMode] = useState<"light" | "dark">("light");
-  const [communicationStyle, setCommunicationStyle] = useState(() => (
-    typeof window !== "undefined" ? window.localStorage.getItem("alerin-communication-style") || "Rapi dan Presisi" : "Rapi dan Presisi"
-  ));
+  const [communicationStyle, setCommunicationStyle] = useState(() => {
+    const validStyles = ["Default", "Rapi", "Ramah", "Lugas", "Kreatif", "Kritis"];
+    if (typeof window !== "undefined") {
+      try {
+        const saved = window.localStorage.getItem("alerin-communication-style");
+        if (saved && validStyles.includes(saved)) return saved;
+      } catch {}
+    }
+    return "Default";
+  });
   const [nama, setNama] = useState(registrationProfile.nama || "Raka Aditya");
   const [universitas, setUniversitas] = useState(registrationProfile.universitas || "Universitas Indonesia");
   const [jenjang, setJenjang] = useState(registrationProfile.jenjang || "S1 (Sarjana)");
@@ -25933,7 +25940,7 @@ function ProfilTab({ onTab, onRegister }: { onTab: (t: NavTab) => void; onRegist
                       }}
                       className="mt-4 w-full rounded-xl bg-[#347CEA] py-3 text-sm font-bold text-white transition-colors hover:bg-blue-700 md:text-[13px]"
                     >
-                      {"Simpan\u00A0\u00A0"}
+                      Simpan
                     </button>
                   </div>
 
