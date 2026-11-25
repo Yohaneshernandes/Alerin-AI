@@ -20331,7 +20331,8 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                       Akun Google Kalender Anda telah terhubung.
                     </span>
                     <span className="block mt-0.5">
-                      Semua agenda sekarang akan diperbarui otomatis.
+                      Semua agenda sekarang akan<br />
+                      diperbarui otomatis.
                     </span>
                   </p>
                 </div>
@@ -21588,7 +21589,8 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                         Akun Google Kalender Anda telah terhubung.
                       </span>
                       <span className="block mt-0.5">
-                        Semua agenda sekarang akan diperbarui otomatis.
+                        Semua agenda sekarang akan<br />
+                        diperbarui otomatis.
                       </span>
                     </p>
                   </div>
