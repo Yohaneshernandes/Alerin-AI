@@ -21511,7 +21511,9 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                   {/* Description */}
                   <div className="pb-4 px-1 flex flex-col justify-start items-center">
                     <p className="text-center justify-center text-gray-500 text-xs font-normal font-['Plus_Jakarta_Sans'] leading-5">
-                      Mohon tunggu sebentar, Alerin sedang menghubungkan jadwal bimbingan dan agenda akademikmu.
+                      Mohon tunggu sebentar, Alerin sedang<br />
+                      menghubungkan jadwal bimbingan dan<br />
+                      agenda akademikmu.
                     </p>
                   </div>
 
