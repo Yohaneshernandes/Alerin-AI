@@ -1496,14 +1496,21 @@ export default function UpgradePage() {
       {mobileDrawerOpen && (
         <div className="md:hidden fixed inset-0 z-[150]">
           <div
-            className="fixed inset-0 bg-black/40 backdrop-blur-xs transition-opacity"
+            className="fixed inset-0 bg-black/40 backdrop-blur-xs"
+            style={{
+              animation: "drawerBackdropFadeIn 0.38s cubic-bezier(0.32, 0.72, 0, 1) forwards",
+              willChange: "opacity",
+            }}
             onClick={() => setMobileDrawerOpen(false)}
           />
           <aside
             className={`fixed top-0 left-0 bottom-0 w-72 max-w-[85vw] z-[160] shadow-2xl flex flex-col py-5 px-4 overflow-hidden ${
               isDarkTheme ? "bg-[#0f172a] border-r border-slate-800 text-white" : "bg-white text-slate-900"
             }`}
-            style={{ animation: "drawerSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1)" }}
+            style={{
+              animation: "drawerSlideIn 0.38s cubic-bezier(0.32, 0.72, 0, 1) forwards",
+              willChange: "transform",
+            }}
           >
             {/* Drawer Header */}
             <div className="shrink-0 flex items-center justify-between mb-5">

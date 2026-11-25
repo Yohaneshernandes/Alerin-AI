@@ -5608,6 +5608,25 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
   const showToast = useCallback((msg: string) => { setToast(msg); }, []);
   const [sidebarOpen, setSidebarOpen] = useState(true); // single toggle for both sidebars
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+  const [mobileDrawerClosing, setMobileDrawerClosing] = useState(false);
+  const openMobileDrawer = useCallback(() => {
+    setActiveHistoryMenu(null);
+    setMobileDrawerClosing(false);
+    setMobileDrawerOpen(true);
+  }, []);
+  const closeMobileDrawer = useCallback((immediate = false) => {
+    setActiveHistoryMenu(null);
+    if (immediate) {
+      setMobileDrawerClosing(false);
+      setMobileDrawerOpen(false);
+      return;
+    }
+    setMobileDrawerClosing(true);
+    setTimeout(() => {
+      setMobileDrawerClosing(false);
+      setMobileDrawerOpen(false);
+    }, 280);
+  }, []);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
@@ -6078,12 +6097,12 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
   };
 
   const renderSidebarPanel = (isMobileDrawer: boolean) => {
-    const closeDrawer = () => {
-      if (isMobileDrawer) setMobileDrawerOpen(false);
+    const closeDrawer = (immediate = false) => {
+      if (isMobileDrawer) closeMobileDrawer(immediate);
     };
     const handleCollapseOrClose = () => {
       setActiveHistoryMenu(null);
-      if (isMobileDrawer) setMobileDrawerOpen(false);
+      if (isMobileDrawer) closeMobileDrawer();
       else setSidebarOpen(false);
     };
 
@@ -6278,7 +6297,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
   };
 
   return (
-    <ShellDrawerContext.Provider value={() => setMobileDrawerOpen(true)}>
+    <ShellDrawerContext.Provider value={openMobileDrawer}>
       <div className="alerin-shell fixed inset-0 md:static md:inset-auto md:h-dvh flex flex-col overflow-hidden bg-white" style={{ fontFamily: "'Inter', sans-serif" }}>
       {searchOpen && (
         <SearchModal
@@ -6385,7 +6404,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
           <div className="flex items-center gap-2.5">
             <button
               type="button"
-              onClick={() => setMobileDrawerOpen(true)}
+              onClick={openMobileDrawer}
               aria-label="Buka navigasi"
               className="size-10 rounded-full border border-slate-200/90 bg-white/70 backdrop-blur-sm flex flex-col justify-center items-center gap-1 hover:bg-slate-50 transition-colors shrink-0 shadow-xs"
             >
@@ -6446,7 +6465,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
           <div className="flex items-center gap-2.5">
             <button
               type="button"
-              onClick={() => setMobileDrawerOpen(true)}
+              onClick={openMobileDrawer}
               aria-label="Buka navigasi"
               className="size-9 rounded-full border border-slate-200/90 flex flex-col justify-center items-center gap-1 hover:bg-slate-50 transition-colors shrink-0"
             >
@@ -6500,17 +6519,25 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
       {mobileDrawerOpen && (
         <div className="md:hidden fixed inset-0 z-[150]">
           <div
-            className="fixed inset-0 bg-black/40 backdrop-blur-xs transition-opacity"
-            onClick={() => {
-              setActiveHistoryMenu(null);
-              setMobileDrawerOpen(false);
+            className="fixed inset-0 bg-black/40 backdrop-blur-xs"
+            style={{
+              animation: mobileDrawerClosing
+                ? "drawerBackdropFadeOut 0.28s cubic-bezier(0.32, 0.72, 0, 1) forwards"
+                : "drawerBackdropFadeIn 0.38s cubic-bezier(0.32, 0.72, 0, 1) forwards",
+              willChange: "opacity",
             }}
+            onClick={() => closeMobileDrawer()}
           />
           <aside
             className={`fixed top-0 left-0 bottom-0 w-72 max-w-[85vw] z-[160] shadow-2xl flex flex-col py-5 px-4 overflow-hidden ${
               isDarkTheme ? "bg-[#0f172a] border-r border-slate-800" : "bg-white"
             }`}
-            style={{ animation: "drawerSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1)" }}
+            style={{
+              animation: mobileDrawerClosing
+                ? "drawerSlideOut 0.28s cubic-bezier(0.32, 0.72, 0, 1) forwards"
+                : "drawerSlideIn 0.38s cubic-bezier(0.32, 0.72, 0, 1) forwards",
+              willChange: "transform",
+            }}
           >
             {renderSidebarPanel(true)}
           </aside>
