@@ -16,6 +16,7 @@ import FileContentPreview from "@/components/FileContentPreview";
 import PdfViewer from "@/components/PdfViewer";
 import PlusBadgeIcon from "@/components/PlusBadgeIcon";
 import AlerinBusinessModal from "@/components/AlerinBusinessModal";
+import SaranLaporanModal from "@/components/SaranLaporanModal";
 import { downloadAttachmentFile } from "@/utils/generateDownloadFile";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -5608,6 +5609,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
   const [sidebarOpen, setSidebarOpen] = useState(true); // single toggle for both sidebars
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
   const [profileMenuPos, setProfileMenuPos] = useState<{ top: number; right: number } | null>(null);
   const profileBtnRef = useRef<HTMLButtonElement>(null);
@@ -6331,6 +6333,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
       )}
       {upgradeOpen && <UpgradeModal onClose={() => setUpgradeOpen(false)} onToast={showToast} />}
       {businessModalOpen && <AlerinBusinessModal onClose={() => setBusinessModalOpen(false)} onToast={showToast} />}
+      {feedbackOpen && <SaranLaporanModal onClose={() => setFeedbackOpen(false)} onToast={showToast} isDark={isDarkTheme} />}
       {creditsOpen && <CreditsModal onClose={() => setCreditsOpen(false)} onUpgrade={() => { setCreditsOpen(false); navigate("/upgrade"); }} />}
       {calOpen && <CalendarModal onClose={() => setCalOpen(false)} onToast={showToast} />}
       {toast && <Toast msg={toast} onDone={() => setToast(null)} />}
@@ -7212,7 +7215,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                 </span>
               </button>
 
-              <button type="button" onClick={() => { showToast("Form saran & laporan siap digunakan."); setProfileMenuOpen(false); }}
+              <button type="button" onClick={() => { setFeedbackOpen(true); setProfileMenuOpen(false); }}
                 className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 transition-colors cursor-pointer ${
                   isDarkTheme ? "text-slate-300 hover:bg-slate-800" : "text-slate-600 hover:bg-slate-50"
                 }`}>
