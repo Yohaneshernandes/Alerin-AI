@@ -245,7 +245,7 @@ function homeStrip(p) {
   }
 
   let kondTitle = 'Belum diperbarui';
-  let kondDesc = 'Ceritakan kendala dengan dosen pembimbing atau materi.';
+  let kondDesc = 'Ceritakan kendala dengan dosen pembimbing atau Mentor.';
   let kondIsPlaceholder = true;
 
   if (sit) {
