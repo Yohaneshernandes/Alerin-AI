@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 
 export interface SaranLaporanModalProps {
   onClose: () => void;
@@ -80,9 +81,10 @@ export default function SaranLaporanModal({
     }, 600);
   };
 
-  return (
+  const modalContent = (
     <div
-      className="fixed inset-0 z-[220] flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-[gemini-fade-in_0.2s_ease-out]"
+      className="fixed inset-0 z-[350] flex items-center justify-center p-4 backdrop-blur-sm animate-[gemini-fade-in_0.2s_ease-out]"
+      style={{ backgroundColor: "rgba(0, 0, 0, 0.65)" }}
       onClick={onClose}
       role="dialog"
       aria-modal="true"
@@ -303,4 +305,10 @@ export default function SaranLaporanModal({
       </div>
     </div>
   );
+
+  if (typeof document !== "undefined") {
+    return createPortal(modalContent, document.body);
+  }
+
+  return modalContent;
 }
