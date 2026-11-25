@@ -19896,23 +19896,9 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                 Agenda {selected.toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
               </span>
             </div>
-            <div className="flex items-center gap-2 shrink-0">
-              <span className="px-2.5 py-0.5 bg-blue-100 rounded-full text-blue-600 text-[10px] font-semibold leading-4 tracking-tight shrink-0">
-                {selectedEvents.length} Agenda
-              </span>
-              <button
-                type="button"
-                onClick={openAddAgendaModal}
-                className="h-7 px-2.5 bg-blue-50 hover:bg-blue-100 active:scale-95 text-blue-600 border border-blue-200/80 rounded-lg inline-flex items-center gap-1.5 text-xs font-semibold cursor-pointer transition-all"
-                title="Tambah agenda baru"
-              >
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="12" y1="5" x2="12" y2="19" />
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
-                <span>Tambah Agenda</span>
-              </button>
-            </div>
+            <span className="px-2.5 py-0.5 bg-blue-100 rounded-full text-blue-600 text-[10px] font-semibold leading-4 tracking-tight shrink-0">
+              {selectedEvents.length} Agenda
+            </span>
           </div>
 
           {/* List Kartu Agenda (Scrollable, pas menampilkan agenda tanpa memotong tombol bawah) */}
@@ -21177,23 +21163,9 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                       Agenda {selected.toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
                     </span>
                   </div>
-                  <div className="inline-flex items-center gap-1.5 shrink-0">
-                    <span className="px-2 py-0.5 bg-blue-100 rounded-full text-blue-600 text-[9px] font-semibold font-['Plus_Jakarta_Sans'] leading-4 tracking-tight">
-                      {selectedEvents.length} Agenda
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => switchDesktopView(true)}
-                      className="px-2 py-0.5 bg-blue-50 hover:bg-blue-100 active:scale-95 text-blue-600 border border-blue-200/80 rounded-md inline-flex items-center gap-1 text-[10px] font-semibold cursor-pointer transition-colors"
-                      title="Tambah agenda baru"
-                    >
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <line x1="12" y1="5" x2="12" y2="19" />
-                        <line x1="5" y1="12" x2="19" y2="12" />
-                      </svg>
-                      <span>Tambah</span>
-                    </button>
-                  </div>
+                  <span className="px-2 py-0.5 bg-blue-100 rounded-full text-blue-600 text-[9px] font-semibold font-['Plus_Jakarta_Sans'] leading-4 tracking-tight shrink-0">
+                    {selectedEvents.length} Agenda
+                  </span>
                 </div>
 
                 {/* List Kartu Agenda (Scrollable, tinggi diatur max-h-[90px] agar di mobile terlihat 1,5 kartu agenda sebelum di-scroll) */}
