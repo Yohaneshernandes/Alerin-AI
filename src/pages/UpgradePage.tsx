@@ -1321,7 +1321,7 @@ export default function UpgradePage() {
                     }
                     setProfileMenuOpen((o) => !o);
                   }}
-                  className="flex items-center gap-2 text-left hover:opacity-85 transition-opacity cursor-pointer"
+                  className="flex items-center gap-2.5 text-left hover:opacity-85 transition-opacity cursor-pointer"
                   aria-label="Profil Raka Aditya"
                 >
                   <div
@@ -1332,41 +1332,38 @@ export default function UpgradePage() {
                   </div>
                   <div className="min-w-0 flex flex-col items-start leading-tight">
                     <p className="text-xs font-semibold whitespace-nowrap text-slate-800">Raka Aditya</p>
+                    <span
+                      role="button"
+                      tabIndex={0}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleAccountPlan();
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          toggleAccountPlan();
+                        }
+                      }}
+                      title={accountPlan === "pro" ? "Klik untuk ganti ke Plus" : "Klik untuk ganti ke Pro"}
+                      className="mt-0.5 inline-flex items-center gap-1 rounded-full border border-blue-200 bg-white px-2 py-[1px] font-['Inter:Bold'] text-[9.5px] font-bold leading-[13px] whitespace-nowrap text-slate-900 shadow-2xs hover:border-blue-300 hover:bg-blue-50/60 transition-all active:scale-95 cursor-pointer select-none"
+                    >
+                      <span>{accountPlan === "pro" ? "Pro" : "Plus"}</span>
+                      <PlusBadgeIcon tier={accountPlan} size={11} />
+                    </span>
                   </div>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleAccountPlan();
-                  }}
-                  title={accountPlan === "pro" ? "Klik untuk ganti ke Plus" : "Klik untuk ganti ke Pro"}
-                  className="inline-flex items-center gap-1 rounded-full border border-blue-200 bg-white px-2 py-[1px] font-['Inter:Bold'] text-[9.5px] font-bold leading-[13px] whitespace-nowrap text-slate-900 shadow-2xs hover:border-blue-300 hover:bg-blue-50/60 transition-all active:scale-95 cursor-pointer select-none"
-                >
-                  <span>{accountPlan === "pro" ? "Pro" : "Plus"}</span>
-                  <PlusBadgeIcon tier={accountPlan} size={11} />
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (profileBtnRef.current) {
-                      const pillEl = profileBtnRef.current?.parentElement ?? profileBtnRef.current;
-                      const rect = pillEl?.getBoundingClientRect();
-                      if (rect) {
-                        setProfileMenuPos({
-                          top: rect.bottom + 8,
-                          right: Math.max(12, window.innerWidth - rect.right),
-                        });
-                      }
-                    }
-                    setProfileMenuOpen((o) => !o);
-                  }}
-                  className="text-slate-400 hover:text-slate-600 transition-colors p-0.5 cursor-pointer shrink-0"
-                  aria-label="Buka menu profil"
-                >
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                  <svg
+                    width="13"
+                    height="13"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="text-slate-400 ml-0.5 shrink-0"
+                  >
                     <polyline points="6 9 12 15 18 9" />
                   </svg>
                 </button>
