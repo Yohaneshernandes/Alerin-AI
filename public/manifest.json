@@ -10,20 +10,20 @@
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/logo192.png",
+      "src": "/logo192.png?v=2",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/logo512.png",
+      "src": "/logo512.png?v=2",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/assets/alerin-logo-only.png",
-      "sizes": "501x450",
+      "src": "/apple-touch-icon.png?v=2",
+      "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     }

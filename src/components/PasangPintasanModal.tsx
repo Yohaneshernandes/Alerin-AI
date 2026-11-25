@@ -121,7 +121,7 @@ export default function PasangPintasanModal({
           }`}
         >
           <div className="flex items-center gap-3.5">
-            <div className="size-11 rounded-2xl bg-[#EDF4FF] dark:bg-blue-950/60 p-2 border border-blue-100 dark:border-blue-900/50 flex items-center justify-center shrink-0 shadow-xs">
+            <div className="size-11 rounded-2xl bg-[#EDF4FF] dark:bg-blue-950/60 p-2.5 border border-blue-100 dark:border-blue-900/50 flex items-center justify-center shrink-0 shadow-xs">
               <img
                 src="/assets/alerin-logo-only.png"
                 alt="Logo Alerin"
@@ -172,11 +172,11 @@ export default function PasangPintasanModal({
         <div className="p-5 sm:p-6 space-y-4">
           {/* Card Pratinjau Pintasan Alerin */}
           <div className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-gradient-to-r from-blue-50/90 via-sky-50/60 to-indigo-50/40 dark:from-blue-950/40 dark:via-blue-950/20 dark:to-indigo-950/30 border border-blue-100/90 dark:border-blue-900/50">
-            <div className="size-12 rounded-2xl bg-white shadow-xs p-1.5 border border-blue-100 shrink-0 flex items-center justify-center">
+            <div className="size-12 rounded-2xl bg-white shadow-xs border border-blue-100 overflow-hidden shrink-0 flex items-center justify-center">
               <img
-                src="/assets/alerin-logo-only.png"
+                src="/apple-touch-icon.png?v=2"
                 alt="Alerin"
-                className="w-full h-full object-contain"
+                className="w-full h-full object-cover"
               />
             </div>
             <div className="min-w-0 flex-1">
