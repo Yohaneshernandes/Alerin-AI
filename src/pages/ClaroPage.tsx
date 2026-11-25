@@ -5632,6 +5632,40 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
   const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
   const [profileMenuPos, setProfileMenuPos] = useState<{ top: number; right: number } | null>(null);
   const profileBtnRef = useRef<HTMLButtonElement>(null);
+  const [accountPlan, setAccountPlan] = useState<"plus" | "pro">(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const saved = localStorage.getItem("alerin_user_package") || localStorage.getItem("alerin_user_plan");
+        if (saved && saved.toLowerCase().includes("pro")) return "pro";
+      } catch {}
+    }
+    return "plus";
+  });
+
+  const toggleAccountPlan = useCallback(() => {
+    setAccountPlan((prev) => {
+      const next = prev === "plus" ? "pro" : "plus";
+      try {
+        localStorage.setItem("alerin_user_package", next);
+        localStorage.setItem("alerin_user_plan", next);
+        window.dispatchEvent(new Event("alerin_plan_change"));
+      } catch {}
+      showToast(next === "pro" ? "Beralih ke akun Pro" : "Beralih ke akun Plus");
+      return next;
+    });
+  }, [showToast]);
+
+  useEffect(() => {
+    const handlePlanChange = () => {
+      try {
+        const saved = localStorage.getItem("alerin_user_package") || localStorage.getItem("alerin_user_plan");
+        if (saved && saved.toLowerCase().includes("pro")) setAccountPlan("pro");
+        else if (saved && saved.toLowerCase().includes("plus")) setAccountPlan("plus");
+      } catch {}
+    };
+    window.addEventListener("alerin_plan_change", handlePlanChange);
+    return () => window.removeEventListener("alerin_plan_change", handlePlanChange);
+  }, []);
   const [isDarkTheme, setIsDarkTheme] = useState(() => {
     if (typeof window !== "undefined") {
       return window.localStorage.getItem("alerin-theme") === "dark";
@@ -7103,36 +7137,59 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                   : "bg-white/90 border-slate-200/85 shadow-[0_4px_20px_rgba(15,23,42,0.08)]"
               }`}
             >
-              <button
-                ref={profileBtnRef}
-                type="button"
-                onClick={() => {
-                  const pillEl = profileBtnRef.current?.parentElement ?? profileBtnRef.current;
-                  const rect = pillEl?.getBoundingClientRect();
-                  if (rect) setProfileMenuPos({ top: rect.bottom + 8, right: Math.max(12, window.innerWidth - rect.right) });
-                  setProfileMenuOpen(o => !o);
-                }}
-                className="flex items-center gap-2.5 pl-0.5 pr-1 text-left hover:opacity-85 transition-opacity cursor-pointer"
-              >
-                <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0"
-                  style={{ background: "linear-gradient(135deg,#f59e0b,#d97706)" }}>RA</div>
-                <div className="min-w-0 flex flex-col items-start leading-tight">
-                  <p className={`text-xs font-semibold whitespace-nowrap ${isDarkTheme ? "text-slate-100" : "text-slate-800"}`}>Raka Aditya</p>
-                  <span
-                    className={`mt-0.5 inline-flex items-center gap-1 rounded-full border px-2 py-[1px] font-['Inter:Bold'] text-[9.5px] font-bold leading-[13px] whitespace-nowrap ${
-                      isDarkTheme
-                        ? "border-blue-500/40 bg-slate-900 text-slate-100"
-                        : "border-blue-200 bg-white text-slate-900"
-                    }`}
-                  >
-                    Plus
-                    <PlusBadgeIcon size={11} />
-                  </span>
-                </div>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400 ml-0.5 shrink-0">
-                  <polyline points="6 9 12 15 18 9" />
-                </svg>
-              </button>
+              <div className="flex items-center gap-2 pl-0.5 pr-1 text-left">
+                <button
+                  ref={profileBtnRef}
+                  type="button"
+                  onClick={() => {
+                    const pillEl = profileBtnRef.current?.parentElement ?? profileBtnRef.current;
+                    const rect = pillEl?.getBoundingClientRect();
+                    if (rect) setProfileMenuPos({ top: rect.bottom + 8, right: Math.max(12, window.innerWidth - rect.right) });
+                    setProfileMenuOpen(o => !o);
+                  }}
+                  className="flex items-center gap-2 text-left hover:opacity-85 transition-opacity cursor-pointer"
+                  aria-label="Profil Raka Aditya"
+                >
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0 shadow-xs"
+                    style={{ background: "linear-gradient(135deg,#f59e0b,#d97706)" }}>RA</div>
+                  <div className="min-w-0 flex flex-col items-start leading-tight">
+                    <p className={`text-xs font-semibold whitespace-nowrap ${isDarkTheme ? "text-slate-100" : "text-slate-800"}`}>Raka Aditya</p>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleAccountPlan();
+                  }}
+                  title={accountPlan === "pro" ? "Klik untuk ganti ke Plus" : "Klik untuk ganti ke Pro"}
+                  className={`inline-flex items-center gap-1 rounded-full border px-2 py-[1px] font-['Inter:Bold'] text-[9.5px] font-bold leading-[13px] whitespace-nowrap transition-all active:scale-95 cursor-pointer shadow-2xs select-none ${
+                    isDarkTheme
+                      ? "border-blue-500/40 bg-slate-900 text-slate-100 hover:border-blue-400"
+                      : "border-blue-200 bg-white text-slate-900 hover:border-blue-300 hover:bg-blue-50/60"
+                  }`}
+                >
+                  <span>{accountPlan === "pro" ? "Pro" : "Plus"}</span>
+                  <PlusBadgeIcon tier={accountPlan} size={11} />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    const pillEl = profileBtnRef.current?.parentElement ?? profileBtnRef.current;
+                    const rect = pillEl?.getBoundingClientRect();
+                    if (rect) setProfileMenuPos({ top: rect.bottom + 8, right: Math.max(12, window.innerWidth - rect.right) });
+                    setProfileMenuOpen(o => !o);
+                  }}
+                  className="text-slate-400 hover:text-slate-600 transition-colors p-0.5 cursor-pointer shrink-0"
+                  aria-label="Buka menu profil"
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </button>
+              </div>
               <div className={`w-px h-5 shrink-0 ${isDarkTheme ? "bg-slate-700" : "bg-slate-200/80"}`} />
               <button
                 type="button"
@@ -7175,8 +7232,26 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                   }}
                 />
               </div>
-              <div className="min-w-0">
-                <p className={`truncate text-sm font-bold ${isDarkTheme ? "text-white" : "text-slate-900"}`}>Raka</p>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center justify-between gap-2">
+                  <p className={`truncate text-sm font-bold ${isDarkTheme ? "text-white" : "text-slate-900"}`}>Raka</p>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleAccountPlan();
+                    }}
+                    title={accountPlan === "pro" ? "Klik untuk ganti ke Plus" : "Klik untuk ganti ke Pro"}
+                    className={`inline-flex items-center gap-1 rounded-full border px-2 py-[1px] font-['Inter:Bold'] text-[9.5px] font-bold leading-[13px] whitespace-nowrap transition-all active:scale-95 cursor-pointer shadow-2xs select-none ${
+                      isDarkTheme
+                        ? "border-blue-500/40 bg-slate-900 text-slate-100 hover:border-blue-400"
+                        : "border-blue-200 bg-white text-slate-900 hover:border-blue-300 hover:bg-blue-50/60"
+                    }`}
+                  >
+                    <span>{accountPlan === "pro" ? "Pro" : "Plus"}</span>
+                    <PlusBadgeIcon tier={accountPlan} size={11} />
+                  </button>
+                </div>
                 <p className="mt-0.5 truncate text-xs text-slate-400">rakaaditya@gmail.com</p>
               </div>
             </div>

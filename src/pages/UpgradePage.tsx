@@ -547,6 +547,40 @@ export default function UpgradePage() {
   const [profileMenuPos, setProfileMenuPos] = useState<{ top: number; right: number } | null>(null);
   const profileBtnRef = useRef<HTMLButtonElement>(null);
   const [currentAccountPlan, setCurrentAccountPlan] = useState("Paket: Plus");
+  const [accountPlan, setAccountPlan] = useState<"plus" | "pro">(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const saved = localStorage.getItem("alerin_user_package") || localStorage.getItem("alerin_user_plan");
+        if (saved && saved.toLowerCase().includes("pro")) return "pro";
+      } catch {}
+    }
+    return "plus";
+  });
+
+  const toggleAccountPlan = useCallback(() => {
+    setAccountPlan((prev) => {
+      const next = prev === "plus" ? "pro" : "plus";
+      try {
+        localStorage.setItem("alerin_user_package", next);
+        localStorage.setItem("alerin_user_plan", next);
+        window.dispatchEvent(new Event("alerin_plan_change"));
+      } catch {}
+      showToast(next === "pro" ? "Beralih ke akun Pro" : "Beralih ke akun Plus", "success");
+      return next;
+    });
+  }, [showToast]);
+
+  useEffect(() => {
+    const handlePlanChange = () => {
+      try {
+        const saved = localStorage.getItem("alerin_user_package") || localStorage.getItem("alerin_user_plan");
+        if (saved && saved.toLowerCase().includes("pro")) setAccountPlan("pro");
+        else if (saved && saved.toLowerCase().includes("plus")) setAccountPlan("plus");
+      } catch {}
+    };
+    window.addEventListener("alerin_plan_change", handlePlanChange);
+    return () => window.removeEventListener("alerin_plan_change", handlePlanChange);
+  }, []);
   const [isDarkTheme, setIsDarkTheme] = useState(() =>
     typeof window !== "undefined" && window.localStorage.getItem("alerin-theme") === "dark"
   );
@@ -1272,39 +1306,71 @@ export default function UpgradePage() {
             <div
               className="flex items-center gap-2 px-2.5 py-1.5 rounded-full backdrop-blur-md border border-slate-200/85 bg-white/90 shadow-[0_4px_20px_rgba(15,23,42,0.08)] transition-colors"
             >
-              <button
-                ref={profileBtnRef}
-                type="button"
-                onClick={() => {
-                  const pillEl = profileBtnRef.current?.parentElement ?? profileBtnRef.current;
-                  const rect = pillEl?.getBoundingClientRect();
-                  if (rect) {
-                    setProfileMenuPos({
-                      top: rect.bottom + 8,
-                      right: Math.max(12, window.innerWidth - rect.right),
-                    });
-                  }
-                  setProfileMenuOpen((o) => !o);
-                }}
-                className="flex items-center gap-2.5 pl-0.5 pr-1 text-left hover:opacity-85 transition-opacity cursor-pointer"
-              >
-                <div
-                  className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0 shadow-xs"
-                  style={{ background: "linear-gradient(135deg,#f59e0b,#d97706)" }}
+              <div className="flex items-center gap-2 pl-0.5 pr-1 text-left">
+                <button
+                  type="button"
+                  ref={profileBtnRef}
+                  onClick={(e) => {
+                    const pillEl = profileBtnRef.current?.parentElement ?? profileBtnRef.current;
+                    const rect = pillEl?.getBoundingClientRect();
+                    if (rect) {
+                      setProfileMenuPos({
+                        top: rect.bottom + 8,
+                        right: Math.max(12, window.innerWidth - rect.right),
+                      });
+                    }
+                    setProfileMenuOpen((o) => !o);
+                  }}
+                  className="flex items-center gap-2 text-left hover:opacity-85 transition-opacity cursor-pointer"
+                  aria-label="Profil Raka Aditya"
                 >
-                  RA
-                </div>
-                <div className="min-w-0 flex flex-col items-start leading-tight">
-                  <p className="text-xs font-semibold whitespace-nowrap text-slate-800">Raka Aditya</p>
-                  <span className="mt-0.5 inline-flex items-center gap-1 rounded-full border border-blue-200 bg-white px-2 py-[1px] font-['Inter:Bold'] text-[9.5px] font-bold leading-[13px] whitespace-nowrap text-slate-900 shadow-2xs">
-                    Plus
-                    <PlusBadgeIcon size={11} />
-                  </span>
-                </div>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400 ml-0.5 shrink-0">
-                  <polyline points="6 9 12 15 18 9" />
-                </svg>
-              </button>
+                  <div
+                    className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0 shadow-xs"
+                    style={{ background: "linear-gradient(135deg,#f59e0b,#d97706)" }}
+                  >
+                    RA
+                  </div>
+                  <div className="min-w-0 flex flex-col items-start leading-tight">
+                    <p className="text-xs font-semibold whitespace-nowrap text-slate-800">Raka Aditya</p>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleAccountPlan();
+                  }}
+                  title={accountPlan === "pro" ? "Klik untuk ganti ke Plus" : "Klik untuk ganti ke Pro"}
+                  className="inline-flex items-center gap-1 rounded-full border border-blue-200 bg-white px-2 py-[1px] font-['Inter:Bold'] text-[9.5px] font-bold leading-[13px] whitespace-nowrap text-slate-900 shadow-2xs hover:border-blue-300 hover:bg-blue-50/60 transition-all active:scale-95 cursor-pointer select-none"
+                >
+                  <span>{accountPlan === "pro" ? "Pro" : "Plus"}</span>
+                  <PlusBadgeIcon tier={accountPlan} size={11} />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (profileBtnRef.current) {
+                      const pillEl = profileBtnRef.current?.parentElement ?? profileBtnRef.current;
+                      const rect = pillEl?.getBoundingClientRect();
+                      if (rect) {
+                        setProfileMenuPos({
+                          top: rect.bottom + 8,
+                          right: Math.max(12, window.innerWidth - rect.right),
+                        });
+                      }
+                    }
+                    setProfileMenuOpen((o) => !o);
+                  }}
+                  className="text-slate-400 hover:text-slate-600 transition-colors p-0.5 cursor-pointer shrink-0"
+                  aria-label="Buka menu profil"
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </button>
+              </div>
               <div className="w-px h-5 shrink-0 bg-slate-200/80" />
               <button
                 type="button"
