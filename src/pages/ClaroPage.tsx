@@ -24386,6 +24386,38 @@ function ProfilTab({ onTab, onRegister }: { onTab: (t: NavTab) => void; onRegist
   const [bantuan, setBantuan] = useState(registrationProfile.bantuan || "Skripsi");
   const [faseAkademik, setFaseAkademik] = useState(registrationProfile.fase || "Penyusunan Bab II");
   const [motto, setMotto] = useState("Proses hari ini, hasil nanti.");
+  const [aboutNickname, setAboutNickname] = useState(() => (
+    typeof window !== "undefined" ? window.localStorage.getItem("alerin-about-nickname") || "Raka" : "Raka"
+  ));
+  const [savedAboutNickname, setSavedAboutNickname] = useState(aboutNickname);
+  const [aboutDesc, setAboutDesc] = useState(() => (
+    typeof window !== "undefined"
+      ? window.localStorage.getItem("alerin-about-desc") || "Saya tertarik pada manajemen dan riset terapan. Saya lebih mudah memahami penjelasan melalui contoh serta latihan singkat."
+      : "Saya tertarik pada manajemen dan riset terapan. Saya lebih mudah memahami penjelasan melalui contoh serta latihan singkat."
+  ));
+  const [savedAboutDesc, setSavedAboutDesc] = useState(aboutDesc);
+
+  const isAboutDirty = aboutNickname !== savedAboutNickname || aboutDesc !== savedAboutDesc;
+  const isSaveAboutActive = isAboutDirty && (aboutNickname.trim().length > 0 || aboutDesc.trim().length > 0);
+  const [saveAboutSuccess, setSaveAboutSuccess] = useState(false);
+
+  const handleSaveAboutYou = () => {
+    if (!isSaveAboutActive) return;
+    const cleanNick = aboutNickname.trim();
+    const cleanDesc = aboutDesc.trim();
+    try {
+      window.localStorage.setItem("alerin-about-nickname", cleanNick);
+      window.localStorage.setItem("alerin-about-desc", cleanDesc);
+    } catch {}
+    setSavedAboutNickname(cleanNick);
+    setSavedAboutDesc(cleanDesc);
+    setSaveAboutSuccess(true);
+    setNotice("Informasi Tentang Kamu berhasil disimpan.");
+    window.setTimeout(() => {
+      setNotice("");
+      setSaveAboutSuccess(false);
+    }, 2400);
+  };
 
   const inF = (e: React.FocusEvent<HTMLInputElement>) => { e.currentTarget.style.borderColor = "#93c5fd"; e.currentTarget.style.background = "#fff"; };
   const inB = (e: React.FocusEvent<HTMLInputElement>) => { e.currentTarget.style.borderColor = "#e2e8f0"; e.currentTarget.style.background = "#f8fafc"; };
@@ -25991,28 +26023,52 @@ function ProfilTab({ onTab, onRegister }: { onTab: (t: NavTab) => void; onRegist
                     <div className="grid sm:grid-cols-2 gap-3 mb-3">
                       <div>
                         <p className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-slate-500 md:text-[11px]">Nama panggilan</p>
-                        <div
-                          contentEditable
-                          suppressContentEditableWarning
-                          role="textbox"
+                        <input
+                          type="text"
+                          value={aboutNickname}
+                          onChange={(e) => setAboutNickname(e.target.value)}
+                          placeholder="Nama panggilan"
                           aria-label="Nama panggilan"
-                          className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-[13px] font-medium text-slate-700 outline-none transition-colors focus:border-blue-400 focus:bg-white md:text-xs"
-                        >
-                          Raka
-                        </div>
+                          className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-[13px] font-medium text-slate-700 outline-none transition-colors focus:border-blue-400 focus:bg-white md:text-xs"
+                        />
                       </div>
                     </div>
                     <p className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-slate-500 md:text-[11px]">Deskripsi minat dan gaya riset</p>
-                    <div
-                      contentEditable
-                      suppressContentEditableWarning
-                      role="textbox"
+                    <textarea
+                      value={aboutDesc}
+                      onChange={(e) => setAboutDesc(e.target.value)}
+                      placeholder="Deskripsi minat dan gaya riset..."
                       aria-label="Deskripsi minat dan gaya riset"
-                      aria-multiline="true"
-                      className="min-h-24 rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-[13px] leading-relaxed text-slate-600 outline-none transition-colors focus:border-blue-400 focus:bg-white md:text-xs"
-                    >
-                      Saya tertarik pada manajemen dan riset terapan. Saya lebih mudah memahami penjelasan melalui contoh serta latihan singkat.
-                    </div>
+                      rows={3}
+                      className="w-full min-h-24 rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-[13px] leading-relaxed text-slate-600 outline-none transition-colors focus:border-blue-400 focus:bg-white md:text-xs resize-none"
+                    />
+
+                    {/* Button Simpan */}
+                    {saveAboutSuccess ? (
+                      <button
+                        type="button"
+                        disabled
+                        className="mt-4 w-full rounded-xl py-3 text-sm font-bold transition-all md:text-[13px] flex items-center justify-center gap-2 bg-emerald-600 text-white shadow-xs cursor-default"
+                      >
+                        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                        <span>Berhasil Disimpan</span>
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        disabled={!isSaveAboutActive}
+                        onClick={handleSaveAboutYou}
+                        className={`mt-4 w-full rounded-xl py-3 text-sm font-bold transition-all md:text-[13px] flex items-center justify-center gap-2 ${
+                          isSaveAboutActive
+                            ? "bg-[#347CEA] text-white hover:bg-blue-700 shadow-xs cursor-pointer active:scale-[0.98]"
+                            : "bg-slate-100 text-slate-400 border border-slate-200/80 cursor-not-allowed"
+                        }`}
+                      >
+                        Simpan
+                      </button>
+                    )}
                   </div>
                 </div>
               )}
