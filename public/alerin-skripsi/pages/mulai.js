@@ -420,21 +420,24 @@ function workspaceView() {
        <button type="button" class="bab-btn-next" style="background:#52647D; margin-left: 8px;" data-action="reopen:${done.id}"><span>Buka Lagi</span></button>`
     : `<button type="button" class="idea-btn-submit" data-action="guide-task"><span>Kerjakan</span></button>`;
 
-  const hasActiveTitle = !!(S.title && (S.titleChosenAt || S.activeResearch));
+  const activeTitle = S.activeResearch?.title || S.title || '';
+  const hasActiveTitle = !!(activeTitle && (S.titleChosenAt || S.activeResearch || S.title));
   const isDefaultOrTest =
     !S.draft?.topic ||
     isAsal(S.draft.topic) ||
     /algoritma|video pendek|fatigue|reels/i.test(S.draft.topic) ||
     String(S.draft.topic).length < 5;
   const displayTopic = isDefaultOrTest
-    ? (S.title || 'Pengaruh algoritma konten video pendek (TikTok/Reels) terhadap fenomena social media fatigue dan pola konsumsi informasi audiens muda.')
-    : S.draft.topic;
+    ? (activeTitle || 'Pengaruh algoritma konten video pendek (TikTok/Reels) terhadap fenomena social media fatigue dan pola konsumsi informasi audiens muda.')
+    : (activeTitle || S.draft.topic);
+
+  const currentDisplayTitle = activeTitle || displayTopic;
 
   const bannerHtml = hasActiveTitle
     ? `
       <div class="hasil-awal-banner mulai-chapter-banner">
-        <div class="hasil-awal-banner-tag">Berdasarkan isian pengguna</div>
-        <div class="hasil-awal-banner-title">${e(displayTopic)}</div>
+        <div class="hasil-awal-banner-tag">Judul Penelitian Aktif</div>
+        <div class="hasil-awal-banner-title">${e(currentDisplayTitle)}</div>
         <div class="hasil-awal-banner-desc">Rancangan merupakan bahan diskusi pembimbing. Outline dan kerangka berpikir tersedia pada setiap opsi judul.</div>
       </div>
     `
