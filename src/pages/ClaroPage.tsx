@@ -19883,7 +19883,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
       {/* Agenda Section (Daftar agenda desktop: judul tetap di atas & scrollable jika banyak) */}
       {selected && selectedKey && selectedEvents.length > 0 && (
         <div className="border-t border-slate-200 flex flex-col min-h-0 flex-1 shrink-0">
-          {/* Header Agenda Tetap (dengan tombol + Tambah Agenda langsung) */}
+          {/* Header Agenda Tetap */}
           <div className="px-6 pt-2.5 pb-1.5 flex items-center justify-between gap-2 shrink-0 bg-white">
             <div className="flex items-center gap-2 min-w-0">
               <svg width="14" height="15" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
