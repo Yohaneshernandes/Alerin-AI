@@ -7366,6 +7366,8 @@ const MODES: {
   bg: string;
   border: string;
   icon: React.ReactNode;
+  badge?: string;
+  isLocked?: boolean;
 }[] = [
   {
     id: "luma",
@@ -7387,6 +7389,8 @@ const MODES: {
     label: "Vera",
     fullTitle: "Vera - Cermat",
     desc: "Analisis terstruktur, perbandingan, penelaahan file, dan tugas multi-langkah menengah",
+    badge: "Plus/Pro",
+    isLocked: true,
     color: "#334155",
     bg: "#ffffff",
     border: "#e2e8f0",
@@ -7406,6 +7410,8 @@ const MODES: {
     label: "Alta",
     fullTitle: "Alta - Mendalam",
     desc: "Metodologi kompleks, sintesis, kritik argumen, dan keputusan akademik mendalam",
+    badge: "Plus/Pro",
+    isLocked: true,
     color: "#334155",
     bg: "#ffffff",
     border: "#e2e8f0",
@@ -7450,6 +7456,7 @@ function ChatInputBox({
       (document.documentElement.classList.contains("dark") ||
         document.documentElement.classList.contains("profile-dark") ||
         document.body?.classList.contains("dark"));
+  const navigate = useNavigate();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const mobileTextareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -8119,6 +8126,12 @@ function ChatInputBox({
                             type="button"
                             onClick={(e) => {
                               e.stopPropagation();
+                              if (m.isLocked) {
+                                navigate("/upgrade");
+                                setModeOpen(false);
+                                setModeDropdownPos(null);
+                                return;
+                              }
                               setActiveMode(m.id);
                               setModeOpen(false);
                               setModeDropdownPos(null);
@@ -8130,16 +8143,23 @@ function ChatInputBox({
                             }`}
                           >
                             <div className="flex-1 min-w-0 pr-1">
-                              <p className={`text-[13.5px] font-semibold leading-tight ${isDark ? "text-white" : "text-slate-900"}`}>
-                                {m.fullTitle}
-                              </p>
+                              <div className="flex items-center gap-2">
+                                <p className={`text-[13.5px] font-semibold leading-tight ${isDark ? "text-white" : "text-slate-900"}`}>
+                                  {m.fullTitle}
+                                </p>
+                                {m.badge && (
+                                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-[#dbeafe] text-[#2563eb] dark:bg-blue-950/70 dark:text-blue-300 shrink-0 leading-none">
+                                    {m.badge}
+                                  </span>
+                                )}
+                              </div>
                               <p className={`text-[11.5px] font-normal leading-relaxed mt-1 ${isDark ? "text-slate-400" : "text-slate-500"}`}>
                                 {m.desc}
                               </p>
                             </div>
 
                             <div className={`shrink-0 w-5 flex items-center justify-end self-start mt-0.5 ${isDark ? "text-blue-400" : "text-slate-900"}`}>
-                              {isSelected && (
+                              {isSelected ? (
                                 <svg
                                   width="16"
                                   height="16"
@@ -8152,7 +8172,22 @@ function ChatInputBox({
                                 >
                                   <polyline points="20 6 9 17 4 12" />
                                 </svg>
-                              )}
+                              ) : m.isLocked ? (
+                                <svg
+                                  width="15"
+                                  height="15"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="1.8"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  className="text-slate-400 dark:text-slate-400"
+                                >
+                                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                                </svg>
+                              ) : null}
                             </div>
                           </button>
                         );
