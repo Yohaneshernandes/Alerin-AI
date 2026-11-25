@@ -230,8 +230,8 @@ function homeStrip(p) {
 
   let checkedTitle = 'Belum ada bahan diperiksa';
   let checkedDesc = 'Hasil Periksa Skripsi otomatis tampil di sini.';
-  let checkedAction = 'nav:periksa';
-  let checkedBtnText = 'Mulai Unggah Berkas';
+  let checkedAction = '';
+  let checkedBtnText = '';
   let checkedIsPlaceholder = true;
 
   if (r) {
@@ -266,11 +266,15 @@ function homeStrip(p) {
           <strong class="b18-strip-title ${checkedIsPlaceholder ? 'b18-placeholder' : ''}">${e(checkedTitle)}</strong>
           <span class="b18-strip-desc">${e(checkedDesc)}</span>
         </div>
-        <div class="b18-strip-card-action">
+        ${
+          checkedBtnText
+            ? `<div class="b18-strip-card-action">
           <button type="button" class="btn text b18-btn-strip-link" data-action="${checkedAction}">
             <span>${e(checkedBtnText)}</span>
           </button>
-        </div>
+        </div>`
+            : ''
+        }
       </div>
 
       <div class="b18-strip-card">
