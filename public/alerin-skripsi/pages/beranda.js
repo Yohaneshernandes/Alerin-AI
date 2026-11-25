@@ -418,18 +418,6 @@ function targetCard() {
     `;
   }
 
-  const status =
-    route === 'beranda' && !KALENDER_INDUK_TERHUBUNG
-      ? `<div class="b18-cal-status">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="12" y1="8" x2="12" y2="12"></line>
-            <line x1="12" y1="16" x2="12.01" y2="16"></line>
-          </svg>
-          <span>Kalender Alerin Induk belum terhubung. Pengingat otomatis via email belum aktif.</span>
-        </div>`
-      : '';
-
   return `
     <section class="card target-card b18-target-card ${primaryUrg.cls}">
       <div class="b18-target-head">
@@ -442,7 +430,6 @@ function targetCard() {
         <h3>Target Terdekat${list.length > 1 ? ` (${list.length})` : ''}</h3>
       </div>
       ${body}
-      ${status}
       <div class="actions b18-target-actions">
         <button type="button" class="btn b18-btn-add-target" data-action="target-suggest">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
