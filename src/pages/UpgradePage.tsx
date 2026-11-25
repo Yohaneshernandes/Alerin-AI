@@ -763,6 +763,7 @@ export default function UpgradePage() {
   });
   const [bizSubmitting, setBizSubmitting] = useState(false);
   const [bizConfirmModalOpen, setBizConfirmModalOpen] = useState(false);
+  const [isVoucherSuccessModalOpen, setIsVoucherSuccessModalOpen] = useState(false);
   const [bizErrors, setBizErrors] = useState<{
     name?: boolean;
     email?: boolean;
@@ -778,6 +779,7 @@ export default function UpgradePage() {
       isSuccessModalOpen ||
       bizConfirmModalOpen ||
       businessModalOpen ||
+      isVoucherSuccessModalOpen ||
       notifOpen ||
       mobileDrawerOpen
   );
@@ -993,6 +995,7 @@ export default function UpgradePage() {
         amount: 25000,
         type: "fixed",
       });
+      setIsVoucherSuccessModalOpen(true);
       showToast(`Voucher ${code} berhasil diterapkan! (Hemat Rp25.000)`, "success");
     } else {
       showToast("Kode voucher tidak valid atau sudah kedaluwarsa.", "error");
@@ -5036,6 +5039,86 @@ export default function UpgradePage() {
               >
                 Batalkan Pembayaran
               </button>
+          </div>
+        </div>
+      )}
+
+      {/* POP-UP VOUCHER BERHASIL DITERAPKAN */}
+      {isVoucherSuccessModalOpen && (
+        <div
+          className="fixed inset-0 z-[80] overflow-hidden overscroll-none bg-slate-900/60 backdrop-blur-sm p-4 sm:p-5 flex items-center justify-center animate-[gemini-fade-in_0.2s_ease-out]"
+          onClick={() => setIsVoucherSuccessModalOpen(false)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="relative bg-white rounded-[26px] max-w-[380px] w-full p-6 sm:p-7 text-center shadow-2xl border border-slate-100 animate-[gemini-zoom-in_0.18s_ease-out]"
+          >
+            {/* Close Button X */}
+            <button
+              type="button"
+              onClick={() => setIsVoucherSuccessModalOpen(false)}
+              aria-label="Tutup"
+              className="absolute top-4 right-4 size-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+
+            {/* Icon Voucher / Badge Diskon */}
+            <div className="size-16 sm:size-20 rounded-2xl bg-gradient-to-tr from-[#1A73E8] to-sky-400 text-white mx-auto flex items-center justify-center shadow-lg shadow-blue-500/25 mb-4">
+              <svg className="w-8 h-8 sm:w-10 sm:h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M2.586 16.726A2 2 0 0 1 2 15.312V9c0-.55.45-1 1-1h1.5a1.5 1.5 0 0 0 0-3H3c-.55 0-1-.45-1-1V3a1 1 0 0 1 1-1h6.312a2 2 0 0 1 1.414.586l10.688 10.688a2 2 0 0 1 0 2.828l-6.312 6.312a2 2 0 0 1-2.828 0L2.586 16.726Z" />
+                <circle cx="8" cy="8" r="1.5" fill="currentColor" />
+              </svg>
+            </div>
+
+            {/* Pill Status */}
+            <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[#1A73E8] bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
+              <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+              Voucher Berhasil Diterapkan
+            </span>
+
+            {/* Title */}
+            <h3 className="text-xl sm:text-[22px] font-extrabold text-slate-900 mt-3 leading-snug">
+              Hemat {formatRupiah(appliedVoucher?.amount || 25000)}!
+            </h3>
+
+            {/* Description */}
+            <p className="text-xs sm:text-[13px] text-slate-600 mt-2 leading-relaxed">
+              Kode promo <strong className="font-bold text-[#1A73E8] tracking-wider">{appliedVoucher?.code || "ALLERIHEMAT"}</strong> berhasil dipasang. Potongan harga otomatis diterapkan ke total pesananmu.
+            </p>
+
+            {/* Rincian Box */}
+            <div className="mt-5 p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-left space-y-2">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-slate-500 font-medium">Kode Kupon</span>
+                <span className="font-mono font-bold text-slate-900 bg-white px-2 py-0.5 rounded border border-slate-200 text-[11px]">{appliedVoucher?.code || "ALLERIHEMAT"}</span>
+              </div>
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-slate-500 font-medium">Total Potongan</span>
+                <span className="font-bold text-emerald-600">-{formatRupiah(appliedVoucher?.amount || 25000)}</span>
+              </div>
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-slate-500 font-medium">Status</span>
+                <span className="inline-flex items-center gap-1 font-semibold text-blue-600">
+                  <span className="size-1.5 rounded-full bg-blue-600 animate-pulse"></span>
+                  Aktif Digunakan
+                </span>
+              </div>
+            </div>
+
+            {/* Action Button */}
+            <button
+              type="button"
+              onClick={() => setIsVoucherSuccessModalOpen(false)}
+              className="w-full mt-5 py-3.5 px-5 bg-[#1A73E8] hover:bg-[#1557b0] active:scale-[0.98] text-white font-bold text-sm rounded-xl shadow-md shadow-[#1A73E8]/20 transition-all cursor-pointer"
+            >
+              Gunakan Sekarang
+            </button>
           </div>
         </div>
       )}
