@@ -19456,10 +19456,10 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
             }}
             autoCapitalize="sentences"
             placeholder="Contoh: Diskusi Evaluasi Mingguan"
-            className={`w-full px-3.5 py-2.5 bg-white rounded-xl outline outline-1 outline-offset-[-1px] text-sm text-slate-900 placeholder:text-slate-400 font-normal transition-colors ${
+            className={`w-full px-3.5 py-2.5 bg-white rounded-xl border text-sm text-slate-900 placeholder:text-slate-400 font-normal transition-all shadow-2xs outline-none ${
               agendaErrors.title
-                ? "outline-red-400 focus:outline-red-400"
-                : "outline-slate-200 focus:outline-[#1A73E8]"
+                ? "border-red-400 focus:border-red-500 focus:ring-1 focus:ring-red-400"
+                : "border-slate-300 focus:border-blue-600 focus:ring-1 focus:ring-blue-600/20"
             }`}
           />
           {agendaErrors.title && (
@@ -19483,7 +19483,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
             <div
               aria-readonly="true"
               title="Tanggal otomatis mengikuti tanggal yang dipilih di kalender"
-              className="relative flex items-center bg-slate-50 rounded-xl outline outline-1 outline-offset-[-1px] outline-slate-200 select-none cursor-default"
+              className="relative flex items-center bg-slate-50/80 rounded-xl border border-slate-300 select-none cursor-default shadow-2xs"
             >
               <svg
                 width="15"
@@ -19515,12 +19515,12 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
             <div
               ref={timeFieldRef}
               onClick={openTimePicker}
-              className={`relative flex items-center bg-white rounded-xl outline outline-1 outline-offset-[-1px] transition-colors cursor-pointer ${
+              className={`relative flex items-center bg-white rounded-xl border transition-all cursor-pointer shadow-2xs ${
                 agendaErrors.time
-                  ? "outline-red-400 focus-within:outline-red-400"
+                  ? "border-red-400 focus-within:border-red-500 focus-within:ring-1 focus-within:ring-red-400"
                   : timePickerOpen
-                  ? "outline-[#1A73E8] ring-2 ring-[#1A73E8]/15"
-                  : "outline-slate-200 focus-within:outline-[#1A73E8]"
+                  ? "border-blue-600 ring-2 ring-blue-600/15"
+                  : "border-slate-300 focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600/20"
               }`}
             >
               <input
@@ -19596,12 +19596,12 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
             autoCapitalize="sentences"
             placeholder="Tuliskan catatan tambahan..."
             rows={3}
-            className="w-full px-3.5 py-3 bg-white rounded-xl outline outline-1 outline-offset-[-1px] outline-slate-200 focus:outline-[#1A73E8] text-sm text-slate-900 placeholder:text-slate-400 leading-5 resize-none outline-none font-normal transition-colors"
+            className="w-full px-3.5 py-2.5 bg-white rounded-xl border border-slate-300 focus:border-blue-600 focus:ring-1 focus:ring-blue-600/20 text-sm text-slate-900 placeholder:text-slate-400 leading-5 resize-none outline-none font-normal transition-all shadow-2xs"
           />
         </div>
 
         {/* Aktifkan Pengingat Card */}
-        <div className="p-3.5 bg-white rounded-xl outline outline-1 outline-offset-[-1px] outline-slate-200 flex flex-col transition-all">
+        <div className="p-3.5 bg-white rounded-xl border border-slate-300/90 flex flex-col transition-all shadow-2xs">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-3 min-w-0">
               <div className="size-9 bg-blue-50 rounded-lg outline outline-1 outline-offset-[-1px] outline-blue-100/50 flex items-center justify-center text-blue-600 shrink-0">
@@ -20677,8 +20677,10 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                     if (agendaErrors.title) setAgendaErrors((prev) => ({ ...prev, title: false }));
                   }}
                   placeholder="Contoh: Diskusi Evaluasi Mingguan"
-                  className={`self-stretch px-3.5 py-2.5 bg-white rounded-xl outline outline-1 outline-offset-[-1px] text-xs text-slate-900 placeholder:text-slate-400 font-normal transition-colors ${
-                    agendaErrors.title ? "outline-red-400 focus:outline-red-400" : "outline-slate-200 focus:outline-blue-600"
+                  className={`self-stretch px-3.5 py-2.5 bg-white rounded-xl border text-xs text-slate-900 placeholder:text-slate-400 font-normal transition-all shadow-2xs outline-none ${
+                    agendaErrors.title
+                      ? "border-red-400 focus:border-red-500 focus:ring-1 focus:ring-red-400"
+                      : "border-slate-300 focus:border-blue-600 focus:ring-1 focus:ring-blue-600/20"
                   }`}
                 />
                 {agendaErrors.title && (
@@ -20701,7 +20703,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                     Tanggal
                   </label>
                   <div className="self-stretch relative inline-flex justify-start items-center">
-                    <div className="flex-1 pl-9 pr-3.5 py-2.5 bg-slate-50 rounded-xl outline outline-1 outline-offset-[-1px] outline-slate-200 inline-flex flex-col justify-start items-start overflow-hidden">
+                    <div className="flex-1 pl-9 pr-3.5 py-2.5 bg-slate-50/80 rounded-xl border border-slate-300 inline-flex flex-col justify-start items-start overflow-hidden shadow-2xs">
                       <span className="self-stretch text-slate-900 text-xs font-medium leading-4 truncate">
                         {formattedActivityDate}
                       </span>
@@ -20742,8 +20744,10 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                         }
                       }}
                       placeholder="-- . --"
-                      className={`flex-1 pl-3.5 pr-9 py-2.5 bg-white rounded-xl outline outline-1 outline-offset-[-1px] text-xs text-slate-900 placeholder:text-slate-400 font-normal transition-colors cursor-pointer ${
-                        agendaErrors.time ? "outline-red-400 focus:outline-red-400" : "outline-slate-200 focus:outline-blue-600"
+                      className={`flex-1 pl-3.5 pr-9 py-2.5 bg-white rounded-xl border text-xs text-slate-900 placeholder:text-slate-400 font-normal transition-all cursor-pointer shadow-2xs outline-none ${
+                        agendaErrors.time
+                          ? "border-red-400 focus:border-red-500 focus:ring-1 focus:ring-red-400"
+                          : "border-slate-300 focus:border-blue-600 focus:ring-1 focus:ring-blue-600/20"
                       }`}
                     />
                     <div className="size-4 right-[14px] top-[11px] absolute pointer-events-none flex items-center justify-center">
@@ -20815,12 +20819,12 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                   value={agendaNotes}
                   onChange={(e) => setAgendaNotes(capitalizeWords(e.target.value.slice(0, 300)))}
                   placeholder="Tuliskan catatan tambahan..."
-                  className="self-stretch h-14 px-3.5 py-2 bg-white rounded-xl outline outline-1 outline-offset-[-1px] outline-slate-200 focus:outline-blue-600 text-xs text-slate-900 placeholder:text-slate-400 resize-none transition-colors leading-5 font-['Plus_Jakarta_Sans']"
+                  className="self-stretch h-14 px-3.5 py-2 bg-white rounded-xl border border-slate-300 focus:border-blue-600 focus:ring-1 focus:ring-blue-600/20 text-xs text-slate-900 placeholder:text-slate-400 resize-none transition-all leading-5 font-['Plus_Jakarta_Sans'] outline-none shadow-2xs"
                 />
               </div>
 
               {/* Aktifkan Pengingat Card */}
-              <div className="self-stretch p-3.5 bg-white rounded-2xl outline outline-1 outline-offset-[-1px] outline-slate-200/90 flex flex-col gap-2.5">
+              <div className="self-stretch p-3.5 bg-white rounded-2xl border border-slate-300/90 flex flex-col gap-2.5 shadow-2xs">
                 <div className="self-stretch inline-flex justify-between items-center">
                   <div className="flex justify-start items-center gap-2.5">
                     <div className="size-9 bg-blue-50 rounded-lg outline outline-1 outline-offset-[-1px] outline-blue-100/50 flex justify-center items-center shrink-0 text-blue-600">
