@@ -20261,7 +20261,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                 <div className="pb-1 flex flex-col justify-start items-center">
                   <h3
                     id="google-syncing-title"
-                    className="text-center justify-center text-slate-900 text-sm font-bold font-['Plus_Jakarta_Sans'] leading-6"
+                    className="text-center justify-center text-slate-900 text-sm font-bold font-['Plus_Jakarta_Sans'] leading-6 whitespace-nowrap"
                   >
                     Menghubungkan ke Google Kalender...
                   </h3>
@@ -21423,7 +21423,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                   <div className="pb-2 flex flex-col justify-start items-center">
                     <h3
                       id="mobile-google-connect-title"
-                      className="text-center justify-center text-slate-900 text-sm sm:text-base font-bold font-['Plus_Jakarta_Sans'] leading-6"
+                      className="text-center justify-center text-slate-900 text-[13.5px] sm:text-base font-bold font-['Plus_Jakarta_Sans'] leading-6 whitespace-nowrap"
                     >
                       Hubungkan dengan Google Kalender?
                     </h3>
@@ -21485,22 +21485,22 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                   aria-modal="true"
                   aria-labelledby="mobile-google-syncing-title"
                   onClick={(e) => e.stopPropagation()}
-                  className="relative w-[340px] max-w-[calc(100%-20px)] p-6 bg-white rounded-2xl outline outline-1 outline-offset-[-1px] outline-slate-200/90 shadow-[0px_22.7px_45.4px_0px_rgba(2,6,23,0.35)] flex flex-col justify-start items-center font-['Plus_Jakarta_Sans'] animate-[gemini-zoom-in_0.15s_ease-out]"
+                  className="relative w-[345px] max-w-[calc(100%-12px)] px-4 py-5 bg-white rounded-2xl outline outline-1 outline-offset-[-1px] outline-slate-200/90 shadow-[0px_22.7px_45.4px_0px_rgba(2,6,23,0.35)] flex flex-col justify-start items-center font-['Plus_Jakarta_Sans'] animate-[gemini-zoom-in_0.15s_ease-out]"
                 >
                   {/* Logo Alerin <-> Sync (Spinning) <-> Google */}
-                  <div className="pb-4 flex items-center justify-center gap-3.5">
-                    <div className="size-13 bg-blue-50 rounded-2xl outline outline-1 outline-offset-[-1px] outline-blue-100 flex justify-center items-center shrink-0">
+                  <div className="pb-3.5 flex items-center justify-center gap-3.5">
+                    <div className="size-12 bg-blue-50 rounded-2xl outline outline-1 outline-offset-[-1px] outline-blue-100 flex justify-center items-center shrink-0">
                       <img
                         src="/assets/alerin-logo-only.png"
                         alt="Alerin"
-                        className="size-6.5 object-contain"
+                        className="size-6 object-contain"
                       />
                     </div>
 
-                    <div className="size-6.5 bg-blue-50 rounded-full shadow-[0px_0.67px_1.33px_0px_rgba(0,0,0,0.05)] outline outline-[0.67px] outline-offset-[-0.67px] outline-blue-600 flex justify-center items-center shrink-0 text-blue-600">
+                    <div className="size-6 bg-blue-50 rounded-full shadow-[0px_0.67px_1.33px_0px_rgba(0,0,0,0.05)] outline outline-[0.67px] outline-offset-[-0.67px] outline-blue-600 flex justify-center items-center shrink-0 text-blue-600">
                       <svg
-                        width="12"
-                        height="12"
+                        width="11"
+                        height="11"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
@@ -21516,8 +21516,8 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                       </svg>
                     </div>
 
-                    <div className="size-13 bg-blue-50 rounded-2xl outline outline-1 outline-offset-[-1px] outline-blue-100 inline-flex justify-center items-center shrink-0">
-                      <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true" className="size-6.5">
+                    <div className="size-12 bg-blue-50 rounded-2xl outline outline-1 outline-offset-[-1px] outline-blue-100 inline-flex justify-center items-center shrink-0">
+                      <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" className="size-6">
                         <path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z" />
                         <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96H1.29v3.09C3.26 21.3 7.31 24 12 24z" />
                         <path fill="#FBBC05" d="M5.27 14.29c-.25-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.98-3.09z" />
@@ -21526,18 +21526,18 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                     </div>
                   </div>
 
-                  {/* Title */}
+                  {/* Title: 1 baris utuh */}
                   <div className="pb-1.5 flex flex-col justify-start items-center">
                     <h3
                       id="mobile-google-syncing-title"
-                      className="text-center justify-center text-slate-900 text-sm sm:text-base font-bold font-['Plus_Jakarta_Sans'] leading-6"
+                      className="text-center justify-center text-slate-900 text-[13px] sm:text-sm font-bold font-['Plus_Jakarta_Sans'] leading-5 whitespace-nowrap"
                     >
                       Menghubungkan ke Google Kalender...
                     </h3>
                   </div>
 
                   {/* Description */}
-                  <div className="pb-4.5 px-1 flex flex-col justify-start items-center">
+                  <div className="pb-4 px-1 flex flex-col justify-start items-center">
                     <p className="text-center justify-center text-gray-500 text-xs font-normal font-['Plus_Jakarta_Sans'] leading-5">
                       Mohon tunggu sebentar, Alerin sedang menghubungkan jadwal bimbingan dan agenda akademikmu.
                     </p>
