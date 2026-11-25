@@ -26228,7 +26228,7 @@ function ProfilTab({ onTab, onRegister }: { onTab: (t: NavTab) => void; onRegist
                           {item.icon}
                           <span className="flex flex-col text-left">
                             <span className="text-sm font-medium text-slate-700">{item.label}</span>
-                            {i === 0 && <span className="text-xs text-slate-500 md:text-[11px] md:text-slate-400">Cara cepat dalam mengakses Alerin</span>}
+                            {i === 0 && <span className="text-xs text-slate-500 md:text-[11px] md:text-slate-400">Cara cepat mengakses Alerin</span>}
                           </span>
                         </div>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="2"><path d="M9 18l6-6-6-6"/></svg>
