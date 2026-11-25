@@ -15518,5 +15518,37 @@ body.dark .chat-shortcut-link:hover {
   background: #1D4ED8;
 }
 
+/* ========================================================
+   OUTLINE JUDUL MODAL - MOBILE LAYOUT
+   Align description column tightly with title column
+   ======================================================== */
+@media (max-width: 768px) {
+  .outline-sub > div {
+    grid-template-columns: 115px minmax(0, 1fr) !important;
+    gap: 12px !important;
+    padding: 8px 0 8px 10px !important;
+  }
+  .outline-sub dt {
+    font-size: 11px !important;
+    line-height: 1.6 !important;
+    font-weight: 600 !important;
+  }
+  .outline-sub dd {
+    font-size: 11px !important;
+    line-height: 1.7 !important;
+    color: #475569 !important;
+  }
+}
+body.dark .outline-sub > div {
+  border-left-color: #334155 !important;
+}
+body.dark .outline-sub dt {
+  color: #f1f5f9 !important;
+}
+body.dark .outline-sub dd {
+  color: #94a3b8 !important;
+}
+
+
 
 

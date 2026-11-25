@@ -469,11 +469,6 @@ body.dark .choice:has(input:checked) {
   .cal-agenda .between {
     flex-wrap: wrap;
   }
-  .outline-sub > div {
-    grid-template-columns: 1fr;
-    gap: 3px;
-    padding-left: 12px;
-  }
   .frame-node {
     grid-template-columns: 30px minmax(0, 1fr);
     gap: 11px;
@@ -522,6 +517,30 @@ body.dark .choice:has(input:checked) {
   font-size: 11px;
   line-height: 1.85;
   color: #56647a;
+}
+@media (max-width: 768px) {
+  .outline-sub > div {
+    grid-template-columns: 115px minmax(0, 1fr) !important;
+    gap: 12px !important;
+    padding: 8px 0 8px 10px !important;
+  }
+  .outline-sub dt {
+    font-size: 11px !important;
+    line-height: 1.6 !important;
+  }
+  .outline-sub dd {
+    font-size: 11px !important;
+    line-height: 1.7 !important;
+  }
+}
+body.dark .outline-sub > div {
+  border-left-color: #334155;
+}
+body.dark .outline-sub dt {
+  color: #f1f5f9;
+}
+body.dark .outline-sub dd {
+  color: #94a3b8;
 }
 .frame-flow {
   display: flex;
