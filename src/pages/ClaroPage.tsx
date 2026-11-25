@@ -19706,11 +19706,11 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
   );
 
   const desktopCalendarPanel = (
-    <div className="w-full max-h-[90vh] bg-white flex flex-col">
+    <div className="w-full max-h-[min(92vh,760px)] bg-white flex flex-col overflow-y-auto">
       {/* Top Header + Inner Calendar Box */}
-      <div className={`px-6 pt-6 flex flex-col gap-3.5 shrink-0 ${selected && selectedEvents.length > 0 ? "pb-3" : "pb-3.5"}`}>
+      <div className={`px-6 pt-5 pb-2.5 flex flex-col gap-3 shrink-0`}>
         {/* Top Header */}
-        <div className="flex items-start justify-between pb-1 gap-3">
+        <div className="flex items-start justify-between pb-0.5 gap-3">
           <div className="flex flex-col items-start">
             <div className="flex items-center gap-2">
               <div className="size-7 bg-blue-100 rounded-lg flex items-center justify-center shrink-0 text-blue-600">
@@ -19777,7 +19777,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
         </div>
 
         {/* Inner Calendar Box */}
-        <div className="p-5 bg-slate-50 rounded-2xl outline outline-1 outline-offset-[-1px] outline-slate-200 flex flex-col gap-3.5">
+        <div className="p-4 sm:p-4.5 bg-slate-50 rounded-2xl outline outline-1 outline-offset-[-1px] outline-slate-200 flex flex-col gap-2.5 sm:gap-3">
           {/* Month Bar */}
           <div className="flex items-center justify-between">
             <div className="text-slate-900 text-base font-bold leading-6">
@@ -19853,7 +19853,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                     }
                     setSelected(cellDate);
                   }}
-                  className={`relative h-10 rounded-xl flex flex-col items-center justify-center text-sm transition-all cursor-pointer ${
+                  className={`relative h-9 rounded-xl flex flex-col items-center justify-center text-sm transition-all cursor-pointer ${
                     isCellSelected
                       ? "bg-blue-600 text-white font-bold shadow-xs"
                       : isCellToday
@@ -19880,11 +19880,11 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
         </div>
       </div>
 
-      {/* Agenda Section (Daftar agenda desktop: judul tetap di atas & menampilkan 2 agenda utuh) */}
+      {/* Agenda Section (Daftar agenda desktop: judul tetap di atas & scrollable jika banyak) */}
       {selected && selectedKey && selectedEvents.length > 0 && (
-        <div className="border-t border-slate-200 flex flex-col shrink-0">
-          {/* Header Agenda Tetap (Tidak ikut ter-scroll sehingga judul tetap rapi dan bersih) */}
-          <div className="px-6 pt-3 pb-1.5 flex items-center justify-between gap-2 shrink-0 bg-white">
+        <div className="border-t border-slate-200 flex flex-col min-h-0 flex-1 shrink-0">
+          {/* Header Agenda Tetap (dengan tombol + Tambah Agenda langsung) */}
+          <div className="px-6 pt-2.5 pb-1.5 flex items-center justify-between gap-2 shrink-0 bg-white">
             <div className="flex items-center gap-2 min-w-0">
               <svg width="14" height="15" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
                 <rect x="3" y="4" width="18" height="18" rx="2" />
@@ -19896,25 +19896,39 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                 Agenda {selected.toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
               </span>
             </div>
-            <span className="px-2.5 py-0.5 bg-blue-100 rounded-full text-blue-600 text-[10px] font-semibold leading-4 tracking-tight shrink-0">
-              {selectedEvents.length} Agenda
-            </span>
+            <div className="flex items-center gap-2 shrink-0">
+              <span className="px-2.5 py-0.5 bg-blue-100 rounded-full text-blue-600 text-[10px] font-semibold leading-4 tracking-tight shrink-0">
+                {selectedEvents.length} Agenda
+              </span>
+              <button
+                type="button"
+                onClick={openAddAgendaModal}
+                className="h-7 px-2.5 bg-blue-50 hover:bg-blue-100 active:scale-95 text-blue-600 border border-blue-200/80 rounded-lg inline-flex items-center gap-1.5 text-xs font-semibold cursor-pointer transition-all"
+                title="Tambah agenda baru"
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+                <span>Tambah Agenda</span>
+              </button>
+            </div>
           </div>
 
-          {/* List Kartu Agenda (Scrollable, tinggi diatur pas agar 2 agenda muncul utuh tanpa terpotong) */}
-          <div className="calendar-agenda-scrollbar max-h-[195px] overflow-y-auto px-6 pt-1 pb-3 flex flex-col gap-2.5">
+          {/* List Kartu Agenda (Scrollable, pas menampilkan agenda tanpa memotong tombol bawah) */}
+          <div className="calendar-agenda-scrollbar max-h-[145px] overflow-y-auto px-6 pt-1 pb-2.5 flex flex-col gap-2">
             {selectedEvents.map((ev, ei) => (
               <div
                 key={`${ev.source}-${ev.sourceIndex}-${ei}`}
-                className="px-3.5 py-2.5 bg-blue-100/80 rounded-xl flex flex-col gap-2 shrink-0"
+                className="px-3.5 py-2 bg-blue-100/80 rounded-xl flex flex-col gap-1.5 shrink-0"
               >
                 <div className="flex items-start justify-between gap-2">
-                  <div className="flex items-center gap-3 min-w-0 flex-1 flex-wrap">
+                  <div className="flex items-center gap-2.5 min-w-0 flex-1 flex-wrap">
                     <span className="text-slate-900 text-sm font-semibold leading-5 truncate">
                       {ev.label}
                     </span>
                     <span className="flex items-center gap-[5px] text-gray-700 text-xs font-medium leading-5 shrink-0">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
                         <circle cx="12" cy="12" r="10" />
                         <polyline points="12 6 12 12 16 14" />
                       </svg>
@@ -19958,7 +19972,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                 </div>
 
                 {ev.notes && (
-                  <div className="w-full px-2.5 py-1.5 bg-white rounded-lg text-gray-500 text-xs font-normal leading-5">
+                  <div className="w-full px-2.5 py-1 bg-white rounded-lg text-gray-500 text-xs font-normal leading-4">
                     {ev.notes}
                   </div>
                 )}
@@ -19969,11 +19983,11 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
       )}
 
       {/* Bottom CTA Bar */}
-      <div className={`px-6 shrink-0 ${selected && selectedEvents.length > 0 ? "border-t border-slate-200 pt-3.5 pb-4 rounded-bl-3xl rounded-br-3xl" : "pb-6 pt-0"}`}>
+      <div className={`px-6 shrink-0 bg-white ${selected && selectedEvents.length > 0 ? "border-t border-slate-200 pt-2.5 pb-3.5 rounded-bl-3xl rounded-br-3xl" : "pb-5 pt-0"}`}>
         <button
           type="button"
           onClick={openAddAgendaModal}
-          className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 active:scale-[0.99] rounded-2xl shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] flex items-center justify-center gap-2 text-white text-base font-semibold leading-6 cursor-pointer transition-all"
+          className="w-full px-4 py-2.5 sm:py-3 bg-blue-600 hover:bg-blue-700 active:scale-[0.99] rounded-2xl shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] flex items-center justify-center gap-2 text-white text-sm sm:text-base font-semibold leading-6 cursor-pointer transition-all"
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="12" cy="12" r="9" />
@@ -21200,10 +21214,22 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                       Agenda {selected.toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
                     </span>
                   </div>
-                  <div className="px-2 py-0.5 bg-blue-100 rounded-full inline-flex items-center shrink-0">
-                    <span className="text-blue-600 text-[9px] font-semibold font-['Plus_Jakarta_Sans'] leading-4 tracking-tight">
+                  <div className="inline-flex items-center gap-1.5 shrink-0">
+                    <span className="px-2 py-0.5 bg-blue-100 rounded-full text-blue-600 text-[9px] font-semibold font-['Plus_Jakarta_Sans'] leading-4 tracking-tight">
                       {selectedEvents.length} Agenda
                     </span>
+                    <button
+                      type="button"
+                      onClick={() => switchDesktopView(true)}
+                      className="px-2 py-0.5 bg-blue-50 hover:bg-blue-100 active:scale-95 text-blue-600 border border-blue-200/80 rounded-md inline-flex items-center gap-1 text-[10px] font-semibold cursor-pointer transition-colors"
+                      title="Tambah agenda baru"
+                    >
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19" />
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                      </svg>
+                      <span>Tambah</span>
+                    </button>
                   </div>
                 </div>
 
