@@ -387,7 +387,7 @@ function revEmptyState(all, tab, q, stage) {
       </svg>
     `;
     title = 'Belum ada arahan dosen';
-    desc = 'Catat arahan setiap selesai bimbingan. Alerin membantumu memahami maksudnya dan menautkannya ke pekerjaan di Progres Aktif.';
+    desc = 'Catat arahan setiap selesai bimbingan. Alerin membantumu <br class="rv-br">memahami maksudnya dan menautkannya ke pekerjaan di Progres Aktif.';
     actions = `
       <button type="button" class="rv-empty-btn-tambah" data-action="add-revision">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -405,7 +405,7 @@ function revEmptyState(all, tab, q, stage) {
         ${iconSvg}
       </div>
       <h3 class="rv-empty-title">${e(title)}</h3>
-      <p class="rv-empty-desc">${e(desc)}</p>
+      <p class="rv-empty-desc">${desc}</p>
       ${actions}
     </div>
   `;

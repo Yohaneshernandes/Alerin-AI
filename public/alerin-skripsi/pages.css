@@ -8806,9 +8806,10 @@ body.dark{--bg:#111a28;--ink:#e4ebf5;--navy:#e3edf9;--muted:#b2c2d8;--line:#3446
   font-size: 13.5px !important;
   color: #64748B !important;
   line-height: 21px !important;
-  max-width: 440px !important;
+  max-width: 540px !important;
   margin: 0 0 22px 0 !important;
   font-family: 'Inter', sans-serif !important;
+  text-wrap: balance !important;
 }
 
 .rv-empty-actions {
@@ -14538,9 +14539,13 @@ body.dark-mode .btn-peta-action-subtle,
     font-size: 13px !important;
     line-height: 20px !important;
     color: #637087 !important;
-    max-width: 306px !important;
+    max-width: 340px !important;
     margin: 0 0 20px 0 !important;
     text-align: center !important;
+    text-wrap: balance !important;
+  }
+  .rv-empty-desc .rv-br {
+    display: none;
   }
 
   .rv-empty-btn-tambah {
