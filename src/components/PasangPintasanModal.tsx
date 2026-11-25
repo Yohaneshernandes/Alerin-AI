@@ -7,8 +7,6 @@ export interface PasangPintasanModalProps {
   isDark?: boolean;
 }
 
-type DeviceType = "ios" | "android" | "desktop";
-
 export default function PasangPintasanModal({
   onClose,
   onToast,
@@ -20,33 +18,20 @@ export default function PasangPintasanModal({
       (document.documentElement.classList.contains("dark") ||
         document.body.classList.contains("dark")));
 
-  // Deteksi perangkat pengguna secara otomatis
-  const [device, setDevice] = useState<DeviceType>(() => {
-    if (typeof navigator !== "undefined") {
-      const ua = navigator.userAgent || "";
-      if (/iPhone|iPad|iPod/i.test(ua)) return "ios";
-      if (/Android/i.test(ua)) return "android";
-    }
-    return "desktop";
-  });
-
-  const [hasNativePrompt, setHasNativePrompt] = useState<boolean>(false);
   const [isInstalling, setIsInstalling] = useState(false);
+  const [showIosGuide, setShowIosGuide] = useState(false);
+  const [showDesktopGuide, setShowDesktopGuide] = useState(false);
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      if ((window as any).deferredInstallPrompt) {
-        setHasNativePrompt(true);
-      }
-      const handlePromptReady = () => setHasNativePrompt(true);
-      window.addEventListener("alerin_install_prompt_ready", handlePromptReady);
-      return () => {
-        window.removeEventListener("alerin_install_prompt_ready", handlePromptReady);
-      };
-    }
-  }, []);
+  // Deteksi lingkungan perangkat
+  const isIos =
+    typeof navigator !== "undefined" &&
+    /iPhone|iPad|iPod/i.test(navigator.userAgent || "");
 
-  // Tutup dengan tombol Escape
+  const isAndroid =
+    typeof navigator !== "undefined" &&
+    /Android/i.test(navigator.userAgent || "");
+
+  // Close on Escape key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -55,34 +40,44 @@ export default function PasangPintasanModal({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [onClose]);
 
-  // Eksekusi PWA install prompt jika didukung browser
-  const handleNativeInstall = async () => {
+  // Handler utama saat tombol "Pasang Pintasan Sekarang" diklik
+  const handleUniversalInstall = async () => {
+    // 1. Jika browser mendukung PWA BeforeInstallPrompt (Chrome Android / Desktop Chrome / Edge)
     const promptEvent = (window as any).deferredInstallPrompt;
-    if (!promptEvent) {
-      onToast?.("Gunakan panduan di bawah untuk memasang pintasan di browsermu.", "info");
+    if (promptEvent) {
+      try {
+        setIsInstalling(true);
+        promptEvent.prompt();
+        const choiceResult = await promptEvent.userChoice;
+        if (choiceResult.outcome === "accepted") {
+          onToast?.("Pintasan Alerin berhasil dipasang di perangkatmu!", "success");
+          (window as any).deferredInstallPrompt = null;
+          setTimeout(() => onClose(), 800);
+        } else {
+          onToast?.("Pemasangan pintasan dibatalkan.", "info");
+        }
+      } catch (err) {
+        console.error("Gagal memicu install prompt:", err);
+      } finally {
+        setIsInstalling(false);
+      }
       return;
     }
-    try {
-      setIsInstalling(true);
-      promptEvent.prompt();
-      const choiceResult = await promptEvent.userChoice;
-      if (choiceResult.outcome === "accepted") {
-        onToast?.("Pintasan Alerin berhasil dipasang di perangkatmu!", "success");
-        (window as any).deferredInstallPrompt = null;
-        setHasNativePrompt(false);
-        setTimeout(() => onClose(), 800);
-      } else {
-        onToast?.("Pemasangan pintasan dibatalkan.", "info");
-      }
-    } catch (err) {
-      console.error("Gagal memicu install prompt:", err);
-    } finally {
-      setIsInstalling(false);
-    }
-  };
 
-  // Unduh pintasan desktop (.url) untuk Windows / Mac
-  const handleDownloadDesktopShortcut = () => {
+    // 2. Jika di iOS Safari (iPhone / iPad) - Apple tidak mengizinkan trigger programmatic share sheet
+    if (isIos) {
+      setShowIosGuide(true);
+      onToast?.("Ketuk tombol Bagikan [↑] di Safari, lalu pilih 'Tambahkan ke Layar Utama'.", "info");
+      return;
+    }
+
+    // 3. Jika di Android tapi prompt belum ditangkap
+    if (isAndroid) {
+      onToast?.("Buka menu titik tiga (⋮) di Chrome, lalu pilih 'Tambahkan ke Layar Utama'.", "info");
+      return;
+    }
+
+    // 4. Jika di Desktop (PC / Laptop Windows atau Mac)
     try {
       const appOrigin = typeof window !== "undefined" ? window.location.origin : "https://alerin-ai.vercel.app";
       const fileContent = `[InternetShortcut]\nURL=${appOrigin}/\nIconIndex=0\nIconFile=${appOrigin}/favicon.png\n`;
@@ -95,9 +90,10 @@ export default function PasangPintasanModal({
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
-      onToast?.("File pintasan Alerin berhasil diunduh. Pindahkan ke Desktop kamu!", "success");
-    } catch (err) {
-      console.error("Gagal mengunduh pintasan desktop:", err);
+      setShowDesktopGuide(true);
+      onToast?.("Pintasan Desktop Alerin berhasil diunduh!", "success");
+    } catch {
+      setShowDesktopGuide(true);
     }
   };
 
@@ -111,7 +107,7 @@ export default function PasangPintasanModal({
       aria-labelledby="pasang-pintasan-title"
     >
       <div
-        className={`w-full max-w-[480px] rounded-3xl shadow-2xl border overflow-hidden animate-[gemini-zoom-in_0.2s_ease-out] transition-colors max-h-[92vh] flex flex-col ${
+        className={`w-full max-w-[440px] rounded-3xl shadow-2xl border overflow-hidden animate-[gemini-zoom-in_0.2s_ease-out] transition-colors flex flex-col ${
           isDark
             ? "bg-[#1e293b] border-slate-700/80 text-slate-100 shadow-[0_24px_80px_rgba(0,0,0,0.5)]"
             : "bg-white border-slate-100 text-slate-900 shadow-[0_24px_80px_rgba(0,0,0,0.18)]"
@@ -125,7 +121,7 @@ export default function PasangPintasanModal({
           }`}
         >
           <div className="flex items-center gap-3.5">
-            <div className="size-12 rounded-2xl bg-[#EDF4FF] dark:bg-blue-950/60 p-2 border border-blue-100 dark:border-blue-900/50 flex items-center justify-center shrink-0 shadow-xs">
+            <div className="size-11 rounded-2xl bg-[#EDF4FF] dark:bg-blue-950/60 p-2 border border-blue-100 dark:border-blue-900/50 flex items-center justify-center shrink-0 shadow-xs">
               <img
                 src="/assets/alerin-logo-only.png"
                 alt="Logo Alerin"
@@ -144,7 +140,7 @@ export default function PasangPintasanModal({
                   isDark ? "text-slate-400" : "text-slate-500"
                 }`}
               >
-                Akses cepat Alerin langsung dari layar utama perangkatmu
+                Akses cepat Alerin langsung dari layar utama
               </p>
             </div>
           </div>
@@ -172,233 +168,11 @@ export default function PasangPintasanModal({
           </button>
         </div>
 
-        {/* Scrollable Body */}
-        <div className="p-5 sm:p-6 space-y-4 overflow-y-auto">
-          {/* Tombol Pasang Instan jika Browser Mendukung Native Prompt */}
-          {hasNativePrompt && (
-            <div className="rounded-2xl p-4 bg-blue-50/80 dark:bg-blue-950/40 border border-blue-200/80 dark:border-blue-900/60 space-y-2.5">
-              <div className="flex items-center gap-2 text-xs font-semibold text-[#186DD8] dark:text-blue-400">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                  <polyline points="7 10 12 15 17 10" />
-                  <line x1="12" y1="15" x2="12" y2="3" />
-                </svg>
-                <span>Browser mendukung instalasi langsung</span>
-              </div>
-              <button
-                type="button"
-                onClick={handleNativeInstall}
-                disabled={isInstalling}
-                className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs sm:text-sm font-bold text-white bg-[#347CEA] hover:bg-blue-700 active:scale-[0.98] transition-all shadow-sm shadow-blue-500/25 cursor-pointer disabled:opacity-50"
-              >
-                {isInstalling ? (
-                  <span>Sedang memasang...</span>
-                ) : (
-                  <>
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-                      <rect x="3" y="3" width="18" height="14" rx="2" />
-                      <path d="M8 21h8M12 17v4" />
-                      <path d="M9 8l3 3 3-3M12 5v6" />
-                    </svg>
-                    <span>Pasang Aplikasi Alerin Sekarang</span>
-                  </>
-                )}
-              </button>
-            </div>
-          )}
-
-          {/* Tab Pemilihan Perangkat */}
-          <div>
-            <label className={`block text-xs font-semibold mb-2 ${isDark ? "text-slate-300" : "text-slate-700"}`}>
-              Pilih Jenis Perangkatmu:
-            </label>
-            <div className="grid grid-cols-3 gap-1.5 p-1 rounded-2xl bg-slate-100 dark:bg-slate-800/80">
-              <button
-                type="button"
-                onClick={() => setDevice("ios")}
-                className={`py-2 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                  device === "ios"
-                    ? "bg-white dark:bg-slate-700 text-[#347CEA] dark:text-blue-400 shadow-xs"
-                    : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
-                }`}
-              >
-                <span>🍎</span>
-                <span className="truncate">iPhone / iPad</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setDevice("android")}
-                className={`py-2 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                  device === "android"
-                    ? "bg-white dark:bg-slate-700 text-[#347CEA] dark:text-blue-400 shadow-xs"
-                    : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
-                }`}
-              >
-                <span>🤖</span>
-                <span className="truncate">Android</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setDevice("desktop")}
-                className={`py-2 px-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                  device === "desktop"
-                    ? "bg-white dark:bg-slate-700 text-[#347CEA] dark:text-blue-400 shadow-xs"
-                    : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
-                }`}
-              >
-                <span>💻</span>
-                <span className="truncate">Laptop / PC</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Panduan Khusus Sesuai Perangkat */}
-          <div className={`p-4 rounded-2xl border ${isDark ? "bg-slate-800/40 border-slate-700/60" : "bg-slate-50/80 border-slate-200/80"}`}>
-            {device === "ios" && (
-              <div className="space-y-3.5 text-xs sm:text-sm">
-                <div className="flex items-start gap-3">
-                  <span className="size-6 rounded-full bg-[#347CEA] text-white flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
-                    1
-                  </span>
-                  <div>
-                    <p className="font-semibold text-slate-800 dark:text-slate-200">
-                      Buka di Safari &amp; Ketuk Tombol Bagikan (Share)
-                    </p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">
-                      Ketuk ikon kotak dengan panah ke atas <strong className="font-semibold text-blue-600">[↑]</strong> di bilah navigasi bawah Safari.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <span className="size-6 rounded-full bg-[#347CEA] text-white flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
-                    2
-                  </span>
-                  <div>
-                    <p className="font-semibold text-slate-800 dark:text-slate-200">
-                      Pilih "Tambahkan ke Layar Utama" (Add to Home Screen)
-                    </p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">
-                      Gulir ke bawah pada menu bagikan, lalu pilih opsi dengan ikon tanda tambah <strong className="font-semibold text-blue-600">[+]</strong>.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <span className="size-6 rounded-full bg-[#347CEA] text-white flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
-                    3
-                  </span>
-                  <div>
-                    <p className="font-semibold text-slate-800 dark:text-slate-200">
-                      Ketuk "Tambah" di Kanan Atas
-                    </p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">
-                      Selesai! Logo resmi Alerin akan otomatis tampil di layar utama HP kamu seperti aplikasi biasa.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {device === "android" && (
-              <div className="space-y-3.5 text-xs sm:text-sm">
-                <div className="flex items-start gap-3">
-                  <span className="size-6 rounded-full bg-[#347CEA] text-white flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
-                    1
-                  </span>
-                  <div>
-                    <p className="font-semibold text-slate-800 dark:text-slate-200">
-                      Ketuk Menu Titik Tiga (⋮) di Chrome
-                    </p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">
-                      Buka Alerin di Google Chrome, lalu ketuk ikon titik tiga di pojok kanan atas browser.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <span className="size-6 rounded-full bg-[#347CEA] text-white flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
-                    2
-                  </span>
-                  <div>
-                    <p className="font-semibold text-slate-800 dark:text-slate-200">
-                      Pilih "Tambahkan ke Layar Utama" atau "Instal Aplikasi"
-                    </p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">
-                      Ketuk opsi <strong>Instal aplikasi</strong> atau <strong>Tambahkan ke Layar Utama</strong>.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <span className="size-6 rounded-full bg-[#347CEA] text-white flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
-                    3
-                  </span>
-                  <div>
-                    <p className="font-semibold text-slate-800 dark:text-slate-200">
-                      Konfirmasi Pemasangan
-                    </p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">
-                      Ketuk tombol <strong>Instal</strong>. Alerin dengan logo resminya akan segera terpasang di HP kamu!
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {device === "desktop" && (
-              <div className="space-y-4 text-xs sm:text-sm">
-                <div className="space-y-3">
-                  <div className="flex items-start gap-3">
-                    <span className="size-6 rounded-full bg-[#347CEA] text-white flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
-                      1
-                    </span>
-                    <div>
-                      <p className="font-semibold text-slate-800 dark:text-slate-200">
-                        Klik Ikon Pasang di Bilah URL Browser
-                      </p>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">
-                        Di Chrome atau Edge, perhatikan sebelah kanan bilah URL (tempat mengetik alamat web). Klik ikon monitor kecil atau ikon tambah <strong className="font-semibold text-blue-600">[⊕]</strong> lalu pilih <strong>Instal</strong>.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <span className="size-6 rounded-full bg-[#347CEA] text-white flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
-                      2
-                    </span>
-                    <div>
-                      <p className="font-semibold text-slate-800 dark:text-slate-200">
-                        Atau Unduh File Pintasan Desktop Langsung
-                      </p>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">
-                        Kamu juga bisa mengunduh file shortcut untuk disimpan di Desktop komputer:
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={handleDownloadDesktopShortcut}
-                  className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600 active:scale-[0.98] transition-all cursor-pointer shadow-2xs"
-                >
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="text-[#347CEA]">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                    <polyline points="7 10 12 15 17 10" />
-                    <line x1="12" y1="15" x2="12" y2="3" />
-                  </svg>
-                  <span>Unduh File Pintasan Desktop (.url)</span>
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* Kartu Pratinjau Logo Alerin */}
-          <div className="flex items-center gap-3 p-3 rounded-2xl bg-blue-50/50 dark:bg-blue-950/20 border border-blue-100/80 dark:border-blue-900/40">
-            <div className="size-10 rounded-xl bg-white shadow-2xs p-1 border border-slate-100 shrink-0 flex items-center justify-center">
+        {/* Universal Body */}
+        <div className="p-5 sm:p-6 space-y-4">
+          {/* Card Pratinjau Pintasan Alerin */}
+          <div className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-gradient-to-r from-blue-50/90 via-sky-50/60 to-indigo-50/40 dark:from-blue-950/40 dark:via-blue-950/20 dark:to-indigo-950/30 border border-blue-100/90 dark:border-blue-900/50">
+            <div className="size-12 rounded-2xl bg-white shadow-xs p-1.5 border border-blue-100 shrink-0 flex items-center justify-center">
               <img
                 src="/assets/alerin-logo-only.png"
                 alt="Alerin"
@@ -406,29 +180,99 @@ export default function PasangPintasanModal({
               />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">
-                Alerin - AI Skripsi &amp; Kuliah
-              </p>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
+              <div className="flex items-center gap-2">
+                <p className="text-sm font-bold text-slate-900 dark:text-white truncate">
+                  Alerin AI
+                </p>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-600 text-white shadow-2xs">
+                  Aplikasi Web
+                </span>
+              </div>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate">
                 Layar Utama &bull; Buka langsung tanpa ketik alamat web
               </p>
             </div>
           </div>
-        </div>
 
-        {/* Footer Actions */}
-        <div
-          className={`p-4 sm:p-5 pt-3 border-t flex items-center justify-end shrink-0 ${
-            isDark ? "border-slate-700/80" : "border-slate-100"
-          }`}
-        >
+          {/* Manfaat Pintasan */}
+          <div className="space-y-2 text-xs">
+            <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
+              <span className="size-4 rounded-full bg-blue-100 dark:bg-blue-950/80 text-[#347CEA] flex items-center justify-center text-[10px] font-bold shrink-0">
+                ✓
+              </span>
+              <span>Buka Alerin dalam 1 sentuhan seperti aplikasi biasa</span>
+            </div>
+            <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
+              <span className="size-4 rounded-full bg-blue-100 dark:bg-blue-950/80 text-[#347CEA] flex items-center justify-center text-[10px] font-bold shrink-0">
+                ✓
+              </span>
+              <span>Tampilan layar penuh lebih luas dan nyaman</span>
+            </div>
+            <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
+              <span className="size-4 rounded-full bg-blue-100 dark:bg-blue-950/80 text-[#347CEA] flex items-center justify-center text-[10px] font-bold shrink-0">
+                ✓
+              </span>
+              <span>Akun dan riwayat tersimpan otomatis</span>
+            </div>
+          </div>
+
+          {/* Panduan Cepat Khusus jika Muncul State iOS / Desktop */}
+          {showIosGuide && (
+            <div className="p-3.5 rounded-2xl bg-amber-50/90 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/60 text-xs space-y-1.5 animate-[gemini-fade-in_0.2s_ease-out]">
+              <p className="font-bold text-amber-900 dark:text-amber-300 flex items-center gap-1.5">
+                <span>📱</span>
+                <span>Langkah Pemasangan di iPhone / iPad:</span>
+              </p>
+              <ol className="list-decimal list-inside space-y-1 text-amber-800 dark:text-amber-400 leading-relaxed">
+                <li>Ketuk ikon <strong>Bagikan [↑]</strong> di bilah bawah Safari.</li>
+                <li>Pilih <strong>"Tambahkan ke Layar Utama" [+]</strong>.</li>
+                <li>Ketuk <strong>"Tambah"</strong> di kanan atas. Selesai!</li>
+              </ol>
+            </div>
+          )}
+
+          {showDesktopGuide && (
+            <div className="p-3.5 rounded-2xl bg-blue-50/90 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/60 text-xs space-y-1.5 animate-[gemini-fade-in_0.2s_ease-out]">
+              <p className="font-bold text-[#186DD8] dark:text-blue-300 flex items-center gap-1.5">
+                <span>💻</span>
+                <span>Pintasan Desktop Siap!</span>
+              </p>
+              <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
+                File pintasan sudah diunduh ke komputermu. Kamu juga bisa mengklik ikon instal <strong>[⊕]</strong> di sebelah kanan bilah URL browser untuk menginstal sebagai aplikasi.
+              </p>
+            </div>
+          )}
+
+          {/* Tombol Universal Pasang Pintasan */}
           <button
             type="button"
-            onClick={onClose}
-            className="px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-white bg-[#347CEA] hover:bg-blue-700 transition-colors shadow-sm cursor-pointer"
+            onClick={handleUniversalInstall}
+            disabled={isInstalling}
+            className="w-full flex items-center justify-center gap-2.5 py-3.5 px-6 rounded-2xl text-sm font-bold text-white bg-[#347CEA] hover:bg-blue-700 active:scale-[0.98] transition-all shadow-md shadow-blue-500/25 cursor-pointer disabled:opacity-50"
           >
-            Mengerti
+            {isInstalling ? (
+              <>
+                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                </svg>
+                <span>Sedang memasang pintasan...</span>
+              </>
+            ) : (
+              <>
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="3" width="18" height="14" rx="2" />
+                  <path d="M8 21h8M12 17v4" />
+                  <path d="M9 8l3 3 3-3M12 5v6" />
+                </svg>
+                <span>Pasang Pintasan</span>
+              </>
+            )}
           </button>
+
+          <p className={`text-center text-[11px] ${isDark ? "text-slate-500" : "text-slate-400"}`}>
+            Didukung di HP Android, iPhone / iPad, Windows, dan Mac
+          </p>
         </div>
       </div>
     </div>
