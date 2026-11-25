@@ -6261,14 +6261,15 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
               }`}
             >
               {unpinnedHistoryItems.length > 0 ? (
-                (expandedHistory ? unpinnedHistoryItems : unpinnedHistoryItems.slice(0, 7)).map(
-                  (item) => renderHistoryItem(item, isMobileDrawer)
-                )
+                (isMobileDrawer
+                  ? (expandedHistory ? unpinnedHistoryItems : unpinnedHistoryItems.slice(0, 7))
+                  : unpinnedHistoryItems
+                ).map((item) => renderHistoryItem(item, isMobileDrawer))
               ) : (
                 <p className="px-2 py-1 text-xs text-slate-400">Belum ada riwayat lainnya</p>
               )}
 
-              {isLoadingMoreHistory && (
+              {isMobileDrawer && isLoadingMoreHistory && (
                 <div className="space-y-3 py-2.5 px-1.5 animate-pulse">
                   <div className="h-2.5 w-[68%] rounded-sm bg-neutral-200" />
                   <div className="h-2.5 w-[36%] rounded-sm bg-neutral-200" />
@@ -6276,21 +6277,19 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                 </div>
               )}
 
-              {unpinnedHistoryItems.length > 7 && !isLoadingMoreHistory && (
-                <div className={isMobileDrawer ? "pt-1.5 pb-1 px-1" : "pt-1 pb-0.5 px-1"}>
+              {isMobileDrawer && unpinnedHistoryItems.length > 7 && !isLoadingMoreHistory && (
+                <div className="pt-1.5 pb-1 px-1">
                   <button
                     type="button"
                     onClick={handleToggleExpandHistory}
-                    className={`flex items-center justify-between w-full text-left text-neutral-500 hover:text-blue-600 font-medium transition-colors cursor-pointer group px-1 ${
-                      isMobileDrawer ? "text-[13px] py-1" : "text-[12.5px] py-0.5"
-                    }`}
+                    className="flex items-center justify-between w-full text-left text-neutral-500 hover:text-blue-600 font-medium transition-colors cursor-pointer group px-1 text-[13px] py-1"
                   >
                     <span>
                       {expandedHistory ? "Tampilkan lebih sedikit" : "Lihat selengkapnya"}
                     </span>
                     <svg
-                      width={isMobileDrawer ? "13" : "12"}
-                      height={isMobileDrawer ? "13" : "12"}
+                      width="13"
+                      height="13"
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="currentColor"
