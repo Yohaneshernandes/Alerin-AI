@@ -697,10 +697,11 @@ export default function UpgradePage() {
   const [activeModalFeatureKey, setActiveModalFeatureKey] = useState<string | null>(null);
   const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
   const [isQrisModalOpen, setIsQrisModalOpen] = useState(false);
-  const [mobilePaymentType, setMobilePaymentType] = useState<"qris" | "va_bca" | "shopeepay" | "card" | "gopay">("qris");
+  const [mobilePaymentType, setMobilePaymentType] = useState<"qris" | "va_bca" | "shopeepay" | "card" | "gopay" | "akulaku">("qris");
   const [bcaGuideTab, setBcaGuideTab] = useState<"atm" | "klikbca" | "mbca" | null>("atm");
   const [shopeeGuideOpen, setShopeeGuideOpen] = useState(true);
   const [gopayGuideOpen, setGopayGuideOpen] = useState(true);
+  const [akulakuGuideOpen, setAkulakuGuideOpen] = useState(true);
   const [cardGuideOpen, setCardGuideOpen] = useState(true);
   const [cardNumber, setCardNumber] = useState("");
   const [cardExpiry, setCardExpiry] = useState("");
@@ -1039,6 +1040,15 @@ export default function UpgradePage() {
         checkoutScrollRef.current?.scrollTo({ top: 0 });
         return;
       }
+      if (selectedPaymentMethod === "akulaku") {
+        setMobilePaymentType("akulaku");
+        setAkulakuGuideOpen(true);
+        setQrisSecondsLeft(3 * 3600 + 54 * 60 + 57);
+        setIsQrisLoading(true);
+        setIsQrisModalOpen(true);
+        checkoutScrollRef.current?.scrollTo({ top: 0 });
+        return;
+      }
       if (selectedPaymentMethod === "shopeepay") {
         setMobilePaymentType("shopeepay");
         setShopeeGuideOpen(true);
@@ -1144,6 +1154,8 @@ export default function UpgradePage() {
             ? "BCA Virtual Account"
             : mobilePaymentType === "gopay"
             ? "GoPay / GoPayLater"
+            : mobilePaymentType === "akulaku"
+            ? "Akulaku PayLater"
             : mobilePaymentType === "shopeepay"
             ? "ShopeePay/SPayLater"
             : mobilePaymentType === "card"
@@ -3258,7 +3270,7 @@ export default function UpgradePage() {
                           {/* Batalkan Button shape */}
                           <div className="mt-5 h-12 w-full rounded-2xl bg-slate-200/85 shimmer-sweep" />
                         </div>
-                      ) : mobilePaymentType === "gopay" || mobilePaymentType === "shopeepay" ? (
+                      ) : mobilePaymentType === "gopay" || mobilePaymentType === "akulaku" || mobilePaymentType === "shopeepay" ? (
                         <div className="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-2xs">
                           {/* Logos shape */}
                           <div className="flex items-center gap-3">
@@ -3762,6 +3774,105 @@ export default function UpgradePage() {
                           className="mt-5 w-full py-3.5 px-6 rounded-2xl bg-[#3B7CE2] hover:bg-[#2563EB] active:scale-[0.98] text-white font-bold text-sm shadow-sm transition-all cursor-pointer"
                         >
                           Bayar dengan GoPay
+                        </button>
+
+                        {/* Tombol Merah Batalkan */}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setCancelPaymentReason("Saya berubah pikiran");
+                            setCancelPaymentModalOpen(true);
+                          }}
+                          className="mt-3 w-full py-3.5 px-6 rounded-2xl bg-[#F42B2B] hover:bg-[#dc2626] active:scale-[0.98] text-white font-bold text-sm transition-all cursor-pointer shadow-sm"
+                        >
+                          Batalkan
+                        </button>
+                      </div>
+                    ) : mobilePaymentType === "akulaku" ? (
+                      <div className="bg-white rounded-3xl p-5 border border-slate-200/75 shadow-2xs">
+                        {/* Logo Akulaku PayLater */}
+                        <div className="flex items-center">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setIsQrisModalOpen(false);
+                              setIsCheckoutModalOpen(false);
+                              setCurrentAccountPlan(currentTier === "pro" ? "Paket: Pro" : "Paket: Plus");
+                              setIsSuccessModalOpen(true);
+                            }}
+                            title="Simulasi Pembayaran Berhasil"
+                            className="cursor-pointer active:scale-95 transition-transform"
+                          >
+                            <img
+                              src="/assets/payment-logos/akulaku.png"
+                              alt="Akulaku PayLater"
+                              className="h-8 w-auto object-contain shrink-0"
+                            />
+                          </button>
+                        </div>
+
+                        {/* Deskripsi */}
+                        <p className="text-[13px] leading-[1.6] text-neutral-700 mt-4">
+                          Tekan tombol di bawah untuk melanjutkan pembayaran menggunakan Akulaku PayLater. Kamu akan diarahkan ke aplikasi Akulaku untuk memilih tenor cicilan dan mengonfirmasi pembayaran.
+                        </p>
+
+                        {/* Petunjuk Penggunaan */}
+                        <div className="mt-5">
+                          <button
+                            type="button"
+                            onClick={() => setAkulakuGuideOpen((prev) => !prev)}
+                            className="flex items-center gap-2 text-left cursor-pointer group"
+                          >
+                            <span className="size-5 rounded-full bg-sky-900 text-white text-[11px] font-bold flex items-center justify-center shrink-0">
+                              ?
+                            </span>
+                            <span className="text-[13.5px] font-bold text-sky-900">
+                              Petunjuk Penggunaan
+                            </span>
+                            <svg
+                              className="w-3.5 h-3.5 text-sky-900/70 group-hover:text-sky-900 transition-colors"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2.3"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <path d="m7 15 5 5 5-5" />
+                              <path d="m7 9 5-5 5 5" />
+                            </svg>
+                          </button>
+
+                          {akulakuGuideOpen && (
+                            <ol className="mt-3 py-4 pr-4 pl-8 rounded-xl bg-blue-500/15 text-[12.5px] text-black font-medium leading-relaxed space-y-2 list-decimal list-outside">
+                              <li>Tekan tombol Bayar dengan Akulaku PayLater.</li>
+                              <li>Kamu akan otomatis diarahkan ke aplikasi Akulaku.</li>
+                              <li>Pilih tenor cicilan yang diinginkan.</li>
+                              <li>Periksa rincian pembayaran, lalu konfirmasi transaksi.</li>
+                              <li>Masukkan PIN Akulaku atau kode verifikasi (OTP) Kamu.</li>
+                              <li>
+                                Selesaikan verifikasi dengan memasukkan PIN atau kode OTP jika diminta.
+                                <br />
+                                Pembayaran berhasil.
+                              </li>
+                            </ol>
+                          )}
+                        </div>
+
+                        {/* Tombol Biru Bayar dengan Akulaku PayLater */}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setIsQrisModalOpen(false);
+                            setIsCheckoutModalOpen(false);
+                            setCurrentAccountPlan(currentTier === "pro" ? "Paket: Pro" : "Paket: Plus");
+                            setIsSuccessModalOpen(true);
+                          }}
+                          className="mt-5 w-full py-3.5 px-6 rounded-2xl bg-[#3B7CE2] hover:bg-[#2563EB] active:scale-[0.98] text-white font-bold text-sm shadow-sm transition-all cursor-pointer"
+                        >
+                          Bayar dengan Akulaku PayLater
                         </button>
 
                         {/* Tombol Merah Batalkan */}
@@ -4489,6 +4600,7 @@ export default function UpgradePage() {
                       type="button"
                       onClick={() => {
                         setSelectedPaymentMethod("akulaku");
+                        setMobilePaymentType("akulaku");
                         setVaDropdownOpen(false);
                       }}
                       className={`w-full flex items-center justify-between gap-2 px-3 py-3.5 rounded-xl transition-all cursor-pointer active:scale-[0.99] ${
