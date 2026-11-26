@@ -748,7 +748,7 @@ export default function UpgradePage() {
     | "ewallet"
   >("qris");
   const [vaDropdownOpen, setVaDropdownOpen] = useState(false);
-  const [selectedVaBank, setSelectedVaBank] = useState<string>("bca");
+  const [selectedVaBank, setSelectedVaBank] = useState<string>("bni");
   const [isPaymentProcessing, setIsPaymentProcessing] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 
@@ -1020,7 +1020,7 @@ export default function UpgradePage() {
         checkoutScrollRef.current?.scrollTo({ top: 0 });
         return;
       }
-      if (selectedPaymentMethod === "va" && selectedVaBank === "bca") {
+      if (selectedPaymentMethod === "va") {
         setMobilePaymentType("va_bca");
         setBcaGuideTab("atm");
         setQrisSecondsLeft(3 * 3600 + 54 * 60 + 57);
@@ -3426,7 +3426,7 @@ export default function UpgradePage() {
                     {/* White Payment Card: BCA Virtual Account ATAU QRIS */}
                     {mobilePaymentType === "va_bca" ? (
                       <div className="bg-white rounded-3xl p-5 border border-slate-200/75 shadow-2xs">
-                        {/* Logo BCA (klik untuk simulasi pembayaran berhasil) */}
+                        {/* Logo Bank VA (klik untuk simulasi pembayaran berhasil) */}
                         <div className="flex items-center">
                           <button
                             type="button"
@@ -3439,17 +3439,43 @@ export default function UpgradePage() {
                             title="Simulasi Pembayaran Berhasil"
                             className="cursor-pointer active:scale-95 transition-transform"
                           >
-                            <img
-                              src="/assets/payment-logos/bca.png"
-                              alt="BCA"
-                              className="h-8 w-auto object-contain shrink-0"
-                            />
+                            {selectedVaBank === "bri" ? (
+                              <img src="/assets/payment-logos/bri.png" alt="BRI" className="h-7 w-auto object-contain shrink-0" />
+                            ) : selectedVaBank === "mandiri" ? (
+                              <img src="/assets/payment-logos/mandiri.png" alt="Mandiri" className="h-8 w-auto object-contain shrink-0" />
+                            ) : selectedVaBank === "permata" ? (
+                              <img src="/assets/payment-logos/permata.png" alt="Permata" className="h-8 w-auto object-contain shrink-0" />
+                            ) : selectedVaBank === "cimb" ? (
+                              <span className="inline-flex items-center gap-1.5 py-1">
+                                <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                  <rect width="24" height="24" rx="3" fill="#790008" />
+                                  <path d="M7 7l6 5-6 5h5l6-5-6-5H7z" fill="#FFFFFF" />
+                                </svg>
+                                <span className="text-[13px] tracking-tight leading-none whitespace-nowrap">
+                                  <span className="font-black text-[#790008]">CIMB</span>{" "}
+                                  <span className="font-medium text-[#790008]">NIAGA</span>
+                                </span>
+                              </span>
+                            ) : selectedVaBank === "bsi" ? (
+                              <span className="inline-flex items-center gap-1 py-1">
+                                <span className="relative text-[18px] font-black tracking-tight leading-none text-[#00A39D] pr-1">
+                                  BSI
+                                  <span className="absolute -top-1 right-0 text-[9px] text-[#F9AD19] leading-none">✦</span>
+                                </span>
+                                <span className="flex flex-col leading-none text-left text-[7px] font-bold text-[#00A39D] uppercase">
+                                  <span>BANK SYARIAH</span>
+                                  <span>INDONESIA</span>
+                                </span>
+                              </span>
+                            ) : (
+                              <img src="/assets/payment-logos/bni.png" alt="BNI" className="h-7 w-auto object-contain shrink-0" />
+                            )}
                           </button>
                         </div>
 
                         {/* Deskripsi */}
                         <p className="text-[13px] leading-[1.6] text-neutral-700 mt-4">
-                          Gunakan nomor BCA Virtual Account di bawah ini untuk melakukan pembayaran. Pastikan nominal transfer sesuai hingga digit terakhir agar transaksi terverifikasi otomatis.
+                          Gunakan nomor {selectedVaBank === "bri" ? "BRI" : selectedVaBank === "mandiri" ? "Mandiri" : selectedVaBank === "permata" ? "Permata Bank" : selectedVaBank === "cimb" ? "CIMB Niaga" : selectedVaBank === "bsi" ? "BSI" : "BNI"} Virtual Account di bawah ini untuk melakukan pembayaran. Pastikan nominal transfer sesuai hingga digit terakhir agar transaksi terverifikasi otomatis.
                         </p>
 
                         {/* Virtual Account Section */}
@@ -4105,55 +4131,15 @@ export default function UpgradePage() {
                           </svg>
                         </button>
 
-                        {/* 2x4 Grid of 8 Banks */}
+                        {/* Grid of 6 Banks (BNI, BRI, Mandiri, Permata Bank, CIMB Niaga, BSI) */}
                         <div className="p-3.5 grid grid-cols-2 gap-2.5 bg-white">
-                          {/* 1. BCA */}
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setSelectedPaymentMethod("va");
-                              setSelectedVaBank("bca");
-                              setMobilePaymentType("va_bca");
-                            }}
-                            className={`h-11 px-2.5 rounded-lg flex items-center justify-center transition-all cursor-pointer active:scale-[0.98] ${
-                              selectedPaymentMethod === "va" && selectedVaBank === "bca"
-                                ? "bg-blue-50/40 border-2 border-[#1A73E8] shadow-2xs"
-                                : "bg-white border border-slate-300/90 hover:border-[#3B7CE2]"
-                            }`}
-                          >
-                            <img
-                              src="/assets/payment-logos/bca.png"
-                              alt="BCA"
-                              className="h-5 w-auto max-w-[96px] object-contain"
-                            />
-                          </button>
-
-                          {/* 2. Mandiri */}
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setSelectedPaymentMethod("va");
-                              setSelectedVaBank("mandiri");
-                            }}
-                            className={`h-11 px-2.5 rounded-lg flex items-center justify-center transition-all cursor-pointer active:scale-[0.98] ${
-                              selectedPaymentMethod === "va" && selectedVaBank === "mandiri"
-                                ? "bg-blue-50/40 border-2 border-[#1A73E8] shadow-2xs"
-                                : "bg-white border border-slate-300/90 hover:border-[#3B7CE2]"
-                            }`}
-                          >
-                            <img
-                              src="/assets/payment-logos/mandiri.png"
-                              alt="Mandiri"
-                              className="h-6 w-auto max-w-[100px] object-contain"
-                            />
-                          </button>
-
-                          {/* 3. BNI */}
+                          {/* 1. BNI */}
                           <button
                             type="button"
                             onClick={() => {
                               setSelectedPaymentMethod("va");
                               setSelectedVaBank("bni");
+                              setMobilePaymentType("va_bca");
                             }}
                             className={`h-11 px-2.5 rounded-lg flex items-center justify-center transition-all cursor-pointer active:scale-[0.98] ${
                               selectedPaymentMethod === "va" && selectedVaBank === "bni"
@@ -4168,12 +4154,55 @@ export default function UpgradePage() {
                             />
                           </button>
 
+                          {/* 2. BANK BRI */}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSelectedPaymentMethod("va");
+                              setSelectedVaBank("bri");
+                              setMobilePaymentType("va_bca");
+                            }}
+                            className={`h-11 px-2.5 rounded-lg flex items-center justify-center transition-all cursor-pointer active:scale-[0.98] ${
+                              selectedPaymentMethod === "va" && selectedVaBank === "bri"
+                                ? "bg-blue-50/40 border-2 border-[#1A73E8] shadow-2xs"
+                                : "bg-white border border-slate-300/90 hover:border-[#3B7CE2]"
+                            }`}
+                          >
+                            <img
+                              src="/assets/payment-logos/bri.png"
+                              alt="BANK BRI"
+                              className="h-4.5 w-auto max-w-[100px] object-contain"
+                            />
+                          </button>
+
+                          {/* 3. Mandiri */}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSelectedPaymentMethod("va");
+                              setSelectedVaBank("mandiri");
+                              setMobilePaymentType("va_bca");
+                            }}
+                            className={`h-11 px-2.5 rounded-lg flex items-center justify-center transition-all cursor-pointer active:scale-[0.98] ${
+                              selectedPaymentMethod === "va" && selectedVaBank === "mandiri"
+                                ? "bg-blue-50/40 border-2 border-[#1A73E8] shadow-2xs"
+                                : "bg-white border border-slate-300/90 hover:border-[#3B7CE2]"
+                            }`}
+                          >
+                            <img
+                              src="/assets/payment-logos/mandiri.png"
+                              alt="Mandiri"
+                              className="h-6 w-auto max-w-[100px] object-contain"
+                            />
+                          </button>
+
                           {/* 4. Permata Bank */}
                           <button
                             type="button"
                             onClick={() => {
                               setSelectedPaymentMethod("va");
                               setSelectedVaBank("permata");
+                              setMobilePaymentType("va_bca");
                             }}
                             className={`h-11 px-2.5 rounded-lg flex items-center justify-center transition-all cursor-pointer active:scale-[0.98] ${
                               selectedPaymentMethod === "va" && selectedVaBank === "permata"
@@ -4194,6 +4223,7 @@ export default function UpgradePage() {
                             onClick={() => {
                               setSelectedPaymentMethod("va");
                               setSelectedVaBank("cimb");
+                              setMobilePaymentType("va_bca");
                             }}
                             className={`h-11 px-2.5 rounded-lg flex items-center justify-center transition-all cursor-pointer active:scale-[0.98] ${
                               selectedPaymentMethod === "va" && selectedVaBank === "cimb"
@@ -4213,57 +4243,13 @@ export default function UpgradePage() {
                             </span>
                           </button>
 
-                          {/* 6. BANK BRI */}
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setSelectedPaymentMethod("va");
-                              setSelectedVaBank("bri");
-                            }}
-                            className={`h-11 px-2.5 rounded-lg flex items-center justify-center transition-all cursor-pointer active:scale-[0.98] ${
-                              selectedPaymentMethod === "va" && selectedVaBank === "bri"
-                                ? "bg-blue-50/40 border-2 border-[#1A73E8] shadow-2xs"
-                                : "bg-white border border-slate-300/90 hover:border-[#3B7CE2]"
-                            }`}
-                          >
-                            <img
-                              src="/assets/payment-logos/bri.png"
-                              alt="BANK BRI"
-                              className="h-4.5 w-auto max-w-[100px] object-contain"
-                            />
-                          </button>
-
-                          {/* 7. SeaBank */}
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setSelectedPaymentMethod("va");
-                              setSelectedVaBank("seabank");
-                            }}
-                            className={`h-11 px-2.5 rounded-lg flex items-center justify-center transition-all cursor-pointer active:scale-[0.98] ${
-                              selectedPaymentMethod === "va" && selectedVaBank === "seabank"
-                                ? "bg-blue-50/40 border-2 border-[#1A73E8] shadow-2xs"
-                                : "bg-white border border-slate-300/90 hover:border-[#3B7CE2]"
-                            }`}
-                          >
-                            <span className="inline-flex items-center gap-1.5">
-                              <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                                <circle cx="12" cy="11" r="8.5" fill="#FF6600" />
-                                <path d="M14.3 8.6c-.5-.5-1.2-.7-2.1-.7-1.2 0-2 .6-2 1.4 0 .8.7 1.1 1.9 1.4 1.4.3 2.3.7 2.3 1.9 0 1.1-1 1.9-2.5 1.9-1 0-2-.3-2.6-.9l.7-.9c.5.4 1.2.7 1.9.7.9 0 1.3-.3 1.3-.9 0-.5-.4-.7-1.5-1-1.5-.3-2.6-.7-2.6-2 0-1.2 1-2 2.6-2 1 0 1.8.2 2.4.7l-.8.4z" fill="#FFFFFF" />
-                                <path d="M4.5 18.5C7 17 9.5 17 12 18.5C14.5 20 17 20 19.5 18.5" stroke="#0072CE" strokeWidth="2" strokeLinecap="round" />
-                              </svg>
-                              <span className="text-[12px] font-extrabold tracking-tight leading-none text-[#FF6600]">
-                                SeaBank
-                              </span>
-                            </span>
-                          </button>
-
-                          {/* 8. BSI */}
+                          {/* 6. BSI */}
                           <button
                             type="button"
                             onClick={() => {
                               setSelectedPaymentMethod("va");
                               setSelectedVaBank("bsi");
+                              setMobilePaymentType("va_bca");
                             }}
                             className={`h-11 px-2.5 rounded-lg flex items-center justify-center transition-all cursor-pointer active:scale-[0.98] ${
                               selectedPaymentMethod === "va" && selectedVaBank === "bsi"
@@ -4301,10 +4287,9 @@ export default function UpgradePage() {
                           Virtual Account
                         </span>
                         <div className="flex items-center gap-1.5 shrink-0">
-                          <img src="/assets/payment-logos/bca.png" alt="BCA" className="h-3.5 w-auto object-contain" />
                           <img src="/assets/payment-logos/bni.png" alt="BNI" className="h-3 w-auto object-contain" />
                           <img src="/assets/payment-logos/bri.png" alt="BANK BRI" className="h-3.5 w-auto object-contain" />
-                          <span className="text-[11.5px] font-bold text-black">+7</span>
+                          <span className="text-[11.5px] font-bold text-black">+4</span>
                           <svg className="w-4 h-4 text-black shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
                             <path d="m9 18 6-6-6-6" />
                           </svg>
@@ -4762,7 +4747,7 @@ export default function UpgradePage() {
                           Virtual Account (Bank Transfer)
                         </span>
                         <span className="text-[11px] text-slate-500 block">
-                          BCA, Mandiri, BNI, BRI, Permata
+                          BNI, BRI, Mandiri, Permata, CIMB Niaga, BSI
                         </span>
                       </div>
                     </div>
