@@ -3982,11 +3982,7 @@ export default function UpgradePage() {
 
                       {/* Deskripsi */}
                       <p className="text-[13px] leading-[1.6] text-neutral-700 mt-4">
-                        Scan kode QR di bawah ini menggunakan aplikasi e-wallet atau m-banking pilihan kamu{" "}
-                        <strong className="font-bold text-neutral-800">
-                          (GPay, GoPay, OVO, Dana, BCA, dll.).
-                        </strong>{" "}
-                        Pastikan nominal pembayaran sesuai hingga digit terakhir agar transaksi terverifikasi secara otomatis.
+                        Scan kode QR menggunakan e-wallet atau m-banking pilihan kamu, kemudian lakukan pembayaran sesuai nominal yang tertera.
                       </p>
 
                       {/* Kode QR (klik juga bisa untuk simulasi pembayaran berhasil) */}
@@ -4066,15 +4062,15 @@ export default function UpgradePage() {
 
                         {qrisGuideOpen && (
                           <ol className="mt-3 py-4 pr-4 pl-8 rounded-xl bg-blue-500/15 text-[12.5px] text-black font-medium leading-relaxed space-y-2 list-decimal list-outside">
-                            <li>Buka aplikasi m-banking atau e-wallet pilihan Kamu.</li>
-                            <li>Pilih menu Scan/QRIS pada aplikasi.</li>
+                            <li>Buka aplikasi m-banking atau e-wallet pilihan kamu.</li>
+                            <li>Pilih menu Scan atau QRIS.</li>
                             <li>
                               Arahkan kamera ke kode QR di atas (atau unggah dari galeri jika kode QR sudah disimpan).
                             </li>
                             <li>
-                              Periksa nama penerima dan nominal, lalu konfirmasi pembayaran.
+                              Pindai kode QR yang tersedia (atau unggah dari galeri jika kode QR telah disimpan).
                             </li>
-                            <li>Pembayaran selesai! Simpan bukti transaksi kamu.</li>
+                            <li>Pembayaran berhasil.</li>
                           </ol>
                         )}
                       </div>
