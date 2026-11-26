@@ -4770,9 +4770,9 @@ function GeminiBlueLoadingPill() {
                   Sedang berpikir
                 </span>
                 <span className="flex items-center gap-1 pt-0.5">
-                  <span className="size-1 rounded-full bg-blue-600 animate-bounce [animation-delay:0ms]" />
-                  <span className="size-1 rounded-full bg-blue-500 animate-bounce [animation-delay:150ms]" />
-                  <span className="size-1 rounded-full bg-sky-400 animate-bounce [animation-delay:300ms]" />
+                  <span className="size-1 rounded-full bg-blue-600 animate-alerin-dot-1" />
+                  <span className="size-1 rounded-full bg-blue-500 animate-alerin-dot-2" />
+                  <span className="size-1 rounded-full bg-sky-400 animate-alerin-dot-3" />
                 </span>
               </div>
             ) : (
@@ -11269,7 +11269,8 @@ function cleanMdText(text: string): string {
 function StreamingCursor({ noMargin }: { noMargin?: boolean }) {
   return (
     <span
-      className={`inline-block w-[3px] h-[1.15em] ${noMargin ? "" : "ml-1"} bg-blue-600 rounded-full animate-pulse align-middle`}
+      className={`inline-block w-[2.5px] h-[1.18em] ${noMargin ? "" : "ml-1"} bg-blue-600 rounded-full animate-alerin-cursor align-middle shadow-[0_0_8px_rgba(37,99,235,0.4)]`}
+      style={{ verticalAlign: "-0.15em" }}
       aria-hidden="true"
     />
   );
@@ -12510,10 +12511,13 @@ function PercakapanTab({
 
   useEffect(() => {
     const el = chatScrollRef.current;
-    if (!el) return;
-    // Jangan paksa scroll ke bawah jika pengguna sedang scroll ke atas membaca chat lama
-    if (userScrolledUpRef.current) return;
-    el.scrollTop = el.scrollHeight;
+    if (!el || userScrolledUpRef.current) return;
+    const frameId = requestAnimationFrame(() => {
+      if (el && !userScrolledUpRef.current) {
+        el.scrollTop = el.scrollHeight;
+      }
+    });
+    return () => cancelAnimationFrame(frameId);
   }, [msgs, typing]);
 
   useEffect(() => {
@@ -12567,8 +12571,9 @@ function PercakapanTab({
     const tokens = cleanFullText.match(/(\s+|\S+)/g) || [cleanFullText];
     const totalTokens = tokens.length;
     // Step size 1 kata/token per tik agar teks mengalir halus kata per kata tanpa loncatan kasar
-    const stepSize = totalTokens > 750 ? 2 : 1;
-    const intervalMs = totalTokens > 400 ? 11 : totalTokens > 220 ? 15 : totalTokens > 100 ? 18 : 22;
+    const stepSize = totalTokens > 900 ? 2 : 1;
+    // Kecepatan streaming respons yang halus, nyaman dibaca, dan stabil (tidak terlalu cepat / jumping)
+    const intervalMs = totalTokens > 600 ? 26 : totalTokens > 300 ? 30 : 36;
     let tokenIdx = Math.min(stepSize, totalTokens);
     const initialText = tokens.slice(0, tokenIdx).join("");
 
@@ -16951,7 +16956,7 @@ function ProyekTab({
             }
             updateChatInStateAndStorage(chatSoFar);
           }
-        }, 20);
+        }, 35);
       }, 3500);
       return;
     }
@@ -16972,8 +16977,8 @@ function ProyekTab({
       const cleanFullText = stripEmoticons(replyText);
       const tokens = cleanFullText.match(/(\s+|\S+)/g) || [cleanFullText];
       const totalTokens = tokens.length;
-      const stepSize = totalTokens > 750 ? 2 : 1;
-      const intervalMs = totalTokens > 400 ? 11 : totalTokens > 220 ? 15 : totalTokens > 100 ? 18 : 22;
+      const stepSize = totalTokens > 900 ? 2 : 1;
+      const intervalMs = totalTokens > 600 ? 26 : totalTokens > 300 ? 30 : 36;
       let tokenIdx = Math.min(stepSize, totalTokens);
       const initialText = tokens.slice(0, tokenIdx).join("");
       const isDoneInitially = tokenIdx >= totalTokens;
