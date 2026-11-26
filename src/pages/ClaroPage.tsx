@@ -7235,8 +7235,8 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                 />
               </div>
               <div className="min-w-0 flex-1">
-                <div className="flex items-center justify-between gap-2">
-                  <p className={`truncate text-sm font-bold ${isDarkTheme ? "text-white" : "text-slate-900"}`}>Raka</p>
+                <div className="flex items-center gap-2">
+                  <p className={`shrink-0 text-sm font-bold ${isDarkTheme ? "text-white" : "text-slate-900"}`}>Raka</p>
                   <button
                     type="button"
                     onClick={(e) => {
@@ -7244,7 +7244,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                       toggleAccountPlan();
                     }}
                     title={accountPlan === "pro" ? "Klik untuk ganti ke Plus" : "Klik untuk ganti ke Pro"}
-                    className={`inline-flex items-center gap-1 rounded-full border px-2 py-[1px] font-['Inter:Bold'] text-[9.5px] font-bold leading-[13px] whitespace-nowrap transition-all active:scale-95 cursor-pointer shadow-2xs select-none ${
+                    className={`inline-flex items-center gap-1 rounded-full border px-2 py-[1px] font-['Inter:Bold'] text-[9.5px] font-bold leading-[13px] whitespace-nowrap transition-all active:scale-95 cursor-pointer shadow-2xs select-none shrink-0 ${
                       isDarkTheme
                         ? "border-blue-500/40 bg-slate-900 text-slate-100 hover:border-blue-400"
                         : "border-blue-200 bg-white text-slate-900 hover:border-blue-300 hover:bg-blue-50/60"
