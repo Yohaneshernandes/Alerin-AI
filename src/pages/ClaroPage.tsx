@@ -7696,7 +7696,7 @@ function ChatInputBox({
         name: file.name,
         type: ext,
         size,
-        previewUrl: URL.createObjectURL(file),
+        previewUrl: isImage ? URL.createObjectURL(file) : undefined,
       };
     });
     setUploadedItems((prev) => [...prev, ...newItems]);
@@ -7963,7 +7963,7 @@ function ChatInputBox({
                     setSelectedPreviewItem(item);
                     setPreviewModalOpen(true);
                   }}
-                  className="size-[86px] rounded-[22px] bg-[#F2F4F7] p-2.5 flex flex-col justify-between relative shrink-0 cursor-pointer hover:bg-[#E5E7EB] border border-neutral-200/50 transition-all select-none shadow-2xs group"
+                  className="size-[86px] rounded-[22px] bg-white p-2.5 flex flex-col justify-between relative shrink-0 cursor-pointer hover:bg-slate-50 border border-slate-200/90 transition-all select-none shadow-xs group"
                   title={`Ketuk untuk melihat preview ${item.name}`}
                 >
                   <div className="flex items-start justify-between w-full">
@@ -7978,7 +7978,7 @@ function ChatInputBox({
                         removeItem(item.id);
                       }}
                       aria-label={`Hapus ${item.name}`}
-                      className="size-5 rounded-full bg-neutral-600 hover:bg-neutral-800 text-white flex items-center justify-center transition-transform hover:scale-110 active:scale-95 cursor-pointer shadow-xs"
+                      className="size-5 rounded-full bg-slate-200/80 hover:bg-slate-300 text-slate-600 flex items-center justify-center transition-transform hover:scale-110 active:scale-95 cursor-pointer shadow-xs"
                     >
                       <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                         <line x1="18" y1="6" x2="6" y2="18" />
@@ -12052,8 +12052,9 @@ function SharedChatPreviewView({
                 <div key={idx} className="flex flex-col items-end gap-1">
                   {m.fileCards && m.fileCards.length > 0 ? (
                     <div className="flex flex-wrap justify-end gap-2 mb-1 max-w-[280px] md:max-w-[360px]">
-                      {m.fileCards.map((fc, fIdx) =>
-                        fc.previewUrl ? (
+                      {m.fileCards.map((fc, fIdx) => {
+                        const isImg = Boolean(fc.previewUrl) && (/\.(jpg|jpeg|png|webp|gif)$/i.test(fc.name) || fc.type.startsWith("image/") || fc.type === "FOTO");
+                        return isImg ? (
                           <div
                             key={fIdx}
                             onClick={() => setPreviewImgUrl(fc.previewUrl ?? null)}
@@ -12064,19 +12065,37 @@ function SharedChatPreviewView({
                             <img src={fc.previewUrl} alt={fc.name} className="w-full h-full object-cover" />
                           </div>
                         ) : (
-                          <div key={fIdx} className="flex items-center gap-2 px-3 py-2 rounded-2xl bg-slate-800 text-white text-xs">
-                            <span className="font-semibold truncate max-w-[160px]">{fc.name}</span>
+                          <div key={fIdx} className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl bg-white border border-slate-200/90 shadow-xs dark:bg-slate-800 dark:border-slate-700">
+                            <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 bg-red-50 border border-red-100/80">
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="1.8" strokeLinecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                            </div>
+                            <div className="min-w-0">
+                              <p className="text-xs font-bold text-slate-800 dark:text-white truncate max-w-[150px]">{fc.name}</p>
+                              <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">{fc.type} · {fc.size}</p>
+                            </div>
                           </div>
-                        )
-                      )}
+                        );
+                      })}
                     </div>
-                  ) : m.fileCard && m.fileCard.previewUrl ? (
-                    <div
-                      onClick={() => setPreviewImgUrl(m.fileCard?.previewUrl ?? null)}
-                      className="cursor-pointer rounded-2xl overflow-hidden mb-1 border border-slate-200/40 shadow-xs max-w-[200px]"
-                    >
-                      <img src={m.fileCard.previewUrl} alt={m.fileCard.name} className="w-full h-36 object-cover" />
-                    </div>
+                  ) : m.fileCard ? (
+                    Boolean(m.fileCard.previewUrl) && (/\.(jpg|jpeg|png|webp|gif)$/i.test(m.fileCard.name) || m.fileCard.type.startsWith("image/") || m.fileCard.type === "FOTO") ? (
+                      <div
+                        onClick={() => setPreviewImgUrl(m.fileCard?.previewUrl ?? null)}
+                        className="cursor-pointer rounded-2xl overflow-hidden mb-1 border border-slate-200/40 shadow-xs max-w-[200px]"
+                      >
+                        <img src={m.fileCard.previewUrl} alt={m.fileCard.name} className="w-full h-36 object-cover" />
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-3 px-4 py-3 rounded-2xl rounded-br-sm max-w-[80%] bg-white border border-slate-200/90 shadow-xs dark:bg-slate-800 dark:border-slate-700 mb-1">
+                        <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-red-50 border border-red-100/80">
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="1.8" strokeLinecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-sm font-bold text-slate-800 dark:text-white truncate">{m.fileCard.name}</p>
+                          <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">{m.fileCard.type} · {m.fileCard.size}</p>
+                        </div>
+                      </div>
+                    )
                   ) : null}
 
                   {m.text && (
@@ -12669,10 +12688,11 @@ function PercakapanTab({
     setShowScrollBottom(false);
     setTimeout(scrollToBottom, 40);
 
-    const photoFiles = files.filter((f) => Boolean(f.previewUrl));
+    const photoFiles = files.filter((f) => Boolean(f.previewUrl) && (/\.(jpg|jpeg|png|webp|gif)$/i.test(f.name) || f.type.startsWith("image/") || f.type === "FOTO"));
+    const isSinglePhoto = photoFiles.length === 1 && (/\.(jpg|jpeg|png|webp|gif)$/i.test(file.name) || file.type.startsWith("image/") || file.type === "FOTO");
     const title = photoFiles.length > 1
       ? `${photoFiles.length} Foto`
-      : file.previewUrl ? `Foto ${file.name}` : `Analisis ${file.name}`;
+      : isSinglePhoto ? `Foto ${file.name}` : `Analisis ${file.name}`;
     window.dispatchEvent(new CustomEvent("alerin-add-history", { detail: { title, query: text.trim() || title } }));
 
     setTyping(true);
@@ -12681,7 +12701,7 @@ function PercakapanTab({
       let reply = "";
       if (photoFiles.length > 1) {
         reply = `Alerin sudah melihat ${photoFiles.length} foto yang kamu unggah. Ada yang ingin kamu tanyakan atau minta Alerin analisis dari foto-foto ini?`;
-      } else if (photoFiles.length === 1) {
+      } else if (isSinglePhoto) {
         reply = `Alerin sudah melihat foto yang kamu unggah (${file.name}). Ada yang ingin kamu tanyakan atau ingin Alerin analisis dari foto ini?`;
       } else {
         reply = files.length > 1
@@ -13004,8 +13024,9 @@ function PercakapanTab({
               <div key={i} className="flex flex-col items-end gap-1">
                 {m.fileCards && m.fileCards.length > 0 ? (
                   <div className="flex flex-wrap justify-end gap-2 mb-1 max-w-[280px] md:max-w-[360px]">
-                    {m.fileCards.map((fc, idx) => (
-                      fc.previewUrl ? (
+                    {m.fileCards.map((fc, idx) => {
+                      const isImg = Boolean(fc.previewUrl) && (/\.(jpg|jpeg|png|webp|gif)$/i.test(fc.name) || fc.type.startsWith("image/") || fc.type === "FOTO");
+                      return isImg ? (
                         <div
                           key={idx}
                           onClick={() => setChatImagePreview(fc.previewUrl ?? null)}
@@ -13020,20 +13041,20 @@ function PercakapanTab({
                           </div>
                         </div>
                       ) : (
-                        <div key={idx} className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl" style={{ background: "#1e293b" }}>
-                          <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0" style={{ background: "#fee2e2" }}>
+                        <div key={idx} className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl bg-white border border-slate-200/90 shadow-xs dark:bg-slate-800 dark:border-slate-700">
+                          <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 bg-red-50 border border-red-100/80">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="1.8" strokeLinecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                           </div>
                           <div className="min-w-0">
-                            <p className="text-xs font-bold text-white truncate max-w-[150px]">{fc.name}</p>
-                            <p className="text-[10px] text-slate-400">{fc.type} · {fc.size}</p>
+                            <p className="text-xs font-bold text-slate-800 dark:text-white truncate max-w-[150px]">{fc.name}</p>
+                            <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">{fc.type} · {fc.size}</p>
                           </div>
                         </div>
-                      )
-                    ))}
+                      );
+                    })}
                   </div>
                 ) : m.fileCard ? (
-                  m.fileCard.previewUrl ? (
+                  Boolean(m.fileCard.previewUrl) && (/\.(jpg|jpeg|png|webp|gif)$/i.test(m.fileCard.name) || m.fileCard.type.startsWith("image/") || m.fileCard.type === "FOTO") ? (
                     <div
                       onClick={() => setChatImagePreview(m.fileCard?.previewUrl ?? null)}
                       className="cursor-pointer group relative rounded-2xl overflow-hidden mb-1 border border-slate-200/40 shadow-xs max-w-[200px]"
@@ -13045,13 +13066,13 @@ function PercakapanTab({
                       </div>
                     </div>
                   ) : (
-                    <div className="flex items-center gap-3 px-4 py-3 rounded-2xl rounded-br-sm max-w-[80%]" style={{ background: "#1e293b" }}>
-                      <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style={{ background: "#fee2e2" }}>
+                    <div className="flex items-center gap-3 px-4 py-3 rounded-2xl rounded-br-sm max-w-[80%] bg-white border border-slate-200/90 shadow-xs dark:bg-slate-800 dark:border-slate-700">
+                      <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-red-50 border border-red-100/80">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="1.8" strokeLinecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                       </div>
                       <div className="min-w-0">
-                        <p className="text-sm font-bold text-white truncate">{m.fileCard.name}</p>
-                        <p className="text-xs text-slate-400">{m.fileCard.type} · {m.fileCard.size}</p>
+                        <p className="text-sm font-bold text-slate-800 dark:text-white truncate">{m.fileCard.name}</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">{m.fileCard.type} · {m.fileCard.size}</p>
                       </div>
                     </div>
                   )

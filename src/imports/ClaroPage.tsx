@@ -3209,13 +3209,13 @@ function PercakapanTab({ onFeatureClick, onTab, onFeatureRec, initialMsgs, pendi
             return (
               <div key={i} className="flex flex-col items-end gap-1">
                 {m.fileCard && (
-                  <div className="flex items-center gap-3 px-4 py-3 rounded-2xl rounded-br-sm max-w-[80%]" style={{ background: "#1e293b" }}>
-                    <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style={{ background: "#fee2e2" }}>
+                  <div className="flex items-center gap-3 px-4 py-3 rounded-2xl rounded-br-sm max-w-[80%] bg-white border border-slate-200/90 shadow-xs">
+                    <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-red-50 border border-red-100/80">
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="1.8" strokeLinecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                     </div>
                     <div className="min-w-0">
-                      <p className="text-sm font-bold text-white truncate">{m.fileCard.name}</p>
-                      <p className="text-xs text-slate-400">{m.fileCard.type} · {m.fileCard.size}</p>
+                      <p className="text-sm font-bold text-slate-800 truncate">{m.fileCard.name}</p>
+                      <p className="text-xs text-slate-500 font-medium">{m.fileCard.type} · {m.fileCard.size}</p>
                     </div>
                   </div>
                 )}
