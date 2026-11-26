@@ -2963,10 +2963,12 @@ export default function UpgradePage() {
                 onClick={(e) => e.stopPropagation()}
                 className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 text-center shadow-2xl border border-slate-200 animate-[gemini-zoom-in_0.15s_ease-out]"
               >
-                <div className="size-12 rounded-xl bg-emerald-50/80 outline outline-1 outline-offset-[-1px] outline-emerald-200/60 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] mx-auto flex items-center justify-center mb-4">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
+                <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto flex items-center justify-center mb-4 select-none">
+                  <img
+                    src="/assets/icon-success-check-3d.png"
+                    alt="Berhasil Terkirim"
+                    className="w-full h-full object-contain drop-shadow-sm pointer-events-none"
+                  />
                 </div>
 
                 <h3 className="text-lg sm:text-xl font-bold text-slate-900 leading-snug">
