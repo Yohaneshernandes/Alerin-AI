@@ -4328,85 +4328,7 @@ export default function UpgradePage() {
                       </div>
                     </button>
 
-                    {/* 3. Dana */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSelectedPaymentMethod("dana");
-                        setVaDropdownOpen(false);
-                      }}
-                      className={`w-full flex items-center justify-between gap-2 px-3 py-3.5 rounded-xl transition-all cursor-pointer active:scale-[0.99] ${
-                        selectedPaymentMethod === "dana"
-                          ? "bg-blue-50/25 border-2 border-[#1A73E8] shadow-[0_2px_10px_rgba(26,115,232,0.12)]"
-                          : "bg-white border-[1.5px] border-indigo-200 hover:border-indigo-300"
-                      }`}
-                    >
-                      <span className="text-[12.5px] font-bold text-black/75 whitespace-nowrap">
-                        Dana
-                      </span>
-                      <div className="flex items-center gap-2.5 shrink-0">
-                        <img src="/assets/payment-logos/dana.png" alt="DANA" className="h-5 w-auto object-contain" />
-                        <span
-                          className={`w-[17px] h-[17px] rounded-full flex items-center justify-center shrink-0 transition-all ${
-                            selectedPaymentMethod === "dana"
-                              ? "bg-[#1A73E8] border-[1.5px] border-[#1A73E8] text-white"
-                              : "bg-white border-[1.5px] border-slate-300"
-                          }`}
-                        >
-                          {selectedPaymentMethod === "dana" && (
-                            <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
-                              <polyline points="20 6 9 17 4 12" />
-                            </svg>
-                          )}
-                        </span>
-                      </div>
-                    </button>
-
-                    {/* 4. ShopeePay (ShopeePay + SPayLater) */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSelectedPaymentMethod("shopeepay");
-                        setMobilePaymentType("shopeepay");
-                        setVaDropdownOpen(false);
-                      }}
-                      className={`w-full flex items-center justify-between gap-2 px-3 py-3.5 rounded-xl transition-all cursor-pointer active:scale-[0.99] ${
-                        selectedPaymentMethod === "shopeepay"
-                          ? "bg-blue-50/25 border-2 border-[#1A73E8] shadow-[0_2px_10px_rgba(26,115,232,0.12)]"
-                          : "bg-white border-[1.5px] border-indigo-200 hover:border-indigo-300"
-                      }`}
-                    >
-                      <span className="text-[12.5px] font-bold text-black/75 whitespace-nowrap">
-                        ShopeePay
-                      </span>
-                      <div className="flex items-center gap-2 shrink-0">
-                        <img
-                          src="/assets/payment-logos/shopeepay.png"
-                          alt="ShopeePay"
-                          className="h-5 w-auto object-contain"
-                        />
-                        <img
-                          src="/assets/payment-logos/spaylater.png"
-                          alt="SPayLater"
-                          className="h-5 w-auto object-contain"
-                        />
-                        <span
-                          className={`w-[17px] h-[17px] rounded-full flex items-center justify-center shrink-0 transition-all ml-0.5 ${
-                            selectedPaymentMethod === "shopeepay"
-                              ? "bg-[#1A73E8] border-[1.5px] border-[#1A73E8] text-white"
-                              : "bg-white border-[1.5px] border-slate-300"
-                          }`}
-                        >
-                          {selectedPaymentMethod === "shopeepay" && (
-                            <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
-                              <polyline points="20 6 9 17 4 12" />
-                            </svg>
-                          )}
-                        </span>
-                      </div>
-                    </button>
-
-                    {/* 5. Gopay (gopay + gopaylater) */}
+                    {/* 3. Gopay (gopay + gopaylater) */}
                     <button
                       type="button"
                       onClick={() => {
@@ -4449,146 +4371,7 @@ export default function UpgradePage() {
                       </div>
                     </button>
 
-                    {/* 6. Alfa Group (Alfamart + Alfamidi) */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSelectedPaymentMethod("alfa");
-                        setVaDropdownOpen(false);
-                      }}
-                      className={`w-full flex items-center justify-between gap-2 px-3 py-3.5 rounded-xl transition-all cursor-pointer active:scale-[0.99] ${
-                        selectedPaymentMethod === "alfa"
-                          ? "bg-blue-50/25 border-2 border-[#1A73E8] shadow-[0_2px_10px_rgba(26,115,232,0.12)]"
-                          : "bg-white border-[1.5px] border-indigo-200 hover:border-indigo-300"
-                      }`}
-                    >
-                      <span className="text-[12.5px] font-bold text-black/75 whitespace-nowrap">
-                        Alfa Group
-                      </span>
-                      <div className="flex items-center gap-2.5 shrink-0">
-                        <img
-                          src="/assets/payment-logos/alfamart.png"
-                          alt="Alfamart"
-                          className="h-5 w-auto object-contain"
-                        />
-                        <img
-                          src="/assets/payment-logos/alfamidi.png"
-                          alt="Alfamidi"
-                          className="h-4.5 w-auto object-contain"
-                        />
-                        <span
-                          className={`w-[17px] h-[17px] rounded-full flex items-center justify-center shrink-0 transition-all ${
-                            selectedPaymentMethod === "alfa"
-                              ? "bg-[#1A73E8] border-[1.5px] border-[#1A73E8] text-white"
-                              : "bg-white border-[1.5px] border-slate-300"
-                          }`}
-                        >
-                          {selectedPaymentMethod === "alfa" && (
-                            <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
-                              <polyline points="20 6 9 17 4 12" />
-                            </svg>
-                          )}
-                        </span>
-                      </div>
-                    </button>
-
-                    {/* 7. Indomaret */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSelectedPaymentMethod("indomaret");
-                        setVaDropdownOpen(false);
-                      }}
-                      className={`w-full flex items-center justify-between gap-2 px-3 py-3.5 rounded-xl transition-all cursor-pointer active:scale-[0.99] ${
-                        selectedPaymentMethod === "indomaret"
-                          ? "bg-blue-50/25 border-2 border-[#1A73E8] shadow-[0_2px_10px_rgba(26,115,232,0.12)]"
-                          : "bg-white border-[1.5px] border-indigo-200 hover:border-indigo-300"
-                      }`}
-                    >
-                      <span className="text-[12.5px] font-bold text-black/75 whitespace-nowrap">
-                        Indomaret
-                      </span>
-                      <div className="flex items-center gap-2.5 shrink-0">
-                        <img
-                          src="/assets/payment-logos/indomaret.png"
-                          alt="Indomaret"
-                          className="h-5.5 w-auto object-contain"
-                        />
-                        <span
-                          className={`w-[17px] h-[17px] rounded-full flex items-center justify-center shrink-0 transition-all ${
-                            selectedPaymentMethod === "indomaret"
-                              ? "bg-[#1A73E8] border-[1.5px] border-[#1A73E8] text-white"
-                              : "bg-white border-[1.5px] border-slate-300"
-                          }`}
-                        >
-                          {selectedPaymentMethod === "indomaret" && (
-                            <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
-                              <polyline points="20 6 9 17 4 12" />
-                            </svg>
-                          )}
-                        </span>
-                      </div>
-                    </button>
-
-                    {/* 8. Card Payment (VISA, Mastercard, JCB, +2) */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSelectedPaymentMethod("cc");
-                        setMobilePaymentType("card");
-                        setVaDropdownOpen(false);
-                      }}
-                      className={`w-full flex items-center justify-between gap-2 px-3 py-3.5 rounded-xl transition-all cursor-pointer active:scale-[0.99] ${
-                        selectedPaymentMethod === "cc"
-                          ? "bg-blue-50/25 border-2 border-[#1A73E8] shadow-[0_2px_10px_rgba(26,115,232,0.12)]"
-                          : "bg-white border-[1.5px] border-indigo-200 hover:border-indigo-300"
-                      }`}
-                    >
-                      <span className="text-[12.5px] font-bold text-black/75 whitespace-nowrap">
-                        Card Payment
-                      </span>
-                      <div className="flex items-center gap-2 shrink-0">
-                        <img
-                          src="/assets/payment-logos/visa.png"
-                          alt="VISA"
-                          className="h-3.5 w-auto object-contain"
-                        />
-                        {/* Mastercard */}
-                        <svg className="w-6 h-4 shrink-0" viewBox="0 0 32 20" fill="none" aria-label="Mastercard">
-                          <circle cx="11" cy="10" r="8" fill="#EB001B" />
-                          <circle cx="21" cy="10" r="8" fill="#F79E1B" />
-                          <path d="M16 3.7a8 8 0 0 1 0 12.6 8 8 0 0 1 0-12.6z" fill="#FF5F00" />
-                        </svg>
-                        {/* JCB */}
-                        <span className="inline-flex items-center gap-[1.5px] bg-white p-[1px] rounded-[3px] border border-slate-200/70">
-                          <span className="w-[7px] h-[14px] rounded-[2px] bg-gradient-to-b from-[#1D4ED8] to-[#0284C7] text-[6.5px] font-black text-white flex items-center justify-center leading-none">
-                            J
-                          </span>
-                          <span className="w-[7px] h-[14px] rounded-[2px] bg-gradient-to-b from-[#991B1B] to-[#E11D48] text-[6.5px] font-black text-white flex items-center justify-center leading-none">
-                            C
-                          </span>
-                          <span className="w-[7px] h-[14px] rounded-[2px] bg-gradient-to-b from-[#15803D] to-[#65A30D] text-[6.5px] font-black text-white flex items-center justify-center leading-none">
-                            B
-                          </span>
-                        </span>
-                        <span className="text-[11.5px] font-bold text-black">+2</span>
-                        <span
-                          className={`w-[17px] h-[17px] rounded-full flex items-center justify-center shrink-0 transition-all ml-0.5 ${
-                            selectedPaymentMethod === "cc"
-                              ? "bg-[#1A73E8] border-[1.5px] border-[#1A73E8] text-white"
-                              : "bg-white border-[1.5px] border-slate-300"
-                          }`}
-                        >
-                          {selectedPaymentMethod === "cc" && (
-                            <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
-                              <polyline points="20 6 9 17 4 12" />
-                            </svg>
-                          )}
-                        </span>
-                      </div>
-                    </button>
-
-                    {/* 9. Akulaku Paylater */}
+                    {/* 4. Akulaku Paylater */}
                     <button
                       type="button"
                       onClick={() => {
@@ -4618,53 +4401,6 @@ export default function UpgradePage() {
                           }`}
                         >
                           {selectedPaymentMethod === "akulaku" && (
-                            <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
-                              <polyline points="20 6 9 17 4 12" />
-                            </svg>
-                          )}
-                        </span>
-                      </div>
-                    </button>
-
-                    {/* 10. Kredivo */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSelectedPaymentMethod("kredivo");
-                        setVaDropdownOpen(false);
-                      }}
-                      className={`w-full flex items-center justify-between gap-2 px-3 py-3.5 rounded-xl transition-all cursor-pointer active:scale-[0.99] ${
-                        selectedPaymentMethod === "kredivo"
-                          ? "bg-blue-50/25 border-2 border-[#1A73E8] shadow-[0_2px_10px_rgba(26,115,232,0.12)]"
-                          : "bg-white border-[1.5px] border-indigo-200 hover:border-indigo-300"
-                      }`}
-                    >
-                      <span className="text-[12.5px] font-bold text-black/75 whitespace-nowrap">
-                        Kredivo
-                      </span>
-                      <div className="flex items-center gap-2.5 shrink-0">
-                        <span className="inline-flex items-center gap-0.5">
-                          <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                            <path d="M5 4h3.5v16H5V4z" fill="#25A9E0" />
-                            <path d="M8.5 12L17 4h4l-8.5 8 8.5 8h-4l-8.5-8z" fill="#F48120" />
-                          </svg>
-                          <span className="flex flex-col leading-none text-left">
-                            <span className="text-[12px] font-extrabold tracking-tight text-[#25A9E0] leading-none">
-                              redivo
-                            </span>
-                            <span className="text-[6px] font-bold text-[#F48120] leading-tight">
-                              Buy now, Pay later
-                            </span>
-                          </span>
-                        </span>
-                        <span
-                          className={`w-[17px] h-[17px] rounded-full flex items-center justify-center shrink-0 transition-all ${
-                            selectedPaymentMethod === "kredivo"
-                              ? "bg-[#1A73E8] border-[1.5px] border-[#1A73E8] text-white"
-                              : "bg-white border-[1.5px] border-slate-300"
-                          }`}
-                        >
-                          {selectedPaymentMethod === "kredivo" && (
                             <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
                               <polyline points="20 6 9 17 4 12" />
                             </svg>
@@ -4750,11 +4486,11 @@ export default function UpgradePage() {
                     <span className="text-xs font-semibold text-slate-400 shrink-0 ml-2">VA</span>
                   </label>
 
-                  {/* Method 3: E-Wallet Langsung */}
+                  {/* Method 3: GoPay */}
                   <label
-                    onClick={() => setSelectedPaymentMethod("ewallet")}
+                    onClick={() => setSelectedPaymentMethod("gopay")}
                     className={`payment-method-card flex items-center justify-between p-3 sm:p-3.5 rounded-2xl cursor-pointer transition-all ${
-                      selectedPaymentMethod === "ewallet"
+                      selectedPaymentMethod === "gopay" || selectedPaymentMethod === "ewallet"
                         ? "border-2 border-[#1A73E8] bg-blue-50/40 shadow-xs"
                         : "border border-slate-200 hover:border-slate-300 bg-white"
                     }`}
@@ -4762,30 +4498,30 @@ export default function UpgradePage() {
                     <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
                       <div
                         className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 transition-all ${
-                          selectedPaymentMethod === "ewallet"
+                          selectedPaymentMethod === "gopay" || selectedPaymentMethod === "ewallet"
                             ? "border-[#1A73E8] bg-[#1A73E8]"
                             : "border-slate-300 bg-white"
                         }`}
                       >
-                        {selectedPaymentMethod === "ewallet" && (
+                        {(selectedPaymentMethod === "gopay" || selectedPaymentMethod === "ewallet") && (
                           <div className="w-1.5 h-1.5 rounded-full bg-white" />
                         )}
                       </div>
                       <div className="min-w-0">
-                        <span className="font-bold text-slate-900 block truncate">E-Wallet Direct</span>
+                        <span className="font-bold text-slate-900 block truncate">GoPay</span>
                         <span className="text-[11px] text-slate-500 block">
-                          DANA, GoPay Saldo, OVO Direct
+                          GoPay & GoPayLater
                         </span>
                       </div>
                     </div>
                     <span className="text-xs font-semibold text-slate-400 shrink-0 ml-2">App</span>
                   </label>
 
-                  {/* Method 4: Kartu Kredit / Debit Online */}
+                  {/* Method 4: Akulaku Paylater */}
                   <label
-                    onClick={() => setSelectedPaymentMethod("cc")}
+                    onClick={() => setSelectedPaymentMethod("akulaku")}
                     className={`payment-method-card flex items-center justify-between p-3 sm:p-3.5 rounded-2xl cursor-pointer transition-all ${
-                      selectedPaymentMethod === "cc"
+                      selectedPaymentMethod === "akulaku"
                         ? "border-2 border-[#1A73E8] bg-blue-50/40 shadow-xs"
                         : "border border-slate-200 hover:border-slate-300 bg-white"
                     }`}
@@ -4793,25 +4529,25 @@ export default function UpgradePage() {
                     <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
                       <div
                         className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 transition-all ${
-                          selectedPaymentMethod === "cc"
+                          selectedPaymentMethod === "akulaku"
                             ? "border-[#1A73E8] bg-[#1A73E8]"
                             : "border-slate-300 bg-white"
                         }`}
                       >
-                        {selectedPaymentMethod === "cc" && (
+                        {selectedPaymentMethod === "akulaku" && (
                           <div className="w-1.5 h-1.5 rounded-full bg-white" />
                         )}
                       </div>
                       <div className="min-w-0">
                         <span className="font-bold text-slate-900 block truncate">
-                          Kartu Kredit/Debit Online
+                          Akulaku Paylater
                         </span>
                         <span className="text-[11px] text-slate-500 block">
-                          Visa, Mastercard, JCB (3D Secure)
+                          Cicilan & Paylater
                         </span>
                       </div>
                     </div>
-                    <span className="text-xs font-semibold text-slate-400 shrink-0 ml-2">Card</span>
+                    <span className="text-xs font-semibold text-slate-400 shrink-0 ml-2">Paylater</span>
                   </label>
                 </div>
 
