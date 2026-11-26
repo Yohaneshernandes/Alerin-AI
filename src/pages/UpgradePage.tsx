@@ -699,6 +699,7 @@ export default function UpgradePage() {
   const [isQrisModalOpen, setIsQrisModalOpen] = useState(false);
   const [mobilePaymentType, setMobilePaymentType] = useState<"qris" | "va_bca" | "shopeepay" | "card" | "gopay" | "akulaku">("qris");
   const [bcaGuideTab, setBcaGuideTab] = useState<"atm" | "klikbca" | "mbca" | null>("atm");
+  const [briGuideTab, setBriGuideTab] = useState<"atm" | "ib" | "brimo" | null>("atm");
   const [shopeeGuideOpen, setShopeeGuideOpen] = useState(true);
   const [gopayGuideOpen, setGopayGuideOpen] = useState(true);
   const [akulakuGuideOpen, setAkulakuGuideOpen] = useState(true);
@@ -1025,6 +1026,7 @@ export default function UpgradePage() {
       if (selectedPaymentMethod === "va") {
         setMobilePaymentType("va_bca");
         setBcaGuideTab("atm");
+        setBriGuideTab("atm");
         setQrisSecondsLeft(3 * 3600 + 54 * 60 + 57);
         setIsQrisLoading(true);
         setIsQrisModalOpen(true);
@@ -1151,7 +1153,11 @@ export default function UpgradePage() {
         ctx.font = "18px sans-serif";
         const methodLabel =
           mobilePaymentType === "va_bca"
-            ? "BCA Virtual Account"
+            ? selectedVaBank === "bri"
+              ? "BRI Virtual Account"
+              : selectedVaBank === "mandiri"
+              ? "Mandiri Virtual Account"
+              : "Virtual Account"
             : mobilePaymentType === "gopay"
             ? "GoPay / GoPayLater"
             : mobilePaymentType === "akulaku"
@@ -3499,21 +3505,29 @@ export default function UpgradePage() {
 
                         {/* Deskripsi */}
                         <p className="text-[13px] leading-[1.6] text-neutral-700 mt-4">
-                          Gunakan nomor {selectedVaBank === "bri" ? "BRI" : selectedVaBank === "mandiri" ? "Mandiri" : selectedVaBank === "permata" ? "Permata Bank" : selectedVaBank === "cimb" ? "CIMB Niaga" : selectedVaBank === "bsi" ? "BSI" : "BNI"} Virtual Account di bawah ini untuk melakukan pembayaran. Pastikan nominal transfer sesuai hingga digit terakhir agar transaksi terverifikasi otomatis.
+                          {selectedVaBank === "bri"
+                            ? "Gunakan nomor BRI Virtual Account di bawah untuk melakukan transaksi dan lakukan pembayaran sesuai nominal yang tertera."
+                            : `Gunakan nomor ${selectedVaBank === "mandiri" ? "Mandiri" : selectedVaBank === "permata" ? "Permata Bank" : selectedVaBank === "cimb" ? "CIMB Niaga" : selectedVaBank === "bsi" ? "BSI" : "BNI"} Virtual Account di bawah ini untuk melakukan pembayaran. Pastikan nominal transfer sesuai hingga digit terakhir agar transaksi terverifikasi otomatis.`}
                         </p>
 
                         {/* Virtual Account Section */}
                         <div className="mt-5">
                           <h5 className="text-[15px] font-bold text-black leading-snug">
-                            Virtual Account
+                            {selectedVaBank === "bri" ? "Nomor Virtual Account" : "Virtual Account"}
                           </h5>
                           <div className="mt-2.5 px-3.5 py-3 rounded-xl border-[1.5px] border-indigo-200 bg-white flex items-center justify-between gap-2">
                             <span className="text-[13.5px] sm:text-[14.5px] font-bold text-blue-800 tracking-wide tabular-nums truncate select-all">
-                              077434423784279374928453
+                              {selectedVaBank === "bri" ? "1241291143858888908" : "077434423784279374928453"}
                             </span>
                             <button
                               type="button"
-                              onClick={() => handleCopyVaNumber("077434423784279374928453")}
+                              onClick={() =>
+                                handleCopyVaNumber(
+                                  selectedVaBank === "bri"
+                                    ? "1241291143858888908"
+                                    : "077434423784279374928453"
+                                )
+                              }
                               aria-label="Salin nomor Virtual Account"
                               className="p-1.5 rounded-lg text-blue-800 hover:bg-blue-50 active:scale-95 transition-all shrink-0 cursor-pointer"
                             >
@@ -3533,45 +3547,166 @@ export default function UpgradePage() {
                           </div>
                         </div>
 
-                        {/* Petunjuk Penggunaan */}
-                        <div className="mt-5">
-                          <div className="flex items-center gap-2">
-                            <span className="size-5 rounded-full bg-sky-900 text-white text-[11px] font-bold flex items-center justify-center shrink-0">
-                              ?
-                            </span>
-                            <span className="text-[13.5px] font-bold text-sky-900">
-                              Petunjuk Penggunaan
-                            </span>
-                            <svg
-                              className="w-3.5 h-3.5 text-sky-900/70"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2.3"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
-                              <path d="m7 15 5 5 5-5" />
-                              <path d="m7 9 5-5 5 5" />
-                            </svg>
-                          </div>
+                        {/* Petunjuk Penggunaan / Bank Guide */}
+                        {selectedVaBank === "bri" ? (
+                          <div className="mt-5 space-y-0">
+                            {/* 1. ATM BRI */}
+                            <div className="py-2.5">
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setBriGuideTab((prev) => (prev === "atm" ? null : "atm"))
+                                }
+                                className="w-full flex items-center justify-between text-left cursor-pointer group"
+                              >
+                                <div className="flex items-center gap-2">
+                                  <span className="size-5 rounded-full bg-sky-900 text-white text-[11px] font-bold flex items-center justify-center shrink-0">
+                                    ?
+                                  </span>
+                                  <span className="text-[13.5px] font-bold text-neutral-900">
+                                    ATM BRI
+                                  </span>
+                                </div>
+                                <svg
+                                  className="w-3.5 h-3.5 text-neutral-600 group-hover:text-neutral-900 transition-colors"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2.3"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                >
+                                  <path d="m7 15 5 5 5-5" />
+                                  <path d="m7 9 5-5 5 5" />
+                                </svg>
+                              </button>
+                              {briGuideTab === "atm" && (
+                                <ol className="mt-3 py-4 pr-4 pl-8 rounded-xl bg-blue-500/15 text-[12.5px] text-black font-medium leading-relaxed space-y-2 list-decimal list-outside">
+                                  <li>Masukkan kartu ATM BRI dan PIN Kamu.</li>
+                                  <li>
+                                    Pilih menu <strong className="font-bold">Transaksi Lainnya</strong>.
+                                  </li>
+                                  <li>
+                                    Pilih{" "}
+                                    <strong className="font-bold">
+                                      Transfer &rarr; ke Rekening BRI Virtual Account
+                                    </strong>
+                                    .
+                                  </li>
+                                  <li>Masukkan nomor rekening virtual BRI.</li>
+                                  <li>Masukkan jumlah yang harus dibayar, lalu konfirmasi.</li>
+                                  <li>Pembayaran selesai.</li>
+                                </ol>
+                              )}
+                            </div>
 
-                          {/* 1. ATM BCA */}
-                          <div className="mt-3.5">
-                            <button
-                              type="button"
-                              onClick={() =>
-                                setBcaGuideTab((prev) => (prev === "atm" ? null : "atm"))
-                              }
-                              className="w-full py-2 flex items-center justify-between text-left cursor-pointer"
-                            >
-                              <span className="text-[14px] font-bold text-neutral-900">
-                                ATM BCA
+                            {/* 2. Internet Banking BRI */}
+                            <div className="border-t border-slate-100 py-2.5">
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setBriGuideTab((prev) => (prev === "ib" ? null : "ib"))
+                                }
+                                className="w-full flex items-center justify-between text-left cursor-pointer group"
+                              >
+                                <div className="flex items-center gap-2">
+                                  <span className="size-5 rounded-full bg-sky-900 text-white text-[11px] font-bold flex items-center justify-center shrink-0">
+                                    ?
+                                  </span>
+                                  <span className="text-[13.5px] font-bold text-neutral-900">
+                                    Internet Banking BRI
+                                  </span>
+                                </div>
+                                <svg
+                                  className="w-3.5 h-3.5 text-neutral-600 group-hover:text-neutral-900 transition-colors"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2.3"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                >
+                                  <path d="m7 15 5 5 5-5" />
+                                  <path d="m7 9 5-5 5 5" />
+                                </svg>
+                              </button>
+                              {briGuideTab === "ib" && (
+                                <ol className="mt-3 py-4 pr-4 pl-8 rounded-xl bg-blue-500/15 text-[12.5px] text-black font-medium leading-relaxed space-y-2 list-decimal list-outside">
+                                  <li>Login pada Internet Banking BRI.</li>
+                                  <li>
+                                    Pilih menu{" "}
+                                    <strong className="font-bold">
+                                      Transfer &rarr; Transfer ke Virtual Account
+                                    </strong>
+                                    .
+                                  </li>
+                                  <li>Masukkan nomor Virtual Account yang tertera di atas.</li>
+                                  <li>Masukkan jumlah pembayaran sesuai tagihan.</li>
+                                  <li>Validasi transaksi menggunakan mToken Kamu.</li>
+                                  <li>Pembayaran selesai.</li>
+                                </ol>
+                              )}
+                            </div>
+
+                            {/* 3. BRImo */}
+                            <div className="border-t border-slate-100 py-2.5">
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setBriGuideTab((prev) => (prev === "brimo" ? null : "brimo"))
+                                }
+                                className="w-full flex items-center justify-between text-left cursor-pointer group"
+                              >
+                                <div className="flex items-center gap-2">
+                                  <span className="size-5 rounded-full bg-sky-900 text-white text-[11px] font-bold flex items-center justify-center shrink-0">
+                                    ?
+                                  </span>
+                                  <span className="text-[13.5px] font-bold text-neutral-900">
+                                    BRImo
+                                  </span>
+                                </div>
+                                <svg
+                                  className="w-3.5 h-3.5 text-neutral-600 group-hover:text-neutral-900 transition-colors"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2.3"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                >
+                                  <path d="m7 15 5 5 5-5" />
+                                  <path d="m7 9 5-5 5 5" />
+                                </svg>
+                              </button>
+                              {briGuideTab === "brimo" && (
+                                <ol className="mt-3 py-4 pr-4 pl-8 rounded-xl bg-blue-500/15 text-[12.5px] text-black font-medium leading-relaxed space-y-2 list-decimal list-outside">
+                                  <li>Login pada aplikasi BRImo.</li>
+                                  <li>
+                                    Pilih menu{" "}
+                                    <strong className="font-bold">
+                                      Pembayaran &rarr; Virtual Account BRI
+                                    </strong>
+                                    .
+                                  </li>
+                                  <li>Masukkan nomor Virtual Account yang tertera di atas.</li>
+                                  <li>Konfirmasi nominal pembayaran yang tampil pada layar.</li>
+                                  <li>Masukkan PIN BRImo Kamu.</li>
+                                  <li>Transaksi berhasil dilakukan.</li>
+                                </ol>
+                              )}
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="mt-5">
+                            <div className="flex items-center gap-2">
+                              <span className="size-5 rounded-full bg-sky-900 text-white text-[11px] font-bold flex items-center justify-center shrink-0">
+                                ?
+                              </span>
+                              <span className="text-[13.5px] font-bold text-sky-900">
+                                Petunjuk Penggunaan
                               </span>
                               <svg
-                                className={`w-4 h-4 text-black transition-transform ${
-                                  bcaGuideTab === "atm" ? "rotate-90" : ""
-                                }`}
+                                className="w-3.5 h-3.5 text-sky-900/70"
                                 viewBox="0 0 24 24"
                                 fill="none"
                                 stroke="currentColor"
@@ -3579,102 +3714,131 @@ export default function UpgradePage() {
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
                               >
-                                <path d="m9 18 6-6-6-6" />
+                                <path d="m7 15 5 5 5-5" />
+                                <path d="m7 9 5-5 5 5" />
                               </svg>
-                            </button>
-                            {bcaGuideTab === "atm" && (
-                              <ol className="mt-2 mb-3.5 py-4 pr-4 pl-8 rounded-xl bg-blue-500/15 text-[12.5px] text-black font-medium leading-relaxed space-y-2 list-decimal list-outside">
-                                <li>Masukkan kartu ATM dan PIN BCA Kamu.</li>
-                                <li>
-                                  Pilih menu Transaksi Lainnya lalu Transfer lalu Ke Rekening BCA Virtual Account.
-                                </li>
-                                <li>
-                                  Masukkan nomor Virtual Account yang tertera di atas, lalu tekan Benar.
-                                </li>
-                                <li>
-                                  Periksa rincian pembayaran pada layar, lalu pilih Ya untuk mengonfirmasi.
-                                </li>
-                                <li>
-                                  Transaksi selesai, simpan struk sebagai bukti pembayaran.
-                                </li>
-                              </ol>
-                            )}
-                          </div>
+                            </div>
 
-                          {/* 2. Klik BCA */}
-                          <div className="border-t border-neutral-800/40">
-                            <button
-                              type="button"
-                              onClick={() =>
-                                setBcaGuideTab((prev) => (prev === "klikbca" ? null : "klikbca"))
-                              }
-                              className="w-full py-3.5 flex items-center justify-between text-left cursor-pointer"
-                            >
-                              <span className="text-[14px] font-bold text-neutral-900">
-                                Klik BCA
-                              </span>
-                              <svg
-                                className={`w-4 h-4 text-black transition-transform ${
-                                  bcaGuideTab === "klikbca" ? "rotate-90" : ""
-                                }`}
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2.3"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
+                            {/* 1. ATM BCA */}
+                            <div className="mt-3.5">
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setBcaGuideTab((prev) => (prev === "atm" ? null : "atm"))
+                                }
+                                className="w-full py-2 flex items-center justify-between text-left cursor-pointer"
                               >
-                                <path d="m9 18 6-6-6-6" />
-                              </svg>
-                            </button>
-                            {bcaGuideTab === "klikbca" && (
-                              <ol className="mb-3.5 py-4 pr-4 pl-8 rounded-xl bg-blue-500/15 text-[12.5px] text-black font-medium leading-relaxed space-y-2 list-decimal list-outside">
-                                <li>Login ke situs KlikBCA Individual dengan User ID dan PIN kamu.</li>
-                                <li>Pilih menu Transfer Dana lalu pilih Transfer ke BCA Virtual Account.</li>
-                                <li>Masukkan nomor Virtual Account di atas, lalu klik Lanjutkan.</li>
-                                <li>Periksa rincian pembayaran, masukkan respon KeyBCA, lalu klik Kirim.</li>
-                                <li>Transaksi selesai, simpan bukti pembayaran kamu.</li>
-                              </ol>
-                            )}
-                          </div>
+                                <span className="text-[14px] font-bold text-neutral-900">
+                                  ATM BCA
+                                </span>
+                                <svg
+                                  className={`w-4 h-4 text-black transition-transform ${
+                                    bcaGuideTab === "atm" ? "rotate-90" : ""
+                                  }`}
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2.3"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                >
+                                  <path d="m9 18 6-6-6-6" />
+                                </svg>
+                              </button>
+                              {bcaGuideTab === "atm" && (
+                                <ol className="mt-2 mb-3.5 py-4 pr-4 pl-8 rounded-xl bg-blue-500/15 text-[12.5px] text-black font-medium leading-relaxed space-y-2 list-decimal list-outside">
+                                  <li>Masukkan kartu ATM dan PIN BCA Kamu.</li>
+                                  <li>
+                                    Pilih menu Transaksi Lainnya lalu Transfer lalu Ke Rekening BCA Virtual Account.
+                                  </li>
+                                  <li>
+                                    Masukkan nomor Virtual Account yang tertera di atas, lalu tekan Benar.
+                                  </li>
+                                  <li>
+                                    Periksa rincian pembayaran pada layar, lalu pilih Ya untuk mengonfirmasi.
+                                  </li>
+                                  <li>
+                                    Transaksi selesai, simpan struk sebagai bukti pembayaran.
+                                  </li>
+                                </ol>
+                              )}
+                            </div>
 
-                          {/* 3. m-BCA */}
-                          <div className="border-t border-b border-neutral-800/40">
-                            <button
-                              type="button"
-                              onClick={() =>
-                                setBcaGuideTab((prev) => (prev === "mbca" ? null : "mbca"))
-                              }
-                              className="w-full py-3.5 flex items-center justify-between text-left cursor-pointer"
-                            >
-                              <span className="text-[14px] font-bold text-neutral-900">
-                                m-BCA
-                              </span>
-                              <svg
-                                className={`w-4 h-4 text-black transition-transform ${
-                                  bcaGuideTab === "mbca" ? "rotate-90" : ""
-                                }`}
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2.3"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
+                            {/* 2. Klik BCA */}
+                            <div className="border-t border-neutral-800/40">
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setBcaGuideTab((prev) => (prev === "klikbca" ? null : "klikbca"))
+                                }
+                                className="w-full py-3.5 flex items-center justify-between text-left cursor-pointer"
                               >
-                                <path d="m9 18 6-6-6-6" />
-                              </svg>
-                            </button>
-                            {bcaGuideTab === "mbca" && (
-                              <ol className="mb-3.5 py-4 pr-4 pl-8 rounded-xl bg-blue-500/15 text-[12.5px] text-black font-medium leading-relaxed space-y-2 list-decimal list-outside">
-                                <li>Buka aplikasi BCA mobile, pilih menu m-BCA, lalu masukkan Kode Akses.</li>
-                                <li>Pilih menu m-Transfer lalu pilih BCA Virtual Account.</li>
-                                <li>Masukkan nomor Virtual Account di atas, lalu tekan OK dan Send.</li>
-                                <li>Periksa rincian pembayaran yang muncul, tekan OK, lalu masukkan PIN m-BCA.</li>
-                                <li>Transaksi selesai, simpan bukti transaksi kamu.</li>
-                              </ol>
-                            )}
+                                <span className="text-[14px] font-bold text-neutral-900">
+                                  Klik BCA
+                                </span>
+                                <svg
+                                  className={`w-4 h-4 text-black transition-transform ${
+                                    bcaGuideTab === "klikbca" ? "rotate-90" : ""
+                                  }`}
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2.3"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                >
+                                  <path d="m9 18 6-6-6-6" />
+                                </svg>
+                              </button>
+                              {bcaGuideTab === "klikbca" && (
+                                <ol className="mb-3.5 py-4 pr-4 pl-8 rounded-xl bg-blue-500/15 text-[12.5px] text-black font-medium leading-relaxed space-y-2 list-decimal list-outside">
+                                  <li>Login ke situs KlikBCA Individual dengan User ID dan PIN kamu.</li>
+                                  <li>Pilih menu Transfer Dana lalu pilih Transfer ke BCA Virtual Account.</li>
+                                  <li>Masukkan nomor Virtual Account di atas, lalu klik Lanjutkan.</li>
+                                  <li>Periksa rincian pembayaran, masukkan respon KeyBCA, lalu klik Kirim.</li>
+                                  <li>Transaksi selesai, simpan bukti pembayaran kamu.</li>
+                                </ol>
+                              )}
+                            </div>
+
+                            {/* 3. m-BCA */}
+                            <div className="border-t border-b border-neutral-800/40">
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setBcaGuideTab((prev) => (prev === "mbca" ? null : "mbca"))
+                                }
+                                className="w-full py-3.5 flex items-center justify-between text-left cursor-pointer"
+                              >
+                                <span className="text-[14px] font-bold text-neutral-900">
+                                  m-BCA
+                                </span>
+                                <svg
+                                  className={`w-4 h-4 text-black transition-transform ${
+                                    bcaGuideTab === "mbca" ? "rotate-90" : ""
+                                  }`}
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2.3"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                >
+                                  <path d="m9 18 6-6-6-6" />
+                                </svg>
+                              </button>
+                              {bcaGuideTab === "mbca" && (
+                                <ol className="mb-3.5 py-4 pr-4 pl-8 rounded-xl bg-blue-500/15 text-[12.5px] text-black font-medium leading-relaxed space-y-2 list-decimal list-outside">
+                                  <li>Buka aplikasi BCA mobile, pilih menu m-BCA, lalu masukkan Kode Akses.</li>
+                                  <li>Pilih menu m-Transfer lalu pilih BCA Virtual Account.</li>
+                                  <li>Masukkan nomor Virtual Account di atas, lalu tekan OK dan Send.</li>
+                                  <li>Periksa rincian pembayaran yang muncul, tekan OK, lalu masukkan PIN m-BCA.</li>
+                                  <li>Transaksi selesai, simpan bukti transaksi kamu.</li>
+                                </ol>
+                              )}
+                            </div>
                           </div>
-                        </div>
+                        )}
 
                         {/* Tombol Batalkan */}
                         <button
