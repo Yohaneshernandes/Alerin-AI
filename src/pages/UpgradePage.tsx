@@ -1130,76 +1130,14 @@ export default function UpgradePage() {
 
   const handleDownloadInvoice = () => {
     try {
-      const canvas = document.createElement("canvas");
-      canvas.width = 720;
-      canvas.height = 560;
-      const ctx = canvas.getContext("2d");
-      if (ctx) {
-        ctx.fillStyle = "#ffffff";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        ctx.fillStyle = "#1A73E8";
-        ctx.fillRect(0, 0, canvas.width, 96);
-
-        ctx.fillStyle = "#ffffff";
-        ctx.font = "bold 28px sans-serif";
-        ctx.fillText("INVOICE PEMBAYARAN ALERIN", 40, 58);
-
-        ctx.fillStyle = "#0f172a";
-        ctx.font = "bold 20px sans-serif";
-        ctx.fillText("Status: LUNAS", 40, 148);
-
-        ctx.fillStyle = "#475569";
-        ctx.font = "18px sans-serif";
-        const methodLabel =
-          mobilePaymentType === "va_bca"
-            ? selectedVaBank === "bri"
-              ? "BRI Virtual Account"
-              : selectedVaBank === "mandiri"
-              ? "Mandiri Virtual Account"
-              : "Virtual Account"
-            : mobilePaymentType === "gopay"
-            ? "GoPay / GoPayLater"
-            : mobilePaymentType === "akulaku"
-            ? "Akulaku PayLater"
-            : mobilePaymentType === "shopeepay"
-            ? "ShopeePay/SPayLater"
-            : mobilePaymentType === "card"
-            ? "Card Payment"
-            : "QRIS";
-        ctx.fillText(`ID Transaksi   : ALR-2026-8891B`, 40, 204);
-        ctx.fillText(
-          `Paket Aktif    : Alerin ${currentTier === "pro" ? "Pro" : "Plus"} (${selectedFeatures.size} Fitur)`,
-          40,
-          244
-        );
-        ctx.fillText(`Masa Berlaku   : ${getDurationReadable(currentDuration, currentTier)}`, 40, 284);
-        ctx.fillText(`Metode Bayar   : ${methodLabel}`, 40, 324);
-
-        ctx.strokeStyle = "#cbd5e1";
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(40, 368);
-        ctx.lineTo(680, 368);
-        ctx.stroke();
-
-        ctx.fillStyle = "#0f172a";
-        ctx.font = "bold 24px sans-serif";
-        ctx.fillText(`Total Dibayar`, 40, 420);
-        ctx.fillStyle = "#1A73E8";
-        ctx.textAlign = "right";
-        ctx.fillText(formatRupiah(grandTotal), 680, 420);
-
-        ctx.textAlign = "left";
-        ctx.fillStyle = "#64748b";
-        ctx.font = "14px sans-serif";
-        ctx.fillText("Terima kasih telah berlangganan Alerin AI.", 40, 500);
-
-        const link = document.createElement("a");
-        link.download = "Invoice-Alerin.png";
-        link.href = canvas.toDataURL("image/png");
-        link.click();
-      }
+      const link = document.createElement("a");
+      link.href = "/invoice-alerin.pdf";
+      link.download = "INV-BSO11082600001.pdf";
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
       showToast("Invoice berhasil diunduh", "success");
     } catch {
       showToast("Gagal mengunduh invoice", "warning");
