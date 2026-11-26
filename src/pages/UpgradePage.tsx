@@ -5145,37 +5145,8 @@ export default function UpgradePage() {
               Terima kasih telah melakukan pembayaran. Paket kamu sudah aktif, silakan mulai nikmati fitur Alerin.
             </p>
 
-            {/* Email Konfirmasi Info Box */}
-            <div className="mt-6 rounded-2xl bg-[#EEF4FF] px-4 py-3.5 flex items-center gap-3.5 text-left">
-              <div className="size-10 rounded-full bg-[#3374E4] text-white flex items-center justify-center shrink-0">
-                <svg
-                  className="w-5 h-5"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M2 8h3" />
-                  <path d="M1 12h4" />
-                  <path d="M2 16h3" />
-                  <rect x="7" y="6" width="15" height="12" rx="2" />
-                  <path d="m7 8 7.5 5L22 8" />
-                </svg>
-              </div>
-              <div className="min-w-0">
-                <h4 className="text-[13.5px] font-bold text-slate-900 leading-snug">
-                  Email Konfirmasi
-                </h4>
-                <p className="text-[12px] text-slate-600 leading-snug mt-0.5">
-                  Cek email kamu untuk melihat hasil verifikasi
-                </p>
-              </div>
-            </div>
-
             {/* Action Buttons */}
-            <div className="mt-6 space-y-3">
+            <div className="mt-7 space-y-3">
               <button
                 type="button"
                 onClick={() => {
