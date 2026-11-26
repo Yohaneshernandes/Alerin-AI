@@ -19404,7 +19404,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
           </button>
           <div className="flex flex-col gap-0.5">
             <h2 className="text-slate-900 text-base font-bold leading-6">Tambah Agenda</h2>
-            <p className="text-gray-500 text-xs font-normal leading-4">
+            <p className="text-gray-500 text-xs font-normal leading-4 whitespace-nowrap">
               Jadwalkan agenda baru pada kalender terpilih
             </p>
           </div>
@@ -20562,15 +20562,15 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
               e.stopPropagation();
               setCalNotice(null);
             }}
-            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[310] bg-white rounded-2xl border border-slate-200/85 shadow-[0_14px_36px_rgba(15,23,42,0.18),0_4px_12px_rgba(15,23,42,0.06)] pl-3.5 pr-5 py-2.5 flex items-center gap-3 font-['Plus_Jakarta_Sans'] cursor-pointer select-none animate-[gemini-fade-in_0.18s_ease-out] max-w-[90vw]"
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[310] bg-white rounded-2xl border border-slate-200/90 shadow-[0_14px_36px_rgba(15,23,42,0.18),0_4px_12px_rgba(15,23,42,0.06)] px-4 py-2.5 flex items-center gap-2.5 font-['Plus_Jakarta_Sans'] cursor-pointer select-none animate-[gemini-fade-in_0.18s_ease-out] w-auto max-w-[calc(100vw-32px)]"
           >
             <span
-              className={`size-8 rounded-full flex items-center justify-center shrink-0 text-white ${
+              className={`size-7 rounded-full flex items-center justify-center shrink-0 text-white ${
                 calNotice.tone === "error" ? "bg-rose-500" : "bg-blue-600"
               }`}
             >
               {calNotice.tone === "error" ? (
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <line x1="12" y1="8" x2="12" y2="12" />
                   <line x1="12" y1="16" x2="12.01" y2="16" />
                 </svg>
@@ -20579,12 +20579,12 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                   <path d="M21 12a9 9 0 1 1-6.219-8.56" />
                 </svg>
               ) : (
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
               )}
             </span>
-            <span className="text-slate-900 text-xs sm:text-[13px] font-semibold leading-5 tracking-[-0.01em] whitespace-nowrap">
+            <span className="min-w-0 flex-1 text-slate-900 text-xs sm:text-[13px] font-semibold leading-snug tracking-[-0.01em] break-words">
               {calNotice.text}
             </span>
           </div>,
@@ -20603,37 +20603,31 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header Section */}
-            <div className="self-stretch px-5 py-2.5 sm:py-3 border-b border-slate-200 inline-flex justify-between items-start shrink-0">
-              <div className="flex-1 flex justify-between items-start">
-                <div className="flex justify-start items-start gap-2.5">
-                  <div className="w-8 h-10 pt-0.5 inline-flex flex-col justify-center items-start">
-                    <button
-                      type="button"
-                      onClick={() => switchDesktopView(false, "back")}
-                      className="size-8 bg-slate-50 hover:bg-slate-100 rounded-lg outline outline-1 outline-offset-[-1px] outline-slate-200 inline-flex justify-center items-center text-slate-500 cursor-pointer transition-colors"
-                      aria-label="Kembali ke kalender"
-                    >
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                        <line x1="19" y1="12" x2="5" y2="12" />
-                        <polyline points="12 19 5 12 12 5" />
-                      </svg>
-                    </button>
-                  </div>
-                  <div className="inline-flex flex-col justify-start items-start gap-0.5">
-                    <div className="self-stretch flex flex-col justify-start items-start">
-                      <span className="justify-center text-slate-900 text-base font-bold leading-6">Tambah Agenda</span>
-                    </div>
-                    <div className="self-stretch flex flex-col justify-start items-start">
-                      <span className="justify-center text-gray-500 text-xs font-normal leading-4">Jadwalkan agenda baru pada kalender terpilih</span>
-                    </div>
-                  </div>
+            <div className="self-stretch px-4 sm:px-5 py-2.5 sm:py-3 border-b border-slate-200 flex items-center justify-between gap-2 shrink-0">
+              <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                <button
+                  type="button"
+                  onClick={() => switchDesktopView(false, "back")}
+                  className="size-8 bg-slate-50 hover:bg-slate-100 rounded-lg outline outline-1 outline-offset-[-1px] outline-slate-200 flex justify-center items-center text-slate-500 cursor-pointer transition-colors shrink-0"
+                  aria-label="Kembali ke kalender"
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12" />
+                    <polyline points="12 19 5 12 12 5" />
+                  </svg>
+                </button>
+                <div className="flex flex-col min-w-0">
+                  <h2 className="text-slate-900 text-base font-bold leading-6 truncate">Tambah Agenda</h2>
+                  <p className="text-gray-500 text-[10.5px] sm:text-xs font-normal leading-4 whitespace-nowrap truncate">
+                    Jadwalkan agenda baru pada kalender terpilih
+                  </p>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={onClose}
                 aria-label="Tutup"
-                className="size-7 -mr-1 -mt-0.5 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer shrink-0"
+                className="size-7 -mr-1 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer shrink-0"
               >
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
                   <line x1="18" y1="6" x2="6" y2="18" />
