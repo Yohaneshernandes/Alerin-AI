@@ -2963,21 +2963,17 @@ export default function UpgradePage() {
                 onClick={(e) => e.stopPropagation()}
                 className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 text-center shadow-2xl border border-slate-200 animate-[gemini-zoom-in_0.15s_ease-out]"
               >
-                <div className="w-16 h-16 rounded-2xl bg-blue-50 text-[#1A73E8] border border-blue-200 mx-auto flex items-center justify-center mb-4 shadow-sm">
-                  <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <div className="size-12 rounded-xl bg-emerald-50/80 outline outline-1 outline-offset-[-1px] outline-emerald-200/60 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] mx-auto flex items-center justify-center mb-4">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="20 6 9 17 4 12" />
                   </svg>
                 </div>
 
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[#1A73E8] bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
-                  Konfirmasi Pengiriman
-                </span>
-
-                <h3 className="text-lg sm:text-xl font-extrabold text-slate-900 mt-3 leading-snug">
+                <h3 className="text-lg sm:text-xl font-bold text-slate-900 leading-snug">
                   Berhasil mengirim. Mohon ditunggu maksimal 3x24 jam
                 </h3>
 
-                <p className="text-xs text-slate-600 mt-2.5 leading-relaxed">
+                <p className="text-xs sm:text-[13px] text-slate-600 mt-2.5 leading-relaxed">
                   Data formulir Anda telah otomatis dikirim ke email{" "}
                   <strong className="text-slate-900 font-semibold">admin@alerin.id</strong>. Tim Alerin akan segera meninjau dan menghubungi Anda kembali.
                 </p>
@@ -2985,7 +2981,7 @@ export default function UpgradePage() {
                 <button
                   type="button"
                   onClick={() => setBizConfirmModalOpen(false)}
-                  className="w-full mt-6 py-3.5 px-5 bg-[#1A73E8] hover:bg-[#1557b0] active:scale-95 text-white font-bold text-sm rounded-xl shadow-md shadow-[#1A73E8]/25 transition-all cursor-pointer"
+                  className="w-full mt-6 py-3.5 px-5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-semibold text-sm rounded-xl shadow-sm transition-all cursor-pointer"
                 >
                   Tutup
                 </button>
