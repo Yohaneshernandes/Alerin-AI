@@ -5607,6 +5607,14 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
   const [calOpen, setCalOpen] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const showToast = useCallback((msg: string) => { setToast(msg); }, []);
+
+  useEffect(() => {
+    const handleShowToast = (e: any) => {
+      if (e.detail) showToast(e.detail);
+    };
+    window.addEventListener("alerin-show-toast", handleShowToast);
+    return () => window.removeEventListener("alerin-show-toast", handleShowToast);
+  }, [showToast]);
   const [sidebarOpen, setSidebarOpen] = useState(true); // single toggle for both sidebars
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [mobileDrawerClosing, setMobileDrawerClosing] = useState(false);
@@ -7560,6 +7568,72 @@ function ChatInputBox({
   const [canExpand, setCanExpand] = useState(false);
   const [isFullscreenInput, setIsFullscreenInput] = useState(false);
 
+  // Status akun Pro untuk membuka kunci model Vera & Alta
+  const [isProUser, setIsProUser] = useState<boolean>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const saved = localStorage.getItem("alerin_user_package") || localStorage.getItem("alerin_user_plan");
+        return Boolean(saved && saved.toLowerCase().includes("pro"));
+      } catch {}
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    const handlePlanChange = () => {
+      try {
+        const saved = localStorage.getItem("alerin_user_package") || localStorage.getItem("alerin_user_plan");
+        setIsProUser(Boolean(saved && saved.toLowerCase().includes("pro")));
+      } catch {}
+    };
+    window.addEventListener("alerin_plan_change", handlePlanChange);
+    return () => window.removeEventListener("alerin_plan_change", handlePlanChange);
+  }, []);
+
+  const toggleProUnlock = useCallback(() => {
+    setIsProUser((prev) => {
+      const nextPro = !prev;
+      const nextPlan = nextPro ? "pro" : "plus";
+      try {
+        localStorage.setItem("alerin_user_package", nextPlan);
+        localStorage.setItem("alerin_user_plan", nextPlan);
+        window.dispatchEvent(new Event("alerin_plan_change"));
+      } catch {}
+      window.dispatchEvent(
+        new CustomEvent("alerin-show-toast", {
+          detail: nextPro ? "Akun Pro aktif • Semua model terbuka" : "Mode standar • Model Pro terkunci",
+        })
+      );
+      return nextPro;
+    });
+  }, []);
+
+  const lastLumaBtnTapRef = useRef<number>(0);
+  const lastLumaItemTapRef = useRef<number>(0);
+
+  const handleLumaButtonPress = () => {
+    const now = Date.now();
+    const isDoubleTap = now - lastLumaBtnTapRef.current < 500;
+    lastLumaBtnTapRef.current = now;
+
+    if (isDoubleTap) {
+      toggleProUnlock();
+      const pos = calculateModeDropdownPos(modeBtnRef.current);
+      if (pos) setModeDropdownPos(pos);
+      setModeOpen(true);
+      return;
+    }
+
+    if (modeOpen) {
+      setModeOpen(false);
+      setModeDropdownPos(null);
+      return;
+    }
+    const pos = calculateModeDropdownPos(modeBtnRef.current);
+    if (pos) setModeDropdownPos(pos);
+    setModeOpen(true);
+  };
+
   // Deteksi jika teks sudah banyak / scrollable untuk memunculkan tombol perbesar (expand)
   useEffect(() => {
     const isDesktop = typeof window !== "undefined" && window.innerWidth >= 768;
@@ -8153,8 +8227,11 @@ function ChatInputBox({
             <div className="shrink-0" ref={modeRef}>
               <button
                 ref={modeBtnRef}
-                onClick={() => {
-                  if (modeOpen) { setModeOpen(false); setModeDropdownPos(null); return; }
+                type="button"
+                onClick={handleLumaButtonPress}
+                onDoubleClick={(e) => {
+                  e.stopPropagation();
+                  toggleProUnlock();
                   const pos = calculateModeDropdownPos(modeBtnRef.current);
                   if (pos) setModeDropdownPos(pos);
                   setModeOpen(true);
@@ -8183,7 +8260,7 @@ function ChatInputBox({
                   />
                   <div
                     ref={modeDropdownRef}
-                    className={`fixed w-[270px] max-w-[calc(100vw-24px)] rounded-[24px] border p-2 z-[200] select-none transition-all duration-200 ease-out animate-[gemini-fade-in_0.2s_ease-out] ${
+                    className={`fixed w-[285px] max-w-[calc(100vw-24px)] rounded-[24px] border p-2 z-[200] select-none transition-all duration-200 ease-out animate-[gemini-fade-in_0.2s_ease-out] ${
                       isDark
                         ? "bg-[#1e293b] border-slate-700 shadow-[0_16px_40px_rgba(0,0,0,0.5),0_4px_14px_rgba(0,0,0,0.3)]"
                         : "bg-white/98 backdrop-blur-xl border-slate-200/70 shadow-[0_16px_40px_-8px_rgba(0,0,0,0.12),0_4px_14px_rgba(0,0,0,0.05)]"
@@ -8197,21 +8274,41 @@ function ChatInputBox({
                     <div className="space-y-1">
                       {MODES.map((m) => {
                         const isSelected = activeMode === m.id;
+                        const isLocked = !isProUser && m.isLocked;
+
                         return (
                           <button
                             key={m.id}
                             type="button"
                             onClick={(e) => {
                               e.stopPropagation();
-                              if (m.isLocked) {
+
+                              if (m.id === "luma") {
+                                const now = Date.now();
+                                if (now - lastLumaItemTapRef.current < 500) {
+                                  toggleProUnlock();
+                                  lastLumaItemTapRef.current = 0;
+                                  return;
+                                }
+                                lastLumaItemTapRef.current = now;
+                              }
+
+                              if (isLocked) {
                                 navigate("/upgrade");
                                 setModeOpen(false);
                                 setModeDropdownPos(null);
                                 return;
                               }
+
                               setActiveMode(m.id);
                               setModeOpen(false);
                               setModeDropdownPos(null);
+                            }}
+                            onDoubleClick={(e) => {
+                              if (m.id === "luma") {
+                                e.stopPropagation();
+                                toggleProUnlock();
+                              }
                             }}
                             className={`w-full flex items-start gap-2.5 px-3 py-2.5 rounded-2xl text-left transition-all active:scale-[0.99] cursor-pointer ${
                               isSelected
@@ -8220,11 +8317,21 @@ function ChatInputBox({
                             }`}
                           >
                             <div className="flex-1 min-w-0 pr-1">
-                              <div className="flex items-center gap-2">
-                                <p className={`text-[13.5px] font-semibold leading-tight ${isDark ? "text-white" : "text-slate-900"}`}>
-                                  {m.fullTitle}
+                              <div className="flex items-center gap-1.5 flex-wrap">
+                                <p className={`text-[13.5px] font-semibold leading-tight flex items-baseline gap-1 flex-wrap ${isDark ? "text-white" : "text-slate-900"}`}>
+                                  <span>{m.fullTitle}</span>
+                                  {isProUser && m.id === "vera" && (
+                                    <span className="font-normal italic text-[12px] text-slate-500 dark:text-slate-400">
+                                      (Rekomendasi)
+                                    </span>
+                                  )}
+                                  {isProUser && m.id === "alta" && (
+                                    <span className="font-normal italic text-[12px] text-slate-500 dark:text-slate-400">
+                                      (3x penggunaan)
+                                    </span>
+                                  )}
                                 </p>
-                                {m.badge && (
+                                {!isProUser && m.badge && (
                                   <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-[#dbeafe] text-[#2563eb] dark:bg-blue-950/70 dark:text-blue-300 shrink-0 leading-none">
                                     {m.badge}
                                   </span>
@@ -8249,7 +8356,7 @@ function ChatInputBox({
                                 >
                                   <polyline points="20 6 9 17 4 12" />
                                 </svg>
-                              ) : m.isLocked ? (
+                              ) : isLocked ? (
                                 <svg
                                   width="15"
                                   height="15"
