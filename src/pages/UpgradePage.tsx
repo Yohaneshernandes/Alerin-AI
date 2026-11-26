@@ -697,9 +697,10 @@ export default function UpgradePage() {
   const [activeModalFeatureKey, setActiveModalFeatureKey] = useState<string | null>(null);
   const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
   const [isQrisModalOpen, setIsQrisModalOpen] = useState(false);
-  const [mobilePaymentType, setMobilePaymentType] = useState<"qris" | "va_bca" | "shopeepay" | "card">("qris");
+  const [mobilePaymentType, setMobilePaymentType] = useState<"qris" | "va_bca" | "shopeepay" | "card" | "gopay">("qris");
   const [bcaGuideTab, setBcaGuideTab] = useState<"atm" | "klikbca" | "mbca" | null>("atm");
   const [shopeeGuideOpen, setShopeeGuideOpen] = useState(true);
+  const [gopayGuideOpen, setGopayGuideOpen] = useState(true);
   const [cardGuideOpen, setCardGuideOpen] = useState(true);
   const [cardNumber, setCardNumber] = useState("");
   const [cardExpiry, setCardExpiry] = useState("");
@@ -1029,6 +1030,15 @@ export default function UpgradePage() {
         checkoutScrollRef.current?.scrollTo({ top: 0 });
         return;
       }
+      if (selectedPaymentMethod === "gopay" || selectedPaymentMethod === "ewallet") {
+        setMobilePaymentType("gopay");
+        setGopayGuideOpen(true);
+        setQrisSecondsLeft(3 * 3600 + 54 * 60 + 57);
+        setIsQrisLoading(true);
+        setIsQrisModalOpen(true);
+        checkoutScrollRef.current?.scrollTo({ top: 0 });
+        return;
+      }
       if (selectedPaymentMethod === "shopeepay") {
         setMobilePaymentType("shopeepay");
         setShopeeGuideOpen(true);
@@ -1132,6 +1142,8 @@ export default function UpgradePage() {
         const methodLabel =
           mobilePaymentType === "va_bca"
             ? "BCA Virtual Account"
+            : mobilePaymentType === "gopay"
+            ? "GoPay / GoPayLater"
             : mobilePaymentType === "shopeepay"
             ? "ShopeePay/SPayLater"
             : mobilePaymentType === "card"
@@ -3246,7 +3258,7 @@ export default function UpgradePage() {
                           {/* Batalkan Button shape */}
                           <div className="mt-5 h-12 w-full rounded-2xl bg-slate-200/85 shimmer-sweep" />
                         </div>
-                      ) : mobilePaymentType === "shopeepay" ? (
+                      ) : mobilePaymentType === "gopay" || mobilePaymentType === "shopeepay" ? (
                         <div className="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-2xs">
                           {/* Logos shape */}
                           <div className="flex items-center gap-3">
@@ -3660,6 +3672,106 @@ export default function UpgradePage() {
                             setCancelPaymentModalOpen(true);
                           }}
                           className="mt-5 w-full py-3.5 px-6 rounded-2xl bg-[#F42B2B] hover:bg-[#dc2626] active:scale-[0.98] text-white font-bold text-sm transition-all cursor-pointer shadow-sm"
+                        >
+                          Batalkan
+                        </button>
+                      </div>
+                    ) : mobilePaymentType === "gopay" ? (
+                      <div className="bg-white rounded-3xl p-5 border border-slate-200/75 shadow-2xs">
+                        {/* Logos GoPay & GoPayLater */}
+                        <div className="flex items-center gap-3">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setIsQrisModalOpen(false);
+                              setIsCheckoutModalOpen(false);
+                              setCurrentAccountPlan(currentTier === "pro" ? "Paket: Pro" : "Paket: Plus");
+                              setIsSuccessModalOpen(true);
+                            }}
+                            title="Simulasi Pembayaran Berhasil"
+                            className="flex items-center gap-3 cursor-pointer active:scale-95 transition-transform"
+                          >
+                            <img
+                              src="/assets/payment-logos/gopay.png"
+                              alt="GoPay"
+                              className="h-6 w-auto object-contain shrink-0"
+                            />
+                            <img
+                              src="/assets/payment-logos/gopaylater.png"
+                              alt="GoPayLater"
+                              className="h-6.5 w-auto object-contain shrink-0"
+                            />
+                          </button>
+                        </div>
+
+                        {/* Deskripsi */}
+                        <p className="text-[13px] leading-[1.6] text-neutral-700 mt-4">
+                          Tekan tombol di bawah untuk membuka aplikasi GoPay dan selesaikan pembayaran menggunakan GoPay atau GoPayLater. Pastikan saldo GoPay atau limit GoPayLater kamu mencukupi sebelum melanjutkan pembayaran.
+                        </p>
+
+                        {/* Petunjuk Penggunaan */}
+                        <div className="mt-5">
+                          <button
+                            type="button"
+                            onClick={() => setGopayGuideOpen((prev) => !prev)}
+                            className="flex items-center gap-2 text-left cursor-pointer group"
+                          >
+                            <span className="size-5 rounded-full bg-sky-900 text-white text-[11px] font-bold flex items-center justify-center shrink-0">
+                              ?
+                            </span>
+                            <span className="text-[13.5px] font-bold text-sky-900">
+                              Petunjuk Penggunaan
+                            </span>
+                            <svg
+                              className="w-3.5 h-3.5 text-sky-900/70 group-hover:text-sky-900 transition-colors"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2.3"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <path d="m7 15 5 5 5-5" />
+                              <path d="m7 9 5-5 5 5" />
+                            </svg>
+                          </button>
+
+                          {gopayGuideOpen && (
+                            <ol className="mt-3 py-4 pr-4 pl-8 rounded-xl bg-blue-500/15 text-[12.5px] text-black font-medium leading-relaxed space-y-2 list-decimal list-outside">
+                              <li>Tekan tombol Bayar dengan GoPay.</li>
+                              <li>Kamu akan otomatis diarahkan ke aplikasi GoPay.</li>
+                              <li>Pilih metode pembayaran GoPay atau GoPayLater.</li>
+                              <li>Periksa rincian pembayaran, lalu pilih Konfirmasi &amp; Bayar.</li>
+                              <li>Konfirmasi transaksi dengan memasukkan PIN GoPay atau mengikuti proses autentikasi GoPayLater.</li>
+                              <li>Pembayaran berhasil.</li>
+                            </ol>
+                          )}
+                        </div>
+
+                        {/* Tombol Biru Bayar dengan GoPay */}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setIsQrisModalOpen(false);
+                            setIsCheckoutModalOpen(false);
+                            setCurrentAccountPlan(currentTier === "pro" ? "Paket: Pro" : "Paket: Plus");
+                            setIsSuccessModalOpen(true);
+                          }}
+                          className="mt-5 w-full py-3.5 px-6 rounded-2xl bg-[#3B7CE2] hover:bg-[#2563EB] active:scale-[0.98] text-white font-bold text-sm shadow-sm transition-all cursor-pointer"
+                        >
+                          Bayar dengan GoPay
+                        </button>
+
+                        {/* Tombol Merah Batalkan */}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setCancelPaymentReason("Saya berubah pikiran");
+                            setCancelPaymentModalOpen(true);
+                          }}
+                          className="mt-3 w-full py-3.5 px-6 rounded-2xl bg-[#F42B2B] hover:bg-[#dc2626] active:scale-[0.98] text-white font-bold text-sm transition-all cursor-pointer shadow-sm"
                         >
                           Batalkan
                         </button>
@@ -4333,6 +4445,7 @@ export default function UpgradePage() {
                       type="button"
                       onClick={() => {
                         setSelectedPaymentMethod("gopay");
+                        setMobilePaymentType("gopay");
                         setVaDropdownOpen(false);
                       }}
                       className={`w-full flex items-center justify-between gap-2 px-3 py-3.5 rounded-xl transition-all cursor-pointer active:scale-[0.99] ${
