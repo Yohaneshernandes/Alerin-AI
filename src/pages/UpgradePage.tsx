@@ -4097,7 +4097,7 @@ export default function UpgradePage() {
                       Metode Pembayaran
                     </h4>
                     <p className="text-xs text-slate-700 leading-relaxed mt-1">
-                      Pilih metode pembayaran yang kamu inginkan untuk menyelesaikan transaksi dengan cepat dan aman.
+                      Pilih metode pembayaran yang kamu inginkan
                     </p>
                   </div>
 
