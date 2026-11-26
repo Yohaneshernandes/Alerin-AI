@@ -5645,9 +5645,18 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
     window.addEventListener("alerin-open-pintasan", handleOpenPintasan);
     return () => window.removeEventListener("alerin-open-pintasan", handleOpenPintasan);
   }, []);
+  useEffect(() => {
+    if (!profileMenuOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setProfileMenuOpen(false);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [profileMenuOpen]);
+
   const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
   const [profileMenuPos, setProfileMenuPos] = useState<{ top: number; right: number } | null>(null);
-  const profileBtnRef = useRef<HTMLButtonElement>(null);
+  const profileBtnRef = useRef<any>(null);
   const [accountPlan, setAccountPlan] = useState<"plus" | "pro">(() => {
     if (typeof window !== "undefined") {
       try {
@@ -5658,15 +5667,32 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
     return "plus";
   });
 
+  const setPlanDirectly = useCallback((target: "plus" | "pro") => {
+    setAccountPlan((prev) => {
+      if (prev === target) return prev;
+      return target;
+    });
+    try {
+      localStorage.setItem("alerin_user_package", target);
+      localStorage.setItem("alerin_user_plan", target);
+    } catch {}
+    setTimeout(() => {
+      window.dispatchEvent(new Event("alerin_plan_change"));
+      showToast(target === "pro" ? "Beralih ke akun Pro • Semua model terbuka" : "Beralih ke akun Plus");
+    }, 0);
+  }, [showToast]);
+
   const toggleAccountPlan = useCallback(() => {
     setAccountPlan((prev) => {
       const next = prev === "plus" ? "pro" : "plus";
       try {
         localStorage.setItem("alerin_user_package", next);
         localStorage.setItem("alerin_user_plan", next);
-        window.dispatchEvent(new Event("alerin_plan_change"));
       } catch {}
-      showToast(next === "pro" ? "Beralih ke akun Pro" : "Beralih ke akun Plus");
+      setTimeout(() => {
+        window.dispatchEvent(new Event("alerin_plan_change"));
+        showToast(next === "pro" ? "Beralih ke akun Pro • Semua model terbuka" : "Beralih ke akun Plus");
+      }, 0);
       return next;
     });
   }, [showToast]);
@@ -7153,52 +7179,62 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                   : "bg-white/90 border-slate-200/85 shadow-[0_4px_20px_rgba(15,23,42,0.08)]"
               }`}
             >
-              <div className="flex items-center gap-2.5 pl-0.5 pr-1 text-left">
-                <button
+              <div className="flex items-center gap-2 pl-0.5 pr-1 text-left">
+                <div
                   ref={profileBtnRef}
-                  type="button"
-                  onClick={() => {
-                    const pillEl = profileBtnRef.current?.parentElement ?? profileBtnRef.current;
-                    const rect = pillEl?.getBoundingClientRect();
-                    if (rect) setProfileMenuPos({ top: rect.bottom + 8, right: Math.max(12, window.innerWidth - rect.right) });
-                    setProfileMenuOpen(o => !o);
-                  }}
-                  className="flex items-center gap-2.5 text-left hover:opacity-85 transition-opacity cursor-pointer"
-                  aria-label="Profil Raka Aditya"
+                  className="flex items-center gap-2 text-left select-none"
                 >
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0 shadow-xs"
-                    style={{ background: "linear-gradient(135deg,#f59e0b,#d97706)" }}>RA</div>
-                  <div className="min-w-0 flex flex-col items-start leading-tight">
-                    <p className={`text-xs font-semibold whitespace-nowrap ${isDarkTheme ? "text-slate-100" : "text-slate-800"}`}>Raka Aditya</p>
-                    <span
-                      role="button"
-                      tabIndex={0}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleAccountPlan();
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          toggleAccountPlan();
-                        }
-                      }}
-                      title={accountPlan === "pro" ? "Klik untuk ganti ke Plus" : "Klik untuk ganti ke Pro"}
-                      className={`mt-0.5 inline-flex items-center gap-1 rounded-full border px-2 py-[1px] font-['Inter:Bold'] text-[9.5px] font-bold leading-[13px] whitespace-nowrap transition-all active:scale-95 cursor-pointer shadow-2xs select-none ${
-                        isDarkTheme
-                          ? "border-blue-500/40 bg-slate-900 text-slate-100 hover:border-blue-400"
-                          : "border-blue-200 bg-white text-slate-900 hover:border-blue-300 hover:bg-blue-50/60"
-                      }`}
-                    >
-                      <span>{accountPlan === "pro" ? "Pro" : "Plus"}</span>
-                      <PlusBadgeIcon tier={accountPlan} size={11} />
-                    </span>
-                  </div>
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400 ml-0.5 shrink-0">
-                    <polyline points="6 9 12 15 18 9" />
-                  </svg>
-                </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const pillEl = profileBtnRef.current?.parentElement ?? profileBtnRef.current;
+                      const rect = pillEl?.getBoundingClientRect();
+                      if (rect) setProfileMenuPos({ top: rect.bottom + 8, right: Math.max(12, window.innerWidth - rect.right) });
+                      setProfileMenuOpen(o => !o);
+                    }}
+                    className="flex items-center gap-2 hover:opacity-85 transition-opacity cursor-pointer text-left"
+                    aria-label="Profil Raka Aditya"
+                  >
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0 shadow-xs"
+                      style={{ background: "linear-gradient(135deg,#f59e0b,#d97706)" }}>RA</div>
+                    <div className="min-w-0 flex flex-col items-start leading-tight">
+                      <p className={`text-xs font-semibold whitespace-nowrap ${isDarkTheme ? "text-slate-100" : "text-slate-800"}`}>Raka Aditya</p>
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleAccountPlan();
+                    }}
+                    title={accountPlan === "pro" ? "Klik untuk beralih ke Plus" : "Klik untuk beralih ke Pro"}
+                    className={`mt-0.5 inline-flex items-center gap-1 rounded-full border px-2 py-[1.5px] font-['Inter:Bold'] text-[9.5px] font-bold leading-[13px] whitespace-nowrap transition-all active:scale-95 cursor-pointer shadow-2xs select-none ${
+                      isDarkTheme
+                        ? "border-blue-500/40 bg-slate-900 text-slate-100 hover:border-blue-400 hover:bg-slate-800"
+                        : "border-blue-200 bg-white text-slate-900 hover:border-blue-400 hover:bg-blue-50/80"
+                    }`}
+                  >
+                    <span>{accountPlan === "pro" ? "Pro" : "Plus"}</span>
+                    <PlusBadgeIcon tier={accountPlan} size={11} />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const pillEl = profileBtnRef.current?.parentElement ?? profileBtnRef.current;
+                      const rect = pillEl?.getBoundingClientRect();
+                      if (rect) setProfileMenuPos({ top: rect.bottom + 8, right: Math.max(12, window.innerWidth - rect.right) });
+                      setProfileMenuOpen(o => !o);
+                    }}
+                    className="p-1 hover:opacity-80 transition-opacity cursor-pointer text-slate-400 -ml-1"
+                    aria-label="Buka menu profil"
+                  >
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="6 9 12 15 18 9" />
+                    </svg>
+                  </button>
+                </div>
               </div>
               <div className={`w-px h-5 shrink-0 ${isDarkTheme ? "bg-slate-700" : "bg-slate-200/80"}`} />
               <button
@@ -7254,7 +7290,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                     title={accountPlan === "pro" ? "Klik untuk ganti ke Plus" : "Klik untuk ganti ke Pro"}
                     className={`inline-flex items-center gap-1 rounded-full border px-2 py-[1px] font-['Inter:Bold'] text-[9.5px] font-bold leading-[13px] whitespace-nowrap transition-all active:scale-95 cursor-pointer shadow-2xs select-none shrink-0 ${
                       isDarkTheme
-                        ? "border-blue-500/40 bg-slate-900 text-slate-100 hover:border-blue-400"
+                        ? "border-blue-500/40 bg-slate-900 text-slate-100 hover:border-blue-400 hover:bg-slate-800"
                         : "border-blue-200 bg-white text-slate-900 hover:border-blue-300 hover:bg-blue-50/60"
                     }`}
                   >
@@ -7263,6 +7299,43 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                   </button>
                 </div>
                 <p className="mt-0.5 truncate text-xs text-slate-400">rakaaditya@gmail.com</p>
+
+                {/* Switcher Cepat Paket Plus / Pro */}
+                <div className="mt-2.5 flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-700/60">
+                  <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">Paket:</span>
+                  <div className="inline-flex rounded-lg bg-slate-100 dark:bg-slate-800 p-0.5 text-xs font-semibold">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setPlanDirectly("plus");
+                      }}
+                      className={`flex items-center gap-1 px-2.5 py-0.5 rounded-md transition-all cursor-pointer ${
+                        accountPlan === "plus"
+                          ? "bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-xs"
+                          : "text-slate-500 hover:text-slate-800 dark:text-slate-400"
+                      }`}
+                    >
+                      <span>Plus</span>
+                      <PlusBadgeIcon tier="plus" size={10} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setPlanDirectly("pro");
+                      }}
+                      className={`flex items-center gap-1 px-2.5 py-0.5 rounded-md transition-all cursor-pointer ${
+                        accountPlan === "pro"
+                          ? "bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-xs"
+                          : "text-slate-500 hover:text-slate-800 dark:text-slate-400"
+                      }`}
+                    >
+                      <span>Pro</span>
+                      <PlusBadgeIcon tier="pro" size={10} />
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -7590,40 +7663,7 @@ function ChatInputBox({
     return () => window.removeEventListener("alerin_plan_change", handlePlanChange);
   }, []);
 
-  const toggleProUnlock = useCallback(() => {
-    setIsProUser((prev) => {
-      const nextPro = !prev;
-      const nextPlan = nextPro ? "pro" : "plus";
-      try {
-        localStorage.setItem("alerin_user_package", nextPlan);
-        localStorage.setItem("alerin_user_plan", nextPlan);
-        window.dispatchEvent(new Event("alerin_plan_change"));
-      } catch {}
-      window.dispatchEvent(
-        new CustomEvent("alerin-show-toast", {
-          detail: nextPro ? "Akun Pro aktif • Semua model terbuka" : "Mode standar • Model Pro terkunci",
-        })
-      );
-      return nextPro;
-    });
-  }, []);
-
-  const lastLumaBtnTapRef = useRef<number>(0);
-  const lastLumaItemTapRef = useRef<number>(0);
-
   const handleLumaButtonPress = () => {
-    const now = Date.now();
-    const isDoubleTap = now - lastLumaBtnTapRef.current < 500;
-    lastLumaBtnTapRef.current = now;
-
-    if (isDoubleTap) {
-      toggleProUnlock();
-      const pos = calculateModeDropdownPos(modeBtnRef.current);
-      if (pos) setModeDropdownPos(pos);
-      setModeOpen(true);
-      return;
-    }
-
     if (modeOpen) {
       setModeOpen(false);
       setModeDropdownPos(null);
@@ -8229,13 +8269,6 @@ function ChatInputBox({
                 ref={modeBtnRef}
                 type="button"
                 onClick={handleLumaButtonPress}
-                onDoubleClick={(e) => {
-                  e.stopPropagation();
-                  toggleProUnlock();
-                  const pos = calculateModeDropdownPos(modeBtnRef.current);
-                  if (pos) setModeDropdownPos(pos);
-                  setModeOpen(true);
-                }}
                 className={`flex items-center gap-1.5 h-8 px-3.5 py-1.5 rounded-full border text-xs font-semibold transition-all whitespace-nowrap shadow-xs cursor-pointer ${
                   isDark
                     ? "border-slate-700 bg-slate-800 text-slate-300 hover:border-slate-600 hover:text-white"
@@ -8283,16 +8316,6 @@ function ChatInputBox({
                             onClick={(e) => {
                               e.stopPropagation();
 
-                              if (m.id === "luma") {
-                                const now = Date.now();
-                                if (now - lastLumaItemTapRef.current < 500) {
-                                  toggleProUnlock();
-                                  lastLumaItemTapRef.current = 0;
-                                  return;
-                                }
-                                lastLumaItemTapRef.current = now;
-                              }
-
                               if (isLocked) {
                                 navigate("/upgrade");
                                 setModeOpen(false);
@@ -8303,12 +8326,6 @@ function ChatInputBox({
                               setActiveMode(m.id);
                               setModeOpen(false);
                               setModeDropdownPos(null);
-                            }}
-                            onDoubleClick={(e) => {
-                              if (m.id === "luma") {
-                                e.stopPropagation();
-                                toggleProUnlock();
-                              }
                             }}
                             className={`w-full flex items-start gap-2.5 px-3 py-2.5 rounded-2xl text-left transition-all active:scale-[0.99] cursor-pointer ${
                               isSelected
