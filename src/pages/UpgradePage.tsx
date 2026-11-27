@@ -5304,8 +5304,8 @@ export default function UpgradePage() {
                   </div>
                 </div>
 
-                {/* Modal Footer (Button Tutup Dihilangkan, Action Button Full Width) */}
-                <div className="px-6 py-4 bg-slate-50/80 border-t border-slate-100 flex items-center justify-center shrink-0">
+                {/* Modal Footer (Tanpa garis pembatas & tanpa background shape) */}
+                <div className="px-6 pb-6 pt-2 flex items-center justify-center shrink-0">
                   <button
                     type="button"
                     onClick={() => {
