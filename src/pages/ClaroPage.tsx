@@ -11697,7 +11697,7 @@ function MarkdownRenderer({ text, isStreaming, compact }: { text: string; isStre
 
     // Horizontal rule → hapus garis horizontal
     if (/^---+$/.test(line)) {
-      elements.push(<div key={i} className="my-2" />);
+      elements.push(<div key={i} className="my-1" />);
       i++; continue;
     }
 
@@ -11927,7 +11927,7 @@ function MarkdownRenderer({ text, isStreaming, compact }: { text: string; isStre
     const isLast = i === lastNonEmptyLineIdx;
     if (isStreaming && isLast) cursorRendered = true;
     elements.push(
-      <p key={i} className="text-[0.9375rem] text-slate-700 leading-7 mb-1">
+      <p key={i} className={`text-[0.9375rem] text-slate-700 leading-7 ${compact ? "mb-2.5" : "mb-4.5 sm:mb-5"} last:mb-0`}>
         {renderInlineMd(cleanLine)}
         {isStreaming && isLast && <StreamingCursor />}
       </p>
