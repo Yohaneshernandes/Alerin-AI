@@ -7782,22 +7782,38 @@ function ChatInputBox({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? []);
     if (files.length === 0) return;
-    const newItems: UploadedItem[] = files.map((file) => {
+    files.forEach((file) => {
       const isImage = file.type.startsWith("image/") || /\.(jpg|jpeg|png|webp|gif)$/i.test(file.name);
       const ext = file.name.split(".").pop()?.toUpperCase() ?? (isImage ? "FOTO" : "FILE");
       const size = file.size < 1024 * 1024
         ? `${(file.size / 1024).toFixed(0)} KB`
         : `${(file.size / (1024 * 1024)).toFixed(1)} MB`;
-      return {
-        id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      const id = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+      const initialPreview = isImage ? URL.createObjectURL(file) : undefined;
+
+      const newItem: UploadedItem = {
+        id,
         file,
         name: file.name,
         type: ext,
         size,
-        previewUrl: isImage ? URL.createObjectURL(file) : undefined,
+        previewUrl: initialPreview,
       };
+      setUploadedItems((prev) => [...prev, newItem]);
+
+      if (isImage) {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          const dataUrl = ev.target?.result as string;
+          if (dataUrl) {
+            setUploadedItems((prev) =>
+              prev.map((it) => (it.id === id ? { ...it, previewUrl: dataUrl } : it))
+            );
+          }
+        };
+        reader.readAsDataURL(file);
+      }
     });
-    setUploadedItems((prev) => [...prev, ...newItems]);
     e.target.value = "";
     setUploadMenuOpen(false);
   };
@@ -7805,18 +7821,14 @@ function ChatInputBox({
   const removeItem = (id: string) => {
     setUploadedItems((prev) => {
       const target = prev.find((item) => item.id === id);
-      if (target?.previewUrl) URL.revokeObjectURL(target.previewUrl);
+      if (target?.previewUrl?.startsWith("blob:")) {
+        try {
+          URL.revokeObjectURL(target.previewUrl);
+        } catch (_) {}
+      }
       return prev.filter((item) => item.id !== id);
     });
   };
-
-  useEffect(() => {
-    return () => {
-      uploadedItems.forEach((item) => {
-        if (item.previewUrl) URL.revokeObjectURL(item.previewUrl);
-      });
-    };
-  }, [uploadedItems]);
 
   const openUploadMenu = (btnRef?: React.RefObject<HTMLButtonElement | null>) => {
     const target = btnRef?.current ?? uploadBtnRef.current;
@@ -7916,16 +7928,40 @@ function ChatInputBox({
     setListening(true);
   };
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (uploadedItems.length > 0) {
-      const filesPayload = uploadedItems.map((item) => ({
-        name: item.name,
-        type: item.type,
-        size: item.size,
-        previewUrl: item.previewUrl,
-      }));
+      // Pastikan semua foto telah terbaca sebagai Data URL jika belum selesai dibaca
+      const resolvedFiles = await Promise.all(
+        uploadedItems.map(async (item) => {
+          let previewUrl = item.previewUrl;
+          if (item.file && (!previewUrl || previewUrl.startsWith("blob:"))) {
+            const isImage = item.file.type.startsWith("image/") || /\.(jpg|jpeg|png|webp|gif)$/i.test(item.name);
+            if (isImage) {
+              try {
+                previewUrl = await new Promise<string>((resolve) => {
+                  const reader = new FileReader();
+                  reader.onload = (ev) => resolve((ev.target?.result as string) || previewUrl || "");
+                  reader.onerror = () => resolve(previewUrl || "");
+                  reader.readAsDataURL(item.file!);
+                });
+              } catch (_) {}
+            }
+          }
+          return {
+            name: item.name,
+            type: item.type,
+            size: item.size,
+            previewUrl,
+          };
+        })
+      );
+
+      const filesPayload = resolvedFiles;
       const primaryFile = filesPayload[0];
-      const photoCount = uploadedItems.filter((i) => Boolean(i.previewUrl)).length;
+      const photoCount = uploadedItems.filter((i) => {
+        const isImage = (i.file?.type?.startsWith("image/") ?? false) || i.type.startsWith("image/") || /\.(jpg|jpeg|png|webp|gif)$/i.test(i.name) || Boolean(i.previewUrl);
+        return isImage;
+      }).length;
       let defaultText = "";
       if (photoCount > 1) {
         defaultText = `Tolong analisis ${photoCount} foto ini.`;
@@ -7940,9 +7976,6 @@ function ChatInputBox({
         primaryFile,
         filesPayload
       );
-      uploadedItems.forEach((item) => {
-        if (item.previewUrl) URL.revokeObjectURL(item.previewUrl);
-      });
       setUploadedItems([]);
       setInput("");
     } else {
@@ -8217,15 +8250,30 @@ function ChatInputBox({
                       inp.onchange = (e) => {
                         const files = Array.from((e.target as HTMLInputElement).files ?? []);
                         if (files.length > 0) {
-                          const newItems: UploadedItem[] = files.map((f) => ({
-                            id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-                            file: f,
-                            name: f.name || `Kamera-${Date.now()}.jpg`,
-                            type: "JPG",
-                            size: `${(f.size / 1024).toFixed(0)} KB`,
-                            previewUrl: URL.createObjectURL(f),
-                          }));
-                          setUploadedItems((prev) => [...prev, ...newItems]);
+                          files.forEach((f) => {
+                            const id = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+                            const initialPreview = URL.createObjectURL(f);
+                            const newItem: UploadedItem = {
+                              id,
+                              file: f,
+                              name: f.name || `Kamera-${Date.now()}.jpg`,
+                              type: "JPG",
+                              size: `${(f.size / 1024).toFixed(0)} KB`,
+                              previewUrl: initialPreview,
+                            };
+                            setUploadedItems((prev) => [...prev, newItem]);
+
+                            const reader = new FileReader();
+                            reader.onload = (ev) => {
+                              const dataUrl = ev.target?.result as string;
+                              if (dataUrl) {
+                                setUploadedItems((prev) =>
+                                  prev.map((it) => (it.id === id ? { ...it, previewUrl: dataUrl } : it))
+                                );
+                              }
+                            };
+                            reader.readAsDataURL(f);
+                          });
                           setUploadMenuOpen(false);
                         }
                       };
@@ -12215,11 +12263,19 @@ function SharedChatPreviewView({
                           <div
                             key={fIdx}
                             onClick={() => setPreviewImgUrl(fc.previewUrl ?? null)}
-                            className={`cursor-pointer relative rounded-2xl overflow-hidden border border-slate-200/40 shadow-xs ${
-                              m.fileCards && m.fileCards.length === 1 ? "w-full max-w-[200px] h-36" : "w-[120px] h-28"
+                            className={`cursor-pointer group relative rounded-2xl overflow-hidden border border-slate-200/50 bg-slate-100 dark:bg-slate-800 shadow-xs ${
+                              m.fileCards && m.fileCards.length === 1 ? "w-full max-w-[220px] h-36" : "w-[120px] h-28"
                             }`}
                           >
-                            <img src={fc.previewUrl} alt={fc.name} className="w-full h-full object-cover" />
+                            <img
+                              src={fc.previewUrl}
+                              alt={fc.name}
+                              className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
+                              loading="lazy"
+                            />
+                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                              <span className="opacity-0 group-hover:opacity-100 text-white text-[10px] font-medium bg-black/60 px-2 py-0.5 rounded-full transition-opacity">Lihat</span>
+                            </div>
                           </div>
                         ) : (
                           <div key={fIdx} className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl bg-white border border-slate-200/90 shadow-xs dark:bg-slate-800 dark:border-slate-700">
@@ -12238,9 +12294,17 @@ function SharedChatPreviewView({
                     Boolean(m.fileCard.previewUrl) && (/\.(jpg|jpeg|png|webp|gif)$/i.test(m.fileCard.name) || m.fileCard.type.startsWith("image/") || m.fileCard.type === "FOTO") ? (
                       <div
                         onClick={() => setPreviewImgUrl(m.fileCard?.previewUrl ?? null)}
-                        className="cursor-pointer rounded-2xl overflow-hidden mb-1 border border-slate-200/40 shadow-xs max-w-[200px]"
+                        className="cursor-pointer group relative rounded-2xl overflow-hidden mb-1 border border-slate-200/50 bg-slate-100 dark:bg-slate-800 shadow-xs max-w-[220px]"
                       >
-                        <img src={m.fileCard.previewUrl} alt={m.fileCard.name} className="w-full h-36 object-cover" />
+                        <img
+                          src={m.fileCard.previewUrl}
+                          alt={m.fileCard.name}
+                          className="w-full h-36 object-cover transition-transform duration-200 group-hover:scale-105"
+                          loading="lazy"
+                        />
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                          <span className="opacity-0 group-hover:opacity-100 text-white text-[11px] font-medium bg-black/60 px-2.5 py-1 rounded-full transition-opacity">Lihat foto</span>
+                        </div>
                       </div>
                     ) : (
                       <div className="flex items-center gap-3 px-4 py-3 rounded-2xl rounded-br-sm max-w-[80%] bg-white border border-slate-200/90 shadow-xs dark:bg-slate-800 dark:border-slate-700 mb-1">
@@ -13187,12 +13251,17 @@ function PercakapanTab({
                         <div
                           key={idx}
                           onClick={() => setChatImagePreview(fc.previewUrl ?? null)}
-                          className={`cursor-pointer group relative rounded-2xl overflow-hidden border border-slate-200/40 shadow-xs ${
-                            m.fileCards && m.fileCards.length === 1 ? "w-full max-w-[200px] h-36" : "w-[120px] h-28"
+                          className={`cursor-pointer group relative rounded-2xl overflow-hidden border border-slate-200/50 bg-slate-100 dark:bg-slate-800 shadow-xs ${
+                            m.fileCards && m.fileCards.length === 1 ? "w-full max-w-[220px] h-36" : "w-[120px] h-28"
                           }`}
                           title="Ketuk untuk melihat foto"
                         >
-                          <img src={fc.previewUrl} alt={fc.name} className="w-full h-full object-cover" />
+                          <img
+                            src={fc.previewUrl}
+                            alt={fc.name}
+                            className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
+                            loading="lazy"
+                          />
                           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
                             <span className="opacity-0 group-hover:opacity-100 text-white text-[10px] font-medium bg-black/60 px-2 py-0.5 rounded-full transition-opacity">Lihat</span>
                           </div>
@@ -13214,10 +13283,15 @@ function PercakapanTab({
                   Boolean(m.fileCard.previewUrl) && (/\.(jpg|jpeg|png|webp|gif)$/i.test(m.fileCard.name) || m.fileCard.type.startsWith("image/") || m.fileCard.type === "FOTO") ? (
                     <div
                       onClick={() => setChatImagePreview(m.fileCard?.previewUrl ?? null)}
-                      className="cursor-pointer group relative rounded-2xl overflow-hidden mb-1 border border-slate-200/40 shadow-xs max-w-[200px]"
+                      className="cursor-pointer group relative rounded-2xl overflow-hidden mb-1 border border-slate-200/50 bg-slate-100 dark:bg-slate-800 shadow-xs max-w-[220px]"
                       title="Ketuk untuk melihat foto"
                     >
-                      <img src={m.fileCard.previewUrl} alt={m.fileCard.name} className="w-full h-36 object-cover" />
+                      <img
+                        src={m.fileCard.previewUrl}
+                        alt={m.fileCard.name}
+                        className="w-full h-36 object-cover transition-transform duration-200 group-hover:scale-105"
+                        loading="lazy"
+                      />
                       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
                         <span className="opacity-0 group-hover:opacity-100 text-white text-[11px] font-medium bg-black/60 px-2.5 py-1 rounded-full transition-opacity">Lihat foto</span>
                       </div>
