@@ -150,14 +150,14 @@ const PRICING_DATABASE: Record<
 > = {
   chat: {
     name: "Alerin Chat",
-    tag: "AI Asisten Riset",
+    tag: "Diskusi & Riset",
     prices: {
       "7d": 25000,
       "30d": 59000,
       "1y": 566000,
     },
     original_yearly: 708000,
-    description: "AI asisten untuk riset akademik dan diskusi topik.",
+    description: "Tanya jawab materi kuliah, tugas, dan riset.",
     badges: ["Obrolan Riset Cerdas", "Brainstorming 24/7"],
     icon: "05de5.svg",
     mobileIcon: "17983.svg",
@@ -2823,7 +2823,7 @@ export default function UpgradePage() {
                     {
                       key: "Alerin Chat",
                       label: "Alerin Chat",
-                      desc: "AI asisten untuk riset akademik dan diskusi topik.",
+                      desc: "Tanya jawab materi kuliah, tugas, dan riset.",
                     },
                     {
                       key: "Alerin Jurnal",

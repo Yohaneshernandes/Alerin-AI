@@ -16,7 +16,7 @@ export default function FiturLandingFigma({
   const features = [
     {
       title: "Alerin Chat",
-      description: "AI asisten untuk riset akademik dan diskusi topik.",
+      description: "Tanya jawab materi kuliah, tugas, dan riset.",
       icon: "05de5.svg",
       mobileIcon: "17983.svg",
       iconClass: "h-[44.283px] w-[44.283px]",

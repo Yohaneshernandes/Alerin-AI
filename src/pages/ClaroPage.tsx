@@ -3349,7 +3349,7 @@ const OFFICIAL_FEATURES: Record<
 > = {
   chat: {
     label: "Alerin Chat",
-    desc: "AI asisten untuk riset akademik dan diskusi topik.",
+    desc: "Tanya jawab materi kuliah, tugas, dan riset.",
     tab: "percakapan",
     featureKey: "chat",
     icon: "💬",
