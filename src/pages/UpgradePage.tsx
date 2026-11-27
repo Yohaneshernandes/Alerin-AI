@@ -5116,16 +5116,8 @@ export default function UpgradePage() {
               </svg>
             </div>
 
-            {/* Pill Status */}
-            <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[#1A73E8] bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
-              <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="20 6 9 17 4 12" />
-              </svg>
-              Voucher Berhasil Diterapkan
-            </span>
-
             {/* Title */}
-            <h3 className="text-xl sm:text-[22px] font-extrabold text-slate-900 mt-3 leading-snug">
+            <h3 className="text-xl sm:text-[22px] font-extrabold text-slate-900 mt-1 leading-snug">
               Hemat {formatRupiah(appliedVoucher?.amount || 25000)}!
             </h3>
 
@@ -5134,30 +5126,11 @@ export default function UpgradePage() {
               Kode promo <strong className="font-bold text-[#1A73E8] tracking-wider">{appliedVoucher?.code || "ALLERIHEMAT"}</strong> berhasil dipasang. Potongan harga otomatis diterapkan ke total pesananmu.
             </p>
 
-            {/* Rincian Box */}
-            <div className="mt-5 p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-left space-y-2">
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-slate-500 font-medium">Kode Kupon</span>
-                <span className="font-mono font-bold text-slate-900 bg-white px-2 py-0.5 rounded border border-slate-200 text-[11px]">{appliedVoucher?.code || "ALLERIHEMAT"}</span>
-              </div>
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-slate-500 font-medium">Total Potongan</span>
-                <span className="font-bold text-emerald-600">-{formatRupiah(appliedVoucher?.amount || 25000)}</span>
-              </div>
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-slate-500 font-medium">Status</span>
-                <span className="inline-flex items-center gap-1 font-semibold text-blue-600">
-                  <span className="size-1.5 rounded-full bg-blue-600 animate-pulse"></span>
-                  Aktif Digunakan
-                </span>
-              </div>
-            </div>
-
             {/* Action Button */}
             <button
               type="button"
               onClick={() => setIsVoucherSuccessModalOpen(false)}
-              className="w-full mt-5 py-3.5 px-5 bg-[#1A73E8] hover:bg-[#1557b0] active:scale-[0.98] text-white font-bold text-sm rounded-xl shadow-md shadow-[#1A73E8]/20 transition-all cursor-pointer"
+              className="w-full mt-6 py-3.5 px-5 bg-[#1A73E8] hover:bg-[#1557b0] active:scale-[0.98] text-white font-bold text-sm rounded-xl shadow-md shadow-[#1A73E8]/20 transition-all cursor-pointer"
             >
               Gunakan Sekarang
             </button>
