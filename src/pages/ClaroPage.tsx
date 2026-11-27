@@ -24850,7 +24850,7 @@ function ProfilTab({ onTab, onRegister }: { onTab: (t: NavTab) => void; onRegist
             <div className="my-[11px] max-h-[75vh] overflow-y-auto px-5 py-[10px] sm:px-6">
               <div className="flex items-center justify-between gap-4 rounded-xl border border-slate-200 p-4">
                 <div className="flex min-w-0 items-center gap-3">
-                  <img src="/assets/7052b.png" alt="" className="h-12 w-12 shrink-0 rounded-xl object-cover" />
+                  <img src="/assets/7052b.png" alt="" className="h-12 w-12 shrink-0 object-contain" />
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
                       <p className="text-base font-bold text-slate-900">Alerin Plus</p>
@@ -25713,7 +25713,7 @@ function ProfilTab({ onTab, onRegister }: { onTab: (t: NavTab) => void; onRegist
                     <div className="mx-auto max-w-xl">
                       <div className="rounded-2xl border border-blue-100 bg-blue-50 p-5">
                         <div className="flex items-center gap-4">
-                          <img src="/assets/7052b.png" alt="" className="h-16 w-16 rounded-2xl object-cover" />
+                          <img src="/assets/7052b.png" alt="Alerin Plus" className="h-16 w-16 shrink-0 object-contain" />
                           <div>
                             <p className="font-display text-xl font-bold text-slate-900">Alerin Plus</p>
                             <p className="mt-1 text-xs text-slate-500">Aktif sampai 30 Desember 2026</p>
@@ -25957,7 +25957,7 @@ function ProfilTab({ onTab, onRegister }: { onTab: (t: NavTab) => void; onRegist
                   <div className="w-full rounded-2xl bg-white p-5 md:col-span-2" style={{ boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}>
                     <div className="flex flex-col gap-4 py-1 sm:flex-row sm:items-center sm:justify-between">
                       <div className="flex items-center gap-3">
-                        <img src="/assets/7052b.png" alt="" className="h-16 w-16 rounded-2xl object-cover" />
+                        <img src="/assets/7052b.png" alt="Alerin Plus" className="h-16 w-16 shrink-0 object-contain" />
                         <div>
                           <p className="font-display text-xl font-bold text-slate-900">Paket Alerin Plus</p>
                           <span className="mt-2 inline-flex rounded-full border border-solid border-[#558FDF] bg-[#558FDF] px-2 py-0.5 text-[10px] font-bold text-white">
