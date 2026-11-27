@@ -2210,6 +2210,25 @@ Contohnya:
 Tabel kolom pendek di atas langsung fit 100% di layar HP dengan teks rapi tanpa scroll ke samping.`
   ],
 
+  // ── 2b-1. KOLOM PANJANG 1 (Tabel multi-kolom yang luas & tembus layar kanan di mobile) ───
+  [
+    /\b(?:kolom\s*(?:panjang\s*)?1|tabel\s*(?:panjang\s*)?1)\b/i,
+    `Kalau Alerin memberikan **kolom panjang 1**, tampilannya berupa tabel multi-kolom yang luas di mana sisi kanannya **tembus langsung ke tepi layar HP** sehingga kamu bisa leluasa menggesernya (scroll) ke samping:
+
+Contohnya:
+
+<!-- bleed-right -->
+| Bab | Judul | Isi Utama | Bobot Nilai | Status Pengerjaan | Target Selesai | Catatan Dosen |
+|---|---|---|---|---|---|---|
+| **BAB I** | Pendahuluan | Latar belakang, rumusan masalah, tujuan, manfaat, batasan | 15% | Siap Direvisi | Minggu ke-2 | Perbaiki batasan masalah |
+| **BAB II** | Kajian Pustaka | Landasan teori, penelitian terdahulu, kerangka konseptual | 25% | Sedang Dikerjakan | Minggu ke-4 | Tambahkan 3 jurnal Scopus |
+| **BAB III** | Metodologi | Desain penelitian, populasi & sampel, teknik analisis data | 20% | Draf Awal | Minggu ke-6 | Validasi instrumen |
+| **BAB IV** | Hasil & Pembahasan | Deskripsi data, hasil uji statistik, pembahasan teori | 30% | Belum Dimulai | Minggu ke-8 | Tunggu kelengkapan data |
+| **BAB V** | Penutup | Kesimpulan, implikasi, keterbatasan, dan saran penelitian | 10% | Belum Dimulai | Minggu ke-9 | Rekomendasi penelitian |
+
+Tabel kolom panjang 1 di atas memiliki sisi kanan yang tembus langsung ke tepi layar di tampilan mobile, sehingga kamu bisa menggeser (scroll) kolom ke kiri dan ke kanan secara leluasa tanpa terpotong margin.`
+  ],
+
   // ── 2b. KOLOM PANJANG (Tabel multi-kolom yang luas & bisa digeser kanan-kiri) ───
   [
     /\b(?:kolom\s*panjang|tabel\s*panjang)\b/i,
@@ -2231,7 +2250,7 @@ Tabel kolom panjang di atas memiliki 5 kolom lengkap dan teks detail sehingga bi
   // ── 2c. KOLOM / TABEL UMUM ──────────────────────────────────────────────────
   [
     /\b(?:kolom|tabel)\b/i,
-    `Alerin menyediakan dua format tabel responsif: **kolom pendek** (fit di layar HP tanpa scroll) dan **kolom panjang** (bisa digeser kanan-kiri):
+    `Alerin menyediakan tiga format tabel responsif: **kolom pendek** (fit di layar HP tanpa scroll), **kolom panjang** (tabel standar berbingkai rapi), dan **kolom panjang 1** (sisi kanan tembus ke tepi layar HP):
 
 **1. Contoh Kolom Pendek (Fit di layar, tanpa scroll):**
 
@@ -2243,17 +2262,18 @@ Tabel kolom panjang di atas memiliki 5 kolom lengkap dan teks detail sehingga bi
 | **BAB IV** | Hasil Analisis | Hal 66–110 |
 | **BAB V** | Penutup | Hal 111–125 |
 
-**2. Contoh Kolom Panjang (Bisa digeser ke kiri dan kanan):**
+**2. Contoh Kolom Panjang 1 (Sisi kanan tembus tepi layar HP, bisa digeser):**
 
-| Bab | Judul | Isi Utama | Bobot Nilai | Status Pengerjaan |
-|---|---|---|---|---|
-| **BAB I** | Pendahuluan | Latar belakang, rumusan masalah, tujuan, manfaat | 15% | Siap Direvisi |
-| **BAB II** | Kajian Pustaka | Landasan teori, kerangka konseptual, hipotesis | 25% | Sedang Dikerjakan |
-| **BAB III** | Metodologi | Desain penelitian, sampel, instrumen, analisis | 20% | Draf Awal |
-| **BAB IV** | Pembahasan | Deskripsi data dan hasil uji statistik/analisis | 30% | Belum Dimulai |
-| **BAB V** | Penutup | Kesimpulan, keterbatasan, dan rekomendasi | 10% | Belum Dimulai |
+<!-- bleed-right -->
+| Bab | Judul | Isi Utama | Bobot Nilai | Status Pengerjaan | Target Selesai | Catatan Dosen |
+|---|---|---|---|---|---|---|
+| **BAB I** | Pendahuluan | Latar belakang, rumusan masalah, tujuan, manfaat | 15% | Siap Direvisi | Minggu ke-2 | Perbaiki batasan |
+| **BAB II** | Kajian Pustaka | Landasan teori, kerangka konseptual, hipotesis | 25% | Sedang Dikerjakan | Minggu ke-4 | Jurnal Scopus |
+| **BAB III** | Metodologi | Desain penelitian, sampel, instrumen, analisis | 20% | Draf Awal | Minggu ke-6 | Validasi instrumen |
+| **BAB IV** | Pembahasan | Deskripsi data dan hasil uji statistik/analisis | 30% | Belum Dimulai | Minggu ke-8 | Tunggu data |
+| **BAB V** | Penutup | Kesimpulan, keterbatasan, dan rekomendasi | 10% | Belum Dimulai | Minggu ke-9 | Rekomendasi |
 
-Ketik **"kolom pendek"** untuk tabel yang langsung pas di layar HP, atau ketik **"kolom panjang"** jika membutuhkan tabel dengan banyak kolom!`
+Ketik **"kolom pendek"**, **"kolom panjang"**, atau **"kolom panjang 1"** jika membutuhkan tabel yang sisi kanannya tembus ke tepi layar!`
   ],
 
   // ── 3. LINK OUTPUT (Kartu referensi tautan resmi interaktif) ────────────────
@@ -2944,7 +2964,10 @@ const SUGGESTION_MAP: { pattern: RegExp; suggestions: string[] }[] = [
   { pattern: /ai|kecerdasan buatan|machine learning/i, suggestions: ["Aplikasi AI di bidang akademik", "Etika penggunaan AI untuk skripsi", "Referensi AI terbaru (2023-2024)"] },
   { pattern: /python|kode|coding|program|javascript|sql|database|api|web|react|frontend|backend/i, suggestions: ["Tambahkan error handling", "Jelaskan kode ini baris per baris", "Buat unit test untuk fungsi ini"] },
   { pattern: /ngasih file|output.*file|lampiran|contoh dokumen|buat file excel|contoh file|\b(?:file|files|dokumen|pptx?|powerpoint)\b/i, suggestions: ["Coba buat file PowerPoint (.pptx)", "Coba buat file Excel dengan banyak kolom", "Buatkan dokumen Panduan PDF & Word"] },
-  { pattern: /kolom|tabel/i, suggestions: ["Tambah kolom deadline & bobot", "Ubah format tabel jadi Excel", "Jelaskan isi setiap kolom"] },
+  { pattern: /\b(?:kolom\s*(?:panjang\s*)?1|tabel\s*(?:panjang\s*)?1)\b/i, suggestions: ["Coba kolom panjang (berbingkai)", "Coba kolom pendek (fit layar)", "Ubah format tabel jadi Excel"] },
+  { pattern: /\b(?:kolom\s*panjang|tabel\s*panjang)\b/i, suggestions: ["Coba kolom panjang 1 (tembus layar)", "Coba kolom pendek (fit layar)", "Tambah kolom deadline & bobot"] },
+  { pattern: /\b(?:kolom\s*pendek|tabel\s*pendek)\b/i, suggestions: ["Coba kolom panjang 1 (tembus layar)", "Coba kolom panjang", "Tambah kolom deadline & bobot"] },
+  { pattern: /kolom|tabel/i, suggestions: ["Coba kolom panjang 1 (tembus layar)", "Coba kolom pendek (fit layar)", "Coba kolom panjang"] },
   { pattern: /referensi website|referensi ui|link referensi/i, suggestions: ["Buka Figma Community untuk UI Kit", "Cari inspirasi di Dribbble", "Buatkan ringkasan struktur dashboard"] },
 ];
 
@@ -11407,6 +11430,7 @@ function MarkdownRenderer({ text, isStreaming, compact }: { text: string; isStre
   const elements: React.ReactNode[] = [];
   let i = 0;
   let cursorRendered = false;
+  let hasBleedMarker = false;
 
   let lastNonEmptyLineIdx = -1;
   for (let idx = lines.length - 1; idx >= 0; idx--) {
@@ -11422,6 +11446,15 @@ function MarkdownRenderer({ text, isStreaming, compact }: { text: string; isStre
 
     // Blank line → skip
     if (!line) { i++; continue; }
+
+    // HTML comment marker (misal: <!-- bleed-right --> atau <!-- tembus -->)
+    if (line.startsWith("<!--") && line.endsWith("-->")) {
+      if (/bleed-right|tembus|kolom-panjang-1/i.test(line)) {
+        hasBleedMarker = true;
+      }
+      i++;
+      continue;
+    }
 
     // Code block or Special Cards (files / links / visual diagrams / penulisan)
     if (line.startsWith("```")) {
@@ -11665,6 +11698,8 @@ function MarkdownRenderer({ text, isStreaming, compact }: { text: string; isStre
       const body = rows.slice(1);
       const colCount = Math.max(headers.length, ...body.map(r => parseRow(r).length));
       const isFitScreen = colCount <= 3;
+      const isBleedTable = !isFitScreen && (hasBleedMarker || /kolom\s*(?:panjang\s*)?1|tabel\s*(?:panjang\s*)?1|tembus\s*langsung\s*ke\s*tepi\s*layar/i.test(cleanText));
+      hasBleedMarker = false;
       const colAligns = sepLine
         ? parseRow(sepLine).map(col => {
             const left = col.startsWith(":");
@@ -11678,7 +11713,11 @@ function MarkdownRenderer({ text, isStreaming, compact }: { text: string; isStre
       elements.push(
         <div
           key={`tbl-${i}`}
-          className={`my-3.5 w-full ${isFitScreen ? "overflow-hidden" : "overflow-x-auto"} select-text rounded-xl border border-neutral-300 bg-white shadow-xs`}
+          className={`my-3.5 select-text ${isFitScreen ? "overflow-hidden" : "overflow-x-auto"} ${
+            isBleedTable
+              ? "-mr-4 md:mr-0 w-[calc(100%+16px)] md:w-full rounded-l-xl rounded-r-none md:rounded-r-xl border-y border-l border-r-0 md:border-r border-neutral-300 bg-white shadow-xs"
+              : "w-full rounded-xl border border-neutral-300 bg-white shadow-xs"
+          }`}
           style={{
             WebkitOverflowScrolling: "touch",
             scrollbarWidth: "none",
@@ -11708,7 +11747,7 @@ function MarkdownRenderer({ text, isStreaming, compact }: { text: string; isStre
                         key={ci}
                         className={`py-2.5 sm:py-3 px-2 sm:px-3 text-center align-middle font-semibold text-black break-words border-r border-neutral-200/80 last:border-r-0 ${colWidthClass} ${
                           !isFitScreen ? "whitespace-nowrap px-4" : ""
-                        }`}
+                        } ${isBleedTable ? "last:pr-6 md:last:pr-4" : ""}`}
                       >
                         {renderInlineMd(cleanMdText(h))}
                       </th>
@@ -11734,7 +11773,7 @@ function MarkdownRenderer({ text, isStreaming, compact }: { text: string; isStre
                               ci === 0
                                 ? "font-semibold sm:font-medium text-slate-900"
                                 : "text-slate-800"
-                            } ${!isFitScreen ? "min-w-[120px] px-4" : ""}`}
+                            } ${!isFitScreen ? "min-w-[120px] px-4" : ""} ${isBleedTable ? "last:pr-6 md:last:pr-4" : ""}`}
                           >
                             {renderInlineMd(cleanMdText(cell))}
                           </td>
