@@ -25154,14 +25154,14 @@ function ProfilTab({ onTab, onRegister }: { onTab: (t: NavTab) => void; onRegist
           <button
             type="button"
             onClick={onRegister}
-            className="group relative mx-0 mb-3 mt-[11px] flex min-h-profile-cta w-full items-center gap-3 overflow-hidden rounded-2xl bg-white px-5 py-[22px] text-left text-blue-800 shadow-[0_10px_30px_rgba(52,124,234,0.16)] ring-1 ring-blue-100"
+            className="group relative mx-0 mb-3 mt-[11px] flex min-h-profile-cta w-full items-center gap-3 overflow-hidden rounded-2xl bg-white px-5 py-4 sm:py-[18px] text-left text-blue-800 shadow-[0_10px_30px_rgba(52,124,234,0.16)] ring-1 ring-blue-100"
           >
             <span aria-hidden="true" className="pointer-events-none absolute inset-y-0 -left-1/3 z-20 hidden w-1/4 -skew-x-12 bg-gradient-to-r from-transparent via-blue-200/70 to-transparent opacity-0 blur-sm transition-[left,opacity] duration-700 ease-out group-hover:left-[115%] group-hover:opacity-100 md:block" />
             <span aria-hidden="true" className="pointer-events-none absolute -right-8 -top-12 h-32 w-32 rounded-full border border-blue-200/70" />
             <span aria-hidden="true" className="pointer-events-none absolute -bottom-16 right-12 hidden h-32 w-52 rounded-full bg-blue-400/25 blur-2xl md:block" />
             <span aria-hidden="true" className="pointer-events-none absolute left-[42%] top-3 h-2 w-2 rotate-45 rounded-[2px] bg-blue-300/70" />
             <span aria-hidden="true" className="pointer-events-none absolute bottom-3 left-[58%] h-1.5 w-1.5 rounded-full bg-blue-400/70" />
-            <img src="/assets/6667b.svg" alt="" className="relative z-10 shrink-0 rounded-xl border border-white/70 bg-[linear-gradient(135deg,rgba(52,124,234,0.88),rgba(85,143,223,0.62))] p-2 shadow-[0_6px_18px_rgba(52,124,234,0.28),inset_0_1px_0_rgba(255,255,255,0.45)] backdrop-blur-xl" />
+            <img src="/assets/6667b.svg" alt="" className="relative z-10 shrink-0 h-11 w-11 sm:h-12 sm:w-12 rounded-xl border border-white/70 bg-[linear-gradient(135deg,rgba(52,124,234,0.88),rgba(85,143,223,0.62))] p-2 object-contain shadow-[0_6px_18px_rgba(52,124,234,0.28),inset_0_1px_0_rgba(255,255,255,0.45)] backdrop-blur-xl" />
             <span className="relative z-10 min-w-0 flex-1">
               <span className="block font-['Inter:Bold'] text-[15px] font-bold leading-5 text-[#3a3a3b]">Lengkapi Profil Kamu 8/10</span>
               <span className="mt-0.5 block max-w-profile-description font-['Inter:Medium'] text-[13px] font-medium text-slate-500">Lengkapi profilmu untuk pengalaman yang lebih sesuai</span>
