@@ -8237,12 +8237,22 @@ function ChatInputBox({
                   if (pos) setModeDropdownPos(pos);
                   setModeOpen(true);
                 }}
-                className={`flex items-center gap-1.5 h-8 px-3.5 py-1.5 rounded-full border text-xs font-semibold transition-all whitespace-nowrap shadow-xs cursor-pointer ${
+                className={`flex items-center gap-1.5 h-8 px-3.5 py-1.5 rounded-full border text-xs font-semibold transition-all whitespace-nowrap shadow-xs cursor-pointer select-none outline-none focus:outline-none focus:ring-0 active:outline-none focus-visible:outline-none focus-visible:ring-0 ${
                   isDark
                     ? "border-slate-700 bg-slate-800 text-slate-300 hover:border-slate-600 hover:text-white"
                     : "border-slate-200/90 bg-white/70 md:bg-white text-slate-700 hover:border-blue-300 hover:text-blue-600"
                 }`}
-                style={modeOpen ? { borderColor: isDark ? "#60a5fa" : "#93c5fd", color: isDark ? "#60a5fa" : "#2563eb", background: isDark ? "#1e293b" : "#eff6ff" } : {}}
+                style={{
+                  WebkitTapHighlightColor: "transparent",
+                  outline: "none",
+                  ...(modeOpen
+                    ? {
+                        borderColor: isDark ? "#60a5fa" : "#93c5fd",
+                        color: isDark ? "#60a5fa" : "#2563eb",
+                        background: isDark ? "#1e293b" : "#eff6ff",
+                      }
+                    : {}),
+                }}
               >
                 {currentMode.label}
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ opacity: 0.6 }}><path d="M6 9l6 6 6-6"/></svg>
