@@ -2459,6 +2459,34 @@ Teknologi AI memiliki potensi besar untuk meningkatkan kualitas pendidikan. Namu
 Output penulisan juga bisa dibuat sebagai dokumen yang dapat diedit langsung di Alerin.`
   ],
 
+  // ── 5d. PARAGRAF OUTPUT (Jawaban panjang mendalam berparagraf-paragraf) ─────
+  [
+    /\b(?:paragraf(?:\s*-\s*paragraf|\s+paragraf)?|berparagraf(?:-paragraf)?)\b/i,
+    `Tentu bisa banget! Ketika kamu mengetik **"paragraf"** atau meminta tulisan yang mendalam, Alerin menyusun jawaban yang utuh, mengalir, dan berparagraf-paragraf tanpa terpotong-potong. Setiap paragraf dirancang dengan struktur akademik yang kokoh: kalimat topik (*topic sentence*), pendalaman argumen (*supporting elaboration*), bukti empiris atau rujukan teoretis, serta transisi logis yang menjembatani gagasan ke paragraf selanjutnya.
+
+Berikut contoh tulisan komprehensif dalam rangkaian beberapa paragraf utuh yang mendalam:
+
+Perkembangan teknologi kecerdasan buatan (*artificial intelligence*) dalam lanskap pendidikan tinggi telah mentransformasi paradigma pembelajaran dari pendekatan konvensional menuju ekosistem yang adaptif dan terpersonalisasi. Fenomena ini tidak sekadar merevolusi cara mahasiswa mengakses materi perkuliahan dan literatur ilmiah, melainkan juga meredefinisi hakikat interaksi pedagogis antara pengajar dan peserta didik. Ketika platform cerdas mampu memetakan kekuatan kognitif serta mengidentifikasi celah pemahaman secara waktu nyata, proses transfer pengetahuan tidak lagi terikat pada ritme kelas yang kaku dan monolitik, melainkan berkembang menjadi pengalaman belajar yang dinamis serta berpusat pada kebutuhan individu.
+
+Meskipun demikian, integrasi teknologi mutakhir ini memunculkan diskursus kritis seputar integritas akademik dan otonomi berpikir kritis di kalangan civitas akademika. Ketergantungan yang berlebihan pada asisten otomatis berpotensi mengaburkan batasan antara bantuan kognitif yang konstruktif dan erosi kemampuan analitis mandiri. Oleh sebab itu, urgensi literasi digital kontemporer tidak lagi terbatas pada kemahiran teknis dalam mengoperasikan alat, melainkan mencakup kepekaan etis, evaluasi kredibilitas sumber informasi, serta kapasitas untuk mempertanyakan keluaran algoritmik secara metodologis dan bertanggung jawab.
+
+Dari sudut pandang metodologi penelitian ilmiah, transformasi digital ini juga membuka dimensi baru dalam pengolahan data empiris dan penelusuran literatur akademik secara masif. Para peneliti kini dapat melakukan sintesis terhadap ribuan artikel jurnal terindeks dalam hitungan detik, menemukan celah riset (*research gap*) dengan presisi yang lebih tinggi, serta memodelkan variabel kompleks yang sebelumnya membutuhkan komputasi manual berbulan-bulan. Efisiensi ini secara signifikan mengakselerasi siklus publikasi ilmiah dan memperluas kolaborasi interdisipliner di tingkat global tanpa terhambat oleh sekat geografis.
+
+Kendati akselerasi riset tersebut menawarkan peluang yang sangat menjanjikan, tantangan validasi data dan reproduktibilitas temuan tetap menjadi pilar fundamental yang tidak dapat digantikan oleh otomatisasi sistem. Keberadaan fenomena halusinasi data dan bias inheren dalam model komputasi menuntut ketelitian peneliti untuk senantiasa melakukan triangulasi metode dan verifikasi langsung terhadap sumber-sumber primer yang terpercaya. Dengan demikian, kecerdasan buatan diposisikan sebagai akselerator intelektual yang memperkaya penalaran manusia, bukan sebagai substitusi atas ketajaman berpikir epistemologis peneliti itu sendiri.
+
+Pada akhirnya, keberhasilan adopsi inovasi teknologi di ruang akademik bertumpu pada keselarasan antara kemajuan infrastruktur digital dan penguatan regulasi etis di perguruan tinggi. Institusi pendidikan dituntut untuk merumuskan kebijakan yang adaptif namun tetap tegas dalam menjaga martabat kejujuran ilmiah, sekaligus membekali generasi mahasiswa dengan kompetensi reflektif yang relevan bagi masa depan. Sinergi yang harmonis antara kecanggihan teknologi dan integritas intelektual inilah yang akan memastikan bahwa transformasi pendidikan tinggi tetap bermuara pada pencerahan ilmu pengetahuan dan kemaslahatan masyarakat secara berkelanjutan.
+
+---
+
+Kamu bisa meminta Alerin menyusun jawaban berparagraf-paragraf untuk kebutuhan apa pun, seperti:
+- **Latar Belakang Skripsi:** Menguraikan masalah dari skala makro, meso, hingga mikro secara berurutan.
+- **Landasan Teori & Tinjauan Pustaka:** Mengelaborasi konsep, sintesis literatur, dan komparasi teori secara mengalir.
+- **Pembahasan Hasil (*Discussion*):** Menginterpretasikan temuan data lapangan dikaitkan dengan teori para ahli.
+- **Esai & Artikel Opini:** Membangun premis argumentatif yang kuat dan persuasif per paragraf.
+
+Ketikkan topik atau rancangan tulisanmu, dan Alerin siap menyusunnya dalam paragraf-paragraf yang panjang, rapi, dan berbobot!`
+  ],
+
   [/panduan dashboard|dokumen akademik|contoh dokumen|file pdf dan word|file docx|lampiran dokumen|download pdf/i, `Contoh dokumen: **Panduan Dashboard Akademik**
 
 Dokumen berisi:
@@ -2949,6 +2977,7 @@ const SUGGESTION_MAP: { pattern: RegExp; suggestions: string[] }[] = [
   { pattern: /bagan|diagram|flowchart|mindmap|mind\s*map|alur proses|struktur organisasi/i, suggestions: ["Buatkan bagan alur pendaftaran mahasiswa baru", "Buatkan mind map rencana penelitian skripsi", "Buatkan timeline pengerjaan skripsi 6 bulan"] },
   { pattern: /rumus|formula|matematika|persamaan|kalkulasi|pythagoras|turunan|integral/i, suggestions: ["Contoh rumus turunan dan integral", "Cara menghitung rumus Pythagoras", "Buatkan rumus dalam bentuk tabel"] },
   { pattern: /\b(?:output\s+penulisan|contoh\s+penulisan|writing\s+output|penulisan|tulisan)\b/i, suggestions: ["Buatkan penulisan gaya Kasual untuk TikTok", "Buatkan penulisan format Akademik", "Buatkan draft email resmi & SOP"] },
+  { pattern: /\b(?:paragraf(?:\s*-\s*paragraf|\s+paragraf)?|berparagraf(?:-paragraf)?)\b/i, suggestions: ["Buatkan 5 paragraf latar belakang skripsi", "Tips transisi kalimat antar paragraf", "Ubah poin-poin ini jadi paragraf utuh"] },
   { pattern: /TAM|UTAUT|technology acceptance/i, suggestions: ["Jelaskan konstruk TAM lebih detail", "Contoh kuesioner TAM siap pakai", "Bandingkan TAM dengan UTAUT2"] },
   { pattern: /metodologi|kuantitatif|kualitatif|survei|sampel/i, suggestions: ["Berapa minimal sampel yang valid?", "Perbedaan validitas & reliabilitas", "Teknik sampling mana yang cocok?"] },
   { pattern: /rumusan masalah|hipotesis/i, suggestions: ["Bantu kembangkan hipotesisnya", "Saran variabel penelitian tambahan", "Cek apakah rumusannya sudah tajam"] },
@@ -3029,6 +3058,13 @@ const SOURCE_MAP: { pattern: RegExp; sources: ChatSource[] }[] = [
     { title: "Panduan Penulisan Skripsi dan Tesis", author: "Kemdikbud RI", year: "2022" },
     { title: "Academic Writing for Graduate Students", author: "Swales & Feak", year: "2012" },
     { title: "The Craft of Research (Fourth Edition)", author: "Booth, W.C., Colomb, G.G., & Williams, J.M.", year: "2016", url: "https://press.uchicago.edu" },
+  ]},
+  { pattern: /\b(?:paragraf(?:\s*-\s*paragraf|\s+paragraf)?|berparagraf(?:-paragraf)?)\b/i, sources: [
+    { title: "Academic Writing for Graduate Students: Essential Tasks and Skills", author: "Swales, J.M. & Feak, C.B.", year: "2021", url: "https://scholar.google.com" },
+    { title: "The Craft of Research (Fourth Edition)", author: "Booth, W.C., Colomb, G.G., & Williams, J.M.", year: "2016", url: "https://press.uchicago.edu" },
+    { title: "They Say / I Say: The Moves That Matter in Academic Writing", author: "Graff, G., & Birkenstein, C.", year: "2021", url: "https://scholar.google.com" },
+    { title: "Writing Your Journal Article in Twelve Weeks", author: "Belcher, W.L.", year: "2019", url: "https://scholar.google.com" },
+    { title: "Pedoman Penulisan Karya Ilmiah dan Standardisasi Paragraf", author: "Kemdikbudristek RI", year: "2023", url: "https://sinta.kemdikbud.go.id" },
   ]},
   { pattern: /SEM|SmartPLS|regresi|analisis data/i, sources: [
     { title: "Structural Equation Modeling with AMOS", author: "Byrne, B.M.", year: "2016" },
