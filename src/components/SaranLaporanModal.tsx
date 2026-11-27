@@ -202,14 +202,14 @@ export default function SaranLaporanModal({
                 <div className="flex items-center justify-between mb-2">
                   <label
                     htmlFor="saran-message"
-                    className={`text-xs font-semibold ${
+                    className={`text-sm sm:text-[15px] font-semibold ${
                       isDark ? "text-slate-300" : "text-slate-700"
                     }`}
                   >
                     Rincian Masukan <span className="text-red-500">*</span>
                   </label>
                   <span
-                    className={`text-[11px] tabular-nums ${
+                    className={`text-xs sm:text-[13px] tabular-nums ${
                       isDark ? "text-slate-500" : "text-slate-400"
                     }`}
                   >
@@ -223,7 +223,7 @@ export default function SaranLaporanModal({
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder="Ceritakan ide, saran perbaikan, atau kendala yang kamu alami saat menggunakan Alerin..."
-                  className={`w-full px-4 py-3 rounded-2xl border text-xs sm:text-sm outline-none transition-all resize-none leading-relaxed ${
+                  className={`w-full px-4 py-3.5 rounded-2xl border text-[15px] sm:text-base placeholder:text-[14px] sm:placeholder:text-[15px] outline-none transition-all resize-none leading-relaxed ${
                     isDark
                       ? "bg-slate-800/80 border-slate-700 text-slate-100 placeholder-slate-500 focus:border-[#347CEA] focus:ring-2 focus:ring-blue-500/20"
                       : "bg-slate-50 border-slate-200 text-slate-900 placeholder-slate-400 focus:bg-white focus:border-[#347CEA] focus:ring-2 focus:ring-blue-100"
@@ -238,7 +238,7 @@ export default function SaranLaporanModal({
                   type="button"
                   onClick={onClose}
                   disabled={isSubmitting}
-                  className={`px-4.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-colors cursor-pointer ${
+                  className={`px-5 py-2.5 rounded-xl text-sm sm:text-[15px] font-semibold transition-colors cursor-pointer ${
                     isDark
                       ? "text-slate-300 bg-slate-800 hover:bg-slate-700 hover:text-white"
                       : "text-slate-600 bg-slate-100 hover:bg-slate-200"
@@ -250,7 +250,7 @@ export default function SaranLaporanModal({
                 <button
                   type="submit"
                   disabled={!message.trim() || isSubmitting}
-                  className={`flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-white transition-all shadow-sm ${
+                  className={`flex items-center justify-center gap-2 px-6.5 py-2.5 rounded-xl text-sm sm:text-[15px] font-bold text-white transition-all shadow-sm ${
                     !message.trim() || isSubmitting
                       ? "bg-[#347CEA]/50 cursor-not-allowed opacity-60"
                       : "bg-[#347CEA] hover:bg-blue-700 active:scale-[0.98] shadow-blue-500/25 cursor-pointer"
