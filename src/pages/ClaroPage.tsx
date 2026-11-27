@@ -24604,8 +24604,8 @@ function ProfilTab({ onTab, onRegister }: { onTab: (t: NavTab) => void; onRegist
     }, 2400);
   };
 
-  const inF = (e: React.FocusEvent<HTMLInputElement>) => { e.currentTarget.style.borderColor = "#93c5fd"; e.currentTarget.style.background = "#fff"; };
-  const inB = (e: React.FocusEvent<HTMLInputElement>) => { e.currentTarget.style.borderColor = "#e2e8f0"; e.currentTarget.style.background = "#f8fafc"; };
+  const inF = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => { e.currentTarget.style.borderColor = "#93c5fd"; e.currentTarget.style.background = "#fff"; };
+  const inB = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => { e.currentTarget.style.borderColor = "#e2e8f0"; e.currentTarget.style.background = "#f8fafc"; };
   const inCls = "w-full px-3 py-2 rounded-xl text-sm text-slate-800 outline-none transition-all";
   const inSt = { background: "#f8fafc", border: "1.5px solid #e2e8f0" };
 
@@ -25431,11 +25431,25 @@ function ProfilTab({ onTab, onRegister }: { onTab: (t: NavTab) => void; onRegist
                         </label>
                         <label className="block">
                           <span className="mb-2 block text-sm font-semibold text-slate-700">Jenjang Akademik</span>
-                          <select value={jenjang} onChange={event => setJenjang(event.target.value)} className={`${inCls} px-4 py-3 text-base`} style={inSt}>
-                            <option value="S1 (Sarjana)">S1 Sarjana/D4 Diploma</option>
-                            <option value="S2 (Magister)">S2 Magister</option>
-                            <option value="S3 (Doktor)">S3 Doktor</option>
-                          </select>
+                          <div className="relative">
+                            <select
+                              value={jenjang}
+                              onChange={event => setJenjang(event.target.value)}
+                              className={`${inCls} appearance-none cursor-pointer px-4 py-3 pr-10 text-base`}
+                              style={{ ...inSt, WebkitAppearance: "none", MozAppearance: "none", appearance: "none" }}
+                              onFocus={inF}
+                              onBlur={inB}
+                            >
+                              <option value="S1 (Sarjana)">S1 Sarjana/D4 Diploma</option>
+                              <option value="S2 (Magister)">S2 Magister</option>
+                              <option value="S3 (Doktor)">S3 Doktor</option>
+                            </select>
+                            <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 flex items-center text-slate-400">
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M6 9l6 6 6-6" />
+                              </svg>
+                            </div>
+                          </div>
                         </label>
                         <label className="block">
                           <span className="mb-2 block text-sm font-semibold text-slate-700">Universitas</span>
@@ -25447,11 +25461,25 @@ function ProfilTab({ onTab, onRegister }: { onTab: (t: NavTab) => void; onRegist
                         </label>
                         <label className="block sm:col-span-2">
                           <span className="mb-2 block text-sm font-semibold text-slate-700">Semester Saat Ini</span>
-                          <select value={semester} onChange={event => setSemester(event.target.value)} className={`${inCls} px-4 py-3 text-base`} style={inSt}>
-                            {["Semester 1", "Semester 2", "Semester 3", "Semester 4", "Semester 5", "Semester 6", "Semester 7", "Semester 8", "Semester 9", "Semester 10", "Semester 11", "Semester 12", "Semester 9+"].map(option => (
-                              <option key={option} value={option}>{option}</option>
-                            ))}
-                          </select>
+                          <div className="relative">
+                            <select
+                              value={semester}
+                              onChange={event => setSemester(event.target.value)}
+                              className={`${inCls} appearance-none cursor-pointer px-4 py-3 pr-10 text-base`}
+                              style={{ ...inSt, WebkitAppearance: "none", MozAppearance: "none", appearance: "none" }}
+                              onFocus={inF}
+                              onBlur={inB}
+                            >
+                              {["Semester 1", "Semester 2", "Semester 3", "Semester 4", "Semester 5", "Semester 6", "Semester 7", "Semester 8", "Semester 9", "Semester 10", "Semester 11", "Semester 12", "Semester 9+"].map(option => (
+                                <option key={option} value={option}>{option}</option>
+                              ))}
+                            </select>
+                            <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 flex items-center text-slate-400">
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M6 9l6 6 6-6" />
+                              </svg>
+                            </div>
+                          </div>
                         </label>
                       </div>
                       <div className="mt-6 flex justify-end gap-2">

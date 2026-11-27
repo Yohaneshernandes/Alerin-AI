@@ -1202,3 +1202,26 @@ body.dark {
   background: #ffffff !important;
   border-color: #3b82f6 !important;
 }
+
+select.appearance-none,
+.appearance-none {
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  background-image: none !important;
+}
+
+select.appearance-none::-ms-expand,
+select::-ms-expand {
+  display: none !important;
+}
+
+select.appearance-none::picker-icon,
+select::picker-icon {
+  display: none !important;
+  content: none !important;
+  opacity: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+  visibility: hidden !important;
+}
