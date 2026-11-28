@@ -19230,6 +19230,13 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
     source: "preset" | "custom";
     index: number;
   } | null>(null);
+  const [initialEditValues, setInitialEditValues] = useState<{
+    title: string;
+    time: string;
+    notes: string;
+    reminder: boolean;
+    reminderOffset: string;
+  } | null>(null);
   const [deleteAgendaConfirm, setDeleteAgendaConfirm] = useState<{
     key: string;
     label: string;
@@ -19253,6 +19260,33 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
     return {};
   });
 
+  const isAgendaModified = useMemo(() => {
+    if (!editingAgenda || !initialEditValues) return true;
+    const currentTitle = agendaTitle.trim();
+    const initTitle = initialEditValues.title.trim();
+
+    const cleanTime = (t: string) => t.replace(/\s+/g, "").replace(":", ".");
+    const currentTime = cleanTime(agendaTime);
+    const initTime = cleanTime(initialEditValues.time);
+
+    const currentNotes = agendaNotes.trim();
+    const initNotes = initialEditValues.notes.trim();
+
+    const currentReminder = Boolean(agendaReminder);
+    const initReminder = Boolean(initialEditValues.reminder);
+
+    const currentOffset = agendaReminderOffset;
+    const initOffset = initialEditValues.reminderOffset;
+
+    return (
+      currentTitle !== initTitle ||
+      currentTime !== initTime ||
+      currentNotes !== initNotes ||
+      currentReminder !== initReminder ||
+      (currentReminder && currentOffset !== initOffset)
+    );
+  }, [editingAgenda, initialEditValues, agendaTitle, agendaTime, agendaNotes, agendaReminder, agendaReminderOffset]);
+
   const switchDesktopView = useCallback((nextAdding: boolean, direction: "forward" | "back" = "forward") => {
     setReminderMenuOpen(false);
     setMobileReminderDropdown(false);
@@ -19260,6 +19294,10 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
     setMobileTimePickerOpen(false);
     setDeleteAgendaConfirm(null);
     setAgendaLimitWarningModal(false);
+    if (!nextAdding) {
+      setEditingAgenda(null);
+      setInitialEditValues(null);
+    }
     setGoogleConnectModal(false);
     if (syncIntervalRef.current) {
       window.clearInterval(syncIntervalRef.current);
@@ -19474,6 +19512,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
       return;
     }
     setEditingAgenda(null);
+    setInitialEditValues(null);
     setAgendaTitle("");
     setAgendaTime("");
     setAgendaNotes("");
@@ -19490,13 +19529,26 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
     key: string,
     ev: { label: string; time: string; notes?: string; reminder?: boolean; reminderOffset?: string; source: "preset" | "custom"; sourceIndex: number }
   ) => {
+    const initialTitle = ev.label.slice(0, 50);
+    const tMatch = ev.time.match(/([01]?\d|2[0-3])\s*[.:]\s*(\d{2})/);
+    const initialTime = tMatch ? `${tMatch[1].padStart(2, "0")} . ${tMatch[2]}` : "";
+    const initialNotes = (ev.notes || "").slice(0, 300);
+    const initialReminder = Boolean(ev.reminder);
+    const initialOffset = ev.reminderOffset || "30 menit sebelumnya";
+
     setEditingAgenda({ key, source: ev.source, index: ev.sourceIndex });
-    setAgendaTitle(ev.label.slice(0, 50));
-    const tMatch = ev.time.match(/([01]?\d|2[0-3])[.:](\d{2})/);
-    setAgendaTime(tMatch ? `${tMatch[1].padStart(2, "0")} . ${tMatch[2]}` : "");
-    setAgendaNotes((ev.notes || "").slice(0, 300));
-    setAgendaReminder(Boolean(ev.reminder));
-    setAgendaReminderOffset(ev.reminderOffset || "30 menit sebelumnya");
+    setAgendaTitle(initialTitle);
+    setAgendaTime(initialTime);
+    setAgendaNotes(initialNotes);
+    setAgendaReminder(initialReminder);
+    setAgendaReminderOffset(initialOffset);
+    setInitialEditValues({
+      title: initialTitle,
+      time: initialTime,
+      notes: initialNotes,
+      reminder: initialReminder,
+      reminderOffset: initialOffset,
+    });
     setAgendaErrors({});
     setReminderMenuOpen(false);
     setTimePickerOpen(false);
@@ -19680,6 +19732,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
     try { localStorage.setItem("alerin_calendar_events", JSON.stringify(nextMap)); } catch {}
     const wasEditing = Boolean(editingAgenda);
     setEditingAgenda(null);
+    setInitialEditValues(null);
     setAgendaTitle("");
     setAgendaTime("");
     setAgendaNotes("");
@@ -19691,7 +19744,16 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
     showCalNotice(wasEditing ? "Agenda berhasil diperbarui" : "Agenda baru berhasil ditambahkan", "success");
   };
 
-  const activeDateForForm = selected ?? today;
+  const activeDateForForm = useMemo(() => {
+    if (editingAgenda) {
+      const parts = editingAgenda.key.split("-").map(Number);
+      if (parts.length === 3 && !isNaN(parts[0]) && !isNaN(parts[1]) && !isNaN(parts[2])) {
+        return new Date(parts[0], parts[1] - 1, parts[2]);
+      }
+    }
+    return selected ?? today;
+  }, [editingAgenda, selected, today]);
+
   const formattedActivityDate = activeDateForForm.toLocaleDateString("id-ID", {
     weekday: "long",
     day: "numeric",
@@ -19701,7 +19763,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
 
   const desktopAddAgendaPanel = (
     <div className="w-full max-h-[90vh] bg-white flex flex-col">
-      {/* Header Tambah Agenda */}
+      {/* Header Tambah/Edit Agenda */}
       <div className="px-6 py-3 bg-white border-b border-slate-200 flex items-start justify-between gap-3 shrink-0">
         <div className="flex items-start gap-3">
           <button
@@ -19716,9 +19778,11 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
             </svg>
           </button>
           <div className="flex flex-col gap-0.5">
-            <h2 className="text-slate-900 text-base font-bold leading-6">Tambah Agenda</h2>
+            <h2 className="text-slate-900 text-base font-bold leading-6">
+              {editingAgenda ? "Edit Agenda" : "Tambah Agenda"}
+            </h2>
             <p className="text-gray-500 text-xs font-normal leading-4 whitespace-nowrap">
-              Jadwalkan agenda baru pada kalender terpilih
+              {editingAgenda ? "Perbarui agenda yang telah dibuat" : "Jadwalkan agenda baru pada kalender terpilih"}
             </p>
           </div>
         </div>
@@ -20010,9 +20074,14 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
         <button
           type="button"
           onClick={handleSaveAgenda}
-          className="h-9 px-6 py-2 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] rounded-[10px] text-white text-xs font-semibold leading-4 cursor-pointer transition-all flex items-center justify-center"
+          disabled={Boolean(editingAgenda && !isAgendaModified)}
+          className={`h-9 px-6 py-2 rounded-[10px] text-xs font-semibold leading-4 transition-all flex items-center justify-center ${
+            editingAgenda && !isAgendaModified
+              ? "bg-blue-600/40 text-white/70 cursor-not-allowed pointer-events-none shadow-none"
+              : "bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white cursor-pointer shadow-xs"
+          }`}
         >
-          Simpan
+          {editingAgenda ? "Perbarui" : "Simpan"}
         </button>
       </div>
     </div>
@@ -20988,9 +21057,11 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                   </svg>
                 </button>
                 <div className="flex flex-col min-w-0">
-                  <h2 className="text-slate-900 text-base font-bold leading-6 truncate">Tambah Agenda</h2>
+                  <h2 className="text-slate-900 text-base font-bold leading-6 truncate">
+                    {editingAgenda ? "Edit Agenda" : "Tambah Agenda"}
+                  </h2>
                   <p className="text-gray-500 text-[10.5px] sm:text-xs font-normal leading-4 whitespace-nowrap truncate">
-                    Jadwalkan agenda baru pada kalender terpilih
+                    {editingAgenda ? "Perbarui agenda yang telah dibuat" : "Jadwalkan agenda baru pada kalender terpilih"}
                   </p>
                 </div>
               </div>
@@ -21286,14 +21357,19 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
               </div>
             </div>
 
-            {/* Bottom Actions: Hanya tombol Simpan (tombol Batal dihilangkan) */}
+            {/* Bottom Actions: Hanya tombol Simpan/Perbarui (tombol Batal dihilangkan) */}
             <div className="self-stretch px-5 py-2.5 bg-white border-t border-slate-200 flex flex-col justify-start items-start shrink-0">
               <button
                 type="button"
                 onClick={handleSaveAgenda}
-                className="self-stretch h-11 relative bg-blue-600 hover:bg-blue-700 active:scale-[0.99] rounded-xl inline-flex justify-center items-center text-white text-xs sm:text-sm font-semibold font-['Plus_Jakarta_Sans'] leading-5 shadow-[0px_2px_4px_-2px_rgba(59,130,246,0.25)] shadow-[0px_4px_6px_-1px_rgba(59,130,246,0.25)] transition-all cursor-pointer"
+                disabled={Boolean(editingAgenda && !isAgendaModified)}
+                className={`self-stretch h-11 relative rounded-xl inline-flex justify-center items-center text-xs sm:text-sm font-semibold font-['Plus_Jakarta_Sans'] leading-5 transition-all ${
+                  editingAgenda && !isAgendaModified
+                    ? "bg-blue-600/40 text-white/70 cursor-not-allowed pointer-events-none shadow-none"
+                    : "bg-blue-600 hover:bg-blue-700 active:scale-[0.99] text-white shadow-[0px_2px_4px_-2px_rgba(59,130,246,0.25)] shadow-[0px_4px_6px_-1px_rgba(59,130,246,0.25)] cursor-pointer"
+                }`}
               >
-                Simpan
+                {editingAgenda ? "Perbarui" : "Simpan"}
               </button>
             </div>
           </div>
