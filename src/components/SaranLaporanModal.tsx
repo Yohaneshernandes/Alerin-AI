@@ -57,7 +57,7 @@ export default function SaranLaporanModal({
           subject:
             message.trim().slice(0, 60) +
             (message.trim().length > 60 ? "..." : ""),
-          message: message.trim(),
+          message: message.trim().slice(0, 500),
           email: userEmail,
           createdAt: new Date().toISOString(),
         };
@@ -197,7 +197,7 @@ export default function SaranLaporanModal({
 
             {/* Form */}
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
-              {/* Rincian Pesan */}
+              {/* Detail Masukan */}
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <label
@@ -206,22 +206,27 @@ export default function SaranLaporanModal({
                       isDark ? "text-slate-300" : "text-slate-700"
                     }`}
                   >
-                    Rincian Masukan <span className="text-red-500">*</span>
+                    Detail Masukan <span className="text-red-500">*</span>
                   </label>
                   <span
                     className={`text-xs sm:text-[13px] tabular-nums ${
-                      isDark ? "text-slate-500" : "text-slate-400"
+                      message.length >= 500
+                        ? "text-amber-500 font-medium"
+                        : isDark
+                        ? "text-slate-500"
+                        : "text-slate-400"
                     }`}
                   >
-                    {message.length} karakter
+                    {message.length}/500 karakter
                   </span>
                 </div>
                 <textarea
                   id="saran-message"
                   required
                   rows={5}
+                  maxLength={500}
                   value={message}
-                  onChange={(e) => setMessage(e.target.value)}
+                  onChange={(e) => setMessage(e.target.value.slice(0, 500))}
                   placeholder="Ceritakan ide, saran perbaikan, atau kendala yang kamu alami saat menggunakan Alerin..."
                   className={`w-full px-4 py-3.5 rounded-2xl border text-[15px] sm:text-base placeholder:text-[14px] sm:placeholder:text-[15px] outline-none transition-all resize-none leading-relaxed ${
                     isDark
