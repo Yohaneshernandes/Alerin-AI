@@ -1012,10 +1012,10 @@ function renderUserMessageContent(text: string) {
   });
 }
 
-// Komponen pesan pengguna dengan fitur lihat selengkapnya / lihat lebih sedikit jika >= 401 karakter
+// Komponen pesan pengguna dengan fitur lihat selengkapnya / lihat lebih sedikit jika >= 201 karakter
 function UserMessageBubbleContent({ text }: { text: string }) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const THRESHOLD = 401;
+  const THRESHOLD = 201;
 
   if (!text) return null;
 
@@ -1058,10 +1058,10 @@ function UserMessageBubbleContent({ text }: { text: string }) {
     );
   }
 
-  // Potong di batas kata/baris yang rapi di dekat 400 karakter
-  let cutIndex = 400;
-  const lastBreak = Math.max(text.lastIndexOf(" ", 400), text.lastIndexOf("\n", 400));
-  if (lastBreak > 400 - 80) {
+  // Potong di batas kata/baris yang rapi di dekat 200 karakter
+  let cutIndex = 200;
+  const lastBreak = Math.max(text.lastIndexOf(" ", 200), text.lastIndexOf("\n", 200));
+  if (lastBreak > 200 - 50) {
     cutIndex = lastBreak;
   }
   const displayText = text.slice(0, cutIndex).trimEnd() + "...";
