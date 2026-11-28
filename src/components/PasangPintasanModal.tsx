@@ -50,7 +50,7 @@ export default function PasangPintasanModal({
         promptEvent.prompt();
         const choiceResult = await promptEvent.userChoice;
         if (choiceResult.outcome === "accepted") {
-          onToast?.("Pintasan Alerin berhasil dipasang di perangkatmu!", "success");
+          onToast?.("Aplikasi Alerin berhasil dipasang di perangkatmu!", "success");
           (window as any).deferredInstallPrompt = null;
           setTimeout(() => onClose(), 800);
         } else {
@@ -85,13 +85,13 @@ export default function PasangPintasanModal({
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = "Alerin AI.url";
+      link.download = "Alerin.url";
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
       setShowDesktopGuide(true);
-      onToast?.("Pintasan Desktop Alerin berhasil diunduh!", "success");
+      onToast?.("Aplikasi Desktop Alerin berhasil diunduh!", "success");
     } catch {
       setShowDesktopGuide(true);
     }
@@ -133,7 +133,7 @@ export default function PasangPintasanModal({
                 id="pasang-pintasan-title"
                 className="text-base sm:text-lg font-bold tracking-tight"
               >
-                Pasang Pintasan Alerin
+                Pasang Aplikasi Alerin
               </h3>
               <p
                 className={`text-xs mt-0.5 ${
@@ -182,7 +182,7 @@ export default function PasangPintasanModal({
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
                 <p className="text-sm font-bold text-slate-900 dark:text-white truncate">
-                  Alerin AI
+                  Alerin
                 </p>
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-600 text-white shadow-2xs">
                   Aplikasi Web
@@ -243,7 +243,7 @@ export default function PasangPintasanModal({
             </div>
           )}
 
-          {/* Tombol Universal Pasang Pintasan */}
+          {/* Tombol Universal Pasang Aplikasi */}
           <button
             type="button"
             onClick={handleUniversalInstall}
@@ -256,7 +256,7 @@ export default function PasangPintasanModal({
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                 </svg>
-                <span>Sedang memasang pintasan...</span>
+                <span>Sedang memasang aplikasi...</span>
               </>
             ) : (
               <>
@@ -265,7 +265,7 @@ export default function PasangPintasanModal({
                   <path d="M8 21h8M12 17v4" />
                   <path d="M9 8l3 3 3-3M12 5v6" />
                 </svg>
-                <span>Pasang Pintasan</span>
+                <span>Pasang Aplikasi</span>
               </>
             )}
           </button>

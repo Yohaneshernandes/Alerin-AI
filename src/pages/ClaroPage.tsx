@@ -7416,7 +7416,7 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                 }`}>
                 <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="3" y="3" width="18" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M9 8l3 3 3-3M12 5v6"/></svg>
                 <span className="flex flex-col">
-                  <span className="text-sm font-medium">Pasang Pintasan</span>
+                  <span className="text-sm font-medium">Pasang Aplikasi</span>
                   <span className="text-[11px] text-slate-400">Cara cepat mengakses Alerin</span>
                 </span>
               </button>
@@ -26529,7 +26529,7 @@ function ProfilTab({ onTab, onRegister }: { onTab: (t: NavTab) => void; onRegist
                   {/* Menu list */}
                   <div className="bg-white rounded-2xl overflow-hidden" style={{ boxShadow: "0 1px 6px rgba(0,0,0,0.04)" }}>
                     {[
-                      { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="2"><rect x="3" y="3" width="18" height="14" rx="2"/><path d="M8 21h8M12 17v4M16 8l-4 4-2-2M12 5v7"/></svg>, label: "Pasang Pintasan", view: "edit-profile" as ProfileView },
+                      { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="2"><rect x="3" y="3" width="18" height="14" rx="2"/><path d="M8 21h8M12 17v4M16 8l-4 4-2-2M12 5v7"/></svg>, label: "Pasang Aplikasi", view: "edit-profile" as ProfileView },
                       { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h6"/></svg>, label: "Kebijakan Privasi", view: "privacy-policy" as ProfileView },
                       { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11"/><path d="M8 7h6M8 11h6M8 15h3"/><path d="m16 19 2 2 4-4"/></svg>, label: "Syarat & Ketentuan", view: "terms" as ProfileView },
                     ].map((item, i) => (

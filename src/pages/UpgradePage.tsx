@@ -1508,7 +1508,7 @@ export default function UpgradePage() {
                   <path d="M9 8l3 3 3-3M12 5v6" />
                 </svg>
                 <span className="flex flex-col">
-                  <span className="text-sm font-medium">Pasang Pintasan</span>
+                  <span className="text-sm font-medium">Pasang Aplikasi</span>
                   <span className="text-[11px] text-slate-400">Cara cepat mengakses Alerin</span>
                 </span>
               </button>
