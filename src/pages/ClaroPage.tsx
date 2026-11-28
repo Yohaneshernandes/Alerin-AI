@@ -8439,12 +8439,12 @@ function ChatInputBox({
                                 <p className={`text-[13.5px] font-semibold leading-tight flex items-baseline gap-1 flex-wrap ${isDark ? "text-white" : "text-slate-900"}`}>
                                   <span>{m.fullTitle}</span>
                                   {isProUser && m.id === "vera" && (
-                                    <span className="font-normal italic text-[12px] text-slate-500 dark:text-slate-400">
+                                    <span className="font-normal italic text-[12px] text-slate-800 dark:text-slate-200">
                                       (Rekomendasi)
                                     </span>
                                   )}
                                   {isProUser && m.id === "alta" && (
-                                    <span className="font-normal italic text-[12px] text-slate-500 dark:text-slate-400">
+                                    <span className="font-normal italic text-[12px] text-slate-800 dark:text-slate-200">
                                       (3x penggunaan)
                                     </span>
                                   )}
