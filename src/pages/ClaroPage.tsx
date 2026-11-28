@@ -19207,7 +19207,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
   const [calNotice, setCalNotice] = useState<{
     id: number;
     text: string;
-    tone: "success" | "info" | "error";
+    tone: "success" | "info" | "error" | "warning";
   } | null>(null);
   const titleInputRef = useRef<HTMLInputElement | null>(null);
   const reminderBtnRef = useRef<HTMLButtonElement | null>(null);
@@ -19236,6 +19236,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
     source: "preset" | "custom";
     sourceIndex: number;
   } | null>(null);
+  const [agendaLimitWarningModal, setAgendaLimitWarningModal] = useState(false);
   const [agendaErrors, setAgendaErrors] = useState<{ title?: boolean; time?: boolean }>({});
   const [hiddenPresetMap, setHiddenPresetMap] = useState<Record<string, number[]>>(() => {
     try {
@@ -19258,6 +19259,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
     setTimePickerOpen(false);
     setMobileTimePickerOpen(false);
     setDeleteAgendaConfirm(null);
+    setAgendaLimitWarningModal(false);
     setGoogleConnectModal(false);
     if (syncIntervalRef.current) {
       window.clearInterval(syncIntervalRef.current);
@@ -19285,13 +19287,13 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
     });
   }, []);
 
-  const showCalNotice = useCallback((text: string, tone: "success" | "info" | "error" = "success") => {
+  const showCalNotice = useCallback((text: string, tone: "success" | "info" | "error" | "warning" = "success") => {
     if (calNoticeTimerRef.current) window.clearTimeout(calNoticeTimerRef.current);
     setCalNotice({ id: Date.now(), text, tone });
     calNoticeTimerRef.current = window.setTimeout(() => {
       setCalNotice(null);
       calNoticeTimerRef.current = null;
-    }, 3000);
+    }, 3200);
   }, []);
 
   useEffect(() => {
@@ -19463,6 +19465,14 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
   };
 
   const openAddAgendaModal = () => {
+    const targetDate = selected ?? today;
+    const targetKey = toKey(targetDate);
+    const existingEvents = getEventsForKey(targetKey);
+    if (existingEvents.length >= 3) {
+      setAgendaLimitWarningModal(true);
+      showCalNotice("Maksimal 3 agenda per tanggal. Hapus atau ubah agenda yang ada terlebih dahulu.", "warning");
+      return;
+    }
     setEditingAgenda(null);
     setAgendaTitle("");
     setAgendaTime("");
@@ -19616,6 +19626,16 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
     const normalizedTime = `${match[1]}.${match[2]}`;
     const targetDate = selected ?? today;
     const key = editingAgenda ? editingAgenda.key : toKey(targetDate);
+
+    // Validasi batas maksimal 3 agenda per tanggal untuk penambahan agenda baru
+    if (!editingAgenda) {
+      const currentDayEvents = getEventsForKey(key);
+      if (currentDayEvents.length >= 3) {
+        setAgendaLimitWarningModal(true);
+        showCalNotice("Maksimal 3 agenda per tanggal. Hapus atau ubah agenda yang ada terlebih dahulu.", "warning");
+        return;
+      }
+    }
 
     const hasSameTimeOnDay = getEventsForKey(key).some((ev) => {
       if (editingAgenda && ev.source === editingAgenda.source && ev.sourceIndex === editingAgenda.index) {
@@ -20285,6 +20305,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
       onClick={() => {
         if (googleConnectModal) setGoogleConnectModal(false);
         else if (deleteAgendaConfirm) setDeleteAgendaConfirm(null);
+        else if (agendaLimitWarningModal) setAgendaLimitWarningModal(false);
         else onClose();
       }}
     >
@@ -20380,6 +20401,49 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                     className="h-8 px-5 bg-blue-600 hover:bg-blue-700 active:scale-[0.99] rounded-lg shadow-[0px_0.9086957px_1.8173914px_0px_rgba(0,0,0,0.05)] inline-flex justify-center items-center text-white text-xs font-semibold leading-5 cursor-pointer transition-all"
                   >
                     Ya, Hapus
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Pop-up Peringatan Batas Maksimal Agenda (Desktop) */}
+          {agendaLimitWarningModal && (
+            <div
+              className="absolute inset-0 z-35 flex items-center justify-center p-4 bg-slate-900/35 backdrop-blur-[1px] animate-[gemini-fade-in_0.15s_ease-out]"
+              onClick={() => setAgendaLimitWarningModal(false)}
+            >
+              <div
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="agenda-limit-title"
+                onClick={(e) => e.stopPropagation()}
+                className="relative w-96 max-w-[calc(100%-32px)] px-6 py-5 bg-white rounded-2xl border border-zinc-200 shadow-[0px_22.7px_45.4px_0px_rgba(2,6,23,0.3)] flex flex-col justify-start items-center gap-3.5 animate-[gemini-zoom-in_0.15s_ease-out] font-['Plus_Jakarta_Sans']"
+              >
+                <div className="self-stretch flex items-start gap-3.5">
+                  <div className="size-11 bg-amber-100 rounded-2xl shadow-[0px_0.9px_1.8px_0px_rgba(0,0,0,0.05)] border border-amber-200/80 flex justify-center items-center shrink-0 text-amber-600">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                      <line x1="12" y1="9" x2="12" y2="13" />
+                      <line x1="12" y1="17" x2="12.01" y2="17" />
+                    </svg>
+                  </div>
+                  <div className="flex-1 min-w-0 pt-0.5">
+                    <h3 id="agenda-limit-title" className="text-slate-900 text-base font-bold leading-5">
+                      Batas Agenda Tercapai
+                    </h3>
+                    <p className="mt-1.5 text-slate-500 text-xs font-normal leading-relaxed">
+                      Setiap tanggal dibatasi maksimal <strong className="font-semibold text-slate-800">3 agenda</strong>. Silakan hapus atau ubah agenda yang ada jika ingin menambahkan agenda baru.
+                    </p>
+                  </div>
+                </div>
+                <div className="self-stretch flex justify-end pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setAgendaLimitWarningModal(false)}
+                    className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 active:scale-[0.99] rounded-xl text-white text-xs sm:text-sm font-semibold transition-all cursor-pointer shadow-xs"
+                  >
+                    Mengerti
                   </button>
                 </div>
               </div>
@@ -20859,13 +20923,23 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
           >
             <span
               className={`size-7 rounded-full flex items-center justify-center shrink-0 text-white ${
-                calNotice.tone === "error" ? "bg-rose-500" : "bg-blue-600"
+                calNotice.tone === "error"
+                  ? "bg-rose-500"
+                  : calNotice.tone === "warning"
+                  ? "bg-amber-500"
+                  : "bg-blue-600"
               }`}
             >
               {calNotice.tone === "error" ? (
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <line x1="12" y1="8" x2="12" y2="12" />
                   <line x1="12" y1="16" x2="12.01" y2="16" />
+                </svg>
+              ) : calNotice.tone === "warning" ? (
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                  <line x1="12" y1="9" x2="12" y2="13" />
+                  <line x1="12" y1="17" x2="12.01" y2="17" />
                 </svg>
               ) : calNotice.tone === "info" ? (
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" className="animate-spin" aria-hidden="true">
@@ -20888,7 +20962,11 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
       {/* ── MOBILE POPUP (Sesuai Desain Figma Mobile 100% - Ukuran Dioptimalkan Lebih Proporsional) ── */}
       <div
         className="flex md:hidden min-h-full items-center justify-center p-3.5"
-        onClick={onClose}
+        onClick={() => {
+          if (deleteAgendaConfirm) setDeleteAgendaConfirm(null);
+          else if (agendaLimitWarningModal) setAgendaLimitWarningModal(false);
+          else onClose();
+        }}
       >
         {addingAgenda ? (
           <div
@@ -21524,7 +21602,7 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
             <div className="self-stretch px-5 pt-3 pb-3.5 bg-white border-t border-slate-100 flex flex-col items-center gap-3.5 shrink-0">
               <button
                 type="button"
-                onClick={() => switchDesktopView(true)}
+                onClick={openAddAgendaModal}
                 className="self-stretch h-11 relative bg-blue-600 hover:bg-blue-700 active:scale-[0.99] rounded-xl inline-flex justify-center items-center gap-2 shadow-[0px_2px_4px_-2px_rgba(59,130,246,0.25)] shadow-[0px_4px_6px_-1px_rgba(59,130,246,0.25)] transition-all cursor-pointer text-white"
               >
                 <div className="size-3.5 relative overflow-hidden flex items-center justify-center">
@@ -21632,6 +21710,50 @@ function CalendarModal({ onClose, onToast }: { onClose: () => void; onToast: (m:
                       className="h-8 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] rounded-lg shadow-[0px_0.91px_1.82px_0px_rgba(0,0,0,0.05)] inline-flex justify-center items-center text-white text-xs font-semibold font-['Plus_Jakarta_Sans'] leading-4 cursor-pointer transition-all"
                     >
                       Ya, Hapus
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Pop-up Peringatan Batas Maksimal Agenda (Mobile) */}
+            {agendaLimitWarningModal && (
+              <div
+                className="absolute inset-0 z-50 flex items-center justify-center p-3.5 bg-slate-900/35 backdrop-blur-[1px] rounded-2xl animate-[gemini-fade-in_0.15s_ease-out]"
+                onClick={() => setAgendaLimitWarningModal(false)}
+              >
+                <div
+                  role="dialog"
+                  aria-modal="true"
+                  onClick={(e) => e.stopPropagation()}
+                  className="relative w-72 max-w-[calc(100%-16px)] px-5 py-4 bg-white rounded-2xl outline outline-1 outline-offset-[-1px] outline-zinc-200 shadow-[0px_22.7px_45.4px_0px_rgba(2,6,23,0.3)] flex flex-col justify-start items-center gap-3 font-['Plus_Jakarta_Sans'] animate-[gemini-zoom-in_0.15s_ease-out]"
+                >
+                  <div className="self-stretch inline-flex justify-start items-start gap-3">
+                    <div className="size-9 bg-amber-100 rounded-xl outline outline-1 outline-offset-[-1px] outline-amber-200 flex justify-center items-center shrink-0 text-amber-600">
+                      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                        <line x1="12" y1="9" x2="12" y2="13" />
+                        <line x1="12" y1="17" x2="12.01" y2="17" />
+                      </svg>
+                    </div>
+                    <div className="flex-1 min-w-0 pt-0.5">
+                      <span className="block text-slate-900 text-sm font-bold font-['Plus_Jakarta_Sans'] leading-5">
+                        Batas Agenda Tercapai
+                      </span>
+                    </div>
+                  </div>
+                  <div className="self-stretch flex flex-col justify-start items-start">
+                    <p className="self-stretch text-slate-500 text-xs font-normal font-['Plus_Jakarta_Sans'] leading-relaxed">
+                      Setiap tanggal dibatasi maksimal <strong className="font-semibold text-slate-800">3 agenda</strong>. Hapus atau ubah agenda yang ada jika ingin menambah agenda baru.
+                    </p>
+                  </div>
+                  <div className="self-stretch pt-0.5">
+                    <button
+                      type="button"
+                      onClick={() => setAgendaLimitWarningModal(false)}
+                      className="w-full py-2 bg-blue-600 hover:bg-blue-700 active:scale-[0.99] rounded-xl text-white text-xs font-semibold font-['Plus_Jakarta_Sans'] transition-all cursor-pointer shadow-xs"
+                    >
+                      Mengerti
                     </button>
                   </div>
                 </div>
