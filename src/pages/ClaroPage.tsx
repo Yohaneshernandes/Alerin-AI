@@ -8450,7 +8450,7 @@ function ChatInputBox({
                                   )}
                                 </p>
                                 {!isProUser && m.badge && (
-                                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-[#dbeafe] text-[#2563eb] dark:bg-blue-950/70 dark:text-blue-300 shrink-0 leading-none">
+                                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-600 border border-slate-200/70 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 shrink-0 leading-none">
                                     {m.badge}
                                   </span>
                                 )}
