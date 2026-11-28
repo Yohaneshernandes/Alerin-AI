@@ -7260,14 +7260,14 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                         }
                       }}
                       title={accountPlan === "pro" ? "Klik untuk ganti ke Plus" : "Klik untuk ganti ke Pro"}
-                      className={`mt-0.5 inline-flex items-center gap-1 rounded-full border px-2 py-[1px] font-['Inter:Bold'] text-[9.5px] font-bold leading-[13px] whitespace-nowrap transition-all active:scale-95 cursor-pointer shadow-2xs select-none ${
+                      className={`mt-0.5 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-[2px] font-['Inter:Bold'] text-[10.5px] font-bold leading-[14px] whitespace-nowrap transition-all active:scale-95 cursor-pointer shadow-2xs select-none ${
                         isDarkTheme
                           ? "border-blue-500/40 bg-slate-900 text-slate-100 hover:border-blue-400"
                           : "border-blue-200 bg-white text-slate-900 hover:border-blue-300 hover:bg-blue-50/60"
                       }`}
                     >
                       <span>{accountPlan === "pro" ? "Pro" : "Plus"}</span>
-                      <PlusBadgeIcon tier={accountPlan} size={11} />
+                      <PlusBadgeIcon tier={accountPlan} size={12} />
                     </span>
                   </div>
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400 ml-0.5 shrink-0">
@@ -7327,14 +7327,14 @@ function Shell({ children, activeTab, onTab, onOpenHistory, onNewChat, hasActive
                       toggleAccountPlan();
                     }}
                     title={accountPlan === "pro" ? "Klik untuk ganti ke Plus" : "Klik untuk ganti ke Pro"}
-                    className={`inline-flex items-center gap-1 rounded-full border px-2 py-[1px] font-['Inter:Bold'] text-[9.5px] font-bold leading-[13px] whitespace-nowrap transition-all active:scale-95 cursor-pointer shadow-2xs select-none shrink-0 ${
+                    className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-[2px] font-['Inter:Bold'] text-[10.5px] font-bold leading-[14px] whitespace-nowrap transition-all active:scale-95 cursor-pointer shadow-2xs select-none shrink-0 ${
                       isDarkTheme
                         ? "border-blue-500/40 bg-slate-900 text-slate-100 hover:border-blue-400"
                         : "border-blue-200 bg-white text-slate-900 hover:border-blue-300 hover:bg-blue-50/60"
                     }`}
                   >
                     <span>{accountPlan === "pro" ? "Pro" : "Plus"}</span>
-                    <PlusBadgeIcon tier={accountPlan} size={11} />
+                    <PlusBadgeIcon tier={accountPlan} size={12} />
                   </button>
                 </div>
                 <p className="mt-0.5 truncate text-xs text-slate-400">rakaaditya@gmail.com</p>

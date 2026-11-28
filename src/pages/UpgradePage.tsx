@@ -1319,10 +1319,10 @@ export default function UpgradePage() {
                         }
                       }}
                       title={accountPlan === "pro" ? "Klik untuk ganti ke Plus" : "Klik untuk ganti ke Pro"}
-                      className="mt-0.5 inline-flex items-center gap-1 rounded-full border border-blue-200 bg-white px-2 py-[1px] font-['Inter:Bold'] text-[9.5px] font-bold leading-[13px] whitespace-nowrap text-slate-900 shadow-2xs hover:border-blue-300 hover:bg-blue-50/60 transition-all active:scale-95 cursor-pointer select-none"
+                      className="mt-0.5 inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-white px-2.5 py-[2px] font-['Inter:Bold'] text-[10.5px] font-bold leading-[14px] whitespace-nowrap text-slate-900 shadow-2xs hover:border-blue-300 hover:bg-blue-50/60 transition-all active:scale-95 cursor-pointer select-none"
                     >
                       <span>{accountPlan === "pro" ? "Pro" : "Plus"}</span>
-                      <PlusBadgeIcon tier={accountPlan} size={11} />
+                      <PlusBadgeIcon tier={accountPlan} size={12} />
                     </span>
                   </div>
                   <svg
@@ -1420,8 +1420,26 @@ export default function UpgradePage() {
                   }}
                 />
               </div>
-              <div className="min-w-0">
-                <p className={`truncate text-sm font-bold ${isDarkTheme ? "text-white" : "text-slate-900"}`}>Raka</p>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2">
+                  <p className={`shrink-0 text-sm font-bold ${isDarkTheme ? "text-white" : "text-slate-900"}`}>Raka</p>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleAccountPlan();
+                    }}
+                    title={accountPlan === "pro" ? "Klik untuk ganti ke Plus" : "Klik untuk ganti ke Pro"}
+                    className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-[2px] font-['Inter:Bold'] text-[10.5px] font-bold leading-[14px] whitespace-nowrap transition-all active:scale-95 cursor-pointer shadow-2xs select-none shrink-0 ${
+                      isDarkTheme
+                        ? "border-blue-500/40 bg-slate-900 text-slate-100 hover:border-blue-400"
+                        : "border-blue-200 bg-white text-slate-900 hover:border-blue-300 hover:bg-blue-50/60"
+                    }`}
+                  >
+                    <span>{accountPlan === "pro" ? "Pro" : "Plus"}</span>
+                    <PlusBadgeIcon tier={accountPlan} size={12} />
+                  </button>
+                </div>
                 <p className="mt-0.5 truncate text-xs text-slate-400">rakaaditya@gmail.com</p>
               </div>
             </div>
